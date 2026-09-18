@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+void calculateSumAndAverage(int n, int *sum, float *average) {
+    if (n <= 0) {
+        *sum = 0;
+        *average = 0.0f;
+        return;
+    }
+
+    long long temp_sum = 0;
+    for (int i = 1; i <= n; i++) {
+        if (temp_sum > INT_MAX - i) {
+            *sum = 0;
+            *average = 0.0f;
+            return;
+        }
+        temp_sum += i;
+    }
+
+    *sum = (int)temp_sum;
+    *average = (float)temp_sum / n;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    int sum;
+    float average;
+    calculateSumAndAverage(n, &sum, &average);
+
+    printf("Sum of first %d natural numbers is %d\n", n, sum);
+    printf("Average of first %d natural numbers is %.2f\n", n, average);
+
+    return 0;
+}
+```

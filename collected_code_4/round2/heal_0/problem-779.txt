@@ -1,0 +1,54 @@
+Below is a simple implementation example using nested loops to count the number of unique arrays in a given list of arrays (assuming each array's size is fixed).
+
+Note: C language does not have an implicit mechanism to compare entire arrays or lists. So, we have to manually compare element by element.
+
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define SIZE 5
+
+bool isEqual(int* array1, int* array2, int size) {
+    for(int i = 0; i < size; i++){
+        if(array1[i] != array2[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
+int countUnique(int arrList[SIZE][SIZE], int listSize, int arrSize) {
+    int count = listSize;
+
+    for(int i = 0; i < listSize; i++) {
+        for(int j = i + 1; j < listSize; j++) {
+            if(isEqual(arrList[i], arrList[j], arrSize)) {
+                count--;
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int list[SIZE][SIZE] = {
+        {1, 2, 3, 4, 5},
+        {6, 7, 8, 9, 10},
+        {1, 2, 3, 4, 5},
+        {11, 12, 13, 14, 15},
+        {16, 17, 18, 19, 20}
+    };
+
+    int uniqueCount = countUnique(list, SIZE, SIZE);
+
+    printf("Number of unique arrays: %d\n", uniqueCount);
+
+    return 0;
+}
+```
+In this example, the `isEqual` function is used to compare two arrays element by element and the `countUnique` function is used to count only unique arrays in the given list of arrays.
+
+This specific code takes the array size as an input as well. While we slightly altered the requirements for the purpose of the example, this should give you a nice start for a more complex use-case scenario.

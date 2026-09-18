@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+struct Tuple {
+    int *elements;
+    size_t length;
+};
+
+bool check_equal_tuple_lengths(const struct Tuple *tuples, size_t count) {
+    if (tuples == NULL) {
+        return false;
+    }
+
+    if (count <= 1) {
+        return true;
+    }
+
+    size_t reference_length = tuples[0].length;
+
+    for (size_t i = 1; i < count; i++) {
+        if (tuples[i].length != reference_length) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int tuple_a_data[] = {1, 2, 3};
+    int tuple_b_data[] = {4, 5, 6};
+    int tuple_c_data[] = {7, 8, 9};
+
+    struct Tuple tuples_array[3] = {
+        {tuple_a_data, sizeof(tuple_a_data) / sizeof(tuple_a_data[0])},
+        {tuple_b_data, sizeof(tuple_b_data) / sizeof(tuple_b_data[0])},
+        {tuple_c_data, sizeof(tuple_c_data) / sizeof(tuple_c_data[0])}
+    };
+
+    size_t tuple_count = sizeof(tuples_array) / sizeof(tuples_array[0]);
+
+    bool are_equal = check_equal_tuple_lengths(tuples_array, tuple_count);
+
+    if (are_equal) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```

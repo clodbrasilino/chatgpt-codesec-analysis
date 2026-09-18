@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int min_length_sublist(const int* arr, int size, int target) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+
+    int min_len = INT_MAX;
+    int current_sum = 0;
+    int start = 0;
+
+    for (int end = 0; end < size; end++) {
+        current_sum += arr[end];
+
+        while (current_sum >= target) {
+            if (end - start + 1 < min_len) {
+                min_len = end - start + 1;
+            }
+            current_sum -= arr[start];
+            start++;
+        }
+    }
+
+    return (min_len == INT_MAX) ? 0 : min_len;
+}
+
+int main(void) {
+    int arr[] = {2, 3, 1, 2, 4, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target = 7;
+
+    int result = min_length_sublist(arr, size, target);
+
+    printf("Minimum length of sublist: %d\n", result);
+
+    return 0;
+}
+```

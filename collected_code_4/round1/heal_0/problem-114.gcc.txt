@@ -1,0 +1,69 @@
+./collected_code_4/round1//heal_0//problem-114.c: In function 'getTupleFrequency':
+./collected_code_4/round1//heal_0//problem-114.c:44:12: warning: leak of 'freqTupleList' [CWE-401] [-Wanalyzer-malloc-leak]
+   44 |     return freqTupleList;
+      |            ^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     FreqTuple* freqTupleList = getTupleFrequency(tupleList, 6, &freqSize);
+    |      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (2) calling 'getTupleFrequency' from 'main'
+    |
+    +--> 'getTupleFrequency': events 3-15
+           |
+           |   14 | FreqTuple* getTupleFrequency(Tuple* tupleList, int size, int* freqSize) {
+           |      |            ^~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (3) entry to 'getTupleFrequency'
+           |   15 |     FreqTuple* freqTupleList = (FreqTuple*)malloc(sizeof(FreqTuple)*size);
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (4) allocated here
+           |   16 | 
+           |   17 |     if (freqTupleList == NULL) {
+           |      |        ~    
+           |      |        |
+           |      |        (5) assuming 'freqTupleList' is non-NULL
+           |      |        (6) following 'false' branch (when 'freqTupleList' is non-NULL)...
+           |......
+           |   22 |     int freqTupleListSize = 0;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (7) ...to here
+           |   23 | 
+           |   24 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |   25 |         int j;
+           |   26 |         for (j = 0; j < freqTupleListSize; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (10) following 'false' branch (when 'j >= freqTupleListSize')...
+           |      |                (9) ...to here
+           |......
+           |   34 |         if (j == freqTupleListSize) {
+           |      |            ~
+           |      |            |
+           |      |            (11) ...to here
+           |      |            (12) following 'true' branch (when 'j == freqTupleListSize')...
+           |   35 |             freqTupleList[freqTupleListSize].tuple = tupleList[i];
+           |      |                                                               ~
+           |      |                                                               |
+           |      |                                                               (13) ...to here
+           |......
+           |   42 |     freqTupleList = (FreqTuple*)realloc(freqTupleList, sizeof(FreqTuple)*freqTupleListSize);
+           |      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (14) when 'realloc' fails
+           |   43 | 
+           |   44 |     return freqTupleList;
+           |      |            ~~~~~~~~~~~~~
+           |      |            |
+           |      |            (15) 'freqTupleList' leaks here; was allocated at (4)
+           |

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+
+int count_odd_factors(int lower, int upper)
+{
+    int num_odd_factors = 0;
+    for(int i = lower; i <= upper; i++) {
+        int root = sqrt(i);
+        if(root * root == i) {
+            num_odd_factors++;
+        }
+    }
+    
+    return num_odd_factors;
+}
+
+int main()
+{
+    int lower, upper;
+    printf("Enter the lower range: ");
+    scanf("%d", &lower);
+    printf("Enter the upper range: ");
+    scanf("%d", &upper);
+
+    if(lower > upper || lower < 0) {
+        printf("Invalid range! Lower range should be less than upper and both should be non-negative.\n");
+        return 0;
+    }
+
+    int num_odd_factors = count_odd_factors(lower, upper);
+    printf("Number of numbers with odd factors in the given range = %d\n", num_odd_factors);
+
+    return 0;
+}

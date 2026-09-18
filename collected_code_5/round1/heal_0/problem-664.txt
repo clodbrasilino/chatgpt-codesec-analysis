@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+
+double average_of_evens(int n)
+{
+    int sum = 0, count = 0;
+    for(int i = 0; i <= n; i++){
+        if(i % 2 == 0){
+            sum += i;
+            count++;
+        }
+    }
+    if(count == 0) return 0;
+    return (double)sum/count;
+}
+
+int main(){
+    int number;
+    printf("Enter an even number till which you want to find the average: ");
+    scanf("%d", &number);
+    if(number % 2 != 0){
+        printf("The number entered is not even.\n");
+        return 1;
+    }
+    printf("Average of even numbers till %d is %.2f\n", number, average_of_evens(number));
+    return 0;
+}
+``` 
+In this program, the `average_of_evens` function finds the average of even numbers between 0 and n by initializing the sum and the count to 0, and then increment them appropriately inside a for loop that iterates from 0 to n. The function returns 0 if there are no even numbers (i.e., if the count is zero), otherwise it returns the average (which is the sum divided by the count).
+
+The main function asks the user to enter an even number until which they want to find the average, and then checks if the entered number is even. If the number is not even, the program prints an error message and returns 1, otherwise it prints the average of even numbers till the entered number using a call to the `average_of_evens` function.

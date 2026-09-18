@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (head == NULL) {
+        return;
+    }
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+Node* createAlternateList(Node* head) {
+    Node* alternateHead = NULL;
+    Node* current = head;
+    int count = 0;
+
+    while (current != NULL) {
+        if (count % 2 == 0) {
+            appendNode(&alternateHead, current->data);
+        }
+        current = current->next;
+        count++;
+    }
+
+    return alternateHead;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* nextNode;
+    while (current != NULL) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* originalList = NULL;
+    Node* alternateList = NULL;
+
+    for (int i = 1; i <= 10; i++) {
+        appendNode(&originalList, i);
+    }
+
+    alternateList = createAlternateList(originalList);
+
+    printList(originalList);
+    printList(alternateList);
+
+    freeList(originalList);
+    freeList(alternateList);
+
+    return EXIT_SUCCESS;
+}

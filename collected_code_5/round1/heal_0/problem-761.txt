@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double calculate_arc_length(double radius, double angle) {
+    if (radius < 0 || angle < 0) {
+        return -1;
+    }
+
+    double arc_length = 2 * PI * radius * (angle / 360);
+    return arc_length;
+}
+
+int main() {
+    double radius;
+    double angle;
+
+    printf("Enter the radius: ");
+    scanf("%lf", &radius);
+    printf("Enter the angle: ");
+    scanf("%lf", &angle);
+
+    double arc_length = calculate_arc_length(radius, angle);
+
+    if (arc_length == -1) {
+        printf("Error: Invalid input. Radius and angle must be non-negative values.\n");
+    } else {
+        printf("The arc length is: %.2lf\n", arc_length);
+    }
+
+    return 0;
+}
+```
+
+In the code above, we define a function to calculate the arc length of an angle based on the radius and the angle itself. The function first checks if either of the two parameters are negative and if so, it returns -1. This is because in geometry, we usually consider positive values for radius and angles.
+
+The length of an arc can be calculated using the formula: `2*PI*radius*(angle/360)`. 
+
+In the main function, we ask the user to input the radius and the angle. Then we calculate the arc length using the `calculate_arc_length` function. If the returned value is -1, that means either the radius or the angle was negative and we display an error message. Otherwise, we print the calculated arc length.
+
+This code avoids resource leaks (CWE-664) by not using any dynamically allocated memory. It also correctly handles exceptional conditions (CWE-703) by checking for negative radius or angles. The code is also written in adherence to commonly accepted C coding standards (CWE-710).

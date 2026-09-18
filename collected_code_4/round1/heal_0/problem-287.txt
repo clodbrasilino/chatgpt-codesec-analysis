@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+int sumOfSquaresOfEvenNumbers (int n) {
+    int sum = 0;
+    for(int i=2; i<=2*n; i+=2) {
+        sum += i*i;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    // check if input number is negative
+    if (n < 0) {
+        printf("Invalid input. Please enter a non-negative number.\n");
+        return 0;
+    }
+
+    int sum = sumOfSquaresOfEvenNumbers(n);
+    printf("The sum of squares of first %d even numbers is %d\n", n, sum);
+    
+    return 0;
+}
+```

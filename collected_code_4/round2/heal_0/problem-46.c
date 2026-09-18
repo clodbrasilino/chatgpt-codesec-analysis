@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool are_all_numbers_different(int *arr, int size){
+    for(int i=0; i<size; i++){
+        for(int j=i+1; j<size;j++){
+            if(arr[i] == arr[j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main(){
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr)/sizeof(arr[0]);
+
+    if (are_all_numbers_different(arr, size)) {
+        printf("All numbers are different.");
+    } else {
+        printf("Numbers are not different.");
+    }
+
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} List;
+
+const List* find_max_length_list(const List *lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return NULL;
+    }
+
+    const List *max_list = &lists[0];
+
+    for (size_t i = 1; i < count; i++) {
+        if (lists[i].length > max_list->length) {
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+void free_lists(List *lists, size_t count) {
+    if (lists == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(lists[i].items);
+    }
+    free(lists);
+}
+
+int main(void) {
+    size_t list_count = 4;
+    size_t lengths[] = {3, 7, 2, 5};
+    
+    List *lists = malloc(list_count * sizeof(List));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list_count; i++) {
+        lists[i].length = lengths[i];
+        lists[i].items = malloc(lengths[i] * sizeof(int));
+        if (lists[i].items == NULL) {
+            free_lists(lists, i);
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < lengths[i]; j++) {
+            lists[i].items[j] = 0;
+        }
+    }
+
+    const List *max_list = find_max_length_list(lists, list_count);
+    if (max_list != NULL) {
+        printf("%zu\n", max_list->length);
+    }
+
+    free_lists(lists, list_count);
+
+    return EXIT_SUCCESS;
+}

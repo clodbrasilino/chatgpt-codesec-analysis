@@ -1,0 +1,6 @@
+problem-335.c:22:36:medium:UBSan: signed integer overflow: 9223372036854775807 - -4 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:1580,execs:904,op:havoc,rep:2)
+problem-335.c:22:54:medium:UBSan: signed integer overflow: 4 * 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:1580,execs:904,op:havoc,rep:2)
+problem-335.c:26:54:medium:UBSan: signed integer overflow: 4 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000019,time:23992,execs:12733,op:havoc,rep:2)
+problem-335.c:31:56:medium:UBSan: signed integer overflow: 4 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000019,time:23992,execs:12733,op:havoc,rep:2)
+problem-335.c:52:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000012,time:21319,execs:11415,op:havoc,rep:1)
+problem-335.c:52:36:medium:UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000012,time:21319,execs:11415,op:havoc,rep:1)

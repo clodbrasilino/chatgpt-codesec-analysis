@@ -1,0 +1,394 @@
+./collected_code_4/round1//heal_0//problem-108.c: In function 'newNode':
+./collected_code_4/round1//heal_0//problem-108.c:17:15: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     temp->val = val;
+      |     ~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     mergeArrays(arr, arrayCount, arrayLength);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeArrays' from 'main'
+    |
+    +--> 'mergeArrays': events 3-6
+           |
+           |   49 | void mergeArrays(int arr[][10], int arrayCount, int arrayLength) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeArrays'
+           |......
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (5) ...to here
+           |      |         (6) calling 'push' from 'mergeArrays'
+           |
+           +--> 'push': events 7-8
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (7) entry to 'push'
+                  |   31 |     Node *start = queue->start;
+                  |   32 |     Node *temp = newNode(val, arrayNum, indexInArray);
+                  |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (8) calling 'newNode' from 'push'
+                  |
+                  +--> 'newNode': events 9-11
+                         |
+                         |   15 | Node* newNode(int val, int arrayNum, int indexInArray) {
+                         |      |       ^~~~~~~
+                         |      |       |
+                         |      |       (9) entry to 'newNode'
+                         |   16 |     Node* temp = (Node*)malloc(sizeof(Node));
+                         |      |                         ~~~~~~~~~~~~~~~~~~~~
+                         |      |                         |
+                         |      |                         (10) this call could return NULL
+                         |   17 |     temp->val = val;
+                         |      |     ~~~~~~~~~~~~~~~
+                         |      |               |
+                         |      |               (11) 'temp' could be NULL: unchecked value from (10)
+                         |
+./collected_code_4/round1//heal_0//problem-108.c: In function 'mergeArrays':
+./collected_code_4/round1//heal_0//problem-108.c:51:18: warning: dereference of possibly-NULL 'queue' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   51 |     queue->start = NULL;
+      |                  ^
+  'mergeArrays': event 1
+    |
+    |   50 |     Queue* queue = (Queue*)malloc(sizeof(Queue));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |
+  'mergeArrays': event 2
+    |
+    |   51 |     queue->start = NULL;
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) 'queue' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-108.c:57:21: warning: leak of 'top' [CWE-401] [-Wanalyzer-malloc-leak]
+   57 |         Node* top = pop(queue);
+      |                     ^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   65 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   73 |     mergeArrays(arr, arrayCount, arrayLength);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeArrays' from 'main'
+    |
+    +--> 'mergeArrays': events 3-6
+           |
+           |   49 | void mergeArrays(int arr[][10], int arrayCount, int arrayLength) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeArrays'
+           |......
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (5) ...to here
+           |      |         (6) calling 'push' from 'mergeArrays'
+           |
+           +--> 'push': events 7-9
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (7) entry to 'push'
+                  |......
+                  |   33 |     if (queue->start == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (8) following 'true' branch...
+                  |   34 |         queue->start = temp;
+                  |      |         ~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (9) ...to here
+                  |
+           <------+
+           |
+         'mergeArrays': events 10-13
+           |
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (11) following 'true' branch (when 'i < arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (12) ...to here
+           |      |         (10) returning to 'mergeArrays' from 'push'
+           |      |         (13) calling 'push' from 'mergeArrays'
+           |
+           +--> 'push': events 14-15
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (14) entry to 'push'
+                  |   31 |     Node *start = queue->start;
+                  |   32 |     Node *temp = newNode(val, arrayNum, indexInArray);
+                  |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (15) calling 'newNode' from 'push'
+                  |
+                  +--> 'newNode': events 16-18
+                         |
+                         |   15 | Node* newNode(int val, int arrayNum, int indexInArray) {
+                         |      |       ^~~~~~~
+                         |      |       |
+                         |      |       (16) entry to 'newNode'
+                         |   16 |     Node* temp = (Node*)malloc(sizeof(Node));
+                         |      |                         ~~~~~~~~~~~~~~~~~~~~
+                         |      |                         |
+                         |      |                         (17) allocated here
+                         |   17 |     temp->val = val;
+                         |      |     ~~~~~~~~~~~~~~~
+                         |      |               |
+                         |      |               (18) assuming 'temp' is non-NULL
+                         |
+                  <------+
+                  |
+                'push': events 19-23
+                  |
+                  |   32 |     Node *temp = newNode(val, arrayNum, indexInArray);
+                  |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (19) returning to 'push' from 'newNode'
+                  |   33 |     if (queue->start == NULL) {
+                  |      |        ~          
+                  |      |        |
+                  |      |        (20) following 'false' branch...
+                  |......
+                  |   37 |     if (queue->start->val > val) {
+                  |      |        ~~~~~~~~~~~~~
+                  |      |        |     |
+                  |      |        |     (21) ...to here
+                  |      |        (22) following 'true' branch...
+                  |   38 |         temp->next = queue->start;
+                  |      |                      ~~~~~~~~~~~~
+                  |      |                           |
+                  |      |                           (23) ...to here
+                  |
+           <------+
+           |
+         'mergeArrays': events 24-27
+           |
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (25) following 'true' branch (when 'i < arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (26) ...to here
+           |      |         (24) returning to 'mergeArrays' from 'push'
+           |      |         (27) calling 'push' from 'mergeArrays'
+           |
+           +--> 'push': events 28-31
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (28) entry to 'push'
+                  |......
+                  |   33 |     if (queue->start == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (29) following 'false' branch...
+                  |......
+                  |   37 |     if (queue->start->val > val) {
+                  |      |        ~~~~~~~~~~~~~
+                  |      |        |     |
+                  |      |        |     (30) ...to here
+                  |      |        (31) following 'false' branch...
+                  |
+                'push': event 32
+                  |
+                  |cc1:
+                  | (32): ...to here
+                  |
+                'push': events 33-36
+                  |
+                  |   42 |     while (start->next != NULL && start->next->val < val) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (33) following 'true' branch...
+                  |      |                                (35) following 'false' branch...
+                  |   43 |         start = start->next;
+                  |      |         ~~~~~~~~~~~~~~~~~~~     
+                  |      |               |
+                  |      |               (34) ...to here
+                  |   44 |     }
+                  |   45 |     temp->next = start->next;
+                  |      |                  ~~~~~~~~~~~    
+                  |      |                       |
+                  |      |                       (36) ...to here
+                  |
+           <------+
+           |
+         'mergeArrays': events 37-40
+           |
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (38) following 'true' branch (when 'i < arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |              |
+           |      |         |              (39) ...to here
+           |      |         (37) returning to 'mergeArrays' from 'push'
+           |      |         (40) calling 'push' from 'mergeArrays'
+           |
+           +--> 'push': events 41-44
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (41) entry to 'push'
+                  |......
+                  |   33 |     if (queue->start == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (42) following 'false' branch...
+                  |......
+                  |   37 |     if (queue->start->val > val) {
+                  |      |        ~~~~~~~~~~~~~
+                  |      |        |     |
+                  |      |        |     (43) ...to here
+                  |      |        (44) following 'false' branch...
+                  |
+                'push': event 45
+                  |
+                  |cc1:
+                  | (45): ...to here
+                  |
+                'push': events 46-49
+                  |
+                  |   42 |     while (start->next != NULL && start->next->val < val) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |       |
+                  |      |                                |       (47) ...to here
+                  |      |                                (46) following 'true' branch...
+                  |      |                                (48) following 'false' branch...
+                  |......
+                  |   45 |     temp->next = start->next;
+                  |      |                  ~~~~~~~~~~~    
+                  |      |                       |
+                  |      |                       (49) ...to here
+                  |
+           <------+
+           |
+         'mergeArrays': events 50-51
+           |
+           |   53 |     for (int i = 0; i < arrayCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (51) following 'false' branch (when 'i >= arrayCount')...
+           |   54 |         push(queue, arr[i][0], i, 0);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (50) returning to 'mergeArrays' from 'push'
+           |
+         'mergeArrays': event 52
+           |
+           |cc1:
+           | (52): ...to here
+           |
+         'mergeArrays': events 53-57
+           |
+           |   56 |     while (queue->start != NULL) {
+           |      |                         ^
+           |      |                         |
+           |      |                         (53) following 'true' branch...
+           |   57 |         Node* top = pop(queue);
+           |      |                     ~~~~~~~~~~
+           |      |                     |
+           |      |                     (54) ...to here
+           |......
+           |   60 |         if (top->indexInArray + 1 < arrayLength) {
+           |      |            ~             
+           |      |            |
+           |      |            (55) following 'true' branch...
+           |   61 |             push(queue, arr[top->arrayNum][top->indexInArray + 1], top->arrayNum, top->indexInArray + 1);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                                                                        |
+           |      |             (57) calling 'push' from 'mergeArrays'                                   (56) ...to here
+           |
+           +--> 'push': events 58-61
+                  |
+                  |   30 | void push(Queue* queue, int val, int arrayNum, int indexInArray) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (58) entry to 'push'
+                  |......
+                  |   33 |     if (queue->start == NULL) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (59) following 'false' branch...
+                  |......
+                  |   37 |     if (queue->start->val > val) {
+                  |      |        ~~~~~~~~~~~~~
+                  |      |        |     |
+                  |      |        |     (60) ...to here
+                  |      |        (61) following 'false' branch...
+                  |
+                'push': event 62
+                  |
+                  |cc1:
+                  | (62): ...to here
+                  |
+                'push': events 63-66
+                  |
+                  |   42 |     while (start->next != NULL && start->next->val < val) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |       |
+                  |      |                                |       (64) ...to here
+                  |      |                                (63) following 'true' branch...
+                  |      |                                (65) following 'false' branch...
+                  |......
+                  |   45 |     temp->next = start->next;
+                  |      |                  ~~~~~~~~~~~    
+                  |      |                       |
+                  |      |                       (66) ...to here
+                  |
+           <------+
+           |
+         'mergeArrays': event 67
+           |
+           |   61 |             push(queue, arr[top->arrayNum][top->indexInArray + 1], top->arrayNum, top->indexInArray + 1);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (67) returning to 'mergeArrays' from 'push'
+           |
+         'mergeArrays': events 68-70
+           |
+           |   56 |     while (queue->start != NULL) {
+           |      |                         ^
+           |      |                         |
+           |      |                         (68) following 'true' branch...
+           |   57 |         Node* top = pop(queue);
+           |      |                     ~~~~~~~~~~
+           |      |                     |
+           |      |                     (69) ...to here
+           |      |                     (70) 'top' leaks here; was allocated at (17)
+           |

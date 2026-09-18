@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+TupleList* create_tuple_list(size_t capacity) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (!list) return NULL;
+    
+    list->tuples = (Tuple*)malloc(capacity * sizeof(Tuple));
+    if (!list->tuples) {
+        free(list);
+        return NULL;
+    }
+    
+    list->size = 0;
+    list->capacity = capacity;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list) return;
+    for (size_t i = 0; i < list->size; ++i) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int add_tuple(TupleList *list, int *elements, size_t size) {
+    if (!list || list->size >= list->capacity) return -1;
+    
+    list->tuples[list->size].elements = elements;
+    list->tuples[list->size].size = size;
+    list->size++;
+    return 0;
+}
+
+void remove_empty_tuples(TupleList *list) {
+    if (!list) return;
+    
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < list->size; ++read_index) {
+        if (list->tuples[read_index].size > 0) {
+            list->tuples[write_index] = list->tuples[read_index];
+            write_index++;
+        } else {
+            free(list->tuples[read_index].elements);
+        }
+    }
+    list->size = write_index;
+}
+
+int main(void) {
+    TupleList *list = create_tuple_list(5);
+    if (!list) return 1;
+
+    int *t1 = (int*)malloc(2 * sizeof(int));
+    if (t1) { t1[0] = 1; t1[1] = 2; }
+    add_tuple(list, t1, 2);
+
+    int *t2 = NULL;
+    add_tuple(list, t2, 0);
+
+    int *t3 = (int*)malloc(1 * sizeof(int));
+    if (t3) { t3[0] = 3; }
+    add_tuple(list, t3, 1);
+
+    remove_empty_tuples(list);
+
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("Tuple %zu size: %zu\n", i, list->tuples[i].size);
+    }
+
+    free_tuple_list(list);
+    return 0;
+}

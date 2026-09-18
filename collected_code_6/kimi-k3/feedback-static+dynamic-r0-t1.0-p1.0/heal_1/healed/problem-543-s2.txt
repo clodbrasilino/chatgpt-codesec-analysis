@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool add_numbers(int a, int b, int *result) {
+    if (result == NULL) {
+        return false;
+    }
+    if ((b > 0 && a > INT_MAX - b) || (b < 0 && a < INT_MIN - b)) {
+        return false;
+    }
+    *result = a + b;
+    return true;
+}
+
+int count_digits(int num) {
+    int count = 0;
+    unsigned int abs_num;
+    
+    if (num == 0) {
+        return 1;
+    }
+    
+    if (num < 0) {
+        abs_num = (unsigned int)(-(num + 1)) + 1;
+    } else {
+        abs_num = (unsigned int)num;
+    }
+    
+    while (abs_num > 0) {
+        abs_num /= 10;
+        count++;
+    }
+    return count;
+}
+
+int main(void) {
+    int a, b, sum, digits;
+    
+    printf("Enter two numbers: ");
+    if (scanf("%d %d", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (!add_numbers(a, b, &sum)) {
+        fprintf(stderr, "Integer overflow detected\n");
+        return 1;
+    }
+    
+    digits = count_digits(sum);
+    
+    printf("Sum: %d\n", sum);
+    printf("Number of digits: %d\n", digits);
+    
+    return 0;
+}
+```

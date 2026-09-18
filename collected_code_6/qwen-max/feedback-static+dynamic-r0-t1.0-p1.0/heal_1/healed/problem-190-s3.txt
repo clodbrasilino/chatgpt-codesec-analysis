@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int count_integral_coords(int x1, int y1, int x2, int y2) {
+    if (x1 > x2 || y1 > y2) return 0;
+    long width = (long)x2 - x1 + 1;
+    long height = (long)y2 - y1 + 1;
+    if (width > INT_MAX || height > INT_MAX) return 0;
+    if (width * height > INT_MAX) return 0;
+    return (int)(width * height);
+}
+
+int main() {
+    int x1, y1, x2, y2;
+    printf("Enter the coordinates of the bottom-left corner (x1, y1): ");
+    if (scanf("%d %d", &x1, &y1) != 2) {
+        fprintf(stderr, "Invalid input for (x1, y1)\n");
+        return 1;
+    }
+    printf("Enter the coordinates of the top-right corner (x2, y2): ");
+    if (scanf("%d %d", &x2, &y2) != 2) {
+        fprintf(stderr, "Invalid input for (x2, y2)\n");
+        return 1;
+    }
+
+    int result = count_integral_coords(x1, y1, x2, y2);
+    printf("Number of integral coordinates inside the square: %d\n", result);
+
+    return 0;
+}
+```

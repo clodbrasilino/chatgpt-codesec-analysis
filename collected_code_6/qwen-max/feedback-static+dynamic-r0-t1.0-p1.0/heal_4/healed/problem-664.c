@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdint.h>
+
+double average_of_evens(int n) {
+    if (n <= 1) return 0.0;
+
+    int64_t sum = 0;
+    int64_t count = 0;
+    for (int64_t i = 2; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+    return (double)sum / count;
+}
+
+int main() {
+    int n;
+    printf("Enter an integer: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    double avg = average_of_evens(n);
+    if (avg > 0.0 && n > 1) {
+        printf("Average of even numbers up to %d is: %.2f\n", n, avg);
+    } else {
+        printf("No even numbers to calculate the average.\n");
+    }
+    return 0;
+}

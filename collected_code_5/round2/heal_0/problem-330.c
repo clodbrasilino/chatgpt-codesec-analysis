@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+void find_words(const char *str) {
+    regex_t regex;
+    regmatch_t matches[MAX_MATCHES];
+
+    if (regcomp(&regex, "\\b\\w{3,5}\\b", REG_EXTENDED)) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    char *cursor = (char*)str;
+    while ( !regexec(&regex, cursor, MAX_MATCHES, matches, 0) ) {
+        for(int i = 0; i < MAX_MATCHES && matches[i].rm_so != -1; i++) {
+            int start = matches[i].rm_so + (cursor - str);
+            int end = matches[i].rm_eo + (cursor - str);
+            printf("Word found: '%.*s'\n", (end - start), str + start);
+        }
+        cursor += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main(){
+    char str[] = "This C-program is a test for a text with three, four, five word length";
+    find_words(str);
+    return 0;
+}

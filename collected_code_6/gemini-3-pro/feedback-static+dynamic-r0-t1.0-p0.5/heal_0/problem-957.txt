@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int get_rightmost_set_bit_position(unsigned int n);
+
+int get_rightmost_set_bit_position(unsigned int n) {
+    int position = 1;
+    
+    if (n == 0) {
+        return 0;
+    }
+    
+    while ((n & 1) == 0) {
+        n >>= 1;
+        position++;
+    }
+    
+    return position;
+}
+
+int main(void) {
+    unsigned int test_value = 18;
+    int position = get_rightmost_set_bit_position(test_value);
+    
+    if (position > 0) {
+        printf("%d\n", position);
+    } else {
+        printf("0\n");
+    }
+    
+    return 0;
+}
+```

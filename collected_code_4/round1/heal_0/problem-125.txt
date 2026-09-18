@@ -1,0 +1,28 @@
+```C
+#include<stdio.h>
+#include<string.h>
+
+int maxDifference(char* str)
+{
+    int maxDifference = 0;
+    int sum = 0;
+    int n = strlen(str);
+    
+    for(int i=0; i<n; ++i)
+    {
+        sum = (str[i] == '0') ? sum + 1 : sum - 1;
+        if(sum < 0)
+            sum = 0;
+        else if(sum > maxDifference)
+            maxDifference = sum;
+    }
+    return maxDifference;
+}
+
+int main()
+{
+    char str[] = "110000100000111";
+    printf("Max Difference: %d", maxDifference(str));
+    return 0;
+}
+```

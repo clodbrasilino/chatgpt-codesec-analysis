@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-389-s2.c: In function 'lucas_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-389-s2.c:9:5: error: unknown type name 'int128_t'; did you mean 'int32_t'?
+    9 |     int128_t a = 2, b = 1;
+      |     ^~~~~~~~
+      |     int32_t
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-389-s2.c:11:9: error: unknown type name 'int128_t'; did you mean 'int32_t'?
+   11 |         int128_t c = a + b;
+      |         ^~~~~~~~
+      |         int32_t

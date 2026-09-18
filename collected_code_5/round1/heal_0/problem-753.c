@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int value;
+} tuple;
+
+int compare_tuples(const void* a, const void* b) {
+    tuple* tupleA = (tuple*) a;
+    tuple* tupleB = (tuple*) b;
+    return tupleA->value - tupleB->value;
+}
+
+void find_min_k_tuples(tuple* tuples, int n, int k) {
+    qsort(tuples, n, sizeof(tuple), compare_tuples);
+    for (int i = 0; i < k; i++) {
+        printf("Record %d: id = %d, value = %d\n", i + 1, tuples[i].id, tuples[i].value);
+    }
+}
+
+int main() {
+    int n = 5;
+    int k = 3;
+    tuple tuples[5] = {{1, 20}, {2, 15}, {3, 30}, {4, 5}, {5, 25}};
+
+    if (k > n) {
+        printf("Error: k cannot be greater than the number of records\n");
+        return 1;
+    }
+
+    find_min_k_tuples(tuples, n, k);
+    return 0;
+}

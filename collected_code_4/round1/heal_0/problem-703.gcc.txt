@@ -1,0 +1,12 @@
+./collected_code_4/round1//heal_0//problem-703.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-703.c:33:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   33 |     printf("Key2 is in dictionary: %s\n", keyInDictionary(&dictionary, "key2") ? "Yes" : "No");
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-703.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round1//heal_0//problem-703.c:33:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   33 |     printf("Key2 is in dictionary: %s\n", keyInDictionary(&dictionary, "key2") ? "Yes" : "No");
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-703.c:33:5: note: include '<stdio.h>' or provide a declaration of 'printf'

@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+void repeatElements(int *arr, int arrCount) {
+    for(int index = 0; index < arrCount; ++index) {
+        int times = arr[index];
+        
+        if(times < 0) {
+            printf("Negative count is not acceptable...\n");
+            continue;
+        }
+        
+        for(int counter = 0; counter < times; ++counter) {
+            printf("%d ", index);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int repeatArray[] = {2, 3, 1, -5, 6, 7, 0};
+    int arrSize = sizeof(repeatArray) / sizeof(repeatArray[0]);
+
+    repeatElements(repeatArray, arrSize);
+
+    return 0;
+}

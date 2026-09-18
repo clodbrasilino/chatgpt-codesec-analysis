@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define PI 3.14159
+
+double calculate_lateral_surface_area(double radius, double height) {
+    if(radius < 0 || height < 0) {
+        printf("Invalid input. Radius and height must be non-negative.\n");
+        exit(1);
+    }
+    return 2 * PI * radius * height;
+}
+
+int main() {
+    double radius, height;
+    printf("Enter the radius of the cylinder: ");
+    if(scanf("%lf", &radius) != 1) {
+        printf("Invalid input. Please enter a valid number.\n");
+        return 1;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if(scanf("%lf", &height) != 1) {
+        printf("Invalid input. Please enter a valid number.\n");
+        return 1;
+    }
+
+    double lateral_surface_area = calculate_lateral_surface_area(radius, height);
+    printf("The lateral surface area of the cylinder is: %.2lf\n", lateral_surface_area);
+
+    return 0;
+}

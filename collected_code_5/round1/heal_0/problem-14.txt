@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+
+double calcPrismVolume(double base, double height, double length) {
+    if (base <= 0 || height <= 0 || length <= 0) {
+        printf("Error: All dimensions must be positive.\n");
+        return -1;
+    }
+	
+	double volume = 0.5 * base * height * length;
+	return volume;
+}
+
+int main(void) {
+	double base, height, length;
+	printf("Enter the base of the triangular prism: ");
+	scanf("%lf", &base);
+	printf("Enter the height of the triangular prism: ");
+	scanf("%lf", &height);
+	printf("Enter the length of the triangular prism: ");
+	scanf("%lf", &length);
+
+	double volume = calcPrismVolume(base, height, length);
+	if(volume >= 0) {
+		printf("The volume of the triangular prism is: %.2lf\n", volume);
+	}
+
+	return 0;
+}
+```
+
+In this code, the "calcPrismVolume" function calculates the volume of the triangular prism as 0.5 * base * height * length. This function is called from the main function after base, height, and length are received as input from the user.
+
+The possible errors have been properly handled in this code. If any of base, height, or length is equal to or less than 0, the "calcPrismVolume" function returns -1 as an indicator of error and does not proceed further. This checks the possible error condition where volume calculation might not be appropriate.
+
+In the main function, the volume is calculated and only printed out if its value is valid i.e., not -1. So, the case where invalid volume (-1 or negative or nonsensical volume) is printed is avoided.
+
+The coding standards have also been followed properly, making the code readable and understandable.

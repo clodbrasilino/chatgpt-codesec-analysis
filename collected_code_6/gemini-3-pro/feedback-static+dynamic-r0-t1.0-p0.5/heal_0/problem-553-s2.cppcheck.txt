@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-553-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-553-s2.c:31:37: style: Condition 'int_part==-1' is always false [knownConditionTrueFalse]
+    if (result != -1.0 || (int_part == -1 && frac_part == 0)) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-553-s2.c:26:20: note: Assignment 'int_part=42', assigned value is 42
+    int int_part = 42;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-553-s2.c:31:37: note: Condition 'int_part==-1' is always false
+    if (result != -1.0 || (int_part == -1 && frac_part == 0)) {
+                                    ^

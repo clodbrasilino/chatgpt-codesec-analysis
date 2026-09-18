@@ -209,9 +209,10 @@
     "top_p": 1.0,
     "max_rounds": 10,
     "samples": 3,
-    "fuzz": false,
+    "fuzz": true,
     "root": "collected_code_6",
-    "gen_source": "feedback-static-r0-t0.2-p1.0"
+    "gen_source": null,
+    "gen_source_reports": false
   },
   "model_id": "deepseek-v4-pro",
   "reasoning": false,
@@ -368,6 +369,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-36-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-361": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -377,6 +382,10 @@
       "outcome": "clean"
     },
     "problem-361-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-392-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -772,11 +781,19 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-971-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-110": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
     "problem-117": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-129-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -837,6 +854,10 @@
       "outcome": "clean"
     },
     "problem-391-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-392": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -908,6 +929,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-971-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-237-s3": {
       "rounds_to_clean": 3,
       "outcome": "clean"
@@ -936,19 +961,11 @@
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
-    "problem-450": {
-      "rounds_to_clean": 4,
-      "outcome": "clean"
-    },
-    "problem-450-s2": {
-      "rounds_to_clean": 4,
-      "outcome": "clean"
-    },
-    "problem-469": {
-      "rounds_to_clean": 4,
-      "outcome": "clean"
-    },
     "problem-326": {
+      "rounds_to_clean": 6,
+      "outcome": "clean"
+    },
+    "problem-450": {
       "rounds_to_clean": 6,
       "outcome": "clean"
     },
@@ -960,11 +977,23 @@
       "rounds_to_clean": 6,
       "outcome": "clean"
     },
+    "problem-129": {
+      "rounds_to_clean": 7,
+      "outcome": "heal_failed"
+    },
     "problem-440-s3": {
       "rounds_to_clean": 7,
       "outcome": "clean"
     },
+    "problem-450-s2": {
+      "rounds_to_clean": 7,
+      "outcome": "clean"
+    },
     "problem-969": {
+      "rounds_to_clean": 7,
+      "outcome": "clean"
+    },
+    "problem-971": {
       "rounds_to_clean": 7,
       "outcome": "clean"
     },
@@ -973,18 +1002,6 @@
       "outcome": "clean"
     },
     "problem-411": {
-      "rounds_to_clean": 8,
-      "outcome": "clean"
-    },
-    "problem-469-s3": {
-      "rounds_to_clean": 8,
-      "outcome": "clean"
-    },
-    "problem-570-s2": {
-      "rounds_to_clean": 8,
-      "outcome": "clean"
-    },
-    "problem-827-s3": {
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
@@ -1069,14 +1086,6 @@
       "outcome": "clean_at_start"
     },
     "problem-128-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-129": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-129-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -1444,10 +1453,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-36-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-36-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -1505,14 +1510,6 @@
       "outcome": "clean_at_start"
     },
     "problem-391-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-392": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-392-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -1640,7 +1637,15 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
+    "problem-469": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-469-s2": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-469-s3": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
@@ -1829,6 +1834,10 @@
       "outcome": "clean_at_start"
     },
     "problem-570": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-570-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
@@ -2336,6 +2345,10 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
+    "problem-827-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-829": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -2601,18 +2614,6 @@
       "outcome": "clean_at_start"
     },
     "problem-969-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-971": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-971-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-971-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     }

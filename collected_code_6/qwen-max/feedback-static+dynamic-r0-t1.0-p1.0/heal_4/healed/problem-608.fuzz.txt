@@ -1,0 +1,5 @@
+problem-608.c:21:41:medium:UBSan: signed integer overflow: 5984125365178496016 + 7391905774845312950 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:407,execs:230,op:havoc,rep:2)
+problem-608.c:21:41:medium:UBSan: signed integer overflow: 9148876399361101105 + 3925461086752871871 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:1128,execs:513,op:havoc,rep:2)
+problem-608.c:21:56:medium:UBSan: signed integer overflow: 4799117886525834627 * 4 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:407,execs:230,op:havoc,rep:2)
+problem-608.c:21:56:medium:UBSan: signed integer overflow: 2614320569308896712 * 6 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000001,time:1128,execs:513,op:havoc,rep:2)
+problem-608.c:26:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:11,src:000001,time:431,execs:242,op:havoc,rep:1; likely memory-safety defect

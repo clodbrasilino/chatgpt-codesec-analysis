@@ -1,0 +1,135 @@
+./collected_code_4/round2//heal_0/problem-771.c: In function 'isBalanced':
+./collected_code_4/round2//heal_0/problem-771.c:53:32: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   53 |     Stack* stack = createStack(strlen(expr));
+      |                                ^~~~~~
+./collected_code_4/round2//heal_0/problem-771.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-771.c:53:32: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   53 |     Stack* stack = createStack(strlen(expr));
+      |                                ^~~~~~
+./collected_code_4/round2//heal_0/problem-771.c:53:32: note: include '<string.h>' or provide a declaration of 'strlen'
+./collected_code_4/round2//heal_0/problem-771.c: In function 'createStack':
+./collected_code_4/round2//heal_0/problem-771.c:14:21: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |     stack->capacity = capacity;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   83 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   88 |     if (isBalanced(expr))
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isBalanced' from 'main'
+    |
+    +--> 'isBalanced': events 3-4
+           |
+           |   51 | int isBalanced(char* expr)
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isBalanced'
+           |   52 | {
+           |   53 |     Stack* stack = createStack(strlen(expr));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isBalanced'
+           |
+           +--> 'createStack': events 5-7
+                  |
+                  |   11 | Stack* createStack(unsigned int capacity)
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |   12 | {
+                  |   13 |     Stack* stack = (Stack*)malloc(sizeof(Stack));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |   14 |     stack->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (7) 'stack' could be NULL: unchecked value from (6)
+                  |
+./collected_code_4/round2//heal_0/problem-771.c: In function 'push':
+./collected_code_4/round2//heal_0/problem-771.c:34:30: warning: dereference of possibly-NULL '*stack.arr + (sizetype)*stack.top' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |     stack->arr[++stack->top] = item;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   83 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   88 |     if (isBalanced(expr))
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isBalanced' from 'main'
+    |
+    +--> 'isBalanced': events 3-4
+           |
+           |   51 | int isBalanced(char* expr)
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isBalanced'
+           |   52 | {
+           |   53 |     Stack* stack = createStack(strlen(expr));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   11 | Stack* createStack(unsigned int capacity)
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   16 |     stack->arr = (char*)malloc(stack->capacity * sizeof(char));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) this call could return NULL
+                  |
+           <------+
+           |
+         'isBalanced': events 7-10
+           |
+           |   53 |     Stack* stack = createStack(strlen(expr));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'isBalanced' from 'createStack'
+           |   54 |     for (int i = 0; i<strlen(expr); i++)
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (8) following 'true' branch...
+           |   55 |     {
+           |   56 |         if (expr[i] == '{' || expr[i] == '(' || expr[i] == '[')
+           |      |                 ~   
+           |      |                 |
+           |      |                 (9) ...to here
+           |   57 |             push(stack, expr[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (10) calling 'push' from 'isBalanced'
+           |
+           +--> 'push': events 11-14
+                  |
+                  |   30 | void push(Stack* stack, char item)
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (11) entry to 'push'
+                  |   31 | {
+                  |   32 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) following 'false' branch...
+                  |   33 |         return;
+                  |   34 |     stack->arr[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |          |                   |
+                  |      |          (13) ...to here     (14) '*stack.arr + (sizetype)*stack.top' could be NULL: unchecked value from (6)
+                  |

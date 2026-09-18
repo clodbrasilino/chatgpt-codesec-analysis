@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-802.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-802.c:34:5: portability: %lu in format string (no. 1) requires 'unsigned long' but the argument type is 'size_t {aka unsigned long}'. [invalidPrintfArgType_uint]
+    printf("%lu\n", count_rotations(arr1, n1));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-802.c:38:5: portability: %lu in format string (no. 1) requires 'unsigned long' but the argument type is 'size_t {aka unsigned long}'. [invalidPrintfArgType_uint]
+    printf("%lu\n", count_rotations(arr2, n2));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-802.c:42:5: portability: %lu in format string (no. 1) requires 'unsigned long' but the argument type is 'size_t {aka unsigned long}'. [invalidPrintfArgType_uint]
+    printf("%lu\n", count_rotations(arr3, n3));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-802.c:46:5: portability: %lu in format string (no. 1) requires 'unsigned long' but the argument type is 'size_t {aka unsigned long}'. [invalidPrintfArgType_uint]
+    printf("%lu\n", count_rotations(arr4, n4));
+    ^

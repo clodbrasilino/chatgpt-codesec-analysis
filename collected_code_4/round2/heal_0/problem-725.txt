@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+
+void find_matches(char* str){
+    regex_t regex;
+    regmatch_t matches[2];
+    char output[100];
+    int start_pos, end_pos;
+
+    if (regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED)){
+        printf("Could not compile regex\n");
+        return;
+    }
+    if (regexec(&regex, str, 2, matches, 0) == 0){
+        start_pos = matches[1].rm_so + (str - str);
+        end_pos = matches[1].rm_eo + (str - str);
+        memcpy(output, &str[start_pos], end_pos - start_pos);
+        output[end_pos - start_pos] = '\0';
+        printf("%s\n", output);
+    }
+    else{
+        printf("No match\n");
+    }
+
+    regfree(&regex);
+}
+
+
+int main(){
+    char input_str[] = "test \"match this\"";
+    find_matches(input_str);
+    return 0;
+}
+```

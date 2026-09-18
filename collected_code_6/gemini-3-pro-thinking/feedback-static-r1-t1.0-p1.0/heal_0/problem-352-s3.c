@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool are_all_characters_unique(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool seen[256] = { false };
+    const unsigned char *ptr = (const unsigned char *)str;
+
+    while (*ptr != '\0') {
+        if (seen[*ptr]) {
+            return false;
+        }
+        seen[*ptr] = true;
+        ptr++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "abcdefg",
+        "hello",
+        "1234567890",
+        " a b c",
+        "",
+        NULL
+    };
+
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        bool result = are_all_characters_unique(test_strings[i]);
+        printf("%s: %s\n", 
+               test_strings[i] ? test_strings[i] : "NULL", 
+               result ? "true" : "false");
+    }
+
+    return 0;
+}

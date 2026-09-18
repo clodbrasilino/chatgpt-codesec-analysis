@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areAllCharactersUnique(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool char_set[256] = {false};
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char val = (unsigned char)str[i];
+        if (char_set[val]) {
+            return false;
+        }
+        char_set[val] = true;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_str1 = "abcdefg";
+    const char *test_str2 = "hello";
+    const char *test_str3 = "";
+
+    if (areAllCharactersUnique(test_str1)) {
+        printf("test_str1 has all unique characters.\n");
+    } else {
+        printf("test_str1 does not have all unique characters.\n");
+    }
+
+    if (areAllCharactersUnique(test_str2)) {
+        printf("test_str2 has all unique characters.\n");
+    } else {
+        printf("test_str2 does not have all unique characters.\n");
+    }
+
+    if (areAllCharactersUnique(test_str3)) {
+        printf("test_str3 has all unique characters.\n");
+    } else {
+        printf("test_str3 does not have all unique characters.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int lcm(int a, int b) {
+    return (a / gcd(a, b)) * b;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:8,execs:15,op:(null),pos:0; likely memory-safety defect
+  */
+
+int main() {
+    int num1, num2;
+    printf("Enter two positive integers: ");
+    scanf("%d %d", &num1, &num2);
+    printf("LCM of %d and %d is %d\n", num1, num2, lcm(num1, num2));
+    return 0;
+}

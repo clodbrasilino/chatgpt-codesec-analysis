@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    float* data;
+    size_t count;
+} FloatArray;
+
+FloatArray convert_to_floats(const char** list, size_t size) {
+    FloatArray result;
+    result.data = (float*)malloc(size * sizeof(float));
+    result.count = 0;
+
+    if (!result.data) {
+        return result;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (!list[i]) continue;
+
+        char* endptr;
+        float val = strtof(list[i], &endptr);
+
+        if (endptr != list[i] && *endptr == '\0') {
+            result.data[result.count++] = val;
+        }
+    }
+
+    if (result.count < size) {
+        float* temp = (float*)realloc(result.data, result.count * sizeof(float));
+        if (temp || result.count == 0) {
+            result.data = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* string_list[] = {
+        "12.34",
+        "not_a_float",
+        "45.67",
+        "89",
+        "invalid",
+        "-3.14"
+    };
+    
+    size_t list_size = sizeof(string_list) / sizeof(string_list[0]);
+    FloatArray floats = convert_to_floats(string_list, list_size);
+
+    for (size_t i = 0; i < floats.count; ++i) {
+        printf("%f\n", floats.data[i]);
+    }
+
+    free(floats.data);
+    return 0;
+}
+```

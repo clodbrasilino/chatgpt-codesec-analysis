@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#define MAX 100000
+
+long long arr[MAX];
+
+long long find_max_sum(long long n)
+{
+    if (n<12)
+        return n;
+    if (n<sizeof(arr)/sizeof(arr[0]) && arr[n])
+        return arr[n];
+        
+    long long temp_sum = find_max_sum(n/2) + find_max_sum(n/3) + find_max_sum(n/4) + find_max_sum(n/5);
+    if (n<sizeof(arr)/sizeof(arr[0]))
+        arr[n] = temp_sum>n?temp_sum:n;
+
+    return arr[n];
+}
+
+int main()
+{
+    long long n = 0;
+    while(scanf("%lld",&n)!=EOF)
+    {
+        printf("%lld\n",find_max_sum(n));
+    }
+    return 0;
+}
+```

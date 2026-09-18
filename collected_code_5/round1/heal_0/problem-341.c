@@ -1,0 +1,43 @@
+#include<stdlib.h>
+#include<stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple* convertToTuples(int* arr, int size) {
+    if(!arr || size <= 0)
+        return NULL;
+
+    Tuple *tuples = (Tuple*) malloc(sizeof(Tuple) * (size/2));
+
+    if(!tuples) {
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < size/2; ++i) { 
+        tuples[i].first = arr[2*i];
+        tuples[i].second = arr[2*i+1];
+    }
+
+    return tuples;
+}
+
+int main() {
+    int mySet[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    int size = sizeof(mySet)/sizeof(mySet[0]);
+
+    Tuple* myTuples = convertToTuples(mySet, size);
+
+    if(myTuples != NULL) {
+        for(int i = 0; i < size/2; ++i) {
+            printf("{%d, %d}\n", myTuples[i].first, myTuples[i].second);
+        }
+    }
+
+    free(myTuples);
+
+    return 0;
+}

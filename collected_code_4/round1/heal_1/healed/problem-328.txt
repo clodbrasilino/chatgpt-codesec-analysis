@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void rotateLeft(int* arr, int size, int rotations){
+    int* temp = (int*)malloc(size * sizeof(int));
+
+    if (temp == NULL) {
+        return;
+    }
+  
+    for(int i=0; i<size; i++){
+        temp[i] = arr[(i+rotations)%size];
+    }
+
+    for(int j=0; j<size; j++){
+        arr[j] = temp[j];
+    }
+
+    free(temp);
+}
+
+void printArray(int* arr, int size){
+    for(int i=0; i<size; i++){
+        printf("%d ",arr[i]);
+    }
+    printf("\n");
+}
+
+int main(){
+    int arr[] = {1, 2, 3, 4, 5};
+    int rotations = 2;
+    int size = sizeof(arr)/sizeof(arr[0]);
+
+    rotateLeft(arr, size, rotations);
+    printArray(arr, size);
+
+    return 0;
+}

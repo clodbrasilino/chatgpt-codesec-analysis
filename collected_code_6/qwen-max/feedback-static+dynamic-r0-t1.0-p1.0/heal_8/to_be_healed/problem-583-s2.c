@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+unsigned long long binomial_coefficient(int64_t n, int64_t k) {
+    if (n < 0 || k < 0) return 0;
+    if (k > n) return 0;
+    if (k > n - k) k = n - k;
+    unsigned long long res = 1;
+    for (int64_t i = 0; i < k; ++i) {
+        if (res > ULLONG_MAX / (n - i)) return 0;
+        res *= (n - i);
+        if (res < (i + 1)) return 0;
+        res /= (i + 1);
+    }
+    return res;
+}
+
+unsigned long long catalan_number(int64_t n) {
+    if (n <= 1) return 1;
+    unsigned long long bc = binomial_coefficient(2 * (uint64_t)n, (uint64_t)n);
+    if (bc == 0 || bc > ULLONG_MAX / (n + 1)) return 0;
+    return bc / (n + 1);
+}
+
+int main() {
+    int64_t n;
+    printf("Enter the value of n: ");
+    /* Possible weaknesses found:
+     *  %lld in format string (no. 1) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
+     */
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Input is not an integer.\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0) {
+        printf("Please enter a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = catalan_number(n);
+    if (result == 0) {
+        printf("Result is out of range or input is invalid.\n");
+        return EXIT_FAILURE;
+    }
+    printf("The %lldth Catalan number is: %llu\n", (long long)n, result);
+
+    return 0;
+}

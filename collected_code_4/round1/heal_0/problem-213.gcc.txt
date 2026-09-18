@@ -1,0 +1,59 @@
+./collected_code_4/round1//heal_0//problem-213.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-213.c:54:16: warning: dereference of NULL 'result' [CWE-476] [-Wanalyzer-null-dereference]
+   54 |     free(result->first);
+      |          ~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   39 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'concatenate_tuples' from 'main'
+    |
+    +--> 'concatenate_tuples': events 3-5
+           |
+           |   10 | StringTuple* concatenate_tuples(StringTuple *t1, StringTuple *t2){
+           |      |              ^~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (3) entry to 'concatenate_tuples'
+           |   11 |     if(!t1 || !t2){
+           |      |       ~       
+           |      |       |
+           |      |       (4) following 'false' branch...
+           |......
+           |   15 |     StringTuple *result = (StringTuple*) malloc(sizeof(StringTuple));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (5) ...to here
+           |
+         'concatenate_tuples': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   48 |     StringTuple *result = concatenate_tuples(&t1, &t2);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) return of NULL to 'main' from 'concatenate_tuples'
+    |   49 | 
+    |   50 |     if(result != NULL){
+    |      |       ~                    
+    |      |       |
+    |      |       (8) following 'false' branch (when 'result' is NULL)...
+    |......
+    |   54 |     free(result->first);
+    |      |          ~~~~~~~~~~~~~     
+    |      |                |
+    |      |                (9) ...to here
+    |      |                (10) dereference of NULL 'result'
+    |

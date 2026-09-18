@@ -1,0 +1,68 @@
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* newNode(int data) {
+    Node* temp = (Node*)malloc(sizeof(Node));
+    if(temp == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(0);
+    }
+    temp->data = data;
+    temp->next = NULL;
+    return temp;
+}
+
+Node* addLists(Node* first, Node* second) {
+    Node* res = NULL; 
+    Node *temp, *prev = NULL;
+    int carry = 0, sum;
+ 
+    while (first != NULL || second != NULL) {
+        sum = carry + (first? first->data: 0) + (second? second->data: 0);
+        carry = (sum >= 10)? 1 : 0;
+        sum = sum % 10;
+        temp = newNode(sum);
+ 
+        if(res == NULL)
+            res = temp;
+        else 
+            prev->next = temp;
+        prev = temp;
+        if(first) first = first->next;
+        if(second) second = second->next;
+    }
+
+    if(carry > 0) temp->next = newNode(carry);
+    return res;
+}
+
+void printList(Node* node) {
+    while(node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* res = NULL;
+    Node* first = newNode(5);
+    first->next = newNode(6);
+    first->next->next = newNode(7);
+
+    Node* second = newNode(10);
+    second->next = newNode(11);
+    second->next->next = newNode(12);
+ 
+    res = addLists(first, second);
+    printList(res);
+ 
+    return 0;
+}
+```

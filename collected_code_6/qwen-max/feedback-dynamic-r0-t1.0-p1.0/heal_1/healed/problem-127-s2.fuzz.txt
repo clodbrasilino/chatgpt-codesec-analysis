@@ -1,0 +1,4 @@
+problem-127-s2.c:13:34:medium:UBSan: signed integer overflow: 2147483647 - -1116077172 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:368,execs:291,op:havoc,rep:15)
+problem-127-s2.c:13:34:medium:UBSan: signed integer overflow: 2147483647 - -637353989 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:901,execs:611,op:havoc,rep:15)
+problem-127-s2.c:13:34:medium:UBSan: signed integer overflow: 2147483647 - -1025293812 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000000,time:4526,execs:2980,op:havoc,rep:14)
+problem-127-s2.c:21:11:medium:UBSan: left shift of negative value -279019293 (AFL crash: id:000000,sig:06,src:000000,time:368,execs:291,op:havoc,rep:15)

@@ -1,0 +1,170 @@
+./collected_code_4/round1//heal_0//problem-40.c: In function 'createHashTable':
+./collected_code_4/round1//heal_0//problem-40.c:12:26: warning: dereference of possibly-NULL 'hashTable' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |         hashTable[i].key = -1;
+      |         ~~~~~~~~~~~~~~~~~^~~~
+  'createHashTable': events 1-4
+    |
+    |   10 |     hashMap *hashTable = malloc(elements * sizeof(hashMap));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |   11 |     for (int i = 0; i < elements; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < elements')...
+    |   12 |         hashTable[i].key = -1;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |       |
+    |      |                  |       (4) 'hashTable + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                  (3) ...to here
+    |
+./collected_code_4/round1//heal_0//problem-40.c: In function 'insert':
+./collected_code_4/round1//heal_0//problem-40.c:26:32: warning: use of uninitialized value '*hashTable_31(D) + _2.key' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |     while (hashTable[hashIndex].key != -1 && hashTable[hashIndex].key != key) {
+      |            ~~~~~~~~~~~~~~~~~~~~^~~~
+  'frequency': events 1-2
+    |
+    |   40 | void frequency(int *array, int size, int elements) {
+    |      |      ^~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'frequency'
+    |   41 |     hashMap *hashTable = createHashTable(elements);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'createHashTable' from 'frequency'
+    |
+    +--> 'createHashTable': events 3-6
+           |
+           |    9 | hashMap *createHashTable(int elements) {
+           |      |          ^~~~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createHashTable'
+           |   10 |     hashMap *hashTable = malloc(elements * sizeof(hashMap));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) region created on heap here
+           |   11 |     for (int i = 0; i < elements; i++) {
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'false' branch (when 'i >= elements')...
+           |......
+           |   16 |     return hashTable;
+           |      |            ~~~~~~~~~
+           |      |            |
+           |      |            (6) ...to here
+           |
+    <------+
+    |
+  'frequency': events 7-10
+    |
+    |   41 |     hashMap *hashTable = createHashTable(elements);
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (7) returning to 'frequency' from 'createHashTable'
+    |   42 | 
+    |   43 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (8) following 'true' branch (when 'i < size')...
+    |   44 |         insert(hashTable, array[i], elements);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                      |
+    |      |         |                      (9) ...to here
+    |      |         (10) calling 'insert' from 'frequency'
+    |
+    +--> 'insert': events 11-12
+           |
+           |   23 | void insert(hashMap *hashTable, int key, int elements) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (11) entry to 'insert'
+           |......
+           |   26 |     while (hashTable[hashIndex].key != -1 && hashTable[hashIndex].key != key) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (12) use of uninitialized value '*hashTable_31(D) + _2.key' here
+           |
+./collected_code_4/round1//heal_0//problem-40.c:26:32: warning: use of uninitialized value '*hashTable_31(D) + _2.key' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |     while (hashTable[hashIndex].key != -1 && hashTable[hashIndex].key != key) {
+      |            ~~~~~~~~~~~~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   57 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     frequency(array, size, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'frequency' from 'main'
+    |
+    +--> 'frequency': events 3-4
+           |
+           |   40 | void frequency(int *array, int size, int elements) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'frequency'
+           |   41 |     hashMap *hashTable = createHashTable(elements);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) calling 'createHashTable' from 'frequency'
+           |
+           +--> 'createHashTable': events 5-12
+                  |
+                  |    9 | hashMap *createHashTable(int elements) {
+                  |      |          ^~~~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createHashTable'
+                  |   10 |     hashMap *hashTable = malloc(elements * sizeof(hashMap));
+                  |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                          |
+                  |      |                          (6) region created on heap here
+                  |   11 |     for (int i = 0; i < elements; i++) {
+                  |      |                     ~~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (7) following 'true' branch (when 'i < elements')...
+                  |      |                       (9) following 'true' branch (when 'i < elements')...
+                  |      |                       (11) following 'false' branch (when 'i >= elements')...
+                  |   12 |         hashTable[i].key = -1;
+                  |      |                  ~
+                  |      |                  |
+                  |      |                  (8) ...to here
+                  |      |                  (10) ...to here
+                  |......
+                  |   16 |     return hashTable;
+                  |      |            ~~~~~~~~~
+                  |      |            |
+                  |      |            (12) ...to here
+                  |
+           <------+
+           |
+         'frequency': events 13-16
+           |
+           |   41 |     hashMap *hashTable = createHashTable(elements);
+           |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (13) returning to 'frequency' from 'createHashTable'
+           |   42 | 
+           |   43 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (14) following 'true' branch (when 'i < size')...
+           |   44 |         insert(hashTable, array[i], elements);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                      |
+           |      |         |                      (15) ...to here
+           |      |         (16) calling 'insert' from 'frequency'
+           |
+           +--> 'insert': events 17-18
+                  |
+                  |   23 | void insert(hashMap *hashTable, int key, int elements) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (17) entry to 'insert'
+                  |......
+                  |   26 |     while (hashTable[hashIndex].key != -1 && hashTable[hashIndex].key != key) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (18) use of uninitialized value '*hashTable_31(D) + _2.key' here
+                  |

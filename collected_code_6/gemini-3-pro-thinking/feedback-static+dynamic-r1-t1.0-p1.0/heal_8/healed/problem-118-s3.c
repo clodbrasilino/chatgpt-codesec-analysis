@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char* data;
+    struct Node* next;
+} Node;
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* nextNode = current->next;
+        free(current->data);
+        free(current);
+        current = nextNode;
+    }
+}
+
+Node* stringToList(const char* str) {
+    Node* head = NULL;
+    Node* tail = NULL;
+    const char* ptr = str;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*ptr != '\0') {
+        while (isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        if (*ptr == '\0') {
+            break;
+        }
+
+        const char* start = ptr;
+        while (*ptr != '\0' && !isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+
+        size_t len = (size_t)(ptr - start);
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        if (newNode == NULL) {
+            freeList(head);
+            return NULL;
+        }
+
+        newNode->data = (char*)malloc(len + 1);
+        if (newNode->data == NULL) {
+            free(newNode);
+            freeList(head);
+            return NULL;
+        }
+
+        memcpy(newNode->data, start, len);
+        newNode->data[len] = '\0';
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    return head;
+}
+
+void printList(const Node* head) {
+    const Node* current = head;
+    printf("[");
+    while (current != NULL) {
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        size_t buf_size = 8192;
+        char* buffer = (char*)malloc(buf_size);
+        if (buffer == NULL) {
+            return EXIT_FAILURE;
+        }
+        
+        size_t current_len = 0;
+        for (int i = 1; i < argc; i++) {
+            size_t arg_len = strlen(argv[i]);
+            if (current_len + arg_len + 2 > buf_size) {
+                buf_size = (current_len + arg_len + 2) * 2;
+                char* new_buffer = (char*)realloc(buffer, buf_size);
+                if (new_buffer == NULL) {
+                    free(buffer);
+                    return EXIT_FAILURE;
+                }
+                buffer = new_buffer;
+            }
+            memcpy(buffer + current_len, argv[i], arg_len);
+            current_len += arg_len;
+            if (i < argc - 1) {
+                buffer[current_len++] = ' ';
+            }
+        }
+        buffer[current_len] = '\0';
+        
+        Node* listHead = stringToList(buffer);
+        printList(listHead);
+        freeList(listHead);
+        free(buffer);
+        fflush(stdout);
+    } else {
+        size_t buf_size = 8192;
+        char* buffer = (char*)malloc(buf_size);
+        if (buffer == NULL) {
+            return EXIT_FAILURE;
+        }
+        
+        size_t len = 0;
+        int ch;
+        while ((ch = getchar()) != EOF) {
+            if (ch == '\n') {
+                buffer[len] = '\0';
+                Node* listHead = stringToList(buffer);
+                printList(listHead);
+                freeList(listHead);
+                fflush(stdout);
+                len = 0; 
+            } else {
+                if (len + 1 >= buf_size) {
+                    buf_size *= 2;
+                    char* new_buffer = (char*)realloc(buffer, buf_size);
+                    if (new_buffer == NULL) {
+                        free(buffer);
+                        return EXIT_FAILURE;
+                    }
+                    buffer = new_buffer;
+                }
+                buffer[len++] = (char)ch;
+            }
+        }
+        
+        if (len > 0) {
+            buffer[len] = '\0';
+            Node* listHead = stringToList(buffer);
+            printList(listHead);
+            freeList(listHead);
+            fflush(stdout);
+        }
+        free(buffer);
+    }
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int ConvertToInt(char *numbers[]) {
+    int result = 0;
+    if(numbers) {
+        for(int i = 0; numbers[i] != NULL; i++) {
+            int number = atoi(numbers[i]);
+            result = 10 * result + number;
+        }
+    }
+    return result;
+}
+
+int main(int argc, char *argv[]) {
+    int result = ConvertToInt(argv);
+    printf("Converted integer: %d\n", result);
+    return 0;
+}

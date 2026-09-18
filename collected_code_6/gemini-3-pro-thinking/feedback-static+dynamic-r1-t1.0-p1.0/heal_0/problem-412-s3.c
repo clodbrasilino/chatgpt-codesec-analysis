@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_odd_numbers(int *array, size_t *size);
+
+void remove_odd_numbers(int *array, size_t *size) {
+    if (array == NULL || size == NULL) {
+        return;
+    }
+
+    size_t even_count = 0;
+    for (size_t i = 0; i < *size; i++) {
+        if (array[i] % 2 == 0) {
+            array[even_count] = array[i];
+            even_count++;
+        }
+    }
+    
+    *size = even_count;
+}
+
+int main(void) {
+    size_t list_size = 15;
+    
+    int *numbers = malloc(list_size * sizeof(*numbers));
+    if (numbers == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list_size; i++) {
+        numbers[i] = (int)(i + 1);
+    }
+
+    remove_odd_numbers(numbers, &list_size);
+
+    for (size_t i = 0; i < list_size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    free(numbers);
+    numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

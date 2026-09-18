@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} tuple;
+
+void rearrange(tuple* tuples, int* order, int size) {
+    tuple* temp = (tuple*)malloc(size * sizeof(tuple));
+    if(temp == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+    for(int i = 0; i < size; i++) {
+        if(order[i] >= size || order[i] < 0) {
+            printf("Invalid index in order.\n");
+            free(temp);
+            return;
+        }
+        temp[i] = tuples[order[i]];
+    }
+    memcpy(tuples, temp, size * sizeof(tuple));
+    free(temp);
+}
+
+int main() {
+    tuple tuples[3] = {{1, 2}, {3, 4}, {5, 6}};
+    int order[3] = {2, 0, 1};
+
+    rearrange(tuples, order, 3);
+
+    for(int i = 0; i < 3; i++) {
+        printf("Tuple %d: (%d, %d)\n", i, tuples[i].a, tuples[i].b);
+    }
+
+    return 0;
+}

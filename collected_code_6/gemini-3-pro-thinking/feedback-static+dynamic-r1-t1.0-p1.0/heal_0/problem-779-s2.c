@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct InnerNode {
+    int value;
+    struct InnerNode *next;
+} InnerNode;
+
+typedef struct OuterNode {
+    InnerNode *list;
+    struct OuterNode *next;
+} OuterNode;
+
+InnerNode* create_inner_node(int value) {
+    InnerNode *node = (InnerNode *)malloc(sizeof(InnerNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+OuterNode* create_outer_node(InnerNode *list) {
+    OuterNode *node = (OuterNode *)malloc(sizeof(OuterNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+void free_inner_list(InnerNode *head) {
+    while (head != NULL) {
+        InnerNode *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_outer_list(OuterNode *head) {
+    while (head != NULL) {
+        OuterNode *temp = head;
+        head = head->next;
+        free_inner_list(temp->list);
+        free(temp);
+    }
+}
+
+bool are_lists_equal(const InnerNode *list1, const InnerNode *list2) {
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->value != list2->value) {
+            return false;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return list1 == NULL && list2 == NULL;
+}
+
+size_t count_unique_lists(const OuterNode *head) {
+    size_t unique_count = 0;
+    const OuterNode *current = head;
+
+    while (current != NULL) {
+        bool is_unique = true;
+        const OuterNode *checker = head;
+
+        while (checker != current) {
+            if (are_lists_equal(current->list, checker->list)) {
+                is_unique = false;
+                break;
+            }
+            checker = checker->next;
+        }
+
+        if (is_unique) {
+            unique_count++;
+        }
+
+        current = current->next;
+    }
+
+    return unique_count;
+}
+
+int main(void) {
+    InnerNode *list1_node1 = create_inner_node(1);
+    InnerNode *list1_node2 = create_inner_node(2);
+    InnerNode *list1_node3 = create_inner_node(3);
+    list1_node1->next = list1_node2;
+    list1_node2->next = list1_node3;
+
+    InnerNode *list2_node1 = create_inner_node(1);
+    InnerNode *list2_node2 = create_inner_node(2);
+    InnerNode *list2_node3 = create_inner_node(3);
+    list2_node1->next = list2_node2;
+    list2_node2->next = list2_node3;
+
+    InnerNode *list3_node1 = create_inner_node(4);
+    InnerNode *list3_node2 = create_inner_node(5);
+    list3_node1->next = list3_node2;
+
+    InnerNode *list4_node1 = create_inner_node(1);
+    InnerNode *list4_node2 = create_inner_node(2);
+    InnerNode *list4_node3 = create_inner_node(3);
+    list4_node1->next = list4_node2;
+    list4_node2->next = list4_node3;
+
+    OuterNode *outer1 = create_outer_node(list1_node1);
+    OuterNode *outer2 = create_outer_node(list2_node1);
+    OuterNode *outer3 = create_outer_node(list3_node1);
+    OuterNode *outer4 = create_outer_node(list4_node1);
+
+    outer1->next = outer2;
+    outer2->next = outer3;
+    outer3->next = outer4;
+
+    size_t unique_count = count_unique_lists(outer1);
+    printf("%zu\n", unique_count);
+
+    free_outer_list(outer1);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+
+int check_abundant(int n) {
+    int sum = 1;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            if (i * i != n)
+                sum = sum + i + n / i;
+            else
+                sum = sum + i;
+        }
+    }
+    if (sum > n && n != 0)
+        return 1;   // It means number is abundant
+     
+    return 0;   // It means number is not abundant
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d",&number);
+    
+    if(check_abundant(number))
+       printf("The number is abundant.\n");
+    else
+       printf("The number is not abundant.\n");
+   
+    return 0;
+}
+```
+
+In this code, the `check_abundant` is used to return whether a given number is abundant or not.
+An integer `n` is called abundant if the sum of its proper divisors (all divisors except `n` itself) is greater than `n`.
+
+In the `main` function, the `number` is taken as input from the user. The `check_abundant` function is then called with the `number` as argument. If it returns `1`, the number is said to be abundant; otherwise it's not.

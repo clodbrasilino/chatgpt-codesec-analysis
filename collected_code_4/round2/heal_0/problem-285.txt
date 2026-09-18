@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+// Function to match string
+int match(const char *string) {
+    regex_t re;
+    if (regcomp(&re, "ab{2,3}", REG_EXTENDED) != 0) return 0; 
+    int status = regexec(&re, string, (size_t) 0, NULL, 0);
+    regfree(&re);  //Free memory allocated to the pattern buffer by regcomp()
+    if (status != 0) return 0; 
+    return 1;
+}
+
+// Main function
+int main() {
+    printf("%s\n", match("abb") ? "true" : "false");
+    printf("%s\n", match("abbb") ? "true" : "false");
+    printf("%s\n", match("abbbb") ? "true" : "false");
+    printf("%s\n", match("a") ? "true" : "false");
+    return 0;
+}
+```

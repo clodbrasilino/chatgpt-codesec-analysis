@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data);
+int append_node(Node** head, int data);
+void free_list(Node* head);
+int split_list(Node* head, size_t length, Node** part1, Node** part2);
+void print_list(Node* head);
+
+Node* create_node(int data) {
+    Node* new_node = malloc(sizeof(Node));
+    if (!new_node) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int append_node(Node** head, int data) {
+    if (!head) {
+        return -1;
+    }
+    
+    Node* new_node = create_node(data);
+    if (!new_node) {
+        return -1;
+    }
+    
+    if (!*head) {
+        *head = new_node;
+        return 0;
+    }
+    
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+    
+    return 0;
+}
+
+void free_list(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int split_list(Node* head, size_t length, Node** part1, Node** part2) {
+    if (!part1 || !part2) {
+        return -1;
+    }
+    
+    if (length == 0 || !head) {
+        *part1 = NULL;
+        *part2 = head;
+        return 0;
+    }
+
+    *part1 = head;
+    Node* current = head;
+    size_t count = 1;
+
+    while (current && count < length) {
+        current = current->next;
+        count++;
+    }
+
+    if (!current) {
+        *part2 = NULL;
+    } else {
+        *part2 = current->next;
+        current->next = NULL;
+    }
+    
+    return 0;
+}
+
+void print_list(Node* head) {
+    while (head) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* head = NULL;
+    Node* part1 = NULL;
+    Node* part2 = NULL;
+    int i;
+    int status;
+
+    for (i = 1; i <= 5; i++) {
+        status = append_node(&head, i);
+        if (status != 0) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    status = split_list(head, 3, &part1, &part2);
+    if (status != 0) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    print_list(part1);
+    print_list(part2);
+
+    free_list(part1);
+    free_list(part2);
+
+    return EXIT_SUCCESS;
+}
+```

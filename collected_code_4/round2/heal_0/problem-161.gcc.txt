@@ -1,0 +1,361 @@
+./collected_code_4/round2//heal_0/problem-161.c: In function 'removeFromList':
+./collected_code_4/round2//heal_0/problem-161.c:28:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   28 |             ptr1->next = ptr1->next->next;
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   48 | 
+    |   49 |     Node* mainList = newNode(5);
+    |      |                      ~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   49 |     Node* mainList = newNode(5);
+    |      |                      ^~~~~~~~~~
+    |      |                      |
+    |      |                      (6) returning to 'main' from 'newNode'
+    |   50 |     mainList->next = newNode(6);
+    |      |                      ~~~~~~~~~~
+    |      |                      |
+    |      |                      (7) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 8-12
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (8) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (9) allocated here
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (10) assuming 'node' is non-NULL
+           |      |       (11) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   50 |     mainList->next = newNode(6);
+    |      |                      ^~~~~~~~~~
+    |      |                      |
+    |      |                      (13) returning to 'main' from 'newNode'
+    |   51 |     mainList->next->next = newNode(7);
+    |      |                            ~~~~~~~~~~
+    |      |                            |
+    |      |                            (14) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 15-17
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (16) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (17) ...to here
+           |
+    <------+
+    |
+  'main': events 18-19
+    |
+    |   51 |     mainList->next->next = newNode(7);
+    |      |                            ^~~~~~~~~~
+    |      |                            |
+    |      |                            (18) returning to 'main' from 'newNode'
+    |   52 |     mainList->next->next->next = newNode(8);
+    |      |                                  ~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-22
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (20) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   52 |     mainList->next->next->next = newNode(8);
+    |      |                                  ^~~~~~~~~~
+    |      |                                  |
+    |      |                                  (23) returning to 'main' from 'newNode'
+    |   53 |     mainList->next->next->next->next = newNode(9);
+    |      |                                        ~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (24) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 25-27
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (25) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   53 |     mainList->next->next->next->next = newNode(9);
+    |      |                                        ^~~~~~~~~~
+    |      |                                        |
+    |      |                                        (28) returning to 'main' from 'newNode'
+    |   54 | 
+    |   55 |     Node* removeList = newNode(6);
+    |      |                        ~~~~~~~~~~       
+    |      |                        |
+    |      |                        (29) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 30-32
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (30) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (31) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (32) ...to here
+           |
+    <------+
+    |
+  'main': events 33-34
+    |
+    |   55 |     Node* removeList = newNode(6);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (33) returning to 'main' from 'newNode'
+    |   56 |     removeList->next = newNode(8);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (34) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 35-37
+           |
+           |    9 | Node* newNode(int data) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (35) entry to 'newNode'
+           |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+           |   11 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (36) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   15 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (37) ...to here
+           |
+    <------+
+    |
+  'main': events 38-39
+    |
+    |   56 |     removeList->next = newNode(8);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (38) returning to 'main' from 'newNode'
+    |......
+    |   59 |     printList(mainList);
+    |      |     ~~~~~~~~~~~~~~~~~~~ 
+    |      |     |
+    |      |     (39) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 40
+           |
+           |   38 | void printList(Node* node) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (40) entry to 'printList'
+           |
+         'printList': events 41-42
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (41) following 'true' branch (when 'node' is non-NULL)...
+           |   40 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (42) ...to here
+           |
+         'printList': events 43-44
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (43) following 'true' branch (when 'node' is non-NULL)...
+           |   40 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (44) ...to here
+           |
+         'printList': events 45-46
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (45) following 'true' branch (when 'node' is non-NULL)...
+           |   40 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (46) ...to here
+           |
+         'printList': events 47-48
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (47) following 'true' branch (when 'node' is non-NULL)...
+           |   40 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (48) ...to here
+           |
+         'printList': events 49-50
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (49) following 'true' branch (when 'node' is non-NULL)...
+           |   40 |         printf(" %d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (50) ...to here
+           |
+         'printList': events 51-52
+           |
+           |   39 |     while (node != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (51) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   43 |     printf("\n");
+           |      |     ~~~~~~~~~~~~ 
+           |      |     |
+           |      |     (52) ...to here
+           |
+    <------+
+    |
+  'main': events 53-54
+    |
+    |   59 |     printList(mainList);
+    |      |     ^~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (53) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     mainList = removeFromList(mainList, removeList);
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (54) calling 'removeFromList' from 'main'
+    |
+    +--> 'removeFromList': event 55
+           |
+           |   20 | Node* removeFromList(Node* mainList, Node* removeList) {
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (55) entry to 'removeFromList'
+           |
+         'removeFromList': events 56-59
+           |
+           |   26 |     while (ptr1->next != NULL && ptr2 != NULL) {
+           |      |                               ^
+           |      |                               |
+           |      |                               (56) following 'true' branch...
+           |   27 |         if (ptr1->next->data == ptr2->data) {
+           |      |            ~~~~~~~~~~~         
+           |      |            |    |
+           |      |            |    (57) ...to here
+           |      |            (58) following 'false' branch...
+           |......
+           |   31 |             ptr1 = ptr1->next;
+           |      |             ~~~~~~~~~~~~~~~~~  
+           |      |                  |
+           |      |                  (59) ...to here
+           |
+         'removeFromList': events 60-64
+           |
+           |   26 |     while (ptr1->next != NULL && ptr2 != NULL) {
+           |      |                               ^
+           |      |                               |
+           |      |                               (60) following 'true' branch...
+           |   27 |         if (ptr1->next->data == ptr2->data) {
+           |      |            ~~~~~~~~~~~         
+           |      |            |    |
+           |      |            |    (61) ...to here
+           |      |            (62) following 'true' branch...
+           |   28 |             ptr1->next = ptr1->next->next;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |     |
+           |      |                        |     (63) ...to here
+           |      |                        (64) '<unknown>' leaks here; was allocated at (9)
+           |

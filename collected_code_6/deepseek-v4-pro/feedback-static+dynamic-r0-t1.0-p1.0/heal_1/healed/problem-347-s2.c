@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_squares(int length, int width) {
+    if (length <= 0 || width <= 0) {
+        return 0;
+    }
+
+    unsigned int min_dim = (unsigned int)(length < width ? length : width);
+    unsigned int max_dim = (unsigned int)(length > width ? length : width);
+    long long total = 0;
+
+    for (unsigned int side = 1; side <= min_dim; side++) {
+        unsigned long long remaining_min = min_dim - side + 1;
+        unsigned long long remaining_max = max_dim - side + 1;
+        unsigned long long product = remaining_min * remaining_max;
+        
+        if (product > (unsigned long long)LLONG_MAX - total) {
+            return LLONG_MAX;
+        }
+        
+        total += (long long)product;
+    }
+
+    return total;
+}
+
+int main(void) {
+    int length, width;
+
+    printf("Enter rectangle length: ");
+    if (scanf("%d", &length) != 1) {
+        fprintf(stderr, "Invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter rectangle width: ");
+    if (scanf("%d", &width) != 1) {
+        fprintf(stderr, "Invalid input for width.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (length <= 0 || width <= 0) {
+        fprintf(stderr, "Dimensions must be positive integers.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (length > 1000000 || width > 1000000) {
+        fprintf(stderr, "Dimensions too large to compute safely.\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = count_squares(length, width);
+    if (result == LLONG_MAX) {
+        fprintf(stderr, "Result would overflow, dimensions too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of squares in %dx%d rectangle: %lld\n", length, width, result);
+
+    return EXIT_SUCCESS;
+}

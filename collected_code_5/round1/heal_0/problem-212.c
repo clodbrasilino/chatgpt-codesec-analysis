@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+long sumOfPowers(int n) {
+    long sum = 0;
+    for(int i = 1; i <= n; i++) {
+        sum += i * i * i * i;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    if(n < 0) {
+        printf("Input should be a positive integer.\n");
+        return -1;
+    }
+    long sum = sumOfPowers(n);
+    printf("Sum of fourth powers of first %d natural numbers is %ld\n", n, sum);
+    return 0;
+}

@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+
+int sum_of_even_factors(int num) {
+    int sum = 0;
+    
+    for(int i = 2; i <= num; i++) {
+        if (num%i == 0 && i%2 == 0) {
+            sum += i;
+        }
+    }
+    
+    return sum;
+}
+
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    
+    int sum = sum_of_even_factors(num);
+    printf("Sum of even factors of %d is %d\n", num, sum);
+    
+    return 0;
+}
+```

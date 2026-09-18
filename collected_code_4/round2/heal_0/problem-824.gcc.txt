@@ -1,0 +1,285 @@
+./collected_code_4/round2//heal_0/problem-824.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-824.c:50:16: warning: dereference of possibly-NULL 'head' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   50 |     head->data = 1;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   46 |     Node * head = malloc(sizeof(Node));
+    |      |                   ^~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |......
+    |   50 |     head->data = 1;
+    |      |     ~~~~~~~~~~~~~~ 
+    |      |                |
+    |      |                (2) 'head' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-824.c:53:18: warning: dereference of possibly-NULL 'second' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   53 |     second->data = 2;
+      |     ~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   47 |     Node * second = malloc(sizeof(Node));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |......
+    |   53 |     second->data = 2;
+    |      |     ~~~~~~~~~~~~~~~~ 
+    |      |                  |
+    |      |                  (2) 'second' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-824.c:56:17: warning: dereference of possibly-NULL 'third' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   56 |     third->data = 3;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   48 |     Node * third = malloc(sizeof(Node));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |   56 |     third->data = 3;
+    |      |     ~~~~~~~~~~~~~~~ 
+    |      |                 |
+    |      |                 (2) 'third' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-824.c:66:5: warning: double-'free' of 'second' [CWE-415] [-Wanalyzer-double-free]
+   66 |     free(second);
+      |     ^~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   45 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   46 |     Node * head = malloc(sizeof(Node));
+    |   47 |     Node * second = malloc(sizeof(Node));
+    |      |                     ~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) allocated here
+    |......
+    |   53 |     second->data = 2;
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) assuming 'second' is non-NULL
+    |......
+    |   59 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 5
+           |
+           |   34 | void printList(Node * head){
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'printList'
+           |
+         'printList': events 6-7
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (6) following 'true' branch (when 'current' is non-NULL)...
+           |   38 |         printf("%d ", current->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (7) ...to here
+           |
+         'printList': events 8-9
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (8) following 'true' branch (when 'current' is non-NULL)...
+           |   38 |         printf("%d ", current->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |
+         'printList': events 10-11
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (10) following 'true' branch (when 'current' is non-NULL)...
+           |   38 |         printf("%d ", current->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (11) ...to here
+           |
+         'printList': events 12-13
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (12) following 'false' branch (when 'current' is NULL)...
+           |......
+           |   42 |     printf("\n");
+           |      |     ~~~~~~~~~~~~   
+           |      |     |
+           |      |     (13) ...to here
+           |
+    <------+
+    |
+  'main': events 14-15
+    |
+    |   59 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (14) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     head = deleteEven(head);
+    |      |            ~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (15) calling 'deleteEven' from 'main'
+    |
+    +--> 'deleteEven': event 16
+           |
+           |    9 | Node * deleteEven(Node * head){
+           |      |        ^~~~~~~~~~
+           |      |        |
+           |      |        (16) entry to 'deleteEven'
+           |
+         'deleteEven': events 17-20
+           |
+           |   13 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (17) following 'true' branch (when 'current' is non-NULL)...
+           |   14 |         if(current->data % 2 == 0){
+           |      |           ~~~~~~~~~~~~~~
+           |      |           |       |
+           |      |           |       (18) ...to here
+           |      |           (19) following 'false' branch...
+           |......
+           |   26 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) ...to here
+           |
+         'deleteEven': events 21-27
+           |
+           |   13 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (21) following 'true' branch (when 'current' is non-NULL)...
+           |   14 |         if(current->data % 2 == 0){
+           |      |           ~~~~~~~~~~~~~~
+           |      |           |       |
+           |      |           |       (22) ...to here
+           |      |           (23) following 'true' branch...
+           |   15 |             if(prev != NULL){
+           |      |               ~    
+           |      |               |
+           |      |               (24) ...to here
+           |      |               (25) following 'true' branch (when 'prev' is non-NULL)...
+           |   16 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (26) ...to here
+           |......
+           |   23 |             free(temp);
+           |      |             ~~~~~~~~~~
+           |      |             |
+           |      |             (27) first 'free' here
+           |
+         'deleteEven': events 28-31
+           |
+           |   13 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (28) following 'true' branch (when 'current' is non-NULL)...
+           |   14 |         if(current->data % 2 == 0){
+           |      |           ~~~~~~~~~~~~~~
+           |      |           |       |
+           |      |           |       (29) ...to here
+           |      |           (30) following 'false' branch...
+           |......
+           |   26 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (31) ...to here
+           |
+         'deleteEven': events 32-33
+           |
+           |   13 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (32) following 'false' branch (when 'current' is NULL)...
+           |......
+           |   31 |     return head;
+           |      |            ~~~~    
+           |      |            |
+           |      |            (33) ...to here
+           |
+    <------+
+    |
+  'main': events 34-35
+    |
+    |   61 |     head = deleteEven(head);
+    |      |            ^~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (34) returning to 'main' from 'deleteEven'
+    |   62 | 
+    |   63 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (35) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 36
+           |
+           |   34 | void printList(Node * head){
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (36) entry to 'printList'
+           |
+         'printList': events 37-38
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (37) following 'true' branch (when 'current' is non-NULL)...
+           |   38 |         printf("%d ", current->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (38) ...to here
+           |
+         'printList': events 39-40
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (39) following 'true' branch (when 'current' is non-NULL)...
+           |   38 |         printf("%d ", current->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (40) ...to here
+           |
+         'printList': events 41-42
+           |
+           |   37 |     while(current != NULL){
+           |      |                   ^
+           |      |                   |
+           |      |                   (41) following 'false' branch (when 'current' is NULL)...
+           |......
+           |   42 |     printf("\n");
+           |      |     ~~~~~~~~~~~~   
+           |      |     |
+           |      |     (42) ...to here
+           |
+    <------+
+    |
+  'main': events 43-44
+    |
+    |   63 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (43) returning to 'main' from 'printList'
+    |......
+    |   66 |     free(second);
+    |      |     ~~~~~~~~~~~~
+    |      |     |
+    |      |     (44) second 'free' here; first 'free' was at (27)
+    |

@@ -1,0 +1,52 @@
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <regex.h>
+
+char* snakeToCamel(const char *input) {
+    int length = strlen(input);
+    char *output = (char *) malloc((length + 1) * sizeof(char));
+    int i = 0;
+    int j = 0;
+
+    while(i < length) {
+        if(input[i] == '_') {
+            i++;
+            if(i < length) {
+                /* Possible weaknesses found:
+                 *  dereference of possibly-NULL 'output' [CWE-690] [-Wanalyzer-possible-null-dereference]
+                 */
+                output[j] = toupper(input[i]);
+            }
+        } else {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'output' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            output[j] = input[i];
+        }
+        i++;
+        j++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main() {
+    char input[100];
+    printf("Enter a snake_case string: ");
+    fgets(input, sizeof(input), stdin);
+
+    input[strlen(input) - 1] = '\0'; // To remove the newline character
+
+    char *result = snakeToCamel(input);
+    if(result != NULL) {
+        printf("CamelCase string is: %s\n", result);
+        free(result);
+    } else {
+        printf("Memory allocation failure\n");
+    }
+
+    return 0;
+}

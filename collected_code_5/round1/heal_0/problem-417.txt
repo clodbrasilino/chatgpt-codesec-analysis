@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int findFirstCommon(Tuple* tuples, int size){
+    int i, j;
+
+    for(i = 0; i < size; i++){
+        for(j = i+1; j < size; j++){
+            if(tuples[i].first == tuples[j].first){
+                return tuples[i].first;
+            }
+        }
+    }
+    
+    return -1; // Return -1 if no common element found
+}
+
+int main() {
+    Tuple tuples[] = {{1,2}, {2,3}, {3,4}, {4,5}, {1,6}};
+    int size = sizeof(tuples)/sizeof(tuples[0]);
+    int common = findFirstCommon(tuples, size);
+
+    if(common != -1) {
+        printf("The first common element is: %d\n", common);
+    } else {
+        printf("No common first element found.\n");
+    }
+
+    return 0;
+}
+```
+This function works by taking an array of `Tuple` and the size of the array as arguments. Each tuple has two fields: `first` and `second`. The function goes through the list, checking each pair for a common `first` value. If it finds one, it returns the value. If it doesn't, it returns -1 to signify that no common first element was found. A `main` function is provided to demonstrate how to use this function. The `main` function creates an array of `Tuple` structures and passes them to findFirstCommon. The result is then printed out. If a common element is found, it prints that element, otherwise, it prints that no common element was found. The function avoids the security issues mentioned by correctly managing the lifetime of its resources, properly checking for error conditions (such as no common element), and adhering to C coding standards.

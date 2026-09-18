@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+int findKthElement(int* arr, int length, int k) {
+    if (k >= length || k < 0) {
+        printf("Index out of bounds.");
+        return -1;
+    }
+
+    int odd[100], even[100], odd_count = 0, even_count = 0;
+    
+    for(int i = 0; i < length; i++) {
+        if(arr[i] % 2 == 0)
+            even[even_count++] = arr[i];
+        else
+            odd[odd_count++] = arr[i];
+    }
+
+    if (odd_count > k) {
+        return odd[k];
+    } else if(k < odd_count + even_count) {
+        return even[k - odd_count];
+    } 
+
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int length = sizeof(arr) / sizeof(int);
+    int k = 4;
+    int result = findKthElement(arr, length, k);
+  
+    if (result != -1)
+        printf("Element at index %d is: %d", k, result);
+  
+    return 0;
+}

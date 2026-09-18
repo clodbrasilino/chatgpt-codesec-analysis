@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CHARS 26
+
+int checkRearrange(char* str) 
+{
+    int count[MAX_CHARS] = {0};
+    int strLength = strlen(str);
+    for (int i = 0; i < strLength; i++)
+        count[str[i] - 'a']++;
+
+    int odd = 0;
+    for (int i = 0; i < MAX_CHARS; i++) {
+        if (count[i] % 2 != 0)
+            odd++;
+
+        if (odd > 1)
+            return 0;
+    }
+
+    return 1;
+}
+
+int main() 
+{
+    char str[] = "aab";
+    if (checkRearrange(str))
+        printf("Can be rearranged\n");
+    else
+        printf("Can not be rearranged\n");
+    return 0;
+}

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countOddSetBits(const int arr[], size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        int num = arr[i];
+        int setBits = 0;
+        
+        while (num != 0) {
+            setBits += num & 1;
+            num >>= 1;
+        }
+        
+        if (setBits % 2 != 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = countOddSetBits(arr, size);
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

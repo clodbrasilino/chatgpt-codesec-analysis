@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+TupleList join_tuples(const TupleList *input) {
+    TupleList result = {NULL, 0};
+    if (!input || input->count == 0) {
+        return result;
+    }
+
+    result.tuples = malloc(input->count * sizeof(Tuple));
+    if (!result.tuples) {
+        return result;
+    }
+
+    int *merged = calloc(input->count, sizeof(int));
+    if (!merged) {
+        free(result.tuples);
+        result.tuples = NULL;
+        return result;
+    }
+
+    for (size_t i = 0; i < input->count; ++i) {
+        if (merged[i] || input->tuples[i].size == 0) {
+            continue;
+        }
+
+        int initial_element = input->tuples[i].elements[0];
+        size_t total_size = input->tuples[i].size;
+
+        for (size_t j = i + 1; j < input->count; ++j) {
+            if (!merged[j] && input->tuples[j].size > 0 && input->tuples[j].elements[0] == initial_element) {
+                total_size += input->tuples[j].size - 1;
+            }
+        }
+
+        Tuple new_tuple;
+        new_tuple.size = total_size;
+        new_tuple.elements = malloc(total_size * sizeof(int));
+        if (!new_tuple.elements) {
+            for (size_t k = 0; k < result.count; ++k) {
+                free(result.tuples[k].elements);
+            }
+            free(result.tuples);
+            free(merged);
+            result.tuples = NULL;
+            result.count = 0;
+            return result;
+        }
+
+        size_t index = 0;
+        for (size_t k = 0; k < input->tuples[i].size; ++k) {
+            new_tuple.elements[index++] = input->tuples[i].elements[k];
+        }
+        merged[i] = 1;
+
+        for (size_t j = i + 1; j < input->count; ++j) {
+            if (!merged[j] && input->tuples[j].size > 0 && input->tuples[j].elements[0] == initial_element) {
+                for (size_t k = 1; k < input->tuples[j].size; ++k) {
+                    new_tuple.elements[index++] = input->tuples[j].elements[k];
+                }
+                merged[j] = 1;
+            }
+        }
+
+        result.tuples[result.count++] = new_tuple;
+    }
+
+    free(merged);
+    return result;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list && list->tuples) {
+        for (size_t i = 0; i < list->count; ++i) {
+            free(list->tuples[i].elements);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+        list->count = 0;
+    }
+}
+
+int main(void) {
+    int t1_data[] = {1, 2, 3};
+    int t2_data[] = {1, 4, 5};
+    int t3_data[] = {2, 6};
+    int t4_data[] = {2, 7, 8};
+
+    Tuple tuples[] = {
+        {t1_data, 3},
+        {t2_data, 3},
+        {t3_data, 2},
+        {t4_data, 3}
+    };
+
+    TupleList input = {tuples, 4};
+
+    TupleList result = join_tuples(&input);
+
+    for (size_t i = 0; i < result.count; ++i) {
+        printf("(");
+        for (size_t j = 0; j < result.tuples[i].size; ++j) {
+            printf("%d%s", result.tuples[i].elements[j], j < result.tuples[i].size - 1 ? ", " : "");
+        }
+        printf(")\n");
+    }
+
+    free_tuple_list(&result);
+
+    return 0;
+}
+```

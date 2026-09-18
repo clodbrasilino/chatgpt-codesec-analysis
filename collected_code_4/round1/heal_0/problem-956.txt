@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void SplitStringAtUpperCase(char *str) {
+    const char delim[2] = " ";
+    char *token;
+    token = strtok(str, delim);
+
+    while (token != NULL) {
+        
+        if (isupper((unsigned char)token[0])){
+            printf("%s\n", token);
+        }
+
+        token = strtok(NULL, delim);
+    }
+}
+
+int main() {
+    char str[] = "this Is The Test String To check Function";
+    SplitStringAtUpperCase(str);
+    return 0;
+}
+```
+In the code above we are using a function `SplitStringAtUpperCase(char *str)` to split a given string(`str`) at upper case letters. The function works as follow:
+
+- The function takes as parameters a string `str` which is separated by space.
+- We use `strtok` function to split `str` into tokens until space.
+- Then, We use the `isupper` function to check if first character of token is uppercase or not. If it is then print it.
+- Then, we again use `strtok` function to get next token until `NULL` (end of the tokens) reached.
+- The control returns to `main`.
+
+In the `main()` function, we Initialize a string `str` and call `SplitStringAtUpperCase(str)` to split the string at uppercase letters. The function will print all tokens starting with uppercase letters. The control returns to the Operating System.
+
+Please note that regex is not widely used or preferred in C due to its heavy syntax and the hefty performance cost. Therefore, in this case we preferred using `strtok` function and `isupper` function instead of regex.

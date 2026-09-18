@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node 
+{
+    int data;
+    struct Node* next;
+};
+
+struct Node* SortedMerge(struct Node* a, struct Node* b) 
+{
+    struct Node* result = NULL;
+
+    if (a == NULL)
+        return(b);
+    else if (b == NULL)
+        return(a);
+
+    if (a->data <= b->data) 
+    {
+        result = a;
+        result->next = SortedMerge(a->next, b);
+    }
+    else 
+    {
+        result = b;
+        result->next = SortedMerge(a, b->next);
+    }
+    return result;
+}
+
+struct Node* newNode(int new_data) 
+{
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    if (new_node == NULL)
+        return NULL;
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    return new_node;
+}
+
+void printList(struct Node *node) 
+{
+    while(node!=NULL) 
+    {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+int main() 
+{
+    struct Node* res = NULL;
+    struct Node* a = NULL;
+    struct Node* b = NULL;
+
+    a = newNode(5);
+    if (a == NULL)
+        return 1;
+    a->next = newNode(10);
+    if (a->next == NULL)
+        return 1;
+    a->next->next = newNode(15);
+    if (a->next->next == NULL)
+        return 1;
+
+    b = newNode(2);
+    if (b == NULL)
+        return 1;
+    b->next = newNode(3);
+    if (b->next == NULL)
+        return 1;
+    b->next->next = newNode(20);
+    if (b->next->next == NULL)
+        return 1;
+
+    res = SortedMerge(a, b);
+
+    printf("The merged sorted list is: ");
+    printList(res);
+
+   return 0;
+}

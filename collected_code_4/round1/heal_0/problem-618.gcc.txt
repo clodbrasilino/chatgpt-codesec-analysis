@@ -1,0 +1,235 @@
+./collected_code_4/round1//heal_0//problem-618.c: In function 'listDivide':
+./collected_code_4/round1//heal_0//problem-618.c:35:1: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 | }
+      | ^
+  'listDivide': events 1-3
+    |
+    |   16 | struct Node* listDivide(struct Node* list1, struct Node* list2) {
+    |      |              ^~~~~~~~~~
+    |      |              |
+    |      |              (1) entry to 'listDivide'
+    |   17 |     if (list1 == NULL || list2 == NULL)
+    |      |        ~      
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   20 |     struct Node* result = NULL;
+    |      |                  ~~~~~~
+    |      |                  |
+    |      |                  (3) ...to here
+    |
+  'listDivide': event 4
+    |
+    |   23 |     while (list1 != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (4) following 'true' branch (when 'list1' is non-NULL)...
+    |
+  'listDivide': event 5
+    |
+    |cc1:
+    | (5): ...to here
+    |
+  'listDivide': events 6-10
+    |
+    |   24 |         while (temp != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (6) following 'true' branch (when 'temp' is non-NULL)...
+    |   25 |             if (temp->data == 0)
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (7) ...to here
+    |      |                (8) following 'false' branch...
+    |......
+    |   28 |             int division = list1->data / temp->data;
+    |      |                            ~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (9) ...to here
+    |   29 |             push(&result, division);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (10) calling 'push' from 'listDivide'
+    |
+    +--> 'push': events 11-13
+           |
+           |    9 | void push(struct Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (11) entry to 'push'
+           |   10 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (12) allocated here
+           |   11 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (13) assuming 'new_node' is non-NULL
+           |
+    <------+
+    |
+  'listDivide': event 14
+    |
+    |   29 |             push(&result, division);
+    |      |             ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (14) returning to 'listDivide' from 'push'
+    |
+  'listDivide': events 15-17
+    |
+    |   24 |         while (temp != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (15) following 'true' branch (when 'temp' is non-NULL)...
+    |   25 |             if (temp->data == 0)
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (16) ...to here
+    |      |                (17) following 'true' branch...
+    |
+  'listDivide': event 18
+    |
+    |   26 |                 return NULL;
+    |      |                        ^~~~
+    |      |                        |
+    |      |                        (18) ...to here
+    |
+  'listDivide': event 19
+    |
+    |   35 | }
+    |      | ^
+    |      | |
+    |      | (19) 'result' leaks here; was allocated at (12)
+    |
+./collected_code_4/round1//heal_0//problem-618.c:35:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+  'listDivide': events 1-3
+    |
+    |   16 | struct Node* listDivide(struct Node* list1, struct Node* list2) {
+    |      |              ^~~~~~~~~~
+    |      |              |
+    |      |              (1) entry to 'listDivide'
+    |   17 |     if (list1 == NULL || list2 == NULL)
+    |      |        ~      
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   20 |     struct Node* result = NULL;
+    |      |                  ~~~~~~
+    |      |                  |
+    |      |                  (3) ...to here
+    |
+  'listDivide': event 4
+    |
+    |   23 |     while (list1 != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (4) following 'true' branch (when 'list1' is non-NULL)...
+    |
+  'listDivide': event 5
+    |
+    |cc1:
+    | (5): ...to here
+    |
+  'listDivide': events 6-10
+    |
+    |   24 |         while (temp != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (6) following 'true' branch (when 'temp' is non-NULL)...
+    |   25 |             if (temp->data == 0)
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (7) ...to here
+    |      |                (8) following 'false' branch...
+    |......
+    |   28 |             int division = list1->data / temp->data;
+    |      |                            ~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (9) ...to here
+    |   29 |             push(&result, division);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (10) calling 'push' from 'listDivide'
+    |
+    +--> 'push': events 11-13
+           |
+           |    9 | void push(struct Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (11) entry to 'push'
+           |   10 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+           |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                            |
+           |      |                                            (12) allocated here
+           |   11 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (13) assuming 'new_node' is non-NULL
+           |
+    <------+
+    |
+  'listDivide': event 14
+    |
+    |   29 |             push(&result, division);
+    |      |             ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (14) returning to 'listDivide' from 'push'
+    |
+  'listDivide': events 15-18
+    |
+    |   24 |         while (temp != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (15) following 'true' branch (when 'temp' is non-NULL)...
+    |   25 |             if (temp->data == 0)
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (16) ...to here
+    |      |                (17) following 'false' branch...
+    |......
+    |   28 |             int division = list1->data / temp->data;
+    |      |                            ~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (18) ...to here
+    |
+  'listDivide': events 19-21
+    |
+    |   24 |         while (temp != NULL) {
+    |      |                     ^
+    |      |                     |
+    |      |                     (19) following 'true' branch (when 'temp' is non-NULL)...
+    |   25 |             if (temp->data == 0)
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (20) ...to here
+    |      |                (21) following 'true' branch...
+    |
+  'listDivide': event 22
+    |
+    |   26 |                 return NULL;
+    |      |                        ^~~~
+    |      |                        |
+    |      |                        (22) ...to here
+    |
+  'listDivide': event 23
+    |
+    |   35 | }
+    |      | ^
+    |      | |
+    |      | (23) '<unknown>' leaks here; was allocated at (12)
+    |
+./collected_code_4/round1//heal_0//problem-618.c: In function 'push':
+./collected_code_4/round1//heal_0//problem-618.c:11:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     new_node->data = new_data;
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~
+  'push': events 1-2
+    |
+    |   10 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                            |
+    |      |                                            (1) this call could return NULL
+    |   11 |     new_node->data = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~               
+    |      |                    |
+    |      |                    (2) 'new_node' could be NULL: unchecked value from (1)
+    |

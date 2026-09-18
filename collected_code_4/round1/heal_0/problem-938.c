@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *p;
+    int size;
+} array;
+
+void getClosestTriplets(array a1, array a2, array a3) {
+    int res_min = 0, res_mid = 0, res_max = 0;
+    int i = 0, j = 0, k = 0;
+    int min_diff = INT_MAX;
+
+    while (i < a1.size && j < a2.size && k < a3.size) {
+        int sum = a1.p[i] + a2.p[j] + a3.p[k];
+        int max = (a1.p[i] > a2.p[j]) ? (a1.p[i] > a3.p[k] ? a1.p[i] : a3.p[k]) : (a2.p[j] > a3.p[k] ? a2.p[j] : a3.p[k]);
+        int min = (a1.p[i] < a2.p[j]) ? (a1.p[i] < a3.p[k] ? a1.p[i] : a3.p[k]) : (a2.p[j] < a3.p[k] ? a2.p[j] : a3.p[k]);
+
+        if (min_diff > (max - min)) {
+            min_diff = max - min;
+            res_min = a1.p[i];
+            res_mid = a2.p[j];
+            res_max = a3.p[k];
+        }
+        
+        if (min == a1.p[i]) {
+            i++;
+        } else if (min == a2.p[j]) {
+            j++;
+        } else {
+            k++;
+        }
+    }
+
+    printf("Closest triplets are: %d %d %d\n", res_min, res_mid, res_max);
+}
+
+int main() {
+    array arr1 = {(int[]) {5, 10, 15}, 3};
+    array arr2 = {(int[]) {20, 25, 30}, 3};
+    array arr3 = {(int[]) {1, 2, 3}, 3};
+
+    getClosestTriplets(arr1, arr2, arr3);
+
+    return 0;
+}

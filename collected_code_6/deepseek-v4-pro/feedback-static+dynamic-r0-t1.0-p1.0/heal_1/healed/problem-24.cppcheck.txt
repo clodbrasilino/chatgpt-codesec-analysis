@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-24.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-24.c:34:36: portability: Shifting signed 64-bit value by 63 bits is implementation-defined behaviour. See condition at line 27. [shiftTooManyBitsSigned]
+            long long addend = 1LL << shift;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-24.c:27:23: note: Assuming that condition 'shift>=(int)(sizeof(long long)*8-1)' is not redundant
+            if (shift >= (int)(sizeof(long long) * 8 - 1)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-24.c:34:36: note: Shift
+            long long addend = 1LL << shift;
+                                   ^

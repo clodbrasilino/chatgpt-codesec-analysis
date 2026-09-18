@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long nthCarolNumber(int n) {
+    return ((1LL << n) - 1)*((1LL << n) - 1) - 2;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    if(n < 1) {
+        printf("Invalid input; please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    printf("%lld\n", nthCarolNumber(n));
+
+    return EXIT_SUCCESS;
+}

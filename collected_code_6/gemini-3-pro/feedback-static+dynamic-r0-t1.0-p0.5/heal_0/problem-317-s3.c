@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int count;
+    char character;
+} RLEElement;
+
+typedef struct {
+    RLEElement* elements;
+    size_t size;
+    size_t capacity;
+} RLEList;
+
+RLEList* create_rle_list(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        return NULL;
+    }
+
+    RLEList* list = (RLEList*)malloc(sizeof(RLEList));
+    if (!list) {
+        return NULL;
+    }
+
+    list->elements = (RLEElement*)malloc(initial_capacity * sizeof(RLEElement));
+    if (!list->elements) {
+        free(list);
+        return NULL;
+    }
+
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void free_rle_list(RLEList* list) {
+    if (list) {
+        free(list->elements);
+        free(list);
+    }
+}
+
+int add_rle_element(RLEList* list, int count, char character) {
+    if (!list) {
+        return -1;
+    }
+
+    if (list->size >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        RLEElement* new_elements = (RLEElement*)realloc(list->elements, new_capacity * sizeof(RLEElement));
+        if (!new_elements) {
+            return -1;
+        }
+        list->elements = new_elements;
+        list->capacity = new_capacity;
+    }
+
+    list->elements[list->size].count = count;
+    list->elements[list->size].character = character;
+    list->size++;
+    return 0;
+}
+
+char* decode_rle_list(const RLEList* list) {
+    if (!list) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->elements[i].count < 0) {
+            return NULL;
+        }
+        total_length += (size_t)list->elements[i].count;
+    }
+
+    char* decoded_string = (char*)malloc(total_length + 1);
+    if (!decoded_string) {
+        return NULL;
+    }
+
+    size_t current_pos = 0;
+    for (size_t i = 0; i < list->size; i++) {
+        int count = list->elements[i].count;
+        char character = list->elements[i].character;
+        for (int j = 0; j < count; j++) {
+            decoded_string[current_pos++] = character;
+        }
+    }
+
+    decoded_string[total_length] = '\0';
+    return decoded_string;
+}
+
+int main(void) {
+    RLEList* list = create_rle_list(4);
+    if (!list) {
+        fprintf(stderr, "Failed to create RLE list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (add_rle_element(list, 4, 'A') != 0 ||
+        add_rle_element(list, 1, 'B') != 0 ||
+        add_rle_element(list, 3, 'C') != 0 ||
+        add_rle_element(list, 2, 'A') != 0) {
+        fprintf(stderr, "Failed to add elements to RLE list\n");
+        free_rle_list(list);
+        return EXIT_FAILURE;
+    }
+
+    char* decoded = decode_rle_list(list);
+    if (decoded) {
+        printf("Decoded string: %s\n", decoded);
+        free(decoded);
+    } else {
+        fprintf(stderr, "Failed to decode RLE list\n");
+    }
+
+    free_rle_list(list);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,36 @@
+As a text-based AI model, please note that handling tuples and lists involves the C++ Standard Template Library (STL) or other languages like Python. The C language only uses primitive types, arrays, and structs. However, here is a C function that counts the number of elements in an array, which is similar to counting the number of lists in a tuple.
+
+Please also understand, that C is not designed for the same purpose as a language like Python. Python's higher-level data structures (like tuples and lists) are not available in C's standard library. However, the same functionality can be achieved through similar structures - like multi-dimensional arrays in C.
+
+```c
+#include<stdio.h>
+
+#define MAX_SIZE 1000
+
+int count_arrays(int arr[][MAX_SIZE], int size) {
+    int count = 0;
+    for(int i=0; i<size; i++) {
+        if(arr[i][0] != '\0') 
+            count++;
+    }
+    return count;
+}
+
+int main() {
+    // define and populate the arrays
+    int arr[][MAX_SIZE] = {
+        {1, 2, 3},
+        {4, 5, 6},
+    };
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int total_arrays = count_arrays(arr, size);
+    printf("Number of arrays: %d\n", total_arrays);
+    return 0;
+}
+```
+
+In this C code:
+- We define an integer 2D array which is akin to a list of lists or a tuple of lists in python.
+- We define a function `count_arrays` which counts the arrays present inside the 2D array.
+- Inside the main function, we calculate the size of outer array and then we call `count_arrays` with the array and its size as argument.
+- We print total number of arrays which is same as number of lists in a tuple.

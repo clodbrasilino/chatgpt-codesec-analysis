@@ -1,0 +1,32 @@
+./collected_code_4/round2//heal_0/problem-424.c: In function 'extract_rear_elements':
+./collected_code_4/round2//heal_0/problem-424.c:5:27: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    5 |     char *rear_elements = malloc(length * sizeof(char));
+      |                           ^~~~~~
+./collected_code_4/round2//heal_0/problem-424.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-424.c:5:27: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    5 |     char *rear_elements = malloc(length * sizeof(char));
+      |                           ^~~~~~
+./collected_code_4/round2//heal_0/problem-424.c:5:27: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round2//heal_0/problem-424.c:8:9: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+    8 |         exit(1);
+      |         ^~~~
+./collected_code_4/round2//heal_0/problem-424.c:8:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round2//heal_0/problem-424.c:8:9: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round2//heal_0/problem-424.c:8:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round2//heal_0/problem-424.c:18:13: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+   18 |             exit(1);
+      |             ^~~~
+./collected_code_4/round2//heal_0/problem-424.c:18:13: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round2//heal_0/problem-424.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-424.c:26:29: error: variable-sized object may not be initialized except with an empty initializer
+   26 |     char *strings[length] = {"Hello", "World", "!"};
+      |                             ^
+./collected_code_4/round2//heal_0/problem-424.c:33:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   33 |     free(rear_elements);
+      |     ^~~~
+./collected_code_4/round2//heal_0/problem-424.c:33:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round2//heal_0/problem-424.c:33:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round2//heal_0/problem-424.c:33:5: note: include '<stdlib.h>' or provide a declaration of 'free'

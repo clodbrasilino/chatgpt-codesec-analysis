@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long nthRectangularNumber(long n) {
+    if (n < 0 || n > 10000) {
+        fprintf(stderr, "Input out of bounds. Please enter a non-negative integer less than or equal to 10,000.\n");
+        exit(EXIT_FAILURE);
+    }
+    return n * (n + 1);
+}
+
+int main() {
+    long n;
+    printf("Enter n: ");
+    if (scanf("%ld", &n) == 1) {
+        long result = nthRectangularNumber(n);
+        printf("The %ld-th rectangular number is: %ld\n", n, result);
+    } else {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+    }
+    return 0;
+}

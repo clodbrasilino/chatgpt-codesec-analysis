@@ -1,0 +1,34 @@
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+bool check_if_string_is_integer(const char* str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    if (*str == '-' || *str == '+') {
+        ++str;
+    }
+
+    while (*str != '\0') {
+        if (!isdigit((unsigned char)*str)) {
+            return false;
+        }
+        ++str;
+    }
+    
+    return true;
+}
+
+int main(int argc, char **argv) {
+    const char *str = "12345";
+    if(check_if_string_is_integer(str)) {
+        printf("The string represents an integer.\n");
+    } else {
+        printf("The string does not represent an integer.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void* a, const void* b) {
+    return (*(int*)b - *(int*)a);
+}
+
+int getMaximumSum(int arr[], int n, int k) {
+    int i = 0, sum = 0;
+    qsort(arr, n, sizeof(arr[0]), compare);
+
+    while(i < n-1 && k > 0) {
+        sum += arr[i] + arr[i+1];
+        i += 2;
+        k--;
+    }
+    return sum;
+}
+
+int main() {
+    int n, k;
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
+    printf("Enter the number of pairs: ");
+    scanf("%d", &k);
+    int i, arr[n];
+    printf("Enter array elements: \n");
+    for(i=0; i<n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    int result = getMaximumSum(arr, n, k);
+    printf("Maximum sum is: %d\n", result);
+    return 0;
+}
+```
+This function first sorts the array in descending order. It then finds the sum of the first k highest pairs from the sorted array by traversing through 'k' times. Each time, it adds the sum of the current element and the next element to the total sum. It then moves the index by 2 positions to the next pair. This process continues until 'k' pairs have been added or there are no more pairs in the array. The time complexity of the function is O(nlogn) due to the sorting step.

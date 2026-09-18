@@ -1,0 +1,73 @@
+./collected_code_4/round1//heal_0//problem-602.c: In function 'firstRepeating':
+./collected_code_4/round1//heal_0//problem-602.c:7:25: warning: implicit declaration of function 'calloc' [-Wimplicit-function-declaration]
+    7 |     int *count = (int *)calloc(sizeof(int), NO_OF_CHARS);
+      |                         ^~~~~~
+./collected_code_4/round1//heal_0//problem-602.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+./collected_code_4/round1//heal_0//problem-602.c:7:25: warning: incompatible implicit declaration of built-in function 'calloc' [-Wbuiltin-declaration-mismatch]
+    7 |     int *count = (int *)calloc(sizeof(int), NO_OF_CHARS);
+      |                         ^~~~~~
+./collected_code_4/round1//heal_0//problem-602.c:7:25: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+./collected_code_4/round1//heal_0//problem-602.c:15:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   15 |     free(count);
+      |     ^~~~
+./collected_code_4/round1//heal_0//problem-602.c:15:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-602.c:15:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-602.c:15:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-602.c:13:23: warning: leak of 'count' [CWE-401] [-Wanalyzer-malloc-leak]
+   13 |             return str[i];
+      |                    ~~~^~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   20 |     char str[] = "heleworld";
+    |   21 |     printf("%c", firstRepeating(str));
+    |      |                  ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'firstRepeating' from 'main'
+    |
+    +--> 'firstRepeating': events 3-17
+           |
+           |    6 | char firstRepeating(char *str) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'firstRepeating'
+           |    7 |     int *count = (int *)calloc(sizeof(int), NO_OF_CHARS);
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |    8 |     int i;
+           |    9 |     for (i = 0; *(str+i); i++)
+           |      |                 ~
+           |      |                 |
+           |      |                 (5) following 'true' branch...
+           |      |                 (7) following 'true' branch...
+           |      |                 (9) following 'true' branch...
+           |      |                 (11) following 'true' branch...
+           |      |                 (13) following 'true' branch...
+           |   10 |         count[*(str+i)]++;
+           |      |                ~~~~~~~
+           |      |                    |
+           |      |                    (6) ...to here
+           |      |                    (8) ...to here
+           |      |                    (10) ...to here
+           |      |                    (12) ...to here
+           |      |                    (14) ...to here
+           |   11 |     for (i = 0; *(str+i); i++)
+           |      |                 ~
+           |      |                 |
+           |      |                 (15) following 'true' branch...
+           |   12 |         if (count[*(str+i)] > 1)
+           |      |                    ~~~~~~~
+           |      |                        |
+           |      |                        (16) ...to here
+           |   13 |             return str[i];
+           |      |                    ~~~~~~
+           |      |                       |
+           |      |                       (17) 'count' leaks here; was allocated at (4)
+           |

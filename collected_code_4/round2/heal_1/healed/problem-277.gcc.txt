@@ -1,0 +1,38 @@
+./collected_code_4/round2//heal_1/healed/problem-277.c: In function 'filterDict':
+./collected_code_4/round2//heal_1/healed/problem-277.c:30:9: warning: double-'free' of 'tempOutputDict' [CWE-415] [-Wanalyzer-double-free]
+   30 |         free(tempOutputDict);
+      |         ^~~~~~~~~~~~~~~~~~~~
+  'filterDict': events 1-9
+    |
+    |   12 |     dictItem* tempOutputDict = (dictItem*)malloc(sizeof(dictItem) * dictSize);
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) allocated here
+    |   13 | 
+    |   14 |     if(tempOutputDict == NULL) {
+    |      |       ~                                    
+    |      |       |
+    |      |       (2) assuming 'tempOutputDict' is non-NULL
+    |      |       (3) following 'false' branch (when 'tempOutputDict' is non-NULL)...
+    |......
+    |   19 |     for(i = 0; i < dictSize; i++) {
+    |      |         ~~~~~                              
+    |      |           |
+    |      |           (4) ...to here
+    |......
+    |   27 |     *outputDict = (dictItem*)realloc(tempOutputDict, sizeof(dictItem) * (*outputSize));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (5) first 'free' here
+    |      |                              (6) when 'realloc' succeeds, moving buffer
+    |   28 | 
+    |   29 |     if(*outputDict != tempOutputDict) {
+    |      |       ~                                    
+    |      |       |
+    |      |       (7) following 'true' branch...
+    |   30 |         free(tempOutputDict);
+    |      |         ~~~~~~~~~~~~~~~~~~~~               
+    |      |         |
+    |      |         (8) ...to here
+    |      |         (9) second 'free' here; first 'free' was at (5)
+    |

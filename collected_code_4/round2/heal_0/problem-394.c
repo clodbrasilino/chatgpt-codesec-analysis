@@ -1,0 +1,27 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isTupleDistinct(int* tuple, int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (tuple[i] == tuple[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3, 4, 5};
+    int size = sizeof(tuple) / sizeof(int);
+    bool result = isTupleDistinct(tuple, size);
+
+    if (result) {
+        printf("The tuple is distinct.\n");
+    } else {
+        printf("The tuple is not distinct.\n");
+    }
+
+    return 0;
+}

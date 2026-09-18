@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+double oddAverage(int n) {
+    if(n <= 0) {
+        printf("Invalid Input. Please enter a positive odd number\n");
+        return 0;
+    } 
+    if(n%2 == 0) {
+        printf("Invalid Input. Please enter an odd number\n");
+        return 0;
+    }
+    int i, sum = 0, count = 0;
+    for(i = 1; i <= n; i+=2) {
+        sum+= i;
+        count++;
+    }
+    return ((double)sum)/count;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    double avg = oddAverage(n);
+    if(avg != 0)
+        printf("Average of odd numbers till %d is %.2f\n", n, avg);
+
+    return 0;
+}

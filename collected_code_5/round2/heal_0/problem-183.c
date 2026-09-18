@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countPairs(int arr[], int size, int k){
+  int count=0, distCount=0;
+  for(int i=0;i<size;i++){
+    for(int j=i+1;j<size;j++){
+        if(abs(arr[i]-arr[j]) == k ){
+            distCount++;
+          }
+    }
+  }
+  return distCount;
+}
+
+int main(){
+  int arr[] = {1,5,3,4,2,6};
+  int size = sizeof(arr)/sizeof(arr[0]);
+  int k = 1;
+  printf("Count = %d",countPairs(arr,size,k));
+  return 0;
+}

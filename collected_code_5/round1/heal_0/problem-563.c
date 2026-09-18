@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* extractValues(const char *string) {
+    if(!string) return NULL;
+
+    char *result = malloc(strlen(string) + 1);
+    if(!result) return NULL;
+
+    int j = 0, inQuote = 0;
+    for(int i = 0; i < strlen(string); i++) {
+        if(string[i] == '"') {
+            inQuote = !inQuote;
+            continue;
+        }
+        if(inQuote) {
+            result[j] = string[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main() {
+    char *str = "The \"quick\" brown \"fox jumps\" over the lazy \"dog\"";
+    char *result = extractValues(str);
+    if(!result) {
+        printf("Failed to allocate memory.\n");
+        return 1;
+    }
+
+    printf("%s\n", result);
+    free(result);
+
+    return 0;
+}

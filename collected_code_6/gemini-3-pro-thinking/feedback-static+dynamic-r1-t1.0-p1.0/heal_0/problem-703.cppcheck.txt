@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c:55:31: style: Condition 'found_4' is always false [knownConditionTrueFalse]
+    printf("NULL dict: %s\n", found_4 ? "true" : "false");
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c:50:32: note: Calling function 'contains_key' returns 0
+    bool found_4 = contains_key(NULL, search_key_1);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c:50:32: note: Assignment 'found_4=contains_key(NULL,search_key_1)', assigned value is 0
+    bool found_4 = contains_key(NULL, search_key_1);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c:55:31: note: Condition 'found_4' is always false
+    printf("NULL dict: %s\n", found_4 ? "true" : "false");
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-703.c:8:9: style: struct member 'KeyValuePair::value' is never used. [unusedStructMember]
+    int value;
+        ^

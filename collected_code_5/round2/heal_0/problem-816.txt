@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+  int x;
+  int y;
+} Tuple;
+
+void clearTuple(Tuple* tuple) {
+    if (tuple == NULL) return;
+    
+    tuple->x = 0;
+    tuple->y = 0;
+}
+
+int main() {
+    Tuple* p = (Tuple*) malloc(sizeof(Tuple));
+    if (p == NULL) {
+        printf("Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    p->x = 5;
+    p->y = 8;
+    
+    printf("Before clear: x: %d y: %d\n", p->x, p->y);
+    
+    clearTuple(p);
+    
+    printf("After clear: x: %d y: %d\n", p->x, p->y);
+    
+    free(p);
+    
+    return EXIT_SUCCESS;
+}
+```

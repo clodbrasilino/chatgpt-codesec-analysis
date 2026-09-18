@@ -1,0 +1,369 @@
+./collected_code_4/round2//heal_3/healed/problem-73.c: In function 'insertArray':
+./collected_code_4/round2//heal_3/healed/problem-73.c:27:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   27 |             free(a->array);
+      |             ^~~~~~~~~~~~~~
+  'regex_split': events 1-4
+    |
+    |   44 | Array* regex_split(const char* string, const char* regex_pattern) {
+    |      |        ^~~~~~~~~~~
+    |      |        |
+    |      |        (1) entry to 'regex_split'
+    |......
+    |   50 |     if(arr == NULL) return NULL;
+    |      |       ~ 
+    |      |       |
+    |      |       (2) following 'false' branch (when 'arr' is non-NULL)...
+    |   51 | 
+    |   52 |     initArray(arr, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |      |     (4) calling 'initArray' from 'regex_split'
+    |
+    +--> 'initArray': events 5-7
+           |
+           |   14 | void initArray(Array* a, size_t initialSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'initArray'
+           |   15 |     a->array = (char**)malloc(initialSize * sizeof(char*));
+           |   16 |     if(a->array == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'false' branch...
+           |   17 |         exit(1);
+           |   18 |     a->used = 0;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (7) ...to here
+           |
+    <------+
+    |
+  'regex_split': events 8-13
+    |
+    |   52 |     initArray(arr, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) returning to 'regex_split' from 'initArray'
+    |   53 | 
+    |   54 |     if (regcomp(&regex_compiled, regex_pattern, REG_EXTENDED)) {
+    |      |        ~
+    |      |        |
+    |      |        (9) following 'false' branch...
+    |......
+    |   59 |         if (regexec(&regex_compiled, p, MAX_MATCHES, matches, 0) != 0) break;
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            ||
+    |      |            |(10) ...to here
+    |      |            (11) following 'false' branch...
+    |   60 |         if (matches[0].rm_so != 0) {
+    |      |             ~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (12) ...to here
+    |   61 |             char* new_str = (char*)malloc(matches[0].rm_so + 1);
+    |   62 |             if(new_str == NULL) {
+    |      |               ~
+    |      |               |
+    |      |               (13) following 'false' branch (when 'new_str' is non-NULL)...
+    |
+  'regex_split': event 14
+    |
+    |   68 |             memcpy(new_str, p, matches[0].rm_so);
+    |      |             ^~~~~~
+    |      |             |
+    |      |             (14) ...to here
+    |
+  'regex_split': event 15
+    |
+    |   70 |             insertArray(arr, new_str);
+    |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (15) calling 'insertArray' from 'regex_split'
+    |
+    +--> 'insertArray': events 16-19
+           |
+           |   22 | void insertArray(Array* a, char* element) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (16) entry to 'insertArray'
+           |   23 |     if (a->used == a->size) {
+           |      |        ~
+           |      |        |
+           |      |        (17) following 'false' branch...
+           |......
+           |   32 |     a->array[a->used++] = strdup(element);
+           |      |     ~~~~~~~~              ~~~~~~~~~~~~~~~
+           |      |      |                    |
+           |      |      (18) ...to here      (19) allocated here
+           |
+    <------+
+    |
+  'regex_split': events 20-23
+    |
+    |   59 |         if (regexec(&regex_compiled, p, MAX_MATCHES, matches, 0) != 0) break;
+    |      |            ~ 
+    |      |            |
+    |      |            (21) following 'false' branch...
+    |   60 |         if (matches[0].rm_so != 0) {
+    |      |             ~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (22) ...to here
+    |   61 |             char* new_str = (char*)malloc(matches[0].rm_so + 1);
+    |   62 |             if(new_str == NULL) {
+    |      |               ~
+    |      |               |
+    |      |               (23) following 'false' branch (when 'new_str' is non-NULL)...
+    |......
+    |   70 |             insertArray(arr, new_str);
+    |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (20) returning to 'regex_split' from 'insertArray'
+    |
+  'regex_split': event 24
+    |
+    |   68 |             memcpy(new_str, p, matches[0].rm_so);
+    |      |             ^~~~~~
+    |      |             |
+    |      |             (24) ...to here
+    |
+  'regex_split': event 25
+    |
+    |   70 |             insertArray(arr, new_str);
+    |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (25) calling 'insertArray' from 'regex_split'
+    |
+    +--> 'insertArray': events 26-32
+           |
+           |   22 | void insertArray(Array* a, char* element) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (26) entry to 'insertArray'
+           |   23 |     if (a->used == a->size) {
+           |      |        ~
+           |      |        |
+           |      |        (27) following 'true' branch...
+           |   24 |         a->size *= 2;
+           |      |         ~~~~~~~
+           |      |          |
+           |      |          (28) ...to here
+           |   25 |         char** temp = (char**)realloc(a->array, a->size * sizeof(char*));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (29) when 'realloc' fails
+           |   26 |         if(temp == NULL) {
+           |      |           ~
+           |      |           |
+           |      |           (30) following 'true' branch (when 'temp' is NULL)...
+           |   27 |             free(a->array);
+           |      |             ~~~~~~~~~~~~~~
+           |      |             |     |
+           |      |             |     (31) ...to here
+           |      |             (32) '<unknown>' leaks here; was allocated at (19)
+           |
+./collected_code_4/round2//heal_3/healed/problem-73.c: In function 'regex_split':
+./collected_code_4/round2//heal_3/healed/problem-73.c:55:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   55 |         free(arr);
+      |         ^~~~~~~~~
+  'regex_split': events 1-4
+    |
+    |   44 | Array* regex_split(const char* string, const char* regex_pattern) {
+    |      |        ^~~~~~~~~~~
+    |      |        |
+    |      |        (1) entry to 'regex_split'
+    |......
+    |   50 |     if(arr == NULL) return NULL;
+    |      |       ~ 
+    |      |       |
+    |      |       (2) following 'false' branch (when 'arr' is non-NULL)...
+    |   51 | 
+    |   52 |     initArray(arr, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |      |     (4) calling 'initArray' from 'regex_split'
+    |
+    +--> 'initArray': events 5-9
+           |
+           |   14 | void initArray(Array* a, size_t initialSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'initArray'
+           |   15 |     a->array = (char**)malloc(initialSize * sizeof(char*));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (6) allocated here
+           |   16 |     if(a->array == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (7) assuming '<unknown>' is non-NULL
+           |      |       (8) following 'false' branch...
+           |   17 |         exit(1);
+           |   18 |     a->used = 0;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (9) ...to here
+           |
+    <------+
+    |
+  'regex_split': events 10-13
+    |
+    |   52 |     initArray(arr, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'regex_split' from 'initArray'
+    |   53 | 
+    |   54 |     if (regcomp(&regex_compiled, regex_pattern, REG_EXTENDED)) {
+    |      |        ~
+    |      |        |
+    |      |        (11) following 'true' branch...
+    |   55 |         free(arr);
+    |      |         ~~~~~~~~~
+    |      |         |
+    |      |         (12) ...to here
+    |      |         (13) '<unknown>' leaks here; was allocated at (6)
+    |
+./collected_code_4/round2//heal_3/healed/problem-73.c: In function 'main':
+./collected_code_4/round2//heal_3/healed/problem-73.c:86:13: warning: use of possibly-NULL '*_1 + _3' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   86 |             printf("%s\n", arr->array[i]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   80 | int main(int argc, char**argv)
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   81 | {
+    |   82 |     Array* arr = regex_split("TextColor=Yellow", "[=]");
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'regex_split' from 'main'
+    |
+    +--> 'regex_split': events 3-6
+           |
+           |   44 | Array* regex_split(const char* string, const char* regex_pattern) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'regex_split'
+           |......
+           |   50 |     if(arr == NULL) return NULL;
+           |      |       ~ 
+           |      |       |
+           |      |       (4) following 'false' branch (when 'arr' is non-NULL)...
+           |   51 | 
+           |   52 |     initArray(arr, 1);
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (5) ...to here
+           |      |     (6) calling 'initArray' from 'regex_split'
+           |
+           +--> 'initArray': events 7-9
+                  |
+                  |   14 | void initArray(Array* a, size_t initialSize) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'initArray'
+                  |   15 |     a->array = (char**)malloc(initialSize * sizeof(char*));
+                  |   16 |     if(a->array == NULL)
+                  |      |       ~
+                  |      |       |
+                  |      |       (8) following 'false' branch...
+                  |   17 |         exit(1);
+                  |   18 |     a->used = 0;
+                  |      |     ~~~~~~~~~~~
+                  |      |             |
+                  |      |             (9) ...to here
+                  |
+           <------+
+           |
+         'regex_split': events 10-15
+           |
+           |   52 |     initArray(arr, 1);
+           |      |     ^~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (10) returning to 'regex_split' from 'initArray'
+           |   53 | 
+           |   54 |     if (regcomp(&regex_compiled, regex_pattern, REG_EXTENDED)) {
+           |      |        ~
+           |      |        |
+           |      |        (11) following 'false' branch...
+           |......
+           |   59 |         if (regexec(&regex_compiled, p, MAX_MATCHES, matches, 0) != 0) break;
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            ||
+           |      |            |(12) ...to here
+           |      |            (13) following 'false' branch...
+           |   60 |         if (matches[0].rm_so != 0) {
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (14) ...to here
+           |   61 |             char* new_str = (char*)malloc(matches[0].rm_so + 1);
+           |   62 |             if(new_str == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (15) following 'false' branch (when 'new_str' is non-NULL)...
+           |
+         'regex_split': event 16
+           |
+           |   68 |             memcpy(new_str, p, matches[0].rm_so);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (16) ...to here
+           |
+         'regex_split': event 17
+           |
+           |   70 |             insertArray(arr, new_str);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (17) calling 'insertArray' from 'regex_split'
+           |
+           +--> 'insertArray': events 18-21
+                  |
+                  |   22 | void insertArray(Array* a, char* element) {
+                  |      |      ^~~~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'insertArray'
+                  |   23 |     if (a->used == a->size) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (19) following 'false' branch...
+                  |......
+                  |   32 |     a->array[a->used++] = strdup(element);
+                  |      |     ~~~~~~~~              ~~~~~~~~~~~~~~~
+                  |      |      |                    |
+                  |      |      (20) ...to here      (21) this call could return NULL
+                  |
+           <------+
+           |
+         'regex_split': event 22
+           |
+           |   70 |             insertArray(arr, new_str);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (22) possible return of NULL to 'regex_split' from 'insertArray'
+           |
+    <------+
+    |
+  'main': events 23-28
+    |
+    |   82 |     Array* arr = regex_split("TextColor=Yellow", "[=]");
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (23) returning to 'main' from 'regex_split'
+    |   83 | 
+    |   84 |     if(arr != NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (24) following 'true' branch (when 'arr' is non-NULL)...
+    |   85 |         for (int i=0; i<arr->used; i++) {
+    |      |                  ~    ~~~~~~~~~~~
+    |      |                  |     |
+    |      |                  |     (26) following 'true' branch...
+    |      |                  (25) ...to here
+    |   86 |             printf("%s\n", arr->array[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |             |                 |
+    |      |             |                 (27) ...to here
+    |      |             (28) argument 1 ('*_1 + _3') from (21) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

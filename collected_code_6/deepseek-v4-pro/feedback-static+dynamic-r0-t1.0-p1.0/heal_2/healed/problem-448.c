@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+
+int64_t perrin_sum(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n == 0) {
+        return 3;
+    }
+    if (n == 1) {
+        return 3;
+    }
+    if (n == 2) {
+        return 5;
+    }
+    
+    if (n > INT_MAX - 1) {
+        return -1;
+    }
+    
+    size_t size = (size_t)(n + 1);
+    
+    if (size > SIZE_MAX / sizeof(int64_t)) {
+        return -1;
+    }
+    
+    int64_t *perrin = (int64_t *)malloc(size * sizeof(int64_t));
+    if (perrin == NULL) {
+        return -1;
+    }
+    
+    perrin[0] = 3;
+    perrin[1] = 0;
+    perrin[2] = 2;
+    
+    int64_t sum = 5;
+    
+    for (int i = 3; i <= n; i++) {
+        int64_t next;
+        if ((i - 2 < 0) || (i - 3 < 0)) {
+            free(perrin);
+            return -1;
+        }
+        next = perrin[i - 2] + perrin[i - 3];
+        perrin[i] = next;
+        if (sum > INT64_MAX - next) {
+            free(perrin);
+            return -1;
+        }
+        sum += perrin[i];
+    }
+    
+    free(perrin);
+    return sum;
+}
+
+int main(void) {
+    long input;
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%ld", &input) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (input < INT_MIN || input > INT_MAX) {
+        fprintf(stderr, "Error: input out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)input;
+    
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    int64_t result = perrin_sum(n);
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed or overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of Perrin numbers up to P(%d) = %" PRId64 "\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

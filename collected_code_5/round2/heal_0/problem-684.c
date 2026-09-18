@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+int countOccurences(char *string, char target) {
+    int count = 0;
+    for (size_t i = 0; i < strlen(string); i++) {
+        if (string[i] == target) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char string[] = "This is a test string";
+    char target = 'i';
+    int count = countOccurences(string, target);
+    printf("The character '%c' appears %d times in the string \"%s\"\n", target, count, string);
+    return 0;
+}

@@ -1,0 +1,29 @@
+./collected_code_4/round1//heal_0//problem-791.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-791.c:21:20: warning: dereference of possibly-NULL 'testRecord' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     testRecord->id = 1;
+      |     ~~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   20 |     Record* testRecord = (Record*)malloc(sizeof(Record));
+    |      |                                   ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (1) this call could return NULL
+    |   21 |     testRecord->id = 1;
+    |      |     ~~~~~~~~~~~~~~~~~~             
+    |      |                    |
+    |      |                    (2) 'testRecord' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-791.c:24:22: warning: dereference of possibly-NULL 'nestedRecord' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     nestedRecord->id = 2;
+      |     ~~~~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   23 |     Record* nestedRecord = (Record*)malloc(sizeof(Record));
+    |      |                                     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                                     |
+    |      |                                     (1) this call could return NULL
+    |   24 |     nestedRecord->id = 2;
+    |      |     ~~~~~~~~~~~~~~~~~~~~             
+    |      |                      |
+    |      |                      (2) 'nestedRecord' could be NULL: unchecked value from (1)
+    |

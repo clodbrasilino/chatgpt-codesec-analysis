@@ -1,0 +1,90 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct Map {
+    char *key; 
+    Node *nodes;
+    struct Map *next;
+} Map;
+
+Map* new_map(){
+    return malloc(sizeof(Map));
+}
+
+Node* node_create(char *value) {
+    Node *node = malloc(sizeof(Node));
+    node->value = malloc(strlen(value) + 1);
+    strcpy(node->value, value);
+    node->next = NULL;
+    return node;
+}
+
+void insert_pair(Map **map, char *key, char *value) {
+    if (*map == NULL) {
+        *map = new_map();
+        (*map)->key = malloc(strlen(key) + 1);
+        strcpy((*map)->key, key);
+        (*map)->nodes = node_create(value);
+    } else if (strcmp((*map)->key, key) == 0) {
+        Node *node = node_create(value);
+        node->next = (*map)->nodes;
+        (*map)->nodes = node;
+    } else {
+        insert_pair(&((*map)->next), key, value);
+    }
+}
+
+void print_map(Map *map) {
+    if (map == NULL){
+       return;
+    }
+  
+    printf("Key: %s\n", map->key);
+    Node* node = map->nodes;
+
+    while (node != NULL) {
+        printf("Value: %s\n", node->value);
+        node = node->next;
+    }
+    print_map(map->next);
+}
+
+void free_node(Node *node){
+    if(node == NULL)
+        return;
+  
+    free_node(node->next);
+    free(node->value);
+    free(node);
+}
+
+void free_map(Map *map) {
+    if(map == NULL)
+        return;
+      
+    free_map(map->next);
+    free_node(map->nodes);
+    free(map->key);
+    free(map);
+}
+
+int main() {
+    Map *map = NULL;
+
+    insert_pair(&map, "fruits", "apple");
+    insert_pair(&map, "fruits", "banana");
+    insert_pair(&map, "fruits", "cherry");
+    insert_pair(&map, "vegetables", "carrot");
+
+    print_map(map);
+
+    free_map(map);
+
+    return 0;
+}

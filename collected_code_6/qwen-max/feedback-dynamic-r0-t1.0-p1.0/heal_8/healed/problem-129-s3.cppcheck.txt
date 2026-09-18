@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:56:15: warning: Either the condition 'i>=0' is redundant or the array 'square[10][10]' is accessed at index square[-1][*], which is out of bounds. [negativeIndex]
+        square[i][j] = num++;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:48:15: note: Assuming that condition 'i>=0' is not redundant
+        if (i >= 0 && i < n && j >= 0 && j < n && square[i][j] != 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:56:15: note: Negative array index
+        square[i][j] = num++;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:51:19: style: Condition 'i<0' is always false [knownConditionTrueFalse]
+            if (i < 0) i = n - 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:48:15: note: Assuming that condition 'i>=0' is not redundant
+        if (i >= 0 && i < n && j >= 0 && j < n && square[i][j] != 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:50:13: note: i is incremented', new value is 0
+            i++;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_8/healed/problem-129-s3.c:51:19: note: Condition 'i<0' is always false
+            if (i < 0) i = n - 1;
+                  ^

@@ -1,0 +1,25 @@
+```C
+#include <stdio.h>
+
+int count_equal_numbers(int a, int b, int c) {
+    int count = 0;
+
+    if(a == b) count++;
+    if(a == c) count++;
+    if(b == c) count++;
+
+    return count ? (count + 1) : 0;
+}
+
+int main() {
+    int a, b, c;
+
+    printf("Enter three integers: \n");
+    scanf("%d %d %d", &a, &b, &c);
+
+    printf("The count of equal numbers is %d.\n", count_equal_numbers(a, b, c));
+
+    return 0;
+}
+```
+This program works by first asking the user to input any three integers. The integers are then checked for equality and the count of equal numbers is output. The `count_equal_numbers` function increases the count variable each time the pair of numbers are equal. If no equal numbers were found, it returns 0 - else, it returns the incremented count (as two numbers being equal counts as two in terms of the number of equal numbers in total).

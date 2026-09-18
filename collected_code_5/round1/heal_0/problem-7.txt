@@ -1,0 +1,47 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAXIMUM_WORD_LENGTH 1000
+
+void find_words_of_length(char *text) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    char pattern[] = "\\w{4,}";
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        printf("Failed to compile regex\n");
+        return;
+    }
+
+    char *word = malloc(sizeof(char) * MAXIMUM_WORD_LENGTH);
+    const char *cursor = text;
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        int length = pmatch[0].rm_eo - pmatch[0].rm_so;
+
+        if (length > MAXIMUM_WORD_LENGTH - 1) {
+            length = MAXIMUM_WORD_LENGTH - 1;
+        }
+
+        strncpy(word, cursor + pmatch[0].rm_so, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+
+        cursor += pmatch[0].rm_eo;
+    }
+
+    regfree(&regex);
+    free(word);
+}
+
+int main() {
+    char text[] = "This is a C program to find all words which are at least 4 characters long in a string";
+    find_words_of_length(text);
+    return 0;
+}
+```
+This code will find all the words in a string which are longer than or equal to 4 characters. It uses regular expressions to find the words. A check is also performed to see if the regular expression compilation was successful. If the regex compilation fails, an error message is printed and the function returns. The function `find_words_of_length()` uses a while loop to continue finding matches in the string until `regexec()` returns non-zero, indicating that there are no more matches. Then regular expression is freed to free up resources. The `word` pointer is also freed to prevent memory leaks.
+
+Please note: This code requires a POSIX compatible environment with regex.h support. Be sure that your compiler supports POSIX regex.

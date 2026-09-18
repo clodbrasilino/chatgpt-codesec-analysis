@@ -1,0 +1,35 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+double calculate_wind_chill_index(double temperature, double wind_speed)
+{
+    if(temperature < -58.0 || temperature > 41.0 || wind_speed < 0) 
+    {
+        printf("Invalid Input");
+        return -1;
+    }
+    double wind_chill_index = 35.74 + 0.6215 * temperature - 35.75 * pow(wind_speed, 0.16) + 0.4275 * temperature * pow(wind_speed, 0.16);
+    return wind_chill_index;
+}
+
+int main()
+{
+    double temperature, wind_speed;
+    
+    printf("Enter temperature in Fahrenheit: ");
+    scanf("%lf",&temperature);
+
+    printf("Enter wind speed in mph: ");
+    scanf("%lf",&wind_speed);
+
+    double wind_chill_index = calculate_wind_chill_index(temperature, wind_speed);
+    
+    if(wind_chill_index != -1)
+    {
+        printf("Wind Chill Index is %.2f\n", wind_chill_index);
+    }
+    
+    return 0;
+}
+```

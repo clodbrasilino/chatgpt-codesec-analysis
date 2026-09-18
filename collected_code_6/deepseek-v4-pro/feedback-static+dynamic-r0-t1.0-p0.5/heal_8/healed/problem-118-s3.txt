@@ -1,0 +1,169 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head);
+
+Node *create_node(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = (char *)malloc(strlen(str) + 1);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    strcpy(new_node->data, str);
+    new_node->next = NULL;
+    return new_node;
+}
+
+static void trim_whitespace_in_place(char *str) {
+    if (str == NULL || *str == '\0') {
+        return;
+    }
+    
+    char *start = str;
+    while (isspace((unsigned char)*start)) {
+        start++;
+    }
+    
+    if (*start == '\0') {
+        str[0] = '\0';
+        return;
+    }
+    
+    char *end = start + strlen(start) - 1;
+    while (end > start && isspace((unsigned char)*end)) {
+        end--;
+    }
+    *(end + 1) = '\0';
+    
+    if (start != str) {
+        memmove(str, start, (end - start + 2));
+    }
+}
+
+Node *string_to_list(const char *str, const char *delimiter) {
+    if (str == NULL || delimiter == NULL || *delimiter == '\0') {
+        return NULL;
+    }
+
+    char *str_copy = (char *)malloc(strlen(str) + 1);
+    if (str_copy == NULL) {
+        return NULL;
+    }
+    strcpy(str_copy, str);
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    char *rest = str_copy;
+    char *token;
+
+    while ((token = strtok_r(rest, delimiter, &rest)) != NULL) {
+        char *token_copy = (char *)malloc(strlen(token) + 1);
+        if (token_copy == NULL) {
+            free(str_copy);
+            free_list(head);
+            return NULL;
+        }
+        strcpy(token_copy, token);
+        
+        trim_whitespace_in_place(token_copy);
+        
+        if (token_copy[0] != '\0') {
+            Node *new_node = create_node(token_copy);
+            free(token_copy);
+            
+            if (new_node == NULL) {
+                free(str_copy);
+                free_list(head);
+                return NULL;
+            }
+
+            if (head == NULL) {
+                head = new_node;
+                tail = new_node;
+            } else {
+                tail->next = new_node;
+                tail = new_node;
+            }
+        } else {
+            free(token_copy);
+        }
+    }
+
+    free(str_copy);
+    return head;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    const char *input = "python programming";
+    const char *delimiter = " ";
+
+    Node *list = string_to_list(input, delimiter);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    input = "lists, tuples, strings";
+    delimiter = ",";
+
+    list = string_to_list(input, delimiter);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    input = "write a program";
+    delimiter = " ";
+
+    list = string_to_list(input, delimiter);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```

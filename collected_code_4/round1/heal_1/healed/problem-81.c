@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+struct Tuple {
+    int x;
+    int y;
+};
+
+struct Tuple ZipTuples(struct Tuple a, struct Tuple b) {
+
+    struct Tuple result;
+   
+    result.x = a.x + b.x;
+    result.y = a.y + b.y;
+    return result;
+}
+
+int main() {
+
+    struct Tuple tuple1 = {1, 2};
+    struct Tuple tuple2 = {3, 4};
+
+    struct Tuple zipped = ZipTuples(tuple1, tuple2);
+
+    printf("Zipped tuple: %d, %d\n", zipped.x, zipped.y); 
+    return 0;
+}

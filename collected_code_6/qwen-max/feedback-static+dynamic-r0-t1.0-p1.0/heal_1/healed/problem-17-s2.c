@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <limits.h>
+
+int calculate_perimeter(int side) {
+    if (side > 0 && side <= INT_MAX / 4) {
+        return 4 * side;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    int side;
+    printf("Enter the side of the square: ");
+    if (scanf("%d", &side) == 1) {
+        int perimeter = calculate_perimeter(side);
+        if (perimeter != 0) {
+            printf("The perimeter of the square is: %d\n", perimeter);
+        } else {
+            printf("Invalid input.\n");
+        }
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

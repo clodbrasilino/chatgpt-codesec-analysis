@@ -1,0 +1,63 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Chunk;
+
+Chunk* chunk(int *tuples, size_t tuple_size, size_t chunk_size) {
+    size_t chunk_count = tuple_size / chunk_size;
+    if (tuple_size % chunk_size != 0) chunk_count++;
+
+    Chunk *chunks = malloc(chunk_count * sizeof(Chunk));
+    if (!chunks) return NULL;
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        size_t current_chunk_size = i == chunk_count - 1 ?
+                                    tuple_size - i * chunk_size :
+                                    chunk_size;
+        chunks[i].data = malloc(current_chunk_size * sizeof(int));
+        if (!chunks[i].data) {
+            for (size_t j = 0; j < i; j++) free(chunks[j].data);
+            free(chunks);
+            return NULL;
+        }
+        chunks[i].size = current_chunk_size;
+        for (size_t j = 0; j < current_chunk_size; j++)
+            chunks[i].data[j] = tuples[i * chunk_size + j];
+    }
+    return chunks;
+}
+
+void free_chunks(Chunk *chunks, size_t chunk_count) {
+    for (size_t i = 0; i < chunk_count; i++) free(chunks[i].data);
+    free(chunks);
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    size_t tuple_size = sizeof(tuples) / sizeof(tuples[0]);
+    size_t chunk_size = 3;
+
+    Chunk *chunks = chunk(tuples, tuple_size, chunk_size);
+    if (!chunks) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t chunk_count = tuple_size / chunk_size;
+    if (tuple_size % chunk_size != 0) chunk_count++;
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        printf("[");
+        for (size_t j = 0; j < chunks[i].size; j++)
+            printf(j == chunks[i].size - 1 ? "%d" : "%d, ", chunks[i].data[j]);
+        printf("]\n");
+    }
+
+    free_chunks(chunks, chunk_count);
+    return EXIT_SUCCESS;
+}
+```

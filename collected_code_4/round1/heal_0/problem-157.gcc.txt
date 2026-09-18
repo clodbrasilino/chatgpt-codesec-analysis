@@ -1,0 +1,93 @@
+./collected_code_4/round1//heal_0//problem-157.c: In function 'run_length_encode':
+./collected_code_4/round1//heal_0//problem-157.c:24:13: warning: 'free' of 'temp' which points to memory on the stack [CWE-590] [-Wanalyzer-free-of-non-heap]
+   24 |             free(temp);
+      |             ^~~~~~~~~~
+  'main': events 1-4
+    |
+    |   40 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     Node n1 = {2, &n2};
+    |      |          ~~
+    |      |          |
+    |      |          (2) region created on stack here
+    |      |          (3) capacity: 16 bytes
+    |......
+    |   46 |     Node* encoded_list = run_length_encode(&n0);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (4) calling 'run_length_encode' from 'main'
+    |
+    +--> 'run_length_encode': events 5-7
+           |
+           |    9 | Node* run_length_encode(Node* head) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'run_length_encode'
+           |   10 |     if (head == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   14 |     Node* result = NULL;
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (7) ...to here
+           |
+         'run_length_encode': events 8-15
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (8) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         int count = 1;
+           |      |             ~~~~~  
+           |      |             |
+           |      |             (9) ...to here
+           |   20 |         while (current->next != NULL && current->next->val == current->val) {
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                      |         |
+           |      |                                      |         (11) ...to here
+           |      |                                      (10) following 'true' branch...
+           |      |                                      (12) following 'false' branch...
+           |......
+           |   27 |         *nextPtr = malloc(sizeof(Node));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (13) ...to here
+           |   28 |         if (*nextPtr == NULL) {
+           |      |            ~       
+           |      |            |
+           |      |            (14) following 'false' branch...
+           |......
+           |   32 |         (*nextPtr)->val = count;
+           |      |         ~~~~~~~~~~ 
+           |      |          |
+           |      |          (15) ...to here
+           |
+         'run_length_encode': events 16-20
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (16) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         int count = 1;
+           |      |             ~~~~~  
+           |      |             |
+           |      |             (17) ...to here
+           |   20 |         while (current->next != NULL && current->next->val == current->val) {
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                      |
+           |      |                                      (18) following 'true' branch...
+           |   21 |             count++;
+           |      |             ~~~~~~~
+           |      |                  |
+           |      |                  (19) ...to here
+           |......
+           |   24 |             free(temp);
+           |      |             ~~~~~~~~~~
+           |      |             |
+           |      |             (20) call to 'free' here
+           |

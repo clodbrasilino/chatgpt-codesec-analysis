@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_diff(int* arr, int size, int** diff) {
+  *diff = (int*) malloc((size-1)*sizeof(int));
+  if (*diff != NULL) {
+    for (int i=0; i<size-1; i++) {
+      (*diff)[i] = arr[i+1] - arr[i];
+    }
+  }
+}
+
+int main() {
+  int arr[] = {1, 2, 4, 7, 11, 16};
+  int size = sizeof(arr) / sizeof(arr[0]);
+  int* diff = NULL;
+
+  find_diff(arr, size, &diff);
+
+  if (diff != NULL) {
+    printf("The differences are: ");
+    for (int i=0; i<size-1; i++) {
+      printf("%d ", diff[i]);
+    }
+    free(diff);
+  } else {
+    printf("Error allocating memory!");
+  }
+
+  return 0;
+}

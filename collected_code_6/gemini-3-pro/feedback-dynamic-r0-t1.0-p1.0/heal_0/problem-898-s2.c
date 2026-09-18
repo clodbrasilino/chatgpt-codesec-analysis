@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* extractElements(struct Node* head, int start_index, int num_elements) {
+    if (head == NULL || num_elements <= 0 || start_index < 0) {
+        return NULL;
+    }
+
+    struct Node* new_head = NULL;
+    struct Node* new_tail = NULL;
+    struct Node* current = head;
+    int current_index = 0;
+
+    while (current != NULL && current_index < start_index) {
+        current = current->next;
+        current_index++;
+    }
+
+    int count = 0;
+    while (current != NULL && count < num_elements) {
+        struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+        if (new_node == NULL) {
+            struct Node* temp = new_head;
+            while (temp != NULL) {
+                struct Node* next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            return NULL;
+        }
+
+        new_node->data = current->data;
+        new_node->next = NULL;
+
+        if (new_head == NULL) {
+            new_head = new_node;
+            new_tail = new_node;
+        } else {
+            new_tail->next = new_node;
+            new_tail = new_node;
+        }
+
+        current = current->next;
+        count++;
+    }
+
+    return new_head;
+}
+
+void appendNode(struct Node** head, int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        return;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+
+    struct Node* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    
+    for (int i = 1; i <= 10; i++) {
+        appendNode(&head, i * 10);
+    }
+
+    struct Node* extractedList = extractElements(head, 3, 4);
+
+    printList(head);
+    printList(extractedList);
+
+    freeList(head);
+    freeList(extractedList);
+
+    return 0;
+}

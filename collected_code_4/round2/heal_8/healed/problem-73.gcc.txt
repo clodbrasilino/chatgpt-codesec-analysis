@@ -1,0 +1,186 @@
+./collected_code_4/round2//heal_8/healed/problem-73.c: In function 'insertArray':
+./collected_code_4/round2//heal_8/healed/problem-73.c:34:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |             free(a->array);
+      |             ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   98 | int main(int argc, char**argv) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   99 |     Array* arr = regex_split("TextColor=Yellow", "[=]");
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'regex_split' from 'main'
+    |
+    +--> 'regex_split': events 3-6
+           |
+           |   56 | Array* regex_split(const char* string, const char* regex_pattern) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'regex_split'
+           |......
+           |   62 |     if(arr == NULL){
+           |      |       ~ 
+           |      |       |
+           |      |       (4) following 'false' branch (when 'arr' is non-NULL)...
+           |......
+           |   66 |     initArray(arr, 1);
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (5) ...to here
+           |      |     (6) calling 'initArray' from 'regex_split'
+           |
+           +--> 'initArray': events 7-9
+                  |
+                  |   20 | void initArray(Array* a, size_t initialSize) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'initArray'
+                  |   21 |     a->array = (char**)malloc(initialSize * sizeof(char*));
+                  |   22 |     if(a->array == NULL){
+                  |      |       ~
+                  |      |       |
+                  |      |       (8) following 'false' branch...
+                  |......
+                  |   25 |     a->used = 0;
+                  |      |     ~~~~~~~~~~~
+                  |      |             |
+                  |      |             (9) ...to here
+                  |
+           <------+
+           |
+         'regex_split': events 10-15
+           |
+           |   66 |     initArray(arr, 1);
+           |      |     ^~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (10) returning to 'regex_split' from 'initArray'
+           |   67 | 
+           |   68 |     if (regcomp(&regex_compiled, regex_pattern, REG_EXTENDED)) {
+           |      |        ~
+           |      |        |
+           |      |        (11) following 'false' branch...
+           |......
+           |   75 |         if (regexec(&regex_compiled, p, MAX_MATCHES, matches, 0) != 0){
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            ||
+           |      |            |(12) ...to here
+           |      |            (13) following 'false' branch...
+           |......
+           |   78 |         if (matches[0].rm_so != 0) {
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (14) ...to here
+           |   79 |             char* new_str = (char*)malloc(matches[0].rm_so + 1);
+           |   80 |             if(new_str == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (15) following 'false' branch (when 'new_str' is non-NULL)...
+           |
+         'regex_split': event 16
+           |
+           |   86 |             memcpy(new_str, p, matches[0].rm_so);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (16) ...to here
+           |
+         'regex_split': event 17
+           |
+           |   88 |             insertArray(arr, new_str);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (17) calling 'insertArray' from 'regex_split'
+           |
+           +--> 'insertArray': events 18-24
+                  |
+                  |   29 | void insertArray(Array* a, char* element) {
+                  |      |      ^~~~~~~~~~~
+                  |      |      |
+                  |      |      (18) entry to 'insertArray'
+                  |   30 |     if (a->used == a->size) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (19) following 'false' branch...
+                  |......
+                  |   39 |     a->array[a->used++] = strdup(element);
+                  |      |     ~~~~~~~~              ~~~~~~~~~~~~~~~
+                  |      |      |                    |
+                  |      |      (20) ...to here      (21) allocated here
+                  |   40 |     if(a->array[a->used - 1] == NULL) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (22) assuming '<unknown>' is non-NULL
+                  |      |       (23) following 'false' branch...
+                  |......
+                  |   45 | }
+                  |      | ~     
+                  |      | |
+                  |      | (24) ...to here
+                  |
+           <------+
+           |
+         'regex_split': events 25-28
+           |
+           |   75 |         if (regexec(&regex_compiled, p, MAX_MATCHES, matches, 0) != 0){
+           |      |            ~ 
+           |      |            |
+           |      |            (26) following 'false' branch...
+           |......
+           |   78 |         if (matches[0].rm_so != 0) {
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (27) ...to here
+           |   79 |             char* new_str = (char*)malloc(matches[0].rm_so + 1);
+           |   80 |             if(new_str == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (28) following 'false' branch (when 'new_str' is non-NULL)...
+           |......
+           |   88 |             insertArray(arr, new_str);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (25) returning to 'regex_split' from 'insertArray'
+           |
+         'regex_split': event 29
+           |
+           |   86 |             memcpy(new_str, p, matches[0].rm_so);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (29) ...to here
+           |
+         'regex_split': event 30
+           |
+           |   88 |             insertArray(arr, new_str);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (30) calling 'insertArray' from 'regex_split'
+           |
+           +--> 'insertArray': events 31-37
+                  |
+                  |   29 | void insertArray(Array* a, char* element) {
+                  |      |      ^~~~~~~~~~~
+                  |      |      |
+                  |      |      (31) entry to 'insertArray'
+                  |   30 |     if (a->used == a->size) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (32) following 'true' branch...
+                  |   31 |         a->size *= 2;
+                  |      |         ~~~~~~~
+                  |      |          |
+                  |      |          (33) ...to here
+                  |   32 |         char** temp = (char**)realloc(a->array, a->size * sizeof(char*));
+                  |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                               |
+                  |      |                               (34) when 'realloc' fails
+                  |   33 |         if(temp == NULL) {
+                  |      |           ~
+                  |      |           |
+                  |      |           (35) following 'true' branch (when 'temp' is NULL)...
+                  |   34 |             free(a->array);
+                  |      |             ~~~~~~~~~~~~~~
+                  |      |             |     |
+                  |      |             |     (36) ...to here
+                  |      |             (37) '<unknown>' leaks here; was allocated at (21)
+                  |

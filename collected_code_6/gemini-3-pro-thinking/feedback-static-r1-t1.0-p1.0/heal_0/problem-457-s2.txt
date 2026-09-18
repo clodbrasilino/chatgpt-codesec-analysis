@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Sublist;
+
+typedef struct {
+    Sublist *sublists;
+    size_t count;
+} ListOfSublists;
+
+Sublist* find_min_length_sublist(const ListOfSublists *list);
+
+Sublist* find_min_length_sublist(const ListOfSublists *list) {
+    size_t i;
+    Sublist *min_sublist;
+
+    if (list == NULL || list->sublists == NULL || list->count == 0) {
+        return NULL;
+    }
+
+    min_sublist = &list->sublists[0];
+
+    for (i = 1; i < list->count; ++i) {
+        if (list->sublists[i].length < min_sublist->length) {
+            min_sublist = &list->sublists[i];
+        }
+    }
+
+    return min_sublist;
+}
+
+int main(void) {
+    ListOfSublists list;
+    Sublist *min_sublist;
+    size_t i;
+    size_t j;
+
+    list.count = 3;
+    list.sublists = (Sublist*)malloc(list.count * sizeof(Sublist));
+    if (list.sublists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list.count; ++i) {
+        list.sublists[i].length = (list.count - i) * 2;
+        list.sublists[i].data = (int*)malloc(list.sublists[i].length * sizeof(int));
+        
+        if (list.sublists[i].data == NULL) {
+            for (j = 0; j < i; ++j) {
+                free(list.sublists[j].data);
+            }
+            free(list.sublists);
+            return EXIT_FAILURE;
+        }
+
+        for (j = 0; j < list.sublists[i].length; ++j) {
+            list.sublists[i].data[j] = (int)j;
+        }
+    }
+
+    min_sublist = find_min_length_sublist(&list);
+    if (min_sublist != NULL) {
+        printf("%zu\n", min_sublist->length);
+    }
+
+    for (i = 0; i < list.count; ++i) {
+        free(list.sublists[i].data);
+    }
+    free(list.sublists);
+
+    return EXIT_SUCCESS;
+}
+```

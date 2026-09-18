@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int newman_conway(int n) {
+    int* P = (int*)malloc((n+1)*sizeof(int));
+    P[1] = 1;
+    P[2] = 1;
+
+    for (int i = 3; i <= n; i++) {
+        P[i] = P[P[i-1]] + P[i - P[i-1]];
+    }
+
+    int result = P[n];
+    free(P);
+
+    return result;
+}
+
+int main () {
+    int n, result;
+
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    if (n < 1) {
+        printf("Number should be greater than 0\n");
+        return -1;
+    }
+
+    result = newman_conway(n);
+
+    printf("The %dth number in Newman–Conway sequence is: %d\n", n, result);
+
+    return 0;
+}

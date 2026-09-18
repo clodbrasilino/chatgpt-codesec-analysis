@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_subsequences(const int *arr, size_t n, int k) {
+    if (arr == NULL || k <= 0) {
+        return 0;
+    }
+
+    unsigned long long *dp = (unsigned long long *)calloc((size_t)k, sizeof(unsigned long long));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    unsigned long long *next_dp = (unsigned long long *)malloc((size_t)k * sizeof(unsigned long long));
+    if (next_dp == NULL) {
+        free(dp);
+        return 0;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        for (int j = 0; j < k; j++) {
+            next_dp[j] = dp[j];
+        }
+
+        if (arr[i] < k) {
+            next_dp[arr[i]] += 1;
+        }
+
+        for (int p = 0; p < k; p++) {
+            if (dp[p] > 0) {
+                unsigned long long new_p = (unsigned long long)p * (unsigned long long)arr[i];
+                if (new_p < (unsigned long long)k) {
+                    next_dp[new_p] += dp[p];
+                }
+            }
+        }
+
+        for (int j = 0; j < k; j++) {
+            dp[j] = next_dp[j];
+        }
+    }
+
+    unsigned long long total = 0;
+    for (int p = 0; p < k; p++) {
+        total += dp[p];
+    }
+
+    free(dp);
+    free(next_dp);
+
+    return total;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+    
+    unsigned long long result = count_subsequences(arr, n, k);
+    printf("%llu\n", result);
+    
+    return 0;
+}
+```

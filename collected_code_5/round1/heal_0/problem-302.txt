@@ -1,0 +1,21 @@
+```c
+#include<stdio.h>
+
+unsigned int MostSignificantBit(unsigned int number) {
+    int bitIndex = -1;
+    for (int i=0; i<32; i++) {
+        if ((number & (1 << i)) != 0) {
+           bitIndex = i;
+        }
+    }
+    return bitIndex;
+}
+
+int main() {
+    unsigned int number = 13948;
+    unsigned int MSBit;
+    MSBit = MostSignificantBit(number);
+    printf("The most significant set bit of %u is: %u\n", number, MSBit);
+    return 0;
+}
+```

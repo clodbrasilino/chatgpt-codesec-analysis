@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include<stdlib.h>
+
+void multi_tuple(int *tuple1, int *tuple2, int *result, int size) {
+    for(int i = 0; i < size; i++) {
+        result[i] = tuple1[i] * tuple2[i];
+    }
+}
+
+int main() {
+    int size = 3;
+    int *tuple1 = malloc(sizeof(int) * size);
+    int *tuple2 = malloc(sizeof(int) * size);
+    int *result = malloc(sizeof(int) * size);
+
+    if (tuple1 == NULL || tuple2 == NULL || result == NULL) {
+        /* Possible weaknesses found:
+         *  Potential leak of memory pointed to by 'result' [unix.Malloc]
+         *  Potential leak of memory pointed to by 'tuple2' [unix.Malloc]
+         *  Potential leak of memory pointed to by 'tuple1' [unix.Malloc]
+         */
+        printf("Failed to allocate memory.\n");
+        return EXIT_FAILURE;
+    }
+
+    tuple1[0] = 1;
+    tuple1[1] = 2;
+    tuple1[2] = 3;
+
+    tuple2[0] = 4;
+    tuple2[1] = 5;
+    tuple2[2] = 6;
+
+    multi_tuple(tuple1, tuple2, result, size);
+
+    for(int i = 0; i < size; i++) {
+        printf("result[%d]=%d\n", i, result[i]);
+    }
+
+    free(tuple1);
+    free(tuple2);
+    free(result);
+
+    return 0;
+}

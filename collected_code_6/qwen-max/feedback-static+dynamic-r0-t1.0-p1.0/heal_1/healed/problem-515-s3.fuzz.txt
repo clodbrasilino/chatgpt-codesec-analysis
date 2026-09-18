@@ -1,0 +1,4 @@
+problem-515-s3.c:9:16:medium:UBSan: variable length array bound evaluates to non-positive value 0 (AFL crash: id:000004,sig:06,src:000002,time:579,execs:160,op:havoc,rep:2)
+problem-515-s3.c:14:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000004,sig:06,src:000002,time:579,execs:160,op:havoc,rep:2)
+problem-515-s3.c:21:31:medium:UBSan: index -3 out of bounds for type 'bool[m]' (AFL crash: id:000005,sig:06,src:000002,time:3391,execs:736,op:havoc,rep:2)
+problem-515-s3.c:27:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:13,execs:10,op:(null),pos:0; likely memory-safety defect

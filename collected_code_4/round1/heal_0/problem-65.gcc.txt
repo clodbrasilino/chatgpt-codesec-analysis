@@ -1,0 +1,23 @@
+./collected_code_4/round1//heal_0//problem-65.c: In function 'insertNode':
+./collected_code_4/round1//heal_0//problem-65.c:23:44: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   23 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+      |                                            ^~~~~~
+./collected_code_4/round1//heal_0//problem-65.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-65.c:23:44: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   23 |     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+      |                                            ^~~~~~
+./collected_code_4/round1//heal_0//problem-65.c:23:44: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round1//heal_0//problem-65.c:28:9: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+   28 |         exit(EXIT_FAILURE);
+      |         ^~~~
+./collected_code_4/round1//heal_0//problem-65.c:28:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round1//heal_0//problem-65.c:28:9: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-65.c:28:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round1//heal_0//problem-65.c:28:14: error: 'EXIT_FAILURE' undeclared (first use in this function)
+   28 |         exit(EXIT_FAILURE);
+      |              ^~~~~~~~~~~~
+./collected_code_4/round1//heal_0//problem-65.c:28:14: note: 'EXIT_FAILURE' is defined in header '<stdlib.h>'; did you forget to '#include <stdlib.h>'?
+./collected_code_4/round1//heal_0//problem-65.c:28:14: note: each undeclared identifier is reported only once for each function it appears in

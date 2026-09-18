@@ -1,0 +1,40 @@
+In C, the concept of dictionaries or maps doesn't exist as an inbuilt data structure. Thus, you need to create your own structure like hashmap or linked list to work with key-value pairs. However, we can demonstrate how to remove empty/NULL items from an array-like structure instead.
+
+```C
+#include<stdio.h>
+
+void dropEmptyItems(int arr[], int n) {
+    // Pointer to iterate the array
+    int *temp = arr;
+
+    // Traversing the array
+    for (int i = 0; i < n; i++) {
+        // If element != 0, put the element at next position from beginning
+        if (arr[i] != 0)
+            *(temp++) = arr[i];
+    }
+
+    // Fill rest of the array as 0
+    while (temp < (arr + n))
+        *(temp++) = 0;
+}
+	
+int main() {
+    // initialize array
+    int arr[] = { 0, 1, 2, 0, 3, 0, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    dropEmptyItems(arr, n);
+
+    //Print modified array
+    printf("Modified array is: ");
+    for (int i=0; i<n; i++)
+        printf("%d ", arr[i]);
+
+    return 0;
+}
+```
+
+This program will move all non-zero elements to the front of the array, and fill the remaining positions with 0 (considering 0 as a null or empty value). The function dropEmptyItems() iterates the array and whenever it encounters a non-zero value, it assigns this value at the current position of an auxiliary pointer "temp". Next, we fill the remaining array elements using the 'temp' pointer.
+
+This is not exactly the same as removing from a dictionary but it provides a concept on how to deal with similar stuff in C as dictionaries are not directly supported.

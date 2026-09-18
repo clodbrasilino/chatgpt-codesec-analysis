@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int findExtra(int arr1[], int arr2[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (arr1[i] != arr2[i]){
+            return i;
+        }
+    }
+    return size;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5, 6};
+    int arr2[] = {1, 2, 3, 4, 6};
+    int size = sizeof(arr2) / sizeof(arr2[0]);
+    int idx = findExtra(arr1, arr2, size);
+
+    printf("The extra element is at index %d\n", idx);
+
+    return 0;
+}

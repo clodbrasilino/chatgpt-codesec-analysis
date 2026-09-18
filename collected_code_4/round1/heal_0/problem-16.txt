@@ -1,0 +1,50 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool check_sequence(const char* str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t length = strlen(str);
+    if (length == 0) {
+        return false;
+    }
+
+    for (int i = 0; i < length; ++i) {
+        if (str[i] == '_') {
+            if (i == 0 || i == length - 1) {
+                return false;
+            }
+            else {
+                if (!(islower(str[i - 1]) && islower(str[i + 1]))) {
+                    return false;
+                }
+            }
+        } 
+        else if (!islower(str[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    const char* str1 = "this_is_a_test";
+    const char* str2 = "This_is_Not_A_Test";
+    const char* str3 = "_this_is_warn_";
+    const char* str4 = "this__iswarn";
+
+    printf("str1: %s\n", check_sequence(str1) ? "Valid" : "Invalid");
+    printf("str2: %s\n", check_sequence(str2) ? "Valid" : "Invalid");
+    printf("str3: %s\n", check_sequence(str3) ? "Valid" : "Invalid");
+    printf("str4: %s\n", check_sequence(str4) ? "Valid" : "Invalid");
+
+    return 0;
+}
+```

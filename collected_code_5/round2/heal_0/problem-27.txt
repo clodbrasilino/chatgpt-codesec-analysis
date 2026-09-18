@@ -1,0 +1,59 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define SIZE 100
+
+void remove_digits(char *str)
+{
+    int i, j = 0;
+    int len = strlen(str);
+    char *str_no_digits = (char *)malloc(len+1);
+    if(str_no_digits == NULL)
+    {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < len; i++)
+    {
+        if(!isdigit(str[i]))
+        {
+            str_no_digits[j] = str[i];
+            j++;
+        }
+    }
+    str_no_digits[j] = '\0';
+
+    strcpy(str, str_no_digits);
+    free(str_no_digits);
+}
+
+int main()
+{
+    char list_of_strings[SIZE][SIZE] = {"hello1", "world2", "test123", "C4ode5"};
+    int i;
+
+    for(i = 0; i < SIZE; i++)
+    {
+        if(list_of_strings[i][0] == '\0')
+        {
+            break;
+        }
+        remove_digits(list_of_strings[i]);
+    }
+
+    for(i = 0; i < SIZE; i++)
+    {
+        if(list_of_strings[i][0] == '\0')
+        {
+            break;
+        }
+        printf("%s\n", list_of_strings[i]);
+    }
+
+    return 0;
+}
+```

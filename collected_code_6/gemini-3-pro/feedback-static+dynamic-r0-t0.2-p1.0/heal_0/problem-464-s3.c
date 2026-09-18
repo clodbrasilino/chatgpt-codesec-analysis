@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+} Dictionary;
+
+bool are_all_values_same(const Dictionary *dict) {
+    if (dict == NULL || dict->items == NULL) {
+        return false;
+    }
+    if (dict->size <= 1) {
+        return true;
+    }
+
+    int first_value = dict->items[0].value;
+    for (size_t i = 1; i < dict->size; i++) {
+        if (dict->items[i].value != first_value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    Dictionary dict;
+    dict.size = 3;
+    dict.items = (KeyValuePair *)malloc(dict.size * sizeof(KeyValuePair));
+    
+    if (dict.items == NULL) {
+        return 1;
+    }
+
+    dict.items[0].key = "a";
+    dict.items[0].value = 5;
+    dict.items[1].key = "b";
+    dict.items[1].value = 5;
+    dict.items[2].key = "c";
+    dict.items[2].value = 5;
+
+    bool result = are_all_values_same(&dict);
+    
+    if (result) {
+        printf("All values are the same.\n");
+    } else {
+        printf("Values are not the same.\n");
+    }
+
+    free(dict.items);
+    dict.items = NULL;
+
+    return 0;
+}

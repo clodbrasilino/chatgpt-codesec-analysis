@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+double rectangleArea(double length, double breadth) {
+    if(length <= 0 || breadth <= 0) {
+        printf("Invalid input\n");
+        return -1;
+    }
+    double area = length * breadth;
+    return area;
+}
+
+int main() {
+    double length;
+    double breadth;
+   
+    printf("Enter the length of the rectangle: ");
+    scanf("%lf", &length);
+
+    printf("Enter the breadth of the rectangle: ");
+    scanf("%lf", &breadth);
+    
+    double result = rectangleArea(length, breadth);
+    if(result != -1)
+        printf("Area of the rectangle is: %lf\n", result);
+    return 0;
+}
+```

@@ -1,0 +1,34 @@
+
+#include <stdio.h>
+#include <math.h>
+
+double areaOfPentagon(double sideLength) {
+    double area;
+    if(sideLength <= 0){
+        return -1;
+    }
+    
+    area = (5.0 / 4.0) * sideLength * sideLength * (1 / tan(M_PI / 5.0));
+    return area;
+}
+
+int main() {
+    double sideLength;
+    double area;
+
+    printf("Enter the side length of the pentagon:\n");
+    if(scanf("%lf", &sideLength) != 1){
+        printf("Input error.\n");
+        return -1;
+    }
+
+    area = areaOfPentagon(sideLength);
+    if(area == -1){
+        printf("Invalid side length.\n");
+        return -1;
+    } 
+
+    printf("Area of the pentagon: %.2lf\n", area);
+
+    return 0;
+}

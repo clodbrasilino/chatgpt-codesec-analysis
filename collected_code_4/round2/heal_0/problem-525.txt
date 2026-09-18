@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+typedef struct {
+    Point start;
+    Point end;
+} Line;
+
+bool areParallel(Line line1, Line line2) {
+    int dx1 = line1.end.x - line1.start.x;
+    int dy1 = line1.end.y - line1.start.y;
+    int dx2 = line2.end.x - line2.start.x;
+    int dy2 = line2.end.y - line2.start.y;
+
+    if(dx1*dy2 == dy1*dx2) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    Line line1 = {{1, 2}, {3, 4}};
+    Line line2 = {{2, 4}, {4, 6}};
+
+    if(areParallel(line1, line2)) {
+        printf("The lines are parallel.\n");
+    } else {
+        printf("The lines are not parallel.\n");
+    }
+
+    return 0;
+}
+```

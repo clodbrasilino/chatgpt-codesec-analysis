@@ -1,0 +1,8 @@
+./collected_code_4/round2//heal_0/problem-435.c: In function 'getLastDigit':
+./collected_code_4/round2//heal_0/problem-435.c:4:12: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+    4 |     return abs(number % 10);
+      |            ^~~
+./collected_code_4/round2//heal_0/problem-435.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

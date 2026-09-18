@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+
+int checkEvenParity(int num) {
+    int count = 0;
+    while (num) {
+        if (num & 1)
+            count++;
+        num >>= 1;
+    }
+    return (count % 2 == 0) ? 1 : 0;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    if(scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 0;
+    }
+    if(checkEvenParity(num))
+        printf("Number has even parity\n");
+    else
+        printf("Number has odd parity\n");
+    return 0;
+}
+```
+In this code, the function `checkEvenParity` counts the number of 1's in the binary representation of the given integer. If the count is even, it means the number has even parity and the function returns 1. Otherwise, it has odd parity and the function returns 0.
+
+The `main` function asks the user for a number, then checks its parity by calling `checkEvenParity`. It then prints whether the integer has even or odd parity. If the user entered something that isn't a number, `scanf` will return less than 1, and the program will print an error message and exit.
+
+This code avoids the mentioned programming mistakes: 
+- CWE-664: Here, we are not dealing with resources that require management over their lifetime, such as file handles or memory that needs to be allocated and freed.
+- CWE-703: The return value of `scanf` is checked to see if the user entered a valid number.
+- CWE-710: The code follows the conventions for C, such as returning zero from `main` to indicate success and using a consistent brace style.

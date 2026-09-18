@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+long long count_rectangles(long long r) {
+    if (r <= 0) {
+        return 0;
+    }
+    
+    long long count = 0;
+    unsigned __int128 limit = (unsigned __int128)4 * r * r;
+    long long h = 1;
+    
+    while ((unsigned __int128)h * h <= limit) {
+        h++;
+    }
+    h--;
+    
+    for (long long w = 1; (unsigned __int128)w * w < limit; w++) {
+        while (h > 0 && ((unsigned __int128)w * w + (unsigned __int128)h * h) > limit) {
+            h--;
+        }
+        count += h;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    long long r = 0;
+    
+    if (scanf("%lld", &r) != 1) {
+        return 1;
+    }
+    
+    if (r < 0) {
+        return 1;
+    }
+    
+    long long result = count_rectangles(r);
+    printf("%lld\n", result);
+    
+    return 0;
+}

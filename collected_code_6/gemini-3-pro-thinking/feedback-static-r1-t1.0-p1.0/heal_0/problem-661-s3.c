@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max2(long long a, long long b) {
+    return (a > b) ? a : b;
+}
+
+long long max3(long long a, long long b, long long c) {
+    return max2(max2(a, b), c);
+}
+
+long long maxSumNoThreeConsecutive(const int *arr, size_t n) {
+    if (arr == NULL) {
+        return -1;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return arr[0];
+    }
+    if (n == 2) {
+        return (long long)arr[0] + arr[1];
+    }
+
+    long long *dp = (long long *)malloc(n * sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = arr[0];
+    dp[1] = (long long)arr[0] + arr[1];
+    dp[2] = max3(dp[1], (long long)arr[0] + arr[2], (long long)arr[1] + arr[2]);
+
+    for (size_t i = 3; i < n; i++) {
+        long long choice1 = dp[i - 1];
+        long long choice2 = dp[i - 2] + arr[i];
+        long long choice3 = dp[i - 3] + arr[i] + arr[i - 1];
+        dp[i] = max3(choice1, choice2, choice3);
+    }
+
+    long long result = dp[n - 1];
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {3, 0, 3, 2, 20, 1, 1, 3};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    long long max_sum = maxSumNoThreeConsecutive(arr, n);
+    
+    if (max_sum != -1) {
+        printf("%lld\n", max_sum);
+        return EXIT_SUCCESS;
+    }
+    
+    return EXIT_FAILURE;
+}

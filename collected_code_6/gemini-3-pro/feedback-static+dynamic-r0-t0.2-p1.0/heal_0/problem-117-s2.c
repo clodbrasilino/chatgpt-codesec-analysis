@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    float* array;
+    size_t size;
+} FloatArray;
+
+int is_convertible_to_float(const char* str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+
+    char* endptr;
+    strtof(str, &endptr);
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    return *endptr == '\0';
+}
+
+FloatArray convert_to_floats(const char** list, size_t list_size) {
+    FloatArray result;
+    result.array = NULL;
+    result.size = 0;
+
+    if (list == NULL || list_size == 0) {
+        return result;
+    }
+
+    result.array = (float*)malloc(list_size * sizeof(float));
+    if (result.array == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < list_size; i++) {
+        if (list[i] != NULL && is_convertible_to_float(list[i])) {
+            result.array[result.size] = strtof(list[i], NULL);
+            result.size++;
+        }
+    }
+
+    if (result.size < list_size) {
+        float* temp = (float*)realloc(result.array, result.size * sizeof(float));
+        if (temp != NULL || result.size == 0) {
+            result.array = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* input_list[] = {
+        "3.14",
+        "not a float",
+        "-42.5",
+        "  100.0  ",
+        NULL,
+        "0",
+        "abc"
+    };
+    size_t list_size = sizeof(input_list) / sizeof(input_list[0]);
+
+    FloatArray converted = convert_to_floats(input_list, list_size);
+
+    for (size_t i = 0; i < converted.size; i++) {
+        printf("%f\n", converted.array[i]);
+    }
+
+    free(converted.array);
+
+    return 0;
+}

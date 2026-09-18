@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    if (k > n - k) k = n - k;
+    
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        if (result > LLONG_MAX / (n - i)) {
+            return 0;
+        }
+        result = result * (n - i);
+        result = result / (i + 1);
+    }
+    return result;
+}
+
+long long sum_of_product_binomial(int n) {
+    if (n < 0) return 0;
+    
+    long long sum = 0;
+    for (int i = 0; i <= n; i++) {
+        long long bc = binomial_coefficient(n, i);
+        if (bc == 0 && !(i == 0 || i == n)) {
+            continue;
+        }
+        if (bc > 0 && sum > LLONG_MAX - (bc * bc)) {
+            return 0;
+        }
+        if (bc > 0 && bc > LLONG_MAX / bc) {
+            return 0;
+        }
+        long long product = bc * bc;
+        if (sum > LLONG_MAX - product) {
+            return 0;
+        }
+        sum += product;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_product_binomial(n);
+    if (result == 0 && n > 0) {
+        fprintf(stderr, "Overflow detected\n");
+        return EXIT_FAILURE;
+    }
+    printf("Sum of product of binomial coefficients: %lld\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

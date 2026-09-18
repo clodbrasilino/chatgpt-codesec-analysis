@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int minOperations(int a, int b) {  
+    int counter = 0;
+    
+    if (a == b) {
+        return 0;  
+    }
+    
+    while (a != b) {
+        if(a > b) {
+            a -= b;
+        } else {
+            b -= a;
+        }
+        counter++;
+    }
+    return counter;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter first number: ");
+    scanf("%d", &num1);
+    printf("\nEnter second number: ");
+    scanf("%d", &num2);
+    printf("\nThe minimum operations required to make two numbers equal are: %d\n", minOperations(num1, num2));
+    return 0;
+}

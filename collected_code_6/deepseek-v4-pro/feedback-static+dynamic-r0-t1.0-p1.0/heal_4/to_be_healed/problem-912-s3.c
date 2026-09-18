@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long gcd(unsigned long long a, unsigned long long b) {
+    while (b != 0) {
+        unsigned long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+unsigned long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    unsigned long long result = 1;
+    for (int i = 0; i < k; i++) {
+        if (result > ULLONG_MAX / (n - i)) {
+            return 0;
+        }
+        result = result * (n - i) / (i + 1);
+    }
+    return result;
+}
+
+unsigned long long lobb_number(int m, int n) {
+    if (m < 0 || n < 0) {
+        return 0;
+    }
+
+    if (n > INT_MAX / 2) {
+        return 0;
+    }
+    int two_n = 2 * n;
+
+    if (m > INT_MAX - n) {
+        return 0;
+    }
+    int m_plus_n = m + n;
+
+    /* Possible weaknesses found:
+     *  Assuming that condition 'm_plus_n<0' is not redundant
+     */
+    if (two_n < 0 || m_plus_n < 0) {
+        return 0;
+    }
+
+    unsigned long long binom = binomial_coefficient(two_n, m_plus_n);
+
+    /* Possible weaknesses found:
+     *  Condition 'm_plus_n>=0' is always true [knownConditionTrueFalse]
+     *  Condition 'm_plus_n>=0' is always true
+     */
+    if (binom == 0 && two_n >= m_plus_n && m_plus_n >= 0) {
+        return 0;
+    }
+
+    unsigned long long numerator = 2ULL * m + 1;
+
+    if (binom > 0 && numerator > ULLONG_MAX / binom) {
+        return 0;
+    }
+    unsigned long long product = numerator * binom;
+
+    /* Possible weaknesses found:
+     *  Assignment 'denominator=(unsigned long long)m+n+1', assigned value is greater than 0
+     */
+    unsigned long long denominator = (unsigned long long)m + n + 1;
+
+    /* Possible weaknesses found:
+     *  Condition 'denominator==0' is always false [knownConditionTrueFalse]
+     *  Condition 'denominator==0' is always false
+     */
+    if (denominator == 0) {
+        return 0;
+    }
+
+    return product / denominator;
+}
+
+int main(void) {
+    int m, n;
+
+    printf("Enter m: ");
+    if (scanf("%d", &m) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (m < 0 || n < 0) {
+        fprintf(stderr, "Inputs must be non-negative\n");
+        return 1;
+    }
+
+    unsigned long long result = lobb_number(m, n);
+    printf("L(%d, %d) = %llu\n", m, n, result);
+
+    return 0;
+}

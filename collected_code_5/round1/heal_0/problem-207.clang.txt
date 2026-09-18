@@ -1,0 +1,13 @@
+collected_code_5/round1/heal_0/problem-207.c:9:24: error: too few arguments to function call, expected 3, have 2
+    9 |     return min(min(x, y), z);
+      |                ~~~     ^
+collected_code_5/round1/heal_0/problem-207.c:8:5: note: 'min' declared here
+    8 | int min(int x, int y, int z) {
+      |     ^   ~~~~~~~~~~~~~~~~~~~
+collected_code_5/round1/heal_0/problem-207.c:30:40: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   30 |                 dp[i][j][str[i - 1]] = max(dp[i][j][str[i - 1]],
+      |                                        ^
+collected_code_5/round1/heal_0/problem-207.c:41:18: error: call to undeclared function 'max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   41 |         result = max(result, dp[n][n][k]);
+      |                  ^
+3 errors generated.

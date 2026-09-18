@@ -1,0 +1,41 @@
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} tuple;
+
+typedef struct node {
+    struct node* next;
+    tuple data;
+} node;
+
+node* add_tuple(node* head, tuple* item) {
+    node* new_node = malloc(sizeof(node));
+    if (new_node == NULL) {
+        printf("Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = *item;
+    new_node->next = head;
+    return new_node;
+}
+
+int main() {
+    node* head = NULL;
+    tuple item = {10, 20};
+    head = add_tuple(head, &item);
+    if(head != NULL) {
+        printf("Tuple added to the list: (%d, %d)\n", head->data.x, head->data.y);
+        free(head);
+    }
+    return 0;
+}
+```
+The code above is a C program that defines a tuple as a struct with two integer elements. Nodes are defined as another struct that contain one tuple and a pointer to the next node. Tuples are added to the beginning of the linked list.
+
+The helper function `add_tuple()` creates a new node, assigns a given tuple to that node, and adds it to the list. If memory allocation fails, it prints an error message and exits the program with `EXIT_FAILURE`.
+
+Finally, in the `main()` function, a tuple is initialized and added to the list. If the tuple is added successfully, the tuple is printed, and the function finishes by deallocating the memory.

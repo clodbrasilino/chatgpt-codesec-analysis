@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+//Defining the Tuple Data Type
+typedef struct {
+    int first, second;
+} Tuple;
+
+//Function to find the maximum of two tuples
+Tuple max_tuple(Tuple t1, Tuple t2) {
+    Tuple max;
+    max.first = (t1.first > t2.first) ? t1.first : t2.first;
+    max.second = (t1.second > t2.second) ? t1.second : t2.second;
+    return max;
+}
+
+int main() {
+    Tuple t1 = {10, 20}, t2 = {30, 15}, t3;
+
+    t3 = max_tuple(t1, t2);
+
+    printf("Max Tuple is: {%d, %d}\n", t3.first, t3.second);
+
+    return 0;
+}

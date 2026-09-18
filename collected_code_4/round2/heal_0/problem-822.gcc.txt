@@ -1,0 +1,16 @@
+./collected_code_4/round2//heal_0/problem-822.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-822.c:43:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   43 |         printf("The password is valid");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-822.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-822.c:43:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   43 |         printf("The password is valid");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-822.c:43:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_0/problem-822.c:45:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   45 |         printf("The password is not valid");
+      |         ^~~~~~
+./collected_code_4/round2//heal_0/problem-822.c:45:9: note: include '<stdio.h>' or provide a declaration of 'printf'

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **keys;
+    char **values;
+    size_t size;
+} Dictionary;
+
+bool are_all_dictionaries_empty(const Dictionary *dict_list, size_t list_size) {
+    if (dict_list == NULL) {
+        return true;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (dict_list[i].size > 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    Dictionary dicts[3];
+    
+    dicts[0].keys = NULL;
+    dicts[0].values = NULL;
+    dicts[0].size = 0;
+
+    dicts[1].keys = NULL;
+    dicts[1].values = NULL;
+    dicts[1].size = 0;
+
+    dicts[2].keys = NULL;
+    dicts[2].values = NULL;
+    dicts[2].size = 0;
+
+    bool result = are_all_dictionaries_empty(dicts, 3);
+    
+    if (result) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+
+    dicts[1].size = 5;
+
+    result = are_all_dictionaries_empty(dicts, 3);
+    
+    if (result) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+
+    return 0;
+}

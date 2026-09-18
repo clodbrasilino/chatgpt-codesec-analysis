@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int calculateCombinations(int n, int k) {
+    if (k > n || k < 0) return 0;
+    if (k == 0 || k == n) return 1;
+    
+    unsigned long long int res = 1;
+    if (k > n - k) k = n - k;
+    
+    for (int i = 0; i < k; ++i) {
+        res = (unsigned long long int)(((unsigned __int128)res * (n - i)) / (i + 1));
+    }
+    return res;
+}
+
+unsigned long long int countBinarySequences(int n) {
+    if (n < 0) return 0;
+    
+    unsigned long long int total_count = 0;
+    for (int k = 0; k <= n; ++k) {
+        unsigned long long int combinations = calculateCombinations(n, k);
+        total_count = (unsigned long long int)((unsigned __int128)total_count + ((unsigned __int128)combinations * combinations));
+    }
+    return total_count;
+}
+
+int main() {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+    
+    unsigned long long int result = countBinarySequences(n);
+    printf("%llu\n", result);
+    
+    return 0;
+}

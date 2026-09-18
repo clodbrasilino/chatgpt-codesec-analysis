@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 3
+
+struct urlDate {
+    int year;
+    int month;
+    int day;
+};
+
+int extract_date_from_url(const char *url, struct urlDate *date) {
+    regex_t regex;
+    regmatch_t matches[MAX_MATCHES];
+
+    if (regcomp(&regex, "[0-9]{4}/[0-9]{2}/[0-9]{2}", 0)) {
+        return -1;
+    }
+
+    if (regexec(&regex, url, MAX_MATCHES, matches, 0)) {
+        regfree(&regex);
+        return -1;
+    }
+
+    char year[5], month[3], day[3];
+
+    strncpy(year, &url[matches[0].rm_so], 4);
+    strncpy(month, &url[matches[0].rm_so + 5], 2);
+    strncpy(day, &url[matches[0].rm_so + 8], 2);
+
+    year[4] = month[2] = day[2] = '\0';
+
+    date->year = atoi(year);
+    date->month = atoi(month);
+    date->day = atoi(day);
+
+    regfree(&regex);
+
+    return 0;
+}
+
+int main() {
+    const char *url = "https://www.example.com/2022/12/25/happy-holidays.html";
+    struct urlDate date;
+
+    if (extract_date_from_url(url, &date)) {
+        printf("Failed to extract date from URL\n");
+        return 1;
+    }
+
+    printf("Year: %d\n", date.year);
+    printf("Month: %d\n", date.month);
+    printf("Day: %d\n", date.day);
+
+    return 0;
+}

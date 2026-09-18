@@ -1,0 +1,62 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_SIZE 1000
+
+typedef struct {
+    int value;
+    int length;
+} RunLength;
+
+RunLength** decodeRunLength(int* arr, int len, int* newSize) {
+    if (!arr || len <= 0) return NULL;
+
+    int count = 0;
+    RunLength** res = (RunLength**)malloc(MAX_SIZE * sizeof(RunLength*));
+    if (!res) return NULL;
+
+    for(int i = 0; i < len; i += 2){
+        RunLength* cur_runlength = (RunLength *) malloc(sizeof(RunLength));
+        if (!cur_runlength) {
+            for (int j = 0; j < i / 2; j++) {
+                free(res[j]);
+            }
+            free(res);
+            return NULL;
+        }
+        cur_runlength->value = arr[i];
+        cur_runlength->length = arr[i + 1];
+
+        res[count] = cur_runlength;
+        count++;
+    }
+
+    *newSize = count;
+    return res;
+}
+
+void freeDecodeRunLength(RunLength** arr, int len){
+    if (!arr) return;
+
+    for (int i = 0; i<len; i++){
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+int main(void) {
+    int arr[] = {1, 3, 2, 1, 3, 2, 4, 2};
+    int newSize = 0;
+    
+    RunLength** result = decodeRunLength(arr, sizeof(arr) / sizeof(int), &newSize);
+    
+    if (result){
+        for (int i = 0; i < newSize; i++){
+            printf("Value: %d, Length: %d\n", result[i]->value, result[i]->length);
+        }
+        freeDecodeRunLength(result, newSize);
+    }
+    
+    return 0;
+}
+```

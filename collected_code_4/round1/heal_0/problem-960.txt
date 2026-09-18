@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+
+int countWays(int n) {
+    int tileWays[n + 1];
+    tileWays[0] = 1;
+    tileWays[1] = 1;
+
+    for(int i = 2; i <= n; i++){
+        tileWays[i] = tileWays[i - 1] + tileWays[i - 2];
+    }
+
+    return tileWays[n];
+}
+
+int main() {
+    int tilesCount;
+    printf("Enter the number of tiles: ");
+    scanf("%d", &tilesCount);
+
+    if(tilesCount <= 0) {
+        printf("Invalid number of tiles.");
+        return -1;
+    }
+    
+    int numberOfWays = countWays(tilesCount);
+    printf("Number of ways to arrange the tiles is %d\n", numberOfWays);
+    return 0;
+}
+```
+In the above code, the problem is solved using dynamic programming. The function `countWays` computes the number of ways to cover a floor of size n by 1 and 2. The function creates an array `tileWays[]` and fills it in a bottom-up manner. 
+
+For a given number of tiles, there is one way to arrange one tile or no way if there are no tiles. If there are two or more tiles, there are two ways to arrange  n tiles, either place one tile vertically or place two tiles horizontally. In the first case, the number of ways for n-1 tiles will be considered, in the second case for n-2.
+
+The main function gets user input for the number of tiles, validates the input, and displays the number of ways to arrange the tiles. If the number of tiles is less than or equal to zero, the program outputs an error message and returns with a status code of `-1`.

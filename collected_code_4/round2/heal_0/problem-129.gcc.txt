@@ -1,0 +1,162 @@
+./collected_code_4/round2//heal_0/problem-129.c: In function 'fill_magic_square':
+./collected_code_4/round2//heal_0/problem-129.c:8:21: warning: use of uninitialized value '*magic_square_20(D) + _3' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    8 |         magic_square[i][j] = num++;
+      |         ~~~~~~~~~~~~^~~
+  'main': events 1-9
+    |
+    |   37 | int main(void) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     if(size < 0 || size % 2 == 0){
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch...
+    |......
+    |   48 |     int **magic_square = (int **)malloc(size * sizeof(int *));
+    |      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (3) ...to here
+    |      |                                  (4) region created on heap here
+    |   49 | 
+    |   50 |     if (magic_square == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (5) following 'false' branch (when 'magic_square' is non-NULL)...
+    |......
+    |   55 |     for (int i = 0; i < size; ++i) {
+    |      |              ~      ~~~~~~~~
+    |      |              |        |
+    |      |              |        (7) following 'false' branch...
+    |      |              (6) ...to here
+    |......
+    |   64 |     fill_magic_square(magic_square, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) ...to here
+    |      |     (9) calling 'fill_magic_square' from 'main'
+    |
+    +--> 'fill_magic_square': events 10-13
+           |
+           |    4 | void fill_magic_square(int **magic_square, const int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (10) entry to 'fill_magic_square'
+           |......
+           |    7 |     while (num <= size * size) {
+           |      |            ~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (11) following 'true' branch...
+           |    8 |         magic_square[i][j] = num++;
+           |      |         ~~~~~~~~~~~~~~~      ~~~~~
+           |      |                     |           |
+           |      |                     |           (12) ...to here
+           |      |                     (13) use of uninitialized value '*magic_square_20(D) + _3' here
+           |
+./collected_code_4/round2//heal_0/problem-129.c: In function 'display_square':
+./collected_code_4/round2//heal_0/problem-129.c:31:13: warning: use of uninitialized value '*_4 + _6' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   31 |             printf("%4d ", magic_square[i][j]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-17
+    |
+    |   37 | int main(void) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     if(size < 0 || size % 2 == 0){
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch...
+    |......
+    |   48 |     int **magic_square = (int **)malloc(size * sizeof(int *));
+    |      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                  |
+    |      |                                  (3) ...to here
+    |   49 | 
+    |   50 |     if (magic_square == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (4) following 'false' branch (when 'magic_square' is non-NULL)...
+    |......
+    |   55 |     for (int i = 0; i < size; ++i) {
+    |      |              ~      ~~~~~~~~  ~~~
+    |      |              |        |       |
+    |      |              |        |       (10) ...to here
+    |      |              |        |       (14) ...to here
+    |      |              |        (6) following 'true' branch...
+    |      |              |        (11) following 'true' branch...
+    |      |              |        (15) following 'false' branch...
+    |      |              (5) ...to here
+    |   56 |         magic_square[i] = malloc(size * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) ...to here
+    |      |                           (8) region created on heap here
+    |      |                           (12) ...to here
+    |   57 | 
+    |   58 |         if (magic_square[i] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (9) following 'false' branch...
+    |      |            (13) following 'false' branch...
+    |......
+    |   64 |     fill_magic_square(magic_square, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (16) ...to here
+    |      |     (17) calling 'fill_magic_square' from 'main'
+    |
+    +--> 'fill_magic_square': events 18-20
+           |
+           |    4 | void fill_magic_square(int **magic_square, const int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'fill_magic_square'
+           |......
+           |    7 |     while (num <= size * size) {
+           |      |            ~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) following 'false' branch...
+           |......
+           |   26 | }
+           |      | ~     
+           |      | |
+           |      | (20) ...to here
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   64 |     fill_magic_square(magic_square, size);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) returning to 'main' from 'fill_magic_square'
+    |   65 | 
+    |   66 |     display_square(magic_square, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (22) calling 'display_square' from 'main'
+    |
+    +--> 'display_square': events 23-28
+           |
+           |   28 | void display_square(int **magic_square, const int size) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (23) entry to 'display_square'
+           |   29 |     for (int i = 0; i < size; ++i) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (24) following 'true' branch (when 'i < size')...
+           |   30 |         for (int j = 0; j < size; ++j) {
+           |      |                  ~      ~~~~~~~~
+           |      |                  |        |
+           |      |                  |        (26) following 'true' branch (when 'j < size')...
+           |      |                  (25) ...to here
+           |   31 |             printf("%4d ", magic_square[i][j]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                          |
+           |      |             |                          (27) ...to here
+           |      |             (28) use of uninitialized value '*_4 + _6' here
+           |

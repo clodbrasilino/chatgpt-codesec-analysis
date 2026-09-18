@@ -1,0 +1,89 @@
+./collected_code_4/round2//heal_0/problem-693.c: In function 'removeMultipleSpaces':
+./collected_code_4/round2//heal_0/problem-693.c:26:16: warning: use of uninitialized value '*q' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |             if(*q != ' ' || (q > p && *(q - 1) != ' '))
+      |                ^~
+  'removeMultipleSpaces': events 1-10
+    |
+    |   11 |     if(ret) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'ret == 0')...
+    |......
+    |   16 |     char* p = (char*)malloc(strlen(str) + 1);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |      |
+    |      |                      |      (2) ...to here
+    |      |                      (3) region created on heap here
+    |   17 |     if(p == NULL){
+    |      |       ~
+    |      |       |
+    |      |       (4) following 'false' branch (when 'p' is non-NULL)...
+    |......
+    |   22 |     char *q = p;
+    |      |           ~
+    |      |           |
+    |      |           (5) ...to here
+    |   23 | 
+    |   24 |     for(char *r = str ; *r != '\0' ; *r++) {
+    |      |                         ~~~~~~~~~~
+    |      |                            |
+    |      |                            (6) following 'true' branch...
+    |   25 |         if (!regexec (&regex, r, 0, NULL, 0)){
+    |      |            ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            | |
+    |      |            | (7) ...to here
+    |      |            (8) following 'true' branch...
+    |   26 |             if(*q != ' ' || (q > p && *(q - 1) != ' '))
+    |      |                ~~
+    |      |                |
+    |      |                (9) ...to here
+    |      |                (10) use of uninitialized value '*q' here
+    |
+./collected_code_4/round2//heal_0/problem-693.c:26:16: warning: use of uninitialized value '*q' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |             if(*q != ' ' || (q > p && *(q - 1) != ' '))
+      |                ^~
+  'removeMultipleSpaces': events 1-14
+    |
+    |   11 |     if(ret) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'ret == 0')...
+    |......
+    |   16 |     char* p = (char*)malloc(strlen(str) + 1);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |      |
+    |      |                      |      (2) ...to here
+    |      |                      (3) region created on heap here
+    |   17 |     if(p == NULL){
+    |      |       ~
+    |      |       |
+    |      |       (4) following 'false' branch (when 'p' is non-NULL)...
+    |......
+    |   22 |     char *q = p;
+    |      |           ~
+    |      |           |
+    |      |           (5) ...to here
+    |   23 | 
+    |   24 |     for(char *r = str ; *r != '\0' ; *r++) {
+    |      |                         ~~~~~~~~~~
+    |      |                            |
+    |      |                            (6) following 'true' branch...
+    |      |                            (10) following 'true' branch...
+    |   25 |         if (!regexec (&regex, r, 0, NULL, 0)){
+    |      |            ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            | |
+    |      |            | (7) ...to here
+    |      |            | (11) ...to here
+    |      |            (8) following 'false' branch...
+    |      |            (12) following 'true' branch...
+    |   26 |             if(*q != ' ' || (q > p && *(q - 1) != ' '))
+    |      |                ~~
+    |      |                |
+    |      |                (13) ...to here
+    |      |                (14) use of uninitialized value '*q' here
+    |......
+    |   29 |             *q++ = *r;
+    |      |              ~~~
+    |      |               |
+    |      |               (9) ...to here
+    |

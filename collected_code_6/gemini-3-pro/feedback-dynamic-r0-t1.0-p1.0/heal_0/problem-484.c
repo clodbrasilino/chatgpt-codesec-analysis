@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} TupleArray;
+
+TupleArray* createArray(size_t capacity) {
+    if (capacity == 0) return NULL;
+    TupleArray *arr = (TupleArray*)malloc(sizeof(TupleArray));
+    if (!arr) return NULL;
+    arr->data = (Tuple*)malloc(capacity * sizeof(Tuple));
+    if (!arr->data) {
+        free(arr);
+        return NULL;
+    }
+    arr->size = 0;
+    arr->capacity = capacity;
+    return arr;
+}
+
+void freeArray(TupleArray *arr) {
+    if (arr) {
+        free(arr->data);
+        free(arr);
+    }
+}
+
+bool addTuple(TupleArray *arr, int x, int y) {
+    if (!arr || arr->size >= arr->capacity) return false;
+    arr->data[arr->size].x = x;
+    arr->data[arr->size].y = y;
+    arr->size++;
+    return true;
+}
+
+TupleArray* removeMatchingTuples(const TupleArray *arr1, const TupleArray *arr2) {
+    if (!arr1 || !arr2) return NULL;
+    TupleArray *result = createArray(arr1->size);
+    if (!result) return NULL;
+
+    for (size_t i = 0; i < arr1->size; ++i) {
+        bool match = false;
+        for (size_t j = 0; j < arr2->size; ++j) {
+            if (arr1->data[i].x == arr2->data[j].x && arr1->data[i].y == arr2->data[j].y) {
+                match = true;
+                break;
+            }
+        }
+        if (!match) {
+            addTuple(result, arr1->data[i].x, arr1->data[i].y);
+        }
+    }
+    return result;
+}
+
+void printArray(const TupleArray *arr) {
+    if (!arr) return;
+    for (size_t i = 0; i < arr->size; ++i) {
+        printf("(%d, %d) ", arr->data[i].x, arr->data[i].y);
+    }
+    printf("\n");
+}
+
+int main() {
+    TupleArray *arr1 = createArray(5);
+    if (!arr1) return 1;
+    addTuple(arr1, 1, 2);
+    addTuple(arr1, 3, 4);
+    addTuple(arr1, 5, 6);
+    addTuple(arr1, 7, 8);
+
+    TupleArray *arr2 = createArray(3);
+    if (!arr2) {
+        freeArray(arr1);
+        return 1;
+    }
+    addTuple(arr2, 3, 4);
+    addTuple(arr2, 9, 10);
+
+    TupleArray *result = removeMatchingTuples(arr1, arr2);
+    if (!result) {
+        freeArray(arr1);
+        freeArray(arr2);
+        return 1;
+    }
+
+    printArray(result);
+
+    freeArray(arr1);
+    freeArray(arr2);
+    freeArray(result);
+
+    return 0;
+}

@@ -1,0 +1,5 @@
+problem-160.c:29:40:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000004,sig:06,src:000007,time:58729,execs:35118,op:havoc,rep:1)
+problem-160.c:29:56:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000003,sig:06,src:000007,time:55857,execs:33301,op:havoc,rep:3)
+problem-160.c:34:8:medium:UBSan: signed integer overflow: 2305843009213693952 * 7 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000001,time:3104,execs:1568,op:havoc,rep:1)
+problem-160.c:35:8:medium:UBSan: signed integer overflow: -4611686018427387903 * 7 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:1219,execs:675,op:havoc,rep:1)
+problem-160.c:35:8:medium:UBSan: signed integer overflow: -3074457345618258602 * 7 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000006,time:27648,execs:15965,op:havoc,rep:2)

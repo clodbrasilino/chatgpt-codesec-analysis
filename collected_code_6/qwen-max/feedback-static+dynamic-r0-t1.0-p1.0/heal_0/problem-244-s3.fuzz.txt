@@ -1,0 +1,4 @@
+problem-244-s3.c:5:22:medium:UBSan: nan is outside the range of representable values of type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:37490,execs:12930,op:havoc,rep:8)
+problem-244-s3.c:6:14:medium:UBSan: signed integer overflow: -9223372036854775808 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:37490,execs:12930,op:havoc,rep:8)
+problem-244-s3.c:9:27:medium:UBSan: signed integer overflow: 3037000500 * 3037000500 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000003,time:301,execs:127,op:havoc,rep:1)
+problem-244-s3.c:9:27:medium:UBSan: signed integer overflow: -9223372036854775807 * -9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000003,time:37490,execs:12930,op:havoc,rep:8)

@@ -1,0 +1,51 @@
+./collected_code_4/round2//heal_0/problem-585.c: In function 'createHeap':
+./collected_code_4/round2//heal_0/problem-585.c:18:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     heap->size = 0;
+      |     ~~~~~~~~~~~^~~
+  'findTopNPrices': events 1-2
+    |
+    |   52 | int *findTopNPrices(int *prices, int size, int n) {
+    |      |      ^~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopNPrices'
+    |   53 |     int i;
+    |   54 |     Heap *heap = createHeap();
+    |      |                  ~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'findTopNPrices'
+    |
+    +--> 'createHeap': events 3-5
+           |
+           |   16 | Heap *createHeap() {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   17 |     Heap *heap = (Heap *) malloc(sizeof(Heap));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |   18 |     heap->size = 0;
+           |      |     ~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) 'heap' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round2//heal_0/problem-585.c: In function 'findTopNPrices':
+./collected_code_4/round2//heal_0/problem-585.c:63:22: warning: dereference of possibly-NULL 'topPrices' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   63 |         topPrices[i] = popHeap(heap).price;
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  'findTopNPrices': events 1-4
+    |
+    |   61 |     int *topPrices = (int *) malloc(n * sizeof(int));
+    |      |                              ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (1) this call could return NULL
+    |   62 |     for (i = 0; i < n; i++) {
+    |      |                 ~~~~~         
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   63 |         topPrices[i] = popHeap(heap).price;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      | |
+    |      |                      | (3) ...to here
+    |      |                      (4) 'topPrices + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

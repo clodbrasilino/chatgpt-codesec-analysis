@@ -1,0 +1,3 @@
+problem-598-s3.c:28:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000001,time:158,execs:78,op:arith8,pos:1,val:-5)
+problem-598-s3.c:28:32:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000001,time:158,execs:78,op:arith8,pos:1,val:-5)
+problem-598-s3.c:39:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:7,execs:15,op:(null),pos:0; likely memory-safety defect

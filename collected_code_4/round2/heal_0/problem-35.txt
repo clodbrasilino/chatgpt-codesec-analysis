@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long nthRectangularNumber(int n) {
+    if (n < 1) {
+        printf("Number n should be a positive integer\n");
+        exit(EXIT_FAILURE);
+    }
+    return (long long)n * (n + 1);
+}
+
+int main() {
+    int n;  
+    printf("Enter a positive integer: ");
+    scanf("%d", &n);
+
+    long long result = nthRectangularNumber(n);
+    printf("The %d-th rectangular number is %lld\n", n, result);
+
+    return 0;
+}
+```

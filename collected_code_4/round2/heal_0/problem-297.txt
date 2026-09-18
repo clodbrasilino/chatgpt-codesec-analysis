@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 256
+
+typedef struct {
+  int size;
+  int *data;
+} List;
+
+List* createList(int size) {
+  List* list = (List*)malloc(sizeof(List));
+  list->size = size;
+  list->data = (int*)malloc(size * sizeof(int));
+  return list;
+}
+
+void flattenList(List **nestedList, int size, List *resultList) {
+  int i, j;
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < nestedList[i]->size; j++) {
+      resultList->data[resultList->size++] = nestedList[i]->data[j];
+    }
+  }
+}
+
+void freeList(List* list) {
+  free(list->data);
+  free(list);
+}
+
+int main() {
+  int i;
+  List *nestedList[MAX_SIZE];
+  
+  for(i = 0; i < MAX_SIZE; i++) {
+    nestedList[i] = createList(MAX_SIZE);
+  }
+  
+  List *resultList = createList(MAX_SIZE*MAX_SIZE);
+  resultList->size = 0;
+
+  flattenList(nestedList, MAX_SIZE, resultList);
+
+  printf("[");
+  for(i = 0; i < resultList->size - 1; i++) {
+    printf("%d, ", resultList->data[i]);
+  }
+
+  printf("%d]\n", resultList->data[i]);
+
+  for(i = 0; i < MAX_SIZE; i++) {
+    freeList(nestedList[i]);
+  }
+  
+  freeList(resultList);
+
+  return 0;
+}
+```

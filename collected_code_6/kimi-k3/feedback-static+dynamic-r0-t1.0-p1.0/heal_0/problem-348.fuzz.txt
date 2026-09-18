@@ -1,0 +1,7 @@
+problem-348.c:27:20:medium:UBSan: signed integer overflow: 4611686018427387904 * 4 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000000,sig:06,src:000008,time:12456,execs:5248,op:havoc,rep:3)
+problem-348.c:71:37:medium:UBSan: signed integer overflow: 6063861390644594843 + 3975250549198072254 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000001,sig:06,src:000008,time:12882,execs:5356,op:havoc,rep:2)
+problem-348.c:71:37:medium:UBSan: signed integer overflow: 7057808179262681224 + 2946127768511332654 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000004,sig:06,src:000009,time:36971,execs:11531,op:havoc,rep:24)
+problem-348.c:85:19:medium:UBSan: signed integer overflow: 2683948844843011196 + 7624788253942790228 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000001,sig:06,src:000008,time:12882,execs:5356,op:havoc,rep:2)
+problem-348.c:85:19:medium:UBSan: signed integer overflow: 5620373852622583763 + 3683590725552388792 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000003,sig:06,src:000009,time:30066,execs:10212,op:havoc,rep:2)
+problem-348.c:85:19:medium:UBSan: signed integer overflow: 8771868364471143639 + 1288093645305579246 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000004,sig:06,src:000009,time:36971,execs:11531,op:havoc,rep:24)
+problem-348.c:96:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000009,time:15122,execs:6133,op:havoc,rep:12; likely memory-safety defect

@@ -1,0 +1,37 @@
+#include <stdbool.h> 
+#include <stdio.h>
+
+bool isSubArray(int parent[], int sub[], int parentSize, int subSize) {
+    int i = 0, j = 0;
+
+    while (i < parentSize && j < subSize) {
+        if (parent[i] == sub[j]) {
+            i++;
+            j++;
+            
+            if (j == subSize) {
+                return true;
+            }
+        } else {
+            i = i - j + 1;
+            j = 0;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int parent[] = {2, 3, 0, 5, 1, 1, 2};
+    int sub[] = {3, 0, 5, 1};
+  
+    int parentSize = sizeof(parent) / sizeof(parent[0]);
+    int subSize = sizeof(sub) / sizeof(sub[0]);
+
+    if(isSubArray(parent, sub, parentSize, subSize)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    
+    return 0;
+}

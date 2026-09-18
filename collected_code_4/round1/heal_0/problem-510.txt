@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+
+int countSubsequenceProduct(int array[], int array_size, int k) {
+  int dp_matrix[array_size + 1][k + 1];
+  for (int i = 0; i <= array_size; ++i) {
+    for (int j = 0; j <= k; ++j) {
+      if (i == 0) {
+        dp_matrix[i][j] = 0;
+      } else if (j == 0) {
+        dp_matrix[i][j] = 1;
+      }
+    }
+  }
+  for (int i = 1; i <= array_size; ++i) {
+    for (int j = 1; j <= k; ++j) {
+      if (array[i - 1] > j) {
+        dp_matrix[i][j] = dp_matrix[i - 1][j];
+      } else {
+        dp_matrix[i][j] = dp_matrix[i - 1][j] + dp_matrix[i - 1][j/array[i - 1]];
+      }
+    }
+  }
+  return dp_matrix[array_size][k];
+}
+
+int main() {
+  int array[] = {1, 2, 3, 4};
+  int k = 10;
+  int array_size = sizeof(array)/sizeof(array[0]);
+  printf("%d\n", countSubsequenceProduct(array, array_size, k));
+  return 0;
+}
+```
+This C code works by using Dynamic Programming. We allocate a 2D array dp[][], where dp[i][j] indicates the number of subsequences of the first i elements having product less than j. If the product of a subsequence is greater than the value of k, we don't consider it. Otherwise, we increase the dp[][] value. We initially set all entries in dp[] as zero (which is the base case of our dp[][], as there are zero subsequences with 0 elements), we then loop through the array and the range until k. Finally, the function returns the number of such subsequences which product is smaller than k. The main() function demonstrates the usage of the function with a small test case.

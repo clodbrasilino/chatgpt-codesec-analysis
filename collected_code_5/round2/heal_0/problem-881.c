@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSum(int* arr, int n) {
+    int i;
+    int firstEven = -1;
+    int firstOdd = -1;
+
+    // Search for the first even and odd numbers
+    for(i = 0; i < n; i++) {
+        if(arr[i] % 2 == 0 && firstEven == -1) firstEven = arr[i];
+        if(arr[i] % 2 != 0 && firstOdd == -1) firstOdd = arr[i];
+        
+        // If both first even and odd numbers are found, no need to search more.
+        if(firstEven != -1 && firstOdd != -1) break;
+    }
+    
+    // Handling exceptional condition
+    if(firstEven == -1 || firstOdd == -1) return 0;
+    
+    // Return sum
+    return firstEven + firstOdd;
+}
+
+int main() {
+    int n, i;
+    printf("Enter the number of elements in the array\n");
+    scanf("%d", &n);
+    
+    int* arr = (int*)malloc(n * sizeof(int));
+    
+    printf("Enter the elements of the array\n");
+    for(i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+    
+    int sum = findSum(arr, n);
+    
+    if(sum == 0) {
+        printf("Unable to find first even and odd numbers!\n");
+    } else {
+        printf("Sum of first even and odd number is %d\n", sum);
+    }
+    
+    free(arr);
+    
+    return 0;
+}

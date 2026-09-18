@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+struct Tuple {
+    int numerator;
+    int denominator;
+};
+
+double convert_tuple_to_float(const struct Tuple *t, int *error) {
+    if (t == NULL || error == NULL) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return NAN;
+    }
+
+    if (t->denominator == 0) {
+        *error = 1;
+        return NAN;
+    }
+
+    *error = 0;
+    return (double)(t->numerator) / (double)(t->denominator);
+}
+
+int main(void) {
+    struct Tuple t1 = {355, 113};
+    struct Tuple t2 = {1, 0};
+    int error = 0;
+    double result = 0.0;
+
+    result = convert_tuple_to_float(&t1, &error);
+    if (error == 0) {
+        printf("%f\n", result);
+    } else {
+        printf("Error\n");
+    }
+
+    result = convert_tuple_to_float(&t2, &error);
+    if (error == 0) {
+        printf("%f\n", result);
+    } else {
+        printf("Error\n");
+    }
+
+    result = convert_tuple_to_float(NULL, &error);
+    if (error == 0) {
+        printf("%f\n", result);
+    } else {
+        printf("Error\n");
+    }
+
+    return EXIT_SUCCESS;
+}

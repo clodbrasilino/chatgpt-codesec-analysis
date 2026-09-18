@@ -1,0 +1,2 @@
+problem-543-s2.c:5:17:medium:UBSan: signed integer overflow: 2066381773 + 1999999999 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000005,time:12925,execs:5456,op:havoc,rep:4)
+problem-543-s2.c:6:35:medium:UBSan: nan is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:490,execs:227,op:quick,pos:1)

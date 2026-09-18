@@ -1,0 +1,2 @@
+problem-469.c:62:21:medium:UBSan: signed integer overflow: 1111111111 * 10 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:22505,execs:2163,op:havoc,rep:3)
+problem-469.c:62:21:medium:UBSan: signed integer overflow: 222222222 * 10 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:35114,execs:3640,op:havoc,rep:4)

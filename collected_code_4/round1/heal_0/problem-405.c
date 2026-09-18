@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define SIZE_OF_TUPLE 5
+
+bool checkElementInTuple(int tuple[], int n, int element) {
+    for(int i = 0; i < n; i++) {
+        if(tuple[i] == element) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int tuple[SIZE_OF_TUPLE] = {1, 2, 3, 4, 5};
+    int elementToCheck = 3;
+    
+    if(checkElementInTuple(tuple, SIZE_OF_TUPLE, elementToCheck)) {
+        printf("Element %d is present in the tuple.\n", elementToCheck);
+    }
+    else {
+        printf("Element %d is not present in the tuple.\n", elementToCheck);
+    }
+    
+    return 0;
+}

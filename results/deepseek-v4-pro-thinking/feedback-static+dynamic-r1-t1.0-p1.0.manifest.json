@@ -209,7 +209,7 @@
     "top_p": 1.0,
     "max_rounds": 10,
     "samples": 3,
-    "fuzz": false,
+    "fuzz": true,
     "root": "collected_code_6",
     "gen_source": "feedback-static-r1-t1.0-p1.0",
     "gen_source_reports": true
@@ -394,6 +394,10 @@
       "outcome": "clean"
     },
     "problem-391-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-392": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -809,13 +813,13 @@
       "rounds_to_clean": 5,
       "outcome": "clean"
     },
-    "problem-802-s3": {
-      "rounds_to_clean": 6,
-      "outcome": "heal_failed"
-    },
     "problem-802": {
       "rounds_to_clean": 9,
       "outcome": "clean"
+    },
+    "problem-802-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "heal_failed"
     },
     "problem-108": {
       "rounds_to_clean": 0,
@@ -1374,10 +1378,6 @@
       "outcome": "clean_at_start"
     },
     "problem-391-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-392": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },

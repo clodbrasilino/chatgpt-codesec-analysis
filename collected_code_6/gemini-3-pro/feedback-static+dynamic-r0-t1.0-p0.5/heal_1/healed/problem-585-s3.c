@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    double price;
+} Item;
+
+typedef struct {
+    Item *items;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->items = (Item*)malloc(capacity * sizeof(Item));
+    if (!heap->items) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->items[left].price < heap->items[smallest].price)
+        smallest = left;
+
+    if (right < heap->size && heap->items[right].price < heap->items[smallest].price)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->items[idx], &heap->items[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+void insertMinHeap(MinHeap *heap, Item item) {
+    if (!heap) return;
+    if (heap->size < heap->capacity) {
+        heap->items[heap->size] = item;
+        int i = heap->size;
+        heap->size++;
+        while (i != 0 && heap->items[(i - 1) / 2].price > heap->items[i].price) {
+            swap(&heap->items[i], &heap->items[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    } else if (item.price > heap->items[0].price) {
+        heap->items[0] = item;
+        minHeapify(heap, 0);
+    }
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->items);
+        free(heap);
+    }
+}
+
+void findNMostExpensive(const Item *dataset, int datasetSize, int n) {
+    if (!dataset || datasetSize <= 0 || n <= 0) return;
+    if (n > datasetSize) n = datasetSize;
+
+    MinHeap *heap = createMinHeap(n);
+    if (!heap) return;
+
+    for (int i = 0; i < datasetSize; i++) {
+        insertMinHeap(heap, dataset[i]);
+    }
+
+    for (int i = 0; i < heap->size; i++) {
+        printf("%s: %.2f\n", heap->items[i].name, heap->items[i].price);
+    }
+
+    freeMinHeap(heap);
+}
+
+int main() {
+    Item dataset[] = {
+        {"Item A", 10.5},
+        {"Item B", 50.0},
+        {"Item C", 5.0},
+        {"Item D", 100.0},
+        {"Item E", 75.5},
+        {"Item F", 20.0}
+    };
+    int datasetSize = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+
+    findNMostExpensive(dataset, datasetSize, n);
+
+    return 0;
+}

@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+bool findElemInList(int elem, int list[], int size) {
+    for(int i = 0; i < size; i++) {
+        if(list[i] == elem) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void findNestedElemInList(int nestedList[MAX_SIZE][MAX_SIZE], int nestedListSize[], int list[], int listSize, int total) {
+    for(int i = 0; i < total; i++) {
+        for(int j = 0; j < nestedListSize[i]; j++){
+            if(findElemInList(nestedList[i][j], list, listSize)) {
+                printf("%d ", nestedList[i][j]);
+            }
+        }
+    }
+}
+
+int main() {
+    int nestedList[MAX_SIZE][MAX_SIZE] = {{1, 2, 3}, {2, 3, 4}, {5, 6}};
+    int nestedListSize[] = {3, 3, 2};
+    int list[] = {2, 3, 5};
+    int listSize = sizeof(list)/sizeof(list[0]);
+    int total = sizeof(nestedListSize)/sizeof(nestedListSize[0]);
+    
+    findNestedElemInList(nestedList, nestedListSize, list, listSize, total);
+    
+    return 0;
+}

@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int ascii_value_of_total_chars(char *str) {
+    int ascii_total = 0;
+    int i;
+    for (i = 0; str[i] != '\0'; i++) {
+        ascii_total += (int)str[i];
+    }
+    return ascii_total;
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    int ascii_total = ascii_value_of_total_chars(str);
+    printf("The ASCII value of the total characters in '%s' is: %d\n", str, ascii_total);
+
+    return 0;
+}
+```
+
+This C program defines a function `ascii_value_of_total_chars` that takes a string argument. It sets up an integer variable `ascii_total` to accumulate ascii values of the characters in the string. It does so in a loop that goes character by character until it hits the null-character (the end of the string), casting every character into an integer (which yields its ascii value), and adds it to `ascii_total`.
+
+In the main function, it sets up a string “Hello, World!”, calls `ascii_value_of_total_chars` function on it, and prints the result. The end of the program sees returning of 0 to indicate that the program has finished successfully.

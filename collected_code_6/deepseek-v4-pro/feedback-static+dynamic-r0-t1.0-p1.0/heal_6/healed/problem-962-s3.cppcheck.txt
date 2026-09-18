@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:67:60: warning: Expression 'half_first' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+                if (half_first < 0 && half_n < INT64_MIN / half_first) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:67:32: note: Assuming that condition 'half_first<0' is not redundant
+                if (half_first < 0 && half_n < INT64_MIN / half_first) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:67:60: note: Negative value is converted to an unsigned value
+                if (half_first < 0 && half_n < INT64_MIN / half_first) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:73:59: warning: Expression 'half_last' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+                if (half_last < 0 && half_n < INT64_MIN / half_last) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:73:31: note: Assuming that condition 'half_last<0' is not redundant
+                if (half_last < 0 && half_n < INT64_MIN / half_last) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-962-s3.c:73:59: note: Negative value is converted to an unsigned value
+                if (half_last < 0 && half_n < INT64_MIN / half_last) {
+                                                          ^

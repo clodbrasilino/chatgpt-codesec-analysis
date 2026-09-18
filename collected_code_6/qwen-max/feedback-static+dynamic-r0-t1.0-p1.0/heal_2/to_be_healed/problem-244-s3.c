@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
+long long next_perfect_square(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    long long root = (long long)sqrt(n);
+    if (root * root == n && root < LLONG_MAX - 1) {
+        return (root + 1) * (root + 1);
+    } else if (root < LLONG_MAX - 1) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 3037000500 * 3037000500 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000003,time:19,execs:23,op:havoc,rep:2)
+         */
+        return (root + 1) * (root + 1);
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    long long number;
+    printf("Enter a number: ");
+    scanf("%lld", &number);
+    long long result = next_perfect_square(number);
+    printf("The next perfect square is: %lld\n", result);
+    return 0;
+}

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include <limits.h>
+
+long derangement(long n) {
+    if (n == 0) return 1;
+    if (n == 1) return 0;
+
+    int64_t* d = (int64_t*) malloc((n + 1) * sizeof(int64_t));
+    if (d == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    d[0] = 1;
+    d[1] = 0;
+    for (long i = 2; i <= n; i++) {
+        int64_t prev = d[i-1];
+        int64_t prev2 = d[i-2];
+        if (i - 1 > INT64_MAX / (prev + prev2)) {
+            free(d);
+            fprintf(stderr, "Overflow detected.\n");
+            exit(EXIT_FAILURE);
+        }
+        d[i] = (i - 1) * (prev + prev2);
+    }
+    int64_t result = d[n];
+    free(d);
+    return result;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:1081,execs:344,op:havoc,rep:3; likely memory-safety defect
+  */
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) != 1 || n < 0) {
+        fprintf(stderr, "Value must be a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+    int64_t result = derangement(n);
+    printf("The %ld-th Rencontres number is: %" PRId64 "\n", n, result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-31-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-31-s3.c:27:9: style: The scope of the variable 'smallest' can be reduced. [variableScope]
+    int smallest;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-31-s3.c:60:34: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+int* get_top_k(int** lists, int* sizes, int num_lists, int k, int* out_size) {
+                                 ^

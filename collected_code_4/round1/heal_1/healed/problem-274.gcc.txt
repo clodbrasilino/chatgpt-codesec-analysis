@@ -1,0 +1,54 @@
+./collected_code_4/round1//heal_1/healed//problem-274.c: In function 'binomialCoeff':
+./collected_code_4/round1//heal_1/healed//problem-274.c:21:21: warning: use of uninitialized value '*C_36 + _5' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |             C[j] = C[j] + C[j-1];
+      |                    ~^~~
+  'main': events 1-2
+    |
+    |   37 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     printf("Sum of even index binomial coefficients is %d ",binomialCoeff(n,n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'binomialCoeff' from 'main'
+    |
+    +--> 'binomialCoeff': events 3-11
+           |
+           |    6 | int binomialCoeff(int n, int k)
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'binomialCoeff'
+           |    7 | {
+           |    8 |     int* C = (int*)malloc((k+1) * sizeof(int));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) region created on heap here
+           |......
+           |   11 |     if(C == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'C' is non-NULL)...
+           |......
+           |   16 |     C[0] = 1;
+           |      |     ~~~~~~~~
+           |      |          |
+           |      |          (6) ...to here
+           |   17 | 
+           |   18 |     for(i = 1; i <= n; i++)
+           |      |                ~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch (when 'i <= n')...
+           |   19 |     {
+           |   20 |         for(j = min(i, k); j > 0; j--)
+           |      |                 ~~~~~~~~~  ~~~~~
+           |      |                 |            |
+           |      |                 |            (9) following 'true' branch (when 'j > 0')...
+           |      |                 (8) ...to here
+           |   21 |             C[j] = C[j] + C[j-1];
+           |      |                    ~~~~
+           |      |                     |
+           |      |                     (10) ...to here
+           |      |                     (11) use of uninitialized value '*C_36 + _5' here
+           |

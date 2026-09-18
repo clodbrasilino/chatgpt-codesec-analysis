@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxBitonicSum(const int arr[], int n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    int *inc = (int *)malloc(n * sizeof(int));
+    int *dec = (int *)malloc(n * sizeof(int));
+
+    if (inc == NULL || dec == NULL) {
+        free(inc);
+        free(dec);
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        inc[i] = arr[i];
+        dec[i] = arr[i];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && inc[i] < inc[j] + arr[i]) {
+                inc[i] = inc[j] + arr[i];
+            }
+        }
+    }
+
+    for (int i = n - 2; i >= 0; i--) {
+        for (int j = n - 1; j > i; j--) {
+            if (arr[i] > arr[j] && dec[i] < dec[j] + arr[i]) {
+                dec[i] = dec[j] + arr[i];
+            }
+        }
+    }
+
+    int maxSum = inc[0] + dec[0] - arr[0];
+    for (int i = 1; i < n; i++) {
+        if (inc[i] + dec[i] - arr[i] > maxSum) {
+            maxSum = inc[i] + dec[i] - arr[i];
+        }
+    }
+
+    free(inc);
+    free(dec);
+
+    return maxSum;
+}
+
+int main(void) {
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = maxBitonicSum(arr, n);
+    if (result != -1) {
+        printf("Maximum sum of bitonic subsequence is %d\n", result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

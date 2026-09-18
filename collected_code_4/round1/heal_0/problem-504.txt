@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+long long cubeSum(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum += (long long)i * i * i;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("\nEnter the number: ");
+    scanf("%d", &n);
+
+    if (n < 1) {
+        printf("\nInvalid input. The number should be a positive integer.\n");
+        return -1;
+    }
+
+    long long result = cubeSum(n);
+    printf("\nCube sum of first %d natural numbers is: %lld\n", n, result);
+
+    return 0;
+}
+```
+This program calculates and prints the cube sum of first n natural numbers. It first takes the input number from the user. Then it goes into error checking: if the entered number is less than 1 (which means it's not a natural number), it prints a message, then exits the program with error code -1. If the number is valid, it calls the cubeSum function to calculate the cube sum, then prints the result. The cubeSum function simply goes through numbers from 1 to n, cubes them (i * i * i) and adds them to sum. It uses long long variables to store the sums because the cube of integer n can be a large number. The function returns the sum.

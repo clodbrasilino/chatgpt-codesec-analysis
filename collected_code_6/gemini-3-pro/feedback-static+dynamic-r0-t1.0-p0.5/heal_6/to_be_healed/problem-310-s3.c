@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['1', '5', '.', '1', '0'], got []
+  *  test case 1 failed: expected ['i', 't', 'e', 'm', '1'], got []
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'], got []
+  */
+
+Tuple* string_to_tuple(const char *str, const char *delimiter) {
+    if (!str) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->elements = NULL;
+    tuple->count = 0;
+
+    if (!delimiter || delimiter[0] == '\0') {
+        size_t len = strlen(str);
+        if (len > 0) {
+            tuple->elements = (char **)malloc(sizeof(char *));
+            if (!tuple->elements) {
+                free(tuple);
+                return NULL;
+            }
+            tuple->elements[0] = strdup(str);
+            if (!tuple->elements[0]) {
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+            tuple->count = 1;
+        }
+        return tuple;
+    }
+
+    char *str_copy = strdup(str);
+    if (!str_copy) {
+        free(tuple);
+        return NULL;
+    }
+
+    char *token = strtok(str_copy, delimiter);
+    while (token) {
+        char **temp = (char **)realloc(tuple->elements, (tuple->count + 1) * sizeof(char *));
+        if (!temp) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            free(str_copy);
+            return NULL;
+        }
+        tuple->elements = temp;
+        tuple->elements[tuple->count] = strdup(token);
+        if (!tuple->elements[tuple->count]) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            free(str_copy);
+            return NULL;
+        }
+        tuple->count++;
+        token = strtok(NULL, delimiter);
+    }
+
+    free(str_copy);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        if (tuple->elements) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+        }
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *str = "Hello,World,C,Programming";
+    const char *delimiter = ",";
+
+    Tuple *tuple = string_to_tuple(str, delimiter);
+    if (tuple) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            printf("Element %zu: %s\n", i, tuple->elements[i]);
+        }
+        free_tuple(tuple);
+    }
+
+    return 0;
+}

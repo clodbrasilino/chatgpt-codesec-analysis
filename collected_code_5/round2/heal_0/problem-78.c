@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+unsigned int oddSetBits(unsigned int *array, unsigned int length){
+    unsigned int count = 0, numSetBits;
+    for(unsigned int i = 0; i<length; i++){
+        numSetBits = __builtin_popcount(array[i]);
+        if(numSetBits % 2 != 0){
+           count++;
+        }
+    }
+    return count;
+}
+
+int main(){
+    unsigned int array[] = {3, 5, 2};
+    unsigned int length = sizeof(array) / sizeof(array[0]);
+    unsigned int count = oddSetBits(array, length);
+    printf("%u\n", count);
+
+    return 0;
+}

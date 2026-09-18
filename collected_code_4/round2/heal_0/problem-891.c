@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countDigits(int num) {
+    int count = 0;
+    if(num == 0) {
+        return 1;
+    }
+    while(num != 0) {
+        num /= 10;
+        ++count;
+    }
+    return count;
+}
+
+int checkDigits(int num1, int num2) {
+    return countDigits(num1) == countDigits(num2);
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
+
+    if(checkDigits(num1, num2) == 1) {
+        printf("Numbers have the same number of digits\n");
+    } else {
+        printf("Numbers don't have the same number of digits\n");
+    }
+
+    return 0;
+}

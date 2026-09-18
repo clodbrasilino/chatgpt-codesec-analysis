@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+typedef struct {
+    uint64_t val;
+    int p_idx;
+    int ptr_idx;
+} HeapNode;
+
+void heapify_down(HeapNode *heap, int size, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < size && heap[left].val < heap[smallest].val) {
+        smallest = left;
+    }
+    if (right < size && heap[right].val < heap[smallest].val) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        HeapNode temp = heap[index];
+        heap[index] = heap[smallest];
+        heap[smallest] = temp;
+        heapify_down(heap, size, smallest);
+    }
+}
+
+uint64_t nthSuperUglyNumber(int n, int *primes, int k) {
+    if (n <= 0 || k <= 0 || primes == NULL) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+
+    uint64_t *ugly = (uint64_t *)malloc((size_t)n * sizeof(uint64_t));
+    if (ugly == NULL) {
+        return 0;
+    }
+
+    HeapNode *heap = (HeapNode *)malloc((size_t)k * sizeof(HeapNode));
+    if (heap == NULL) {
+        free(ugly);
+        return 0;
+    }
+
+    ugly[0] = 1;
+
+    for (int i = 0; i < k; i++) {
+        heap[i].val = (uint64_t)primes[i];
+        heap[i].p_idx = i;
+        heap[i].ptr_idx = 0;
+    }
+
+    for (int i = (k / 2) - 1; i >= 0; i--) {
+        heapify_down(heap, k, i);
+    }
+
+    int count = 1;
+    while (count < n) {
+        HeapNode min_node = heap[0];
+
+        if (min_node.val > ugly[count - 1]) {
+            ugly[count] = min_node.val;
+            count++;
+        }
+
+        min_node.ptr_idx++;
+        min_node.val = ugly[min_node.ptr_idx] * (uint64_t)primes[min_node.p_idx];
+
+        heap[0] = min_node;
+        heapify_down(heap, k, 0);
+    }
+
+    uint64_t result = ugly[n - 1];
+    
+    free(heap);
+    free(ugly);
+
+    return result;
+}
+
+int main(void) {
+    int primes[] = {2, 7, 13, 19};
+    int k = sizeof(primes) / sizeof(primes[0]);
+    int n = 12;
+
+    uint64_t result = nthSuperUglyNumber(n, primes, k);
+    if (result != 0 || (n == 1 && primes != NULL && k > 0)) {
+        printf("%" PRIu64 "\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

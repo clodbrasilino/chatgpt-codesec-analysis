@@ -1,0 +1,9 @@
+collected_code_5/round1/heal_0/problem-748.c:11:24: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   11 |     char *tmp = malloc(strlen(str)+1);
+      |                        ^
+collected_code_5/round1/heal_0/problem-748.c:11:24: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+collected_code_5/round1/heal_0/problem-748.c:12:5: error: call to undeclared library function 'strcpy' with type 'char *(char *, const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   12 |     strcpy(tmp, str);
+      |     ^
+collected_code_5/round1/heal_0/problem-748.c:12:5: note: include the header <string.h> or explicitly provide a declaration for 'strcpy'
+2 errors generated.

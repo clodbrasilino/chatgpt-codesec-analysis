@@ -1,0 +1,85 @@
+./collected_code_4/round1//heal_0//problem-472.c: In function 'checkConsecutive':
+./collected_code_4/round1//heal_0//problem-472.c:16:24: warning: use of uninitialized value '*visited[<unknown>]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   16 |             if (visited[arr[i] - min] != false)
+      |                 ~~~~~~~^~~~~~~~~~~~~~
+  'checkConsecutive': events 1-6
+    |
+    |   13 |     if (max - min + 1 == n) {
+    |      |        ^                    ~
+    |      |        |                    |
+    |      |        |                    (2) ...to here
+    |      |        (1) following 'true' branch...
+    |   14 |         bool visited[n];
+    |      |              ~~~~~~~
+    |      |              |
+    |      |              (3) region created on stack here
+    |   15 |         for (int i = 0; i < n; i++) {
+    |      |                         ~~~~~
+    |      |                           |
+    |      |                           (4) following 'true' branch (when 'i < n')...
+    |   16 |             if (visited[arr[i] - min] != false)
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |   |
+    |      |                        |   (5) ...to here
+    |      |                        (6) use of uninitialized value '*visited[<unknown>]' here
+    |
+./collected_code_4/round1//heal_0//problem-472.c:16:24: warning: use of uninitialized value '*visited[<unknown>]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   16 |             if (visited[arr[i] - min] != false)
+      |                 ~~~~~~~^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   28 |     if (checkConsecutive(arr, n) == true)
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'checkConsecutive' from 'main'
+    |
+    +--> 'checkConsecutive': events 3-15
+           |
+           |    4 | bool checkConsecutive(int arr[], int n) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'checkConsecutive'
+           |......
+           |    7 |     for (int i = 1; i < n; i++) {
+           |      |                     ~~~~~  ~~~
+           |      |                       |     |
+           |      |                       |     (9) ...to here
+           |      |                       (4) following 'true' branch (when 'i < n')...
+           |    8 |         if (arr[i] < min)
+           |      |            ~   ~
+           |      |            |   |
+           |      |            |   (5) ...to here
+           |      |            (6) following 'true' branch...
+           |    9 |             min = arr[i];
+           |      |                      ~
+           |      |                      |
+           |      |                      (7) ...to here
+           |   10 |         if (arr[i] > max)
+           |      |            ~
+           |      |            |
+           |      |            (8) following 'false' branch...
+           |......
+           |   13 |     if (max - min + 1 == n) {
+           |      |        ~                    ~
+           |      |        |                    |
+           |      |        |                    (11) ...to here
+           |      |        (10) following 'true' branch...
+           |   14 |         bool visited[n];
+           |      |              ~~~~~~~
+           |      |              |
+           |      |              (12) region created on stack here
+           |   15 |         for (int i = 0; i < n; i++) {
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (13) following 'true' branch (when 'i < n')...
+           |   16 |             if (visited[arr[i] - min] != false)
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |   |
+           |      |                        |   (14) ...to here
+           |      |                        (15) use of uninitialized value '*visited[<unknown>]' here
+           |

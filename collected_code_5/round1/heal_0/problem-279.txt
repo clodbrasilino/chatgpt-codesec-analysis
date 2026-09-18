@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+
+long long getDecagonalNumber(int n){
+    if(n <= 0) {
+        return -1;
+    }
+    return 4*n*n - 3*n;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter the number: ");
+    scanf("%d", &n);
+    
+    long long res = getDecagonalNumber(n);
+
+    if(res != -1) {
+        printf("The decagonal number is: %lld\n", res);
+    } else {
+        printf("Invalid input. Please enter a positive integer.\n");
+    }
+
+    return 0;
+}
+```

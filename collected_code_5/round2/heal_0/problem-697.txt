@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+
+size_t countEven(const int* array, size_t arrayLength) {
+    if(array == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < arrayLength; i++) {
+        if (array[i] % 2 == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[]={1,2,3,4,5,6,7,8,9,10};
+    size_t count = countEven(arr, sizeof(arr)/sizeof(int));
+
+    printf("Number of even elements: %zu\n", count);
+
+    return 0;
+}
+```
+I have avoided the mentioned Common Weakness Enumerations (CWE) by making sure that the array's lifetime is properly controlled and not accessed after it's freed or before it's allocated (CWE-664). I have also added proper error handling for the case when an invalid value, specifically NULL, is passed for the array (CWE-703). As for adherence to coding standards (CWE-710), I have followed good practices such as properly indenting the code, using braces even for single-line conditionals and loops to avoid ambiguity, and I have included all the necessary standard library headers for the functions used.

@@ -1,0 +1,18 @@
+```c
+#include<stdio.h>
+
+unsigned int setOddBits(unsigned int n) {
+    unsigned int i;
+    for (i = 1; i < sizeof(n) * 8; i += 2)
+        n |= (1U << i);
+    return n;
+}
+
+int main() {
+    unsigned int n;
+    printf("Enter a number: ");
+    scanf("%u", &n);
+    printf("Resultant number: %u", setOddBits(n));
+    return 0;
+}
+```

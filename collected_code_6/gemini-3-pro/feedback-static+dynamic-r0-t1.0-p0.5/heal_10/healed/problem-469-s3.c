@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        int max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    int* buy = (int*)malloc(sizeof(int) * (k + 1));
+    int* sell = (int*)malloc(sizeof(int) * (k + 1));
+
+    for (int i = 0; i <= k; i++) {
+        buy[i] = -1000000000; 
+        sell[i] = 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++) {
+        for (int j = 1; j <= k; j++) {
+            int new_buy = sell[j - 1] - prices[i];
+            if (new_buy > buy[j]) {
+                buy[j] = new_buy;
+            }
+            int new_sell = buy[j] + prices[i];
+            if (new_sell > sell[j]) {
+                sell[j] = new_sell;
+            }
+        }
+    }
+
+    int result = sell[k];
+    
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void) {
+    int k = -1;
+    int capacity = 1000;
+    int* prices = (int*)malloc(capacity * sizeof(int));
+    if (!prices) return 1;
+    
+    int pricesSize = 0;
+    int sign = 1, val = 0, has_val = 0;
+    int c;
+    int bracket_seen = 0;
+    int k_first = -1;
+    
+    while ((c = getchar()) != EOF) {
+        if (c == '[') {
+            bracket_seen = 1;
+        }
+        
+        if (c == '-') {
+            sign = -1;
+        } else if (c >= '0' && c <= '9') {
+            val = val * 10 + (c - '0');
+            has_val = 1;
+        } else {
+            if (has_val) {
+                if (k_first == -1 && !bracket_seen) {
+                    k = sign * val;
+                    k_first = 1;
+                } else {
+                    if (pricesSize >= capacity) {
+                        capacity *= 2;
+                        prices = (int*)realloc(prices, capacity * sizeof(int));
+                    }
+                    prices[pricesSize++] = sign * val;
+                }
+                has_val = 0;
+                val = 0;
+                sign = 1;
+            }
+        }
+    }
+
+    if (has_val) {
+        if (k_first == -1 && !bracket_seen) {
+            k = sign * val;
+        } else {
+            if (pricesSize >= capacity) {
+                capacity *= 2;
+                prices = (int*)realloc(prices, capacity * sizeof(int));
+            }
+            prices[pricesSize++] = sign * val;
+        }
+    }
+
+    int result = maxProfit(k, prices, pricesSize);
+    printf("%d\n", result);
+
+    free(prices);
+    return 0;
+}

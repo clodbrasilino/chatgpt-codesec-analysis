@@ -1,0 +1,10 @@
+collected_code_5/round1/heal_0/problem-209.c:20:9: warning: Potential leak of memory pointed to by 'h' [unix.Malloc]
+   20 |         printf("Memory Error.");
+      |         ^~~~~~
+collected_code_5/round1/heal_0/problem-209.c:55:9: warning: Value stored to 'min' during its initialization is never read [deadcode.DeadStores]
+   55 |     int min = h->array[0];
+      |         ^~~   ~~~~~~~~~~~
+collected_code_5/round1/heal_0/problem-209.c:71:5: warning: Potential leak of memory pointed to by 'heap' [unix.Malloc]
+   71 |     return 0;
+      |     ^~~~~~~~
+3 warnings generated.

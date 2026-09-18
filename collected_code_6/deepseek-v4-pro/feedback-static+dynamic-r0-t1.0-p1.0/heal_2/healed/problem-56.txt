@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdlib.h>
+
+bool reverse_number(int n, int *result) {
+    *result = 0;
+    int remaining = n;
+    while (remaining != 0) {
+        int digit = remaining % 10;
+        if (*result > INT_MAX / 10 || *result < INT_MIN / 10) {
+            return false;
+        }
+        if (*result > 0 && digit > INT_MAX - *result * 10) {
+            return false;
+        }
+        if (*result < 0 && digit < INT_MIN - *result * 10) {
+            return false;
+        }
+        *result = *result * 10 + digit;
+        remaining /= 10;
+    }
+    return true;
+}
+
+bool is_one_less_than_twice_reverse(int n) {
+    int rev;
+    if (!reverse_number(n, &rev)) {
+        return false;
+    }
+    if (rev > INT_MAX / 2 || rev < INT_MIN / 2) {
+        return false;
+    }
+    int twice_rev = 2 * rev;
+    if (twice_rev == INT_MIN) {
+        return false;
+    }
+    return n == twice_rev - 1;
+}
+
+int main(void) {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    
+    if (is_one_less_than_twice_reverse(num)) {
+        printf("%d is one less than twice its reverse.\n", num);
+    } else {
+        printf("%d is not one less than twice its reverse.\n", num);
+    }
+    
+    return 0;
+}
+```

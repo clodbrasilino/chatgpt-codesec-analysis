@@ -1,0 +1,38 @@
+```C
+#include<stdio.h>
+#include<math.h>
+
+double findLateralSurfaceArea(double sideLength) {
+    if(sideLength < 0) {
+        printf("Side length cannot be negative.\n");
+        return -1;
+    }
+
+    double lateralSurfaceArea = 4 * pow(sideLength, 2);
+
+    return lateralSurfaceArea;
+}
+
+int main() {
+    double sideLength = 0.0;
+    printf("Enter side length of the cube: ");
+    scanf("%lf", &sideLength);
+
+    double result = findLateralSurfaceArea(sideLength);
+
+    if(result != -1) {
+        printf("The lateral surface area of the cube is: %.2lf\n", result);
+    }
+
+    return 0;
+}
+```
+This C program calculates the lateral surface area of a cube. 
+
+The function `findLateralSurfaceArea(double sideLength)` checks first if the provided `sideLength` isn't negative. If it is negative, an error message will be printed to the console and the function will return `-1`.
+
+If the input is valid, it calculates the lateral surface area using the formula `4 * pow(sideLength, 2)` and returns the area.
+
+In the `main` function, the user is asked to enter the side length of the cube. This side length is then passed to the `findLateralSurfaceArea` function to calculate the lateral surface area. 
+
+If the return value isn't `-1` (which indicates an error), the program prints the resulting area to the console.

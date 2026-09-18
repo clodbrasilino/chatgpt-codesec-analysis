@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+
+int binarySearch(int arr[], int l, int r, int x) {
+  while (l <= r) {
+    int m = l + (r - l) / 2;
+
+    if (arr[m] == x)
+      return m;
+    
+    if (arr[m] < x)
+      l = m + 1;
+    else
+      r = m - 1;
+  }
+  return -1;
+}
+
+int main(void) {
+  int arr[] = {2, 3, 4, 10, 40};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  int x = 10;
+  int result = binarySearch(arr, 0, n - 1, x);
+  
+  if(result == -1)
+    printf("Element is not present in array\n");
+  else
+    printf("Element is present at index %d\n", result);
+  
+  return 0;
+}
+```
+This C program defines a binary search function which takes in an array, the left and right bounds of the array and the element to search for. If the element is found within the array, the index at which it is found is returned else -1 is returned. A main function initializes an array with some values, specifies the value to search for, calls the binary search function and prints the result. It handles the case where the element is not found by checking if the returned index is -1. 
+
+The program does not make any of the mistakes mentioned as it properly controls resources through their lifetime by not allocating any dynamically that may be left hanging, it handles exceptional conditions by checking for the case where an element to be searched for does not exist, and adheres to good coding standards by being well-structured and readable. The lifetime of all resources is managed within the function scope, hence no resource is improperly controlled. Special conditions such as the element not being in the array are handled as well.

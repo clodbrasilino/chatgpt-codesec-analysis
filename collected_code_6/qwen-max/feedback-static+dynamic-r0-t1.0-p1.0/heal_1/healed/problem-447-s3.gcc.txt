@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-447-s3.c: In function 'find_cubes':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-447-s3.c:7:38: error: implicit declaration of function 'cbrt' [-Wimplicit-function-declaration]
+    7 |         if (list[i] > 0 && list[i] > cbrt(INT_MAX)) {
+      |                                      ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-447-s3.c:4:1: note: include '<math.h>' or provide a declaration of 'cbrt'
+    3 | #include <limits.h>
+  +++ |+#include <math.h>
+    4 | 

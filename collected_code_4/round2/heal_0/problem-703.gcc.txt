@@ -1,0 +1,8 @@
+./collected_code_4/round2//heal_0/problem-703.c: In function 'is_key_present':
+./collected_code_4/round2//heal_0/problem-703.c:39:43: warning: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+   39 |         if (dict->pairs[i].key != NULL && strcmp(dict->pairs[i].key, key) == 0) {
+      |                                           ^~~~~~
+./collected_code_4/round2//heal_0/problem-703.c:3:1: note: include '<string.h>' or provide a declaration of 'strcmp'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 

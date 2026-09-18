@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+long long factorial(int n){
+    long long fact = 1;
+    for(int i = 2; i <= n; i++)
+        fact *= i;
+    return fact;
+}
+
+long long binomialCoeff(int n, int r){
+    long long binom = factorial(n) / (factorial(r) * factorial(n - r));
+    return binom;
+}
+
+long long sumSquaredBinomCoeff(int n) {
+    long long sum = 0;
+    for(int i = 0; i <= n; i++){
+        long long binom = binomialCoeff(n, i);
+        sum += binom * binom;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a positive integer: ");
+    scanf("%d", &n);
+    
+    if (n >= 0) {
+        long long result = sumSquaredBinomCoeff(n);
+        printf("The sum of squares of binomial coefficients is: %lld\n", result);
+    }
+    else {
+        printf("Invalid input. Please enter a positive integer.\n");
+    }
+
+    return 0;
+}

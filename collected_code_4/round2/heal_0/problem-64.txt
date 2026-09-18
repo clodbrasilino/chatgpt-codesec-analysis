@@ -1,0 +1,41 @@
+C language doesn't support lambda functions or built-in lists or tuples data structure like Python or other high-level languages do. Also, error and exception handling is also different in C language in comparison to object-oriented languages. Here's an example of how you might sort an array of structs (similar to tuples) in C.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct 
+{
+    int x;
+    int y;
+} tuple;
+
+int comparison(const void *a, const void *b)
+{
+    tuple *orderA = (tuple *)a;
+    tuple *orderB = (tuple *)b;
+
+    if (orderA->x > orderB->x)
+        return 1;
+    else if (orderA->x < orderB->x)
+        return -1;
+    else 
+        return 0;
+}
+
+int main()
+{
+    tuple arr[] = {{2, 3}, {1, 7}, {8, 10}, {5, 6}, {7, 2}};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    qsort((void *)arr, size, sizeof(arr[0]), comparison);
+
+    for (int i = 0; i < size; i++)
+        printf("(%d, %d) ", arr[i].x, arr[i].y);
+
+    //Ensure successful termination of the program
+    return 0;
+}
+```
+In the above code, we've used structure to define a "tuple", compared them in `comparison` method and sorted using `qsort` function. The Error handling is done implicitly by the standard library itself, so we don't have to worry about exception handling such as null pointer exception as we cannot explicitly throw exceptions in C.
+Note that `qsort` would handle the resource's lifetime properly and there wouldn't be any memory errors in this case. There's also a proper adherence to coding standards by keeping the code simple, readable, and meaningful. Despite C doesn't support lambdas, the comparison function is working in kind of similar way to lambda functions.

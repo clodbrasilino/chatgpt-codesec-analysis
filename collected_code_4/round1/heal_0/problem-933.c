@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_LEN 100
+
+char* camel_to_snake(char* camelCase)
+{
+    regex_t regex;
+    int reti;
+    char* res = malloc(strlen(camelCase) * 2);
+
+    reti = regcomp(&regex, "([A-Z])", 0);
+    if (reti) {
+        printf("Could not compile regex\n");
+        free(res);
+        return NULL;
+    }
+
+    regmatch_t matches[MAX_LEN];
+    char* src = camelCase;
+    char* dst = res;
+    while (*src) {
+        if (!(reti = regexec(&regex, src, MAX_LEN, matches, 0))) {
+            size_t len = matches[0].rm_so;
+            strncpy(dst, src, len);
+            dst[len] = '_';
+            dst[len+1] = tolower(src[len]);
+            dst += len + 2;
+            src += len + 1;
+        } else if (reti == REG_NOMATCH) {
+            strcpy(dst, src);
+            break;
+        } else {
+            regerror(reti, &regex, res, sizeof(res));
+            printf("Regex match failed: %s\n", res);
+            free(res);
+            return NULL;
+        }
+    }
+
+    regfree(&regex);
+    return res;
+}
+
+int main() 
+{
+    char camelCaseStr[] = "camelCaseString";
+    char* snake_case_str = camel_to_snake(camelCaseStr);
+    if (snake_case_str) {
+        printf("Snake case string: %s\n", snake_case_str);
+        free(snake_case_str);
+    }
+    return 0;
+}

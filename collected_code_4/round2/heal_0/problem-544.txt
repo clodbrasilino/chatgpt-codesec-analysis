@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TUPLE_SIZE 20
+#define MAX_STRING_SIZE 1000
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+char* flatten_tuple_list(Tuple* list, int size) {
+    char* string = (char*) malloc(sizeof(char) * MAX_STRING_SIZE);
+    if (string == NULL) {
+        printf("Memory allocation failed.");
+        exit(1);
+    }
+    string[0] = '\0';
+    for (int i = 0; i < size; i++) {
+        char buffer[MAX_TUPLE_SIZE];
+        snprintf(buffer, MAX_TUPLE_SIZE, "(%d, %d)", list[i].x, list[i].y);
+        strncat(string, buffer, MAX_STRING_SIZE - strlen(string) - 1);
+    }
+    return string;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    char* tupleString = flatten_tuple_list(tuples, 3);
+    printf("%s", tupleString);
+    free(tupleString);
+    return 0;
+}
+```

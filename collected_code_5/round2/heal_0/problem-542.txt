@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <stdlib.h>
+
+void replaceCharWithColon(char *str) {
+    int i;
+    for(i=0; i<strlen(str); i++) {
+        if(str[i] == ' ' || str[i] == ',' || str[i] == '.')
+            str[i] = ':';
+    }
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strlen(str) - 1] = '\0';
+    replaceCharWithColon(str);
+    printf("Modified string: %s", str);
+    return 0;
+}
+```
+Please note that the language C does not directly support regular expressions (regex). The use of regex in C would require the PCRE (Perl Compatible Regular Expressions) library, or similar. But your specific request does not really require a regular expression, so the above solution doesn't use one.
+
+Small explanation: The function "replaceCharWithColon" goes through each character in the passed string and if it finds a white space (' '), or a comma (',') or a dot ('.'), it replaces it with a colon (':'). In the main function, the user can enter a string, which then will be passed to the "replaceCharWithColon" function to modify it. After modifying, the modified string is printed to the console.

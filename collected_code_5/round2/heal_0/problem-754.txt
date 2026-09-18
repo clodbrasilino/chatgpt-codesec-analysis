@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+void getCommonIndicesElements(int a[], int b[], int c[], int n) {
+    for(int i = 0; i < n; i++) {
+        if(a[i] == b[i] && b[i] == c[i]) {
+            printf("%d ", a[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int a[MAX_SIZE], b[MAX_SIZE], c[MAX_SIZE], n;
+
+    printf("Enter the number of elements in the lists: ");
+    scanf("%d", &n);
+
+    if(n < 0 || n > MAX_SIZE) {
+        printf("Invalid input\n");
+        return -1;
+    }
+
+    printf("\nEnter elements for list a: ");
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+
+    printf("\nEnter elements for list b: ");
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &b[i]);
+    }
+
+    printf("\nEnter elements for list c: ");
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &c[i]);
+    }
+
+    printf("\nCommon index elements in all three lists are: ");
+    getCommonIndicesElements(a, b, c, n);
+
+    return 0;
+}
+```

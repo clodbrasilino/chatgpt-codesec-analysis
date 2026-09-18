@@ -1,0 +1,31 @@
+#include<stdio.h>
+#include<math.h>
+
+double sumOfSeries(double firstTerm, double numTerms, double commonRatio) {
+    double sum = 0;
+
+    // No number of terms or zero common ratio means sum is 0
+    if(commonRatio == 0 || numTerms <= 0) {
+        return 0;
+    }
+
+    // If commonRatio is 1, sum is number of terms times first term
+    if(commonRatio == 1) {
+        return numTerms * firstTerm;
+    }
+
+    sum = firstTerm * (1 - pow(commonRatio, numTerms)) /(1 - commonRatio);
+
+    return sum;
+}
+
+int main() {
+    double firstTerm = 1;
+    double numTerms = 5;
+    double commonRatio = 2;
+    double sum = sumOfSeries(firstTerm, numTerms, commonRatio);
+
+    printf("Sum of series: %f", sum);
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_FACTOR 1000
+
+bool is_prime(int number) {
+    int i;
+
+    if (number == 1) 
+        return false;
+    else if (number == 2)
+        return true;
+
+    for (i = 2; i*i <= number; i++) {
+        if (number % i == 0) 
+            return false;
+    }
+
+    return true;
+}
+
+void add_prime_factor(int prime_factors[], int *count, int factor) {
+    int i;
+    for (i = 0; i < *count; i++) {
+        if (prime_factors[i] == factor) 
+            return;
+    }
+    prime_factors[(*count)++] = factor;
+}
+
+int count_distinct_prime_factors(int number) {
+    int i;
+    int count = 0;
+    int prime_factors[MAX_FACTOR];
+
+    for (i = 2; i*i <= number; i++) {
+        if (number % i == 0 && is_prime(i)) {
+            add_prime_factor(prime_factors, &count, i);
+            while (number % i == 0)
+                number /= i;
+        }
+    }
+
+    if(number > 1 && is_prime(number)) {
+        add_prime_factor(prime_factors, &count, number);
+    }
+
+    return count;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+
+    int count = count_distinct_prime_factors(number);
+    printf("The number of distinct prime factors of %d: %d\n", number, count);
+
+    return 0;
+}

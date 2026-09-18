@@ -1,0 +1,26 @@
+```c
+#include<stdio.h>
+
+int findFirstEven(int arr[], int n) {
+    for(int i = 0; i < n; i++) {
+        if(arr[i] % 2 == 0)
+            return arr[i];
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 3, 5, 7, 8, 2, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findFirstEven(arr, n);
+    
+    if(result != -1)
+        printf("First even number in the given list is: %d\n", result);
+    else
+        printf("No even number found in the given list.\n");
+
+    return 0; 
+}
+```
+This code checks each number in the given list if it's even by using the modulo operator; any number that gives zero as a remainder when divided by 2 is even. If there are no even numbers, it returns -1, indicating that the array contains no even numbers. In the main function, the array and size of array are given to the findFirstEven() function and it returns the first even number which is then printed.
+The code avoids the mentioned coding mistakes as it handles resources properly and has a sensible exception handling case, checking if an even number was found before trying to print it. The code also adheres to good coding practices such as properly closing the main function with a return statement.

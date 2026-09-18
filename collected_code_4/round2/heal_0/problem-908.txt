@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+
+int findFixedPoint(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == i) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = { -10, -1, 0, 3, 10, 11, 30, 50, 100 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findFixedPoint(arr, n);
+
+    if (result == -1) {
+        printf("No Fixed Point\n");
+    } else {
+        printf("Fixed Point is %d\n", result);
+    }
+    return 0;
+}
+```
+This program contains a function `findFixedPoint` which scans through the passed in array looking for any integer that is equal to its index in the array (a "fixed point"). It returns -1 if there is no such number.
+
+The main function includes an array with a fixed point at index 3 (since 3 == arr[3]), calls the `findFixedPoint` function passing this array, and prints out the result. If `findFixedPoint` returned -1, it prints "No Fixed Point", otherwise, it prints the location of the Fixed Point in the array.

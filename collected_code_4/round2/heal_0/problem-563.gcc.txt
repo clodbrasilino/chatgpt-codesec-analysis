@@ -1,0 +1,178 @@
+./collected_code_4/round2//heal_0/problem-563.c: In function 'extract_quoted_string':
+./collected_code_4/round2//heal_0/problem-563.c:21:31: warning: dereference of possibly-NULL 'output_ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |                 *output_ptr++ = ',';
+      |                 ~~~~~~~~~~~~~~^~~~~
+  'extract_quoted_string': events 1-14
+    |
+    |    8 |     if(input_string == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'input_string' is non-NULL)...
+    |......
+    |   12 |     int len = strlen(input_string);
+    |      |               ~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   13 |     char *output_string = malloc(BUFFER_SIZE);
+    |      |                           ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) this call could return NULL
+    |......
+    |   17 |     for (int i = 0; i < len; ++i) {
+    |      |                     ~~~~~~~  ~~~
+    |      |                       |      |
+    |      |                       |      (7) ...to here
+    |      |                       (4) following 'true' branch (when 'i < len')...
+    |      |                       (8) following 'true' branch (when 'i < len')...
+    |   18 |         if (input_string[i] == '\"') {
+    |      |            ~            ~
+    |      |            |            |
+    |      |            |            (5) ...to here
+    |      |            |            (9) ...to here
+    |      |            (10) following 'true' branch...
+    |   19 |             inside_quote = !inside_quote;
+    |      |                            ~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (11) ...to here
+    |   20 |             if (inside_quote == 0) {
+    |      |                ~
+    |      |                |
+    |      |                (6) following 'false' branch (when 'inside_quote != 0')...
+    |      |                (12) following 'true' branch (when 'inside_quote == 0')...
+    |   21 |                 *output_ptr++ = ',';
+    |      |                 ~~~~~~~~~~~~~~~~~~~
+    |      |                            |  |
+    |      |                            |  (14) 'output_ptr' could be NULL: unchecked value from (3)
+    |      |                            (13) ...to here
+    |
+./collected_code_4/round2//heal_0/problem-563.c:24:27: warning: dereference of possibly-NULL 'output_ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             *output_ptr++ = input_string[i];
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+  'extract_quoted_string': events 1-14
+    |
+    |    8 |     if(input_string == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'input_string' is non-NULL)...
+    |......
+    |   12 |     int len = strlen(input_string);
+    |      |               ~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   13 |     char *output_string = malloc(BUFFER_SIZE);
+    |      |                           ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) this call could return NULL
+    |......
+    |   17 |     for (int i = 0; i < len; ++i) {
+    |      |                     ~~~~~~~  ~~~
+    |      |                       |      |
+    |      |                       |      (7) ...to here
+    |      |                       (4) following 'true' branch (when 'i < len')...
+    |      |                       (8) following 'true' branch (when 'i < len')...
+    |   18 |         if (input_string[i] == '\"') {
+    |      |            ~            ~
+    |      |            |            |
+    |      |            |            (5) ...to here
+    |      |            |            (9) ...to here
+    |      |            (10) following 'false' branch...
+    |   19 |             inside_quote = !inside_quote;
+    |   20 |             if (inside_quote == 0) {
+    |      |                ~
+    |      |                |
+    |      |                (6) following 'false' branch (when 'inside_quote != 0')...
+    |......
+    |   23 |         } else if(inside_quote){
+    |      |                  ~
+    |      |                  |
+    |      |                  (11) ...to here
+    |      |                  (12) following 'true' branch (when 'inside_quote != 0')...
+    |   24 |             *output_ptr++ = input_string[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |             |
+    |      |                           |             (13) ...to here
+    |      |                           (14) 'output_ptr' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round2//heal_0/problem-563.c:24:27: warning: dereference of possibly-NULL 'output_ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             *output_ptr++ = input_string[i];
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+  'extract_quoted_string': events 1-18
+    |
+    |    8 |     if(input_string == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'input_string' is non-NULL)...
+    |......
+    |   12 |     int len = strlen(input_string);
+    |      |               ~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   13 |     char *output_string = malloc(BUFFER_SIZE);
+    |      |                           ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) this call could return NULL
+    |......
+    |   17 |     for (int i = 0; i < len; ++i) {
+    |      |                     ~~~~~~~  ~~~
+    |      |                       |      |
+    |      |                       |      (7) ...to here
+    |      |                       |      (13) ...to here
+    |      |                       (4) following 'true' branch (when 'i < len')...
+    |      |                       (8) following 'true' branch (when 'i < len')...
+    |      |                       (14) following 'true' branch (when 'i < len')...
+    |   18 |         if (input_string[i] == '\"') {
+    |      |            ~            ~
+    |      |            |            |
+    |      |            |            (5) ...to here
+    |      |            |            (9) ...to here
+    |      |            |            (15) ...to here
+    |      |            (10) following 'true' branch...
+    |      |            (16) following 'false' branch...
+    |   19 |             inside_quote = !inside_quote;
+    |      |                            ~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (11) ...to here
+    |   20 |             if (inside_quote == 0) {
+    |      |                ~
+    |      |                |
+    |      |                (6) following 'false' branch (when 'inside_quote != 0')...
+    |      |                (12) following 'false' branch (when 'inside_quote != 0')...
+    |......
+    |   23 |         } else if(inside_quote){
+    |      |                  ~
+    |      |                  |
+    |      |                  (17) ...to here
+    |   24 |             *output_ptr++ = input_string[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (18) 'output_ptr' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round2//heal_0/problem-563.c:29:17: warning: dereference of possibly-NULL 'output_ptr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     *output_ptr = '\0';
+      |     ~~~~~~~~~~~~^~~~~~
+  'extract_quoted_string': events 1-6
+    |
+    |    8 |     if(input_string == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'input_string' is non-NULL)...
+    |......
+    |   12 |     int len = strlen(input_string);
+    |      |               ~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   13 |     char *output_string = malloc(BUFFER_SIZE);
+    |      |                           ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (3) this call could return NULL
+    |......
+    |   28 |     if (output_ptr != output_string && *(output_ptr-1) == ',') output_ptr--;
+    |      |        ~
+    |      |        |
+    |      |        (4) following 'false' branch (when 'output_ptr == output_string')...
+    |   29 |     *output_ptr = '\0';
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) ...to here
+    |      |                 (6) 'output_ptr' could be NULL: unchecked value from (3)
+    |

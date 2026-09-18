@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct IntNode {
+    int val;
+    struct IntNode* next;
+};
+
+struct ListNode {
+    struct IntNode* head;
+    struct ListNode* next;
+};
+
+struct IntNode* create_int_node(int val) {
+    struct IntNode* node = (struct IntNode*)malloc(sizeof(struct IntNode));
+    if (!node) {
+        exit(EXIT_FAILURE);
+    }
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+struct ListNode* create_list_node(struct IntNode* head) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    if (!node) {
+        exit(EXIT_FAILURE);
+    }
+    node->head = head;
+    node->next = NULL;
+    return node;
+}
+
+void free_int_list(struct IntNode* head) {
+    struct IntNode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(struct ListNode* head) {
+    struct ListNode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free_int_list(temp->head);
+        free(temp);
+    }
+}
+
+bool are_lists_equal(struct IntNode* l1, struct IntNode* l2) {
+    while (l1 != NULL && l2 != NULL) {
+        if (l1->val != l2->val) {
+            return false;
+        }
+        l1 = l1->next;
+        l2 = l2->next;
+    }
+    return l1 == NULL && l2 == NULL;
+}
+
+void remove_duplicates(struct ListNode** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL) {
+        return;
+    }
+
+    struct ListNode* current = *head_ref;
+
+    while (current != NULL) {
+        struct ListNode* runner = current;
+        while (runner->next != NULL) {
+            if (are_lists_equal(current->head, runner->next->head)) {
+                struct ListNode* duplicate = runner->next;
+                runner->next = runner->next->next;
+                free_int_list(duplicate->head);
+                free(duplicate);
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void print_lists(struct ListNode* head) {
+    while (head != NULL) {
+        struct IntNode* curr_int = head->head;
+        while (curr_int != NULL) {
+            printf("%d ", curr_int->val);
+            curr_int = curr_int->next;
+        }
+        printf("\n");
+        head = head->next;
+    }
+}
+
+int main(void) {
+    struct IntNode* l1 = create_int_node(1);
+    l1->next = create_int_node(2);
+    l1->next->next = create_int_node(3);
+
+    struct IntNode* l2 = create_int_node(1);
+    l2->next = create_int_node(2);
+
+    struct IntNode* l3 = create_int_node(1);
+    l3->next = create_int_node(2);
+    l3->next->next = create_int_node(3);
+
+    struct ListNode* head = create_list_node(l1);
+    head->next = create_list_node(l2);
+    head->next->next = create_list_node(l3);
+
+    remove_duplicates(&head);
+    print_lists(head);
+    
+    free_list_of_lists(head);
+
+    return EXIT_SUCCESS;
+}
+```

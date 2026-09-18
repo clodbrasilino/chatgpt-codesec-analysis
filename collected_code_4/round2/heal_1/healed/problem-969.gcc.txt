@@ -1,0 +1,212 @@
+./collected_code_4/round2//heal_1/healed/problem-969.c: In function 'addElement':
+./collected_code_4/round2//heal_1/healed/problem-969.c:18:13: warning: use of uninitialized value '*tuple.size' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+      |        ~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   49 |     addElement(&tuple1, "Hello Test");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'addElement' from 'main'
+    |
+    +--> 'addElement': events 3-4
+           |
+           |   17 | void addElement(struct Tuple* tuple, char* el) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'addElement'
+           |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'true' branch...
+           |
+         'addElement': event 5
+           |
+           |   19 |         strcpy(tuple->arr[tuple->size++], el);
+           |      |                           ~~~~~^~~~~~
+           |      |                                |
+           |      |                                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   49 |     addElement(&tuple1, "Hello Test");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'addElement'
+    |   50 |     addElement(&tuple1, "Hello Test2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'addElement' from 'main'
+    |
+    +--> 'addElement': events 8-9
+           |
+           |   17 | void addElement(struct Tuple* tuple, char* el) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'addElement'
+           |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'true' branch...
+           |
+         'addElement': event 10
+           |
+           |   19 |         strcpy(tuple->arr[tuple->size++], el);
+           |      |                           ~~~~~^~~~~~
+           |      |                                |
+           |      |                                (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   50 |     addElement(&tuple1, "Hello Test2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'addElement'
+    |......
+    |   53 |     addElement(&tuple2, "Hello Test");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'addElement' from 'main'
+    |
+    +--> 'addElement': events 13-14
+           |
+           |   17 | void addElement(struct Tuple* tuple, char* el) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (13) entry to 'addElement'
+           |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+           |      |       ~
+           |      |       |
+           |      |       (14) following 'true' branch...
+           |
+         'addElement': event 15
+           |
+           |   19 |         strcpy(tuple->arr[tuple->size++], el);
+           |      |                           ~~~~~^~~~~~
+           |      |                                |
+           |      |                                (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   53 |     addElement(&tuple2, "Hello Test");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (16) returning to 'main' from 'addElement'
+    |   54 |     addElement(&tuple2, "Hello Test3");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addElement' from 'main'
+    |
+    +--> 'addElement': events 18-19
+           |
+           |   17 | void addElement(struct Tuple* tuple, char* el) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addElement'
+           |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'true' branch...
+           |
+         'addElement': event 20
+           |
+           |   19 |         strcpy(tuple->arr[tuple->size++], el);
+           |      |                           ~~~~~^~~~~~
+           |      |                                |
+           |      |                                (20) ...to here
+           |
+    <------+
+    |
+  'main': events 21-22
+    |
+    |   54 |     addElement(&tuple2, "Hello Test3");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) returning to 'main' from 'addElement'
+    |   55 | 
+    |   56 |     result = joinTuples(tuple1, tuple2);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (22) calling 'joinTuples' from 'main'
+    |
+    +--> 'joinTuples': events 23-29
+           |
+           |   26 | struct Tuple joinTuples(struct Tuple tuple1, struct Tuple tuple2) {
+           |      |              ^~~~~~~~~~
+           |      |              |
+           |      |              (23) entry to 'joinTuples'
+           |   27 |     struct Tuple result;
+           |      |                  ~~~~~~
+           |      |                  |
+           |      |                  (24) region created on stack here
+           |......
+           |   30 |     if(strcmp(tuple1.arr[0], tuple2.arr[0]) == 0) {
+           |      |       ~       
+           |      |       |
+           |      |       (25) following 'true' branch (when the strings are equal)...
+           |   31 |         for(int i = 0; i < tuple1.size; i++) {
+           |      |                 ~      ~~~~~~~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (27) following 'true' branch...
+           |      |                 (26) ...to here
+           |   32 |             addElement(&result, tuple1.arr[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                             |
+           |      |             |                             (28) ...to here
+           |      |             (29) calling 'addElement' from 'joinTuples'
+           |
+           +--> 'addElement': events 30-31
+                  |
+                  |   17 | void addElement(struct Tuple* tuple, char* el) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (30) entry to 'addElement'
+                  |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (31) following 'true' branch...
+                  |
+                'addElement': event 32
+                  |
+                  |   19 |         strcpy(tuple->arr[tuple->size++], el);
+                  |      |                           ~~~~~^~~~~~
+                  |      |                                |
+                  |      |                                (32) ...to here
+                  |
+           <------+
+           |
+         'joinTuples': events 33-36
+           |
+           |   31 |         for(int i = 0; i < tuple1.size; i++) {
+           |      |                        ~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (34) following 'true' branch...
+           |   32 |             addElement(&result, tuple1.arr[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                             |
+           |      |             |                             (35) ...to here
+           |      |             (33) returning to 'joinTuples' from 'addElement'
+           |      |             (36) calling 'addElement' from 'joinTuples'
+           |
+           +--> 'addElement': events 37-38
+                  |
+                  |   17 | void addElement(struct Tuple* tuple, char* el) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (37) entry to 'addElement'
+                  |   18 |     if(tuple->size < MAX_TUPLE_COUNT) {
+                  |      |        ~~~~~~~~~~~
+                  |      |             |
+                  |      |             (38) use of uninitialized value '*tuple.size' here
+                  |

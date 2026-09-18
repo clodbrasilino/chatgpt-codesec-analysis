@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+// A function to find the maximum of nth column from the given list of tuples
+int max_nth_column(int n, int tuples[][2], int tuple_size) {
+    int max = tuples[0][n];
+    for (int i = 1; i < tuple_size; i++) {
+        if (tuples[i][n] > max) {
+            max = tuples[i][n];
+        }
+    }
+    return max;
+}
+
+int main() {
+    int tuples[][2] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    int tuple_size = sizeof(tuples) / sizeof(tuples[0]);
+    int n = 1;
+
+    if(n < 0 || n > 1) {
+        printf("Please input valid column number (0 or 1)\n");
+        return 1;
+    } else {
+        int max = max_nth_column(n, tuples, tuple_size);
+        printf("Maximum of column %d: %d\n", n, max);
+        return 0;
+    }
+}
+```

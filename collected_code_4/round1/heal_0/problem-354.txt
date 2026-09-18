@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+
+int nthTerm(int a, int d, int n) {
+    return a + (n-1)*d;
+}
+
+int main() {
+    int first, diff, term;
+
+    printf("Enter the first term: ");
+    scanf("%d", &first);
+
+    printf("Enter the common difference: ");
+    scanf("%d", &diff);
+
+    printf("Enter the term number to find: ");
+    scanf("%d", &term);
+
+    printf("The %dth term is %d\n", term, nthTerm(first, diff, term));
+
+    return 0;
+}
+```

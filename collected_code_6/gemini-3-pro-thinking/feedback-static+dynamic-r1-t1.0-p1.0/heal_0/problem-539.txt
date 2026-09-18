@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double power_by_index(double base, size_t index);
+double* map(const double* array, size_t length, double (*func)(double, size_t));
+
+double power_by_index(double base, size_t index) {
+    return pow(base, (double)index);
+}
+
+double* map(const double* array, size_t length, double (*func)(double, size_t)) {
+    if (array == NULL || func == NULL || length == 0) {
+        return NULL;
+    }
+
+    double* result = (double*)malloc(length * sizeof(double));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        result[i] = func(array[i], i);
+    }
+
+    return result;
+}
+
+int main(void) {
+    const double bases[] = {10.0, 2.0, 3.0, 4.0, 5.0};
+    const size_t length = sizeof(bases) / sizeof(bases[0]);
+
+    double* powers = map(bases, length, power_by_index);
+
+    if (powers == NULL) {
+        fprintf(stderr, "Error: Resource allocation or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        printf("%.6f\n", powers[i]);
+    }
+
+    free(powers);
+    powers = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

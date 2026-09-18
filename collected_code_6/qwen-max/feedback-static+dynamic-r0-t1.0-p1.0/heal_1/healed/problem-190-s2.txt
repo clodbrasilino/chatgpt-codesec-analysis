@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int64_t count_integral_coordinates(int x1, int y1, int x2, int y2) {
+    int64_t width = (int64_t)abs(x2 - x1) + 1;
+    int64_t height = (int64_t)abs(y2 - y1) + 1;
+    return width * height;
+}
+
+int main() {
+    int x1, y1, x2, y2;
+
+    printf("Enter the coordinates of the bottom-left corner (x1, y1): ");
+    if (scanf("%d %d", &x1, &y1) != 2) {
+        fprintf(stderr, "Invalid input for (x1, y1)\n");
+        return 1;
+    }
+
+    printf("Enter the coordinates of the top-right corner (x2, y2): ");
+    if (scanf("%d %d", &x2, &y2) != 2) {
+        fprintf(stderr, "Invalid input for (x2, y2)\n");
+        return 1;
+    }
+
+    int64_t count = count_integral_coordinates(x1, y1, x2, y2);
+    printf("Number of integral coordinates: %lld\n", count);
+
+    return 0;
+}
+```

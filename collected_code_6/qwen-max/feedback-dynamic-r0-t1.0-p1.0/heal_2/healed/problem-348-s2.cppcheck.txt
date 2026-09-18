@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-348-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-348-s2.c:8:11: warning: Either the condition 'k>100' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][100][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (dp[n][k][100 + arr[0]] != -1) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-348-s2.c:26:20: note: Assuming that condition 'k>100' is not redundant
+    if (k < 0 || k > 100) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-348-s2.c:40:42: note: Calling function 'count_sequences', 3rd argument 'k' value is 100
+    int result = count_sequences(arr, n, k, dp);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-348-s2.c:8:11: note: Array index out of bounds
+    if (dp[n][k][100 + arr[0]] != -1) {
+          ^

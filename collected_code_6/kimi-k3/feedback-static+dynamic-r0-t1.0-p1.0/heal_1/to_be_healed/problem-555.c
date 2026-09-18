@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+long long calculateDifference(int n) {
+    if (n < 1) {
+        return 0;
+    }
+    
+    long long sum = (long long)n * (n + 1) / 2;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 3950582716 * 3950582716 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:1009,execs:445,op:quick,pos:5)
+     */
+    long long sumOfCubes = sum * sum;
+    
+    return sumOfCubes - sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a positive integer: ");
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 1) {
+        fprintf(stderr, "Please enter a positive integer\n");
+        return 1;
+    }
+    
+    long long result = calculateDifference(n);
+    printf("Difference: %lld\n", result);
+    
+    return 0;
+}

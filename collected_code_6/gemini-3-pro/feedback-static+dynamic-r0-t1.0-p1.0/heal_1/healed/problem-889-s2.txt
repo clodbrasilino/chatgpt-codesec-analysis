@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct ListOfLists {
+    struct Node* head;
+    struct ListOfLists* next;
+};
+
+struct Node* reverseList(struct Node* head) {
+    struct Node* prev = NULL;
+    struct Node* current = head;
+    struct Node* next = NULL;
+    
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+void reverseAllLists(struct ListOfLists* lolHead) {
+    struct ListOfLists* current = lolHead;
+    while (current != NULL) {
+        current->head = reverseList(current->head);
+        current = current->next;
+    }
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+void printListOfLists(struct ListOfLists* lolHead) {
+    struct ListOfLists* temp = lolHead;
+    while (temp != NULL) {
+        printList(temp->head);
+        temp = temp->next;
+    }
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct ListOfLists* createListOfListsNode(struct Node* head) {
+    struct ListOfLists* newNode = (struct ListOfLists*)malloc(sizeof(struct ListOfLists));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->head = head;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(struct Node* head) {
+    while (head != NULL) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void freeListOfLists(struct ListOfLists* lolHead) {
+    while (lolHead != NULL) {
+        struct ListOfLists* temp = lolHead;
+        freeList(lolHead->head);
+        lolHead = lolHead->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* l1 = createNode(1);
+    l1->next = createNode(2);
+    l1->next->next = createNode(3);
+
+    struct Node* l2 = createNode(4);
+    l2->next = createNode(5);
+    l2->next->next = createNode(6);
+
+    struct ListOfLists* lol = createListOfListsNode(l1);
+    lol->next = createListOfListsNode(l2);
+
+    reverseAllLists(lol);
+
+    printListOfLists(lol);
+
+    freeListOfLists(lol);
+
+    return 0;
+}
+```

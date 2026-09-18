@@ -1,0 +1,127 @@
+./collected_code_4/round1//heal_0//problem-49.c: In function 'extract_elements':
+./collected_code_4/round1//heal_0//problem-49.c:17:37: warning: use of uninitialized value '*list_26(D) + _4' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   17 |         extracted_elements[i] = list[i][pos];
+      |                                 ~~~~^~~
+  'main': events 1-9
+    |
+    |   23 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   32 |     int** list = (int**)malloc(rows * sizeof(int*));
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) region created on heap here
+    |   33 |     if(list == NULL){
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   38 |     for(int i = 0; i < rows; i++){
+    |      |             ~      ~~~~~~~~
+    |      |             |        |
+    |      |             |        (5) following 'false' branch...
+    |      |             (4) ...to here
+    |......
+    |   46 |     printf("Enter the elements of the list:\n");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |   47 |     for(int i = 0; i < rows; i++){
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (7) following 'false' branch...
+    |......
+    |   53 |     printf("Enter the position to extract: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) ...to here
+    |......
+    |   56 |     int* extracted_elements = extract_elements(list, rows, cols, pos);
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (9) calling 'extract_elements' from 'main'
+    |
+    +--> 'extract_elements': events 10-17
+           |
+           |    4 | int* extract_elements(int **list, int rows, int cols, int pos){
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (10) entry to 'extract_elements'
+           |    5 |     if(pos >= cols){
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch (when 'pos < cols')...
+           |......
+           |   10 |     int* extracted_elements = (int*)malloc(rows * sizeof(int));
+           |      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (12) ...to here
+           |   11 |     if(extracted_elements == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (13) following 'false' branch (when 'extracted_elements' is non-NULL)...
+           |......
+           |   16 |     for(int i = 0; i < rows; i++){
+           |      |             ~      ~~~~~~~~
+           |      |             |        |
+           |      |             |        (15) following 'true' branch (when 'i < rows')...
+           |      |             (14) ...to here
+           |   17 |         extracted_elements[i] = list[i][pos];
+           |      |                                 ~~~~~~~
+           |      |                                     |
+           |      |                                     (16) ...to here
+           |      |                                     (17) use of uninitialized value '*list_26(D) + _4' here
+           |
+./collected_code_4/round1//heal_0//problem-49.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-49.c:67:9: warning: use of uninitialized value '*list_57 + _34' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   67 |         free(list[i]);
+      |         ^~~~~~~~~~~~~
+  'main': events 1-12
+    |
+    |   32 |     int** list = (int**)malloc(rows * sizeof(int*));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) region created on heap here
+    |   33 |     if(list == NULL){
+    |      |       ~                  
+    |      |       |
+    |      |       (2) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   38 |     for(int i = 0; i < rows; i++){
+    |      |             ~      ~~~~~~~~
+    |      |             |        |
+    |      |             |        (4) following 'false' branch...
+    |      |             (3) ...to here
+    |......
+    |   46 |     printf("Enter the elements of the list:\n");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) ...to here
+    |   47 |     for(int i = 0; i < rows; i++){
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (6) following 'false' branch...
+    |......
+    |   53 |     printf("Enter the position to extract: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) ...to here
+    |......
+    |   57 |     if(extracted_elements != NULL){
+    |      |       ~                  
+    |      |       |
+    |      |       (8) following 'false' branch (when 'extracted_elements' is NULL)...
+    |......
+    |   66 |     for(int i = 0; i < rows; i++){
+    |      |             ~      ~~~~~~~~
+    |      |             |        |
+    |      |             |        (10) following 'true' branch...
+    |      |             (9) ...to here
+    |   67 |         free(list[i]);
+    |      |         ~~~~~~~~~~~~~    
+    |      |         |        |
+    |      |         |        (11) ...to here
+    |      |         (12) use of uninitialized value '*list_57 + _34' here
+    |

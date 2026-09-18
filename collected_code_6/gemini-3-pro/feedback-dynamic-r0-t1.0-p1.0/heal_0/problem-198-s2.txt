@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point p1;
+    Point p2;
+    Point p3;
+    double area;
+} Triangle;
+
+Triangle find_largest_inscribed_triangle(double a, double b) {
+    Triangle max_triangle;
+    
+    if (a <= 0.0 || b <= 0.0) {
+        max_triangle.area = 0.0;
+        return max_triangle;
+    }
+
+    double angle1 = 0.0;
+    double angle2 = 2.0 * M_PI / 3.0;
+    double angle3 = 4.0 * M_PI / 3.0;
+
+    max_triangle.p1.x = a * cos(angle1);
+    max_triangle.p1.y = b * sin(angle1);
+
+    max_triangle.p2.x = a * cos(angle2);
+    max_triangle.p2.y = b * sin(angle2);
+
+    max_triangle.p3.x = a * cos(angle3);
+    max_triangle.p3.y = b * sin(angle3);
+
+    max_triangle.area = (3.0 * sqrt(3.0) / 4.0) * a * b;
+
+    return max_triangle;
+}
+
+int main(void) {
+    double a, b;
+    
+    if (scanf("%lf %lf", &a, &b) != 2) {
+        return 1;
+    }
+
+    if (a <= 0.0 || b <= 0.0) {
+        return 1;
+    }
+
+    Triangle max_triangle = find_largest_inscribed_triangle(a, b);
+
+    printf("%.6f %.6f\n", max_triangle.p1.x, max_triangle.p1.y);
+    printf("%.6f %.6f\n", max_triangle.p2.x, max_triangle.p2.y);
+    printf("%.6f %.6f\n", max_triangle.p3.x, max_triangle.p3.y);
+    printf("%.6f\n", max_triangle.area);
+
+    return 0;
+}
+```

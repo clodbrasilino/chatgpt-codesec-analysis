@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverseWords(char *str) {
+    char *temp;
+    char *word;
+    char *reversed = malloc(strlen(str) + 1);
+
+    if (!reversed) {
+        printf("Memory allocation error!\n");
+        return;
+    }
+
+    word = strtok(str, " ");
+    while (word != NULL)
+    {
+        temp = word;
+        word = strtok(NULL, " ");
+
+        if (word != NULL) {
+            strcat(word, " ");
+        }
+        strcat(word, temp);
+        strcpy(reversed, word);
+    }
+    strcpy(str, reversed);
+    free(reversed);
+}
+
+int main() {
+    char input[] = "This is a sample string";
+    reverseWords(input);
+    printf("Reversed string: %s\n", input);
+    return 0;
+}
+```
+This program will result in a segmentation fault because the `strtok` function replaces the delimiters in the original string with `\0`. This means that when you try to append the next word to the beginning of the string it is no longer null-terminated and you get undefined behavior. The segmentation fault is likely happening at the `strcat(word, " ");` line because `word` isn't pointing to a null-terminated string.

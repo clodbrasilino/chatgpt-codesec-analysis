@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int numSubsequences(int array[], int size, int limit){
+    int count = 0;
+    for(int i=0; i<size; i++){
+        if(array[i] < limit){
+            count++;
+            int product = array[i];
+            for(int j=i+1; j<size; j++){
+                product *= array[j];
+                if(product < limit){
+                    count++;
+                } else{
+                    break;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int main(){
+    int array[] = {1, 11, 2, 6, 16, 12};
+    int size = sizeof array/sizeof array[0];
+    int limit = 50;
+    printf("The number of subsequences is: %d\n", numSubsequences(array, size, limit));
+    return 0;
+}

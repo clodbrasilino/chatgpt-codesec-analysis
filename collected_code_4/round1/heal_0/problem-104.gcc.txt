@@ -1,0 +1,44 @@
+./collected_code_4/round1//heal_0//problem-104.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-104.c:29:22: warning: dereference of possibly-NULL 'list_of_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     list_of_lists[0] = malloc(list_sizes[0]* sizeof(char *));
+      |     ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   27 |     char ***list_of_lists = malloc(num_lists * sizeof(char **));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   28 | 
+    |   29 |     list_of_lists[0] = malloc(list_sizes[0]* sizeof(char *));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) 'list_of_lists' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-104.c:30:25: warning: dereference of possibly-NULL '*list_of_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     list_of_lists[0][0] = "jack";
+      |     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   29 |     list_of_lists[0] = malloc(list_sizes[0]* sizeof(char *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   30 |     list_of_lists[0][0] = "jack";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) '*list_of_lists' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-104.c:36:25: warning: dereference of possibly-NULL '*list_of_lists_51 + 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   36 |     list_of_lists[1][0] = "zack";
+      |     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   35 |     list_of_lists[1] = malloc(list_sizes[1]* sizeof(char *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   36 |     list_of_lists[1][0] = "zack";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) '*list_of_lists_51 + 8' could be NULL: unchecked value from (1)
+    |

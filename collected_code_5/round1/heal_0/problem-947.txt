@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int shortestWordLength(char *str) {
+    int len = strlen(str), minLen = INT_MAX, currLen = 0;
+    for(int i = 0; i < len; i++) {
+        if(str[i] != ' ') {
+            currLen++;
+        } else {
+            if(currLen < minLen) minLen = currLen;
+            currLen = 0;
+        }
+    }
+
+    // For the last word in string
+    if(currLen < minLen) minLen = currLen;
+    return minLen;
+}
+
+int main() {
+    char str[] = "Find the length of shortest word";
+    printf("%d\n", shortestWordLength(str));
+    return 0;
+}
+```

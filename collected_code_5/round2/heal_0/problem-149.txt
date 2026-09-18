@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int longestSubsequence(int* arr, int n) {
+    int* dp = (int*)calloc(n, sizeof(int));
+    if(dp == NULL) {
+        printf("Memory allocation failed.\n");
+        return 0;
+    }
+
+    int i, j;
+    int max = 1;
+    for (i = 0; i < n; ++i) {
+        dp[i] = 1;
+        for (j = 0; j < i; ++j) {
+            if (abs(arr[i] - arr[j]) == 1) {
+                dp[i] = dp[j] + 1;
+                if (dp[i] > max)
+                    max = dp[i];
+            }
+        }
+    }
+    
+    free(dp);
+    return max;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 3, 7, 2, 1, 2, 2, 1};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int res = longestSubsequence(arr, size);
+    printf("The length of the longest subsequence is %d\n", res);
+    return 0;
+}
+```

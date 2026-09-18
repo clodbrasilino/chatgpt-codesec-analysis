@@ -1,0 +1,127 @@
+./collected_code_4/round2//heal_15/healed/problem-114.c: In function 'assignFrequencies':
+./collected_code_4/round2//heal_15/healed/problem-114.c:37:14: warning: leak of 'results' [CWE-401] [-Wanalyzer-malloc-leak]
+   37 |     *results = (TupleFrequency*)realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+      |     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   50 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 3-19
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequencies'
+           |   15 |     if (tupleCount == 0 || results == NULL || resultCount == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |   16 | 
+           |   17 |     *results = (TupleFrequency*)malloc(sizeof(TupleFrequency) * tupleCount);
+           |      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (5) ...to here
+           |      |                                 (6) allocated here
+           |   18 |     if (*results == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (7) assuming 'results' is non-NULL
+           |      |        (8) following 'false' branch...
+           |   19 | 
+           |   20 |     *resultCount = 0;
+           |      |     ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) ...to here
+           |   21 |     for (int i = 0; i < tupleCount; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'i < tupleCount')...
+           |      |                       (16) following 'false' branch (when 'i >= tupleCount')...
+           |   22 |         int j;
+           |   23 |         for (j = 0; j < *resultCount; j++) {
+           |      |              ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |                |      |
+           |      |                |      (12) following 'false' branch...
+           |      |                (11) ...to here
+           |......
+           |   31 |         if (j == *resultCount) {
+           |      |            ~     ~~~~~~~~~~~~
+           |      |            |     |
+           |      |            |     (13) ...to here
+           |      |            (14) following 'true' branch...
+           |   32 |             (*results)[*resultCount].tuple = tuples[i];
+           |      |                                                    ~
+           |      |                                                    |
+           |      |                                                    (15) ...to here
+           |......
+           |   37 |     *results = (TupleFrequency*)realloc(*results, sizeof(TupleFrequency) * (*resultCount));
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |                  |                                           |
+           |      |              |                  (18) when 'realloc' fails                   (17) ...to here
+           |      |              (19) 'results' leaks here; was allocated at (6)
+           |
+./collected_code_4/round2//heal_15/healed/problem-114.c: In function 'main':
+./collected_code_4/round2//heal_15/healed/problem-114.c:52:23: warning: use of uninitialized value 'resultCount' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   52 |     for (int i = 0; i < resultCount; i++) {
+      |                     ~~^~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   48 |     int resultCount;
+    |      |         ~~~~~~~~~~~
+    |      |         |
+    |      |         (2) region created on stack here
+    |      |         (3) capacity: 4 bytes
+    |   49 | 
+    |   50 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) calling 'assignFrequencies' from 'main'
+    |
+    +--> 'assignFrequencies': events 5-9
+           |
+           |   14 | void assignFrequencies(Tuple *tuples, int tupleCount, TupleFrequency **results, int *resultCount) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'assignFrequencies'
+           |   15 |     if (tupleCount == 0 || results == NULL || resultCount == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch...
+           |   16 | 
+           |   17 |     *results = (TupleFrequency*)malloc(sizeof(TupleFrequency) * tupleCount);
+           |      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                 |
+           |      |                                 (7) ...to here
+           |   18 |     if (*results == NULL) return;
+           |      |        ~                  ~~~~~~
+           |      |        |                  |
+           |      |        |                  (9) ...to here
+           |      |        (8) following 'true' branch...
+           |
+    <------+
+    |
+  'main': events 10-11
+    |
+    |   50 |     assignFrequencies(tuples, sizeof(tuples) / sizeof(tuples[0]), &results, &resultCount);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) returning to 'main' from 'assignFrequencies'
+    |   51 | 
+    |   52 |     for (int i = 0; i < resultCount; i++) {
+    |      |                     ~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (11) use of uninitialized value 'resultCount' here
+    |

@@ -1,0 +1,33 @@
+Here is a simple implementation which would work if the given list is an array of integers.
+
+```C
+#include <stdio.h>
+
+int findMax(int arr[], int n) {
+    if (n < 1) {
+        printf("Error: Empty array\n");
+        return 0;
+    }
+
+    int max = arr[0];
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    return max;
+}
+
+int main() {
+    int arr[] = {1, 45, 6, 89, 2, 30};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int max = findMax(arr, n);
+
+    printf("Max element in array: %d\n", max);
+
+    return 0;
+}
+```
+In this program, 'findMax' function is used to find the maximum value in the provided array. The function receives the array and its size as parameters. If the array's length is less than 1, it prints an error message and returns 0, this is to take care of CWE-703. To prevent CWE-664, we are not dynamically allocating any memory so we do not need to worry about managing resources. For CWE-710, we conform to standard C coding practices, such as always using a return statement in non-void functions, using braces in loops, and terminating statement with semicolon etc.

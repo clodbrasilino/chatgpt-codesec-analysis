@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+
+void rearrange(int *array, int arraySize)
+{
+    int i = -1;
+    for (int j = 0; j < arraySize; j++) {
+        if (array[j] < 0) {
+            i++;
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+}
+
+int main(){
+    int array[] = {-1, 2, -3, 4, 5, -6, 7, 8, 9};
+    int arraySize = sizeof(array) / sizeof(array[0]);
+
+    rearrange(array, arraySize);
+
+    for (int i = 0; i < arraySize; i++)
+        printf("%d ", array[i]);
+
+    return 0;
+}
+```
+In this code snippet, the function 'rearrange' takes an integer array and its size as input. It goes through the array and if it encounters a negative number, it swaps the negative number with the first non-negative number in the array. This process is repeated until all the negative numbers are at the beginning and all the positive numbers are at the end of the array.
+
+The 'main' function initializes an integer array and calculates its size. It then calls the 'rearrange' function using this array and its size as input. Afterward, it prints out all the elements of the rearranged array.

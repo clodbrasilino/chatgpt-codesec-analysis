@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_sequences(long long m, long long n)
+{
+    long long total;
+    long long k;
+
+    if (n == 0) {
+        return 1;
+    }
+    if (m <= 0) {
+        return 0;
+    }
+
+    total = 0;
+    for (k = 1; k <= m; k++) {
+        total += count_sequences(k / 2, n - 1);
+    }
+    return total;
+}
+
+int main(void)
+{
+    long long m;
+    long long n;
+    long long result;
+
+    if (scanf("%lld %lld", &m, &n) != 2) {
+        fprintf(stderr, "Failed to read input values\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m < 0 || n < 0) {
+        fprintf(stderr, "Invalid input values\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_sequences(m, n);
+
+    if (printf("Number of possible sequences: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the fuzzing crash: the original code recursed via `count_sequences(m - 1, n)`, meaning a large `m` (e.g., from a fuzzer-supplied value like `1000000000 5`) produced recursion depth proportional to `m`, exhausting the stack and causing the observed crash (stack overflow manifesting as SIGSEGV/SIGABRT).
+
+The fix converts that unbounded `m - 1` recursion into an iterative loop, since `f(m, n) = f(m - 1, n) + f(m/2, n - 1)` unrolls to `f(m, n) = sum(k = 1..m) of f(k/2, n - 1)`. The only remaining recursion halves `m` on each level, so the recursion depth is now bounded by roughly `log2(m)` (at most ~63 frames for a 64-bit `long long`), eliminating the memory-safety defect regardless of input magnitude.

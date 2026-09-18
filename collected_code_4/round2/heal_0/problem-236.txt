@@ -1,0 +1,29 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+long long equilateral_triangles(int n) {
+    if(n < 1) {
+        return 0;
+    }
+    
+    return (n * (n+1) * (2*n+1)) / 6;
+}
+
+int main() {
+    int sideLength;
+    long long triangleCount;
+    
+    printf("Enter the side length of the equilateral triangle: ");
+    scanf("%d", &sideLength);
+    
+    triangleCount = equilateral_triangles(sideLength);
+
+    printf("Maximum number of equilateral triangles that can be formed: %lld\n", triangleCount);
+    
+    return 0;
+}
+```
+
+This function calculates the number of smaller equilateral triangles that can be formed within a larger equilateral triangle, given the side length of the larger triangle.
+The main function reads the side length as input from the user and then calls this function with the inputted value. It then outputs the returned number of triangles.

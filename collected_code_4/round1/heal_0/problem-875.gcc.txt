@@ -1,0 +1,8 @@
+./collected_code_4/round1//heal_0//problem-875.c: In function 'minDiff':
+./collected_code_4/round1//heal_0//problem-875.c:11:13: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   11 |          if(abs(arr[i] - arr[j]) < min_diff)
+      |             ^~~
+./collected_code_4/round1//heal_0//problem-875.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include<limits.h>
+  +++ |+#include <stdlib.h>
+    3 | 

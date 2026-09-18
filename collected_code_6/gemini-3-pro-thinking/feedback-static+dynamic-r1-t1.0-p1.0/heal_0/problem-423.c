@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int get_max(int a, int b, int c) {
+    int max = a;
+    if (b > max) {
+        max = b;
+    }
+    if (c > max) {
+        max = c;
+    }
+    return max;
+}
+
+int get_max_gold(const int *gold, size_t rows, size_t cols) {
+    if (!gold || rows == 0 || cols == 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc(rows * cols * sizeof(int));
+    if (!dp) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < rows; ++i) {
+        dp[i * cols] = gold[i * cols];
+    }
+
+    for (size_t j = 1; j < cols; ++j) {
+        for (size_t i = 0; i < rows; ++i) {
+            int right_up = (i > 0) ? dp[(i - 1) * cols + (j - 1)] : 0;
+            int right = dp[i * cols + (j - 1)];
+            int right_down = (i < rows - 1) ? dp[(i + 1) * cols + (j - 1)] : 0;
+
+            dp[i * cols + j] = gold[i * cols + j] + get_max(right_up, right, right_down);
+        }
+    }
+
+    int max_gold = dp[cols - 1];
+    for (size_t i = 1; i < rows; ++i) {
+        if (dp[i * cols + (cols - 1)] > max_gold) {
+            max_gold = dp[i * cols + (cols - 1)];
+        }
+    }
+
+    free(dp);
+    return max_gold;
+}
+
+int main(void) {
+    const size_t rows = 4;
+    const size_t cols = 4;
+    
+    int *gold = (int *)malloc(rows * cols * sizeof(int));
+    if (!gold) {
+        return EXIT_FAILURE;
+    }
+
+    const int initial_gold[] = {
+        1, 3, 1, 5,
+        2, 2, 4, 1,
+        5, 0, 2, 3,
+        0, 6, 1, 2
+    };
+
+    for (size_t i = 0; i < rows * cols; ++i) {
+        gold[i] = initial_gold[i];
+    }
+
+    int max_gold = get_max_gold(gold, rows, cols);
+    if (max_gold >= 0) {
+        printf("%d\n", max_gold);
+    }
+
+    free(gold);
+    return (max_gold < 0) ? EXIT_FAILURE : EXIT_SUCCESS;
+}

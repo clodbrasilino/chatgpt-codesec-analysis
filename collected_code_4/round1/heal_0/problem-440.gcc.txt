@@ -1,0 +1,37 @@
+./collected_code_4/round1//heal_0//problem-440.c: In function 'splitString':
+./collected_code_4/round1//heal_0//problem-440.c:12:25: warning: dereference of possibly-NULL 'res' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |         res[(*count)++] = token;
+      |         ~~~~~~~~~~~~~~~~^~~~~~~
+  'findAdverbAndPosition': events 1-2
+    |
+    |   19 | void findAdverbAndPosition(char *sentence) {
+    |      |      ^~~~~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findAdverbAndPosition'
+    |   20 |     int count = 0, i, j;
+    |   21 |     char **words = splitString(sentence, &count);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'splitString' from 'findAdverbAndPosition'
+    |
+    +--> 'splitString': events 3-7
+           |
+           |    7 | char **splitString(char *str, int *count) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'splitString'
+           |    8 |     char **res = (char **) malloc(MAX_LEN * sizeof(char *));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |......
+           |   11 |     while(token) {
+           |      |           ~~~~~
+           |      |           |
+           |      |           (5) following 'true' branch (when 'token' is non-NULL)...
+           |   12 |         res[(*count)++] = token;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |          |
+           |      |              |          (7) 'res + (long unsigned int)*count * 8' could be NULL: unchecked value from (4)
+           |      |              (6) ...to here
+           |

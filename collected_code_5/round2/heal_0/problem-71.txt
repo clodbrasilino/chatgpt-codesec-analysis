@@ -1,0 +1,54 @@
+```C
+#include <stdio.h>
+
+void updateGap(int *gap) {
+    *gap = (*gap * 10) / 13;
+
+    if (*gap < 1) {
+        *gap = 1;
+    }
+}
+
+void combSort(int arr[], int n) {
+    int gap = n;
+    int swapped = 1;
+    
+    while (gap != 1 || swapped == 1) {
+        updateGap(&gap);
+        swapped = 0;
+
+        for (int i = 0; i < n - gap; i++) {
+            if (arr[i] > arr[i + gap]) {
+                int temp = arr[i];
+                arr[i] = arr[i + gap];
+                arr[i + gap] = temp;
+                swapped = 1;
+            }
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {8, 5, 2, 6, 9, 3, 1, 4, 0, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Before sorting: ");
+    printArray(arr, n);
+
+    combSort(arr, n);
+
+    printf("After sorting: ");
+    printArray(arr, n);
+
+    return 0;
+}
+```
+This C program sorts an array in ascending order using the comb sort algorithm. The gap starts with the size of the array and shrinks down each iteration until it is 1. It does a standard bubble sort to swap elements that are larger than the corresponding element at the other end of the gap. The program consists of a function to manage the gap, a comb sort function, and a main function to execute the sorting algorithm. It also includes a helper function to print arrays. The program does not have any memory leaks or improper control of a resource through its lifetime (CWE-664), improper check or handling of exceptional conditions (CWE-703), or improper adherence to coding standards (CWE-710).

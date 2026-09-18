@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool are_all_different(int *arr, int len) {
+    for(int i = 0; i < len; i++) {
+        for(int j = i+1; j < len; j++) {
+            if(arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int len = sizeof(arr) / sizeof(arr[0]);
+
+    if(are_all_different(arr, len)) {
+        printf("All elements are unique\n");
+    } else {
+        printf("All elements are not unique\n");
+    }
+
+    return 0;
+}
+```
+This simplistic solution compares each item in the given array to every other item. If any two are found to be equal, the function `are_all_different()` immediately returns `false`. If no two items are the same, it returns `true`. I've enclosed this function in a basic `main()` function, that creates an array, and then checks it.

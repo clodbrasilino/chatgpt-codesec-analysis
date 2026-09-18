@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool isPalindrome(char str[]) {
+    int start = 0;
+    int end = strlen(str) - 1;
+
+    while (end > start) {
+        if (str[start++] != str[end--]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void findPalindromes(char *arr[], int arrSize) {
+    for (int i = 0; i < arrSize; ++i) {
+        if (isPalindrome(arr[i])) {
+            printf("%s\n", arr[i]);
+        }
+    }
+}
+
+int main() {
+    char *arr[] = {"madam", "hello", "bob", "world", "racecar"};
+    findPalindromes(arr, sizeof(arr) / sizeof(arr[0]));
+    return 0;
+}

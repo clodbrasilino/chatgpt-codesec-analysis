@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int check_number_at_end(char* str) {
+    int len = strlen(str);
+    return isdigit(str[len - 1]) ? 1 : 0;
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    scanf("%s", str);
+    if(check_number_at_end(str)) {
+        printf("The string ends with a number\n");
+    }
+    else {
+        printf("The string does not end with a number\n");
+    }
+    return 0;
+}
+```
+The `check_number_at_end` function checks if the last character of the input string `str` is a digit. This is done by using the `isdigit` function from the C Standard Library. If the function returns true (which is equivalent to `1`), the string ends with a number. If it returns false (which is equivalent to `0`), it does not. In the `main` function, the user is asked to provide a string, which is read using `scanf`. Then, `check_number_at_end` is called with this string as argument. Based on the function's return value, the program outputs whether the string ends with a number.

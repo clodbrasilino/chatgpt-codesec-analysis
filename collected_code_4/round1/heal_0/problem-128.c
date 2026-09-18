@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **shortlist_words(char **list, int length, int word_length, int *new_length) {
+    int i, count = 0;
+
+    // Counting number of words longer than 'word_length'
+    for (i = 0; i < length; i++) {
+        if (strlen(list[i]) > word_length) {
+            count++;
+        }
+    }
+
+    // Allocating space for shortlist
+    char **shortlist = malloc(count * sizeof(char *));
+    if (shortlist == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(1);
+    }
+
+    // Shortlisting words
+    *new_length = 0;
+    for (i = 0; i < length; i++) {
+        if (strlen(list[i]) > word_length) {
+            shortlist[*new_length] = list[i]; /* reference to the word, no new allocation */
+            (*new_length)++;
+        }
+    }
+    return shortlist; /* caller must free it */
+}
+
+int main() {
+    char *words[] = {"apple", "banana", "cherry", "date", "elderberry", "fig", "grape"};
+    int length = sizeof(words) / sizeof(words[0]);
+
+    int word_length = 5; /* threshold length */
+    int new_length, i;
+
+    char **shortlist = shortlist_words(words, length, word_length, &new_length);
+
+    printf("Words longer than %d characters:\n", word_length);
+    for (i = 0; i < new_length; i++) {
+        printf("%s\n", shortlist[i]);
+    }
+
+    free(shortlist);
+
+    return 0;
+}

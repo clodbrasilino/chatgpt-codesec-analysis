@@ -1,0 +1,38 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isPower(const int num) {
+    if(num && (!(num & (num-1))))
+        return true;
+    else
+        return false;
+}
+
+unsigned countBits(unsigned int number) {
+    unsigned int count = 0;
+    while (number) {
+        count += number & 1;
+        number >>= 1;
+    }
+    return count;
+}
+
+bool CheckNumber(unsigned int num) {
+    if (!isPower(countBits(num))) {
+        return false;
+    }
+    return true;
+}
+
+int main() {
+    unsigned int num;
+    printf("Enter a number: ");
+    scanf("%u", &num);
+    
+    if(CheckNumber(num))
+        printf("Yes, the number can be represented as sum of non-zero powers of 2.\n");
+    else
+        printf("No, the number can't be represented as sum of non-zero powers of 2.\n");
+
+    return 0;
+}

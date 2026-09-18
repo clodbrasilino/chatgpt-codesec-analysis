@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+void generate_magic_square(int n, int *matrix) {
+    int row = 0;
+    int col = n / 2;
+    int total_cells = n * n;
+
+    for (int i = 1; i <= total_cells; i++) {
+        matrix[row * n + col] = i;
+        
+        int next_row = (row - 1 < 0) ? (n - 1) : (row - 1);
+        int next_col = (col + 1 == n) ? 0 : (col + 1);
+
+        if (matrix[next_row * n + next_col] != 0) {
+            row = (row + 1 == n) ? 0 : (row + 1);
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+}
+
+void print_magic_square(int n, const int *matrix) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d ", matrix[i * n + j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(int argc, const char *const argv[]) {
+    if (argc != 2) {
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    errno = 0;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (errno != 0 || *endptr != '\0' || val <= 0 || val % 2 == 0 || val > 46000) {
+        return EXIT_FAILURE;
+    }
+
+    int n = (int)val;
+    size_t num_elements = (size_t)n * (size_t)n;
+    
+    int *matrix = calloc(num_elements, sizeof(int));
+    if (matrix == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    generate_magic_square(n, matrix);
+    print_magic_square(n, matrix);
+
+    free(matrix);
+    return EXIT_SUCCESS;
+}

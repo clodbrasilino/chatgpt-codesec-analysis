@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* find_first_repeated_word(const char* input_string) {
+    if (!input_string) {
+        char* res = (char*)malloc(5);
+        if (res) strcpy(res, "None");
+        return res;
+    }
+
+    size_t len = strlen(input_string);
+    char* str_copy = (char*)malloc(len + 1);
+    if (!str_copy) {
+        char* res = (char*)malloc(5);
+        if (res) strcpy(res, "None");
+        return res;
+    }
+    strcpy(str_copy, input_string);
+
+    for (size_t i = 0; i < len; ++i) {
+        str_copy[i] = tolower((unsigned char)str_copy[i]);
+    }
+
+    size_t words_capacity = 10;
+    char** words = (char**)malloc(words_capacity * sizeof(char*));
+    if (!words) {
+        free(str_copy);
+        char* res = (char*)malloc(5);
+        if (res) strcpy(res, "None");
+        return res;
+    }
+    size_t word_count = 0;
+
+    char* context = NULL;
+    char* token = strtok_r(str_copy, " \t\n\r.,!?;:-", &context);
+
+    while (token != NULL) {
+        for (size_t i = 0; i < word_count; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                char* result = (char*)malloc(strlen(token) + 1);
+                if (result) strcpy(result, token);
+                free(words);
+                free(str_copy);
+                return result;
+            }
+        }
+
+        if (word_count >= words_capacity) {
+            words_capacity *= 2;
+            char** temp = (char**)realloc(words, words_capacity * sizeof(char*));
+            if (!temp) break;
+            words = temp;
+        }
+        words[word_count++] = token;
+        token = strtok_r(NULL, " \t\n\r.,!?;:-", &context);
+    }
+
+    free(words);
+    free(str_copy);
+    char* result = (char*)malloc(5);
+    if (result) strcpy(result, "None");
+    return result;
+}
+
+int main(void) {
+    char buffer[4096];
+    if (fgets(buffer, sizeof(buffer), stdin)) {
+        char* repeated_word = find_first_repeated_word(buffer);
+        if (repeated_word) {
+            printf("%s\n", repeated_word);
+            free(repeated_word);
+        }
+    }
+    return 0;
+}

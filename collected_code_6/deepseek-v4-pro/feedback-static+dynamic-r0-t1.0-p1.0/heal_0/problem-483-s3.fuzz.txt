@@ -1,0 +1,2 @@
+problem-483-s3.c:40:41:medium:UBSan: signed integer overflow: 1416163783 + 1416163783 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000002,time:5896,execs:2710,op:havoc,rep:1)
+problem-483-s3.c:48:24:medium:UBSan: signed integer overflow: -1462639730 - 1416163783 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000002,time:5896,execs:2710,op:havoc,rep:1)

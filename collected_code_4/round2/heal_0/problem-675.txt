@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+int addIntegersInRange(int num1, int num2, int minRange, int maxRange) {
+    int sum = num1 + num2;
+    
+    if (sum >= minRange && sum <= maxRange) {
+        return 20;
+    }
+    
+    return sum;
+}
+
+int main() {
+    int num1, num2, minRange, maxRange;
+    printf("Enter two numbers to add: ");
+    scanf("%d%d", &num1, &num2);
+    
+    printf("Enter a range: ");
+    scanf("%d%d", &minRange, &maxRange);
+    
+    printf("Output: %d\n", addIntegersInRange(num1, num2, minRange, maxRange));
+    
+    return 0;
+}
+```
+This program begins by including the necessary standard input/output library for C. The function `addIntegersInRange` takes four integer arguments: two to add together, and a minimum and maximum to establish a range. It calculates the sum of the first two numbers, then checks if this sum falls between the given range inclusive. If the sum is within the range, the function returns 20; otherwise, the function returns the actual sum.
+
+The main function of the program asks the user to input two numbers and a range. These values are passed to the `addIntegersInRange` function, and the resulting value is printed to the console. The program ends by returning 0 to signify successful completion.

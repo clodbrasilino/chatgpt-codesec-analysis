@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+
+int64_t sum_fourth_power_odd(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    int64_t sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int64_t odd = 2LL * i - 1;
+        int64_t square = odd * odd;
+        
+        if (odd != 0 && square / odd != odd) {
+            return -1;
+        }
+        
+        int64_t fourth = square * square;
+        if (square != 0 && fourth / square != square) {
+            return -1;
+        }
+        
+        if (sum > INT64_MAX - fourth) {
+            return -1;
+        }
+        
+        sum += fourth;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+    
+    int64_t result = sum_fourth_power_odd(n);
+    if (result == -1) {
+        return 1;
+    }
+    
+    printf("%" PRId64 "\n", result);
+    
+    return 0;
+}

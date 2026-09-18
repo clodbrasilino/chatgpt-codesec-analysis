@@ -1,0 +1,44 @@
+Here's a C program to calculate the frequency count of a list of lists:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 3
+#define COLS 4
+
+void countFrequency(int arr[ROWS][COLS]) {
+    int count[10] = {0};
+
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (arr[i][j] >= 0 && arr[i][j] < 10) {
+                count[arr[i][j]]++;
+            } else {
+                printf("Invalid number: %d", arr[i][j]);
+                exit(1);
+            }
+        }
+    }
+
+    for (int i = 0; i < 10; i++) {
+        if (count[i] != 0) {
+            printf("%d appears %d times\n", i, count[i]);
+        }
+    }
+}
+
+int main() {
+    int arr[ROWS][COLS] = {
+        {1, 2, 3, 4},
+        {2, 3, 4, 1},
+        {3, 1, 2, 1}
+    };
+
+    countFrequency(arr);
+
+    return 0;
+}
+```
+
+In this program, we create a 2D array of integers and calculate the frequency count of elements in that array using the `countFrequency` function. The function iterates over the elements of the array, increments the frequency counts of elements in the `count` array, and then prints out the frequency of the elements. Be sure to confirm the numbers in the list are in the range 0 to 9 as our `count` array is of size 10. If the number is invalid (out of the range 0-9), the program will return an error and terminate.

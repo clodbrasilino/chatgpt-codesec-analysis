@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+
+typedef struct {
+    float x;
+    float y;
+} Point;
+
+float find_slope(Point p1, Point p2) {
+    if(p2.x == p1.x) {
+        printf("Error: Divide by zero! Points are vertically aligned.");
+        return 0;
+    }
+    return (p2.y - p1.y) / (p2.x - p1.x);
+}
+
+int main() {
+    Point p1 = {3, 2};
+    Point p2 = {6, 4};
+    float slope = find_slope(p1, p2);
+    printf("The slope of the line is: %f\n", slope);
+    return 0;
+}
+```
+
+In this C code, the function `find_slope` calculates the slope of a line created by two given points. It manages exceptional case by checking if points are vertically aligned before dividing by difference in x coordinates to avoid division by zero error. The data structure used to define the point is appropriate and properly managed throughout its lifetime. The function has been called correctly within the `main` function. Moreover, the coding standards and conventions have been duly followed giving the code a standard formatting and readability.

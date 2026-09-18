@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+
+int modifyBit(int n, int p) {
+    int mask = 1 << p;
+    return (n | mask);
+}
+
+int rightMostUnsetBit(int n) {
+    for (int i = 0; i < sizeof(int) * 8; i++) {
+        if ((n & (1 << i)) == 0) {
+            return modifyBit(n, i);
+        }
+    }
+    return -1; // Unable to find unset bit
+}
+
+int main() {
+    int n;
+    printf("Enter a number:\n");
+    scanf("%d", &n);
+    int result = rightMostUnsetBit(n);
+    if (result == -1) {
+        printf("All bits are set\n");
+    } else {
+        printf("Number after setting the rightmost unset bit: %d\n", result);
+    }
+    return 0;
+}
+```
+In this implementation, the `rightMostUnsetBit` function uses a loop to go over each bit in the number from the least significant bit to the most significant bit. If an unset bit (bit is 0) is found, the bit is set using the `modifyBit` function and the updated number is returned. If no unset bit is found (all bits are 1), the function returns -1.
+
+The `main` function first reads a number from the user. It then calls the `rightMostUnsetBit` function with the input number. If the result is -1, it prints "All bits are set". Otherwise it prints the number after setting the rightmost unset bit.

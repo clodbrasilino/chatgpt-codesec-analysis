@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+
+long long int computeWaystoPaintFence(int n, int k) {
+    long long int total = k;
+    int same = 0, diff = k;
+
+    for(int i = 2; i <= n; i++){
+        same = diff;
+        diff = total * (k-1);
+        total = same + diff;
+    }
+
+    return total;
+}
+
+int main(void){
+    int n, k;
+
+    printf("Enter the number of posts: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of colors: ");
+    scanf("%d", &k);
+
+    printf("Number of ways to paint the fence: %lld", computeWaystoPaintFence(n, k));
+
+    return 0;
+}
+```
+
+This is a C program that calculates the number of ways of painting a fence given several conditions, mainly that:
+
+1. No more than 2 posts can be the same color.
+2. There are a total of n number of posts and k number of possible colors. 
+
+This program assumes that the user provides valid input for both the number of posts n and the number of colors k. If incorrect input is provided, the function will not produce the correct output and there are no checks implemented in the current solution to catch these cases.
+
+The program uses a method only applicable for this problem, due to its simple constraints. The total number of ways to paint the fence if calculated by considering two cases: when the last two painted posts have the same color, and when the last two painted posts have different colors.
+
+If the last two painted posts have the same color, it means the last post was painted the same color as the one before it, which is why we can just use the value of the 'diff' variable at that time for 'same'.
+
+In contrast, if the last two painted posts have different colors, it means we have one less color available to paint the next post with, hence we multiply the current total with (k-1). 
+
+The total for each iteration is just the sum of these two possibilities.

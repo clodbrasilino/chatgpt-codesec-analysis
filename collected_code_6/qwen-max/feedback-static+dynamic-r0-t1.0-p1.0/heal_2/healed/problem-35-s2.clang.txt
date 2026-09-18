@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-35-s2.c:8:5: error: use of undeclared identifier 'int62_t'
+    8 |     int62_t result = (int64_t)n * (n + 1);
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-35-s2.c:9:9: error: use of undeclared identifier 'result'
+    9 |     if (result > INT64_MAX) {
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-35-s2.c:13:12: error: use of undeclared identifier 'result'
+   13 |     return result;
+      |            ^~~~~~
+3 errors generated.

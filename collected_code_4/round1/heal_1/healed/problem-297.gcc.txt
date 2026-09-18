@@ -1,0 +1,109 @@
+./collected_code_4/round1//heal_1/healed//problem-297.c: In function 'appendNestedList':
+./collected_code_4/round1//heal_1/healed//problem-297.c:57:18: warning: dereference of NULL 'current' [CWE-476] [-Wanalyzer-null-dereference]
+   57 |     while(current->next != NULL) {
+      |           ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   14 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   21 |     NestedList *nestedList = createNestedList(arr1, sizeof(arr1)/sizeof(int));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'createNestedList' from 'main'
+    |
+    +--> 'createNestedList': events 3-4
+           |
+           |   36 | NestedList *createNestedList(int *array, int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createNestedList'
+           |   37 |     NestedList *newNode = (NestedList*) malloc(sizeof(NestedList));
+           |   38 |     if (!newNode)
+           |      |        ~     
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is NULL)...
+           |
+         'createNestedList': event 5
+           |
+           |   39 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'createNestedList': event 6
+           |
+           |   39 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   21 |     NestedList *nestedList = createNestedList(arr1, sizeof(arr1)/sizeof(int));
+    |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (7) returning to 'main' from 'createNestedList'
+    |   22 |     appendNestedList(nestedList, arr2, sizeof(arr2)/sizeof(int));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) calling 'appendNestedList' from 'main'
+    |
+    +--> 'appendNestedList': events 9-10
+           |
+           |   48 | NestedList *appendNestedList(NestedList *head, int *array, int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (9) entry to 'appendNestedList'
+           |   49 | 
+           |   50 |     NestedList *newNode = createNestedList(array, size);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (10) calling 'createNestedList' from 'appendNestedList'
+           |
+           +--> 'createNestedList': events 11-13
+                  |
+                  |   36 | NestedList *createNestedList(int *array, int size) {
+                  |      |             ^~~~~~~~~~~~~~~~
+                  |      |             |
+                  |      |             (11) entry to 'createNestedList'
+                  |   37 |     NestedList *newNode = (NestedList*) malloc(sizeof(NestedList));
+                  |   38 |     if (!newNode)
+                  |      |        ~     
+                  |      |        |
+                  |      |        (12) following 'false' branch (when 'newNode' is non-NULL)...
+                  |......
+                  |   41 |     newNode->array = array;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (13) ...to here
+                  |
+           <------+
+           |
+         'appendNestedList': events 14-18
+           |
+           |   50 |     NestedList *newNode = createNestedList(array, size);
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (14) returning to 'appendNestedList' from 'createNestedList'
+           |   51 | 
+           |   52 |     if (!newNode)
+           |      |        ~                   
+           |      |        |
+           |      |        (15) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   55 |     NestedList *current = head;
+           |      |                 ~~~~~~~    
+           |      |                 |
+           |      |                 (16) ...to here
+           |      |                 (17) 'head' is NULL
+           |   56 | 
+           |   57 |     while(current->next != NULL) {
+           |      |           ~~~~~~~~~~~~~    
+           |      |                  |
+           |      |                  (18) dereference of NULL 'current'
+           |

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 15, got 52
+  *  test case 1 failed: expected 5, got 15
+  *  test case 0 failed: expected 2, got 5
+  */
+
+long long bell_number(int n) {
+    if (n < 0) return -1;
+    if (n == 0) return 1;
+    
+    if (n > 25) return -2;
+    
+    long long *bell = (long long *)calloc(n + 1, sizeof(long long));
+    if (bell == NULL) return -1;
+    
+    bell[0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        long long prev = bell[0];
+        bell[0] = bell[i - 1];
+        for (int j = 1; j <= i; j++) {
+            long long temp = bell[j];
+            if (prev > LLONG_MAX - bell[j - 1]) {
+                free(bell);
+                return -2;
+            }
+            bell[j] = prev + bell[j - 1];
+            prev = temp;
+        }
+    }
+    
+    long long result = bell[n];
+    free(bell);
+    return result;
+}
+
+int main() {
+    int test_cases[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (int i = 0; i < num_cases; i++) {
+        int n = test_cases[i];
+        long long result = bell_number(n);
+        if (result >= 0) {
+            printf("Bell number B%d = %lld\n", n, result);
+        } else if (result == -1) {
+            fprintf(stderr, "Error computing B%d\n", n);
+        } else {
+            fprintf(stderr, "Overflow for B%d\n", n);
+        }
+    }
+    
+    return 0;
+}

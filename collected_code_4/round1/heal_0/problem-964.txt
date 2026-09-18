@@ -1,0 +1,31 @@
+Here is the C code:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool isLengthEven(const char *word) {
+    
+    size_t length = strlen(word);
+    
+    return (length % 2 == 0);
+}
+
+int main() {
+    
+    char word[100];
+    
+    printf("Enter a word: ");
+    scanf("%99s", word);
+    
+    if(isLengthEven(word)) {
+        printf("Length of the word is even.\n");
+    } else {
+        printf("Length of the word is odd.\n");
+    }
+    
+    return 0;
+}
+```
+This program asks the user to input a word, then it calls the function 'isLengthEven' to check if the word's length is even or not. In the function 'isLengthEven', it counts the number of characters in the string and checks if the count is divisible by 2 (even) or not. If it is divisible, it returns true which means that the length of the word is even. If it's not divisible (odd), it returns false indicating that the length of the word is odd. Finally, it prints out whether the length of the word is even or odd.

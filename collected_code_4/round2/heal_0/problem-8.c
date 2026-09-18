@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+void findSquare(int arr[], int count) {
+    for(int i=0; i<count; i++) {
+        long squaredValue = (long)arr[i] * (long)arr[i];
+        printf("%ld ", squaredValue);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int arrSize = sizeof(arr) / sizeof(arr[0]);
+
+    findSquare(arr, arrSize);
+
+    return 0;
+}

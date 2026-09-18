@@ -1,0 +1,63 @@
+In C, dictionary and tuples are not the native data types. Because it is a low-level procedural programming language, it doesn't support High-level data structures like Python.
+
+Nevertheless, here is an approach using Structs and Enums for basic Dictionary and Tuple handling:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#define MAX 2
+
+typedef enum {INT, STRING, FLOAT} Type;
+
+typedef struct{
+    Type type;
+    union {
+        int intValue;
+        float floatValue;
+        char str[20];
+    } value;
+} Data;
+
+typedef struct{
+    char key[20];
+    Data data;
+} Dict;
+
+typedef struct{
+    Dict tuple[MAX];
+} Tuple;
+
+void addDictToTuple(Tuple* tuple, Dict* dict, int pos){
+    tuple->tuple[pos] = *dict;
+}
+
+int main(){
+    Data data;
+    data.type = STRING;
+    strcpy(data.value.str, "This is a string");
+
+    Dict dict;
+    strcpy(dict.key, "Key1");
+    dict.data = data;
+
+    Tuple tuple;
+
+    addDictToTuple(&tuple, &dict, 0);
+
+    if(tuple.tuple[0].data.type == STRING){
+        printf("\n[Key: %s, Value: %s]", tuple.tuple[0].key, tuple.tuple[0].data.value.str);
+    } else {
+        printf("\nInvalid Type");
+    }
+
+    return 0;
+}
+```
+
+In this code, a struct `Data` is used to create a variant data type that can hold int, float, and string data types. This fits with the concept of a Dictionary in other languages where values can be of any data types. A struct `Dict` is made to have a key and a value following the dictionary principle. These `Dict' objects then contained in a Tuple. The Tuple can be extended to contain more `Dict' objects by increasing the `MAX` value.
+
+A function `addDictToTuple` is defined to add a `Dict` struct to the `Tuple` struct. It receives pointers to `Dict` and `Tuple` and an index where the `Dict` needs to be placed.
+
+The `main` function tests these structures and function with an example of adding a `Dict` entry to a `Tuple`.
+
+Please note that this implementation is quite basic and doesn't account for dynamic resizing of the Tuple, error checking if index out of bound is not implemented, also retrieving values requires the knowledge of the type in advance.

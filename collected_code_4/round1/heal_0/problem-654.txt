@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+
+float findPerimeter(float length, float breadth){
+    float perimeter=0;
+    if(length <= 0 || breadth <= 0) {
+        printf("Length and breadth must be positive values.\n");
+        return -1;
+    }
+
+    perimeter = 2 * (length + breadth);
+    return perimeter;
+}
+
+int main(){
+    float length=0, breadth=0;
+    float perimeter=0;
+    printf("Enter the length of the rectangle: ");
+    scanf("%f",&length);
+    printf("Enter the breadth of the rectangle: ");
+    scanf("%f",&breadth);
+    
+    perimeter = findPerimeter(length,breadth);
+    
+    if(perimeter != -1)
+        printf("The perimeter of the rectangle is: %.2f\n",perimeter);
+        
+    return 0;
+}
+```

@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+double calculate_surface(double length, double width, double height) {
+    double surfaceArea = 2 * (length * width + width * height + height * length);
+    return surfaceArea;
+}
+
+int main() {
+    double length, width, height;
+
+    printf("Enter length of the cuboid: ");
+    scanf("%lf", &length);
+
+    printf("Enter width of the cuboid: ");
+    scanf("%lf", &width);
+
+    printf("Enter height of the cuboid: ");
+    scanf("%lf", &height);
+
+    // Any negative or zero measurement would be unrealistic for a cuboid
+    if(length <= 0 || width <= 0 || height <= 0) {
+        printf("All measurements for a cuboid must be positive.\n");
+        return 1;
+    }
+
+    double surfaceArea = calculate_surface(length, width, height);
+    printf("Surface area of the cuboid is: %.2lf\n", surfaceArea);
+
+    return 0;
+}

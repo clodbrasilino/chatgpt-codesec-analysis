@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+double ratio_of_negative_numbers(int arr[], int size) {
+    if (size == 0) {
+        return 0.0;
+    }
+
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            count++;
+        }
+    }
+
+    return (double)count / size;
+}
+
+int main() {
+    int arr[] = {-5, 2, -3, 18, -1, 6, -9};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    printf("The ratio of negative numbers is: %.2f", ratio_of_negative_numbers(arr, size));
+
+    return 0;
+}
+```
+In this provided C code, the `ratio_of_negative_numbers` function calculates the ratio of negative numbers in an array. It returns 0 if the size of the array is 0 (to avoid division by zero). The `main` function tests this behavior on a hard-coded example, and then prints the output.

@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
+
+typedef struct {
+    size_t count;
+    int value;
+} RLEPair;
+
+typedef struct {
+    int *data;
+    size_t length;
+} DecodedList;
+
+DecodedList decode_rle(const RLEPair *pairs, size_t num_pairs) {
+    DecodedList result = {NULL, 0};
+    size_t total_length = 0;
+
+    if (!pairs && num_pairs > 0) {
+        return result;
+    }
+
+    for (size_t i = 0; i < num_pairs; ++i) {
+        if (SIZE_MAX - total_length < pairs[i].count) {
+            return result;
+        }
+        total_length += pairs[i].count;
+    }
+
+    if (total_length == 0) {
+        return result;
+    }
+
+    if (total_length > SIZE_MAX / sizeof(int)) {
+        return result;
+    }
+
+    result.data = (int *)malloc(total_length * sizeof(int));
+    if (!result.data) {
+        return result;
+    }
+
+    size_t current_index = 0;
+    for (size_t i = 0; i < num_pairs; ++i) {
+        for (size_t j = 0; j < pairs[i].count; ++j) {
+            result.data[current_index++] = pairs[i].value;
+        }
+    }
+
+    result.length = total_length;
+    return result;
+}
+
+int main(void) {
+    RLEPair encoded_data[] = {
+        {3, 10},
+        {1, 20},
+        {4, 15},
+        {0, 99},
+        {2, 5}
+    };
+    size_t num_pairs = sizeof(encoded_data) / sizeof(encoded_data[0]);
+
+    DecodedList decoded = decode_rle(encoded_data, num_pairs);
+
+    if (decoded.data) {
+        for (size_t i = 0; i < decoded.length; ++i) {
+            printf("%d\n", decoded.data[i]);
+        }
+        free(decoded.data);
+        decoded.data = NULL;
+    }
+
+    return 0;
+}
+```

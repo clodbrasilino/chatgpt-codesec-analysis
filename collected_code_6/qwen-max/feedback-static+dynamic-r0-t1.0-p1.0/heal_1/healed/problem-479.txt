@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
+int findFirstDigit(long n) {
+    if (n == 0) return 0;
+    if (n < 0) n = -n;
+    if (n > 0 && n < LONG_MAX) {
+        int exp = (int)log10(n);
+        long divisor = (long)pow(10, exp);
+        return (int)(n / divisor);
+    }
+    return 0;
+}
+
+int main() {
+    long number;
+    printf("Enter a number: ");
+    if (scanf("%ld", &number) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    int firstDigit = findFirstDigit(number);
+    printf("The first digit of %ld is %d.\n", number, firstDigit);
+    return 0;
+}
+```

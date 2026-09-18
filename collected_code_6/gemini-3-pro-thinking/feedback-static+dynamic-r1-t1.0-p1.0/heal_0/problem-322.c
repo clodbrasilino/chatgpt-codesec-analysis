@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+size_t* find_min_indices(const int *array, size_t size, size_t *out_count) {
+    if (array == NULL || size == 0 || out_count == NULL) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    int min_val = array[0];
+    size_t count = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (array[i] < min_val) {
+            min_val = array[i];
+            count = 1;
+        } else if (array[i] == min_val) {
+            count++;
+        }
+    }
+
+    size_t *indices = malloc(count * sizeof(size_t));
+    if (indices == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t current_index = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i] == min_val) {
+            indices[current_index++] = i;
+        }
+    }
+
+    *out_count = count;
+    return indices;
+}
+
+int main(void) {
+    const int data[] = {7, 2, 5, 2, 8, 2, 9, 10};
+    const size_t size = sizeof(data) / sizeof(data[0]);
+    size_t count = 0;
+
+    size_t *min_indices = find_min_indices(data, size, &count);
+
+    if (min_indices != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            printf("%zu\n", min_indices[i]);
+        }
+        free(min_indices);
+    }
+
+    return 0;
+}

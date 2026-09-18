@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-952.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-952.c:48:11: warning: Either the condition 'r>0' is redundant or there is division by zero at line 48. [zerodivcond]
+        n /= p;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-952.c:41:14: note: Assuming that condition 'r>0' is not redundant
+    while (r > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-952.c:49:14: note: Assignment to 'r/=p'
+        r /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-952.c:48:11: note: Division by zero
+        n /= p;
+          ^

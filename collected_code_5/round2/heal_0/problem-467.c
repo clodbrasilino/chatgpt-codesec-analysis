@@ -1,0 +1,35 @@
+#include<stdio.h>
+#define SIZE 50
+
+void dec2oct(int decimal) {
+    int octal[SIZE];
+    int count = 0, temp;
+    
+    while(decimal !=0) {
+        temp = decimal % 8;
+        octal[count] = temp;
+        decimal /= 8;
+        count++;
+    }
+    
+    for(int i=count-1 ; i >= 0; --i){
+        printf("%d", octal[i]);
+    }
+}
+
+int main(){
+    int decimalVal;
+
+    printf("Enter a decimal number: ");
+    scanf("%d", &decimalVal);
+        
+    if (decimalVal < 0) {
+        printf("Invalid input!\n");
+        return 1;
+    }
+        
+    printf("Octal of given number is : ");
+    dec2oct(decimalVal);
+    
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void) {
+    char buffer[2048];
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(buffer);
+    while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    printf("[");
+    for (size_t i = 0; i < len; i++) {
+        printf("'%c'", buffer[i]);
+        if (i < len - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    return 0;
+}

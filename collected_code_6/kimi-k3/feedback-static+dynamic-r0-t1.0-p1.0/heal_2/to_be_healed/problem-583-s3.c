@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+/* Possible weaknesses found:
+ *  'ULLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+ */
+#include <stdint.h>
+
+unsigned long long catalan(int n) {
+    unsigned long long result = 1;
+    int i;
+    if (n < 0) {
+        return 0;
+    }
+    for (i = 0; i < n; i++) {
+        /* Possible weaknesses found:
+         *  'ULLONG_MAX' undeclared (first use in this function)
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'ULLONG_MAX'
+         */
+        if (result > ULLONG_MAX / (2ULL * (2 * i + 1))) {
+            return 0;
+        }
+        result = result * 2 * (2 * i + 1) / (i + 2);
+    }
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a non-negative integer: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    printf("Catalan(%d) = %llu\n", n, catalan(n));
+    return EXIT_SUCCESS;
+}

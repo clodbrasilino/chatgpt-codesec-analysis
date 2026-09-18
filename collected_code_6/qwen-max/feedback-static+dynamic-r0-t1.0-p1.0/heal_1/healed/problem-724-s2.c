@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
+int sum_of_digits(long long num) {
+    int sum = 0;
+    while (num > 0) {
+        sum += num % 10;
+        num /= 10;
+    }
+    return sum;
+}
+
+int main() {
+    int base, power;
+    printf("Enter the base: ");
+    if (scanf("%d", &base) != 1) {
+        return 1;
+    }
+    printf("Enter the power: ");
+    if (scanf("%d", &power) != 1) {
+        return 1;
+    }
+
+    if (base == 0 && power <= 0) {
+        printf("Undefined result for base 0 and power <= 0\n");
+        return 1;
+    }
+
+    if (base == 1 || (base == -1 && power % 2 == 0)) {
+        long long result = 1;
+        int sum = sum_of_digits(result);
+        printf("Sum of digits of %lld is: %d\n", result, sum);
+        return 0;
+    }
+
+    if (power < 0 || base < 0 || base > LLONG_MAX || (long double)base > powl((long double)LLONG_MAX, 1.0 / power)) {
+        printf("Result out of range\n");
+        return 1;
+    }
+
+    long long result = (long long)powl(base, power);
+    int sum = sum_of_digits(result);
+    printf("Sum of digits of %lld is: %d\n", result, sum);
+    return 0;
+}

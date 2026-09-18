@@ -1,0 +1,25 @@
+#include<stdio.h>
+
+long long nonagonalNumber(int n) {
+    if(n < 1) {
+        printf("Invalid input. Please enter a positive number.\n");
+        return -1;
+    }
+    return ((n*(7*n - 5))/2);
+}
+
+int main() {
+    int nthNumber;
+    long long result;
+
+    printf("Please enter the nth number you want to find: ");
+    scanf("%d", &nthNumber);
+
+    result = nonagonalNumber(nthNumber);
+
+    if(result != -1) {
+        printf("The %dth nonagonal number is %lld\n", nthNumber, result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include <limits.h>
+
+bool isPerfectSquare(int n) {
+    if (n < 0) return false;
+    int root = (int)sqrt(n);
+    return n == root * root;
+}
+
+int countNumbersWithOddFactors(int start, int end) {
+    if (start > end || start < 0 || end > INT_MAX) return 0;
+    int count = 0;
+    for (int i = start; i <= end; ++i) {
+        if (isPerfectSquare(i)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int start, end;
+    printf("Enter the range (start end): ");
+    if (scanf("%d %d", &start, &end) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (start > INT_MAX || end > INT_MAX || start < INT_MIN || end < INT_MIN) {
+        fprintf(stderr, "Range out of bounds\n");
+        return 1;
+    }
+
+    int result = countNumbersWithOddFactors(start, end);
+    printf("Numbers with odd factors in the range: %d\n", result);
+
+    return 0;
+}
+```

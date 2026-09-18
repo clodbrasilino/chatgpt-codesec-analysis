@@ -1,0 +1,24 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c: In function 'safe_multiply':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:6:32: error: 'LONG_MAX' undeclared (first use in this function)
+    6 |     if (a > 0 && b > 0 && a > (LONG_MAX / b)) return false;
+      |                                ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:4:1: note: 'LONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <stdbool.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:6:32: note: each undeclared identifier is reported only once for each function it appears in
+    6 |     if (a > 0 && b > 0 && a > (LONG_MAX / b)) return false;
+      |                                ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:7:32: error: 'LONG_MIN' undeclared (first use in this function)
+    7 |     if (a < 0 && b < 0 && a < (LONG_MIN / b)) return false;
+      |                                ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:7:32: note: 'LONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c: In function 'safe_add':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:15:24: error: 'LONG_MAX' undeclared (first use in this function)
+   15 |     if ((b > 0 && a > (LONG_MAX - b)) || (b < 0 && a < (LONG_MIN - b))) return false;
+      |                        ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:15:24: note: 'LONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:15:57: error: 'LONG_MIN' undeclared (first use in this function)
+   15 |     if ((b > 0 && a > (LONG_MAX - b)) || (b < 0 && a < (LONG_MIN - b))) return false;
+      |                                                         ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-354-s3.c:15:57: note: 'LONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* removeSpaces(char* str) {
+    char* strWithoutSpaces = malloc(strlen(str)+1);
+    if(strWithoutSpaces == NULL) {
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int count = 0;
+    for (int i = 0; str[i]; i++) {
+        if (str[i] != ' ')
+            strWithoutSpaces[count++] = str[i];
+    }
+    strWithoutSpaces[count] = '\0';
+
+    return strWithoutSpaces;
+}
+
+int main() {
+    char str[] = "C is a programming language.";
+    char* strWithoutSpaces = removeSpaces(str);
+
+    printf("%s\n", strWithoutSpaces);
+
+    free(strWithoutSpaces);
+
+    return 0;
+}
+```

@@ -1,0 +1,59 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int item;
+    int count;
+} Item;
+
+int itemExists(Item* items, int size, int item) {
+    for (int i = 0; i < size; i++) {
+        if (items[i].item == item) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+Item* findRepeatedItems(int* tuple, int size, int* resultSize) {
+    Item* items = malloc(size * sizeof(Item));
+    int itemCount = 0;
+
+    for (int i = 0; i < size; i++) {
+        int index = itemExists(items, itemCount, tuple[i]);
+        if (index != -1) {
+            items[index].count++;
+        } else {
+            items[itemCount].item = tuple[i];
+            items[itemCount].count = 1;
+            itemCount++;
+        }
+    }
+
+    *resultSize = itemCount;
+    items = realloc(items, itemCount * sizeof(Item));
+    return items;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3, 1, 2, 3, 4, 5, 5};
+    int tupleSize = sizeof(tuple) / sizeof(tuple[0]);
+    int resultSize;
+    
+    Item* repeatedItems = findRepeatedItems(tuple, tupleSize, &resultSize);
+
+    if (repeatedItems == NULL) {
+        printf("Allocation failed");
+        return -1;
+    }
+
+    for (int i = 0; i < resultSize; i++) {
+        if (repeatedItems[i].count > 1)
+            printf("Item: %d, Repetitions: %d\n", repeatedItems[i].item, repeatedItems[i].count);
+    }
+
+    free(repeatedItems);
+    return 0;
+}
+```

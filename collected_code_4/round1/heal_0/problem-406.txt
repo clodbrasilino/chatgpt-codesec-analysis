@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+int find_parity(unsigned int num) {
+    int parity = 0;
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return parity;
+}
+
+int main() {
+    unsigned int num;
+    printf("Enter a number : ");
+    scanf("%u",&num);
+    int res = find_parity(num);
+    if (res == 0) 
+        printf("Number has even parity\n");
+    else 
+        printf("Number has odd parity\n");
+
+    return 0;
+}
+```

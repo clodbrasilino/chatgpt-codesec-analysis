@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+int append_node(Node **head_ref, int data) {
+    if (head_ref == NULL) {
+        return -1;
+    }
+
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return 0;
+    }
+
+    Node *last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    
+    last->next = new_node;
+    return 0;
+}
+
+void remove_negatives(Node **head_ref) {
+    if (head_ref == NULL || *head_ref == NULL) {
+        return;
+    }
+
+    Node *current = *head_ref;
+    Node *prev = NULL;
+
+    while (current != NULL) {
+        if (current->data < 0) {
+            Node *node_to_free = current;
+            
+            if (prev == NULL) {
+                *head_ref = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            
+            current = current->next;
+            free(node_to_free);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+void print_list(const Node *head) {
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    int exit_status = EXIT_SUCCESS;
+
+    if (append_node(&head, 15) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    if (append_node(&head, -10) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    if (append_node(&head, 42) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    if (append_node(&head, -5) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    if (append_node(&head, -1) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    if (append_node(&head, 7) != 0) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    remove_negatives(&head);
+    print_list(head);
+
+cleanup:
+    free_list(head);
+    return exit_status;
+}

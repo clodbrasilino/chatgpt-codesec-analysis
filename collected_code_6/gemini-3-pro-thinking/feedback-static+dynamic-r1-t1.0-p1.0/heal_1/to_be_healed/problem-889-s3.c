@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct InnerNode {
+    int data;
+    struct InnerNode* next;
+};
+
+struct OuterNode {
+    struct InnerNode* inner_list;
+    struct OuterNode* next;
+};
+
+struct InnerNode* create_inner_node(int data) {
+    struct InnerNode* new_node = (struct InnerNode*)malloc(sizeof(struct InnerNode));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+struct OuterNode* create_outer_node(struct InnerNode* inner_list) {
+    struct OuterNode* new_node = (struct OuterNode*)malloc(sizeof(struct OuterNode));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->inner_list = inner_list;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void reverse_inner_list(struct InnerNode** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL) {
+        return;
+    }
+
+    struct InnerNode* prev = NULL;
+    struct InnerNode* current = *head_ref;
+    struct InnerNode* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head_ref = prev;
+}
+
+void reverse_all_lists(struct OuterNode* head) {
+    struct OuterNode* current = head;
+    while (current != NULL) {
+        reverse_inner_list(&(current->inner_list));
+        current = current->next;
+    }
+}
+
+void free_inner_list(struct InnerNode* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    struct InnerNode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_outer_list(struct OuterNode* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    struct OuterNode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free_inner_list(temp->inner_list);
+        free(temp);
+    }
+}
+
+void print_inner_list(const struct InnerNode* head) {
+    const struct InnerNode* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void print_outer_list(const struct OuterNode* head) {
+    const struct OuterNode* current = head;
+    while (current != NULL) {
+        print_inner_list(current->inner_list);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    struct InnerNode* list1 = create_inner_node(1);
+    list1->next = create_inner_node(2);
+    list1->next->next = create_inner_node(3);
+
+    struct InnerNode* list2 = create_inner_node(4);
+    list2->next = create_inner_node(5);
+
+    struct InnerNode* list3 = create_inner_node(6);
+    list3->next = create_inner_node(7);
+    list3->next->next = create_inner_node(8);
+    list3->next->next->next = create_inner_node(9);
+
+    struct OuterNode* outer_list = create_outer_node(list1);
+    outer_list->next = create_outer_node(list2);
+    outer_list->next->next = create_outer_node(list3);
+
+    reverse_all_lists(outer_list);
+
+    print_outer_list(outer_list);
+
+    free_outer_list(outer_list);
+
+    return EXIT_SUCCESS;
+}

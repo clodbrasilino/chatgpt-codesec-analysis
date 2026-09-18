@@ -1,0 +1,13 @@
+collected_code_5/round1/heal_0/problem-198.c:19:26: error: call to undeclared library function 'malloc' with type 'void *(unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |     Point *p = (Point *) malloc(sizeof(Point));
+      |                          ^
+collected_code_5/round1/heal_0/problem-198.c:19:26: note: include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
+collected_code_5/round1/heal_0/problem-198.c:22:9: error: call to undeclared library function 'exit' with type 'void (int) __attribute__((noreturn))'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   22 |         exit(1);
+      |         ^
+collected_code_5/round1/heal_0/problem-198.c:22:9: note: include the header <stdlib.h> or explicitly provide a declaration for 'exit'
+collected_code_5/round1/heal_0/problem-198.c:48:5: error: call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   48 |     free(p);
+      |     ^
+collected_code_5/round1/heal_0/problem-198.c:48:5: note: include the header <stdlib.h> or explicitly provide a declaration for 'free'
+3 errors generated.

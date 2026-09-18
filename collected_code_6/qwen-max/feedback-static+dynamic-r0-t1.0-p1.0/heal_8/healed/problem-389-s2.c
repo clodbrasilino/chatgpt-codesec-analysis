@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <gmp.h>
+
+void lucas_number(int n, mpz_t result) {
+    if (n == 0) {
+        mpz_set_ui(result, 2);
+        return;
+    }
+    if (n == 1) {
+        mpz_set_ui(result, 1);
+        return;
+    }
+
+    mpz_t a, b, c;
+    mpz_inits(a, b, c, NULL);
+    mpz_set_ui(a, 2);
+    mpz_set_ui(b, 1);
+
+    for (int i = 2; i <= n; ++i) {
+        mpz_add(c, a, b);
+        mpz_set(a, b);
+        mpz_set(b, c);
+    }
+
+    mpz_set(result, b);
+    mpz_clears(a, b, c, NULL);
+}
+
+int main() {
+    int n;
+    printf("Enter the position of the Lucas number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    mpz_t result;
+    mpz_init(result);
+    lucas_number(n, result);
+    gmp_printf("The %dth Lucas number is: %Zd\n", n, result);
+
+    mpz_clear(result);
+    return EXIT_SUCCESS;
+}

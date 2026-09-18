@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int check_product_equal(long long num) {
+    int position = 1;
+    long long even_product = 1;
+    long long odd_product = 1;
+    unsigned long long abs_num;
+    
+    if (num == LLONG_MIN) {
+        abs_num = (unsigned long long)LLONG_MAX + 1;
+    } else if (num < 0) {
+        abs_num = -num;
+    } else {
+        abs_num = num;
+    }
+    
+    while (abs_num > 0) {
+        int digit = abs_num % 10;
+        if (position % 2 == 0) {
+            even_product *= digit;
+        } else {
+            odd_product *= digit;
+        }
+        abs_num /= 10;
+        position++;
+    }
+    
+    return even_product == odd_product;
+}
+
+int main(void) {
+    long long number;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &number) != 1) {
+        printf("Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (check_product_equal(number)) {
+        printf("Product of digits at even and odd places is equal\n");
+    } else {
+        printf("Product of digits at even and odd places is not equal\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

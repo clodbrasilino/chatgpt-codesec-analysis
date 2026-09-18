@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_in_sequence(int n) {
+    long a = 0, b = 1;
+    while (a <= n) {
+        if (a == n) return true;
+        long c = a + b;
+        if (c < a || c < b) break; // Check for overflow
+        a = b;
+        b = c;
+    }
+    return false;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if (is_in_sequence(num)) {
+        printf("Number is in the sequence\n");
+    } else {
+        printf("Number is not in the sequence\n");
+    }
+    return 0;
+}

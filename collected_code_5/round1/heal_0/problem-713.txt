@@ -1,0 +1,35 @@
+```c
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define TUPLE_SIZE 4
+
+bool checkValid(int* tupleItems) {
+    // Assuming 0 is not a valid value in the tuple.
+    for(int i = 0; i < TUPLE_SIZE; i++) {
+        if(tupleItems[i] == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int* tupleItems = (int *)malloc(TUPLE_SIZE * sizeof(int));
+    
+    // Some actions to fill tupleItems...
+
+    if(checkValid(tupleItems)) {
+        // Handle valid case...
+    } else {
+         // Handle invalid case...
+    }
+    
+    free(tupleItems);
+    
+    return 0;
+}
+```
+This is a simple function that, given a dynamically allocated 4-tuple of integers, checks if all of the values are non-zero (taking 0 to be invalid here for the purpose of the example), and returns true if they are all non-zero, and false otherwise. It firstly defines a boolean function `checkValid` that takes an array of integers as an argument. It then loops over the array of integers, returning false if any of the integers are 0.
+
+The `main` function firstly allocates memory for a 4-tuple of integers using `malloc`. It then checks if all of the elements of the tuple are non-zero using the `checkValid` function, and takes some course of action depending on the result. Finally, it frees the memory allocated for the tuple, to avoid a memory leak.

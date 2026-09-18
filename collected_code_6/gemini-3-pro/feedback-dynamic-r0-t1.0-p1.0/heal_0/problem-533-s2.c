@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} DataType;
+
+typedef struct {
+    DataType type;
+    void *data;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+Tuple* createTuple(size_t capacity) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    
+    tuple->elements = (TupleElement*)malloc(capacity * sizeof(TupleElement));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = 0;
+    tuple->capacity = capacity;
+    return tuple;
+}
+
+void freeTuple(Tuple *tuple) {
+    if (tuple) {
+        for (size_t i = 0; i < tuple->size; ++i) {
+            if (tuple->elements[i].type == TYPE_STRING && tuple->elements[i].data) {
+                free(tuple->elements[i].data);
+            }
+        }
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int addInt(Tuple *tuple, int value) {
+    if (!tuple || tuple->size >= tuple->capacity) return -1;
+    
+    int *data = (int*)malloc(sizeof(int));
+    if (!data) return -1;
+    
+    *data = value;
+    tuple->elements[tuple->size].type = TYPE_INT;
+    tuple->elements[tuple->size].data = data;
+    tuple->size++;
+    return 0;
+}
+
+int addFloat(Tuple *tuple, float value) {
+    if (!tuple || tuple->size >= tuple->capacity) return -1;
+    
+    float *data = (float*)malloc(sizeof(float));
+    if (!data) return -1;
+    
+    *data = value;
+    tuple->elements[tuple->size].type = TYPE_FLOAT;
+    tuple->elements[tuple->size].data = data;
+    tuple->size++;
+    return 0;
+}
+
+int addString(Tuple *tuple, const char *value) {
+    if (!tuple || tuple->size >= tuple->capacity || !value) return -1;
+    
+    char *data = strdup(value);
+    if (!data) return -1;
+    
+    tuple->elements[tuple->size].type = TYPE_STRING;
+    tuple->elements[tuple->size].data = data;
+    tuple->size++;
+    return 0;
+}
+
+int removeElementsByType(Tuple *tuple, DataType typeToRemove) {
+    if (!tuple) return -1;
+    
+    size_t writeIndex = 0;
+    for (size_t readIndex = 0; readIndex < tuple->size; ++readIndex) {
+        if (tuple->elements[readIndex].type == typeToRemove) {
+            free(tuple->elements[readIndex].data);
+            tuple->elements[readIndex].data = NULL;
+        } else {
+            if (writeIndex != readIndex) {
+                tuple->elements[writeIndex] = tuple->elements[readIndex];
+            }
+            writeIndex++;
+        }
+    }
+    
+    tuple->size = writeIndex;
+    return 0;
+}
+
+void printTuple(const Tuple *tuple) {
+    if (!tuple) return;
+    
+    printf("Tuple(size=%zu): [", tuple->size);
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i].type == TYPE_INT) {
+            printf("%d", *(int*)tuple->elements[i].data);
+        } else if (tuple->elements[i].type == TYPE_FLOAT) {
+            printf("%f", *(float*)tuple->elements[i].data);
+        } else if (tuple->elements[i].type == TYPE_STRING) {
+            printf("\"%s\"", (char*)tuple->elements[i].data);
+        }
+        if (i < tuple->size - 1) printf(", ");
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    Tuple *tuple = createTuple(10);
+    if (!tuple) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return 1;
+    }
+    
+    if (addInt(tuple, 10) != 0 ||
+        addFloat(tuple, 3.14f) != 0 ||
+        addString(tuple, "Hello") != 0 ||
+        addInt(tuple, 20) != 0 ||
+        addString(tuple, "World") != 0) {
+        fprintf(stderr, "Failed to add elements\n");
+        freeTuple(tuple);
+        return 1;
+    }
+    
+    printTuple(tuple);
+    
+    if (removeElementsByType(tuple, TYPE_STRING) != 0) {
+        fprintf(stderr, "Failed to remove elements\n");
+        freeTuple(tuple);
+        return 1;
+    }
+    
+    printTuple(tuple);
+    
+    freeTuple(tuple);
+    
+    return 0;
+}

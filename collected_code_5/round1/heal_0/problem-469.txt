@@ -1,0 +1,56 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, int* prices, int pricesSize) {
+    if(pricesSize < 1) {
+        return 0;
+    }
+    if(k >= pricesSize / 2) {
+        int profit = 0;
+        for(int i = 1; i < pricesSize; i++) {
+            if(prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    } else {
+        int** local = (int**)malloc((k + 1) * sizeof(int*));
+        for(int i = 0; i < k + 1; i++) {
+            local[i] = (int*)calloc(pricesSize, sizeof(int));
+        }
+        int** global = (int**)malloc((k + 1) * sizeof(int*));
+        for(int i = 0; i < k + 1; i++) {
+            global[i] = (int*)calloc(pricesSize, sizeof(int));
+        }
+        for(int j = 1; j < k + 1; j++) {
+            for(int i = 1; i < pricesSize; i++) {
+                int diff = prices[i] - prices[i - 1];
+                local[j][i] = (global[j - 1][i - 1] > local[j][i - 1] + diff) ? 
+                                global[j - 1][i - 1] : 
+                                local[j][i - 1] + diff;
+                global[j][i] = (global[j][i - 1] > local[j][i]) ? 
+                                global[j][i - 1] : 
+                                local[j][i];
+            }
+        }
+        int result = global[k][pricesSize - 1];
+        for(int i = 0; i < k + 1; i++) {
+            free(local[i]);
+            free(global[i]);
+        }
+        free(local);
+        free(global);
+        return result;
+    }
+}
+
+int main() {
+    int prices[] = {3, 2, 6, 5, 0, 3};
+    int k = 2;
+    int pricesSize = sizeof(prices) / sizeof(prices[0]);
+    int maxprofit = maxProfit(k, prices, pricesSize);
+    printf("The maximum possible profit is: %d\n", maxprofit);
+    return 0;
+}
+```

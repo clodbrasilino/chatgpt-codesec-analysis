@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeLeadingZeroes(char *ipAddr) {
+    static char newIpAddr[16];
+    int sections[4];
+
+    if (sscanf(ipAddr, "%d.%d.%d.%d", &sections[0], &sections[1], &sections[2], &sections[3]) != 4)
+        return NULL;
+
+    sprintf(newIpAddr, "%d.%d.%d.%d", sections[0], sections[1], sections[2], sections[3]);
+
+    return newIpAddr;
+}
+
+int main() {
+    char ipAddr[16];
+    printf("Enter IP Address: ");
+    fgets(ipAddr, sizeof(ipAddr), stdin);
+    ipAddr[strcspn(ipAddr, "\n")] = 0;
+
+    char* newIpAddr = removeLeadingZeroes(ipAddr);
+
+    if (newIpAddr == NULL) {
+        printf("Invalid IP Address\n");
+        return 1;
+    }
+
+    printf("IP Address without leading zeroes: %s\n", newIpAddr);
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX_LEN 100
+
+int checkDup(char *strs[], int total, char *str) {
+    for(int i=0; i<total; i++) {
+        if(strcmp(strs[i], str) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void removeDups(char *strs[], int total) {
+    char *result[MAX_LEN];
+    int count = 0;
+
+    for(int i=0; i<total; i++) {
+        if(!checkDup(result, count, strs[i])) {
+            result[count] = (char*)malloc(strlen(strs[i])+1);
+            strcpy(result[count], strs[i]);
+            count++;
+        }
+    }
+
+    for(int i=0; i<count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+}
+
+int main() {
+    char *strs[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    int total = sizeof(strs)/sizeof(strs[0]);
+
+    removeDups(strs, total);
+    
+    return 0;
+}
+```

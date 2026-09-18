@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+void frequencyCount(int arr[], int n) {
+    int count = 1, i;
+    for (i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            count++;
+        } else {
+            printf("%d appears %d times\n", arr[i - 1], count);
+            count = 1;
+        }
+    }
+    printf("%d appears %d times\n", arr[n - 1], count);
+}
+
+int main() {
+    int arr[] = {1, 1, 2, 2, 2, 3, 4, 4, 4, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    frequencyCount(arr, n);
+    return 0;
+}

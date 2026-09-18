@@ -1,0 +1,32 @@
+Here's an example of a simple C program that extracts the even elements from a 2D array which is equivalent of nested tuple in Python. Note that tuples and nested tuples in the Python sense, don't really have an equivalent in C. The closest equivalent would be a multidimensional array:
+
+```c
+#include<stdio.h>
+
+#define M 3
+#define N 4
+
+void extract_even_elements(int arr[M][N]) {
+    printf("Even elements: ");
+    for(int i=0; i<M; i++) {
+        for(int j=0; j<N; j++) {
+            if(arr[i][j] % 2 == 0) {
+                printf("%d ", arr[i][j]);
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[M][N] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+    extract_even_elements(arr);
+    return 0;
+}
+```
+
+The above C program avoids the mentioned CWE (Common Weakness Enumeration) programming mistakes:
+
+- CWE-664: The function `extract_even_elements` does not manage any resources, so there is no resource misuse.
+- CWE-703: The function `extract_even_elements` has no exceptional conditions to check, so there is no improper handling.
+- CWE-710: The program adheres to common C programming standards, so there is no violation. The functions are properly defined, required headers are included, and `main` function is present.

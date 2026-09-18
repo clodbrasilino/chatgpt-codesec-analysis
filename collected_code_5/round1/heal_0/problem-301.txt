@@ -1,0 +1,51 @@
+Considering dictionaries in C are implemented using structures and linked lists, here is an example of a function calculating the depth of such a structure.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    struct node *next;
+};
+
+struct dictionary {
+    struct node *node;
+};
+
+long depth(struct node *node) {
+    long depth = 0;
+    while (node != NULL) {
+        node = node->next;
+        depth++;
+    }
+    return depth;
+}
+
+struct node* addNode(struct node* node) {
+    struct node* newNode = (struct node*) malloc(sizeof(struct node));
+    newNode -> next = node;
+    return newNode;
+}
+
+void freeDictionary(struct dictionary* dict) {
+    struct node* nextNode;
+    while (dict -> node) {
+        nextNode = dict -> node -> next;
+        free(dict -> node);
+        dict -> node = nextNode;
+    }
+    free(dict);
+}
+
+int main() {
+    struct dictionary* dict = (struct dictionary*) malloc(sizeof(struct dictionary));
+    dict -> node = NULL;
+    for (int i = 0; i < 10; i++)
+        dict -> node = addNode(dict -> node);
+    printf("Depth: %ld\n", depth(dict -> node));
+    freeDictionary(dict);
+    return 0;
+}
+``` 
+
+This code defines a dictionary as a linked list of nodes. The function depth() determines the depth of the dictionary by traversing the linked list from the first node until it reaches the end (NULL). The addNode() function is used to add new nodes to the dictionary's linked list. At the end of the program, the freeDictionary() function is used to properly free all allocated memory.

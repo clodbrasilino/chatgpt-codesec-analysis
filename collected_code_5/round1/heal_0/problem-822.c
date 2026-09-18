@@ -1,0 +1,44 @@
+#include <stdbool.h>
+#include <string.h>
+
+bool isValidPassword(char *password) {
+    if(password == NULL) {
+        return false;
+    }
+
+    int length = strlen(password);
+    if(length < 8 || length > 20) {
+        return false;
+    }
+
+    bool hasDigit = false;
+    bool hasLower = false;
+    bool hasUpper = false;
+    for(int i = 0; i < length; i++) {
+        char ch = password[i];
+
+        if(ch >= '0' && ch <= '9') {
+            hasDigit = true;
+        } else if(ch >= 'a' && ch <= 'z') {
+            hasLower = true;
+        } else if(ch >= 'A' && ch <= 'Z') {
+            hasUpper = true;
+        }
+    }
+
+    return hasDigit && hasLower && hasUpper;
+}
+
+int main() {
+    char password[21];
+    printf("Enter a password: ");
+    scanf("%20s", password);
+
+    if(isValidPassword(password)) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    return 0;
+}

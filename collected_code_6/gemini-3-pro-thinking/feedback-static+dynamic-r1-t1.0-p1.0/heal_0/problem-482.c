@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int find_upper_lower_sequences(const char *input_string) {
+    if (input_string == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    int comp_result = regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED);
+    if (comp_result != 0) {
+        return -1;
+    }
+
+    const char *cursor = input_string;
+    regmatch_t match[1];
+
+    while (regexec(&regex, cursor, 1, match, 0) == 0) {
+        int length = (int)(match[0].rm_eo - match[0].rm_so);
+        printf("%.*s\n", length, cursor + match[0].rm_so);
+        cursor += match[0].rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *test_string = "Hello World, this Is a TestString with Multiple Matches.";
+    
+    int result = find_upper_lower_sequences(test_string);
+    if (result != 0) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

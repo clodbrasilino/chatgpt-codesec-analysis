@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void) {
+    char line[4096];
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(line);
+    if (len > 0 && line[len - 1] == '\n') {
+        line[len - 1] = '\0';
+    }
+
+    printf("[");
+    int first = 1;
+    char *token = strtok(line, " \t\r\n");
+    
+    while (token != NULL) {
+        if (!first) {
+            printf(", ");
+        }
+        printf("'%s'", token);
+        first = 0;
+        token = strtok(NULL, " \t\r\n");
+    }
+    
+    printf("]\n");
+
+    return 0;
+}

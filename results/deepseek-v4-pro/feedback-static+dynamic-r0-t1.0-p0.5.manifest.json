@@ -209,9 +209,10 @@
     "top_p": 0.5,
     "max_rounds": 10,
     "samples": 3,
-    "fuzz": false,
+    "fuzz": true,
     "root": "collected_code_6",
-    "gen_source": "feedback-static-r0-t1.0-p0.5"
+    "gen_source": null,
+    "gen_source_reports": false
   },
   "model_id": "deepseek-v4-pro",
   "reasoning": false,
@@ -265,6 +266,14 @@
       "outcome": "clean"
     },
     "problem-128-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-129": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-129-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -329,6 +338,10 @@
       "outcome": "clean"
     },
     "problem-260-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-260-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -860,18 +873,6 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
-    "problem-450": {
-      "rounds_to_clean": 2,
-      "outcome": "clean"
-    },
-    "problem-450-s2": {
-      "rounds_to_clean": 2,
-      "outcome": "clean"
-    },
-    "problem-450-s3": {
-      "rounds_to_clean": 2,
-      "outcome": "clean"
-    },
     "problem-528": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -936,6 +937,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-834-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-843-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -984,12 +989,12 @@
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
-    "problem-933-s3": {
+    "problem-450-s2": {
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
-    "problem-118-s3": {
-      "rounds_to_clean": 4,
+    "problem-933-s3": {
+      "rounds_to_clean": 3,
       "outcome": "clean"
     },
     "problem-411-s2": {
@@ -1012,10 +1017,6 @@
       "rounds_to_clean": 5,
       "outcome": "clean"
     },
-    "problem-537-s2": {
-      "rounds_to_clean": 5,
-      "outcome": "clean"
-    },
     "problem-956": {
       "rounds_to_clean": 6,
       "outcome": "clean"
@@ -1028,15 +1029,15 @@
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
-    "problem-827": {
-      "rounds_to_clean": 9,
-      "outcome": "clean"
-    },
     "problem-297-s3": {
       "rounds_to_clean": 10,
       "outcome": "clean"
     },
     "problem-411-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "clean"
+    },
+    "problem-450-s3": {
       "rounds_to_clean": 10,
       "outcome": "clean"
     },
@@ -1069,8 +1070,12 @@
       "outcome": "not_cleaned"
     },
     "problem-118-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-118-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-120": {
       "rounds_to_clean": 0,
@@ -1100,15 +1105,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-129": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-129-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-129-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -1285,10 +1282,6 @@
       "outcome": "clean_at_start"
     },
     "problem-260": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-260-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -1600,6 +1593,10 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
+    "problem-450": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-456": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -1761,6 +1758,10 @@
       "outcome": "clean_at_start"
     },
     "problem-537": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-537-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
@@ -2336,6 +2337,10 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
+    "problem-827": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-827-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -2369,10 +2374,6 @@
       "outcome": "clean_at_start"
     },
     "problem-834": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-834-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },

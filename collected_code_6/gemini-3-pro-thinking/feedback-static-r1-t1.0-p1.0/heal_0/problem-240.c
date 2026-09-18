@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_list(const Node* head) {
+    while (head) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int replace_last_with_list(Node** dest_list, Node** src_list) {
+    if (!dest_list || !src_list || !*dest_list) {
+        return -1;
+    }
+
+    Node* current = *dest_list;
+    Node* prev = NULL;
+
+    while (current->next) {
+        prev = current;
+        current = current->next;
+    }
+
+    free(current);
+
+    if (prev) {
+        prev->next = *src_list;
+    } else {
+        *dest_list = *src_list;
+    }
+
+    *src_list = NULL;
+
+    return 0;
+}
+
+int main(void) {
+    Node* list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+    list1->next->next->next = create_node(4);
+
+    Node* list2 = create_node(10);
+    list2->next = create_node(20);
+    list2->next->next = create_node(30);
+
+    if (replace_last_with_list(&list1, &list2) != 0) {
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    print_list(list1);
+
+    free_list(list1);
+    free_list(list2); 
+
+    return EXIT_SUCCESS;
+}

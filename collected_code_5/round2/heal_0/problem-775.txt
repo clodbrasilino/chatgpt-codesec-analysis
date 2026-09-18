@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkOdd(int* list, int size) {
+    for(int i = 1; i < size; i += 2) {
+        if(list[i] % 2 == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int size = 10;
+    int* numbers = malloc(size * sizeof(*numbers));
+    
+    if(numbers == NULL) {
+        perror("Unable to allocate memory for numbers");
+        return 1;
+    }
+    
+    for(int i = 0; i < size; i++) {
+        numbers[i] = i;
+    }
+    
+    int result = checkOdd(numbers, size);
+    
+    if (result) {
+        printf("Every odd index contains odd numbers\n");
+    } else {
+        printf("Every odd index does not contain odd numbers\n");
+    }
+    
+    free(numbers);
+
+    return 0;
+}
+```

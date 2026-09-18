@@ -1,0 +1,3 @@
+problem-236-s2.c:6:15:medium:UBSan: signed integer overflow: 149477148 * 149477149 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:8047,execs:2801,op:havoc,rep:6)
+problem-236-s2.c:6:25:medium:UBSan: signed integer overflow: 20110740 * 8969 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1214,execs:457,op:havoc,rep:8)
+problem-236-s2.c:6:25:medium:UBSan: signed integer overflow: 1617486380 * 298954297 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:8047,execs:2801,op:havoc,rep:6)

@@ -1,0 +1,47 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+int IsSmartNumber(int num){
+    int val = (int)sqrt(num);
+    return ((val*val) == num);
+}
+
+int NthSmartNumber(int n){
+    int count = 0;
+    for(int num = 1;; num++){
+        if (IsSmartNumber(num)){
+            count++;
+            if (count == n){
+                return num;
+            }
+        }
+    }
+    return -1; // To handle unexpected n values (more than total no. of smart numbers)
+}
+
+int main(){
+
+    int n;
+
+    printf("Enter the nth position: ");
+    scanf("%d", &n);
+
+    if(n <= 0){
+        printf("Invalid input. Please enter a positive number.\n");
+        return 1;
+    }
+
+    int result = NthSmartNumber(n);
+
+    if(result == -1){
+        printf("No smart number found at given position.\n");
+        return 1;
+    }
+
+    printf("The %dth smart number is: %d\n", n, result);
+
+    return 0;
+}
+```
+The IsSmartNumber function checks for whether the number after taking sqrt is an integer number or not. If that number's square is equal to the original number then it is a smart number which means that the number is a perfect square. The NthSmartNumber function will count the smart numbers until it reaches the nth smart number and returns it. This code handles unexpected values for n (like negative or zero) by checking for valid input. Should such an error occur, it will notify the user and terminate the program with an error value.

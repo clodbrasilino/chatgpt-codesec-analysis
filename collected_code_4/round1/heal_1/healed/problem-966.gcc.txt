@@ -1,0 +1,368 @@
+./collected_code_4/round1//heal_1/healed//problem-966.c: In function 'remove_empty_tuple':
+./collected_code_4/round1//heal_1/healed//problem-966.c:19:26: warning: dereference of NULL '*current.data' [CWE-476] [-Wanalyzer-null-dereference]
+   19 |         if(!current->data->valid) {
+      |             ~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-8
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     if(head != NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'true' branch (when 'head' is non-NULL)...
+    |   47 |         head->data = (tuple *)malloc(sizeof(tuple));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (3) ...to here
+    |      |                               (4) allocated here
+    |   48 | 
+    |   49 |         if(head->data != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (5) assuming '<unknown>' is NULL
+    |      |           (6) following 'false' branch...
+    |......
+    |   75 |     head = remove_empty_tuple(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (7) ...to here
+    |      |            (8) calling 'remove_empty_tuple' from 'main'
+    |
+    +--> 'remove_empty_tuple': event 9
+           |
+           |   14 | list* remove_empty_tuple(list *head) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (9) entry to 'remove_empty_tuple'
+           |
+         'remove_empty_tuple': events 10-12
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (10) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |                    |     |
+           |      |                    |     (12) dereference of NULL '*current.data'
+           |      |                    (11) ...to here
+           |
+./collected_code_4/round1//heal_1/healed//problem-966.c:19:26: warning: use of uninitialized value '*current_7->data.valid' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   19 |         if(!current->data->valid) {
+      |             ~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-7
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     if(head != NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'true' branch (when 'head' is non-NULL)...
+    |   47 |         head->data = (tuple *)malloc(sizeof(tuple));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (3) ...to here
+    |      |                               (4) region created on heap here
+    |   48 | 
+    |   49 |         if(head->data != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (5) following 'false' branch...
+    |......
+    |   75 |     head = remove_empty_tuple(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (6) ...to here
+    |      |            (7) calling 'remove_empty_tuple' from 'main'
+    |
+    +--> 'remove_empty_tuple': event 8
+           |
+           |   14 | list* remove_empty_tuple(list *head) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (8) entry to 'remove_empty_tuple'
+           |
+         'remove_empty_tuple': events 9-11
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (9) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |                    |     |
+           |      |                    |     (11) use of uninitialized value '*current_7->data.valid' here
+           |      |                    (10) ...to here
+           |
+./collected_code_4/round1//heal_1/healed//problem-966.c:19:26: warning: use of uninitialized value '*current_7->data.valid' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   19 |         if(!current->data->valid) {
+      |             ~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-11
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     if(head != NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'true' branch (when 'head' is non-NULL)...
+    |   47 |         head->data = (tuple *)malloc(sizeof(tuple));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (3) ...to here
+    |   48 | 
+    |   49 |         if(head->data != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (4) following 'true' branch...
+    |   50 |             head->data->valid = 1;
+    |      |             ~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) ...to here
+    |......
+    |   53 |             if(second != NULL) {
+    |      |               ~
+    |      |               |
+    |      |               (6) following 'true' branch (when 'second' is non-NULL)...
+    |   54 |                head->next = second;
+    |      |                ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) ...to here
+    |   55 |                second->data = (tuple *)malloc(sizeof(tuple));
+    |      |                                        ~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (8) region created on heap here
+    |   56 | 
+    |   57 |                if(second->data != NULL) {
+    |      |                  ~
+    |      |                  |
+    |      |                  (9) following 'false' branch...
+    |......
+    |   75 |     head = remove_empty_tuple(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (10) ...to here
+    |      |            (11) calling 'remove_empty_tuple' from 'main'
+    |
+    +--> 'remove_empty_tuple': event 12
+           |
+           |   14 | list* remove_empty_tuple(list *head) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (12) entry to 'remove_empty_tuple'
+           |
+         'remove_empty_tuple': events 13-16
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (13) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |           ~ ~~~~~~~~~~~~~
+           |      |           |        |
+           |      |           |        (14) ...to here
+           |      |           (15) following 'false' branch...
+           |......
+           |   33 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (16) ...to here
+           |
+         'remove_empty_tuple': events 17-19
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (17) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |                    |     |
+           |      |                    |     (19) use of uninitialized value '*current_7->data.valid' here
+           |      |                    (18) ...to here
+           |
+./collected_code_4/round1//heal_1/healed//problem-966.c:21:37: warning: use of uninitialized value '*current.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |                 prev->next = current->next;
+      |                              ~~~~~~~^~~~~~
+  'main': events 1-13
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     if(head != NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'true' branch (when 'head' is non-NULL)...
+    |   47 |         head->data = (tuple *)malloc(sizeof(tuple));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (3) ...to here
+    |   48 | 
+    |   49 |         if(head->data != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (4) following 'true' branch...
+    |   50 |             head->data->valid = 1;
+    |      |             ~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) ...to here
+    |   51 |             second = (list *)malloc(sizeof(list));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (6) region created on heap here
+    |   52 | 
+    |   53 |             if(second != NULL) {
+    |      |               ~
+    |      |               |
+    |      |               (7) following 'true' branch (when 'second' is non-NULL)...
+    |   54 |                head->next = second;
+    |      |                ~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (8) ...to here
+    |......
+    |   57 |                if(second->data != NULL) {
+    |      |                  ~
+    |      |                  |
+    |      |                  (9) following 'true' branch...
+    |   58 |                    second->data->valid = 0;
+    |      |                    ~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (10) ...to here
+    |......
+    |   61 |                    if(third != NULL) {
+    |      |                      ~
+    |      |                      |
+    |      |                      (11) following 'false' branch (when 'third' is NULL)...
+    |......
+    |   75 |     head = remove_empty_tuple(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (12) ...to here
+    |      |            (13) calling 'remove_empty_tuple' from 'main'
+    |
+    +--> 'remove_empty_tuple': event 14
+           |
+           |   14 | list* remove_empty_tuple(list *head) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (14) entry to 'remove_empty_tuple'
+           |
+         'remove_empty_tuple': events 15-18
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (15) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |           ~ ~~~~~~~~~~~~~
+           |      |           |        |
+           |      |           |        (16) ...to here
+           |      |           (17) following 'false' branch...
+           |......
+           |   33 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (18) ...to here
+           |
+         'remove_empty_tuple': events 19-25
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (19) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |           ~ ~~~~~~~~~~~~~
+           |      |           |        |
+           |      |           |        (20) ...to here
+           |      |           (21) following 'true' branch...
+           |   20 |             if(prev != NULL) {
+           |      |               ~    
+           |      |               |
+           |      |               (22) ...to here
+           |      |               (23) following 'true' branch (when 'prev' is non-NULL)...
+           |   21 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (24) ...to here
+           |      |                                     (25) use of uninitialized value '*current.next' here
+           |
+./collected_code_4/round1//heal_1/healed//problem-966.c:34:21: warning: use of uninitialized value '*current.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   34 |             current = current->next;
+      |             ~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-9
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   42 |     list *head = (list *)malloc(sizeof(list));
+    |      |                          ~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) region created on heap here
+    |......
+    |   46 |     if(head != NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'true' branch (when 'head' is non-NULL)...
+    |   47 |         head->data = (tuple *)malloc(sizeof(tuple));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (4) ...to here
+    |   48 | 
+    |   49 |         if(head->data != NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (5) following 'true' branch...
+    |   50 |             head->data->valid = 1;
+    |      |             ~~~~~~~~~~
+    |      |                 |
+    |      |                 (6) ...to here
+    |......
+    |   53 |             if(second != NULL) {
+    |      |               ~
+    |      |               |
+    |      |               (7) following 'false' branch (when 'second' is NULL)...
+    |......
+    |   75 |     head = remove_empty_tuple(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (8) ...to here
+    |      |            (9) calling 'remove_empty_tuple' from 'main'
+    |
+    +--> 'remove_empty_tuple': event 10
+           |
+           |   14 | list* remove_empty_tuple(list *head) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (10) entry to 'remove_empty_tuple'
+           |
+         'remove_empty_tuple': events 11-15
+           |
+           |   18 |     while(current != NULL) {
+           |      |                   ^
+           |      |                   |
+           |      |                   (11) following 'true' branch (when 'current' is non-NULL)...
+           |   19 |         if(!current->data->valid) {
+           |      |           ~ ~~~~~~~~~~~~~
+           |      |           |        |
+           |      |           |        (12) ...to here
+           |      |           (13) following 'false' branch...
+           |......
+           |   33 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (14) ...to here
+           |   34 |             current = current->next;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (15) use of uninitialized value '*current.next' here
+           |

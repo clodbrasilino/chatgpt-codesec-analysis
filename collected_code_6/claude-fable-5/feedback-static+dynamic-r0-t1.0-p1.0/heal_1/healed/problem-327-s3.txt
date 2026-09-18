@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_valid_triangle(long a, long b, long c)
+{
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return 0;
+    }
+    if (a <= c - b || a <= b - c || b <= a - c) {
+        return 0;
+    }
+    return 1;
+}
+
+static int is_isosceles(long a, long b, long c)
+{
+    if (!is_valid_triangle(a, b, c)) {
+        return -1;
+    }
+    if (a == b || b == c || a == c) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    long a;
+    long b;
+    long c;
+    int result;
+
+    printf("Enter three side lengths: ");
+
+    if (scanf("%ld %ld %ld", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = is_isosceles(a, b, c);
+
+    if (result == -1) {
+        fprintf(stderr, "Error: the given sides do not form a valid triangle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("The triangle is isosceles.\n");
+    } else {
+        printf("The triangle is not isosceles.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the UBSan-reported signed integer overflow found by AFL fuzzing. The original expressions like `a + b <= c` could overflow when the operands are near `LONG_MAX` (e.g., `6 + 9223372036854775807`), which is undefined behavior in C.
+
+The fix rewrites each addition as an algebraically equivalent subtraction: `a + b <= c` becomes `a <= c - b`, and so on. Since all three values are guaranteed strictly positive at that point (checked immediately before), the subtraction of two positive `long` values can never overflow — the result always lies within `(LONG_MIN, LONG_MAX)`. This preserves the exact triangle-inequality semantics for all valid positive inputs while eliminating the undefined behavior entirely.

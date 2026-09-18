@@ -1,0 +1,180 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    INTEGER,
+    LIST
+} ElementType;
+
+typedef struct NestedList {
+    ElementType type;
+    union {
+        int value;
+        struct {
+            struct NestedList** elements;
+            size_t count;
+        } list;
+    } data;
+} NestedList;
+
+typedef struct FlatList {
+    int* array;
+    size_t size;
+    size_t capacity;
+} FlatList;
+
+FlatList* create_flat_list(size_t initial_capacity) {
+    FlatList* fl = (FlatList*)malloc(sizeof(FlatList));
+    if (!fl) return NULL;
+    
+    fl->array = (int*)malloc(initial_capacity * sizeof(int));
+    if (!fl->array) {
+        free(fl);
+        return NULL;
+    }
+    
+    fl->size = 0;
+    fl->capacity = initial_capacity;
+    return fl;
+}
+
+void free_flat_list(FlatList* fl) {
+    if (fl) {
+        free(fl->array);
+        free(fl);
+    }
+}
+
+int append_to_flat_list(FlatList* fl, int value) {
+    if (!fl) return 0;
+    
+    if (fl->size >= fl->capacity) {
+        size_t new_capacity = fl->capacity == 0 ? 4 : fl->capacity * 2;
+        int* new_array = (int*)realloc(fl->array, new_capacity * sizeof(int));
+        if (!new_array) return 0;
+        
+        fl->array = new_array;
+        fl->capacity = new_capacity;
+    }
+    
+    fl->array[fl->size++] = value;
+    return 1;
+}
+
+int flatten_helper(const NestedList* nl, FlatList* fl) {
+    if (!nl || !fl) return 0;
+    
+    if (nl->type == INTEGER) {
+        return append_to_flat_list(fl, nl->data.value);
+    } else if (nl->type == LIST) {
+        for (size_t i = 0; i < nl->data.list.count; ++i) {
+            if (!flatten_helper(nl->data.list.elements[i], fl)) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+FlatList* flatten(const NestedList* nl) {
+    if (!nl) return NULL;
+    
+    FlatList* fl = create_flat_list(16);
+    if (!fl) return NULL;
+    
+    if (!flatten_helper(nl, fl)) {
+        free_flat_list(fl);
+        return NULL;
+    }
+    
+    return fl;
+}
+
+NestedList* create_integer(int value) {
+    NestedList* nl = (NestedList*)malloc(sizeof(NestedList));
+    if (!nl) return NULL;
+    
+    nl->type = INTEGER;
+    nl->data.value = value;
+    return nl;
+}
+
+NestedList* create_list(NestedList** elements, size_t count) {
+    NestedList* nl = (NestedList*)malloc(sizeof(NestedList));
+    if (!nl) return NULL;
+    
+    nl->type = LIST;
+    nl->data.list.elements = (NestedList**)malloc(count * sizeof(NestedList*));
+    if (!nl->data.list.elements) {
+        free(nl);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < count; ++i) {
+        nl->data.list.elements[i] = elements[i];
+    }
+    nl->data.list.count = count;
+    return nl;
+}
+
+void free_nested_list(NestedList* nl) {
+    if (!nl) return;
+    
+    if (nl->type == LIST) {
+        for (size_t i = 0; i < nl->data.list.count; ++i) {
+            free_nested_list(nl->data.list.elements[i]);
+        }
+        free(nl->data.list.elements);
+    }
+    free(nl);
+}
+
+int main(void) {
+    NestedList* i1 = create_integer(1);
+    NestedList* i2 = create_integer(2);
+    NestedList* i3 = create_integer(3);
+    NestedList* i4 = create_integer(4);
+    
+    if (!i1 || !i2 || !i3 || !i4) {
+        free_nested_list(i1);
+        free_nested_list(i2);
+        free_nested_list(i3);
+        free_nested_list(i4);
+        return 1;
+    }
+    
+    NestedList* elems1[] = {i2, i3};
+    NestedList* l1 = create_list(elems1, 2);
+    
+    if (!l1) {
+        free_nested_list(i1);
+        free_nested_list(i2);
+        free_nested_list(i3);
+        free_nested_list(i4);
+        return 1;
+    }
+    
+    NestedList* elems2[] = {i1, l1, i4};
+    NestedList* root = create_list(elems2, 3);
+    
+    if (!root) {
+        free_nested_list(i1);
+        free_nested_list(l1);
+        free_nested_list(i4);
+        return 1;
+    }
+    
+    FlatList* flat = flatten(root);
+    if (flat) {
+        for (size_t i = 0; i < flat->size; ++i) {
+            printf("%d ", flat->array[i]);
+        }
+        printf("\n");
+        free_flat_list(flat);
+    }
+    
+    free_nested_list(root);
+    return 0;
+}
+```

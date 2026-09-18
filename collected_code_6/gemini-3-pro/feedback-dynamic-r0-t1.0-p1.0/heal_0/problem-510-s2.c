@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_subsequences(int *arr, int n, int k) {
+    if (k <= 1 || arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)calloc(k, sizeof(int));
+    if (dp == NULL) {
+        return -1; 
+    }
+
+    for (int i = 0; i < n; i++) {
+        int val = arr[i];
+        if (val == 0) {
+            continue;
+        }
+        for (int j = k - 1; j >= val; j--) {
+            dp[j] += dp[j / val];
+        }
+        if (val < k) {
+            dp[val]++;
+        }
+    }
+
+    int total_subsequences = 0;
+    for (int i = 1; i < k; i++) {
+        total_subsequences += dp[i];
+    }
+
+    int zero_count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+
+    int total_with_zeros = total_subsequences;
+    if (zero_count > 0) {
+        int multiplier = 1;
+        for (int i = 0; i < zero_count; i++) {
+            multiplier *= 2;
+        }
+        total_with_zeros = (total_subsequences + 1) * multiplier - 1;
+    }
+
+    free(dp);
+    return total_with_zeros;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+    
+    int result = count_subsequences(arr, n, k);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

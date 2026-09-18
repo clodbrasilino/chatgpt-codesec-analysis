@@ -1,0 +1,48 @@
+```c
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LEN 100
+
+char* join_tuple(char tuple1[], char tuple2[]) {
+    size_t len1 = strlen(tuple1);
+    for(size_t i = 0; i < len1; i++) {
+        if(tuple1[i] == ',') {
+            if(strncmp(tuple1, tuple2, i) != 0) {
+                return NULL;
+            } 
+			
+            char* joint_tuple = (char*)malloc(MAX_LEN * sizeof(char));
+            if(joint_tuple == NULL) {
+                return NULL;
+            }
+
+            strncpy(joint_tuple, tuple1, MAX_LEN-1);
+            strncat(joint_tuple, tuple2+i, MAX_LEN-strlen(joint_tuple)-1);
+            
+			return joint_tuple;
+        } 
+    }
+
+    return NULL;
+}
+
+int main() {
+    char tuple1[MAX_LEN] = "abc,def,ghi";
+    char tuple2[MAX_LEN] = "abc,jkl,mno";
+
+    char* result = join_tuple(tuple1, tuple2);
+
+    if(result == NULL) {
+        printf("Tuples cannot be joined\n");
+    } else {
+        printf("The joined tuple is %s\n", result);
+        free(result); 
+        result = NULL;
+    }
+
+    return 0;
+}
+```
+The function `join_tuple` compares tuples `tuple1` and `tuple2` and joins them if they start with the same character sequence up to the first comma. The `strncmp` function compares the characters of two strings up to a given number of characters, which is the index of the first comma (`i`). If the character sequences do not match (`strncmp` function does not return 0), the function returns `NULL`, indicating that the tuples cannot be joined. The `malloc` function allocates memory for the joint tuple, and the function verifies that the allocation has been successful (`joint_tuple` is not `NULL`). The `strncpy` and `strncat` functions copy `tuple1` and append `tuple2` starting from the first comma to `joint_tuple`. Inside the `main` function, if `result` is `NULL`, it means that the tuples cannot be joined; otherwise, it prints the joined tuple and deallocates the memory allocated for `result` using `free`.

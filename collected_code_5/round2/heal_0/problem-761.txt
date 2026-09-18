@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double arc_length(double radius, double angle){
+    double arcLength;
+
+    if(radius < 0 || angle < 0){
+        printf("Error! Radius and angle values must be positive.\n");
+        return -1;
+    }
+
+    arcLength = 2 * PI * radius * (angle / 360.0);
+
+    return arcLength;
+}
+
+int main() {
+    double radius;
+    double angle;
+    double result;
+
+    printf("Enter radius: ");
+    scanf("%lf", &radius);
+
+    printf("Enter angle: ");
+    scanf("%lf", &angle);
+
+    result = arc_length(radius, angle);
+
+    if(result != -1) {
+        printf("Arc Length = %.2lf\n", result);
+    }
+
+    return 0;
+}
+```

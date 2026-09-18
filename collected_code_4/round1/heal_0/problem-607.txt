@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int search_pattern(const char *str, const char *pattern, int **matches) {
+    regex_t reg;
+    regmatch_t match;
+    int res = 0;
+    int n = 0;
+    int error;
+    char errbuf[256];
+    
+    if ((error = regcomp(&reg, pattern, REG_EXTENDED)) != 0) {
+        regerror(error, &reg, errbuf, sizeof(errbuf));
+        printf("regcomp: %s\n", errbuf);
+        return -1;
+    }
+
+    while (res != REG_NOMATCH) {
+        res = regexec(&reg, str, 1, &match, 0);
+        if (!res) {
+            *matches = realloc(*matches, (n + 1) * sizeof(int));
+            (*matches)[n] = match.rm_so;
+            str += match.rm_eo;
+            n++;
+        } else if (res != REG_NOMATCH) {
+            regerror(res, &reg, errbuf, sizeof(errbuf));
+            printf("regexec: %s\n", errbuf);
+            regfree(&reg);
+            return -1;
+        }
+    }
+
+    regfree(&reg);
+    return n;
+}
+
+int main() {
+    const char *str = "Hello world! Welcome to the world of C!";
+    const char *pattern = "world";
+    int *matches = NULL;
+    int n;
+
+    n = search_pattern(str, pattern, &matches);
+    if (n == -1)
+        return EXIT_FAILURE;
+
+    printf("Found %d occurrences of '%s' in '%s'\n", n, pattern, str);
+    for (int i = 0; i < n; i++)
+        printf("Occurrence at index: %d\n", matches[i]);
+
+    free(matches);
+    return EXIT_SUCCESS;
+}
+```

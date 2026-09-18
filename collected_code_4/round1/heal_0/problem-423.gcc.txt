@@ -1,0 +1,162 @@
+./collected_code_4/round1//heal_0//problem-423.c: In function 'solveGoldMine':
+./collected_code_4/round1//heal_0//problem-423.c:10:15: warning: dereference of possibly-NULL 'dp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         dp[i] = (int *)malloc(n * sizeof(int));
+      |         ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'solveGoldMine': events 1-4
+    |
+    |    8 |     int **dp = (int **)malloc(m * sizeof(int *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |    9 |     for (i = 0; i < m; i++)
+    |      |                 ~~~~~   
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < m')...
+    |   10 |         dp[i] = (int *)malloc(n * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |        |
+    |      |               |        (3) ...to here
+    |      |               (4) 'dp + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-423.c:24:20: warning: use of uninitialized value '*dp' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     int result = dp[0][0];
+      |                  ~~^~~
+  'solveGoldMine': events 1-6
+    |
+    |    8 |     int **dp = (int **)malloc(m * sizeof(int *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) region created on heap here
+    |    9 |     for (i = 0; i < m; i++)
+    |      |                 ~~~~~   
+    |      |                   |
+    |      |                   (2) following 'false' branch (when 'i >= m')...
+    |......
+    |   12 |     for (i = 0; i < m; i++)
+    |      |          ~~~~~  ~~~~~   
+    |      |            |      |
+    |      |            |      (4) following 'false' branch (when 'i >= m')...
+    |      |            (3) ...to here
+    |......
+    |   15 |     for (j = n - 2; j >= 0; j--) {
+    |      |          ~~~~~~~~~      
+    |      |            |
+    |      |            (5) ...to here
+    |......
+    |   24 |     int result = dp[0][0];
+    |      |                  ~~~~~  
+    |      |                    |
+    |      |                    (6) use of uninitialized value '*dp' here
+    |
+./collected_code_4/round1//heal_0//problem-423.c:24:20: warning: use of uninitialized value '*dp' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     int result = dp[0][0];
+      |                  ~~^~~
+  'main': events 1-6
+    |
+    |   35 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     for(i = 0; i < r; i++)
+    |      |                ~~~~~
+    |      |                  |
+    |      |                  (2) following 'false' branch...
+    |......
+    |   44 |     printf("Enter %d elements of the gold mine:\n", r * c);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) ...to here
+    |   45 |     for(i = 0; i < r; i++)
+    |      |                ~~~~~
+    |      |                  |
+    |      |                  (4) following 'false' branch...
+    |......
+    |   49 |     printf("Maximum gold that can be collected is: %d\n", solveGoldMine(goldmine, r, c));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) ...to here
+    |      |     (6) calling 'solveGoldMine' from 'main'
+    |
+    +--> 'solveGoldMine': events 7-13
+           |
+           |    6 | int solveGoldMine(int **gold, int m, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (7) entry to 'solveGoldMine'
+           |    7 |     int i, j;
+           |    8 |     int **dp = (int **)malloc(m * sizeof(int *));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (8) region created on heap here
+           |    9 |     for (i = 0; i < m; i++)
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (9) following 'false' branch (when 'i >= m')...
+           |......
+           |   12 |     for (i = 0; i < m; i++)
+           |      |          ~~~~~  ~~~~~
+           |      |            |      |
+           |      |            |      (11) following 'false' branch (when 'i >= m')...
+           |      |            (10) ...to here
+           |......
+           |   15 |     for (j = n - 2; j >= 0; j--) {
+           |      |          ~~~~~~~~~
+           |      |            |
+           |      |            (12) ...to here
+           |......
+           |   24 |     int result = dp[0][0];
+           |      |                  ~~~~~
+           |      |                    |
+           |      |                    (13) use of uninitialized value '*dp' here
+           |
+./collected_code_4/round1//heal_0//problem-423.c:24:20: warning: dereference of possibly-NULL 'dp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     int result = dp[0][0];
+      |                  ~~^~~
+  'solveGoldMine': events 1-6
+    |
+    |    8 |     int **dp = (int **)malloc(m * sizeof(int *));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |    9 |     for (i = 0; i < m; i++)
+    |      |                 ~~~~~   
+    |      |                   |
+    |      |                   (2) following 'false' branch (when 'i >= m')...
+    |......
+    |   12 |     for (i = 0; i < m; i++)
+    |      |          ~~~~~  ~~~~~   
+    |      |            |      |
+    |      |            |      (4) following 'false' branch (when 'i >= m')...
+    |      |            (3) ...to here
+    |......
+    |   15 |     for (j = n - 2; j >= 0; j--) {
+    |      |          ~~~~~~~~~      
+    |      |            |
+    |      |            (5) ...to here
+    |......
+    |   24 |     int result = dp[0][0];
+    |      |                  ~~~~~  
+    |      |                    |
+    |      |                    (6) 'dp' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-423.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-423.c:42:21: warning: dereference of possibly-NULL 'goldmine' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   42 |         goldmine[i] = (int *)malloc(c * sizeof(int));
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   40 |     int **goldmine = (int **)malloc(r * sizeof(int *));
+    |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (1) this call could return NULL
+    |   41 |     for(i = 0; i < r; i++)
+    |      |                ~~~~~          
+    |      |                  |
+    |      |                  (2) following 'true' branch...
+    |   42 |         goldmine[i] = (int *)malloc(c * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |        |
+    |      |                     |        (3) ...to here
+    |      |                     (4) 'goldmine + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

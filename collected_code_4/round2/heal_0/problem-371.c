@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int smallestMissingElem(int array[], int n) {
+    int i = 0;
+
+    while(i< n){
+        if(array[i] != i+1)
+            return i+1;
+
+        i++;
+    }
+
+    return n+1;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 6, 7, 9};
+    int n = sizeof(array) / sizeof(array[0]);
+    int miss = smallestMissingElem(array, n);
+    printf("The smallest missing element is %d", miss);
+    return 0;
+}

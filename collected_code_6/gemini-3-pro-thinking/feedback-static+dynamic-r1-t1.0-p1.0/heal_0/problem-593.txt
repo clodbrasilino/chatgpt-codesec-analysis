@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+char *remove_leading_zeroes(char *ip) {
+    char *src;
+    char *dst;
+
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    src = ip;
+    dst = ip;
+
+    while (*src != '\0') {
+        while (*src == '0' && *(src + 1) >= '0' && *(src + 1) <= '9') {
+            src++;
+        }
+
+        while (*src != '.' && *src != '\0') {
+            *dst++ = *src++;
+        }
+
+        if (*src == '.') {
+            *dst++ = *src++;
+        }
+    }
+    
+    *dst = '\0';
+
+    return ip;
+}
+
+int main(void) {
+    char ip1[] = "192.168.001.01";
+    char ip2[] = "000.000.000.000";
+    char ip3[] = "010.00.05.009";
+    char ip4[] = "127.0.0.1";
+
+    if (remove_leading_zeroes(ip1) != NULL) {
+        printf("%s\n", ip1);
+    }
+
+    if (remove_leading_zeroes(ip2) != NULL) {
+        printf("%s\n", ip2);
+    }
+
+    if (remove_leading_zeroes(ip3) != NULL) {
+        printf("%s\n", ip3);
+    }
+
+    if (remove_leading_zeroes(ip4) != NULL) {
+        printf("%s\n", ip4);
+    }
+
+    return 0;
+}
+```

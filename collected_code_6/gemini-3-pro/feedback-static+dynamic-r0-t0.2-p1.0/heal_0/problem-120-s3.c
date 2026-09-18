@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+long long max_product(Tuple* tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return LLONG_MIN;
+    }
+
+    long long max_prod = LLONG_MIN;
+
+    for (size_t i = 0; i < size; i++) {
+        long long current_prod = (long long)tuples[i].first * (long long)tuples[i].second;
+        if (current_prod > max_prod) {
+            max_prod = current_prod;
+        }
+    }
+
+    return max_prod;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {2, 3},
+        {-5, -6},
+        {10, 2},
+        {0, 100}
+    };
+    
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    long long result = max_product(tuples, size);
+    
+    if (result != LLONG_MIN) {
+        printf("Maximum product: %lld\n", result);
+    } else {
+        printf("Invalid input or empty list.\n");
+    }
+    
+    return 0;
+}

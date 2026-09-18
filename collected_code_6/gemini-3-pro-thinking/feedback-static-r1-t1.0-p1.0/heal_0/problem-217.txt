@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+char find_first_repeated_char(const char *str);
+
+char find_first_repeated_char(const char *str) {
+    if (!str) {
+        return '\0';
+    }
+
+    bool seen[256] = { false };
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        unsigned char index = (unsigned char)str[i];
+        
+        if (seen[index]) {
+            return str[i];
+        }
+        seen[index] = true;
+    }
+
+    return '\0';
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "development",
+        "abcdef",
+        "aab",
+        NULL
+    };
+    
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_cases; i++) {
+        char result = find_first_repeated_char(test_cases[i]);
+        if (result != '\0') {
+            printf("%c\n", result);
+        } else {
+            printf("\\0\n");
+        }
+    }
+
+    return 0;
+}
+```

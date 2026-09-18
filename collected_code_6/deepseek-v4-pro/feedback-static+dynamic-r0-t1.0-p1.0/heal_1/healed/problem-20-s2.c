@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdint.h>
+
+int is_woodall(int n) {
+    if (n <= 0) return 0;
+    
+    for (int m = 1; m <= 30; m++) {
+        if ((1LL << m) > (LLONG_MAX / m)) break;
+        
+        long long woodall = (long long)m * (1LL << m) - 1;
+        
+        if (woodall > INT_MAX) break;
+        
+        if (woodall == n) return 1;
+        if (woodall > n) return 0;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (is_woodall(num)) {
+        printf("%d is a Woodall number\n", num);
+    } else {
+        printf("%d is not a Woodall number\n", num);
+    }
+    
+    return 0;
+}

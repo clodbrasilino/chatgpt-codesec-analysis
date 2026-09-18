@@ -1,0 +1,69 @@
+Please note that C does not support tuples as intrinsic types. However, you can implement tuple-like behavior using a struct based approach for handling it. Here is an example of how to define tuples using structs in C and a function to remove specific data types:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Defining a struct to mimic a tuple
+typedef struct Tuple {
+    int *intElement;
+    float *floatElement;
+    char *charElement;
+} Tuple;
+
+// Function to initialize a tuple
+void initializeTuple(Tuple *tuple, int intValue, float floatValue, char charValue) {
+    tuple->intElement = (int *)malloc(sizeof(int));
+    tuple->floatElement = (float *)malloc(sizeof(float));
+    tuple->charElement = (char *)malloc(sizeof(char));
+    *(tuple->intElement) = intValue;
+    *(tuple->floatElement) = floatValue;
+    *(tuple->charElement) = charValue;
+}
+
+// Function to delete particular elements depending upon the datatype
+void removeElement(Tuple *tuple, char dataType) {
+    switch(dataType) {
+        case 'i':
+            free(tuple->intElement);
+            tuple->intElement = NULL;
+            break;
+        case 'f':
+            free(tuple->floatElement);
+            tuple->floatElement = NULL;
+            break;
+        case 'c':
+            free(tuple->charElement);
+            tuple->charElement = NULL;
+            break;
+        default:
+            printf("Invalid data type.\n");
+    }
+}
+
+// Function to print tuple values
+void printTuple(Tuple *tuple) {
+    if(tuple->intElement != NULL) {
+        printf("Integer: %d\n", *(tuple->intElement));
+    }
+    if(tuple->floatElement != NULL) {
+        printf("Float: %f\n", *(tuple->floatElement));
+    }
+    if(tuple->charElement != NULL) {
+        printf("Char: %c\n", *(tuple->charElement));
+    }
+}
+
+// A main function for testing
+int main() {
+    Tuple myTuple;
+    initializeTuple(&myTuple, 5, 7.3, 'a');
+    printTuple(&myTuple);
+    removeElement(&myTuple, 'i');
+    printTuple(&myTuple);
+    return 0;
+}
+```
+
+In this code, I defined a struct `Tuple` with int, float, and char pointers as elements to represent a tuple. I'm using dynamic allocation for elements to demonstrate how to properly manage a resource throughout its lifetime. The function `removeElement()` removes an element based on the datatype.
+Please remember to add proper error checking for your program such as out of memory errors while allocating memory. In this simple example, these error checks are not added to keep it uncluttered and easy to understand.

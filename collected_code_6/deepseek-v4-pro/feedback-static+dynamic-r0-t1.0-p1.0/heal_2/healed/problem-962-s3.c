@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int64_t sum_even_in_range(int64_t l, int64_t r) {
+    if (l > r) {
+        return 0;
+    }
+    if (l <= 0) {
+        l = 1;
+    }
+    if (l % 2 != 0) {
+        l++;
+    }
+    if (r % 2 != 0) {
+        r--;
+    }
+    if (l > r) {
+        return 0;
+    }
+    int64_t n = (r - l) / 2 + 1;
+    if (n % 2 == 0) {
+        return (n / 2) * (l + r);
+    } else {
+        return n * ((l + r) / 2);
+    }
+}
+
+int main(void) {
+    long long l, r;
+    printf("Enter lower bound: ");
+    if (scanf("%lld", &l) != 1) {
+        return 1;
+    }
+    printf("Enter upper bound: ");
+    if (scanf("%lld", &r) != 1) {
+        return 1;
+    }
+    long long result = sum_even_in_range(l, r);
+    printf("Sum of even numbers in range [%lld, %lld]: %lld\n", l, r, result);
+    return 0;
+}

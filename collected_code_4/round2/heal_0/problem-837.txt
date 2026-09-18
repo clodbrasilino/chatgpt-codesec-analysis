@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+
+long long cubeSum(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n*2; i+=2) {
+        sum += (long long)i*i*i;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the number: ");
+    scanf("%d", &n);
+    if (n < 0) {
+        printf("Number should be non-negative.\n");
+        return 1;
+    }
+    printf("The cube sum of first %d odd natural numbers is %lld.\n",n, cubeSum(n));
+    return 0;
+}
+```

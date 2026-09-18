@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+void modulo_operation(int *tuple1, int *tuple2, int *result, int size) {
+    int i;
+    for(i=0; i<size; i++) {
+        if(tuple2[i] != 0) {
+            result[i] = tuple1[i] % tuple2[i];
+        } else {
+            printf("Warning: Division by zero!\n");
+            result[i] = 0;
+        }
+    }
+}
+
+int main() {
+    int size = 3; // size of the tuples
+    int tuple1[] = {10, 20, 30};
+    int tuple2[] = {2, 0, 5};
+    int result[size];
+    int i;
+
+    modulo_operation(tuple1, tuple2, result, size);
+
+    printf("The result of the modulo operation is: \n");
+    for(i=0; i<size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

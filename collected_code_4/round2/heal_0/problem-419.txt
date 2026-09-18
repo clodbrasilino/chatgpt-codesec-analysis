@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+void processList(int* arr, int n) {
+    if (!arr || n <= 0)
+        return;
+
+    int sum = 0;
+
+    for (int i = 0; i < n; i++) {
+        int roundNum = round(arr[i]);
+        sum += roundNum;
+    }
+
+    sum *= n;
+
+    printf("Total: %d\n", sum);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int len = sizeof(arr) / sizeof(arr[0]);
+    processList(arr, len);
+
+    return 0;
+}
+```
+In the above code:
+
+- The function `processList()` takes an integer array and its size as inputs.
+- It checks whether the array is not NULL and the size is more than 0. If not, it exists immediately, avoiding potential pitfalls like a NULL pointer dereference or division by zero.
+- It calculates the sum of all the rounded numbers in the array using the `round()` function, and then multiplies the sum by the array's size.
+- The calculated value is printed in the console.
+- In the main function, an integer array is declared, its size calculated and `processList()` function is called.
+- All variables our resources are properly managed, so the program adheres to coding standards.

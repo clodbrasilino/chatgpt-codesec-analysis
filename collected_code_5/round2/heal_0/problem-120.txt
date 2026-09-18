@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+
+long findMaxProduct(int arr[], int n) {
+    if(n < 2) {
+        printf("No pairs in array\n");
+        return 0;
+    }
+
+    int firstMax = (arr[0] > arr[1]) ? arr[0] : arr[1];
+    int secondMax = (arr[0] < arr[1]) ? arr[0] : arr[1];
+
+    for(int i = 2; i < n; i++) {
+        if(arr[i] > firstMax) {
+            secondMax = firstMax;
+            firstMax = arr[i];
+        } else if(arr[i] > secondMax) {
+            secondMax = arr[i];
+        }
+    }
+    return (long)firstMax * secondMax;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    long maxProduct = findMaxProduct(arr, n);
+    printf("Maximum Product is %ld", maxProduct);
+    return 0;
+}
+```
+This program finds the maximum product by identifying the two highest values in the array. If the series has less than two elements, the function returns 0 and prints an error message. The function does not use any dynamic resource allocation, eliminating the possibility of CWE-664 related problems. The improper adherence to coding standards (CWE-710) has been avoided by using good indentation, proper function naming, and no unnecessary global variables. The improper check or handling of exceptional conditions (CWE-703) has also been avoided by adding a condition to return 0 if there are less than two elements in the array.

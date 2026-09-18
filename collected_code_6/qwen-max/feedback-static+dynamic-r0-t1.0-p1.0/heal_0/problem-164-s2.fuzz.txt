@@ -1,0 +1,4 @@
+problem-164-s2.c:10:22:medium:UBSan: signed integer overflow: 1478708443 + 739354220 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:1601,execs:478,op:havoc,rep:3)
+problem-164-s2.c:18:22:medium:UBSan: signed integer overflow: 1842981511 + 614327169 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:9631,execs:2724,op:havoc,rep:7)
+problem-164-s2.c:18:22:medium:UBSan: signed integer overflow: 1890882366 + 420196080 cannot be represented in type 'int' (AFL crash: id:000003,sig:06,src:000001,time:14550,execs:4104,op:havoc,rep:3)
+problem-164-s2.c:24:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:12,execs:16,op:(null),pos:0; likely memory-safety defect

@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+float area_of_trapezium(float base1, float base2, float height) {
+    if(base1 < 0 || base2 < 0 || height < 0) {
+        printf("Invalid parameters.");
+        return -1;
+    }
+    return 0.5 * (base1 + base2) * height;
+}
+
+int main() {
+    float base1, base2, height;
+
+    printf("Enter Base1: ");
+    scanf("%f", &base1);
+    printf("Enter Base2: ");
+    scanf("%f", &base2);
+    printf("Enter Height: ");
+    scanf("%f", &height);
+
+    float area = area_of_trapezium(base1, base2, height);
+    if(area != -1) {
+        printf("Area of trapezium: %.2f\n", area);
+    }
+
+    return 0;
+}
+```

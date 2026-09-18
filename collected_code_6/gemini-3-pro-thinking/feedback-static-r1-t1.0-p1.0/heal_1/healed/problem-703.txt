@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    const char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    const KeyValuePair *items;
+    size_t size;
+} Dictionary;
+
+bool contains_key(const Dictionary *dict, const char *key);
+
+bool contains_key(const Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL || dict->items == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < dict->size; i++) {
+        if (dict->items[i].key != NULL && strcmp(dict->items[i].key, key) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"orange", 3}
+    };
+
+    Dictionary dict = {
+        .items = pairs,
+        .size = sizeof(pairs) / sizeof(pairs[0])
+    };
+
+    int sum_values = 0;
+    for (size_t i = 0; i < dict.size; i++) {
+        sum_values += dict.items[i].value;
+    }
+    printf("Total value of all dictionary items: %d\n", sum_values);
+
+    const char *search_key_1 = "banana";
+    const char *search_key_2 = "grape";
+
+    bool found_1 = contains_key(&dict, search_key_1);
+    bool found_2 = contains_key(&dict, search_key_2);
+
+    printf("%s: %s\n", search_key_1, found_1 ? "true" : "false");
+    printf("%s: %s\n", search_key_2, found_2 ? "true" : "false");
+
+    return EXIT_SUCCESS;
+}
+```

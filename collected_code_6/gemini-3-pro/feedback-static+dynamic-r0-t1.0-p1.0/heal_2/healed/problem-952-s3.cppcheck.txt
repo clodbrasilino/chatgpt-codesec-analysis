@@ -1,0 +1,49 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:54:35: warning: Either the condition 'n>0' is redundant or there is division by zero at line 54. [zerodivcond]
+        unsigned long long ni = n % p;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:53:14: note: Assuming that condition 'n>0' is not redundant
+    while (n > 0 || r > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:62:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:54:35: note: Division by zero
+        unsigned long long ni = n % p;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:55:35: warning: Either the condition 'n>0' is redundant or there is division by zero at line 55. [zerodivcond]
+        unsigned long long ri = r % p;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:53:14: note: Assuming that condition 'n>0' is not redundant
+    while (n > 0 || r > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:62:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:55:35: note: Division by zero
+        unsigned long long ri = r % p;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:61:48: warning: Either the condition 'n>0' is redundant or there is division by zero at line 61. [zerodivcond]
+        res = (res * nCrModP_basic(ni, ri, p)) % p;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:53:14: note: Assuming that condition 'n>0' is not redundant
+    while (n > 0 || r > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:62:14: note: Assignment to 'n/=p'
+        n /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:61:48: note: Division by zero
+        res = (res * nCrModP_basic(ni, ri, p)) % p;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:62:11: warning: Either the condition 'r>0' is redundant or there is division by zero at line 62. [zerodivcond]
+        n /= p;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:53:23: note: Assuming that condition 'r>0' is not redundant
+    while (n > 0 || r > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:63:14: note: Assignment to 'r/=p'
+        r /= p;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-952-s3.c:62:11: note: Division by zero
+        n /= p;
+          ^

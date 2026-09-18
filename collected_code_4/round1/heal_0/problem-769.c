@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 5
+
+int* difference(int* list1, int* list2, int listSize) {
+    int* result = (int*)malloc(listSize*sizeof(int));
+    if(result == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < listSize; i++) {
+        result[i] = list1[i] - list2[i];
+    }
+
+    return result;
+}
+
+int main() {
+    int list1[SIZE] = {10, 20, 30, 40, 50};
+    int list2[SIZE] = {5, 10, 15, 20, 25};
+    
+    int *diff = difference(list1, list2, SIZE);
+
+    for(int i = 0; i < SIZE; i++) {
+        printf("%d ", diff[i]);
+    }
+    printf("\n");
+
+    free(diff);
+
+    return 0;
+}

@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int choose(int n, int k) 
+{ 
+    int res = 1; 
+    if (k > n - k) 
+        k = n - k; 
+    for (int i = 0; i < k; ++i) 
+    { 
+        res *= (n - i); 
+        res /= (i + 1); 
+    } 
+    return res; 
+} 
+
+int productBinomialCoeff(int n) 
+{ 
+    int prod = 1; 
+    for (int i = 0; i <= n; i++)
+    { 
+        prod *= choose(n, i); 
+    } 
+    return prod; 
+} 
+
+int main() 
+{ 
+    int n = 5; 
+    int sum = 0;
+    for (int i = 0; i <= n; i++)
+    { 
+        sum += productBinomialCoeff(i); 
+    } 
+    printf("Sum of product of binomial coefficients is %d.\n", sum);
+    return 0;
+}

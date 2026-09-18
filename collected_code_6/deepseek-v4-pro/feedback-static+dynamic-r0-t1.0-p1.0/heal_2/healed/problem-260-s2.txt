@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+bool is_prime(uint64_t n) {
+    if (n < 2) return false;
+    if (n % 2 == 0) return n == 2;
+    if (n % 3 == 0) return n == 3;
+    for (uint64_t i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
+uint64_t nsw_prime(unsigned int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    
+    uint64_t a = 1;
+    uint64_t b = 1;
+    unsigned int count = 1;
+    uint64_t candidate = 1;
+    
+    while (count < n) {
+        if (b > UINT64_MAX / 2) break;
+        uint64_t next = 2 * b + a;
+        if (next < b) break;
+        a = b;
+        b = next;
+        if (is_prime(next)) {
+            count++;
+            candidate = next;
+        }
+    }
+    return candidate;
+}
+
+int main(void) {
+    unsigned int n;
+    printf("Enter n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("%" PRIu64 "\n", nsw_prime(n));
+    return EXIT_SUCCESS;
+}
+```

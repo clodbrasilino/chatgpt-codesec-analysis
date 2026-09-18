@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **data;
+    int rows;
+    int cols;
+} NestedList;
+
+int* extract_column(const NestedList *list, int col_index, int *out_size) {
+    if (list == NULL || list->data == NULL || out_size == NULL) {
+        return NULL;
+    }
+    
+    if (col_index < 0 || col_index >= list->cols) {
+        return NULL;
+    }
+    
+    int *column = (int *)malloc(list->rows * sizeof(int));
+    if (column == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < list->rows; i++) {
+        if (list->data[i] == NULL) {
+            free(column);
+            return NULL;
+        }
+        column[i] = list->data[i][col_index];
+    }
+    
+    *out_size = list->rows;
+    return column;
+}
+
+void free_nested_list(NestedList *list) {
+    if (list != NULL) {
+        if (list->data != NULL) {
+            for (int i = 0; i < list->rows; i++) {
+                free(list->data[i]);
+            }
+            free(list->data);
+        }
+    }
+}
+
+int main(void) {
+    NestedList list;
+    list.rows = 3;
+    list.cols = 4;
+    
+    list.data = (int **)malloc(list.rows * sizeof(int *));
+    if (list.data == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < list.rows; i++) {
+        list.data[i] = (int *)malloc(list.cols * sizeof(int));
+        if (list.data[i] == NULL) {
+            list.rows = i;
+            free_nested_list(&list);
+            return 1;
+        }
+        for (int j = 0; j < list.cols; j++) {
+            list.data[i][j] = (i * list.cols) + j;
+        }
+    }
+    
+    int out_size = 0;
+    int target_col = 2;
+    int *extracted = extract_column(&list, target_col, &out_size);
+    
+    if (extracted != NULL) {
+        for (int i = 0; i < out_size; i++) {
+            printf("%d\n", extracted[i]);
+        }
+        free(extracted);
+    }
+    
+    free_nested_list(&list);
+    
+    return 0;
+}

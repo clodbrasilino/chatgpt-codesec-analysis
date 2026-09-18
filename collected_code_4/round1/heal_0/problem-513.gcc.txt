@@ -1,0 +1,109 @@
+./collected_code_4/round1//heal_0//problem-513.c: In function 'convert':
+./collected_code_4/round1//heal_0//problem-513.c:17:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |             free(output);
+      |             ^~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   42 | int main(){
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     if(input == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'input' is non-NULL)...
+    |......
+    |   51 |     for(int i = 0; i < size; i++) {
+    |      |             ~      ~~~~~~~~
+    |      |             |        |
+    |      |             |        (4) following 'true' branch (when 'i < size')...
+    |      |             (3) ...to here
+    |   52 |         input[i] = (char *)malloc(10*sizeof(char));
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |   53 |         if(input[i] == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (6) following 'false' branch...
+    |
+  'main': event 7
+    |
+    |   61 |         sprintf(input[i],"ele%d",i+1);
+    |      |         ^~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |
+  'main': event 8
+    |
+    |   64 |     char **output = convert(input, delim, size);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (8) calling 'convert' from 'main'
+    |
+    +--> 'convert': events 9-30
+           |
+           |    5 | char **convert(char **input, const char *delim, int size) {
+           |      |        ^~~~~~~
+           |      |        |
+           |      |        (9) entry to 'convert'
+           |    6 |     if(input == NULL || delim == NULL || size <= 0) return NULL;
+           |      |       ~ 
+           |      |       |
+           |      |       (10) following 'false' branch...
+           |    7 | 
+           |    8 |     char **output = (char **)calloc(2*size + 1 , sizeof(char *));
+           |      |                                     ~~~~~~
+           |      |                                      |
+           |      |                                      (11) ...to here
+           |    9 |     if(output == NULL) return NULL;
+           |      |       ~ 
+           |      |       |
+           |      |       (12) following 'false' branch (when 'output' is non-NULL)...
+           |   10 | 
+           |   11 |     for(int i = 0; i < size; i++){
+           |      |             ~      ~~~~~~~~  ~~~
+           |      |             |        |        |
+           |      |             |        |        (21) ...to here
+           |      |             |        (14) following 'true' branch (when 'i < size')...
+           |      |             |        (22) following 'true' branch (when 'i < size')...
+           |      |             (13) ...to here
+           |   12 |         output[2 * i] = strdup(input[i]);
+           |      |                                     ~
+           |      |                                     |
+           |      |                                     (15) ...to here
+           |      |                                     (23) ...to here
+           |   13 |         if (output[2 * i] == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (16) following 'false' branch...
+           |      |            (24) following 'true' branch...
+           |   14 |             for(int j = 0; j < i; j++){
+           |      |                     ~      ~~~~~
+           |      |                     |        |
+           |      |                     |        (26) following 'true' branch (when 'j < i')...
+           |      |                     |        (28) following 'false' branch (when 'j >= i')...
+           |      |                     (25) ...to here
+           |   15 |                 free(output[2 * j]);
+           |      |                             ~~~~~
+           |      |                               |
+           |      |                               (27) ...to here
+           |   16 |             }
+           |   17 |             free(output);
+           |      |             ~~~~~~~~~~~~
+           |      |             |
+           |      |             (29) ...to here
+           |      |             (30) '<unknown>' leaks here; was allocated at (18)
+           |......
+           |   20 |         output[2 * i + 1] = strdup(delim);
+           |      |                ~~~~~        ~~~~~~~~~~~~~
+           |      |                  |          |
+           |      |                  |          (18) allocated here
+           |      |                  (17) ...to here
+           |   21 |         if (output[2 * i + 1] == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (19) assuming '<unknown>' is non-NULL
+           |      |            (20) following 'false' branch...
+           |

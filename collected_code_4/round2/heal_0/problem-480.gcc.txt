@@ -1,0 +1,73 @@
+./collected_code_4/round2//heal_0/problem-480.c: In function 'getMaxOccurringChar':
+./collected_code_4/round2//heal_0/problem-480.c:6:15: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    6 |     int len = strlen(str);
+      |               ^~~~~~
+./collected_code_4/round2//heal_0/problem-480.c:2:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | #define ASCII_SIZE 256
+./collected_code_4/round2//heal_0/problem-480.c:6:15: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    6 |     int len = strlen(str);
+      |               ^~~~~~
+./collected_code_4/round2//heal_0/problem-480.c:6:15: note: include '<string.h>' or provide a declaration of 'strlen'
+./collected_code_4/round2//heal_0/problem-480.c:18:12: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   18 |     return result;
+      |            ^~~~~~
+  'getMaxOccurringChar': events 1-5
+    |
+    |    8 |     char result;
+    |      |          ^~~~~~
+    |      |          |
+    |      |          (1) region created on stack here
+    |      |          (2) capacity: 1 byte
+    |    9 | 
+    |   10 |     for (int i = 0; i < len; i++) {
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch (when 'i >= len')...
+    |......
+    |   18 |     return result;
+    |      |            ~~~~~~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) use of uninitialized value 'result' here
+    |
+./collected_code_4/round2//heal_0/problem-480.c:18:12: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   18 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   21 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   22 |     char str[] = "sample string";
+    |   23 |     printf("Max occurring character is '%c'.\n", getMaxOccurringChar(str));
+    |      |                                                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                  |
+    |      |                                                  (2) calling 'getMaxOccurringChar' from 'main'
+    |
+    +--> 'getMaxOccurringChar': events 3-8
+           |
+           |    4 | char getMaxOccurringChar(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'getMaxOccurringChar'
+           |......
+           |    8 |     char result;
+           |      |          ~~~~~~
+           |      |          |
+           |      |          (4) region created on stack here
+           |      |          (5) capacity: 1 byte
+           |    9 | 
+           |   10 |     for (int i = 0; i < len; i++) {
+           |      |                     ~~~~~~~
+           |      |                       |
+           |      |                       (6) following 'false' branch (when 'i >= len')...
+           |......
+           |   18 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (7) ...to here
+           |      |            (8) use of uninitialized value 'result' here
+           |

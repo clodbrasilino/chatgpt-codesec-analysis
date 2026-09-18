@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-318.c:7:21: error: use of undeclared identifier 'LLONG_MAX'
+    7 |             if (a > LLONG_MAX / b) return false;
+      |                     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-318.c:9:21: error: use of undeclared identifier 'LLONG_MIN'
+    9 |             if (b < LLONG_MIN / a) return false;
+      |                     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-318.c:13:21: error: use of undeclared identifier 'LLONG_MIN'
+   13 |             if (a < LLONG_MIN / b) return false;
+      |                     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-318.c:15:31: error: use of undeclared identifier 'LLONG_MAX'
+   15 |             if (a != 0 && b < LLONG_MAX / a) return false;
+      |                               ^~~~~~~~~
+4 errors generated.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-962-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-962-s3.c:49:32: error: Uninitialized variable: sum_first_last [uninitvar]
+            int64_t half_sum = sum_first_last / 2;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-962-s3.c:47:29: error: Uninitialized variable: sum_first_last [legacyUninitvar]
+            return half_n * sum_first_last;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-962-s3.c:35:31: style: Variable 'remainder' is assigned a value that is never used. [unreadVariable]
+            int64_t remainder = (first % 2 + last % 2) / 2;
+                              ^

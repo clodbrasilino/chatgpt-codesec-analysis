@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int fifthPowerSum(int n) {
+    long long int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long int power = 1;
+        for (int j = 0; j < 5; j++) {
+            power *= i;
+        }
+        sum += power;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the number:\n");
+    if (scanf("%d", &n) != 1) {
+        printf("Enter a valid number.\n");
+        exit(EXIT_FAILURE);
+    }
+    if(n<1){
+        printf("Enter a positive number.\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("The sum of fifth power of first %d natural numbers is %lld\n", n, fifthPowerSum(n));
+    return 0;
+}
+```

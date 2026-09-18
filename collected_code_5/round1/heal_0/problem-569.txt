@@ -1,0 +1,52 @@
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CHAR 256
+#define MAX_LIST 10
+
+void sort_sublist(char list[][MAX_LIST][MAX_CHAR], int n, int m) {
+    int i, j, min_index;
+    char min_str[MAX_CHAR];
+
+    for(i=0; i<n; i++) {
+        for(j=0; j<m-1; j++) {
+            int min_index = j;
+            strcpy(min_str, list[i][j]);
+            for(int k=j+1; k<m; k++) {
+                if(strcmp(list[i][k], min_str) < 0) {
+                    strcpy(min_str, list[i][k]);
+                    min_index = k;
+                }
+            }
+
+            // Swap min string with the current string
+            if(min_index != j) {
+                char temp[MAX_CHAR];
+                strcpy(temp, list[i][j]);
+                strcpy(list[i][j], list[i][min_index]);
+                strcpy(list[i][min_index], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char list[MAX_LIST][MAX_LIST][MAX_CHAR] = {
+       { "python", "java", "c", "cplusplus" },
+       { "banana", "apple", "mango", "pear" }
+    };
+    
+    sort_sublist(list, 2, 4);
+    
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<4; j++) {
+            printf("%s ", list[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```

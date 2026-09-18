@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+int numUniqueLists(int arr[MAX][MAX], int m, int n) {
+    int count = m;
+    for (int i = 0; i < m; i++) {
+        for (int j = i + 1; j < m; j++) {
+            bool flag = true;
+            for (int k = 0; k < n; k++) {
+                if (arr[i][k] != arr[j][k]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                count--;
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int m = 3, n = 3;
+    int arr[MAX][MAX] = {{1,2,3}, {4,5,6}, {1,2,3}};
+
+    int unique = numUniqueLists(arr, m, n);
+
+    printf("Number of unique lists = %d\n", unique);
+
+    return 0;
+}

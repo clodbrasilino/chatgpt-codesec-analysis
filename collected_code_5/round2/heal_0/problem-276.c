@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+#define PI 3.141592653589793238
+
+double findVolume(double radius, double height);
+
+int main() {
+    double radius, height;
+
+    printf("Enter radius of the cylinder: ");
+    scanf("%lf", &radius);
+    
+    printf("Enter height of the cylinder: ");
+    scanf("%lf", &height);
+
+    if (radius < 0 || height < 0) {
+        printf("Error: Both radius and height must be non-negative.\n");
+        return -1;
+    }
+
+    double volume = findVolume(radius, height);
+    
+    printf("Volume of the cylinder is %.2lf\n", volume);
+
+    return 0;
+}
+
+double findVolume(double radius, double height) {
+    return PI * radius * radius * height;
+}

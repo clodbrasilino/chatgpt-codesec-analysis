@@ -1,0 +1,65 @@
+./collected_code_4/round2//heal_0/problem-326.c: In function 'get_most_frequent_word':
+./collected_code_4/round2//heal_0/problem-326.c:26:12: warning: leak of 'word' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |     return most_freq_word;
+      |            ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   30 |     char* list[LIST_LENGTH] = {"apple", "banana", "apple", "orange", "banana","apple"};
+    |   31 |     char* most_freq_word = get_most_frequent_word(list, 6);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'get_most_frequent_word' from 'main'
+    |
+    +--> 'get_most_frequent_word': events 3-17
+           |
+           |    8 | char* get_most_frequent_word(char* list[], int length) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'get_most_frequent_word'
+           |    9 |     int i, j, max_count = -1;
+           |   10 |     char* word = malloc(sizeof(char) * MAX_WORD_LENGTH);
+           |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) allocated here
+           |......
+           |   13 |     for(i = 0; i < length; ++i) {
+           |      |                ~~~~~~~~~~  ~~~
+           |      |                  |         |
+           |      |                  |         (16) ...to here
+           |      |                  (5) following 'true' branch (when 'i < length')...
+           |      |                  (11) following 'true' branch (when 'i < length')...
+           |   14 |         int count = 0;
+           |      |             ~~~~~
+           |      |             |
+           |      |             (6) ...to here
+           |      |             (12) ...to here
+           |   15 |         for(j = 0; j < length; ++j) {
+           |      |                    ~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'j < length')...
+           |      |                      (13) following 'true' branch (when 'j < length')...
+           |   16 |             if(strcmp(list[i], list[j]) == 0)
+           |      |                                    ~
+           |      |                                    |
+           |      |                                    (8) ...to here
+           |      |                                    (14) ...to here
+           |......
+           |   20 |         if(count > max_count) {
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'true' branch (when 'count > max_count')...
+           |      |           (15) following 'false' branch (when 'count <= max_count')...
+           |   21 |             max_count = count;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (10) ...to here
+           |......
+           |   26 |     return most_freq_word;
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (17) 'word' leaks here; was allocated at (4)
+           |

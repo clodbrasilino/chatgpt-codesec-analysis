@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    
+    if(new_node == NULL) {
+        printf("Failed to allocate memory.\n");
+        return;
+    }
+    
+    new_node->data  = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref)    = new_node;
+}
+
+void moveFront(struct Node** head_ref) {
+    if (*head_ref == NULL || (*head_ref)->next == NULL) {
+        return;
+    }
+    
+    struct Node* secNode = (*head_ref)->next;
+    struct Node* lastNode = *head_ref;
+    
+    while (lastNode->next != NULL) {
+        lastNode = lastNode->next;
+    }
+    
+    (*head_ref)->next = NULL;
+    lastNode->next = *head_ref;
+    *head_ref = secNode;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+    
+    printf("Initial linked list\n");
+    printList(head);
+    
+    moveFront(&head);
+    
+    printf("\nLinked list after moving front node to end\n");
+    printList(head);
+
+    return 0;
+}
+```

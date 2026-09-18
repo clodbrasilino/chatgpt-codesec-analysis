@@ -1,0 +1,85 @@
+./collected_code_4/round2//heal_0/problem-362.c: In function 'find_max_occurrences':
+./collected_code_4/round2//heal_0/problem-362.c:28:12: warning: use of uninitialized value 'max_value' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     return max_value;
+      |            ^~~~~~~~~
+  'find_max_occurrences': events 1-2
+    |
+    |   19 |     int max_count = 0, max_value;
+    |      |                        ^~~~~~~~~
+    |      |                        |
+    |      |                        (1) region created on stack here
+    |      |                        (2) capacity: 4 bytes
+    |
+  'find_max_occurrences': events 3-7
+    |
+    |   21 |     for(int i = 0; i < MAX_ELEMENTS; ++i) {
+    |      |                      ^               ~~~
+    |      |                      |               |
+    |      |                      |               (6) ...to here
+    |      |                      (3) following 'true' branch (when 'i <= 999')...
+    |   22 |         if(counts[i].count > max_count) {
+    |      |           ~~~~~~~~~~~~~~~~
+    |      |           |         |
+    |      |           |         (4) ...to here
+    |      |           (5) following 'false' branch...
+    |......
+    |   28 |     return max_value;
+    |      |            ~~~~~~~~~  
+    |      |            |
+    |      |            (7) use of uninitialized value 'max_value' here
+    |
+./collected_code_4/round2//heal_0/problem-362.c:28:12: warning: use of uninitialized value 'max_value' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     return max_value;
+      |            ^~~~~~~~~
+  'main': events 1-2
+    |
+    |   31 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   35 |     int result = find_max_occurrences(array, length);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'find_max_occurrences' from 'main'
+    |
+    +--> 'find_max_occurrences': events 3-7
+           |
+           |   11 | int find_max_occurrences(int* array, int length) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'find_max_occurrences'
+           |......
+           |   14 |     for(int i = 0; i < length; ++i) {
+           |      |                    ~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) following 'true' branch (when 'i < length')...
+           |   15 |         counts[array[i]].value = array[i];
+           |      |                                       ~
+           |      |                                       |
+           |      |                                       (7) ...to here
+           |......
+           |   19 |     int max_count = 0, max_value;
+           |      |                        ~~~~~~~~~
+           |      |                        |
+           |      |                        (4) region created on stack here
+           |      |                        (5) capacity: 4 bytes
+           |
+         'find_max_occurrences': events 8-12
+           |
+           |   21 |     for(int i = 0; i < MAX_ELEMENTS; ++i) {
+           |      |                      ^               ~~~
+           |      |                      |               |
+           |      |                      |               (11) ...to here
+           |      |                      (8) following 'true' branch (when 'i <= 999')...
+           |   22 |         if(counts[i].count > max_count) {
+           |      |           ~~~~~~~~~~~~~~~~
+           |      |           |         |
+           |      |           |         (9) ...to here
+           |      |           (10) following 'false' branch...
+           |......
+           |   28 |     return max_value;
+           |      |            ~~~~~~~~~  
+           |      |            |
+           |      |            (12) use of uninitialized value 'max_value' here
+           |

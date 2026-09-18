@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+
+int binary_search(int arr[], int len, int value) {
+    int low = 0;
+    int high = len;
+
+    while (low < high) {
+        int mid = (low + high) / 2;
+        if (arr[mid] < value)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+    return low;
+}
+
+int main() {
+    int array[] = {1, 3, 5, 7, 9, 11, 13, 15};
+    int len = sizeof(array) / sizeof(array[0]);
+
+    int value = 10;
+    int index = binary_search(array, len, value);
+
+    printf("The right place to insert %d in sorted order is at index %d\n", value, index);
+
+    return 0;
+}
+```
+
+This code first includes the required C header file stdio.h for input and output.
+
+It then defines the function binary_search, which locates the right insertion point for a specific value in a sorted array. The parameters for the function are the sorted integer array, its length, and the integer value that you want to insert. Inside the function, the array is divided half repeatedly until the right position is found where the given value can be inserted in sorted order.
+
+The main function initializes a sorted array and its length. It then defines a value to insert. The right place to insert the value is determined by calling the binary_search function with the array, its length, and the value as arguments. The insertion point (index) is then printed.
+
+The program returns 0 indicating successful termination.

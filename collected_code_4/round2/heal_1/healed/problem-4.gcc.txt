@@ -1,0 +1,111 @@
+./collected_code_4/round2//heal_1/healed/problem-4.c: In function 'main':
+./collected_code_4/round2//heal_1/healed/problem-4.c:105:15: warning: dereference of NULL 'queue' [CWE-476] [-Wanalyzer-null-dereference]
+  105 |     free(queue->arr);
+      |          ~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   94 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   98 |     PriorityQueue* queue = createQueue(n);
+    |      |                            ~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'createQueue' from 'main'
+    |
+    +--> 'createQueue': event 3
+           |
+           |   10 | PriorityQueue* createQueue(int capacity) {
+           |      |                ^~~~~~~~~~~
+           |      |                |
+           |      |                (3) entry to 'createQueue'
+           |
+         'createQueue': event 4
+           |
+           |   13 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (4) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   98 |     PriorityQueue* queue = createQueue(n);
+    |      |                            ^~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (5) return of NULL to 'main' from 'createQueue'
+    |   99 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~   
+    |      |                       |
+    |      |                       (6) following 'true' branch (when 'i < n')...
+    |  100 |         insert(queue, values[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-11
+           |
+           |   34 | void insert(PriorityQueue* queue, int value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   35 |     if (queue == NULL || queue->arr == NULL || queue->size == queue->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'true' branch (when 'queue' is NULL)...
+           |   36 |         return;
+           |      |         ~~~~~~
+           |      |         |
+           |      |         (11) ...to here
+           |
+    <------+
+    |
+  'main': events 12-13
+    |
+    |  100 |         insert(queue, values[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (12) returning to 'main' from 'insert'
+    |......
+    |  103 |     printMaxValues(queue, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) calling 'printMaxValues' from 'main'
+    |
+    +--> 'printMaxValues': events 14-18
+           |
+           |   85 | void printMaxValues(PriorityQueue* queue, int count) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (14) entry to 'printMaxValues'
+           |   86 |     for (int i = 0; i < count; i++) {
+           |      |                     ~~~~~~~~~
+           |      |                       |
+           |      |                       (15) following 'true' branch (when 'i < count')...
+           |   87 |         if (queue == NULL || queue->arr == NULL || queue->size == 0) {
+           |      |            ~
+           |      |            |
+           |      |            (16) ...to here
+           |      |            (17) following 'true' branch (when 'queue' is NULL)...
+           |   88 |             return;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (18) ...to here
+           |
+    <------+
+    |
+  'main': events 19-20
+    |
+    |  103 |     printMaxValues(queue, n);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) returning to 'main' from 'printMaxValues'
+    |  104 | 
+    |  105 |     free(queue->arr);
+    |      |          ~~~~~~~~~~
+    |      |               |
+    |      |               (20) dereference of NULL 'queue'
+    |

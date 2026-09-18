@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countSubsequences(const int* arr, int n, int k) {
+    if (k <= 1) {
+        return 0;
+    }
+
+    int count = 0;
+    int dp[k];
+    
+    for (int i = 0; i < k; i++) {
+        dp[i] = 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int val = arr[i];
+        if (val > 0 && val < k) {
+            for (int j = k - 1; j >= 1; j--) {
+                if (dp[j] > 0) {
+                    long long prod = (long long)j * val;
+                    if (prod < k) {
+                        dp[prod] += dp[j];
+                    }
+                }
+            }
+            dp[val] += 1;
+        } else if (val == 0) {
+            dp[0] += 1;
+        }
+    }
+
+    for (int i = 0; i < k; i++) {
+        count += dp[i];
+    }
+
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+
+    int result = countSubsequences(arr, n, k);
+    printf("%d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-447-s3.c:7:38: error: call to undeclared library function 'cbrt' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    7 |         if (list[i] > 0 && list[i] > cbrt(INT_MAX)) {
+      |                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-447-s3.c:7:38: note: include the header <math.h> or explicitly provide a declaration for 'cbrt'
+1 error generated.

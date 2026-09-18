@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int isReciprocal (float a, float b, float c) {
+    float root1, root2;
+    float discriminant = b*b - 4*a*c;
+  
+    if (discriminant < 0 || a == 0) {
+        return 0;
+    }
+    
+    root1 = (-b + sqrt(discriminant)) / (2*a);
+    root2 = (-b - sqrt(discriminant)) / (2*a);
+
+    if (fabs(root1 - (1/root2)) < 0.000001 && fabs(root2 - (1/root1)) < 0.000001) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+   float a, b, c;
+
+   printf("Enter a, b and c of quadratic equation ax^2 + bx + c: ");
+   scanf("%f %f %f",&a,&b,&c);
+
+   if (isReciprocal(a, b, c))
+     printf("Roots are reciprocal\n");
+   else
+     printf("Roots are NOT reciprocal\n");
+
+   return 0;
+}
+```
+The function "isReciprocal" checks if roots of a quadratic equation are reciprocal of each other or not. First, it calculates the discriminant. If the discriminant is less than zero or a is zero, it immediately returns 0, which means that the roots cannot be reciprocal. Otherwise, it calculates root1 and root2 using standard formulas. If root1 equals the reciprocal of root2 and root2 equals the reciprocal of root1 within a very small tolerance (1e-6 here), then the function returns 1. Otherwise, it returns 0.
+The "main" function prompts the user to input the parameters of a quadratic equation and calls the "isReciprocal" function to check if the roots of the equation are reciprocal.

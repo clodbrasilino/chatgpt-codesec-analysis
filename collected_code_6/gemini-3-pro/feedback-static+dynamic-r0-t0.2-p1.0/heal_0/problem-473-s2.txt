@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+bool contains(const Tuple *tuple, int element) {
+    if (!tuple || !tuple->elements) return false;
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i] == element) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Tuple* tuple_intersection(const TupleList *list) {
+    if (!list || list->size == 0 || !list->tuples) {
+        return NULL;
+    }
+
+    Tuple *result = malloc(sizeof(Tuple));
+    if (!result) return NULL;
+
+    result->elements = malloc(list->tuples[0].size * sizeof(int));
+    if (!result->elements) {
+        free(result);
+        return NULL;
+    }
+    result->size = 0;
+
+    for (size_t i = 0; i < list->tuples[0].size; ++i) {
+        int current_element = list->tuples[0].elements[i];
+        bool in_all = true;
+
+        for (size_t j = 1; j < list->size; ++j) {
+            if (!contains(&list->tuples[j], current_element)) {
+                in_all = false;
+                break;
+            }
+        }
+
+        if (in_all) {
+            bool already_added = false;
+            for (size_t k = 0; k < result->size; ++k) {
+                if (result->elements[k] == current_element) {
+                    already_added = true;
+                    break;
+                }
+            }
+            if (!already_added) {
+                result->elements[result->size++] = current_element;
+            }
+        }
+    }
+
+    if (result->size == 0) {
+        free(result->elements);
+        result->elements = NULL;
+    } else {
+        int *temp = realloc(result->elements, result->size * sizeof(int));
+        if (temp) {
+            result->elements = temp;
+        }
+    }
+
+    return result;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {3, 4, 5, 6, 7};
+    int arr3[] = {5, 4, 3, 8, 9};
+
+    Tuple t1 = {arr1, 5};
+    Tuple t2 = {arr2, 5};
+    Tuple t3 = {arr3, 5};
+
+    Tuple tuples[] = {t1, t2, t3};
+    TupleList list = {tuples, 3};
+
+    Tuple *intersection = tuple_intersection(&list);
+
+    if (intersection) {
+        printf("Intersection: ");
+        for (size_t i = 0; i < intersection->size; ++i) {
+            printf("%d ", intersection->elements[i]);
+        }
+        printf("\n");
+        free_tuple(intersection);
+    } else {
+        printf("No intersection or memory allocation failed.\n");
+    }
+
+    return 0;
+}
+```

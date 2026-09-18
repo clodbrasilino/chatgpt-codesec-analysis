@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+void replaceChars(char *str) {
+    while(*str != '\0') {
+        if(*str == ' ' || *str == ',' || *str == '.') {
+            *str = ':';
+        }
+        str++;
+    }
+}
+
+int main() {
+    char str[] = "Hello, World. How are you?";
+
+    replaceChars(str);
+
+    printf("%s\n", str);
+
+    return 0;
+}
+```

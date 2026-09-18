@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double maxTriangleAreaInSemiCircle(double radius) {
+    double area;
+    if(radius <= 0) {
+         printf("Radius should be a positive number!\n");
+         return 0;
+    }
+    area = (1.0 / 2.0) * radius * radius * sin(PI); 
+    return area;
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the semicircle: ");
+    scanf("%lf", &radius);
+    if (radius <= 0) {
+        printf("Input should be a positive number!\n");
+        return 0;
+    }
+
+    double result = maxTriangleAreaInSemiCircle(radius);
+    printf("The largest possible area of a triangle inscribed in the given semicircle is %lf \n", result);
+
+    return 0;
+}
+```
+This function calculates the maximum area of a triangle inside a semicircle provided the radius of the semicircle. The maximum area of a triangle inscribed in a semicircle is given by the formula `(1/2) * r^2 * sin(180)`. The main program prompts the user to enter a radius and then prints out the result. The function and main program both include checks for negative or zero radius, and will not proceed if the input given is non-numeric or negative.

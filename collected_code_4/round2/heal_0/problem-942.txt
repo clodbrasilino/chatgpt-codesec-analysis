@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int isPresent(struct Node* head, int value) {
+    struct Node* current = head;
+    while (current != NULL){
+        if (current->data == value)
+            return 1;
+        current = current->next;
+    }
+    return 0;
+}
+
+struct Node* newNode(int data) {
+    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    newNode->data  = data;
+    newNode->next =  NULL;
+    return newNode;
+}
+
+int main(){
+    struct Node* head = newNode(20);
+    head->next = newNode(17);
+    head->next->next = newNode(15);
+    head->next->next->next = newNode(14);
+    
+    printf("Element Present status : ");
+    if(isPresent(head, 17)){
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}
+```

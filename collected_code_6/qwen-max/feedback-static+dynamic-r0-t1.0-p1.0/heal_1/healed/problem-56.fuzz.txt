@@ -1,0 +1,4 @@
+problem-56.c:22:12:medium:UBSan: signed integer overflow: 2 * 1638839751 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:2188,execs:961,op:havoc,rep:4)
+problem-56.c:22:12:medium:UBSan: signed integer overflow: 2 * 1111111111 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000003,time:5931,execs:2553,op:havoc,rep:14)
+problem-56.c:22:40:medium:UBSan: signed integer overflow: 2 * 1638839751 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:2188,execs:961,op:havoc,rep:4)
+problem-56.c:22:40:medium:UBSan: signed integer overflow: 2 * 1111111111 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000003,time:5931,execs:2553,op:havoc,rep:14)

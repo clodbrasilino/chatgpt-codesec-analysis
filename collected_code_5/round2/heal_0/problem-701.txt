@@ -1,0 +1,31 @@
+```C
+#include <stdlib.h>
+#include <stdio.h>
+
+int findEquilibriumIndex(int arr[], int n) {
+    int totalSum = 0;
+    int leftSum = 0;
+    int i;
+
+    for(i = 0; i < n; ++i) {
+        totalSum += arr[i];
+    }
+
+    for(i = 0; i < n; ++i) {
+        totalSum -= arr[i];
+        if(leftSum == totalSum) {
+            return i;
+        }
+        leftSum += arr[i];
+    }
+
+    return -1;
+}
+
+int main() {
+    int arr[] = { -7, 1, 5, 2, -4, 3, 0 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Equilibrium Index: %d\n", findEquilibriumIndex(arr, n));
+    return 0;
+}
+```

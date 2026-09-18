@@ -1,0 +1,29 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isNonPrime(int number) {
+    if(number < 2) {
+        return true;
+    }
+    for(int i = 2; i*i <= number; i++) {
+        if(number % i == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int number;
+    printf("Enter a number: ");
+    if(scanf("%d", &number) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        return 1;
+    }
+    if(isNonPrime(number)) {
+        printf("%d is a non-prime number.\n", number);
+    } else {
+        printf("%d is a prime number.\n", number);
+    }
+    return 0;
+}

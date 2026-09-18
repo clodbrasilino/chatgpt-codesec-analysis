@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmp(const void* p, const void* q) {
+    int a = *(const int*)p;
+    int b = *(const int*)q;
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+}
+
+long MaxProductThreeNumbers(int* array, int size) {
+    qsort(array, size, sizeof(int), cmp);
+    long prod1 = 1, prod2 = 1;
+    for (int i=0; i<3; ++i) {
+        prod1 *= array[i];
+        prod2 *= array[size-i-1];
+    }
+    return prod1 > prod2 ? prod1 : prod2;
+}
+
+int main()
+{  
+    int array[] = {1, -10, -20, 30, -40, 50};  
+    int size = sizeof(array) / sizeof(array[0]);
+    printf("%ld\n", MaxProductThreeNumbers(array, size));  
+    return 0;  
+}
+```
+This function computes the maximum product of three numbers in an integer array. It first sorts the array by using the built-in qsort function, then it computes the product of the first three elements and the last three elements. The reason behind this is that two negative numbers can make a positive one when being multiplied, resulting in a larger product in case the absolute value of negative numbers is large. The function finally returns the larger one of the two products.

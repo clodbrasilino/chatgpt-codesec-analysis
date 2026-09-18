@@ -1,0 +1,112 @@
+#include <stdlib.h>
+#include <stddef.h>
+
+int remove_two_duplicates(int **lists, size_t *sizes, size_t num_lists) {
+    if (!lists || !sizes || num_lists == 0) {
+        return -1;
+    }
+
+    size_t capacity = 16;
+    size_t seen_count = 0;
+    int *seen = malloc(capacity * sizeof(int));
+    if (!seen) {
+        return -1;
+    }
+
+    unsigned int removed_count = 0;
+
+    for (size_t i = 0; i < num_lists && removed_count < 2; i++) {
+        if (!lists[i]) {
+            continue;
+        }
+
+        for (size_t j = 0; j < sizes[i] && removed_count < 2; ) {
+            int current = lists[i][j];
+            int is_duplicate = 0;
+
+            for (size_t k = 0; k < seen_count; k++) {
+                if (seen[k] == current) {
+                    is_duplicate = 1;
+                    break;
+                }
+            }
+
+            if (is_duplicate) {
+                for (size_t k = j; k < sizes[i] - 1; k++) {
+                    lists[i][k] = lists[i][k + 1];
+                }
+                sizes[i]--;
+                removed_count++;
+            } else {
+                if (seen_count >= capacity) {
+                    size_t new_capacity = capacity * 2;
+                    int *new_seen = realloc(seen, new_capacity * sizeof(int));
+                    if (!new_seen) {
+                        free(seen);
+                        return -1;
+                    }
+                    seen = new_seen;
+                    capacity = new_capacity;
+                }
+                seen[seen_count++] = current;
+                j++;
+            }
+        }
+    }
+
+    free(seen);
+    return removed_count == 2 ? 0 : 1;
+}
+
+int main(void) {
+    size_t num_lists = 2;
+    
+    size_t *sizes = malloc(num_lists * sizeof(size_t));
+    if (!sizes) {
+        return 1;
+    }
+
+    sizes[0] = 5;
+    sizes[1] = 4;
+
+    int **lists = malloc(num_lists * sizeof(int *));
+    if (!lists) {
+        free(sizes);
+        return 1;
+    }
+
+    lists[0] = malloc(sizes[0] * sizeof(int));
+    if (!lists[0]) {
+        free(lists);
+        free(sizes);
+        return 1;
+    }
+
+    lists[1] = malloc(sizes[1] * sizeof(int));
+    if (!lists[1]) {
+        free(lists[0]);
+        free(lists);
+        free(sizes);
+        return 1;
+    }
+
+    lists[0][0] = 10;
+    lists[0][1] = 20;
+    lists[0][2] = 30;
+    lists[0][3] = 20;
+    lists[0][4] = 40;
+
+    lists[1][0] = 50;
+    lists[1][1] = 10;
+    lists[1][2] = 60;
+    lists[1][3] = 60;
+
+    int status = remove_two_duplicates(lists, sizes, num_lists);
+
+    free(lists[0]);
+    free(lists[1]);
+    free(lists);
+    free(sizes);
+
+    return status == -1 ? 1 : 0;
+}

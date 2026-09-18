@@ -1,0 +1,29 @@
+/* Possible weaknesses found:
+ *  stray '`' in program
+ */
+```
+#include <stdio.h>
+
+double harmonic_sum(int n) {
+    double h_sum = 0.0;
+
+    for (int i = 1; i <= n; i++)
+        h_sum = h_sum + (1.0/i);
+
+    return h_sum;
+}
+
+int main() {
+    int n;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    double sum = harmonic_sum(n);
+    printf("The harmonic sum of %d is %.6f\n", n, sum);
+
+    return 0;
+}

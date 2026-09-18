@@ -1,0 +1,6 @@
+problem-335.c:15:41:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000003,sig:06,src:000013,time:11613,execs:6697,op:havoc,rep:1)
+problem-335.c:20:14:medium:UBSan: signed integer overflow: -9223372036854775808 * 5 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000013,time:11613,execs:6697,op:havoc,rep:1)
+problem-335.c:27:15:medium:UBSan: signed integer overflow: 2 * 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000006,time:1959,execs:971,op:havoc,rep:1)
+problem-335.c:27:19:medium:UBSan: signed integer overflow: 2 + 9223372036854775806 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000006,time:1861,execs:912,op:havoc,rep:1)
+problem-335.c:33:60:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000006,time:1861,execs:912,op:havoc,rep:1)
+problem-335.c:43:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000012,time:11412,execs:6574,op:havoc,rep:2; likely memory-safety defect

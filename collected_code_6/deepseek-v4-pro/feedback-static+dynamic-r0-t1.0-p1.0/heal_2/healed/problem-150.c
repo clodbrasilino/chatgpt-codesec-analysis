@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <limits.h>
+
+bool is_present_in_sequence(long long n, long long target) {
+    if (target < 0) {
+        return false;
+    }
+
+    unsigned long long low = 1;
+    unsigned long long high;
+
+    if (n > 1) {
+        unsigned long long max_val;
+        
+        if ((unsigned long long)n > ULLONG_MAX / ((unsigned long long)n + 1)) {
+            max_val = ULLONG_MAX;
+        } else {
+            max_val = ((unsigned long long)n * ((unsigned long long)n + 1)) / 2;
+        }
+
+        if (target > 0 && (unsigned long long)target > max_val) {
+            return false;
+        }
+
+        if (max_val < ULLONG_MAX / 2) {
+            high = (unsigned long long)n;
+        } else {
+            high = 1;
+            while (high < (unsigned long long)n && high < ULLONG_MAX / (high + 1)) {
+                high *= 2;
+            }
+            if (high > (unsigned long long)n) high = (unsigned long long)n;
+            if (high < (unsigned long long)n) high = (unsigned long long)n;
+        }
+    } else {
+        high = 1;
+    }
+
+    while (low <= high) {
+        unsigned long long mid = low + (high - low) / 2;
+        unsigned long long sum;
+
+        if (mid > ULLONG_MAX / (mid + 1)) {
+            sum = ULLONG_MAX;
+        } else {
+            sum = (mid * (mid + 1)) / 2;
+        }
+
+        if (sum == (unsigned long long)target) {
+            return true;
+        } else if (sum < (unsigned long long)target) {
+            low = mid + 1;
+        } else {
+            if (mid == 0) break;
+            high = mid - 1;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    long long n, target;
+
+    printf("Enter the sequence limit (n): ");
+    if (scanf("%lld", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter the number to search: ");
+    if (scanf("%lld", &target) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (n < 1) {
+        printf("Sequence limit must be positive\n");
+        return 1;
+    }
+
+    if (is_present_in_sequence(n, target)) {
+        printf("%lld is present in the sequence\n", target);
+    } else {
+        printf("%lld is not present in the sequence\n", target);
+    }
+
+    return 0;
+}

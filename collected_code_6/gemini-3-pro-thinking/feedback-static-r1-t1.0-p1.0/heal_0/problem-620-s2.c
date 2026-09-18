@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int compare_ints(const void* a, const void* b) {
+    int arg1 = *(const int*)a;
+    int arg2 = *(const int*)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int* find_largest_divisible_subset(int* nums, size_t nums_size, size_t* return_size) {
+    if (!nums || !return_size || nums_size == 0) {
+        if (return_size) {
+            *return_size = 0;
+        }
+        return NULL;
+    }
+
+    qsort(nums, nums_size, sizeof(int), compare_ints);
+
+    size_t* dp = (size_t*)malloc(nums_size * sizeof(size_t));
+    size_t* parent = (size_t*)malloc(nums_size * sizeof(size_t));
+
+    if (!dp || !parent) {
+        free(dp);
+        free(parent);
+        *return_size = 0;
+        return NULL;
+    }
+
+    size_t max_size = 0;
+    size_t max_idx = 0;
+
+    for (size_t i = 0; i < nums_size; i++) {
+        dp[i] = 1;
+        parent[i] = i;
+        for (size_t j = 0; j < i; j++) {
+            if (nums[j] != 0 && nums[i] % nums[j] == 0 && dp[i] < dp[j] + 1) {
+                dp[i] = dp[j] + 1;
+                parent[i] = j;
+            }
+        }
+        if (dp[i] > max_size) {
+            max_size = dp[i];
+            max_idx = i;
+        }
+    }
+
+    int* result = (int*)malloc(max_size * sizeof(int));
+    if (!result) {
+        free(dp);
+        free(parent);
+        *return_size = 0;
+        return NULL;
+    }
+
+    size_t curr_idx = max_idx;
+    for (size_t i = 0; i < max_size; i++) {
+        result[max_size - 1 - i] = nums[curr_idx];
+        curr_idx = parent[curr_idx];
+    }
+
+    free(dp);
+    free(parent);
+    *return_size = max_size;
+
+    return result;
+}
+
+int main(void) {
+    int nums[] = {1, 2, 4, 8, 3, 9, 27};
+    size_t nums_size = sizeof(nums) / sizeof(nums[0]);
+    size_t return_size = 0;
+
+    int* subset = find_largest_divisible_subset(nums, nums_size, &return_size);
+
+    if (subset) {
+        for (size_t i = 0; i < return_size; i++) {
+            printf("%d ", subset[i]);
+        }
+        printf("\n");
+        free(subset);
+    }
+
+    return 0;
+}

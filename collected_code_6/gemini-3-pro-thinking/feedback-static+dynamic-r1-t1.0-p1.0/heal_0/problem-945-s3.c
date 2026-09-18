@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Set;
+
+Set* convert_tuple_to_set(const int *tuple, size_t tuple_size) {
+    if (!tuple && tuple_size > 0) {
+        return NULL;
+    }
+
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (!set) {
+        return NULL;
+    }
+
+    if (tuple_size == 0) {
+        set->elements = NULL;
+        set->size = 0;
+        return set;
+    }
+
+    set->elements = (int *)malloc(tuple_size * sizeof(int));
+    if (!set->elements) {
+        free(set);
+        return NULL;
+    }
+
+    set->size = 0;
+
+    for (size_t i = 0; i < tuple_size; ++i) {
+        bool is_duplicate = false;
+        for (size_t j = 0; j < set->size; ++j) {
+            if (set->elements[j] == tuple[i]) {
+                is_duplicate = true;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            set->elements[set->size] = tuple[i];
+            set->size++;
+        }
+    }
+
+    if (set->size > 0 && set->size < tuple_size) {
+        int *resized_elements = (int *)realloc(set->elements, set->size * sizeof(int));
+        if (resized_elements) {
+            set->elements = resized_elements;
+        }
+    } else if (set->size == 0) {
+        free(set->elements);
+        set->elements = NULL;
+    }
+
+    return set;
+}
+
+void free_set(Set *set) {
+    if (set) {
+        free(set->elements);
+        free(set);
+    }
+}
+
+int main(void) {
+    int tuple_data[] = {1, 2, 2, 3, 4, 4, 5, 1, 6, 3};
+    size_t tuple_size = sizeof(tuple_data) / sizeof(tuple_data[0]);
+
+    Set *unique_set = convert_tuple_to_set(tuple_data, tuple_size);
+    if (!unique_set) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < unique_set->size; ++i) {
+        printf("%d ", unique_set->elements[i]);
+    }
+    printf("\n");
+
+    free_set(unique_set);
+
+    return EXIT_SUCCESS;
+}

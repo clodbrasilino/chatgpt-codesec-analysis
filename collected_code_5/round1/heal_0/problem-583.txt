@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+
+unsigned long int binomialCoeff(unsigned int n, unsigned int k) {
+    unsigned long int res = 1;
+
+    if (k > n - k)
+        k = n - k;
+
+    for (int i = 0; i < k; ++i) {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+
+    return res;
+}
+
+unsigned long int catalan(unsigned int n) {
+    unsigned long int c = binomialCoeff(2 * n, n);
+
+    return c / (n + 1);
+}
+
+int main() {
+    unsigned int n;
+    printf("Enter a number: ");
+    scanf("%u", &n);
+
+    printf("The %uth catalan number is %lu\n", n, catalan(n));
+
+    return 0;
+}
+```
+
+* The function `binomialCoeff` calculates the binomial coefficient which is a key part in the calculation of the Catalan numbers.
+
+* The function `catalan` calculates the nth Catalan number by using the binomial coefficient.
+
+* The main function takes a number from the user and prints out the corresponding Catalan number by calling the function `catalan`.

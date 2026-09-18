@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+size_t count_positives(const int* arr, size_t size) {
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const int arr[] = {1, -2, 3, -4, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    size_t count = count_positives(arr, size);
+
+    printf("The number of positive numbers is: %lu\n", count);
+
+    return 0;
+}

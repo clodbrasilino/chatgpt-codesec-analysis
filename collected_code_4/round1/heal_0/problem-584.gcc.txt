@@ -1,0 +1,177 @@
+./collected_code_4/round1//heal_0//problem-584.c: In function 'match_regex':
+./collected_code_4/round1//heal_0//problem-584.c:32:21: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     result->matches = NULL;
+      |                     ^
+  'match_regex': events 1-3
+    |
+    |   24 |     if (regcomp(&regex_comp, pattern, REG_EXTENDED)) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   29 |     int nomatch = regexec(&regex_comp, text, MAX_MATCHES, group_array, 0);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) ...to here
+    |   30 | 
+    |   31 |     match_result* result = malloc(sizeof(match_result));
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (3) this call could return NULL
+    |
+  'match_regex': event 4
+    |
+    |   32 |     result->matches = NULL;
+    |      |                     ^
+    |      |                     |
+    |      |                     (4) 'result' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round1//heal_0//problem-584.c:49:40: warning: dereference of possibly-NULL '*result.positions + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   49 |             result->positions[i].start = start;
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'match_regex': events 1-10
+    |
+    |   24 |     if (regcomp(&regex_comp, pattern, REG_EXTENDED)) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   29 |     int nomatch = regexec(&regex_comp, text, MAX_MATCHES, group_array, 0);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) ...to here
+    |......
+    |   36 |     if (!nomatch) {
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'true' branch (when 'nomatch == 0')...
+    |   37 |         int match_count = 0;
+    |      |             ~~~~~~~~~~~
+    |      |             |
+    |      |             (4) ...to here
+    |   38 |         for (match_count = 0; match_count < MAX_MATCHES && group_array[match_count].rm_so != -1; match_count++);
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                         |                          |
+    |      |                                                         |                          (6) ...to here
+    |      |                                                         (5) following 'true' branch (when 'match_count <= 99')...
+    |......
+    |   41 |         result->positions = malloc(sizeof(match_position) * match_count);
+    |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (7) this call could return NULL
+    |......
+    |   44 |         for (int i = 0; i < match_count; i++) {
+    |      |                         ~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (8) following 'true' branch (when 'i < match_count')...
+    |   45 |             int start = group_array[i].rm_so;
+    |      |                         ~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (9) ...to here
+    |......
+    |   49 |             result->positions[i].start = start;
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (10) '*result.positions + (long unsigned int)i * 8' could be NULL: unchecked value from (7)
+    |
+./collected_code_4/round1//heal_0//problem-584.c:52:32: warning: dereference of possibly-NULL '*result.matches + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   52 |             result->matches[i] = malloc(sizeof(char) * (length + 1));
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'match_regex': events 1-10
+    |
+    |   24 |     if (regcomp(&regex_comp, pattern, REG_EXTENDED)) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   29 |     int nomatch = regexec(&regex_comp, text, MAX_MATCHES, group_array, 0);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) ...to here
+    |......
+    |   36 |     if (!nomatch) {
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'true' branch (when 'nomatch == 0')...
+    |   37 |         int match_count = 0;
+    |      |             ~~~~~~~~~~~
+    |      |             |
+    |      |             (4) ...to here
+    |   38 |         for (match_count = 0; match_count < MAX_MATCHES && group_array[match_count].rm_so != -1; match_count++);
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                         |                          |
+    |      |                                                         |                          (6) ...to here
+    |      |                                                         (5) following 'true' branch (when 'match_count <= 99')...
+    |   39 | 
+    |   40 |         result->matches = malloc(sizeof(char*) * match_count);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) this call could return NULL
+    |......
+    |   44 |         for (int i = 0; i < match_count; i++) {
+    |      |                         ~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (8) following 'true' branch (when 'i < match_count')...
+    |   45 |             int start = group_array[i].rm_so;
+    |      |                         ~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (9) ...to here
+    |......
+    |   52 |             result->matches[i] = malloc(sizeof(char) * (length + 1));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (10) '*result.matches + (long unsigned int)i * 8' could be NULL: unchecked value from (7)
+    |
+./collected_code_4/round1//heal_0//problem-584.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-584.c:81:5: warning: dereference of NULL 'result' [CWE-476] [-Wanalyzer-null-dereference]
+   81 |     printf("Found %d match(es).\n\n", result->match_count);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   74 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   79 |     match_result* result = match_regex(sentence, adverb_pattern);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'match_regex' from 'main'
+    |
+    +--> 'match_regex': events 3-5
+           |
+           |   20 | match_result* match_regex(const char* text, const char* pattern) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'match_regex'
+           |......
+           |   24 |     if (regcomp(&regex_comp, pattern, REG_EXTENDED)) {
+           |      |        ~       
+           |      |        |
+           |      |        (4) following 'true' branch...
+           |   25 |         puts("Compilation of regex failed.");
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (5) ...to here
+           |
+         'match_regex': event 6
+           |
+           |   26 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   79 |     match_result* result = match_regex(sentence, adverb_pattern);
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (7) return of NULL to 'main' from 'match_regex'
+    |   80 | 
+    |   81 |     printf("Found %d match(es).\n\n", result->match_count);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) dereference of NULL 'result'
+    |

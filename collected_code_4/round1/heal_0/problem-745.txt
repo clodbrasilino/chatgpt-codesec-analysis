@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkDivisibility(int number) {
+    int temp = number;
+    while(temp > 0) {
+        int digit = temp % 10;
+        if(digit == 0 || number % digit != 0) {
+            return false;
+        }
+        temp = temp / 10;
+    }
+    return true;
+}
+
+void findDivisibleNumbers(int start, int end) {
+    for(int i = start; i <= end; i++) {
+        if(checkDivisibility(i)) {
+            printf("%d ", i);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int start, end;
+    printf("Enter start of the range: ");
+    scanf("%d", &start);
+    printf("Enter end of the range: ");
+    scanf("%d", &end);
+    printf("Numbers divisible by every digit they contain in the range %d to %d are: ", start, end);
+    findDivisibleNumbers(start, end);
+    return 0;
+}
+```

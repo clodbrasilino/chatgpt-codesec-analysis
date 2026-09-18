@@ -1,0 +1,6 @@
+problem-300.c:5:17:medium:UBSan: variable length array bound evaluates to non-positive value -1 (AFL crash: id:000003,sig:06,src:000008,time:8337,execs:3493,op:havoc,rep:4)
+problem-300.c:5:19:medium:UBSan: signed integer overflow: 2 * -2052810070 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:1022,execs:465,op:havoc,rep:9)
+problem-300.c:5:28:medium:UBSan: variable length array bound evaluates to non-positive value -1 (AFL crash: id:000003,sig:06,src:000008,time:8337,execs:3493,op:havoc,rep:4)
+problem-300.c:5:30:medium:UBSan: signed integer overflow: 2 * -2052810070 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:1022,execs:465,op:havoc,rep:9)
+problem-300.c:10:39:medium:UBSan: signed integer overflow: 4472995859186094240 + 5516694892996182896 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000000,time:1832,execs:793,op:havoc,rep:16)
+problem-300.c:15:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:11,src:000000,time:1474,execs:649,op:havoc,rep:15; likely memory-safety defect

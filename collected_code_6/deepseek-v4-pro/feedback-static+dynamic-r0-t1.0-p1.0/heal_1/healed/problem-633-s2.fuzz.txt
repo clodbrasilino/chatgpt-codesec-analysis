@@ -1,0 +1,2 @@
+problem-633-s2.c:10:26:medium:UBSan: left shift of 1 by 31 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:39,execs:40,op:havoc,rep:6)
+problem-633-s2.c:21:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000003,time:749,execs:507,op:havoc,rep:1; likely memory-safety defect

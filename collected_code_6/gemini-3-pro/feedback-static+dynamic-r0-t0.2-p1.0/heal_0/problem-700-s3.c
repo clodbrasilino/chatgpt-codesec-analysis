@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_elements_in_range(const int *list, size_t size, int min_val, int max_val) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    if (min_val > max_val) {
+        return -1;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] >= min_val && list[i] <= max_val) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int my_list[] = {1, 5, 8, 12, 15, 20, 25, 30};
+    size_t list_size = sizeof(my_list) / sizeof(my_list[0]);
+    int min_range = 10;
+    int max_range = 25;
+
+    int result = count_elements_in_range(my_list, list_size, min_range, max_range);
+
+    if (result != -1) {
+        printf("Number of elements in range [%d, %d]: %d\n", min_range, max_range, result);
+    } else {
+        printf("Error: Invalid input parameters.\n");
+    }
+
+    return 0;
+}

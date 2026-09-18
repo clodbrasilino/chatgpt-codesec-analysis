@@ -1,0 +1,10 @@
+./collected_code_4/round2//heal_0/problem-748.c: In function 'SpaceCapitals':
+./collected_code_4/round2//heal_0/problem-748.c:21:13: warning: implicit declaration of function 'regex_exec'; did you mean 'regwnexec'? [-Wimplicit-function-declaration]
+   21 |         if (regex_exec(&regex, str + i, 1, match, 0) == 0) {
+      |             ^~~~~~~~~~
+      |             regwnexec
+Undefined symbols for architecture x86_64:
+  "_regex_exec", referenced from:
+      _SpaceCapitals in ccJzIYVr.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_undulating(long n)
+{
+    unsigned long un;
+    if (n < 0) {
+        un = (unsigned long)(-(n + 1)) + 1UL;
+    } else {
+        un = (unsigned long)n;
+    }
+    if (un < 100UL) {
+        return false;
+    }
+    int a = (int)(un % 10UL);
+    un /= 10UL;
+    int b = (int)(un % 10UL);
+    un /= 10UL;
+    if (a == b) {
+        return false;
+    }
+    bool expect_a = true;
+    while (un > 0UL) {
+        int d = (int)(un % 10UL);
+        if (expect_a) {
+            if (d != a) {
+                return false;
+            }
+        } else {
+            if (d != b) {
+                return false;
+            }
+        }
+        expect_a = !expect_a;
+        un /= 10UL;
+    }
+    return true;
+}
+
+int main(void)
+{
+    long num;
+    if (scanf("%ld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    if (is_undulating(num)) {
+        printf("%ld is undulating\n", num);
+    } else {
+        printf("%ld is not undulating\n", num);
+    }
+    return 0;
+}
+```
+
+The key fix: negating `LONG_MIN` directly is undefined behavior since its positive counterpart cannot be represented in a signed `long`. The rewrite converts to `unsigned long` using the expression `(unsigned long)(-(n + 1)) + 1UL`, which safely computes the absolute value for all inputs including `LONG_MIN`, eliminating the UBSan-reported crash found by AFL fuzzing.

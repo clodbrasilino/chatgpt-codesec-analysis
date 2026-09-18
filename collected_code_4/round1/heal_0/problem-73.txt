@@ -1,0 +1,83 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+
+regex_t regex;
+int reti;
+char msgbuf[100];
+
+
+char **split_string(const char *str, const char *regex_pattern, size_t *size) {
+    size_t max_split = 256;
+    char **split_str = malloc(max_split * sizeof(char *));
+    if (!split_str) return NULL;
+
+    char *temp_str = strdup(str);
+    if (!temp_str) {
+        free(split_str);
+        return NULL;
+    }
+
+    char *remainder = temp_str;
+    char *next_token = NULL;
+    size_t count = 0;
+
+    reti = regcomp(&regex, regex_pattern, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    do {
+        next_token = strsep(&remainder, regex_pattern);
+        if (next_token) {
+            split_str[count] = strdup(next_token);
+            if (!split_str[count]) {
+                free(temp_str);
+                for (size_t i = 0; i < count; ++i) {
+                    free(split_str[i]);
+                }
+                free(split_str);
+                return NULL;
+            }
+
+            if (++count == max_split) {
+                max_split *= 2;
+                void *tmp = realloc(split_str, max_split * sizeof(char *));
+                if (!tmp) {
+                    free(temp_str);
+                    for (size_t i = 0; i < count; ++i) {
+                        free(split_str[i]);
+                    }
+                    free(split_str);
+                    return NULL;
+                }
+                split_str = tmp;
+            }
+        }
+    } while (next_token && remainder);
+    regfree(&regex);
+    free(temp_str);
+    *size = count;
+    return split_str;
+}
+
+int main(void) {
+    size_t size = 0;
+    char **split_str = split_string("Hello, World! Nice to meet you.", "[, !.]", &size);
+    if (!split_str) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        printf("%s\n", split_str[i]);
+        free(split_str[i]);
+    }
+    free(split_str);
+    return 0;
+}
+```

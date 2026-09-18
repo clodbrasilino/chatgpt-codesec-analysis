@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void split_list(struct Node* source, struct Node** front, struct Node** back, int frontSize) {
+    struct Node* fast;
+    struct Node* slow;
+    int i;
+
+    if (source == NULL || source->next == NULL) {
+        *front = source;
+        *back = NULL;
+    } else {
+        slow = source;
+        fast = source->next;
+
+        for(i = 1; i < frontSize && fast != NULL; i++) {
+            if(fast->next != NULL) {
+                slow = slow->next;
+                fast = fast->next->next;
+            } else {
+                break;
+            }
+        }
+
+        *front = source;
+        *back = slow->next;
+        slow->next = NULL;
+    }
+}
+
+void print_list(struct Node *node) {
+    while(node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void push(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        return;
+    }
+    newNode->data = data;
+    newNode->next = (*head);
+    (*head) = newNode;
+}
+
+int main() {
+    struct Node* head = NULL;
+    struct Node* front = NULL;
+    struct Node* back = NULL;
+
+    push(&head, 7);
+    push(&head, 6);
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    printf("Original List:\n");
+    print_list(head);
+
+    int frontSize = 4;
+    split_list(head, &front, &back, frontSize);
+
+    printf("Front List:\n");
+    print_list(front);
+
+    printf("Back List:\n");
+    print_list(back);
+
+    return 0;
+}

@@ -1,0 +1,31 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+bool is_vowel(char c) {
+    char vowels[] = "aeiouAEIOU";
+    for (int i = 0; i < 10; i++) {
+        if (c == vowels[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int count_chars_with_vowel_neighbors(char* str) {
+    int count = 0;
+    int len = strlen(str);
+    for (int i = 1; i < len - 1; i++) {
+        if (is_vowel(str[i-1]) && is_vowel(str[i+1])) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char str[] = "Hello, I am a string!";
+    int count = count_chars_with_vowel_neighbors(str);
+    printf("There are %d characters with vowel neighbors in the string.\n", count);
+    return 0;
+}

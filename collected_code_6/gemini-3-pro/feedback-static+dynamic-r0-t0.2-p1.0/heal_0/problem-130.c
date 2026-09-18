@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct FrequencyMap {
+    int value;
+    int count;
+};
+
+int findMaxFrequencyItem(const int *list, size_t size, int *result) {
+    if (list == NULL || size == 0 || result == NULL) {
+        return -1;
+    }
+
+    struct FrequencyMap *map = (struct FrequencyMap *)malloc(size * sizeof(struct FrequencyMap));
+    if (map == NULL) {
+        return -1;
+    }
+
+    size_t uniqueCount = 0;
+    for (size_t i = 0; i < size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < uniqueCount; ++j) {
+            if (map[j].value == list[i]) {
+                map[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            map[uniqueCount].value = list[i];
+            map[uniqueCount].count = 1;
+            uniqueCount++;
+        }
+    }
+
+    int maxCount = 0;
+    int maxItem = list[0];
+
+    for (size_t i = 0; i < uniqueCount; ++i) {
+        if (map[i].count > maxCount) {
+            maxCount = map[i].count;
+            maxItem = map[i].value;
+        }
+    }
+
+    *result = maxItem;
+    free(map);
+    return 0;
+}
+
+int main(void) {
+    int list[] = {1, 3, 2, 1, 4, 1, 2, 5, 2, 2};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int result = 0;
+
+    if (findMaxFrequencyItem(list, size, &result) == 0) {
+        printf("Item with maximum frequency: %d\n", result);
+    } else {
+        printf("Error finding maximum frequency item.\n");
+    }
+
+    return 0;
+}

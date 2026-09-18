@@ -1,0 +1,60 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node *next;
+} node;
+
+node* reverseList(node *head) {
+    node *prev = NULL;
+    node *current = head;
+    node *next = NULL;
+    
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+node* createNewNode(int data) {
+    node* newNode = (node*) malloc(sizeof(node));
+
+    if(!newNode) {
+        printf("Error! memory not available\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void displayList(node* head) {
+    node *temp = head;
+
+    while(temp != NULL) {
+        printf("%d->", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    node* head = createNewNode(1);
+    head->next = createNewNode(2);
+    head->next->next = createNewNode(3);
+    head->next->next->next = createNewNode(4);
+    
+    printf("Original list: ");
+    displayList(head);
+    head = reverseList(head);
+    printf("Reversed list: ");
+    displayList(head);
+
+    return 0;
+}
+```

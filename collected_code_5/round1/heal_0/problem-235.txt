@@ -1,0 +1,16 @@
+```C
+#include<stdio.h>
+
+unsigned int setEvenBits(unsigned int num){
+    unsigned int mask = 0xAAAAAAAA;
+    return num | mask;
+}
+
+int main(){
+    unsigned int num = 5;
+    unsigned int result = setEvenBits(num);
+    printf("Result after setting even bits: %u", result);
+    return 0;
+}
+```
+In the above code, function 'setEvenBits' is used to set the even bits of a given number 'num'. The mask 0xAAAAAAAA is used, which has all its even indexed bits set. This mask is used to perform the bitwise OR operation with 'num', which sets all the even indexed bits.

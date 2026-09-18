@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+unsigned int countBitSet(int obj, int o, int n) {
+    unsigned int count = 0;
+    unsigned int maskO = 1 << o;
+    unsigned int maskN = 1 << n;
+    int range = sizeof(int) * 8;
+
+    if(o >= range || n >= range) return 0;
+
+    for(int i = 0; i < range; i++) {
+        unsigned int mask = 1 << i;
+        if((obj & (maskO | maskN)) == (maskO | maskN)) count++;
+    }
+
+    return count;
+}
+
+int main() {
+    int test = 15;  // Binary: 1111
+    int o = 1, n = 2;
+    unsigned int count = countBitSet(test, o, n);
+    printf("Numbers with oth and nth bits set: %u", count);
+
+    return 0;
+}

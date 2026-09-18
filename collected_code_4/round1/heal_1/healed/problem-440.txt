@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LEN 1000
+
+char **splitString(char *str, int *count) {
+    char **res = (char **) malloc(MAX_LEN * sizeof(char *));
+    if (!res) {
+        return NULL;
+    }
+    char *token = strtok(str, " ");
+
+    while(token) {
+        res[(*count)++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    return res;
+}
+
+void findAdverbAndPosition(char *sentence) {
+    int count = 0, i, j;
+    char **words = splitString(sentence, &count);
+
+    if (!words) {
+        return;
+    }
+
+    char *adverbs[] = {"quickly", "slowly", "beautifully", "rudely", "well"};
+    int adverbsCount = 5;
+
+    for(i = 0; i < count; i++) {
+        for(j = 0; j < adverbsCount; j++) {
+            if(strcmp(words[i], adverbs[j]) == 0) {
+                printf("Adverb: %s, Position: %d\n", adverbs[j], i + 1);
+            }
+        }
+    }
+
+    free(words);
+}
+
+int main() {
+    char sentence[MAX_LEN];
+    printf("Enter a sentence:\n");
+    fgets(sentence, MAX_LEN, stdin);
+
+    if(sentence[strlen(sentence) - 1] == '\n') {
+        sentence[strlen(sentence) - 1] = '\0';
+    }
+
+    findAdverbAndPosition(sentence);
+    
+    return 0;
+}

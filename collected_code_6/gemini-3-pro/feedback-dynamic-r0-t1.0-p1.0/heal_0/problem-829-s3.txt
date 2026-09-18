@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct StringCount {
+    char *str;
+    int count;
+};
+
+char* findSecondMostFrequent(char **arr, int size) {
+    if (size <= 0 || arr == NULL) {
+        return NULL;
+    }
+
+    struct StringCount *counts = calloc(size, sizeof(struct StringCount));
+    if (counts == NULL) {
+        return NULL;
+    }
+
+    int uniqueCounts = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == NULL) continue;
+        
+        int found = 0;
+        for (int j = 0; j < uniqueCounts; j++) {
+            if (strcmp(counts[j].str, arr[i]) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            counts[uniqueCounts].str = arr[i];
+            counts[uniqueCounts].count = 1;
+            uniqueCounts++;
+        }
+    }
+
+    int firstMax = 0, secondMax = 0;
+    char *firstStr = NULL;
+    char *secondStr = NULL;
+
+    for (int i = 0; i < uniqueCounts; i++) {
+        if (counts[i].count > firstMax) {
+            secondMax = firstMax;
+            secondStr = firstStr;
+            firstMax = counts[i].count;
+            firstStr = counts[i].str;
+        } else if (counts[i].count > secondMax && counts[i].count < firstMax) {
+            secondMax = counts[i].count;
+            secondStr = counts[i].str;
+        }
+    }
+
+    free(counts);
+
+    return secondStr;
+}
+
+int main(void) {
+    char *sequence[] = {"apple", "banana", "apple", "orange", "banana", "apple", "kiwi", "banana", "kiwi"};
+    int size = sizeof(sequence) / sizeof(sequence[0]);
+
+    char *result = findSecondMostFrequent(sequence, size);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+    } else {
+        printf("No second most frequent string found.\n");
+    }
+
+    return 0;
+}
+```

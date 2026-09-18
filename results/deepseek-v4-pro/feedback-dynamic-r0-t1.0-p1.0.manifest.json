@@ -209,9 +209,10 @@
     "top_p": 1.0,
     "max_rounds": 10,
     "samples": 3,
-    "fuzz": false,
+    "fuzz": true,
     "root": "collected_code_6",
-    "gen_source": "feedback-static-r0-t1.0-p1.0"
+    "gen_source": "feedback-static-r0-t1.0-p1.0",
+    "gen_source_reports": true
   },
   "model_id": "deepseek-v4-pro",
   "reasoning": false,
@@ -232,11 +233,23 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-260": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-260-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-27": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
     "problem-315-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-36": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -249,6 +262,10 @@
       "outcome": "clean"
     },
     "problem-593-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-834-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -660,14 +677,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-260": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-260-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-260-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -925,10 +934,6 @@
       "outcome": "clean_at_start"
     },
     "problem-358-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-36": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -2229,10 +2234,6 @@
       "outcome": "clean_at_start"
     },
     "problem-834": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-834-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },

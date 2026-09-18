@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+
+struct Tuple {
+    char data[MAX];
+    int count;
+};
+
+void countOccurrences(struct Tuple *tuples, int totalTuples, int count) {
+    for (int i = 0; i < totalTuples; i++) {
+        if (tuples[i].count == count) {
+            printf("%s occurs %d times.\n", tuples[i].data, tuples[i].count);
+        }
+    }
+}
+
+int main() {
+    struct Tuple tuples[] = {
+        {"Record 1", 5},
+        {"Record 2", 10},
+        {"Record 3", 5},
+        {"Record 4", 8},
+        {"Record 5", 5}
+    };
+
+    int totalTuples = sizeof(tuples) / sizeof(tuples[0]);
+    int count = 5;
+    countOccurrences(tuples, totalTuples, count);
+
+    return 0;
+}

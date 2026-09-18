@@ -1,0 +1,3 @@
+problem-355-s3.c:10:21:medium:UBSan: 1e+21 is outside the range of representable values of type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:343,execs:173,op:havoc,rep:12)
+problem-355-s3.c:11:23:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'int64_t' (aka 'long long'); cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000000,time:343,execs:173,op:havoc,rep:12)
+problem-355-s3.c:12:27:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'int64_t' (aka 'long long'); cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000000,time:343,execs:173,op:havoc,rep:12)

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_LISTS 100
+#define MAX_ITEMS 100
+
+int array[MAX_LISTS][MAX_ITEMS];
+int listLengths[MAX_LISTS];
+int numOfLists;
+
+int getMinLengthList() {
+    int minIndex = 0;
+    int minLength = INT_MAX;
+    
+    for(int i = 0; i < numOfLists; i++) {
+        if(minLength > listLengths[i]) {
+            minIndex = i;
+            minLength = listLengths[i];
+        }
+    }
+    
+    return minIndex;
+}
+
+int main() {
+    printf("Enter the number of lists:\n");
+    scanf("%d",&numOfLists);
+
+    for(int i = 0; i < numOfLists; i++) {
+        printf("Enter length of list %d:\n",i+1);
+        scanf("%d",&listLengths[i]);
+        
+        printf("Enter elements of list %d:\n",i+1);
+        for(int j = 0; j < listLengths[i]; j++) {
+            scanf("%d",&array[i][j]);
+        }
+    }
+
+    int minIndex = getMinLengthList();
+    
+    printf("The list with minimum length is:\n");
+    for(int i = 0; i < listLengths[minIndex]; i++) {
+        printf("%d ",array[minIndex][i]);
+    }
+   
+    return 0;
+}

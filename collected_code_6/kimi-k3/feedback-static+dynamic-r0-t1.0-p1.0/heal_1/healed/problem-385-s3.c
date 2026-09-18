@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long perrin(int n) {
+    if (n == 0) {
+        return 3;
+    }
+    if (n == 1) {
+        return 0;
+    }
+    if (n == 2) {
+        return 2;
+    }
+
+    long long prev0 = 3;
+    long long prev1 = 0;
+    long long prev2 = 2;
+    long long result = 0;
+
+    for (int i = 3; i <= n; ++i) {
+        result = prev1 + prev0;
+        prev0 = prev1;
+        prev1 = prev2;
+        prev2 = result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int n;
+    long long result;
+
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "n must be a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = perrin(n);
+    printf("Perrin number %d is %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

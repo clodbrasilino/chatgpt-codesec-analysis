@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got <no output>
+  *  test case 2 failed: expected 'ca', got <no output>
+  *  test case 0 failed: expected 'ab', got <no output>
+  */
+
+char *find_first_repeated_word(const char *str) {
+    if (str == NULL) {
+        char *result = malloc(5);
+        if (result != NULL) {
+            strcpy(result, "None");
+        }
+        return result;
+    }
+
+    size_t len = strlen(str);
+    char *str_copy = malloc(len + 1);
+    if (str_copy == NULL) {
+        return NULL;
+    }
+    strcpy(str_copy, str);
+
+    char **seen_words = malloc((len + 1) * sizeof(char *));
+    if (seen_words == NULL) {
+        free(str_copy);
+        return NULL;
+    }
+
+    size_t count = 0;
+    char *result = NULL;
+    char *token = strtok(str_copy, " \t\n\r,.;:!?()[]{}");
+
+    while (token != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            if (strcmp(seen_words[i], token) == 0) {
+                size_t res_len = strlen(token);
+                result = malloc(res_len + 1);
+                if (result != NULL) {
+                    strcpy(result, token);
+                }
+                goto cleanup;
+            }
+        }
+        seen_words[count++] = token;
+        token = strtok(NULL, " \t\n\r,.;:!?()[]{}");
+    }
+
+cleanup:
+    free(seen_words);
+    free(str_copy);
+
+    if (result == NULL) {
+        result = malloc(5);
+        if (result != NULL) {
+            strcpy(result, "None");
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *text = "apple banana orange apple grape banana";
+    char *repeated = find_first_repeated_word(text);
+
+    if (repeated != NULL) {
+        printf("%s\n", repeated);
+        free(repeated);
+    }
+
+    return 0;
+}

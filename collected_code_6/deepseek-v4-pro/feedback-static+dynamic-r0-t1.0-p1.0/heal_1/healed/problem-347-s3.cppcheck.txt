@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:24:19: style: Condition 'term1>0' is always true [knownConditionTrueFalse]
+        if (term1 > 0 && term2 > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:7:16: note: Assuming that condition 'length<=0' is not redundant
+    if (length <= 0 || width <= 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:11:26: note: Assuming condition is false
+    if (length > 1000000 || width > 1000000) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:16:25: note: ll_length is assigned 'length' here.
+    long long ll_length = length;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:21:44: note: Assignment 'term1=ll_length-size+1', assigned value is greater than 0
+        long long term1 = ll_length - size + 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:24:19: note: Condition 'term1>0' is always true
+        if (term1 > 0 && term2 > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:24:32: style: Condition 'term2>0' is always true [knownConditionTrueFalse]
+        if (term1 > 0 && term2 > 0) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:7:30: note: Assuming that condition 'width<=0' is not redundant
+    if (length <= 0 || width <= 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:11:26: note: Assuming condition is false
+    if (length > 1000000 || width > 1000000) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:17:24: note: ll_width is assigned 'width' here.
+    long long ll_width = width;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:22:43: note: Assignment 'term2=ll_width-size+1', assigned value is greater than 0
+        long long term2 = ll_width - size + 1;
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-347-s3.c:24:32: note: Condition 'term2>0' is always true
+        if (term1 > 0 && term2 > 0) {
+                               ^

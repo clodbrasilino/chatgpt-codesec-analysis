@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int max_length(int array[], int length) {
+    if (length == 1)
+        return 1;
+
+    int curr_len = 1;
+    int max_len = 1;
+
+    for (int i=0; i<length-1; i++)
+    {
+        if (array[i] != array[i+1])
+        {
+            curr_len++;
+            if (curr_len > max_len)
+                max_len = curr_len;
+        }
+        else
+            curr_len = 1;
+    }
+    return max_len;
+}
+
+int main() {
+    int arr[] = {10, 20, 20, 30, 30, 40, 50};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    printf("Max length: %d", max_length(arr, size));
+    return 0;
+}

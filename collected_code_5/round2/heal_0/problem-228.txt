@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areBitsUnsetInRange(int n, int l, int r) {
+    int mask = ((1 << (r - l + 1)) - 1 ) << l;
+    return (n & mask) == 0;  
+}
+
+int main() {
+    int n = 15;
+    int l = 1;
+    int r = 3;
+    if(areBitsUnsetInRange(n, l, r)){
+        printf("All bits in range are unset \n");
+    } else {
+        printf("All bits in range are not unset \n");
+    }
+    return 0;
+}
+```
+This code will check if all the bits in given range are unset or not in a number. The function "areBitsUnsetInRange" is used here for checking the unset bits. The mask is created by shifting 1 to the right by the difference between the given end and start range, subtracting 1 from the result, and then shifting left by l. The function then checks if the bit-wise AND of the number and mask is equal to 0, which would mean that all bits in the given range are unset, and returns the result. The main function checks the unset bits in range from 1 to 3 in the number 15 and prints the result.

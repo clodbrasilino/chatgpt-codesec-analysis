@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isGreaterThanAll(int arr[], int size, int num) {
+    for(int i = 0; i < size; i++) {
+        if(num <= arr[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int size, num;
+
+    printf("Enter the size of array: ");
+    scanf("%d", &size);
+
+    if(size <= 0) {
+        printf("Invalid size. Please enter a size greater than zero.\n");
+        return -1;
+    }
+
+    int arr[size];
+
+    printf("Enter elements of the array: ");
+
+    for(int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    printf("Enter the number to check: ");
+    scanf("%d", &num);
+
+    if(isGreaterThanAll(arr, size, num)) {
+        printf("The entered number is greater than all elements of the array.\n");
+    } else {
+        printf("The entered number is not greater than all elements of the array.\n");
+    }
+
+    return 0;
+}

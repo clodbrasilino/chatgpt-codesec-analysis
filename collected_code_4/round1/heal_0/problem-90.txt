@@ -1,0 +1,40 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_SENTENCE_SIZE 1000
+#define MAX_WORD_SIZE 100
+
+int longest_word_length(char* sentence) {
+    int max_len = 0;
+    int curr_len = 0;
+    for(int i = 0; i < strlen(sentence); i++){
+        if (sentence[i] != ' '){
+            curr_len++;
+        }
+        else{
+            if(curr_len > max_len)
+                max_len = curr_len;
+            curr_len = 0;
+        }
+    }
+    return (curr_len > max_len) ? curr_len : max_len;
+}
+
+int main(){
+    
+    char sentence[MAX_SENTENCE_SIZE];
+    printf("Enter a sentence: ");
+    fgets(sentence, MAX_SENTENCE_SIZE, stdin);
+
+    int len = longest_word_length(sentence);
+    printf("Longest word length: %d\n", len);
+
+    return 0;
+}
+```
+In this code, a character array `sentence` is declared to store the sentence input from the user. The `fgets` function is used to read the sentence, and it ensures that we don't attempt to read more characters than the array can hold, which can cause buffer overflow. 
+
+The function `longest_word_length` processes the sentence character by character, incrementing a counter `curr_len` for each non-space character it encounters. When a space is encountered, it compares `curr_len` with `max_len`, updating `max_len` if `curr_len` is greater. After each space, `curr_len` is reset to 0.
+
+In addition, the `main` function prints an instruction message before input and uses `printf` to print the output. This code adheres to common coding standards and avoids the mentioned mistakes: it properly controls resources (i.e., memory for the sentence array), handles exceptions (prevents potential overflow), and follows coding conventions.

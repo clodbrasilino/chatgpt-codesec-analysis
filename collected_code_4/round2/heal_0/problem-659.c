@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define SIZE 10
+
+void printDuplicates(int* arr, int size) {
+    bool* check = (bool*) malloc(size * sizeof(bool));
+    if (check == NULL) {
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < size; i++) {
+        check[i] = false;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (check[arr[i]] == false) {
+            check[arr[i]] = true;
+        } else {
+            printf("Duplicate element : %d \n", arr[i]);
+        }
+    }
+
+    free(check);
+}
+
+int main(int argc, char const *argv[]) {
+    int arr[SIZE] = {1, 2, 3, 4, 2, 5, 6, 7, 8, 3};
+    printDuplicates(arr, SIZE);
+    return 0;
+}

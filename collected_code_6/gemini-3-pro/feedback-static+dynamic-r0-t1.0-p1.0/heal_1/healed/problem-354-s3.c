@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int find_nth_term(long long int a, long long int d, long long int n) {
+    long long int n_minus_1;
+    long long int product;
+    long long int result;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    if (__builtin_sub_overflow(n, 1, &n_minus_1)) {
+        fprintf(stderr, "Overflow detected\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (__builtin_mul_overflow(n_minus_1, d, &product)) {
+        fprintf(stderr, "Overflow detected\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (__builtin_add_overflow(a, product, &result)) {
+        fprintf(stderr, "Overflow detected\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return result;
+}
+
+int main(void) {
+    long long int a = 0;
+    long long int d = 0;
+    long long int n = 0;
+    long long int result = 0;
+
+    if (scanf("%lld %lld %lld", &a, &d, &n) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_nth_term(a, d, n);
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

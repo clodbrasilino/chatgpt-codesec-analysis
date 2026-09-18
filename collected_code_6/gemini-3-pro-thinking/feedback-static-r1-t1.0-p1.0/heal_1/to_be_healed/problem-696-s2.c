@@ -1,0 +1,232 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int data;
+    struct IntNode* next;
+} IntNode;
+
+typedef struct IntList {
+    IntNode* head;
+    struct IntList* next;
+} IntList;
+
+typedef struct ZippedNode {
+    IntNode* list1;
+    IntNode* list2;
+    struct ZippedNode* next;
+} ZippedNode;
+
+void free_int_list(IntNode* head) {
+    while (head) {
+        IntNode* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_int_list_of_lists(IntList* head) {
+    while (head) {
+        IntList* temp = head;
+        head = head->next;
+        free_int_list(temp->head);
+        free(temp);
+    }
+}
+
+void free_zipped_list(ZippedNode* head) {
+    while (head) {
+        ZippedNode* temp = head;
+        head = head->next;
+        free_int_list(temp->list1);
+        free_int_list(temp->list2);
+        free(temp);
+    }
+}
+
+IntNode* copy_int_list(const IntNode* head) {
+    if (!head) {
+        return NULL;
+    }
+    IntNode* new_head = malloc(sizeof(IntNode));
+    if (!new_head) {
+        return NULL;
+    }
+    new_head->data = head->data;
+    new_head->next = NULL;
+    
+    IntNode* current = new_head;
+    const IntNode* orig = head->next;
+    
+    while (orig) {
+        current->next = malloc(sizeof(IntNode));
+        if (!current->next) {
+            free_int_list(new_head);
+            return NULL;
+        }
+        current = current->next;
+        current->data = orig->data;
+        current->next = NULL;
+        orig = orig->next;
+    }
+    return new_head;
+}
+
+ZippedNode* zip_lists(const IntList* l1, const IntList* l2) {
+    ZippedNode* dummy = malloc(sizeof(ZippedNode));
+    if (!dummy) {
+        return NULL;
+    }
+    dummy->next = NULL;
+    ZippedNode* tail = dummy;
+
+    while (l1 && l2) {
+        ZippedNode* new_node = malloc(sizeof(ZippedNode));
+        if (!new_node) {
+            free_zipped_list(dummy->next);
+            free(dummy);
+            return NULL;
+        }
+
+        new_node->list1 = copy_int_list(l1->head);
+        new_node->list2 = copy_int_list(l2->head);
+
+        if ((l1->head && !new_node->list1) || (l2->head && !new_node->list2)) {
+            free_int_list(new_node->list1);
+            free_int_list(new_node->list2);
+            free(new_node);
+            free_zipped_list(dummy->next);
+            free(dummy);
+            return NULL;
+        }
+
+        new_node->next = NULL;
+        tail->next = new_node;
+        tail = new_node;
+
+        l1 = l1->next;
+        l2 = l2->next;
+    }
+
+    ZippedNode* result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+IntNode* array_to_int_list(const int* arr, size_t size) {
+    if (size == 0 || !arr) {
+        return NULL;
+    }
+    IntNode* head = malloc(sizeof(IntNode));
+    if (!head) {
+        return NULL;
+    }
+    head->data = arr[0];
+    head->next = NULL;
+    IntNode* tail = head;
+    
+    for (size_t i = 1; i < size; ++i) {
+        tail->next = malloc(sizeof(IntNode));
+        if (!tail->next) {
+            free_int_list(head);
+            return NULL;
+        }
+        tail = tail->next;
+        tail->data = arr[i];
+        tail->next = NULL;
+    }
+    return head;
+}
+
+IntList* append_to_list_of_lists(IntList* head, IntNode* inner_head) {
+    IntList* new_node = malloc(sizeof(IntList));
+    if (!new_node) {
+        free_int_list(inner_head);
+        free_int_list_of_lists(head);
+        return NULL;
+    }
+    new_node->head = inner_head;
+    new_node->next = NULL;
+    
+    if (!head) {
+        return new_node;
+    }
+    
+    IntList* tail = head;
+    while (tail->next) {
+        tail = tail->next;
+    }
+    tail->next = new_node;
+    return head;
+}
+
+int main(void) {
+    IntList* list1 = NULL;
+    IntList* list2 = NULL;
+    ZippedNode* zipped = NULL;
+    
+    /* Possible weaknesses found:
+     *  Variable 'arr1' can be declared as const array [constVariable]
+     */
+    int arr1[] = {1, 2};
+    /* Possible weaknesses found:
+     *  Variable 'arr2' can be declared as const array [constVariable]
+     */
+    int arr2[] = {3};
+    /* Possible weaknesses found:
+     *  Variable 'arr3' can be declared as const array [constVariable]
+     */
+    int arr3[] = {4, 5, 6};
+    /* Possible weaknesses found:
+     *  Variable 'arr4' can be declared as const array [constVariable]
+     */
+    int arr4[] = {7, 8};
+
+    IntNode* inner1 = array_to_int_list(arr1, 2);
+    if (!inner1) {
+        goto cleanup;
+    }
+    list1 = append_to_list_of_lists(list1, inner1);
+    if (!list1) {
+        goto cleanup;
+    }
+
+    IntNode* inner2 = array_to_int_list(arr2, 1);
+    if (!inner2) {
+        goto cleanup;
+    }
+    list1 = append_to_list_of_lists(list1, inner2);
+    if (!list1) {
+        goto cleanup;
+    }
+
+    IntNode* inner3 = array_to_int_list(arr3, 3);
+    if (!inner3) {
+        goto cleanup;
+    }
+    list2 = append_to_list_of_lists(list2, inner3);
+    if (!list2) {
+        goto cleanup;
+    }
+
+    IntNode* inner4 = array_to_int_list(arr4, 2);
+    if (!inner4) {
+        goto cleanup;
+    }
+    list2 = append_to_list_of_lists(list2, inner4);
+    if (!list2) {
+        goto cleanup;
+    }
+
+    zipped = zip_lists(list1, list2);
+    if (!zipped) {
+        goto cleanup;
+    }
+
+cleanup:
+    free_int_list_of_lists(list1);
+    free_int_list_of_lists(list2);
+    free_zipped_list(zipped);
+    
+    return 0;
+}

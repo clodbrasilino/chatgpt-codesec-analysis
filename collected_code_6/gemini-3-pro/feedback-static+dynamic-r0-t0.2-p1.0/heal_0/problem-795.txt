@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    double price;
+} Item;
+
+typedef struct {
+    Item* items;
+    int size;
+    int capacity;
+} MaxHeap;
+
+MaxHeap* createMaxHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MaxHeap* heap = (MaxHeap*)malloc(sizeof(MaxHeap));
+    if (!heap) return NULL;
+    heap->items = (Item*)malloc(capacity * sizeof(Item));
+    if (!heap->items) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void freeMaxHeap(MaxHeap* heap) {
+    if (heap) {
+        free(heap->items);
+        free(heap);
+    }
+}
+
+void swap(Item* a, Item* b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MaxHeap* heap, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->items[left].price > heap->items[largest].price)
+        largest = left;
+
+    if (right < heap->size && heap->items[right].price > heap->items[largest].price)
+        largest = right;
+
+    if (largest != i) {
+        swap(&heap->items[i], &heap->items[largest]);
+        heapify(heap, largest);
+    }
+}
+
+int insertMaxHeap(MaxHeap* heap, Item item) {
+    if (!heap) return -1;
+    if (heap->size < heap->capacity) {
+        heap->items[heap->size] = item;
+        int i = heap->size;
+        heap->size++;
+        while (i != 0 && heap->items[(i - 1) / 2].price < heap->items[i].price) {
+            swap(&heap->items[i], &heap->items[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    } else if (item.price < heap->items[0].price) {
+        heap->items[0] = item;
+        heapify(heap, 0);
+    }
+    return 0;
+}
+
+void findNCheapestItems(Item* dataset, int datasetSize, int n) {
+    if (!dataset || datasetSize <= 0 || n <= 0) return;
+    if (n > datasetSize) n = datasetSize;
+
+    MaxHeap* heap = createMaxHeap(n);
+    if (!heap) return;
+
+    for (int i = 0; i < datasetSize; i++) {
+        insertMaxHeap(heap, dataset[i]);
+    }
+
+    for (int i = 0; i < heap->size; i++) {
+        printf("%s: %.2f\n", heap->items[i].name, heap->items[i].price);
+    }
+
+    freeMaxHeap(heap);
+}
+
+int main() {
+    Item dataset[] = {
+        {"Item A", 45.99},
+        {"Item B", 12.50},
+        {"Item C", 9.99},
+        {"Item D", 105.00},
+        {"Item E", 3.50},
+        {"Item F", 24.00},
+        {"Item G", 8.75}
+    };
+    int datasetSize = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+
+    findNCheapestItems(dataset, datasetSize, n);
+
+    return 0;
+}
+```

@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:21:5: error: use of undeclared identifier 'ptrdiff_t'
+   21 |     ptrdiff_t top = -1;
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:27:13: error: use of undeclared identifier 'top'
+   27 |             top++;
+      |             ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:28:19: error: use of undeclared identifier 'top'
+   28 |             stack[top] = current_char;
+      |                   ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:30:17: error: use of undeclared identifier 'top'
+   30 |             if (top == -1) {
+      |                 ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:35:35: error: use of undeclared identifier 'top'
+   35 |             char top_char = stack[top];
+      |                                   ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:36:13: error: use of undeclared identifier 'top'
+   36 |             top--;
+      |             ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-175-s2.c:47:22: error: use of undeclared identifier 'top'
+   47 |     bool is_valid = (top == -1);
+      |                      ^~~
+7 errors generated.

@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+#define COINS_COUNT 3
+int coins[COINS_COUNT] = {1, 2, 5};
+
+int getMinCoins(int value) {
+    int amount = value;
+    int numCoins = 0;
+
+    for (int i = COINS_COUNT - 1; i >= 0; i--) {
+        while (amount >= coins[i]) {
+            amount -= coins[i];
+            numCoins++;
+        }
+    }
+
+    if (amount > 0) {
+        return -1;  // This should never happen with the coins provided.
+    }
+    return numCoins;
+}
+
+int main() {
+    int amount = 11;
+    int minCoins = getMinCoins(amount);
+
+    if (minCoins == -1) {
+        printf("Error: Cannot make change for %d.\n", amount);
+    }
+    else {
+        printf("Minimum number of coins required to make %d is: %d\n", amount, minCoins);
+    }
+
+    return 0;
+}
+```

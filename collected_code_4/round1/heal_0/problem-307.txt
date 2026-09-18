@@ -1,0 +1,28 @@
+While the question is not extremely clear, here is an example where a "tuple" is represented as a struct and a "colon" is actually the second element of the tuple:
+
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple 
+{
+    int a;
+    int b;
+} Tuple;
+
+int getSecondElement(Tuple tuple)
+{
+    return tuple.b;
+}
+
+int main() 
+{
+    Tuple tuple;
+    tuple.a = 1;
+    tuple.b = 2;
+    printf("Second element of the tuple is: %d\n", getSecondElement(tuple));
+    return 0;
+}
+```
+
+In this code, a Tuple struct is defined with two elements (a, b), then the getSecondElement function extracts the second element of the tuple. The main function creates an instance of tuple and prints the result of getSecondElement execution.

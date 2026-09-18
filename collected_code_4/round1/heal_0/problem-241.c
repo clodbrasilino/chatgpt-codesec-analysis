@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char ***create3DArray(int x, int y, int z) {
+    int i, j;
+    char ***array3D = malloc(x * sizeof(char **));
+
+    if (array3D == NULL) {
+        printf("Memory allocation failed\n");
+        exit(0);
+    }
+
+    for(i = 0; i < x; i++) {
+        array3D[i] = malloc(y * sizeof(char *));
+        if (array3D[i] == NULL) {
+            printf("Memory allocation failed\n");
+            exit(0);
+        }
+
+        for(j = 0; j < y; j++) {
+            array3D[i][j] = malloc(z * sizeof(char));
+            if (array3D[i][j] == NULL) {
+                printf("Memory allocation failed\n");
+                exit(0);
+            }
+
+            for(int k = 0; k < z; k++)
+                array3D[i][j][k] = '*';
+        }
+    }
+
+    return array3D;
+}
+
+void free3DArray(char ***array3D, int x, int y) {
+    int i, j;
+    for(i = 0; i < x; i++) {
+        for(j = 0; j < y; j++) {
+            free(array3D[i][j]);
+        }
+        free(array3D[i]);
+    }
+    free(array3D);
+}
+
+int main()
+{
+    int x = 5, y = 5, z = 5;
+    char ***array3D = create3DArray(x, y, z);
+
+    for(int i = 0; i < x; i++) {
+        for(int j = 0; j < y; j++) {
+            for(int k = 0; k < z; k++) {
+                printf("%c ", array3D[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+    
+    free3DArray(array3D, x, y);
+
+    return 0;
+}

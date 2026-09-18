@@ -1,0 +1,125 @@
+./collected_code_4/round2//heal_1/healed/problem-893.c: In function 'main':
+./collected_code_4/round2//heal_1/healed/problem-893.c:64:37: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   64 |     if ( head != NULL && head ->next[0] != NULL)
+      |                          ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   58 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     addToList(&head, 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'addToList' from 'main'
+    |
+    +--> 'addToList': events 3-8
+           |
+           |   20 | void addToList(Node** head, int data) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'addToList'
+           |   21 |     if (head == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'head' is non-NULL)...
+           |   22 |     if (!(*head)) {
+           |      |        ~ ~~~~~~~
+           |      |        |  |
+           |      |        |  (5) ...to here
+           |      |        (6) following 'true' branch...
+           |   23 |         *head = newNode(data);
+           |      |                 ~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (7) ...to here
+           |      |                 (8) calling 'newNode' from 'addToList'
+           |
+           +--> 'newNode': events 9-11
+                  |
+                  |   10 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (9) entry to 'newNode'
+                  |......
+                  |   13 |     if( temp == NULL) return NULL;
+                  |      |       ~
+                  |      |       |
+                  |      |       (10) following 'false' branch (when 'temp' is non-NULL)...
+                  |   14 |     temp->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (11) ...to here
+                  |
+                'newNode': event 12
+                  |
+                  |   16 |     temp->next = NULL;
+                  |      |                ^
+                  |      |                |
+                  |      |                (12) '0' is NULL
+                  |
+           <------+
+           |
+         'addToList': events 13-14
+           |
+           |   23 |         *head = newNode(data);
+           |      |                 ^~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (13) returning to 'addToList' from 'newNode'
+           |   24 |         if (*head == NULL) return;
+           |      |            ~     
+           |      |            |
+           |      |            (14) following 'false' branch...
+           |
+         'addToList': event 15
+           |
+           |cc1:
+           | (15): ...to here
+           |
+    <------+
+    |
+  'main': events 16-20
+    |
+    |   61 |     addToList(&head, 5);
+    |      |     ^~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (16) returning to 'main' from 'addToList'
+    |   62 |     if( head != NULL)
+    |      |       ~
+    |      |       |
+    |      |       (17) following 'true' branch...
+    |   63 |         addToList(&(head->next[0]), 10);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |         |     |
+    |      |         |         |     (18) ...to here
+    |      |         |         (19) '0' is NULL
+    |      |         (20) calling 'addToList' from 'main'
+    |
+    +--> 'addToList': events 21-23
+           |
+           |   20 | void addToList(Node** head, int data) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (21) entry to 'addToList'
+           |   21 |     if (head == NULL) return;
+           |      |        ~              ~~~~~~
+           |      |        |              |
+           |      |        |              (23) ...to here
+           |      |        (22) following 'true' branch (when 'head' is NULL)...
+           |
+    <------+
+    |
+  'main': events 24-28
+    |
+    |   63 |         addToList(&(head->next[0]), 10);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (24) returning to 'main' from 'addToList'
+    |   64 |     if ( head != NULL && head ->next[0] != NULL)
+    |      |        ~                 ~~~~~~~~~~~~~~
+    |      |        |                      |     |
+    |      |        |                      |     (28) dereference of NULL '*head.next'
+    |      |        |                      (26) ...to here
+    |      |        |                      (27) '0' is NULL
+    |      |        (25) following 'true' branch...
+    |

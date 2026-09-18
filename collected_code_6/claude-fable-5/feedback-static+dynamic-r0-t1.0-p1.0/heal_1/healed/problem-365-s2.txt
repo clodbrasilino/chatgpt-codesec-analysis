@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_digits(long long number)
+{
+    int count = 1;
+    unsigned long long value;
+
+    if (number < 0) {
+        value = (unsigned long long)(-(number + 1)) + 1ULL;
+    } else {
+        value = (unsigned long long)number;
+    }
+
+    while (value >= 10ULL) {
+        value /= 10ULL;
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long number = 0;
+    int result = 0;
+
+    printf("Enter a number: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_digits(number);
+
+    printf("The number %lld has %d digit(s).\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code contained undefined behavior flagged by UBSan and discovered via AFL fuzzing: when the input is `LLONG_MIN` (-9223372036854775808), the expression `number = -number` overflows, because two's complement representation has an asymmetric range — `|LLONG_MIN|` exceeds `LLONG_MAX` by 1, so the negation cannot be represented in `long long`.
+
+**How the rewrite resolves it:**
+
+1. The magnitude is now stored in an `unsigned long long`, which can represent 9223372036854775808 without overflow.
+2. The conversion `(unsigned long long)(-(number + 1)) + 1ULL` avoids negating `LLONG_MIN` directly: adding 1 first brings the value into a safely negatable range (`-(LLONG_MIN + 1)` equals `LLONG_MAX`, which is representable), then the cast and `+ 1ULL` restore the correct magnitude using well-defined unsigned arithmetic.
+3. The digit-counting loop operates entirely on the unsigned value, so all arithmetic in the function is now free of signed overflow.
+
+The observable behavior is unchanged for all valid inputs, and the previously crashing input (`sig:06` / abort from UBSan) now correctly reports 19 digits for `LLONG_MIN`.

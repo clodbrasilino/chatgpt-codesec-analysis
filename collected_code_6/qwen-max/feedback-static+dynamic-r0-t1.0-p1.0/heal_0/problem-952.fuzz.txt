@@ -1,0 +1,4 @@
+problem-952.c:24:0:high:ASan: stack-overflow (AFL crash: id:000002,sig:11,src:000002,time:872,execs:316,op:havoc,rep:4)
+problem-952.c:29:0:high:ASan: BUS (AFL crash: id:000001,sig:06,src:000002,time:23,execs:19,op:quick,pos:1)
+problem-952.c:29:33:medium:UBSan: index 1199545584 out of bounds for type 'long long[n + 1]' (AFL crash: id:000001,sig:06,src:000002,time:23,execs:19,op:quick,pos:1)
+problem-952.c:31:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:14,execs:16,op:(null),pos:0; likely memory-safety defect

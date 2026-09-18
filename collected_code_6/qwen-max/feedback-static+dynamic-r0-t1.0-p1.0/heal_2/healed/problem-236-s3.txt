@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int countEquilateralTriangles(int n) {
+    if (n < 3) return 0;
+    long long count = 0;
+    for (int size = 1; size <= n; ++size) {
+        int layers = n - size + 1;
+        count += (long long)layers * layers;
+    }
+    return (int)(count > INT_MAX ? INT_MAX : count);
+}
+
+int main() {
+    int n;
+    printf("Enter the size of the equilateral triangle: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+    int result = countEquilateralTriangles(n);
+    printf("Maximum number of equilateral triangles: %d\n", result);
+    return 0;
+}
+```

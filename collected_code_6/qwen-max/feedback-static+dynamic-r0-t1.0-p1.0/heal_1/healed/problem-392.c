@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int f(long n, long *memo) {
+    if (n < 2) return n;
+
+    if (memo[n] != -1) return memo[n];
+
+    long a = f(n / 2, memo);
+    long b = f(n / 3, memo);
+    long c = f(n / 4, memo);
+    long d = f(n / 5, memo);
+
+    long sum = a + b + c + d;
+    if (sum > INT_MAX) sum = INT_MAX;
+
+    long val = max(n, sum);
+    memo[n] = val;
+    return val;
+}
+
+int main() {
+    long n;
+    printf("Enter a number: ");
+    scanf("%ld", &n);
+
+    long *memo = (long *)calloc(n + 1, sizeof(long));
+    for (long i = 0; i <= n; ++i) {
+        memo[i] = -1;
+    }
+
+    long result = f(n, memo);
+    printf("Maximum sum possible: %ld\n", result);
+
+    free(memo);
+    return 0;
+}

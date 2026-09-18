@@ -1,0 +1,91 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:24:17: style: Condition 'is_prime(1)' is always false [knownConditionTrueFalse]
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:24:17: note: Calling function 'is_prime' returns 0
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:24:17: note: Condition 'is_prime(1)' is always false
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:29:21: style: Condition 'is_prime(1)' is always false [knownConditionTrueFalse]
+        if (is_prime(1)) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:29:21: note: Calling function 'is_prime' returns 0
+        if (is_prime(1)) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:29:21: note: Condition 'is_prime(1)' is always false
+        if (is_prime(1)) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:15: style: Condition 'count==0' is always true [knownConditionTrueFalse]
+    if (count == 0 && is_prime(1)) count = 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:22:26: note: Assignment 'count=0', assigned value is 0
+    unsigned int count = 0;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:15: note: Condition 'count==0' is always true
+    if (count == 0 && is_prime(1)) count = 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:31: style: Condition 'is_prime(1)' is always false [knownConditionTrueFalse]
+    if (count == 0 && is_prime(1)) count = 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:31: note: Calling function 'is_prime' returns 0
+    if (count == 0 && is_prime(1)) count = 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:31: note: Condition 'is_prime(1)' is always false
+    if (count == 0 && is_prime(1)) count = 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:36:27: style: Condition 'is_prime(1)' is always false [knownConditionTrueFalse]
+    if (n == 1 && is_prime(1)) return 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:36:27: note: Calling function 'is_prime' returns 0
+    if (n == 1 && is_prime(1)) return 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:36:27: note: Condition 'is_prime(1)' is always false
+    if (n == 1 && is_prime(1)) return 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:41:17: style: Condition 'is_prime(1)' is always false [knownConditionTrueFalse]
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:41:17: note: Calling function 'is_prime' returns 0
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:41:17: note: Condition 'is_prime(1)' is always false
+    if (is_prime(1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:38:7: style: Variable 'b' is reassigned a value before the old one has been used. [redundantAssignment]
+    b = 1;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:30:11: note: b is assigned
+        b = 1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:38:7: note: b is overwritten
+    b = 1;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:37:7: style: Variable 'a' is reassigned a value before the old one has been used. [redundantAssignment]
+    a = 1;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:31:11: note: a is assigned
+        a = 1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:37:7: note: a is overwritten
+    a = 1;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:40:15: style: Variable 'candidate' is reassigned a value before the old one has been used. [redundantAssignment]
+    candidate = 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:33:19: note: candidate is assigned
+        candidate = 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:40:15: note: candidate is overwritten
+    candidate = 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:39:11: style: Variable 'count' is reassigned a value before the old one has been used. [redundantAssignment]
+    count = 0;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:35:42: note: count is assigned
+    if (count == 0 && is_prime(1)) count = 1;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-260-s2.c:39:11: note: count is overwritten
+    count = 0;
+          ^

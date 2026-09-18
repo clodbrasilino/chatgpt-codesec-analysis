@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+char* removeSpaces(char* input)
+{
+    int i = 0, j = 0;
+    while (input[i])
+    {
+        if (input[i] != ' ')
+            input[j++] = input[i];
+        i++;
+    }
+    input[j] = '\0';
+    return input;
+}
+
+int main() 
+{
+    char str[] = "C P ro gr a m mi n g is f un";
+    printf("%s", removeSpaces(str));
+    return 0;
+}
+```

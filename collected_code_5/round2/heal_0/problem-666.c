@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+
+int countOccurrence(char* string, char character){
+    int count = 0;
+    int len = strlen(string);
+    for(int i = 0; i < len; i++){
+        if(string[i] == character) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char string[50];
+    printf("Enter the string: \n");
+    fgets(string, 50, stdin);
+    char character;
+    printf("Enter the character to count occurrences: \n");
+    scanf("%c", &character);
+    getchar(); 
+
+    int occurrence = countOccurrence(string, character);
+    printf("The character '%c' occurs %d time(s) in the string\n", character, occurrence);
+    
+    return 0;
+}

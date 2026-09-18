@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void free_string_array(char **arr, size_t count) {
+    if (!arr) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+char **split_at_uppercase(const char *input, size_t *out_count) {
+    if (!input || !out_count) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (input[0] == '\0') {
+        return NULL;
+    }
+
+    regex_t regex;
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    size_t capacity = 10;
+    size_t count = 0;
+    char **result = malloc(capacity * sizeof(char *));
+    if (!result) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    const char *start = input;
+    const char *search = input + 1;
+    regmatch_t pmatch[1];
+
+    while (regexec(&regex, search, 1, pmatch, 0) == 0) {
+        regoff_t match_offset = pmatch[0].rm_so;
+        size_t word_len = (size_t)(search - start) + (size_t)match_offset;
+
+        char *word = malloc(word_len + 1);
+        if (!word) {
+            free_string_array(result, count);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(word, start, word_len);
+        word[word_len] = '\0';
+
+        if (count >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char **temp = realloc(result, new_capacity * sizeof(char *));
+            if (!temp) {
+                free(word);
+                free_string_array(result, count);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+            capacity = new_capacity;
+        }
+
+        result[count++] = word;
+        start = search + match_offset;
+        search = start + 1;
+    }
+
+    size_t last_len = strlen(start);
+    if (last_len > 0) {
+        char *word = malloc(last_len + 1);
+        if (!word) {
+            free_string_array(result, count);
+            regfree(&regex);
+            return NULL;
+        }
+        memcpy(word, start, last_len);
+        word[last_len] = '\0';
+
+        if (count >= capacity) {
+            size_t new_capacity = capacity + 1;
+            char **temp = realloc(result, new_capacity * sizeof(char *));
+            if (!temp) {
+                free(word);
+                free_string_array(result, count);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+            capacity = new_capacity;
+        }
+        result[count++] = word;
+    }
+
+    regfree(&regex);
+    *out_count = count;
+    return result;
+}
+
+int main(void) {
+    const char *input = "splitThisStringAtUppercaseLetters";
+    size_t count = 0;
+    char **result = split_at_uppercase(input, &count);
+
+    if (result) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_string_array(result, count);
+    }
+
+    return 0;
+}

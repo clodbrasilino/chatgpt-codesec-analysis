@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-20.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-20.c:19:9: warning: %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+    if (scanf("%llu", &num) != 1) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-20.c:24:9: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+        printf("%llu is a Woodall number.\n", num);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-20.c:26:9: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+        printf("%llu is not a Woodall number.\n", num);
+        ^

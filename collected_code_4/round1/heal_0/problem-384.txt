@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int find_freq_smallest(int arr[], int n){
+    int freq = 0, min = INT_MAX;
+    for(int i = 0; i < n; i++){
+        if(arr[i] < min){
+            min = arr[i];
+            freq = 1;
+        } else if (arr[i] == min) {
+            freq++;
+        }
+    }
+    return freq;
+}
+
+int main() {
+    int arr[] = {2, 5, 3, 2, 5, 3, 2, 5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int freq = find_freq_smallest(arr, n);
+
+    if(freq == 0)
+    {
+        printf("Array is empty");
+    }
+    else
+    {
+        printf("Frequency of the smallest integer is: %d", freq);
+    }
+    return 0;
+}
+
+``` 
+This program first initializes the smallest value to the maximum possible integer value using the INT_MAX macro. It then goes through the array, if it finds a value smaller than the current smallest value, it updates the smallest value and resets the count to 1. if the smallest value is found again in the array, it increments the count. In the end, it returns the count of the smallest value.

@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int contains(Node* head, int data) {
+    Node* current = head;
+    while (current) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+Node* subtractLists(Node* list1, Node* list2) {
+    Node* result = NULL;
+    Node* current = list1;
+    
+    while (current) {
+        if (!contains(list2, current->data)) {
+            appendNode(&result, current->data);
+        }
+        current = current->next;
+    }
+    
+    return result;
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* result = NULL;
+
+    appendNode(&list1, 1);
+    appendNode(&list1, 2);
+    appendNode(&list1, 3);
+    appendNode(&list1, 4);
+    appendNode(&list1, 5);
+
+    appendNode(&list2, 2);
+    appendNode(&list2, 4);
+
+    result = subtractLists(list1, list2);
+
+    printList(result);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}

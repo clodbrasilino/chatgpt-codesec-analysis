@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stddef.h>
+
+static int checked_add_i64(int64_t a, int64_t b, int64_t *result)
+{
+    if ((b > 0 && a > INT64_MAX - b) ||
+        (b < 0 && a < INT64_MIN - b)) {
+        return 0;
+    }
+
+    *result = a + b;
+    return 1;
+}
+
+static int checked_mul_nonnegative_i64(int64_t a, uint64_t b, int64_t *result)
+{
+    if (a < 0 || b > (uint64_t)INT64_MAX) {
+        return 0;
+    }
+
+    if (a != 0 && b > (uint64_t)INT64_MAX / (uint64_t)a) {
+        return 0;
+    }
+
+    *result = a * (int64_t)b;
+    return 1;
+}
+
+static int max_contiguous_sum_repeated(const int64_t *array,
+                                       size_t length,
+                                       uint64_t repetitions,
+                                       int64_t *result)
+{
+    int64_t total = 0;
+    int64_t prefix = 0;
+    int64_t max_prefix = array[0];
+    int64_t suffix = 0;
+    int64_t max_suffix = array[length - 1];
+    int64_t current = array[0];
+    int64_t best = array[0];
+
+    for (size_t i = 0; i < length; ++i) {
+        if (!checked_add_i64(total, array[i], &total) ||
+            !checked_add_i64(prefix, array[i], &prefix)) {
+            return 0;
+        }
+
+        if (prefix > max_prefix) {
+            max_prefix = prefix;
+        }
+
+        if (i > 0) {
+            if (current > 0) {
+                if (!checked_add_i64(current, array[i], &current)) {
+                    return 0;
+                }
+            } else {
+                current = array[i];
+            }
+
+            if (current > best) {
+                best = current;
+            }
+        }
+
+        if (!checked_add_i64(suffix, array[length - 1 - i], &suffix)) {
+            return 0;
+        }
+
+        if (suffix > max_suffix) {
+            max_suffix = suffix;
+        }
+    }
+
+    if (repetitions == 1) {
+        *result = best;
+        return 1;
+    }
+
+    int64_t combined;
+
+    if (!checked_add_i64(max_suffix, max_prefix, &combined)) {
+        return 0;
+    }
+
+    if (total > 0 && repetitions > 2) {
+        int64_t middle;
+
+        if (!checked_mul_nonnegative_i64(total, repetitions - 2, &middle) ||
+            !checked_add_i64(combined, middle, &combined)) {
+            return 0;
+        }
+    }
+
+    *result = combined > best ? combined : best;
+    return 1;
+}
+
+int main(void)
+{
+    size_t length;
+    uint64_t repetitions;
+
+    if (scanf("%zu %" SCNu64, &length, &repetitions) != 2 ||
+        length == 0 ||
+        repetitions == 0 ||
+        length > SIZE_MAX / sizeof(int64_t)) {
+        return EXIT_FAILURE;
+    }
+
+    int64_t *array = malloc(length * sizeof(*array));
+
+    if (array == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (scanf("%" SCNd64, &array[i]) != 1) {
+            free(array);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int64_t result;
+
+    if (!max_contiguous_sum_repeated(array, length, repetitions, &result)) {
+        free(array);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRId64 "\n", result) < 0) {
+        free(array);
+        return EXIT_FAILURE;
+    }
+
+    free(array);
+    return EXIT_SUCCESS;
+}

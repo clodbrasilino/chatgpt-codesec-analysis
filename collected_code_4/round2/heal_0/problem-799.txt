@@ -1,0 +1,19 @@
+```C
+#include<stdio.h>
+#include<stdlib.h>
+
+unsigned int leftRotate(unsigned int num, unsigned int rotation){
+    unsigned int BIT_SIZE = sizeof(num) * 8;
+    rotation = rotation % BIT_SIZE;
+    return (num << rotation) | (num >> (BIT_SIZE - rotation));
+}
+
+int main(){
+    unsigned int num = 12345;
+    unsigned int rot = 3;
+    unsigned int result = leftRotate(num, rot);
+    printf("Original number = %u \n", num);
+    printf("Number after left rotation = %u \n", result);
+    return 0;
+}
+```

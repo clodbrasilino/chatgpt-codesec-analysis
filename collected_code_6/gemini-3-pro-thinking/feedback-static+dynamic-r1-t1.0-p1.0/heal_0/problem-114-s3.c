@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    size_t frequency;
+} TupleFrequency;
+
+TupleFrequency* assign_frequencies(const Tuple* tuples, size_t input_length, size_t* output_length);
+
+TupleFrequency* assign_frequencies(const Tuple* tuples, size_t input_length, size_t* output_length) {
+    if (!tuples || !output_length || input_length == 0) {
+        if (output_length) {
+            *output_length = 0;
+        }
+        return NULL;
+    }
+
+    TupleFrequency* frequencies = (TupleFrequency*)malloc(input_length * sizeof(TupleFrequency));
+    if (!frequencies) {
+        *output_length = 0;
+        return NULL;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < input_length; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (frequencies[j].tuple.first == tuples[i].first &&
+                frequencies[j].tuple.second == tuples[i].second) {
+                frequencies[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            frequencies[unique_count].tuple = tuples[i];
+            frequencies[unique_count].frequency = 1;
+            unique_count++;
+        }
+    }
+
+    TupleFrequency* temp = (TupleFrequency*)realloc(frequencies, unique_count * sizeof(TupleFrequency));
+    if (temp) {
+        frequencies = temp;
+    }
+
+    *output_length = unique_count;
+    return frequencies;
+}
+
+int main(void) {
+    Tuple input_tuples[] = {
+        {1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {1, 2}
+    };
+    size_t input_length = sizeof(input_tuples) / sizeof(input_tuples[0]);
+    size_t output_length = 0;
+
+    TupleFrequency* result = assign_frequencies(input_tuples, input_length, &output_length);
+
+    if (!result && input_length > 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < output_length; ++i) {
+        printf("(%d, %d): %zu\n", result[i].tuple.first, result[i].tuple.second, result[i].frequency);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

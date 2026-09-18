@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+// Definition of the tuple
+typedef struct {
+    int record;
+} Tuple;
+
+// Function to find the maximum value
+int maxInRecordList(Tuple* tuples, int len) {
+    // Check if the list is not empty
+    if (len <= 0) {
+        printf("The list is empty!\n");
+        return -1;
+    }
+
+    // Initialize the maximum value
+    int max = tuples[0].record;
+
+    for (int i = 1; i < len; ++i) {
+        if (tuples[i].record > max) {
+            max = tuples[i].record;
+        }
+    }
+
+    return max;
+}
+
+int main() {
+    // Create an array of tuples
+    Tuple tuples[] = {{1}, {5}, {2}, {4}, {3}};
+    int len = sizeof(tuples) / sizeof(tuples[0]);
+
+    // Find and print the maximum number
+    int max = maxInRecordList(tuples, len);
+
+    if (max != -1) {
+        printf("The maximum value is: %d\n", max);
+    }
+
+    return 0;
+}

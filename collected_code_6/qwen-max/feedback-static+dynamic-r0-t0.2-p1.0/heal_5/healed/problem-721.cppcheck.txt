@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:17:34: style: Assignment 'right=-DBL_MAX' is redundant with condition 'right==-DBL_MAX'. [duplicateConditionalAssign]
+    if (right == -DBL_MAX) right = -DBL_MAX;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:17:15: note: Condition 'right==-DBL_MAX'
+    if (right == -DBL_MAX) right = -DBL_MAX;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:17:34: note: Assignment 'right=-DBL_MAX' is redundant
+    if (right == -DBL_MAX) right = -DBL_MAX;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:18:32: style: Assignment 'down=-DBL_MAX' is redundant with condition 'down==-DBL_MAX'. [duplicateConditionalAssign]
+    if (down == -DBL_MAX) down = -DBL_MAX;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:18:14: note: Condition 'down==-DBL_MAX'
+    if (down == -DBL_MAX) down = -DBL_MAX;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-721.c:18:32: note: Assignment 'down=-DBL_MAX' is redundant
+    if (down == -DBL_MAX) down = -DBL_MAX;
+                               ^

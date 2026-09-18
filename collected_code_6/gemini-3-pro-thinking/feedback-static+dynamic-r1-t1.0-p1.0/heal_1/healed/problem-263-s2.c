@@ -1,0 +1,197 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+typedef enum {
+    DICT_SUCCESS = 0,
+    DICT_ERROR_MEMORY = 1,
+    DICT_ERROR_NULL_ARG = 2
+} DictStatus;
+
+static char* duplicate_string(const char *src);
+DictStatus init_dictionary(Dictionary *dict, size_t initial_capacity);
+void free_dictionary(Dictionary *dict);
+DictStatus set_value(Dictionary *dict, const char *key, const char *value);
+DictStatus merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2, Dictionary *merged_out);
+
+static char* duplicate_string(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+
+    size_t len = strlen(src) + 1;
+    char *dest = malloc(len);
+    if (dest) {
+        memcpy(dest, src, len);
+    }
+    return dest;
+}
+
+DictStatus init_dictionary(Dictionary *dict, size_t initial_capacity) {
+    if (!dict) {
+        return DICT_ERROR_NULL_ARG;
+    }
+
+    dict->items = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+
+    if (initial_capacity > 0) {
+        dict->items = malloc(initial_capacity * sizeof(KeyValuePair));
+        if (!dict->items) {
+            return DICT_ERROR_MEMORY;
+        }
+        dict->capacity = initial_capacity;
+    }
+
+    return DICT_SUCCESS;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+
+    if (dict->items) {
+        for (size_t i = 0; i < dict->count; i++) {
+            free(dict->items[i].key);
+            free(dict->items[i].value);
+        }
+        free(dict->items);
+    }
+
+    dict->items = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+DictStatus set_value(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) {
+        return DICT_ERROR_NULL_ARG;
+    }
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strcmp(dict->items[i].key, key) == 0) {
+            char *new_value = duplicate_string(value);
+            if (!new_value) {
+                return DICT_ERROR_MEMORY;
+            }
+            free(dict->items[i].value);
+            dict->items[i].value = new_value;
+            return DICT_SUCCESS;
+        }
+    }
+
+    if (dict->count >= dict->capacity) {
+        size_t new_capacity = dict->capacity == 0 ? 8 : dict->capacity * 2;
+        KeyValuePair *new_items = realloc(dict->items, new_capacity * sizeof(KeyValuePair));
+        if (!new_items) {
+            return DICT_ERROR_MEMORY;
+        }
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+
+    char *new_key = duplicate_string(key);
+    if (!new_key) {
+        return DICT_ERROR_MEMORY;
+    }
+
+    char *new_value = duplicate_string(value);
+    if (!new_value) {
+        free(new_key);
+        return DICT_ERROR_MEMORY;
+    }
+
+    dict->items[dict->count].key = new_key;
+    dict->items[dict->count].value = new_value;
+    dict->count++;
+
+    return DICT_SUCCESS;
+}
+
+DictStatus merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2, Dictionary *merged_out) {
+    if (!dict1 || !dict2 || !merged_out) {
+        return DICT_ERROR_NULL_ARG;
+    }
+
+    DictStatus status = init_dictionary(merged_out, dict1->count + dict2->count);
+    if (status != DICT_SUCCESS) {
+        return status;
+    }
+
+    for (size_t i = 0; i < dict1->count; i++) {
+        status = set_value(merged_out, dict1->items[i].key, dict1->items[i].value);
+        if (status != DICT_SUCCESS) {
+            free_dictionary(merged_out);
+            return status;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->count; i++) {
+        status = set_value(merged_out, dict2->items[i].key, dict2->items[i].value);
+        if (status != DICT_SUCCESS) {
+            free_dictionary(merged_out);
+            return status;
+        }
+    }
+
+    return DICT_SUCCESS;
+}
+
+int main(void) {
+    Dictionary dict1;
+    Dictionary dict2;
+    Dictionary merged;
+
+    DictStatus status = init_dictionary(&dict1, 0);
+    if (status != DICT_SUCCESS) {
+        return EXIT_FAILURE;
+    }
+
+    status = init_dictionary(&dict2, 0);
+    if (status != DICT_SUCCESS) {
+        free_dictionary(&dict1);
+        return EXIT_FAILURE;
+    }
+
+    if (set_value(&dict1, "host", "127.0.0.1") != DICT_SUCCESS ||
+        set_value(&dict1, "port", "8080") != DICT_SUCCESS ||
+        set_value(&dict1, "protocol", "http") != DICT_SUCCESS ||
+        set_value(&dict2, "port", "443") != DICT_SUCCESS ||
+        set_value(&dict2, "protocol", "https") != DICT_SUCCESS ||
+        set_value(&dict2, "timeout", "30") != DICT_SUCCESS) {
+        
+        free_dictionary(&dict1);
+        free_dictionary(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    status = merge_dictionaries(&dict1, &dict2, &merged);
+    if (status != DICT_SUCCESS) {
+        free_dictionary(&dict1);
+        free_dictionary(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < merged.count; i++) {
+        printf("%s: %s\n", merged.items[i].key, merged.items[i].value);
+    }
+
+    free_dictionary(&dict1);
+    free_dictionary(&dict2);
+    free_dictionary(&merged);
+
+    return EXIT_SUCCESS;
+}

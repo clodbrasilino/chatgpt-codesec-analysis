@@ -1,0 +1,34 @@
+Here is an example code:
+
+```C
+#include <stdio.h>
+
+long long findTriangles(long long n) {
+    if(n < 0) {
+        printf("Input can't be negative.\n");
+        return -1;
+    }
+
+    long long sum = 0;
+
+    while(n > 0) {
+        sum = sum + (n * (n+1) / 2);
+        n--;
+    }
+    return sum;
+}
+
+int main() {
+    long long n;
+    printf("Enter the side length of the equilateral triangle: ");
+    scanf("%lld", &n);
+    long long result = findTriangles(n);
+    if(result != -1) {
+        printf("Maximum number of triangles: %lld\n", result);
+    }
+
+    return 0;
+}
+```
+
+This program accepts the side length of an equilateral triangle and then calculates the maximum number of smaller equilateral triangles that it can contain. The function `findTriangles` computes the sum of the series (n * (n + 1) / 2) where 'n' decreases by 1 till it reaches 0. The Exceptional Condition of the negative input is dealt with using an `if` condition, and the invalid result -1 isn't printed.

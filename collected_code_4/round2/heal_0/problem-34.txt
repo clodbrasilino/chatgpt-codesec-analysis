@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+
+int findMissingNumber(int array[], int n) {
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        if (array[middle] != middle) {
+            if (middle == 0 || array[middle - 1] == middle - 1)
+                return middle;
+            right = middle - 1;
+        } else {
+            left = middle + 1;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int array[] = {0, 1, 2, 3, 4, 6, 7, 8, 9};
+    int size = sizeof(array)/sizeof(array[0]);
+    int missingNumber = findMissingNumber(array, size);
+    if (missingNumber != -1) {
+        printf("Missing number is %d\n", missingNumber);
+    } else {
+        printf("No missing number\n");
+    }
+    return 0;
+}
+```
+The function `findMissingNumber` find the missing number in a sorted array by using binary search. The basic idea is to check the middle element of the array. If the middle element is not at the middle index, then missing number will be at the left side of the array else the missing number will be at the right side.

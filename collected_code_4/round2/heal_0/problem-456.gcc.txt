@@ -1,0 +1,211 @@
+./collected_code_4/round2//heal_0/problem-456.c: In function 'reverseString':
+./collected_code_4/round2//heal_0/problem-456.c:12:20: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   12 |         str[start] = str[end];
+      |         ~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     reverseStrings(stringlist, count);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-6
+           |
+           |   19 | void reverseStrings(char** strList, int count) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |   20 |     for(int i = 0; i < count; i++) {
+           |      |                    ~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < count')...
+           |   21 |         reverseString(strList[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                    |
+           |      |         |                    (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStrings'
+           |
+           +--> 'reverseString': events 7-10
+                  |
+                  |    5 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |......
+                  |   10 |     while(start < end) {
+                  |      |           ~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (8) following 'true' branch (when 'start < end')...
+                  |   11 |         temp = str[start];
+                  |      |                   ~
+                  |      |                   |
+                  |      |                   (9) ...to here
+                  |   12 |         str[start] = str[end];
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (10) write to string literal here
+                  |
+./collected_code_4/round2//heal_0/problem-456.c:12:20: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   12 |         str[start] = str[end];
+      |         ~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     reverseStrings(stringlist, count);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-6
+           |
+           |   19 | void reverseStrings(char** strList, int count) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |   20 |     for(int i = 0; i < count; i++) {
+           |      |                    ~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < count')...
+           |   21 |         reverseString(strList[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                    |
+           |      |         |                    (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStrings'
+           |
+           +--> 'reverseString': events 7-12
+                  |
+                  |    5 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |......
+                  |   10 |     while(start < end) {
+                  |      |           ~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (8) following 'true' branch (when 'start < end')...
+                  |      |                 (10) following 'true' branch (when 'start < end')...
+                  |   11 |         temp = str[start];
+                  |      |                   ~
+                  |      |                   |
+                  |      |                   (9) ...to here
+                  |      |                   (11) ...to here
+                  |   12 |         str[start] = str[end];
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (12) write to string literal here
+                  |
+./collected_code_4/round2//heal_0/problem-456.c:13:18: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   13 |         str[end] = temp;
+      |         ~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     reverseStrings(stringlist, count);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-6
+           |
+           |   19 | void reverseStrings(char** strList, int count) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |   20 |     for(int i = 0; i < count; i++) {
+           |      |                    ~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < count')...
+           |   21 |         reverseString(strList[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                    |
+           |      |         |                    (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStrings'
+           |
+           +--> 'reverseString': events 7-10
+                  |
+                  |    5 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |......
+                  |   10 |     while(start < end) {
+                  |      |           ~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (8) following 'true' branch (when 'start < end')...
+                  |   11 |         temp = str[start];
+                  |      |                   ~
+                  |      |                   |
+                  |      |                   (9) ...to here
+                  |   12 |         str[start] = str[end];
+                  |   13 |         str[end] = temp;
+                  |      |         ~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (10) write to string literal here
+                  |
+./collected_code_4/round2//heal_0/problem-456.c:13:18: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   13 |         str[end] = temp;
+      |         ~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   29 |     reverseStrings(stringlist, count);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-6
+           |
+           |   19 | void reverseStrings(char** strList, int count) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |   20 |     for(int i = 0; i < count; i++) {
+           |      |                    ~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < count')...
+           |   21 |         reverseString(strList[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                    |
+           |      |         |                    (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStrings'
+           |
+           +--> 'reverseString': events 7-12
+                  |
+                  |    5 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |......
+                  |   10 |     while(start < end) {
+                  |      |           ~~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (8) following 'true' branch (when 'start < end')...
+                  |      |                 (10) following 'true' branch (when 'start < end')...
+                  |   11 |         temp = str[start];
+                  |      |                   ~
+                  |      |                   |
+                  |      |                   (9) ...to here
+                  |      |                   (11) ...to here
+                  |   12 |         str[start] = str[end];
+                  |   13 |         str[end] = temp;
+                  |      |         ~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (12) write to string literal here
+                  |

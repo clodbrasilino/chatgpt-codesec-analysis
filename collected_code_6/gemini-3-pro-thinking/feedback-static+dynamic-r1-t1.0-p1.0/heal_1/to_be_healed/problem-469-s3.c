@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int max_profit_infinite(const int* prices, int n) {
+    int profit = 0;
+    for (int i = 1; i < n; ++i) {
+        if (prices[i] > prices[i - 1]) {
+            profit += prices[i] - prices[i - 1];
+        }
+    }
+    return profit;
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 7, got 0
+  *  test case 0 failed: expected 10, got 5
+  *  test case 2 failed: expected 2, got 0
+  */
+
+int max_profit(int k, const int* prices, int n) {
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        return max_profit_infinite(prices, n);
+    }
+
+    int* profit = (int*)calloc(n, sizeof(int));
+    if (profit == NULL) {
+        return 0; 
+    }
+
+    for (int t = 1; t <= k; ++t) {
+        int max_diff = -prices[0];
+        for (int i = 1; i < n; ++i) {
+            int prev_profit = profit[i];
+            profit[i] = max(profit[i - 1], prices[i] + max_diff);
+            max_diff = max(max_diff, prev_profit - prices[i]);
+        }
+    }
+
+    int result = profit[n - 1];
+    free(profit);
+    return result;
+}
+
+int main(void) {
+    int prices[] = {3, 2, 6, 5, 0, 3};
+    int n = sizeof(prices) / sizeof(prices[0]);
+    int k = 2;
+
+    int profit = max_profit(k, prices, n);
+    printf("%d\n", profit);
+
+    return 0;
+}

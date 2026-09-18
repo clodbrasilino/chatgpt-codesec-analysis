@@ -1,0 +1,39 @@
+collected_code_5/round1/heal_0/problem-591.c:5:5: error: must use 'struct' tag to refer to type 'Node'
+    5 |     Node* next;
+      |     ^
+      |     struct 
+collected_code_5/round1/heal_0/problem-591.c:8:11: error: must use 'struct' tag to refer to type 'Node'
+    8 | void swap(Node **head_ref)
+      |           ^
+      |           struct 
+collected_code_5/round1/heal_0/problem-591.c:13:5: error: must use 'struct' tag to refer to type 'Node'
+   13 |     Node* first = *head_ref;
+      |     ^
+      |     struct 
+collected_code_5/round1/heal_0/problem-591.c:14:5: error: must use 'struct' tag to refer to type 'Node'
+   14 |     Node* last = *head_ref;
+      |     ^
+      |     struct 
+collected_code_5/round1/heal_0/problem-591.c:15:5: error: must use 'struct' tag to refer to type 'Node'
+   15 |     Node* prev = NULL;
+      |     ^
+      |     struct 
+collected_code_5/round1/heal_0/problem-591.c:28:11: error: must use 'struct' tag to refer to type 'Node'
+   28 | void push(Node** head_ref, int new_data)
+      |           ^
+      |           struct 
+collected_code_5/round1/heal_0/problem-591.c:30:5: error: must use 'struct' tag to refer to type 'Node'
+   30 |     Node* new_node = (Node*)malloc(sizeof(Node));
+      |     ^
+      |     struct 
+collected_code_5/round1/heal_0/problem-591.c:30:28: error: expected expression
+   30 |     Node* new_node = (Node*)malloc(sizeof(Node));
+      |                            ^
+collected_code_5/round1/heal_0/problem-591.c:30:23: error: use of undeclared identifier 'Node'
+   30 |     Node* new_node = (Node*)malloc(sizeof(Node));
+      |                       ^
+collected_code_5/round1/heal_0/problem-591.c:48:5: error: must use 'struct' tag to refer to type 'Node'
+   48 |     Node* start = NULL; 
+      |     ^
+      |     struct 
+10 errors generated.

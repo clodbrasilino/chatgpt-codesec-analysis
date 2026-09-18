@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int maxElement(int arr[], int low, int high) {
+   if (high < low)
+      return arr[0];
+   
+   if (high == low)
+      return arr[low];
+
+   int mid = low + (high - low) / 2;
+
+   if (mid < high && arr[mid + 1] < arr[mid])
+      return arr[mid];
+   
+   if (mid > low && arr[mid] < arr[mid - 1])
+      return arr[mid - 1];
+   
+   if (arr[high] > arr[mid])
+      return maxElement(arr, mid + 1, high);
+      
+   return maxElement(arr, low, mid - 1);
+}
+
+int main() {
+   int arr[] = {11, 15, 3, 5, 7, 9};
+   int n = sizeof(arr) / sizeof(arr[0]);
+   printf("The maximum element is %d\n", maxElement(arr, 0, n - 1));
+   return 0;
+}

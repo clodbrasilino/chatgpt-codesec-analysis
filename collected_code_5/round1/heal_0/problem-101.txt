@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int findKthElement(int* arr, int size, int k) {
+    if (arr == NULL || size <= 0 || k < 0 || k >= size) {
+        printf("Invalid input\n");
+        exit(EXIT_FAILURE);
+    }
+    return arr[k];
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+
+    printf("The kth element is %d\n", findKthElement(arr, size, k));
+    return 0;
+}
+```
+In the function findKthElement, it checks that the array pointer is not NULL, the size is greater than 0, and that k is within the array bounds. Any invalid input will cause a failure message to be printed and the program to exit with an error status. This ensures that the function will not try to access a nonexistent array element. The arr[k] operation retrieves the kth element of the array, which is then returned by the function. In the main function, an integer array is declared and its size is determined using the sizeof operator. The k value is also set. Then, the function findKthElement is called with the array, its size, and the k value, and its return value is printed as the kth element.

@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int can_be_difference_of_squares(long long n);
+
+int can_be_difference_of_squares(long long n)
+{
+    long long remainder;
+
+    remainder = n % 4;
+
+    if (remainder < 0) {
+        remainder += 4;
+    }
+
+    if (remainder == 2) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    long long number;
+    int scan_result;
+
+    printf("Enter an integer: ");
+
+    scan_result = scanf("%lld", &number);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (can_be_difference_of_squares(number) == 1) {
+        printf("%lld can be represented as a difference of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as a difference of two squares.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key fix: the original code negated `n` when negative, which invokes undefined behavior for `LLONG_MIN` (`-9223372036854775808`), since its positive counterpart cannot be represented in `long long`. The rewrite eliminates the negation entirely by taking the remainder directly and normalizing a negative remainder into the range `[0, 3]` by adding 4. This preserves the mathematical property being tested (a number is a difference of two squares iff it is not congruent to 2 mod 4) while remaining well-defined for all `long long` inputs, including `LLONG_MIN`.

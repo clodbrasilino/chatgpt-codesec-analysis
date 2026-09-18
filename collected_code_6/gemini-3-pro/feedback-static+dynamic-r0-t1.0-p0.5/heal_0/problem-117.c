@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    float* array;
+    size_t size;
+    size_t capacity;
+} FloatList;
+
+FloatList* create_float_list(size_t initial_capacity) {
+    FloatList* list = (FloatList*)malloc(sizeof(FloatList));
+    if (!list) {
+        return NULL;
+    }
+    list->array = (float*)malloc(initial_capacity * sizeof(float));
+    if (!list->array) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void free_float_list(FloatList* list) {
+    if (list) {
+        free(list->array);
+        free(list);
+    }
+}
+
+int add_to_float_list(FloatList* list, float value) {
+    if (!list) {
+        return 0;
+    }
+    if (list->size >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        float* new_array = (float*)realloc(list->array, new_capacity * sizeof(float));
+        if (!new_array) {
+            return 0;
+        }
+        list->array = new_array;
+        list->capacity = new_capacity;
+    }
+    list->array[list->size++] = value;
+    return 1;
+}
+
+FloatList* convert_to_floats(const char** strings, size_t count) {
+    if (!strings) {
+        return NULL;
+    }
+
+    FloatList* list = create_float_list(count > 0 ? count : 1);
+    if (!list) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (!strings[i]) {
+            continue;
+        }
+
+        char* endptr;
+        float val = strtof(strings[i], &endptr);
+
+        if (endptr != strings[i] && *endptr == '\0') {
+            if (!add_to_float_list(list, val)) {
+                free_float_list(list);
+                return NULL;
+            }
+        }
+    }
+
+    return list;
+}
+
+int main(void) {
+    const char* input_strings[] = {
+        "3.14",
+        "not_a_float",
+        "-42.5",
+        "100",
+        NULL,
+        "0.001",
+        "invalid123"
+    };
+    size_t count = sizeof(input_strings) / sizeof(input_strings[0]);
+
+    FloatList* floats = convert_to_floats(input_strings, count);
+
+    if (floats) {
+        for (size_t i = 0; i < floats->size; ++i) {
+            printf("%f\n", floats->array[i]);
+        }
+        free_float_list(floats);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

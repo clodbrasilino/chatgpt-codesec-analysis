@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct tuple {
+    char *first;
+    char *second;
+} Tuple;
+
+Tuple* str_to_tuple(char *str) {
+    Tuple* result = (Tuple *) malloc(sizeof(Tuple));
+    if(result == NULL) {
+        printf("Memory not allocated.\n");
+        return NULL;
+    }
+
+    char *token = strtok(str, " ");
+    if(token) {
+        result->first = strdup(token);
+        token = strtok(NULL, " ");
+        if(token) {
+            result->second = strdup(token);
+        } 
+        else {
+            free(result->first);
+            free(result);
+            printf("Invalid string format.\n");
+            return NULL;
+        }
+    } 
+    else {
+        free(result);
+        printf("Invalid string format.\n");
+        return NULL;
+    }
+    return result;
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    scanf("%[^\n]", str);
+
+    Tuple *tup = str_to_tuple(str);
+    if(tup) {
+        printf("Tuple: (%s, %s)\n", tup->first, tup->second); 
+        free(tup->first);
+        free(tup->second);
+        free(tup);
+    }
+    
+    return 0;
+}

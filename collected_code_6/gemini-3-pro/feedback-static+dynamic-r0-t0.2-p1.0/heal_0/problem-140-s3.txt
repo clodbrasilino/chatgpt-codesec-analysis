@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+typedef struct {
+    int *elements;
+    size_t size;
+    size_t capacity;
+} IntList;
+
+IntList* create_int_list(size_t initial_capacity) {
+    IntList *list = (IntList*)malloc(sizeof(IntList));
+    if (!list) return NULL;
+    
+    list->elements = (int*)malloc(initial_capacity * sizeof(int));
+    if (!list->elements) {
+        free(list);
+        return NULL;
+    }
+    
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void add_to_int_list(IntList *list, int value) {
+    if (!list) return;
+    
+    if (list->size >= list->capacity) {
+        size_t new_capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+        int *new_elements = (int*)realloc(list->elements, new_capacity * sizeof(int));
+        if (!new_elements) return;
+        
+        list->elements = new_elements;
+        list->capacity = new_capacity;
+    }
+    
+    list->elements[list->size++] = value;
+}
+
+void free_int_list(IntList *list) {
+    if (list) {
+        free(list->elements);
+        free(list);
+    }
+}
+
+IntList* extract_single_elements(const TupleList *tuple_list) {
+    if (!tuple_list) return NULL;
+    
+    IntList *single_elements = create_int_list(10);
+    if (!single_elements) return NULL;
+    
+    for (size_t i = 0; i < tuple_list->size; i++) {
+        if (tuple_list->tuples[i].size == 1) {
+            add_to_int_list(single_elements, tuple_list->tuples[i].elements[0]);
+        }
+    }
+    
+    return single_elements;
+}
+
+int main(void) {
+    int t1_data[] = {1, 2};
+    int t2_data[] = {3};
+    int t3_data[] = {4, 5, 6};
+    int t4_data[] = {7};
+    
+    Tuple tuples[] = {
+        {t1_data, 2},
+        {t2_data, 1},
+        {t3_data, 3},
+        {t4_data, 1}
+    };
+    
+    TupleList tuple_list = {tuples, 4};
+    
+    IntList *singles = extract_single_elements(&tuple_list);
+    
+    if (singles) {
+        for (size_t i = 0; i < singles->size; i++) {
+            printf("%d\n", singles->elements[i]);
+        }
+        free_int_list(singles);
+    }
+    
+    return 0;
+}
+```

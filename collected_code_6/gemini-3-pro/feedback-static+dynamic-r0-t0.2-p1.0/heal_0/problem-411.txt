@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int reti = regcomp(&regex, "_[a-z]", REG_EXTENDED);
+    if (reti) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_str);
+    char* camel_str = (char*)malloc(len + 1);
+    if (camel_str == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    regmatch_t pmatch[1];
+    const char* cursor = snake_str;
+    char* dest = camel_str;
+
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        size_t match_start = pmatch[0].rm_so;
+        size_t match_end = pmatch[0].rm_eo;
+
+        memcpy(dest, cursor, match_start);
+        dest += match_start;
+
+        *dest = toupper((unsigned char)cursor[match_start + 1]);
+        dest++;
+
+        cursor += match_end;
+    }
+
+    strcpy(dest, cursor);
+    regfree(&regex);
+
+    return camel_str;
+}
+
+int main(void) {
+    const char* snake = "this_is_a_snake_case_string";
+    char* camel = snake_to_camel(snake);
+
+    if (camel != NULL) {
+        printf("%s\n", camel);
+        free(camel);
+    } else {
+        fprintf(stderr, "Conversion failed.\n");
+    }
+
+    return 0;
+}
+```

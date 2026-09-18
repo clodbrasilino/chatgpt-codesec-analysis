@@ -1,0 +1,31 @@
+Here is a simple C function to find the Demlo number for a given number:
+
+```C
+#include <stdio.h>
+#include <math.h>
+
+int demlo(int num) {
+    int demlo_num;
+    if (num > 0 && num <= 9){
+        demlo_num = pow(((pow(10, num)) - 1) / 9, 2);
+    } else {
+        printf("The input is out of bounds\n");
+        return -1;
+    }
+    return demlo_num;
+}
+
+int main() {
+    int input_number;
+    printf("Enter a number between 1 and 9: ");
+    scanf("%d", &input_number);
+    int result = demlo(input_number);
+    if(result != -1){
+        printf("Demlo number for input number %d is: %d\n", input_number, result);
+    }
+    return 0;
+}
+```
+In the above code, the `demlo` function takes an integer input and calculates the Demlo number for that integer. This function first checks if the input is between 1 and 9 (inclusive). If this condition is true, then it computes the Demlo number using the formula: `((10^n - 1) / 9)^2`. If the input is out of this range, the function gives the user an error message about the restriction on the input and then returns -1 from the function.
+
+Then `main` function waits for user input, calls the `demlo` function with the entered number, and prints out the Demlo number to the terminal. Before displaying the result, it checks if the return value from `demlo` function is -1. If it is -1, `main` function decides not to display the result and just ends the program execution.

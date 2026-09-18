@@ -983,7 +983,7 @@
     "top_p": 1.0,
     "max_rounds": 10,
     "samples": 3,
-    "fuzz": false,
+    "fuzz": true,
     "root": "collected_code_6",
     "gen_source": "feedback-static-r0-t1.0-p1.0",
     "gen_source_reports": true
@@ -991,6 +991,10 @@
   "model_id": "deepseek-v4-pro",
   "reasoning": false,
   "outcomes": {
+    "problem-1-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-10": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1020,6 +1024,10 @@
       "outcome": "clean"
     },
     "problem-106": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-107": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1083,11 +1091,7 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-126-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-129": {
+    "problem-129-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1159,6 +1163,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-148-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-149": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1199,6 +1207,18 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-160-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-160-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-162-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-166": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1220,6 +1240,10 @@
       "outcome": "clean"
     },
     "problem-169": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-169-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1247,6 +1271,22 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-177-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-177-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-179-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-179-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-184": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1256,6 +1296,10 @@
       "outcome": "clean"
     },
     "problem-186": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-189-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1307,6 +1351,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-20-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-200-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1340,6 +1388,10 @@
       "outcome": "clean"
     },
     "problem-211-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-212-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1392,6 +1444,18 @@
       "outcome": "clean"
     },
     "problem-237-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-239-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-239-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-24-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1459,6 +1523,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-260": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-260-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1479,7 +1547,31 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-264": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-264-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-265-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-267": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-267-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-267-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-268": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1499,11 +1591,19 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-271": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-271-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-274-s3": {
+    "problem-271-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-274-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1516,6 +1616,14 @@
       "outcome": "clean"
     },
     "problem-278-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-28": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-28-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1551,6 +1659,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-287-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-288": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1583,6 +1695,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-291": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-291-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1608,10 +1724,6 @@
       "outcome": "clean"
     },
     "problem-3-s2": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-300": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1695,6 +1807,18 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-320": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-320-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-321": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-322-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -1724,6 +1848,10 @@
       "outcome": "clean"
     },
     "problem-333-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-335-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1767,7 +1895,19 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-344-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-345": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-347": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-347-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1799,7 +1939,15 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-36": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-360-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-360-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -1931,10 +2079,6 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-402-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
     "problem-403": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2011,7 +2155,15 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-420-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-421": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-422-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2091,7 +2243,7 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-453": {
+    "problem-453-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2191,6 +2343,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-483-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-484": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2247,6 +2403,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-5": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-50": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2263,6 +2423,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-504-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-506": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2271,11 +2435,23 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-506-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-508": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
     "problem-508-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-509-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-509-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2339,6 +2515,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-518": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-520-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2376,10 +2556,6 @@
       "outcome": "clean"
     },
     "problem-527-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-529": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2431,6 +2607,22 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-541": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-541-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-543": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-543-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-546": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2448,6 +2640,10 @@
       "outcome": "clean"
     },
     "problem-548-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-549-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2472,6 +2668,10 @@
       "outcome": "clean"
     },
     "problem-554-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-555-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2563,10 +2763,6 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-575": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
     "problem-576": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2595,6 +2791,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-589": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-59-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2616,10 +2816,6 @@
       "outcome": "clean"
     },
     "problem-594-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-598": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2671,6 +2867,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-617-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-618": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2688,6 +2888,10 @@
       "outcome": "clean"
     },
     "problem-620-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-622-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2751,11 +2955,27 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-634-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-637": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-641": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-642-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-646": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-646-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2831,6 +3051,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-663-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-664": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -2884,6 +3108,10 @@
       "outcome": "clean"
     },
     "problem-685": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-685-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -2975,15 +3203,15 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-706": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-706-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
     "problem-706-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-707": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3008,6 +3236,10 @@
       "outcome": "clean"
     },
     "problem-711-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-711-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3112,6 +3344,10 @@
       "outcome": "clean"
     },
     "problem-736-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-738": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3263,10 +3499,6 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-78-s3": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
     "problem-780": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -3340,6 +3572,10 @@
       "outcome": "clean"
     },
     "problem-795-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-797": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3463,6 +3699,10 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-834-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-836": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -3527,10 +3767,6 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-853-s2": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
     "problem-853-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -3591,11 +3827,19 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-873": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-875-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
     "problem-876": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-876-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3699,7 +3943,15 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-901": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-901-s2": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-901-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3791,7 +4043,7 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-926": {
+    "problem-926-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3812,6 +4064,14 @@
       "outcome": "clean"
     },
     "problem-934": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-935": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-935-s2": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
@@ -3867,6 +4127,14 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-955": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
+    "problem-955-s3": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-956": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -3891,10 +4159,6 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
-    "problem-968-s2": {
-      "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
     "problem-969": {
       "rounds_to_clean": 1,
       "outcome": "clean"
@@ -3907,16 +4171,16 @@
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
+    "problem-971": {
+      "rounds_to_clean": 1,
+      "outcome": "clean"
+    },
     "problem-974-s3": {
       "rounds_to_clean": 1,
       "outcome": "clean"
     },
     "problem-98-s2": {
       "rounds_to_clean": 1,
-      "outcome": "clean"
-    },
-    "problem-103": {
-      "rounds_to_clean": 2,
       "outcome": "clean"
     },
     "problem-104": {
@@ -3928,6 +4192,14 @@
       "outcome": "clean"
     },
     "problem-107-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-109": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-126-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -3944,6 +4216,10 @@
       "outcome": "clean"
     },
     "problem-148-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-150": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -3964,6 +4240,14 @@
       "outcome": "clean"
     },
     "problem-159": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-160": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-162": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4015,6 +4299,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-24": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-249": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4024,6 +4312,10 @@
       "outcome": "clean"
     },
     "problem-253-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-260-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4039,11 +4331,19 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-274-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-275-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
     "problem-281-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-300": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4059,6 +4359,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-318-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-34-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4071,6 +4375,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-347-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-348": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4080,6 +4388,22 @@
       "outcome": "clean"
     },
     "problem-353": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-354": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-354-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-355-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-355-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4143,6 +4467,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-402-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-408": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4167,10 +4495,6 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
-    "problem-416": {
-      "rounds_to_clean": 2,
-      "outcome": "clean"
-    },
     "problem-425-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4191,6 +4515,14 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-448": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-453": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-46-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4200,6 +4532,10 @@
       "outcome": "clean"
     },
     "problem-460-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-463": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4227,6 +4563,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-504": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-514-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4243,6 +4583,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-529": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-535-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4255,11 +4599,19 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-56": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-564-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
     "problem-569": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-575": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4271,7 +4623,19 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-589-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-592-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-595-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-598-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4291,6 +4655,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-646-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-653-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4300,10 +4668,6 @@
       "outcome": "clean"
     },
     "problem-656-s3": {
-      "rounds_to_clean": 2,
-      "outcome": "clean"
-    },
-    "problem-67-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4367,7 +4731,15 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-76-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-775-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-78-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4380,6 +4752,10 @@
       "outcome": "clean"
     },
     "problem-792-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-8-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4396,6 +4772,18 @@
       "outcome": "clean"
     },
     "problem-825": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-845": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-845-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-853": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4427,6 +4815,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-905-s3": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-908-s3": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4439,11 +4831,19 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-912-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-914-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
     "problem-917-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-926": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4463,6 +4863,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-960": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
     "problem-966-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
@@ -4472,6 +4876,10 @@
       "outcome": "clean"
     },
     "problem-97-s2": {
+      "rounds_to_clean": 2,
+      "outcome": "clean"
+    },
+    "problem-971-s2": {
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
@@ -4487,6 +4895,10 @@
       "rounds_to_clean": 2,
       "outcome": "clean"
     },
+    "problem-103": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
     "problem-13-s2": {
       "rounds_to_clean": 3,
       "outcome": "clean"
@@ -4499,15 +4911,23 @@
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
-    "problem-311-s2": {
-      "rounds_to_clean": 3,
-      "outcome": "clean"
-    },
-    "problem-311-s3": {
-      "rounds_to_clean": 3,
-      "outcome": "clean"
-    },
     "problem-32-s2": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-335": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-354-s2": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-416": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-5-s2": {
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
@@ -4519,11 +4939,15 @@
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
-    "problem-762-s3": {
+    "problem-67-s2": {
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
-    "problem-903-s3": {
+    "problem-76": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-762-s3": {
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
@@ -4531,7 +4955,19 @@
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
+    "problem-931": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-962": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
     "problem-964-s2": {
+      "rounds_to_clean": 3,
+      "outcome": "clean"
+    },
+    "problem-968-s2": {
       "rounds_to_clean": 3,
       "outcome": "clean"
     },
@@ -4540,6 +4976,18 @@
       "outcome": "clean"
     },
     "problem-110-s3": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
+    "problem-199": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
+    "problem-236-s2": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
+    "problem-334-s3": {
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
@@ -4559,6 +5007,10 @@
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
+    "problem-5-s3": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
     "problem-563": {
       "rounds_to_clean": 4,
       "outcome": "clean"
@@ -4571,11 +5023,23 @@
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
+    "problem-598": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
     "problem-611-s2": {
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
     "problem-682-s2": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
+    "problem-707": {
+      "rounds_to_clean": 4,
+      "outcome": "clean"
+    },
+    "problem-707-s3": {
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
@@ -4587,11 +5051,11 @@
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
-    "problem-952-s2": {
+    "problem-907": {
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
-    "problem-952-s3": {
+    "problem-912-s3": {
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
@@ -4599,11 +5063,19 @@
       "rounds_to_clean": 4,
       "outcome": "clean"
     },
+    "problem-129": {
+      "rounds_to_clean": 5,
+      "outcome": "clean"
+    },
     "problem-417": {
       "rounds_to_clean": 5,
       "outcome": "clean"
     },
     "problem-432": {
+      "rounds_to_clean": 5,
+      "outcome": "clean"
+    },
+    "problem-549-s2": {
       "rounds_to_clean": 5,
       "outcome": "clean"
     },
@@ -4624,6 +5096,10 @@
       "outcome": "clean"
     },
     "problem-707-s2": {
+      "rounds_to_clean": 5,
+      "outcome": "clean"
+    },
+    "problem-797-s3": {
       "rounds_to_clean": 5,
       "outcome": "clean"
     },
@@ -4648,6 +5124,10 @@
       "outcome": "clean"
     },
     "problem-165": {
+      "rounds_to_clean": 6,
+      "outcome": "clean"
+    },
+    "problem-335-s3": {
       "rounds_to_clean": 6,
       "outcome": "clean"
     },
@@ -4679,6 +5159,10 @@
       "rounds_to_clean": 6,
       "outcome": "clean"
     },
+    "problem-746-s2": {
+      "rounds_to_clean": 6,
+      "outcome": "clean"
+    },
     "problem-802": {
       "rounds_to_clean": 6,
       "outcome": "clean"
@@ -4687,7 +5171,15 @@
       "rounds_to_clean": 7,
       "outcome": "clean"
     },
-    "problem-469-s3": {
+    "problem-248-s2": {
+      "rounds_to_clean": 7,
+      "outcome": "clean"
+    },
+    "problem-375-s3": {
+      "rounds_to_clean": 7,
+      "outcome": "clean"
+    },
+    "problem-903-s3": {
       "rounds_to_clean": 7,
       "outcome": "clean"
     },
@@ -4703,6 +5195,14 @@
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
+    "problem-555-s2": {
+      "rounds_to_clean": 8,
+      "outcome": "clean"
+    },
+    "problem-608-s3": {
+      "rounds_to_clean": 8,
+      "outcome": "clean"
+    },
     "problem-704-s2": {
       "rounds_to_clean": 8,
       "outcome": "clean"
@@ -4711,11 +5211,19 @@
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
+    "problem-907-s3": {
+      "rounds_to_clean": 8,
+      "outcome": "clean"
+    },
     "problem-933": {
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
     "problem-936-s2": {
+      "rounds_to_clean": 8,
+      "outcome": "clean"
+    },
+    "problem-962-s3": {
       "rounds_to_clean": 8,
       "outcome": "clean"
     },
@@ -4744,10 +5252,6 @@
       "outcome": "clean_at_start"
     },
     "problem-1-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-1-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -4795,19 +5299,11 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-107": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-108-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
     "problem-108-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-109": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -4940,8 +5436,8 @@
       "outcome": "not_cleaned"
     },
     "problem-122-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-123": {
       "rounds_to_clean": 0,
@@ -5004,10 +5500,6 @@
       "outcome": "clean_at_start"
     },
     "problem-128-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-129-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5076,8 +5568,8 @@
       "outcome": "clean_at_start"
     },
     "problem-138": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-138-s2": {
       "rounds_to_clean": 0,
@@ -5171,10 +5663,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-148-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-15": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5184,10 +5672,6 @@
       "outcome": "clean_at_start"
     },
     "problem-15-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-150": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5271,18 +5755,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-160": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-160-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-160-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-161": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5292,14 +5764,6 @@
       "outcome": "clean_at_start"
     },
     "problem-161-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-162": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-162-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5344,10 +5808,6 @@
       "outcome": "clean_at_start"
     },
     "problem-168-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-169-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5431,14 +5891,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-177-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-177-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-178": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5448,14 +5900,6 @@
       "outcome": "clean_at_start"
     },
     "problem-178-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-179-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-179-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5571,10 +6015,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-189-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-189-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5639,10 +6079,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-199": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-199-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5652,14 +6088,10 @@
       "outcome": "clean_at_start"
     },
     "problem-2-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-20": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-20-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -5783,10 +6215,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-212-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-212-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -5836,16 +6264,16 @@
       "outcome": "clean_at_start"
     },
     "problem-218": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-218-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
     "problem-218-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-219-s2": {
       "rounds_to_clean": 0,
@@ -6023,10 +6451,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-236-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-236-s3": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -6048,22 +6472,6 @@
       "outcome": "clean_at_start"
     },
     "problem-239": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-239-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-239-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-24": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-24-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -6155,10 +6563,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-248-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-248-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6200,8 +6604,8 @@
       "outcome": "clean_at_start"
     },
     "problem-253-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-254": {
       "rounds_to_clean": 0,
@@ -6259,14 +6663,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-260": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-260-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-261": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6287,14 +6683,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-264": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-264-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-264-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6312,22 +6700,6 @@
       "outcome": "clean_at_start"
     },
     "problem-266-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-267": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-267-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-267-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-268": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -6359,14 +6731,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-271": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-271-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-272": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6384,10 +6748,6 @@
       "outcome": "clean_at_start"
     },
     "problem-274": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-274-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -6435,17 +6795,9 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
-    "problem-28": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-28-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
-    },
-    "problem-28-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
     },
     "problem-281": {
       "rounds_to_clean": 0,
@@ -6499,10 +6851,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-287-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-288-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6516,10 +6864,6 @@
       "outcome": "clean_at_start"
     },
     "problem-289-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-291": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -6707,6 +7051,14 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
+    "problem-311-s2": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-311-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-312": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6755,10 +7107,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-318-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-318-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -6779,21 +7127,9 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
-    "problem-320": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-320-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
-    },
-    "problem-320-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-321": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
     },
     "problem-321-s2": {
       "rounds_to_clean": 0,
@@ -6935,22 +7271,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-334-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-335": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-335-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-335-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-336-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -7011,10 +7331,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-344-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-345-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -7032,18 +7348,6 @@
       "outcome": "clean_at_start"
     },
     "problem-346-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-347": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-347-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-347-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -7103,27 +7407,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-354": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-354-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-354-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-355": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-355-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-355-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -7159,10 +7443,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-36": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-36-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -7172,10 +7452,6 @@
       "outcome": "clean_at_start"
     },
     "problem-360": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-360-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -7320,10 +7596,6 @@
       "outcome": "clean_at_start"
     },
     "problem-375-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-375-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -7544,12 +7816,12 @@
       "outcome": "clean_at_start"
     },
     "problem-402": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-402-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-404": {
       "rounds_to_clean": 0,
@@ -7671,10 +7943,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-420-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-420-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -7684,10 +7952,6 @@
       "outcome": "clean_at_start"
     },
     "problem-422": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-422-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -7720,12 +7984,12 @@
       "outcome": "clean_at_start"
     },
     "problem-426": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-426-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-427": {
       "rounds_to_clean": 0,
@@ -7923,10 +8187,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-448": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-449": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -7980,10 +8240,6 @@
       "outcome": "clean_at_start"
     },
     "problem-453-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-453-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8067,10 +8323,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-463": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-463-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -8120,6 +8372,10 @@
       "outcome": "not_cleaned"
     },
     "problem-469-s2": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-469-s3": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
@@ -8259,10 +8515,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-483-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-484-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -8383,18 +8635,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-5": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-5-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-5-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-50-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -8435,15 +8675,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-504": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-504-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-504-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8456,10 +8688,6 @@
       "outcome": "clean_at_start"
     },
     "problem-505-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-506-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8476,14 +8704,6 @@
       "outcome": "clean_at_start"
     },
     "problem-509": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-509-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-509-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8528,10 +8748,6 @@
       "outcome": "clean_at_start"
     },
     "problem-514-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-518": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8731,15 +8947,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-541": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-541-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-541-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8752,14 +8960,6 @@
       "outcome": "clean_at_start"
     },
     "problem-542-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-543": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-543-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8804,14 +9004,6 @@
       "outcome": "clean_at_start"
     },
     "problem-548-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-549-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-549-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -8867,14 +9059,6 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
-    "problem-555-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-555-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-557": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -8896,10 +9080,6 @@
       "outcome": "clean_at_start"
     },
     "problem-558-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-56": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -9016,8 +9196,8 @@
       "outcome": "clean_at_start"
     },
     "problem-574": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-574-s2": {
       "rounds_to_clean": 0,
@@ -9159,15 +9339,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-589": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-589-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-589-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -9196,10 +9368,6 @@
       "outcome": "clean_at_start"
     },
     "problem-591-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-592-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -9244,10 +9412,6 @@
       "outcome": "clean_at_start"
     },
     "problem-597-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-598-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -9355,10 +9519,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-608-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-609-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -9447,10 +9607,6 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
-    "problem-617-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-618-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -9494,10 +9650,6 @@
     "problem-622": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
-    },
-    "problem-622-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
     },
     "problem-623-s2": {
       "rounds_to_clean": 0,
@@ -9587,10 +9739,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-634-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-635": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -9671,10 +9819,6 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
-    "problem-641": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-641-s2": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -9724,18 +9868,6 @@
       "outcome": "clean_at_start"
     },
     "problem-645-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-646": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-646-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-646-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -9879,10 +10011,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-663-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-664-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -9976,8 +10104,8 @@
       "outcome": "not_cleaned"
     },
     "problem-671-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-672": {
       "rounds_to_clean": 0,
@@ -10028,8 +10156,8 @@
       "outcome": "not_cleaned"
     },
     "problem-677-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-678": {
       "rounds_to_clean": 0,
@@ -10096,10 +10224,6 @@
       "outcome": "clean_at_start"
     },
     "problem-684-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-685-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -10251,14 +10375,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-706": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-707-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-708-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -10288,10 +10404,6 @@
       "outcome": "clean_at_start"
     },
     "problem-711": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-711-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -10519,13 +10631,9 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-738": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-738-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-738-s3": {
       "rounds_to_clean": 0,
@@ -10603,10 +10711,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-746-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-746-s3": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -10648,8 +10752,8 @@
       "outcome": "clean_at_start"
     },
     "problem-751-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-751-s3": {
       "rounds_to_clean": 10,
@@ -10715,14 +10819,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-76": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-76-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-760": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -10772,8 +10868,8 @@
       "outcome": "clean_at_start"
     },
     "problem-765": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-765-s2": {
       "rounds_to_clean": 0,
@@ -11019,15 +11115,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-797": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-797-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-797-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -11048,10 +11136,6 @@
       "outcome": "clean_at_start"
     },
     "problem-8-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-8-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -11387,10 +11471,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-834-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-834-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -11432,8 +11512,8 @@
       "outcome": "clean_at_start"
     },
     "problem-84-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-84-s3": {
       "rounds_to_clean": 0,
@@ -11479,15 +11559,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-845": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-845-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-845-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -11567,9 +11639,9 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-853": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+    "problem-853-s2": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-854-s2": {
       "rounds_to_clean": 0,
@@ -11728,16 +11800,16 @@
       "outcome": "clean_at_start"
     },
     "problem-870": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-870-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
     "problem-870-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-871": {
       "rounds_to_clean": 0,
@@ -11756,10 +11828,6 @@
       "outcome": "clean_at_start"
     },
     "problem-872-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-873": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -11788,10 +11856,6 @@
       "outcome": "clean_at_start"
     },
     "problem-876-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-876-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -11848,8 +11912,8 @@
       "outcome": "not_cleaned"
     },
     "problem-882-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-882-s3": {
       "rounds_to_clean": 0,
@@ -12003,14 +12067,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-901": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-901-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-903": {
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
@@ -12031,23 +12087,11 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-905-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-906": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-907": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-907-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-907-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -12080,14 +12124,6 @@
       "outcome": "clean_at_start"
     },
     "problem-910-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-912-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-912-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -12203,10 +12239,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-926-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-926-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -12251,10 +12283,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-931": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-931-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -12280,14 +12308,6 @@
       "outcome": "clean_at_start"
     },
     "problem-934-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-935": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-935-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -12459,6 +12479,14 @@
       "rounds_to_clean": 10,
       "outcome": "not_cleaned"
     },
+    "problem-952-s2": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
+    "problem-952-s3": {
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
+    },
     "problem-954": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -12471,15 +12499,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-955": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-955-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-955-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -12527,10 +12547,6 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-960": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-960-s2": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
@@ -12551,15 +12567,7 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-962": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-962-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-962-s3": {
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
@@ -12631,17 +12639,9 @@
       "rounds_to_clean": 0,
       "outcome": "clean_at_start"
     },
-    "problem-971": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
-    "problem-971-s2": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
-    },
     "problem-971-s3": {
-      "rounds_to_clean": 0,
-      "outcome": "clean_at_start"
+      "rounds_to_clean": 10,
+      "outcome": "not_cleaned"
     },
     "problem-972": {
       "rounds_to_clean": 0,

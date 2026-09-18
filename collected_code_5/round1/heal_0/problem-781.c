@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <math.h>
+
+int count_divisors(int num) {
+    int count = 0;
+    for(int i = 1; i <= sqrt(num); i++) {
+        if(num % i == 0) {
+            if(num / i == i)
+                count++;
+            else
+                count += 2;
+        }
+    }
+    return count;
+}
+
+int is_even(int num) {
+    if(num % 2 == 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    int divisors_count = count_divisors(num);
+    if(is_even(divisors_count)) {
+        printf("Even count of divisors\n");
+    }
+    else {
+        printf("Odd count of divisors\n");
+    }
+    
+    return 0;
+}

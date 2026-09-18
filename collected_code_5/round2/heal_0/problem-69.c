@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSublist(int *list, int listSize, int *sublist, int sublistSize) {
+    if (sublistSize > listSize) {
+        return false;
+    }
+
+    for (int i = 0; i <= listSize - sublistSize; i++) {
+        bool found = true;
+        for (int j = 0; j < sublistSize; j++) {
+            if (list[i+j] != sublist[j]) {
+                found = false;
+                break;
+            }
+        }
+
+        if (found) return true;
+    }
+    
+    return false;
+}
+
+int main() {
+    int list[7] = {1, 2, 3, 4, 5, 6, 7};
+    int sublist[3] = {3, 4, 5};
+
+    bool result = isSublist(list, 7, sublist, 3);
+    if(result)
+        printf("Sublist exists in the list\n");
+    else
+        printf("Sublist doesn't exist in the list\n");
+  
+    return 0;
+}

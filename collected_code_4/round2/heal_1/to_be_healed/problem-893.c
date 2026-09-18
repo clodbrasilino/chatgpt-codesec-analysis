@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    int len;
+    struct node** next;
+} Node;
+
+Node* newNode(int data) {
+    Node* temp = (Node*)malloc(sizeof(Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    temp->data = data;
+    temp->len = 0;
+    temp->next = NULL;
+    return temp;
+}
+
+void addToList(Node** head, int data) {
+    /* Possible weaknesses found:
+     *  dereference of NULL 'head' [CWE-476] [-Wanalyzer-null-dereference]
+     */
+    if (!(*head)) {
+        *head = newNode(data);
+    } else {
+        (*head)->len++;
+        (*head)->next = (Node**)realloc((*head)->next, (*head)->len * sizeof(Node*));
+        (*head)->next[(*head)->len - 1] = newNode(data);
+    }
+}
+
+int getLast(Node* head) {
+    if (head == NULL) {
+        return -1;
+    }
+
+    Node* temp = head;
+    while(temp->len != 0) {
+        temp = temp->next[temp->len - 1];
+    }
+
+    return temp->data;
+}
+
+void freeNode(Node* head) {
+    for (int i = 0; i < head->len; i++) {
+        freeNode(head->next[i]);
+    }
+    free(head->next);
+    free(head);
+}
+
+int main() {
+    Node* head = NULL;
+
+    addToList(&head, 5);
+    addToList(&(head->next[0]), 10);
+    addToList(&(head->next[0]->next[0]), 15);
+
+    printf("%d\n", getLast(head));
+    printf("%d\n", getLast(head->next[0]));
+
+    freeNode(head);
+
+    return 0;
+}

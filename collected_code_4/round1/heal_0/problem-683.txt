@@ -1,0 +1,30 @@
+```c
+#include <math.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isRepresentable(int num) {
+    int squareRoot = sqrt(num);
+    for (int i = 0; i <= squareRoot; i++) {
+        for (int j = 0; j <= squareRoot; j++) {
+            if (i * i + j * j == num) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: \n");
+    scanf("%d", &num);
+    if (isRepresentable(num)) {
+        printf("Yes, the number can be represented as sum of two squares.\n");
+    } else {
+        printf("No, the number can not be represented as sum of two squares.\n");
+    }
+    return 0;
+}
+```
+This C code checks if a given number can be represented by the sum of the squares of two integers. It reads an integer from user input, then calls the `isRepresentable` function with that number, which calculates the square root then runs a nested loop to check all the combinations of squares of integers less than or equal to the square root. If it ever finds a pair of integers that, when squared and summed, yield the original number, it returns true. Otherwise, it returns false. This result is then printed on the screen.

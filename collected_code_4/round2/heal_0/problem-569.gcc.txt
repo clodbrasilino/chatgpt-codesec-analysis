@@ -1,0 +1,45 @@
+./collected_code_4/round2//heal_0/problem-569.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-569.c:28:17: warning: dereference of possibly-NULL 'list' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |         list[i] = malloc(col * sizeof(char *));
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   25 |     char ***list = malloc(row * sizeof(char **));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   26 | 
+    |   27 |     for (i = 0; i < row; i++) {
+    |      |                 ~~~~~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < row')...
+    |   28 |         list[i] = malloc(col * sizeof(char *));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 | |
+    |      |                 | (3) ...to here
+    |      |                 (4) 'list + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round2//heal_0/problem-569.c:30:24: warning: dereference of possibly-NULL '*list_147 + _10 + (long unsigned int)j * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |             list[i][j] = malloc(50 * sizeof(char));
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   27 |     for (i = 0; i < row; i++) {
+    |      |                 ~~^~~~~
+    |      |                   |
+    |      |                   (1) following 'true' branch (when 'i < row')...
+    |   28 |         list[i] = malloc(col * sizeof(char *));
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) ...to here
+    |      |                   (3) this call could return NULL
+    |   29 |         for (j = 0; j < col; j++) {
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'j < col')...
+    |   30 |             list[i][j] = malloc(50 * sizeof(char));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |      |
+    |      |                 |      (6) '*list_147 + _10 + (long unsigned int)j * 8' could be NULL: unchecked value from (3)
+    |      |                 (5) ...to here
+    |

@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **data;
+    size_t rows;
+    size_t *cols;
+} NestedList;
+
+int* extract_column(const NestedList *list, size_t col_index, size_t *out_size) {
+    if (!list || !list->data || !list->cols || !out_size) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list->rows; i++) {
+        if (col_index < list->cols[i]) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int *column_data = (int *)malloc(count * sizeof(int));
+    if (!column_data) {
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < list->rows; i++) {
+        if (col_index < list->cols[i]) {
+            column_data[idx++] = list->data[i][col_index];
+        }
+    }
+
+    *out_size = count;
+    return column_data;
+}
+
+int main(void) {
+    size_t rows = 3;
+    NestedList list;
+    list.rows = rows;
+    
+    list.data = (int **)malloc(rows * sizeof(int *));
+    if (!list.data) {
+        return 1;
+    }
+    
+    list.cols = (size_t *)malloc(rows * sizeof(size_t));
+    if (!list.cols) {
+        free(list.data);
+        return 1;
+    }
+
+    list.cols[0] = 3;
+    list.cols[1] = 2;
+    list.cols[2] = 4;
+
+    for (size_t i = 0; i < rows; i++) {
+        list.data[i] = (int *)malloc(list.cols[i] * sizeof(int));
+        if (!list.data[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(list.data[j]);
+            }
+            free(list.data);
+            free(list.cols);
+            return 1;
+        }
+        for (size_t j = 0; j < list.cols[i]; j++) {
+            list.data[i][j] = (int)((i + 1) * 10 + (j + 1));
+        }
+    }
+
+    size_t col_to_extract = 2;
+    size_t extracted_size = 0;
+    int *extracted_col = extract_column(&list, col_to_extract, &extracted_size);
+
+    if (extracted_col) {
+        for (size_t i = 0; i < extracted_size; i++) {
+            printf("%d ", extracted_col[i]);
+        }
+        printf("\n");
+        free(extracted_col);
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        free(list.data[i]);
+    }
+    free(list.data);
+    free(list.cols);
+
+    return 0;
+}
+```

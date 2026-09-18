@@ -1,0 +1,150 @@
+./collected_code_4/round2//heal_0/problem-844.c: In function 'findKth':
+./collected_code_4/round2//heal_0/problem-844.c:15:30: warning: dereference of possibly-NULL 'evens' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |             evens[evenCnt++] = arr[i];
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~~
+  'findKth': events 1-8
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = malloc(size*sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |    9 |     int* evens = malloc(size*sizeof(int));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) this call could return NULL
+    |......
+    |   13 |     for(int i=0; i<size; i++){
+    |      |                  ~~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < size')...
+    |   14 |         if(arr[i] % 2 == 0)
+    |      |           ~   ~
+    |      |           |   |
+    |      |           |   (5) ...to here
+    |      |           (6) following 'true' branch...
+    |   15 |             evens[evenCnt++] = arr[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |    |
+    |      |                              |    (7) ...to here
+    |      |                              (8) 'evens + (long unsigned int)evenCnt * 4' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round2//heal_0/problem-844.c:17:28: warning: dereference of possibly-NULL 'odds' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |             odds[oddCnt++] = arr[i];
+      |             ~~~~~~~~~~~~~~~^~~~~~~~
+  'findKth': events 1-8
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = malloc(size*sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |      |                 (3) this call could return NULL
+    |......
+    |   13 |     for(int i=0; i<size; i++){
+    |      |                  ~~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < size')...
+    |   14 |         if(arr[i] % 2 == 0)
+    |      |           ~   ~
+    |      |           |   |
+    |      |           |   (5) ...to here
+    |      |           (6) following 'false' branch...
+    |......
+    |   17 |             odds[oddCnt++] = arr[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |    |
+    |      |                            |    (7) ...to here
+    |      |                            (8) 'odds + (long unsigned int)oddCnt * 4' could be NULL: unchecked value from (3)
+    |
+./collected_code_4/round2//heal_0/problem-844.c:27:13: warning: use of uninitialized value '*evens_49 + _32' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   27 |         int num = evens[k-oddCnt];
+      |             ^~~
+  'findKth': events 1-8
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = malloc(size*sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |    9 |     int* evens = malloc(size*sizeof(int));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) region created on heap here
+    |......
+    |   13 |     for(int i=0; i<size; i++){
+    |      |                  ~~~~~~
+    |      |                   |
+    |      |                   (4) following 'false' branch (when 'i >= size')...
+    |......
+    |   20 |     if(k < oddCnt){
+    |      |       ~
+    |      |       |
+    |      |       (5) ...to here
+    |      |       (6) following 'false' branch (when 'k >= oddCnt')...
+    |......
+    |   27 |         int num = evens[k-oddCnt];
+    |      |             ~~~         ~~~~~~~~
+    |      |             |            |
+    |      |             |            (7) ...to here
+    |      |             (8) use of uninitialized value '*evens_49 + _32' here
+    |
+./collected_code_4/round2//heal_0/problem-844.c:27:13: warning: use of uninitialized value '*evens_49 + _32' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   27 |         int num = evens[k-oddCnt];
+      |             ^~~
+  'findKth': events 1-12
+    |
+    |    5 |     if(k < 0 || k >= size){
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch...
+    |......
+    |    8 |     int* odds = malloc(size*sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |    9 |     int* evens = malloc(size*sizeof(int));
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (3) region created on heap here
+    |......
+    |   13 |     for(int i=0; i<size; i++){
+    |      |                  ~~~~~~
+    |      |                   |
+    |      |                   (4) following 'true' branch (when 'i < size')...
+    |      |                   (8) following 'false' branch (when 'i >= size')...
+    |   14 |         if(arr[i] % 2 == 0)
+    |      |           ~   ~
+    |      |           |   |
+    |      |           |   (5) ...to here
+    |      |           (6) following 'false' branch...
+    |......
+    |   17 |             odds[oddCnt++] = arr[i];
+    |      |                                 ~
+    |      |                                 |
+    |      |                                 (7) ...to here
+    |......
+    |   20 |     if(k < oddCnt){
+    |      |       ~
+    |      |       |
+    |      |       (9) ...to here
+    |      |       (10) following 'false' branch (when 'k >= oddCnt')...
+    |......
+    |   27 |         int num = evens[k-oddCnt];
+    |      |             ~~~         ~~~~~~~~
+    |      |             |            |
+    |      |             |            (11) ...to here
+    |      |             (12) use of uninitialized value '*evens_49 + _32' here
+    |

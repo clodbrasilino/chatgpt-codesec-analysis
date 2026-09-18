@@ -1,0 +1,35 @@
+```C
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_sort_possible(int arr[], int n) {
+    int min = 0, max = n - 1;
+
+    while ((min < max) && (arr[min] <= arr[min + 1]))
+        min++;
+
+    if (min == max)
+        return true;
+
+    while ((max > min) && (arr[max] >= arr[max - 1]))
+        max--;
+
+    if (max == 0)
+        return true;
+
+    if (min != 0 || max != n - 1)
+        return false;
+
+    return (arr[0] <= arr[n - 1]);
+}
+
+void main() {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    if (is_sort_possible(arr, n))
+        printf("Yes\n");
+    else
+        printf("No\n");
+}
+```

@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* extract_elements(const int *source, size_t source_size, size_t start_index, size_t count) {
+    if (source == NULL) {
+        return NULL;
+    }
+    if (count == 0) {
+        return NULL;
+    }
+    if (start_index >= source_size) {
+        return NULL;
+    }
+    if (source_size - start_index < count) {
+        return NULL;
+    }
+
+    int *extracted = (int *)malloc(count * sizeof(int));
+    if (extracted == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        extracted[i] = source[start_index + i];
+    }
+
+    return extracted;
+}
+
+int main(void) {
+    int source_list[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    size_t source_size = sizeof(source_list) / sizeof(source_list[0]);
+    size_t start_index = 3;
+    size_t count = 4;
+
+    int *result = extract_elements(source_list, source_size, start_index, count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Extraction failed.\n");
+        return 1;
+    }
+
+    return 0;
+}

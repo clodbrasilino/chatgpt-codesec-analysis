@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void find_numbers(char *str);
+
+int main(void) {
+    char str[] = "Hello 324 World456!";
+    find_numbers(str);
+    return 0;
+}
+
+void find_numbers(char *str) {
+    int i;
+    int len = strlen(str);
+    for(i = 0; i < len; i++) {
+        if(isdigit(str[i])) {
+            printf("Number %c found at position %d\n", str[i], i + 1);
+        }
+    }
+}
+```

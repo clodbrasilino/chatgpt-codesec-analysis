@@ -1,0 +1,62 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int* choosePoints(int* range1, int* range2, int range1_length, int range2_length, int* output_length) {
+    if (range1 == NULL || range2 == NULL || output_length == NULL) {
+        return NULL;
+    }
+
+    int temp_range[2000] = {0};
+    int* output_range = (int*) malloc((range1_length + range2_length) * sizeof(int));
+    
+    if (!output_range) {
+        *output_length = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < range1_length; i++) {
+        temp_range[range1[i]] = 1;
+    }
+
+    for (int i = 0; i < range2_length; i++) {
+        if (temp_range[range2[i]] == 1) {
+            temp_range[range2[i]] = -1;
+        } else {
+            temp_range[range2[i]] = 2;
+        }
+    }
+
+    int k = 0;
+    for (int i = 0; i < 2000; i++) {
+        if (temp_range[i] == 1 || temp_range[i] == 2) {
+            output_range[k++] = i;
+        }
+    }
+
+    *output_length = k;
+    return output_range;
+}
+
+int main() {
+    int range1[3] = {2, 5, 9};
+    int range2[3] = {1, 2, 7};
+    
+    int range1_length = 3;
+    int range2_length = 3;
+    int output_length;
+
+    int* output_range = choosePoints(range1, range2, range1_length, range2_length, &output_length);
+
+    if (output_range != NULL) {
+        for (int i = 0; i < output_length; i++) {
+            printf("%d ", output_range[i]);
+        }
+
+        free(output_range);
+        printf("\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,80 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROW 4
+#define COLUMN 3
+
+int** extractColumn(int** nestedList, int row, int column, int extractIndex) {
+    if(nestedList == NULL || extractIndex < 0 || extractIndex >= column) {
+        printf("Invalid arguments.");
+        return NULL;
+    }
+
+    int** columnList = (int**)malloc(row * sizeof(int*));
+    if (columnList == NULL) {
+        printf("Failed to allocate memory.\n");
+        return NULL;
+    }
+
+    for(int i = 0; i < row; ++i) {
+        columnList[i] = (int*)malloc(sizeof(int));
+
+        if(columnList[i] == NULL) {
+            printf("Failed to allocate memory.\n");
+            return NULL;
+        }
+
+        if(nestedList[i] != NULL) {
+            *columnList[i] = nestedList[i][extractIndex];
+        } else {
+            printf("Nested list row is NULL.");
+            return NULL;
+        }
+    }
+
+    return columnList;
+}
+
+int main() {
+    int** nestedList = (int**)malloc(ROW * sizeof(int*));
+    if (nestedList == NULL) {
+        printf("Failed to allocate memory.\n");
+        return -1;
+    }
+
+    for(int i = 0; i < ROW; ++i) {
+        nestedList[i] = (int*)malloc(COLUMN * sizeof(int));
+
+        if(nestedList[i] == NULL) {
+            printf("Failed to allocate memory.\n");
+            return -1;
+        }
+
+        for(int j = 0; j < COLUMN; ++j){
+            nestedList[i][j] = i + j;
+        }
+    }
+
+    int** column = extractColumn(nestedList, ROW, COLUMN, 1);
+
+    if(column != NULL) {
+        for(int i = 0; i < ROW; i++)
+        {
+            printf("%d ", *column[i]);
+            free(column[i]);
+        }
+        printf("\n");
+
+        free(column);
+    }
+
+    for(int i = 0; i < ROW; ++i) {
+        free(nestedList[i]);
+    }
+
+    free(nestedList);
+
+    return 0;
+}
+```

@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+
+size_t countNonEmptySubstrings(const char *str) {
+    size_t length = strlen(str);
+    return length * (length + 1) / 2;
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    fgets(str, 100, stdin);
+    
+    // Removing trailing new line character from string that fgets() retains
+    str[strcspn(str, "\n")] = 0;
+
+    printf("Number of non-empty substrings is: %zu\n", countNonEmptySubstrings(str));
+    return 0;
+}

@@ -1,0 +1,15 @@
+./collected_code_4/round1//heal_0//problem-487.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-487.c:29:17: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     tuples[0].a = 1;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   28 |     Tuple *tuples = (Tuple*)malloc(sizeof(Tuple) * size);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   29 |     tuples[0].a = 1;
+    |      |     ~~~~~~~~~~~~~~~          
+    |      |                 |
+    |      |                 (2) 'tuples' could be NULL: unchecked value from (1)
+    |

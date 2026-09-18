@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+};
+
+bool list_contains(const struct List* list, int element) {
+    if (list == NULL) {
+        return false;
+    }
+    struct Node* current = list->head;
+    while (current != NULL) {
+        if (current->data == element) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+size_t count_sublists_containing_element(struct List** sublists, size_t num_sublists, int element) {
+    if (sublists == NULL) {
+        return 0;
+    }
+    size_t count = 0;
+    for (size_t i = 0; i < num_sublists; ++i) {
+        if (sublists[i] != NULL && list_contains(sublists[i], element)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node != NULL) {
+        new_node->data = data;
+        new_node->next = NULL;
+    }
+    return new_node;
+}
+
+void free_list(struct List* list) {
+    if (list == NULL) {
+        return;
+    }
+    struct Node* current = list->head;
+    while (current != NULL) {
+        struct Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int main(void) {
+    struct List* list1 = (struct List*)malloc(sizeof(struct List));
+    if (list1 == NULL) return EXIT_FAILURE;
+    list1->head = create_node(1);
+    if (list1->head == NULL) {
+        free(list1);
+        return EXIT_FAILURE;
+    }
+    list1->head->next = create_node(2);
+    if (list1->head->next == NULL) {
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+
+    struct List* list2 = (struct List*)malloc(sizeof(struct List));
+    if (list2 == NULL) {
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+    list2->head = create_node(3);
+    if (list2->head == NULL) {
+        free(list2);
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+    list2->head->next = create_node(2);
+    if (list2->head->next == NULL) {
+        free_list(list2);
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+
+    struct List* list3 = (struct List*)malloc(sizeof(struct List));
+    if (list3 == NULL) {
+        free_list(list2);
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+    list3->head = create_node(4);
+    if (list3->head == NULL) {
+        free(list3);
+        free_list(list2);
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+    list3->head->next = create_node(5);
+    if (list3->head->next == NULL) {
+        free_list(list3);
+        free_list(list2);
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+
+    struct List* sublists[] = {list1, list2, list3};
+    size_t num_sublists = sizeof(sublists) / sizeof(sublists[0]);
+
+    int target = 2;
+    size_t count = count_sublists_containing_element(sublists, num_sublists, target);
+
+    printf("%zu\n", count);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+
+    return EXIT_SUCCESS;
+}
+```

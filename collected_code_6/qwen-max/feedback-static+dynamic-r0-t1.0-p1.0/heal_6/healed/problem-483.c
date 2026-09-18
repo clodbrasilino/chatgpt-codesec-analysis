@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+unsigned long long factorial(unsigned int n) {
+    unsigned long long result = 1;
+    for (unsigned int i = 2; i <= n; ++i) {
+        if (ULLONG_MAX / i < result) {
+            return 0;
+        }
+        result *= i;
+    }
+    return result;
+}
+
+unsigned int find_number_divisible_by_x(unsigned int x) {
+    unsigned int i = 1;
+    while (1) {
+        unsigned long long fact = factorial(i);
+        if (fact == 0 || fact % x == 0) {
+            return i;
+        }
+        if (i >= ULLONG_MAX / 2) {
+            break;
+        }
+        i++;
+    }
+    return 0;
+}
+
+int main() {
+    unsigned int x;
+    printf("Enter a number: ");
+    if (scanf("%u", &x) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (x == 0) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    unsigned int result = find_number_divisible_by_x(x);
+    if (result != 0) {
+        printf("The first natural number whose factorial is divisible by %u is: %u\n", x, result);
+    } else {
+        printf("No natural number found whose factorial is divisible by %u\n", x);
+    }
+    return EXIT_SUCCESS;
+}

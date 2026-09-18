@@ -1,0 +1,37 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+int findNumberOfSolutions(double a, double b, double c) {
+    double discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0) {
+        return 0;
+    } else if (discriminant > 0) {
+        return 2;
+    } else {
+        return 1;
+    }
+}
+
+int main() {
+    double a, b, c;
+
+    printf("Enter coefficients a, b and c: ");
+    scanf("%lf %lf %lf",&a, &b, &c);
+
+    int solutions = findNumberOfSolutions(a,b,c);
+
+    if(solutions==0){
+        printf("No Real Solutions Exist\n");
+    }
+    else if(solutions==1){
+        printf("One Real Solution Exists\n");
+    }
+    else{
+        printf("Two Real Solutions Exist\n");
+    }
+
+    return 0;
+}
+```

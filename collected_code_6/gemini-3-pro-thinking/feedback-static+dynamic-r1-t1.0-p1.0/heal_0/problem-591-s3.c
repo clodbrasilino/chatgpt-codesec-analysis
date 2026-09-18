@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+void swapFirstAndLast(Node** head_ref);
+Node* createNode(int data);
+void appendNode(Node** head_ref, int data);
+void printList(const Node* head);
+void freeList(Node* head);
+
+void swapFirstAndLast(Node** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL || (*head_ref)->next == NULL) {
+        return;
+    }
+
+    Node* first = *head_ref;
+    Node* prev_last = NULL;
+    Node* last = *head_ref;
+
+    while (last->next != NULL) {
+        prev_last = last;
+        last = last->next;
+    }
+
+    if (first->next == last) {
+        last->next = first;
+        first->next = NULL;
+        *head_ref = last;
+    } else {
+        last->next = first->next;
+        prev_last->next = first;
+        first->next = NULL;
+        *head_ref = last;
+    }
+}
+
+Node* createNode(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void appendNode(Node** head_ref, int data) {
+    if (head_ref == NULL) {
+        return;
+    }
+    
+    Node* new_node = createNode(data);
+    
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    
+    Node* last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+
+void printList(const Node* head) {
+    const Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* next_node = NULL;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+
+    appendNode(&head, 10);
+    appendNode(&head, 20);
+    appendNode(&head, 30);
+    appendNode(&head, 40);
+    appendNode(&head, 50);
+
+    printList(head);
+
+    swapFirstAndLast(&head);
+
+    printList(head);
+
+    freeList(head);
+    head = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeLowercase(const char* input) {
+    int len = strlen(input);
+    char *output = (char*)malloc(len + 1);
+    if (output == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+
+    int j = 0;
+    for (int i = 0; i < len; i++) {
+        if (!islower(input[i])) {
+            output[j] = input[i];
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main() {
+    const char* str1 = "Hello Test";
+    char* result = removeLowercase(str1);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}
+```
+ In the above code, the function removeLowercase() scans the given string and identifies all the lowercase characters in the string. When it finds a lowercase character, it skips it and copies all the non-lowercase characters in a newly allocated string which is then returned. The main() function then prints the modified string and frees the allocated memory. It avoids the CWE-664 by properly freeing the allocated memory, it avoids the CWE-703 by checking if memory allocation was successful or not and it avoids the CWE-710 by adhering to the proper coding standard with proper naming conventions and memory management.

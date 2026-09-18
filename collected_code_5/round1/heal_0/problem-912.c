@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int lobb(int n, int m) {
+    int dp[n + 1][2 * n + 2]; 
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= 2 * n; j++) {
+            dp[i][j] = (j == 0)? 1 : 0;
+        }
+    }
+   
+    for (int i = 1; i <= n + 1; i++) { 
+        for (int j = 1; j <= 2 * n; j++) {
+            dp[i][j] = dp[i - 1][j - 1] + dp[i][j - 1]; 
+        } 
+    }
+   
+    return dp[n + 1][2 * m];
+   
+}
+
+int main() {
+    int n, m;
+    if (scanf("%d%d", &n, &m) != 2 || n < 0 || m < 0) {
+        fprintf(stderr, "Invalid input!\n");
+        return 1;
+    }
+
+    int lobbNumber = lobb(n, m);
+    printf("%d\n", lobbNumber);
+
+    return 0;
+}

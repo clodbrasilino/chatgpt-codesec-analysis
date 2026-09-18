@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int val;
+    struct Node* next;
+};
+
+struct Node* createNode(int val) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    if (!newNode) {
+        return NULL;
+    }
+    newNode->val = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(struct Node* head) {
+    struct Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+struct Node* addLists(const struct Node* l1, const struct Node* l2) {
+    struct Node* dummy = createNode(0);
+    if (!dummy) {
+        return NULL;
+    }
+    
+    struct Node* current = dummy;
+    int carry = 0;
+
+    while (l1 != NULL || l2 != NULL || carry != 0) {
+        int sum = carry;
+        if (l1 != NULL) {
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if (l2 != NULL) {
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        
+        carry = sum / 10;
+        current->next = createNode(sum % 10);
+        if (!current->next) {
+            freeList(dummy);
+            return NULL;
+        }
+        current = current->next;
+    }
+
+    struct Node* result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+int main(void) {
+    struct Node* l1 = createNode(2);
+    if (!l1) {
+        return EXIT_FAILURE;
+    }
+    l1->next = createNode(4);
+    if (!l1->next) {
+        freeList(l1);
+        return EXIT_FAILURE;
+    }
+    l1->next->next = createNode(3);
+    if (!l1->next->next) {
+        freeList(l1);
+        return EXIT_FAILURE;
+    }
+
+    struct Node* l2 = createNode(5);
+    if (!l2) {
+        freeList(l1);
+        return EXIT_FAILURE;
+    }
+    l2->next = createNode(6);
+    if (!l2->next) {
+        freeList(l1);
+        freeList(l2);
+        return EXIT_FAILURE;
+    }
+    l2->next->next = createNode(4);
+    if (!l2->next->next) {
+        freeList(l1);
+        freeList(l2);
+        return EXIT_FAILURE;
+    }
+
+    struct Node* result = addLists(l1, l2);
+    if (!result) {
+        freeList(l1);
+        freeList(l2);
+        return EXIT_FAILURE;
+    }
+
+    struct Node* curr = result;
+    while (curr != NULL) {
+        printf("%d", curr->val);
+        if (curr->next != NULL) {
+            printf(" -> ");
+        }
+        curr = curr->next;
+    }
+    printf("\n");
+
+    freeList(l1);
+    freeList(l2);
+    freeList(result);
+
+    return EXIT_SUCCESS;
+}

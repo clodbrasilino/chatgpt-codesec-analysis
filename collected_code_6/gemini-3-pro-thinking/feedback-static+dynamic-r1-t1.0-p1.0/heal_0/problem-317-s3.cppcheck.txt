@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-317-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-317-s3.c:115:14: style: Condition 'size==0' is always false [knownConditionTrueFalse]
+    if (size == 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-317-s3.c:113:32: note: Assignment 'size=sizeof(data)/sizeof(data[0])', assigned value is 14
+    size_t size = sizeof(data) / sizeof(data[0]);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-317-s3.c:115:14: note: Condition 'size==0' is always false
+    if (size == 0) {
+             ^

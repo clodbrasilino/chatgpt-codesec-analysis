@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    /* Possible weaknesses found:
+     *  struct member 'Record::id' is never used. [unusedStructMember]
+     */
+    int id;
+    int count;
+} Record;
+
+typedef struct {
+    int count;
+    int frequency;
+} Frequency;
+
+void check_occurrences(Record* records, int num_records) {
+    if (records == NULL || num_records <= 0) {
+        return;
+    }
+
+    Frequency* frequencies = (Frequency*)malloc(num_records * sizeof(Frequency));
+    if (frequencies == NULL) {
+        return;
+    }
+
+    int num_frequencies = 0;
+
+    for (int i = 0; i < num_records; i++) {
+        int found = 0;
+        for (int j = 0; j < num_frequencies; j++) {
+            if (frequencies[j].count == records[i].count) {
+                frequencies[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            frequencies[num_frequencies].count = records[i].count;
+            frequencies[num_frequencies].frequency = 1;
+            num_frequencies++;
+        }
+    }
+
+    for (int i = 0; i < num_frequencies; i++) {
+        if (frequencies[i].frequency > 1) {
+            printf("Records with count %d occur %d times.\n", frequencies[i].count, frequencies[i].frequency);
+        }
+    }
+
+    free(frequencies);
+}
+
+int main() {
+    Record records[] = {
+        {1, 5},
+        {2, 3},
+        {3, 5},
+        {4, 2},
+        {5, 3},
+        {6, 5}
+    };
+    int num_records = sizeof(records) / sizeof(records[0]);
+
+    check_occurrences(records, num_records);
+
+    return 0;
+}

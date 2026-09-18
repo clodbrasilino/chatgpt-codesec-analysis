@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_diff(int* arr, int n) {
+    if (n <= 1) {
+        return NULL;
+    }
+    
+    int* diff_arr = (int*)malloc((n-1) * sizeof(int));
+    if (diff_arr == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    
+    for(int i = 0; i < n-1; i++) {
+        diff_arr[i] = arr[i+1] - arr[i];
+    }
+    
+    return diff_arr;
+}
+
+int main() {
+    int a[] = {1, 2, 3, 5, 8, 10, 12};
+    int n = sizeof(a) / sizeof(a[0]);
+
+    int* diff_a = find_diff(a, n);
+    if (diff_a == NULL) {
+        printf("Array has less than two elements.\n");
+        return 0;
+    }
+
+    printf("The difference array is: ");
+    for(int i = 0; i < n-1; i++) {
+        printf("%d ", diff_a[i]);
+    }
+    printf("\n");
+
+    free(diff_a);
+
+    return 0;
+}

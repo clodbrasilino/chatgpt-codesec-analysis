@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int multiply(int a, int b) {
+    int result = 0;
+    int is_negative = 0;
+
+    if ((a < 0 && b > 0) || (a > 0 && b < 0)) {
+        is_negative = 1;
+    }
+
+    long long abs_a = a;
+    long long abs_b = b;
+
+    if (abs_a < 0) {
+        abs_a = -abs_a;
+    }
+    if (abs_b < 0) {
+        abs_b = -abs_b;
+    }
+
+    while (abs_b > 0) {
+        if (abs_b & 1) {
+            if (result > INT_MAX - abs_a) {
+                fprintf(stderr, "Integer overflow detected\n");
+                exit(EXIT_FAILURE);
+            }
+            result += abs_a;
+        }
+        abs_a <<= 1;
+        abs_b >>= 1;
+    }
+
+    if (is_negative) {
+        return -result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int num1 = 15;
+    int num2 = 4;
+    int result;
+
+    result = multiply(num1, num2);
+    printf("%d\n", result);
+
+    num1 = -15;
+    num2 = 4;
+    result = multiply(num1, num2);
+    printf("%d\n", result);
+
+    num1 = -15;
+    num2 = -4;
+    result = multiply(num1, num2);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

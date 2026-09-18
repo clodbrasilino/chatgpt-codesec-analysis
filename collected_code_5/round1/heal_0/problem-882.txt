@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+
+int calculatePerimeter(int base, int side) {
+    return 2 * (base + side);
+}
+
+int main(void) {
+    int base, side, perimeter;
+
+    printf("Enter the base of the parallelogram:\n");
+    scanf("%d", &base);
+    printf("Enter the side of the parallelogram:\n");
+    scanf("%d", &side);
+
+    if (base < 0 || side < 0) {
+        printf("Error: dimensions of the parallelogram cannot be negative.\n");
+        return -1;
+    }
+    
+    perimeter = calculatePerimeter(base, side);
+
+    printf("The perimeter of the parallelogram is: %d\n", perimeter);
+
+    return 0;
+}
+```

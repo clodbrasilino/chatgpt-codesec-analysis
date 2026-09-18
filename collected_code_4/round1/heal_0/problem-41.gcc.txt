@@ -1,0 +1,19 @@
+./collected_code_4/round1//heal_0//problem-41.c: In function 'filter_even_numbers':
+./collected_code_4/round1//heal_0//problem-41.c:13:25: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   13 |         result = (int *)malloc(count * sizeof(int));
+      |                         ^~~~~~
+./collected_code_4/round1//heal_0//problem-41.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-41.c:13:25: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   13 |         result = (int *)malloc(count * sizeof(int));
+      |                         ^~~~~~
+./collected_code_4/round1//heal_0//problem-41.c:13:25: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round1//heal_0//problem-41.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-41.c:41:9: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   41 |         free(filtered);
+      |         ^~~~
+./collected_code_4/round1//heal_0//problem-41.c:41:9: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-41.c:41:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-41.c:41:9: note: include '<stdlib.h>' or provide a declaration of 'free'

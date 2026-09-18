@@ -1,0 +1,76 @@
+./collected_code_4/round2//heal_2/healed/problem-569.c: In function 'main':
+./collected_code_4/round2//heal_2/healed/problem-569.c:34:15: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |               free(list[i]);
+      |               ^~~~~~~~~~~~~
+  'main': events 1-29
+    |
+    |   26 |   if(!list) {
+    |      |     ^
+    |      |     |
+    |      |     (1) following 'false' branch (when 'list' is non-NULL)...
+    |......
+    |   30 |   for (i = 0; i < row; i++) {
+    |      |        ~~~~~  ~~~~~~~  ~~~
+    |      |          |      |       |
+    |      |          |      |       (26) ...to here
+    |      |          |      (3) following 'true' branch (when 'i < row')...
+    |      |          |      (27) following 'true' branch (when 'i < row')...
+    |      |          (2) ...to here
+    |   31 |       list[i] = malloc(col * sizeof(char *));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (4) ...to here
+    |      |                 (28) ...to here
+    |   32 |       if(!list[i]) {
+    |      |         ~
+    |      |         |
+    |      |         (5) following 'false' branch...
+    |      |         (29) following 'true' branch...
+    |......
+    |   39 |       for (j = 0; j < col; j++) {
+    |      |            ~~~~~  ~~~~~~~  ~~~
+    |      |              |      |       |
+    |      |              |      |       (12) ...to here
+    |      |              |      |       (16) ...to here
+    |      |              |      |       (20) ...to here
+    |      |              |      |       (24) ...to here
+    |      |              |      (7) following 'true' branch (when 'j < col')...
+    |      |              |      (13) following 'true' branch (when 'j < col')...
+    |      |              |      (17) following 'true' branch (when 'j < col')...
+    |      |              |      (21) following 'true' branch (when 'j < col')...
+    |      |              |      (25) following 'false' branch (when 'j >= col')...
+    |      |              (6) ...to here
+    |   40 |           list[i][j] = malloc(50 * sizeof(char));
+    |      |               ~        ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |        |
+    |      |               |        (9) allocated here
+    |      |               (8) ...to here
+    |      |               (14) ...to here
+    |      |               (18) ...to here
+    |      |               (22) ...to here
+    |   41 |           if(!list[i][j]) {
+    |      |             ~
+    |      |             |
+    |      |             (10) assuming '<unknown>' is non-NULL
+    |      |             (11) following 'false' branch...
+    |      |             (15) following 'false' branch...
+    |      |             (19) following 'false' branch...
+    |      |             (23) following 'false' branch...
+    |
+  'main': event 30
+    |
+    |cc1:
+    | (30): ...to here
+    |
+  'main': events 31-33
+    |
+    |   33 |           while(--i>=0) {
+    |      |                 ~~~^~~
+    |      |                    |
+    |      |                    (31) following 'true' branch (when 'i >= 0')...
+    |   34 |               free(list[i]);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |        |
+    |      |               |        (32) ...to here
+    |      |               (33) '<unknown>' leaks here; was allocated at (9)
+    |

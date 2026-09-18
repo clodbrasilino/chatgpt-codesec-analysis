@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_operations(int a, int b) {
+    return abs(a - b);
+}
+
+int main(void) {
+    int a, b;
+    
+    if (scanf("%d %d", &a, &b) == 2) {
+        int result = min_operations(a, b);
+        printf("%d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}

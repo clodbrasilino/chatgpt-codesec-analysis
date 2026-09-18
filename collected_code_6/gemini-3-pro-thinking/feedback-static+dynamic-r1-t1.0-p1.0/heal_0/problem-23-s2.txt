@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_sum(const int **lists, const size_t *sizes, size_t num_lists, long long *out_max_sum) {
+    if (!lists || !sizes || !out_max_sum || num_lists == 0) {
+        return -1;
+    }
+
+    long long max_sum = LLONG_MIN;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        if (sizes[i] > 0 && !lists[i]) {
+            return -1;
+        }
+
+        long long current_sum = 0;
+        for (size_t j = 0; j < sizes[i]; ++j) {
+            current_sum += lists[i][j];
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+        }
+    }
+
+    *out_max_sum = max_sum;
+    return 0;
+}
+
+int main(void) {
+    size_t num_lists = 3;
+    
+    int **lists = malloc(num_lists * sizeof(int *));
+    if (!lists) {
+        return EXIT_FAILURE;
+    }
+
+    size_t *sizes = malloc(num_lists * sizeof(size_t));
+    if (!sizes) {
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    sizes[0] = 3;
+    sizes[1] = 2;
+    sizes[2] = 4;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        lists[i] = malloc(sizes[i] * sizeof(int));
+        if (!lists[i]) {
+            for (size_t j = 0; j < i; ++j) {
+                free(lists[j]);
+            }
+            free(sizes);
+            free(lists);
+            return EXIT_FAILURE;
+        }
+    }
+
+    lists[0][0] = 1;
+    lists[0][1] = 2;
+    lists[0][2] = 3;
+
+    lists[1][0] = 4;
+    lists[1][1] = 5;
+
+    lists[2][0] = -1;
+    lists[2][1] = -2;
+    lists[2][2] = -3;
+    lists[2][3] = -4;
+
+    const int **const_lists = malloc(num_lists * sizeof(const int *));
+    if (!const_lists) {
+        for (size_t i = 0; i < num_lists; ++i) {
+            free(lists[i]);
+        }
+        free(sizes);
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        const_lists[i] = lists[i];
+    }
+
+    long long max_sum = 0;
+    int status = find_max_sum(const_lists, sizes, num_lists, &max_sum);
+
+    if (status == 0) {
+        printf("%lld\n", max_sum);
+    }
+
+    free((void *)const_lists);
+    for (size_t i = 0; i < num_lists; ++i) {
+        free(lists[i]);
+    }
+    free(sizes);
+    free(lists);
+
+    return status == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+```

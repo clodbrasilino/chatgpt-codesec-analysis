@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Heap {
+    int* harr;
+    int count;
+    int capacity;
+} MinHeap;
+
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+MinHeap* createMinHeap(int size) {
+    MinHeap* h = (MinHeap*)malloc(sizeof(MinHeap));
+    h->harr = (int*)malloc(sizeof(int) * size);
+    h->capacity = size;
+    h->count = 0;
+    return h;
+}
+
+int parent(int i) { return (i - 1) / 2; }
+int left(int i) { return (2 * i + 1); }
+int right(int i) { return (2 * i + 2); }
+
+void minHeapify(MinHeap* h, int idx) {
+    int l = left(idx);
+    int r = right(idx);
+    int smallest = idx;
+    
+    if(l < h->count && h->harr[l] < h->harr[smallest])
+        smallest = l;
+    if(r < h->count && h->harr[r] < h->harr[smallest])
+        smallest = r;
+    
+    if(smallest != idx) {
+        swap(&h->harr[smallest], &h->harr[idx]);
+        minHeapify(h, smallest);
+    }
+}
+
+int getMin(MinHeap* h) {
+    if(h->count == 0) return -1;
+    return h->harr[0];
+}
+
+void replaceMin(MinHeap* h, int val) {
+    h->harr[0] = val;
+    minHeapify(h, 0);
+}
+
+int nthSuperUglyNumber(int n, int primes[], int k) {
+    MinHeap* h = createMinHeap(n);
+    h->harr[0] = 1;
+    h->count = 1;
+    int* ugly = (int*)malloc(sizeof(int) * n);
+    int* idx = (int*)malloc(sizeof(int) * k);
+    int* val = (int*)malloc(sizeof(int) * k);
+    for(int i = 0; i < k; i++) {
+        idx[i] = val[i] = 0;
+    }
+    
+    for(int count = 1; count < n; count++) {
+        int next = getMin(h);
+        ugly[count] = next;
+        
+        for(int i = 0; i < k; i++) {
+            if(val[i] == next) {
+                val[i] = ugly[++idx[i]] * primes[i];
+                if(h->count < n) {
+                    h->harr[h->count] = val[i];
+                    h->count++;
+                } else {
+                    replaceMin(h, val[i]);
+                }
+            }
+        }
+    }
+    return ugly[n - 1];
+}
+
+int main() {
+    int primes[] = {2, 7, 13, 19};
+    int n = 11;
+    int k = sizeof(primes) / sizeof(primes[0]);
+
+    printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    
+    return 0;
+}

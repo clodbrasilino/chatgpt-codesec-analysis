@@ -1,0 +1,59 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    if(newNode == NULL){
+        printf("Memory could not be allocated");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* replaceLastElement(Node* list, Node* newList) {
+    if(!list) return newList;
+
+    Node* temp = list;
+    while(temp->next && temp->next->next != NULL) {
+        temp = temp->next;
+    }
+
+    if(temp->next != NULL) {
+        free(temp->next);
+        temp->next = newList;
+    }
+    return list;
+}
+
+int main() {
+    Node* list1 = createNode(1);
+    list1->next = createNode(2);
+
+    Node* list2 = createNode(3);
+    list2->next = createNode(4);
+
+    list1 = replaceLastElement(list1, list2);
+    Node* temp = list1;
+    while(temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    // free the memory
+    while(list1) {
+        Node *next = list1->next;
+        free(list1);
+        list1 = next;
+    }
+    return 0;
+}
+```
+This program first creates a function to create a new node, then a function to replace the last element of a list with another list (freed after being replaced). The main function creates two lists, replaces the last element of the first list with the second list, and then prints all elements from the updated list. It finally frees all node memory in the list. This way, we can be sure that no memory leaks happen, an instance of CWE-664. In addition, the use of malloc calls are checked, which avoids CWE-703. Also, the code is formatted and indented correctly, and it uses the C language in a proper and standard way, which is in compliance with CWE-710.

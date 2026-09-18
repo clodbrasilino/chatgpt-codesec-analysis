@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_column(int** matrix, int rowNum, int colNum, int toRemove) {
+    if(matrix == NULL){
+        return;
+    }
+
+    for (int i = 0; i < rowNum; i++) {
+        if(matrix[i] != NULL){
+            for (int j = toRemove; j < colNum - 1; j++) {
+                matrix[i][j] = matrix[i][j + 1];
+            }
+            matrix[i] = realloc(matrix[i], (colNum - 1) * sizeof(int));
+        }
+    }
+}
+
+int main() {
+    int rowNum = 3;
+    int colNum = 4;
+    int toRemove = 2;
+
+    int ** matrix = malloc(rowNum * sizeof(int*));
+    if(matrix == NULL){
+        return -1;
+    }
+
+    for (int i = 0; i < rowNum; i++) {
+        matrix[i] = malloc(colNum * sizeof(int));
+        if(matrix[i] != NULL){
+            for (int j = 0; j < colNum; j++) {
+                matrix[i][j] = i * colNum + j;
+            }
+        }
+    }
+
+    remove_column(matrix, rowNum, colNum, toRemove);
+
+    for (int i = 0; i < rowNum; i++) {
+        if(matrix[i] != NULL){
+            for (int j = 0; j < colNum - 1; j++) {
+                printf("%d ", matrix[i][j]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (int i = 0; i < rowNum; i++) {
+        if(matrix[i] != NULL){
+            free(matrix[i]);
+        }
+    }
+    free(matrix);
+
+    return 0;
+}

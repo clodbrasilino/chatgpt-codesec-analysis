@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int min, max;
+} Range;
+
+typedef struct {
+    int val, arrayIndex, elementIndex;
+} Element;
+
+void swap(Element* a, Element* b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(Element heap[], int size, int root) {
+    int smallest = root;
+    int leftChild = 2 * root + 1;
+    int rightChild = 2 * root + 2;
+
+    if (leftChild < size && heap[leftChild].val < heap[smallest].val)
+        smallest = leftChild;
+
+    if (rightChild < size && heap[rightChild].val < heap[smallest].val)
+        smallest = rightChild;
+
+    if (smallest != root) {
+        swap(&heap[root], &heap[smallest]);
+        minHeapify(heap, size, smallest);
+    }
+}
+
+Range findSmallestRange(int arr[][20], int n, int k) {
+    Element heap[k];
+    int i;
+    int range = INT_MAX;
+    int min = INT_MAX, max = INT_MIN;
+    int currentMax = INT_MIN;
+    Range minRange;
+    
+    for (i = 0; i < k; i++) {
+        heap[i].val = arr[i][0];
+        heap[i].arrayIndex = i;
+        heap[i].elementIndex = 1;
+
+        if (heap[i].val > currentMax)
+            currentMax = heap[i].val;
+    }
+
+    minHeapify(heap, k, 0);
+
+    while (1) {
+        min = heap[0].val;
+        int arrayIndex = heap[0].arrayIndex;
+        int elementIndex = heap[0].elementIndex;
+
+        if (currentMax - min < range) {
+            range = currentMax - min;
+            minRange.min = min;
+            minRange.max = currentMax;
+        }
+
+        if (elementIndex < n) {
+            heap[0].val = arr[arrayIndex][elementIndex];
+            heap[0].elementIndex += 1;
+            
+            if (heap[0].val > currentMax)
+                currentMax = heap[0].val;
+        } else
+            break;
+
+        minHeapify(heap, k, 0);
+    }
+
+    return minRange;
+}
+
+int main() {
+    int arr[][20] = {
+        {4, 7, 9, 12, 15},
+        {0, 8, 10, 14, 20},
+        {6, 12, 16, 30, 50}
+    };
+
+    int k = sizeof(arr)/sizeof(arr[0]);
+
+    Range minRange = findSmallestRange(arr, k, k);
+
+    printf("Smallest range is [%d, %d]", minRange.min, minRange.max);
+
+    return 0;
+}
+```

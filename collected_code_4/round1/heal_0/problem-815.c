@@ -1,0 +1,49 @@
+
+#include <stdio.h>
+
+void sort012(int a[], int arr_size)
+{
+    int lo = 0;
+    int hi = arr_size - 1;
+    int mid = 0;
+ 
+    while (mid <= hi) {
+        switch (a[mid]) {
+        case 0:
+            {
+                int temp = a[lo];
+                a[lo]  = a[mid];
+                a[mid] = temp;
+                lo++;
+                mid++;
+                break;
+            }
+        case 1:
+            mid++;
+            break;
+        case 2:
+            {
+                int temp = a[mid];
+                a[mid]  = a[hi];
+                a[hi] = temp;
+                hi--;
+                break;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int arr[] = {0, 1, 2, 0, 1, 2};
+    int arr_size = sizeof(arr)/sizeof(arr[0]);
+    int i;
+
+    sort012(arr, arr_size);
+
+    printf("Sorted array is: \n");
+    for (i = 0; i < arr_size; i++)
+        printf("%d ", arr[i]);
+    
+    return 0;
+}

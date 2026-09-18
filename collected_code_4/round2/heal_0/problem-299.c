@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+#define MAX_TUPLES 1000
+
+typedef struct tuple {
+    int first;
+    int second;
+} tuple;
+
+int maximum_aggregate(tuple arr[], int n) {
+    int max_sum = 0;
+    for(int i = 0; i < n; i++) {
+        int sum = arr[i].first + arr[i].second;
+        if(sum > max_sum){
+            max_sum = sum;
+        }
+    }
+    return max_sum;
+}
+
+int main() {
+    tuple arr[MAX_TUPLES];
+    int n = 0;
+
+    printf("Enter number of tuples: ");
+    scanf("%d", &n);
+
+    if(n > MAX_TUPLES || n <= 0) {
+        printf("Entered invalid number of tuples. Number of tuples must be between 1 and %d\n", MAX_TUPLES);
+        return -1;
+    }
+
+    for(int i = 0; i < n; i++) {
+        printf("Enter data for tuple %d (format is 'first second'): ", i + 1);
+        scanf("%d %d", &(arr[i].first), &(arr[i].second));
+    }
+
+    int max_sum = maximum_aggregate(arr, n);
+
+    printf("Maximum sum of tuple values: %d\n", max_sum);
+
+    return 0;
+}

@@ -1,0 +1,50 @@
+Here is a C program that checks if a URL is valid or not using regular expressions (regex). This program makes use of the POSIX regex library.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_URL_LENGTH 2048
+
+int url_check(const char *url) {
+    regex_t regex;
+    int return_val;
+
+    return_val = regcomp(&regex, "^(http|https)://"
+    "[a-zA-Z0-9\\-\\.]+\\."
+    "[a-zA-Z]{2,3}(/\\S*)?$", REG_EXTENDED);
+
+    if(return_val) {
+        printf("Could not compile regex\n");
+        return 0;  
+    }
+
+    return_val = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+
+    if(!return_val)
+        return 1;
+    else if(return_val == REG_NOMATCH)
+        return 0;
+    else 
+        return 0;
+}
+
+int main() {
+    char url[MAX_URL_LENGTH];
+
+    printf("Enter a URL to check: ");
+    fgets(url, MAX_URL_LENGTH, stdin);
+    
+    url[strlen(url) - 1] = '\0';
+
+    if(url_check(url))
+        printf("URL is valid\n");
+    else
+        printf("URL is invalid\n");
+
+    return 0;
+}
+```
+This C program includes a function named `url_check` that is passed a URL as an argument. It compiles a regular expression that matches valid HTTP or HTTPS URLs and checks the URL against this pattern using the `regexec` function. Before leaving the function, the regular expression is freed with the `regfree` function to prevent a memory leak. In the `main` function, the user is prompted to enter a URL. This URL is then passed to `url_check` and the result is printed to the console.

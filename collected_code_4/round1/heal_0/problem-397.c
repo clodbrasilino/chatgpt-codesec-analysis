@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int findMedian(int a, int b, int c) {
+    int median;
+
+    if ((a >= b && a <= c) || (a >= c && a <= b)) {
+        median = a;
+    } else if ((b >= a && b <= c) || (b >= c && b <= a)) {
+        median = b;
+    } else {
+        median = c;
+    }
+
+    return median;
+}
+
+int main() {
+    int num1, num2, num3;
+    printf("Enter three numbers: \n");
+    scanf("%d %d %d", &num1, &num2, &num3);
+
+    int median = findMedian(num1, num2, num3);
+
+    printf("Median of %d, %d and %d is %d\n", num1, num2, num3, median);
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countWays(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n % 2 != 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+    
+    unsigned int a_prev2 = 1;
+    unsigned int a_prev1 = 0;
+    unsigned int b_prev2 = 0;
+    unsigned int b_prev1 = 1;
+    
+    unsigned int a_curr = 0;
+    unsigned int b_curr = 0;
+
+    for (int i = 2; i <= n; i++) {
+        a_curr = a_prev2 + 2 * b_prev1;
+        b_curr = a_prev1 + b_prev2;
+        
+        a_prev2 = a_prev1;
+        a_prev1 = a_curr;
+        
+        b_prev2 = b_prev1;
+        b_prev1 = b_curr;
+    }
+    
+    return (int)a_curr;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    int ways = countWays(n);
+    if (ways != -1) {
+        printf("%d\n", ways);
+    } else {
+        return 1;
+    }
+    
+    return 0;
+}

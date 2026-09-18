@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+long long findMaxProduct(Tuple* tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return LLONG_MIN;
+    }
+
+    long long max_product = LLONG_MIN;
+
+    for (size_t i = 0; i < size; ++i) {
+        long long current_product = (long long)tuples[i].first * (long long)tuples[i].second;
+        if (current_product > max_product) {
+            max_product = current_product;
+        }
+    }
+
+    return max_product;
+}
+
+int main(void) {
+    size_t size = 4;
+    Tuple* tuples = (Tuple*)malloc(size * sizeof(Tuple));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].first = 2; tuples[0].second = 3;
+    tuples[1].first = 5; tuples[1].second = -2;
+    tuples[2].first = -10; tuples[2].second = -10;
+    tuples[3].first = 8; tuples[3].second = 4;
+
+    long long max_prod = findMaxProduct(tuples, size);
+    if (max_prod != LLONG_MIN) {
+        printf("Maximum product: %lld\n", max_prod);
+    } else {
+        printf("List is empty or invalid.\n");
+    }
+
+    free(tuples);
+    return EXIT_SUCCESS;
+}

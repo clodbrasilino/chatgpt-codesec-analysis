@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int* find_common_elements(const int* list1, size_t size1,
+                          const int* list2, size_t size2,
+                          const int* list3, size_t size3,
+                          size_t* out_size)
+{
+    if (list1 == NULL || list2 == NULL || list3 == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t min_size = size1;
+    if (size2 < min_size) {
+        min_size = size2;
+    }
+    if (size3 < min_size) {
+        min_size = size3;
+    }
+
+    if (min_size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* temp_result = (int*)malloc(min_size * sizeof(int));
+    if (temp_result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < min_size; ++i) {
+        if (list1[i] == list2[i] && list2[i] == list3[i]) {
+            temp_result[count] = list1[i];
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(temp_result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* final_result = (int*)realloc(temp_result, count * sizeof(int));
+    if (final_result == NULL) {
+        free(temp_result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    *out_size = count;
+    return final_result;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5, 10};
+    int list2[] = {1, 9, 3, 4, 6, 7};
+    int list3[] = {1, 8, 3, 4};
+
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+
+    size_t out_size = 0;
+    int* common_elements = find_common_elements(list1, size1, list2, size2, list3, size3, &out_size);
+
+    if (common_elements != NULL) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("%d\n", common_elements[i]);
+        }
+        free(common_elements);
+        common_elements = NULL;
+    }
+
+    return 0;
+}

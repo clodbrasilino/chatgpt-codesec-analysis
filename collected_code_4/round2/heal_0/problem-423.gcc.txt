@@ -1,0 +1,12 @@
+./collected_code_4/round2//heal_0/problem-423.c: In function 'goldMine':
+./collected_code_4/round2//heal_0/problem-423.c:6:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+    6 |     memset(goldTable, 0, sizeof(goldTable));
+      |     ^~~~~~
+./collected_code_4/round2//heal_0/problem-423.c:2:1: note: include '<string.h>' or provide a declaration of 'memset'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | #define MAX(a, b) ((a) > (b)) ? (a) : (b)
+./collected_code_4/round2//heal_0/problem-423.c:6:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+    6 |     memset(goldTable, 0, sizeof(goldTable));
+      |     ^~~~~~
+./collected_code_4/round2//heal_0/problem-423.c:6:5: note: include '<string.h>' or provide a declaration of 'memset'

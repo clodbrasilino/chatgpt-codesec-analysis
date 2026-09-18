@@ -1,0 +1,39 @@
+```C
+#include <string.h>
+#include <stdio.h>
+
+void findOccurrenceAndPosition(char *mainStr, char *subStr) {
+    int i = 0;
+    char *curPtr = mainStr;
+    char *resPtr = NULL;
+
+    while ((resPtr = strstr(curPtr, subStr)) != NULL) {
+        printf("Found substring '%s' at position %ld\n", subStr, resPtr - mainStr + 1);
+        i++;
+        curPtr = resPtr + 1;
+    }
+
+    if (i == 0) {
+        printf("Substring not found\n");
+    } else {
+        printf("Total occurrences: %d\n", i);
+    }
+}
+
+int main() {
+    char mainStr[100];
+    char subStr[50];
+
+    printf("Enter the main string: ");
+    fgets(mainStr, sizeof(mainStr), stdin);
+    mainStr[strcspn(mainStr, "\n")] = '\0';
+
+    printf("Enter the substring to be searched: ");
+    fgets(subStr, sizeof(subStr), stdin);
+    subStr[strcspn(subStr, "\n")] = '\0';
+
+    findOccurrenceAndPosition(mainStr, subStr);
+
+    return 0;
+}
+```

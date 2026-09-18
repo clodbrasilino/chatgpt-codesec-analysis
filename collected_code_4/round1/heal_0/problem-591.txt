@@ -1,0 +1,66 @@
+```C
+#include <stdio.h>
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+void swap(Node **head_ref)
+{
+    if (*head_ref == NULL || (*head_ref)->next == NULL)
+        return;
+
+    Node* first = *head_ref;
+    Node* last = *head_ref;
+    Node* prev = NULL;
+
+    while (last->next != NULL) {
+        prev = last;
+        last = last->next;
+    }
+
+    prev->next = first;
+    *head_ref = last;
+    last->next = first->next;
+    first->next = NULL;
+}
+
+void push(Node** head_ref, int new_data)
+{
+    Node* new_node = (Node*)malloc(sizeof(Node));
+
+    new_node->data  = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void printList(struct Node *node) 
+{
+    while (node != NULL) 
+    { 
+        printf(" %d ", node->data); 
+        node = node->next; 
+    } 
+}
+
+int main()
+{
+    Node* start = NULL; 
+
+    int arr[] = {1, 2, 3, 4, 5};
+    int i;
+    for (i = 4; i >=0; i--) 
+       push(&start, arr[i]); 
+
+    printf("\n Linked list before swapping\n"); 
+    printList(start); 
+
+    swap(&start); 
+
+    printf("\n Linked list after swapping\n"); 
+    printList(start); 
+  
+    return 0; 
+}
+```

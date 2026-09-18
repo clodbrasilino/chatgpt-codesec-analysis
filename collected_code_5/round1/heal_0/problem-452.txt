@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+float calculateLoss(float cost, float sale) {
+    float loss = 0.0;
+
+    if(cost > sale) {
+        loss = cost - sale;
+    }
+
+    return loss;
+}
+
+int main() {
+    float cost, sale, loss;
+
+    printf("Enter the cost and sale prices: ");
+    scanf("%f %f", &cost, &sale);
+
+    loss = calculateLoss(cost, sale);
+
+    if(loss > 0)
+        printf("Loss amount: %.2f\n", loss);
+    else
+        printf("No loss.\n");
+
+    return 0;
+}
+```
+In this code, the function `calculateLoss` is used to calculate the loss from the cost and sale prices. If the cost is greater than the sale price, it means a loss has incurred, thus calculating the loss by subtracting sale price from cost price. If cost is not greater than sale, there is no loss so it returns 0.
+
+The `main` function is used as the program's entry point. It begins by taking the cost and sale prices as input from the user, then calls the `calculateLoss` function to find the loss. If loss is greater than 0, it prints the loss amount calculated. If not, it prints "No Loss".

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculateCombination(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    unsigned long long c = 1;
+    for (int i = 1; i <= k; i++) {
+        c = c * (n - i + 1) / i;
+    }
+    return c;
+}
+
+unsigned long long sumOfSquaresOfBinomialCoeffs(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return calculateCombination(2 * n, n);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    int n = 5;
+    
+    if (argc > 1) {
+        n = atoi(argv[1]);
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = sumOfSquaresOfBinomialCoeffs(n);
+    printf("Sum of squares of binomial coefficients for n=%d is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

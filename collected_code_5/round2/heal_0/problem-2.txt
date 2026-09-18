@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+
+void findSimilarElements(int n1, int n2, int arr1[], int arr2[]) {
+    int i, j;
+
+    printf("\nSimilar elements are: ");
+    for (i = 0; i < n1; i++) {
+        for (j = 0; j < n2; j++) {
+            if (arr1[i] == arr2[j]) {
+                printf("%d ", arr1[i]);
+                break;
+            }
+        }
+    }
+}
+
+int main() {
+    int n1, n2, i;
+  
+    printf("Enter number of elements for first array: ");
+    scanf("%d", &n1);
+
+    int arr1[n1];
+
+    printf("Enter elements for first array: ");
+    for (i = 0; i < n1; i++) {
+        scanf("%d", &arr1[i]);
+    }
+    
+    printf("Enter number of elements for second array: ");
+    scanf("%d", &n2);
+
+    int arr2[n2];
+
+    printf("Enter elements for second array: ");
+    for (i = 0; i < n2; i++) {
+        scanf("%d", &arr2[i]);
+    }
+
+    findSimilarElements(n1, n2, arr1, arr2);
+
+    return 0;
+}
+```

@@ -1,0 +1,5 @@
+problem-127-s3.c:46:15:medium:UBSan: left shift of 1342177280 by 1 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:2786,execs:942,op:havoc,rep:1)
+problem-127-s3.c:46:15:medium:UBSan: left shift of 1116077172 by 1 places cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:6405,execs:2225,op:havoc,rep:2)
+problem-127-s3.c:46:15:medium:UBSan: left shift of 1073741824 by 1 places cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:15572,execs:5757,op:havoc,rep:2)
+problem-127-s3.c:46:15:medium:UBSan: left shift of 1773790778 by 1 places cannot be represented in type 'int' (AFL crash: id:000004,sig:06,src:000001,time:31989,execs:11646,op:havoc,rep:2)
+problem-127-s3.c:57:0:error:Fuzzing found a crash (signal 6) on input id:000003,sig:06,src:000001,time:19152,execs:7119,op:havoc,rep:2; likely memory-safety defect

@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int power(long long base, unsigned int exp, long long *result)
+{
+    long long acc;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    acc = 1;
+
+    while (exp > 0U) {
+        if ((exp & 1U) == 1U) {
+            if (base > 0 && acc > LLONG_MAX / base) {
+                return -1;
+            }
+            if (base < 0 && acc < LLONG_MIN / base) {
+                return -1;
+            }
+            if (base < 0 && acc > 0 && base < LLONG_MIN / acc) {
+                return -1;
+            }
+            acc *= base;
+        }
+        exp >>= 1U;
+        if (exp > 0U) {
+            if (base != 0 && (base > LLONG_MAX / base || base < LLONG_MIN / base)) {
+                return -1;
+            }
+            base *= base;
+        }
+    }
+
+    *result = acc;
+    return 0;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000005,time:25850,execs:16241,op:havoc,rep:2; likely memory-safety defect
+  */
+
+int main(void)
+{
+    long long a;
+    unsigned int b;
+    long long result;
+
+    printf("Enter base: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter exponent: ");
+    if (scanf("%u", &b) != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return EXIT_FAILURE;
+    }
+
+    if (power(a, b, &result) != 0) {
+        fprintf(stderr, "Overflow detected or invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld^%u = %lld\n", a, b, result);
+    return EXIT_SUCCESS;
+}

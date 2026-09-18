@@ -1,0 +1,104 @@
+./collected_code_4/round1//heal_0//problem-691.c: In function 'groupFirstElementsBySecond':
+./collected_code_4/round1//heal_0//problem-691.c:36:30: warning: leak of 'tupleGroup.firstElements' [CWE-401] [-Wanalyzer-malloc-leak]
+   36 |     tupleGroup.firstElements = realloc(tupleGroup.firstElements, sizeof(int) * tupleGroup.size);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'groupFirstElementsBySecond': events 1-6
+    |
+    |   21 |     tupleGroup.firstElements = malloc(sizeof(int) * tupleList->size);
+    |      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (1) allocated here
+    |   22 | 
+    |   23 |     if(tupleGroup.firstElements == NULL) {
+    |      |       ~                         
+    |      |       |
+    |      |       (2) assuming 'tupleGroup.firstElements' is non-NULL
+    |      |       (3) following 'false' branch...
+    |......
+    |   28 |     size_t index = 0;
+    |      |            ~~~~~                
+    |      |            |
+    |      |            (4) ...to here
+    |......
+    |   36 |     tupleGroup.firstElements = realloc(tupleGroup.firstElements, sizeof(int) * tupleGroup.size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              | |
+    |      |                              | (5) when 'realloc' fails
+    |      |                              (6) 'tupleGroup.firstElements' leaks here; was allocated at (1)
+    |
+./collected_code_4/round1//heal_0//problem-691.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-691.c:48:9: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   48 |         printf("%d ", tupleGroup.firstElements[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   45 |     struct TupleGroup tupleGroup = groupFirstElementsBySecond(&tupleList, 2);
+    |      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (2) calling 'groupFirstElementsBySecond' from 'main'
+    |
+    +--> 'groupFirstElementsBySecond': events 3-12
+           |
+           |   19 | struct TupleGroup groupFirstElementsBySecond(struct TupleList* tupleList, int second) {
+           |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (3) entry to 'groupFirstElementsBySecond'
+           |......
+           |   23 |     if(tupleGroup.firstElements == NULL) {
+           |      |       ~            
+           |      |       |
+           |      |       (4) following 'false' branch...
+           |......
+           |   28 |     size_t index = 0;
+           |      |            ~~~~~   
+           |      |            |
+           |      |            (5) ...to here
+           |   29 |     for(size_t i = 0; i < tupleList->size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (6) following 'true' branch...
+           |      |                         (10) following 'false' branch...
+           |   30 |         if(tupleList->tuples[i].second == second) {
+           |      |           ~~~~~~~~~~~~~~~~~~
+           |      |           |         |
+           |      |           |         (7) ...to here
+           |      |           (8) following 'true' branch...
+           |   31 |             tupleGroup.firstElements[index++] = tupleList->tuples[i].first;
+           |      |                                                 ~~~~~~~~~~~~~~~~~
+           |      |                                                          |
+           |      |                                                          (9) ...to here
+           |......
+           |   35 |     tupleGroup.size = index;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (11) ...to here
+           |   36 |     tupleGroup.firstElements = realloc(tupleGroup.firstElements, sizeof(int) * tupleGroup.size);
+           |      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (12) when 'realloc' fails
+           |
+    <------+
+    |
+  'main': events 13-17
+    |
+    |   45 |     struct TupleGroup tupleGroup = groupFirstElementsBySecond(&tupleList, 2);
+    |      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (13) returning to 'main' from 'groupFirstElementsBySecond'
+    |   46 | 
+    |   47 |     for(size_t i = 0; i < tupleGroup.size; ++i) {
+    |      |                       ~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (14) following 'true' branch...
+    |   48 |         printf("%d ", tupleGroup.firstElements[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                       |             |
+    |      |         |                       |             (16) '0' is NULL
+    |      |         |                       (15) ...to here
+    |      |         (17) dereference of NULL 'tupleGroup.firstElements + i * 4'
+    |

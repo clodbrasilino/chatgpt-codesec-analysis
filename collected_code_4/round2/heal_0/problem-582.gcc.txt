@@ -1,0 +1,29 @@
+./collected_code_4/round2//heal_0/problem-582.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-582.c:20:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   20 |     printf("%s\n", check_dictionary_empty(dict) ? "Empty" : "Not Empty");
+      |     ^~~~~~
+./collected_code_4/round2//heal_0/problem-582.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <stdlib.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round2//heal_0/problem-582.c:20:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   20 |     printf("%s\n", check_dictionary_empty(dict) ? "Empty" : "Not Empty");
+      |     ^~~~~~
+./collected_code_4/round2//heal_0/problem-582.c:20:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round2//heal_0/problem-582.c:18:16: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     dict->data = NULL;
+      |                ^
+  'main': event 1
+    |
+    |   17 |     Dictionary *dict = malloc(sizeof(Dictionary));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |
+  'main': event 2
+    |
+    |   18 |     dict->data = NULL;
+    |      |                ^
+    |      |                |
+    |      |                (2) 'dict' could be NULL: unchecked value from (1)
+    |

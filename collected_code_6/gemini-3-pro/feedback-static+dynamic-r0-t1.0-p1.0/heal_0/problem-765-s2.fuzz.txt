@@ -1,0 +1,2 @@
+problem-765-s2.c:9:23:medium:UBSan: nan is outside the range of representable values of type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:377,execs:196,op:havoc,rep:2)
+problem-765-s2.c:9:54:medium:UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:377,execs:196,op:havoc,rep:2)

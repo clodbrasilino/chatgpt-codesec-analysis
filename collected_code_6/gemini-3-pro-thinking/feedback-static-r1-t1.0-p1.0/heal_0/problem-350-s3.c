@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t minimize_string_length(char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    size_t freq[256] = {0};
+    unsigned char *ptr = (unsigned char *)str;
+    
+    while (*ptr) {
+        freq[*ptr]++;
+        ptr++;
+    }
+
+    size_t max_freq = 0;
+    unsigned char char_to_remove = 0;
+
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            char_to_remove = (unsigned char)i;
+        }
+    }
+
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr) {
+        if ((unsigned char)*read_ptr != char_to_remove) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+
+    return (size_t)(write_ptr - str);
+}
+
+int main(void) {
+    char str1[] = "programming";
+    size_t len1 = minimize_string_length(str1);
+    printf("%s %zu\n", str1, len1);
+
+    char str2[] = "abacaba";
+    size_t len2 = minimize_string_length(str2);
+    printf("%s %zu\n", str2, len2);
+
+    char str3[] = "";
+    size_t len3 = minimize_string_length(str3);
+    printf("%s %zu\n", str3, len3);
+
+    size_t len4 = minimize_string_length(NULL);
+    printf("%zu\n", len4);
+
+    return 0;
+}

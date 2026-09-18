@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
+int findSquareRoot(int num) {
+    if (num < 0) {
+        return -1;
+    }
+    
+    double sqrtResult = sqrt((double)num);
+    
+    if (isnan(sqrtResult) || sqrtResult > INT_MAX || sqrtResult < INT_MIN) {
+        return -1;
+    }
+    
+    int sqrtNum = (int)sqrtResult;
+    
+    if (sqrtNum > 0 && sqrtNum > INT_MAX / sqrtNum) {
+        return -1;
+    }
+    
+    if (sqrtNum * sqrtNum == num) {
+        return sqrtNum;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a perfect square number: ");
+    scanf("%d", &num);
+
+    int result = findSquareRoot(num);
+    if (result != -1) {
+        printf("Square root of %d is %d\n", num, result);
+    } else {
+        printf("%d is not a perfect square number\n", num);
+    }
+
+    return 0;
+}

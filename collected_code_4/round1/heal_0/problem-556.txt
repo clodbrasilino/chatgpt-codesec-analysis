@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+int countOddXORPairs(int array[], int size)
+{
+    int count = 0;
+    for(int i = 0; i < size; i++)
+    {
+        for(int j = i + 1; j < size; j++)
+        {
+            if ((array[i] ^ array[j]) & 1)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main()
+{
+    int array[] = {2, 3, 5, 4, 6};
+    int size = sizeof(array) / sizeof(array[0]);
+
+    printf("Count of pair with odd XOR is %d\n", countOddXORPairs(array, size));
+
+    return 0;
+}
+```

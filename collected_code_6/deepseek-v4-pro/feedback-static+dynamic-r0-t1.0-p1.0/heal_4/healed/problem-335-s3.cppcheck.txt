@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:70:18: style: Condition 'll_n>0' is always true [knownConditionTrueFalse]
+        if (ll_n > 0 && half_sum > 0 && ll_n > LLONG_MAX / half_sum) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:7:25: note: Assuming that condition 'number_of_terms<=0' is not redundant
+    if (number_of_terms <= 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:13:20: note: ll_n is assigned 'number_of_terms' here.
+    long long ll_n = number_of_terms;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:70:18: note: Condition 'll_n>0' is always true
+        if (ll_n > 0 && half_sum > 0 && ll_n > LLONG_MAX / half_sum) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:73:18: style: Condition 'll_n>0' is always true [knownConditionTrueFalse]
+        if (ll_n > 0 && half_sum < 0 && ll_n > LLONG_MAX / (-half_sum)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:7:25: note: Assuming that condition 'number_of_terms<=0' is not redundant
+    if (number_of_terms <= 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:70:38: note: Assuming condition is false
+        if (ll_n > 0 && half_sum > 0 && ll_n > LLONG_MAX / half_sum) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:13:20: note: ll_n is assigned 'number_of_terms' here.
+    long long ll_n = number_of_terms;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-335-s3.c:73:18: note: Condition 'll_n>0' is always true
+        if (ll_n > 0 && half_sum < 0 && ll_n > LLONG_MAX / (-half_sum)) {
+                 ^

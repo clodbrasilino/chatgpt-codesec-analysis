@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+// Function to calculate number of ways
+long long int numberOfWays(int n) { 
+    if(n <= 0) {
+        return 0;
+    }
+    if(n == 1) {
+        return 1;
+    }
+	if(n == 2) {
+		return 3;
+	}
+
+    long long int dp[n+1]; 
+    dp[1] = 1;
+    dp[2] = 3;
+    for(int i = 3; i <= n; i++) {
+        dp[i] = dp[i-1] + 2*dp[i-2];
+    }
+
+    return dp[n]; 
+ }
+
+int main() { 
+	int n = 4;
+	printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes is : %lld\n", n, numberOfWays(n));
+	return 0; 
+} 

@@ -1,0 +1,4 @@
+problem-177.c:19:23:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+problem-177.c:21:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+problem-177.c:21:31:medium:UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000023,time:53616,execs:12952,op:havoc,rep:2)
+problem-177.c:48:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000011,time:17232,execs:6507,op:havoc,rep:3; likely memory-safety defect

@@ -1,0 +1,58 @@
+I should point out that regex support isn't built into C unlike in other languages such as Python or JavaScript.
+
+Because of that, the best way to do this in standard C might involve iterating over the string and examining each character manually. However, doing it with regex would involve using a library such as POSIX regex that comes in the standard library with most UNIX-like operating systems.
+
+Here's how you could do it with POSIX regex:
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_on_uppercase(char* str){
+    regex_t regex;
+    int ret;
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if(ret){
+        printf("Could not compile regex\n");
+        exit(1);
+    }
+
+    regmatch_t matches[1];
+    char* next_str = str;
+    
+    printf("Substrings:\n");
+    while(next_str){
+        if(regexec(&regex, next_str, 1, matches, 0) == 0){
+            int match_len = matches[0].rm_eo - matches[0].rm_so;
+            char* substring = (char*)malloc(sizeof(char) * (match_len + 1));
+            strncpy(substring, next_str, match_len);
+            substring[match_len] = '\0';
+            printf("%s\n", substring);
+
+            next_str += matches[0].rm_eo;
+        } else {
+            printf("%s\n", next_str);
+            next_str = 0;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    split_string_on_uppercase(str);
+    return 0;
+}
+```
+This code finds all substrings in `str` that end at an uppercase letter, printing each one. Afterwards, it advances the string pointer and repeats the process until no matches can be found.
+
+However, do note that this code could fail if the string contains multi-byte characters. In such a case, matching against an ASCII range like `[A-Z]` could produce incorrect results. If you need to handle such strings, you would have to use a library that supports Unicode and Unicode regex.
+
+Always remember to `free` any memory you `malloc`. `strdup` is not used in my example, but if it was, it would also be important to `free` any strings created with it. Mismanagement of memory could introduce serious bugs into your program (CWE-664).
+
+When dealing with system resources, always check the return value of each function call to handle any issues that may occur (CWE-703). 
+
+Always aim to adhere to coding standards for the particular language you're using (CWE-710). In C, this might include always using braces even for single-statement control flow blocks, avoiding the use of non-standard language extensions, etc.

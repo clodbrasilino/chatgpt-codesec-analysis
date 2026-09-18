@@ -1,0 +1,34 @@
+```C
+#include <stdio.h>
+
+void shiftLastElement(int* arr, int size) {
+    int lastElement;
+
+    if(arr == NULL || size == 0){
+        printf("\nError: Array is empty or NULL");
+        return;
+    }
+
+    lastElement = arr[size - 1];
+
+    for(int i = size - 1; i > 0; --i){
+        arr[i] = arr[i - 1];
+    }
+
+    arr[0] = lastElement;
+}
+
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5};
+    int size = sizeof(list) / sizeof(list[0]);
+
+    shiftLastElement(list, size);
+
+    for(int i = 0; i < size; ++i){
+        printf("%d ", list[i]);
+    }
+
+    return 0;
+}
+```

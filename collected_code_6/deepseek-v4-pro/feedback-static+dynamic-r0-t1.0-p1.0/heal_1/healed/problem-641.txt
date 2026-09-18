@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int nonagonal_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    
+    if (n > INT_MAX / 7) {
+        return -1;
+    }
+    
+    long long term = 7LL * n - 5;
+    
+    if (term > LLONG_MAX / n) {
+        return -1;
+    }
+    
+    long long numerator = n * term;
+    
+    if (numerator % 2 != 0) {
+        numerator -= 1;
+    }
+    
+    long long result = numerator / 2;
+    
+    if (result > INT_MAX || result < INT_MIN) {
+        return -1;
+    }
+    
+    return (int)result;
+}
+
+int main(void) {
+    int n;
+    int result;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nonagonal_number(n);
+    if (result == -1) {
+        printf("n must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Nonagonal number %d: %d\n", n, result);
+    return EXIT_SUCCESS;
+}
+```

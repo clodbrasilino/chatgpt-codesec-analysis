@@ -1,0 +1,259 @@
+./collected_code_4/round1//heal_0//problem-723.c: In function 'count_same_pairs':
+./collected_code_4/round1//heal_0//problem-723.c:16:12: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   16 |         map[index]++;
+      |         ~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     int res = count_same_pairs(l1, l2, n1, n2);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'count_same_pairs' from 'main'
+    |
+    +--> 'count_same_pairs': events 3-7
+           |
+           |   10 | int count_same_pairs(Pair l1[], Pair l2[], int n1, int n2) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'count_same_pairs'
+           |   11 |     int map[MAX] = {0};
+           |      |         ~~~
+           |      |         |
+           |      |         (4) capacity: 400000 bytes
+           |......
+           |   14 |     for(int i = 0; i < n1; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < n1')...
+           |   15 |         int index = l1[i].x * MAX + l1[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (6) ...to here
+           |   16 |         map[index]++;
+           |      |         ~~~~~~~~~~
+           |      |            |
+           |      |            (7) out-of-bounds read from byte 400008 till byte 400011 but 'map' ends at byte 400000
+           |
+./collected_code_4/round1//heal_0//problem-723.c:16:12: note: read of 4 bytes from after the end of 'map'
+   16 |         map[index]++;
+      |         ~~~^~~~~~~
+./collected_code_4/round1//heal_0//problem-723.c:16:12: note: valid subscripts for 'map' are '[0]' to '[99999]'
+./collected_code_4/round1//heal_0//problem-723.c:16:19: warning: stack-based buffer overflow [CWE-121] [-Wanalyzer-out-of-bounds]
+   16 |         map[index]++;
+      |         ~~~~~~~~~~^~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     int res = count_same_pairs(l1, l2, n1, n2);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'count_same_pairs' from 'main'
+    |
+    +--> 'count_same_pairs': events 3-7
+           |
+           |   10 | int count_same_pairs(Pair l1[], Pair l2[], int n1, int n2) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'count_same_pairs'
+           |   11 |     int map[MAX] = {0};
+           |      |         ~~~
+           |      |         |
+           |      |         (4) capacity: 400000 bytes
+           |......
+           |   14 |     for(int i = 0; i < n1; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < n1')...
+           |   15 |         int index = l1[i].x * MAX + l1[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (6) ...to here
+           |   16 |         map[index]++;
+           |      |         ~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (7) out-of-bounds write from byte 400008 till byte 400011 but 'map' ends at byte 400000
+           |
+./collected_code_4/round1//heal_0//problem-723.c:16:19: note: write of 4 bytes to beyond the end of 'map'
+   16 |         map[index]++;
+      |         ~~~~~~~~~~^~
+./collected_code_4/round1//heal_0//problem-723.c:16:19: note: valid subscripts for 'map' are '[0]' to '[99999]'
+./collected_code_4/round1//heal_0//problem-723.c:21:15: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   21 |         if(map[index] > 0) {
+      |            ~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     int res = count_same_pairs(l1, l2, n1, n2);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'count_same_pairs' from 'main'
+    |
+    +--> 'count_same_pairs': events 3-9
+           |
+           |   10 | int count_same_pairs(Pair l1[], Pair l2[], int n1, int n2) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'count_same_pairs'
+           |   11 |     int map[MAX] = {0};
+           |      |         ~~~
+           |      |         |
+           |      |         (4) capacity: 400000 bytes
+           |......
+           |   14 |     for(int i = 0; i < n1; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < n1')...
+           |   15 |         int index = l1[i].x * MAX + l1[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (6) ...to here
+           |......
+           |   19 |     for(int i = 0; i < n2; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < n2')...
+           |   20 |         int index = l2[i].x * MAX + l2[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (8) ...to here
+           |   21 |         if(map[index] > 0) {
+           |      |            ~~~~~~~~~~
+           |      |               |
+           |      |               (9) out-of-bounds read from byte 1200016 till byte 1200019 but 'map' ends at byte 400000
+           |
+./collected_code_4/round1//heal_0//problem-723.c:21:15: note: read of 4 bytes from after the end of 'map'
+   21 |         if(map[index] > 0) {
+      |            ~~~^~~~~~~
+./collected_code_4/round1//heal_0//problem-723.c:21:15: note: valid subscripts for 'map' are '[0]' to '[99999]'
+./collected_code_4/round1//heal_0//problem-723.c:23:16: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   23 |             map[index]--;
+      |             ~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     int res = count_same_pairs(l1, l2, n1, n2);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'count_same_pairs' from 'main'
+    |
+    +--> 'count_same_pairs': events 3-11
+           |
+           |   10 | int count_same_pairs(Pair l1[], Pair l2[], int n1, int n2) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'count_same_pairs'
+           |   11 |     int map[MAX] = {0};
+           |      |         ~~~
+           |      |         |
+           |      |         (4) capacity: 400000 bytes
+           |......
+           |   14 |     for(int i = 0; i < n1; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < n1')...
+           |   15 |         int index = l1[i].x * MAX + l1[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (6) ...to here
+           |......
+           |   19 |     for(int i = 0; i < n2; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < n2')...
+           |   20 |         int index = l2[i].x * MAX + l2[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (8) ...to here
+           |   21 |         if(map[index] > 0) {
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'true' branch...
+           |   22 |             count++;
+           |      |             ~~~~~~~
+           |      |                  |
+           |      |                  (10) ...to here
+           |   23 |             map[index]--;
+           |      |             ~~~~~~~~~~
+           |      |                |
+           |      |                (11) out-of-bounds read from byte 1200016 till byte 1200019 but 'map' ends at byte 400000
+           |
+./collected_code_4/round1//heal_0//problem-723.c:23:16: note: read of 4 bytes from after the end of 'map'
+   23 |             map[index]--;
+      |             ~~~^~~~~~~
+./collected_code_4/round1//heal_0//problem-723.c:23:16: note: valid subscripts for 'map' are '[0]' to '[99999]'
+./collected_code_4/round1//heal_0//problem-723.c:23:23: warning: stack-based buffer overflow [CWE-121] [-Wanalyzer-out-of-bounds]
+   23 |             map[index]--;
+      |             ~~~~~~~~~~^~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     int res = count_same_pairs(l1, l2, n1, n2);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'count_same_pairs' from 'main'
+    |
+    +--> 'count_same_pairs': events 3-11
+           |
+           |   10 | int count_same_pairs(Pair l1[], Pair l2[], int n1, int n2) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'count_same_pairs'
+           |   11 |     int map[MAX] = {0};
+           |      |         ~~~
+           |      |         |
+           |      |         (4) capacity: 400000 bytes
+           |......
+           |   14 |     for(int i = 0; i < n1; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < n1')...
+           |   15 |         int index = l1[i].x * MAX + l1[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (6) ...to here
+           |......
+           |   19 |     for(int i = 0; i < n2; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i < n2')...
+           |   20 |         int index = l2[i].x * MAX + l2[i].y;
+           |      |                       ~
+           |      |                       |
+           |      |                       (8) ...to here
+           |   21 |         if(map[index] > 0) {
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'true' branch...
+           |   22 |             count++;
+           |      |             ~~~~~~~
+           |      |                  |
+           |      |                  (10) ...to here
+           |   23 |             map[index]--;
+           |      |             ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (11) out-of-bounds write from byte 1200016 till byte 1200019 but 'map' ends at byte 400000
+           |
+./collected_code_4/round1//heal_0//problem-723.c:23:23: note: write of 4 bytes to beyond the end of 'map'
+   23 |             map[index]--;
+      |             ~~~~~~~~~~^~
+./collected_code_4/round1//heal_0//problem-723.c:23:23: note: valid subscripts for 'map' are '[0]' to '[99999]'

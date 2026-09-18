@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* camel_to_snake(const char* camel_case) {
+    if (!camel_case) return NULL;
+
+    size_t len = strlen(camel_case);
+    char* snake_case = (char*)malloc(len * 2 + 1);
+    if (!snake_case) {
+        return NULL;
+    }
+
+    const char* in = camel_case;
+    char* out = snake_case;
+
+    while (*in) {
+        if (isupper((unsigned char)*in)) {
+            if (in > camel_case) {
+                *out++ = '_';
+            }
+            *out++ = tolower((unsigned char)*in);
+        } else {
+            *out++ = *in;
+        }
+        in++;
+    }
+    
+    *out = '\0';
+    return snake_case;
+}
+
+int main(void) {
+    char buffer[1024];
+    if (scanf("%1023s", buffer) == 1) {
+        char* snake = camel_to_snake(buffer);
+        if (snake) {
+            printf("%s\n", snake);
+            free(snake);
+        }
+    }
+    return 0;
+}
+```

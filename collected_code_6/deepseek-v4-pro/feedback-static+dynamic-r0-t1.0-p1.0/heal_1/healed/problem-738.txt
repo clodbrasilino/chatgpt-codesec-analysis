@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double geometric_sum_recursive(int n);
+double geometric_sum_iterative(int n);
+
+double geometric_sum_recursive(int n) {
+    if (n == 0) {
+        return 0.0;
+    }
+    if (n == 1) {
+        return 1.0;
+    }
+    if (n > 1000) {
+        return geometric_sum_iterative(n);
+    }
+    double term = 1.0 / pow(2.0, (double)(n - 1));
+    double rest = geometric_sum_recursive(n - 1);
+    return term + rest;
+}
+
+double geometric_sum_iterative(int n) {
+    double sum = 0.0;
+    double term = 1.0;
+    for (int i = 0; i < n; i++) {
+        sum += term;
+        term /= 2.0;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n = 0;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    if (n < 0) {
+        return 1;
+    }
+    double result = geometric_sum_recursive(n);
+    printf("%.10f\n", result);
+    return 0;
+}
+```

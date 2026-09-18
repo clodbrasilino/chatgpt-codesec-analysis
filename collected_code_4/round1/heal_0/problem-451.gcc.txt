@@ -1,0 +1,61 @@
+./collected_code_4/round1//heal_0//problem-451.c: In function 'remove_whitespace':
+./collected_code_4/round1//heal_0//problem-451.c:20:28: warning: dereference of possibly-NULL 'plaintext' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |             plaintext[j++] = input[i + match.rm_so];
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+  'remove_whitespace': events 1-8
+    |
+    |    9 |     char *plaintext = malloc(strlen(input) + 1);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |   10 | 
+    |   11 |     if (0 != regcomp(&regex, "[^ \t\n]", REG_EXTENDED)) {
+    |      |        ~               
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   16 |     int i, j = 0;
+    |      |            ~           
+    |      |            |
+    |      |            (3) ...to here
+    |   17 |     for (i = 0; input[i] != '\0'; ++i) {
+    |      |                 ~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (4) following 'true' branch...
+    |   18 |         /* execute the regex */
+    |   19 |         if (0 == regexec(&regex, input + i, 1, &match, 0)) {
+    |      |            ~     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |     |
+    |      |            |     (5) ...to here
+    |      |            (6) following 'true' branch...
+    |   20 |             plaintext[j++] = input[i + match.rm_so];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |         |
+    |      |                            |         (7) ...to here
+    |      |                            (8) 'plaintext + (sizetype)j' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-451.c:24:18: warning: dereference of possibly-NULL 'plaintext' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     plaintext[j] = '\0';
+      |     ~~~~~~~~~~~~~^~~~~~
+  'remove_whitespace': events 1-4
+    |
+    |    9 |     char *plaintext = malloc(strlen(input) + 1);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |   10 | 
+    |   11 |     if (0 != regcomp(&regex, "[^ \t\n]", REG_EXTENDED)) {
+    |      |        ~               
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   16 |     int i, j = 0;
+    |      |            ~           
+    |      |            |
+    |      |            (3) ...to here
+    |......
+    |   24 |     plaintext[j] = '\0';
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (4) 'plaintext + (sizetype)j' could be NULL: unchecked value from (1)
+    |

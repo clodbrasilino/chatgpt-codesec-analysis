@@ -1,0 +1,25 @@
+./collected_code_4/round1//heal_0//problem-728.c: In function 'sumOfLists':
+./collected_code_4/round1//heal_0//problem-728.c:4:20: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    4 |     int* sumList = malloc(size * sizeof(int));
+      |                    ^~~~~~
+./collected_code_4/round1//heal_0//problem-728.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-728.c:4:20: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    4 |     int* sumList = malloc(size * sizeof(int));
+      |                    ^~~~~~
+./collected_code_4/round1//heal_0//problem-728.c:4:20: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round1//heal_0//problem-728.c:7:9: warning: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+    7 |         exit(0);
+      |         ^~~~
+./collected_code_4/round1//heal_0//problem-728.c:7:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round1//heal_0//problem-728.c:7:9: warning: incompatible implicit declaration of built-in function 'exit' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-728.c:7:9: note: include '<stdlib.h>' or provide a declaration of 'exit'
+./collected_code_4/round1//heal_0//problem-728.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-728.c:32:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   32 |     free(sumList);
+      |     ^~~~
+./collected_code_4/round1//heal_0//problem-728.c:32:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-728.c:32:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-728.c:32:5: note: include '<stdlib.h>' or provide a declaration of 'free'

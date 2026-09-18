@@ -1,0 +1,309 @@
+./collected_code_4/round2//heal_2/healed/problem-652.c: In function 'freeTuples':
+./collected_code_4/round2//heal_2/healed/problem-652.c:47:9: warning: use of uninitialized value '*tuples_10(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   47 |         free(tuples[i]);
+      |         ^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   52 | int main(void) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   53 |     int matrix[ROW][COL] = {{1, 2, 3, 4},{5, 6, 7, 8},{9, 10, 11, 12}};
+    |   54 |     tuple **flattened = flattenMatrix(matrix);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'flattenMatrix' from 'main'
+    |
+    +--> 'flattenMatrix': events 3-6
+           |
+           |   23 | tuple** flattenMatrix(int matrix[ROW][COL]) {
+           |      |         ^~~~~~~~~~~~~
+           |      |         |
+           |      |         (3) entry to 'flattenMatrix'
+           |   24 |     tuple **flattened = (tuple**) malloc(COL * ROW * sizeof(tuple*));
+           |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (4) region created on heap here
+           |   25 |     if(flattened == NULL) {
+           |      |       ~  
+           |      |       |
+           |      |       (5) following 'false' branch (when 'flattened' is non-NULL)...
+           |......
+           |   30 |     int k = 0;
+           |      |         ~
+           |      |         |
+           |      |         (6) ...to here
+           |
+         'flattenMatrix': events 7-8
+           |
+           |   31 |     for(int i = 0; i < ROW; i++) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (7) following 'true' branch (when 'i <= 2')...
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                 ~     
+           |      |                 |
+           |      |                 (8) ...to here
+           |
+         'flattenMatrix': events 9-11
+           |
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (9) following 'true' branch (when 'j <= 3')...
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |                       |
+           |      |                              |                       (10) ...to here
+           |      |                              (11) calling 'createTuple' from 'flattenMatrix'
+           |
+           +--> 'createTuple': events 12-14
+                  |
+                  |   11 | tuple* createTuple(int x, int y, int val) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (12) entry to 'createTuple'
+                  |   12 |     tuple *new_tuple = (tuple*) malloc(sizeof(tuple));
+                  |   13 |     if(new_tuple == NULL) {
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (13) following 'false' branch (when 'new_tuple' is non-NULL)...
+                  |......
+                  |   17 |     new_tuple->x = x;
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (14) ...to here
+                  |
+           <------+
+           |
+         'flattenMatrix': event 15
+           |
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (15) returning to 'flattenMatrix' from 'createTuple'
+           |
+         'flattenMatrix': events 16-18
+           |
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (16) following 'true' branch (when 'j <= 3')...
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |                       |
+           |      |                              |                       (17) ...to here
+           |      |                              (18) calling 'createTuple' from 'flattenMatrix'
+           |
+           +--> 'createTuple': events 19-21
+                  |
+                  |   11 | tuple* createTuple(int x, int y, int val) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (19) entry to 'createTuple'
+                  |   12 |     tuple *new_tuple = (tuple*) malloc(sizeof(tuple));
+                  |   13 |     if(new_tuple == NULL) {
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (20) following 'false' branch (when 'new_tuple' is non-NULL)...
+                  |......
+                  |   17 |     new_tuple->x = x;
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (21) ...to here
+                  |
+           <------+
+           |
+         'flattenMatrix': event 22
+           |
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (22) returning to 'flattenMatrix' from 'createTuple'
+           |
+         'flattenMatrix': events 23-25
+           |
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (23) following 'true' branch (when 'j <= 3')...
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |                       |
+           |      |                              |                       (24) ...to here
+           |      |                              (25) calling 'createTuple' from 'flattenMatrix'
+           |
+           +--> 'createTuple': events 26-28
+                  |
+                  |   11 | tuple* createTuple(int x, int y, int val) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (26) entry to 'createTuple'
+                  |   12 |     tuple *new_tuple = (tuple*) malloc(sizeof(tuple));
+                  |   13 |     if(new_tuple == NULL) {
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (27) following 'false' branch (when 'new_tuple' is non-NULL)...
+                  |......
+                  |   17 |     new_tuple->x = x;
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (28) ...to here
+                  |
+           <------+
+           |
+         'flattenMatrix': event 29
+           |
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (29) returning to 'flattenMatrix' from 'createTuple'
+           |
+         'flattenMatrix': events 30-32
+           |
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (30) following 'true' branch (when 'j <= 3')...
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |                       |
+           |      |                              |                       (31) ...to here
+           |      |                              (32) calling 'createTuple' from 'flattenMatrix'
+           |
+           +--> 'createTuple': events 33-35
+                  |
+                  |   11 | tuple* createTuple(int x, int y, int val) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (33) entry to 'createTuple'
+                  |   12 |     tuple *new_tuple = (tuple*) malloc(sizeof(tuple));
+                  |   13 |     if(new_tuple == NULL) {
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (34) following 'false' branch (when 'new_tuple' is non-NULL)...
+                  |......
+                  |   17 |     new_tuple->x = x;
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (35) ...to here
+                  |
+           <------+
+           |
+         'flattenMatrix': event 36
+           |
+           |   33 |             flattened[k++] = createTuple(i, j, matrix[i][j]);
+           |      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (36) returning to 'flattenMatrix' from 'createTuple'
+           |
+         'flattenMatrix': events 37-38
+           |
+           |   31 |     for(int i = 0; i < ROW; i++) {
+           |      |                             ~~~
+           |      |                              |
+           |      |                              (38) ...to here
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (37) following 'false' branch (when 'j > 3')...
+           |
+         'flattenMatrix': events 39-40
+           |
+           |   31 |     for(int i = 0; i < ROW; i++) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (39) following 'true' branch (when 'i <= 2')...
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                 ~     
+           |      |                 |
+           |      |                 (40) ...to here
+           |
+         'flattenMatrix': events 41-42
+           |
+           |   31 |     for(int i = 0; i < ROW; i++) {
+           |      |                             ~~~
+           |      |                              |
+           |      |                              (42) ...to here
+           |   32 |         for(int j = 0; j < COL; j++) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (41) following 'false' branch (when 'j > 3')...
+           |
+         'flattenMatrix': events 43-44
+           |
+           |   31 |     for(int i = 0; i < ROW; i++) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (43) following 'false' branch (when 'i > 2')...
+           |......
+           |   36 |     return flattened;
+           |      |            ~~~~~~~~~  
+           |      |            |
+           |      |            (44) ...to here
+           |
+    <------+
+    |
+  'main': events 45-46
+    |
+    |   54 |     tuple **flattened = flattenMatrix(matrix);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (45) returning to 'main' from 'flattenMatrix'
+    |   55 |     printTuples(flattened, ROW*COL);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (46) calling 'printTuples' from 'main'
+    |
+    +--> 'printTuples': events 47-49
+           |
+           |   39 | void printTuples(tuple **tuples, int size) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (47) entry to 'printTuples'
+           |   40 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (48) following 'true' branch (when 'i < size')...
+           |   41 |         printf("(%d, %d): %d\n", tuples[i]->x, tuples[i]->y, tuples[i]->val);
+           |      |                                                                    ~
+           |      |                                                                    |
+           |      |                                                                    (49) ...to here
+           |
+    <------+
+    |
+  'main': events 50-51
+    |
+    |   55 |     printTuples(flattened, ROW*COL);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (50) returning to 'main' from 'printTuples'
+    |   56 |     freeTuples(flattened, ROW*COL);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (51) calling 'freeTuples' from 'main'
+    |
+    +--> 'freeTuples': events 52-63
+           |
+           |   45 | void freeTuples(tuple **tuples, int size) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (52) entry to 'freeTuples'
+           |   46 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (53) following 'true' branch (when 'i < size')...
+           |      |                      (55) following 'true' branch (when 'i < size')...
+           |      |                      (57) following 'true' branch (when 'i < size')...
+           |      |                      (59) following 'true' branch (when 'i < size')...
+           |      |                      (61) following 'true' branch (when 'i < size')...
+           |   47 |         free(tuples[i]);
+           |      |         ~~~~~~~~~~~~~~~
+           |      |         |          |
+           |      |         |          (54) ...to here
+           |      |         |          (56) ...to here
+           |      |         |          (58) ...to here
+           |      |         |          (60) ...to here
+           |      |         |          (62) ...to here
+           |      |         (63) use of uninitialized value '*tuples_10(D) + _2' here
+           |

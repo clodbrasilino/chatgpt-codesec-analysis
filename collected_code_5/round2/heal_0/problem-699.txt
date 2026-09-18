@@ -1,0 +1,56 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int minimumSwaps(char *string1, char *string2, int n) {
+    int count1[2] = {0}, count2[2] = {0}, result = 0;
+
+    for (int i=0; i<n; i++) {
+        count1[string1[i]-'0']++;
+        count2[string2[i]-'0']++;
+    }
+
+    if (count1[0] != count2[0] || count1[1] != count2[1]) {
+        return -1;
+    }
+
+    for (int i=0; i<n; i++) {
+        if (string1[i] != string2[i]) {
+            result++;
+        }
+
+        if (string1[i] == '0') {
+            count1[0]--;
+        } else {
+            count1[1]--;
+        }
+        
+        if (string2[i] == '0') {
+            count2[0]--;
+        } else {
+            count2[1]--;
+        }
+
+        if (count1[0] < count2[0] || count1[1] < count2[1]) {
+            return -1;
+        }
+    }
+
+    return (result / 2);
+}
+
+int main() {
+    char string1[] = "1100";
+    char string2[] = "0011";
+    int n = strlen(string1);
+
+    int result = minimumSwaps(string1, string2, n);
+
+    if(result!=-1)
+        printf("Minimum number of swaps required = %d", result);
+    else
+        printf("Conversion not possible");
+
+    return 0;
+}
+```

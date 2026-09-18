@@ -1,0 +1,18 @@
+./collected_code_4/round1//heal_0//problem-792.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-792.c:20:21: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   20 |         int* list = malloc(5 * sizeof(int));
+      |                     ^~~~~~
+./collected_code_4/round1//heal_0//problem-792.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-792.c:20:21: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   20 |         int* list = malloc(5 * sizeof(int));
+      |                     ^~~~~~
+./collected_code_4/round1//heal_0//problem-792.c:20:21: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round1//heal_0//problem-792.c:33:9: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   33 |         free(lists[i]);
+      |         ^~~~
+./collected_code_4/round1//heal_0//problem-792.c:33:9: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-792.c:33:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-792.c:33:9: note: include '<stdlib.h>' or provide a declaration of 'free'

@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+
+double calculateCubeVolume(double sideLength) {
+    if (sideLength < 0) {
+        printf("Error: Side length cannot be negative\n");
+        return -1;
+    }
+    return sideLength*sideLength*sideLength;
+}
+
+int main() {
+    double sideLength;
+    printf("Enter the side length of the cube: ");
+    scanf("%lf", &sideLength);
+
+    double volume = calculateCubeVolume(sideLength);
+    if (volume != -1) {
+        printf("The volume of the cube is: %.2lf\n", volume);
+    }
+    return 0;
+}
+```

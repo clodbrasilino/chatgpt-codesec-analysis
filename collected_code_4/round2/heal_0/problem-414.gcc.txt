@@ -1,0 +1,55 @@
+./collected_code_4/round2//heal_0/problem-414.c: In function 'check_value':
+./collected_code_4/round2//heal_0/problem-414.c:7:15: warning: use of uninitialized value '*arr_10(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    7 |         if(arr[i] == val)
+      |            ~~~^~~
+  'main': events 1-7
+    |
+    |   14 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     int* arr = (int*) malloc(len * sizeof(int));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) region created on heap here
+    |   21 |     if(arr == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'false' branch (when 'arr' is non-NULL)...
+    |......
+    |   26 |     printf("Enter the elements of the array: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |   27 |     for(int i = 0; i < len; i++) {
+    |      |                    ~~~~~~~
+    |      |                      |
+    |      |                      (5) following 'false' branch...
+    |......
+    |   31 |     printf("Enter the value to check for: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |......
+    |   34 |     bool result = check_value(arr, len, val);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) calling 'check_value' from 'main'
+    |
+    +--> 'check_value': events 8-11
+           |
+           |    5 | bool check_value(int* arr, int len, int val) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'check_value'
+           |    6 |     for(int i = 0; i < len; i++) {
+           |      |                    ~~~~~~~
+           |      |                      |
+           |      |                      (9) following 'true' branch (when 'i < len')...
+           |    7 |         if(arr[i] == val)
+           |      |            ~~~~~~
+           |      |               |
+           |      |               (10) ...to here
+           |      |               (11) use of uninitialized value '*arr_10(D) + _2' here
+           |

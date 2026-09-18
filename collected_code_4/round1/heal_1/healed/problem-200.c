@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_max_indices(int *array, int array_size) {
+    if(array_size == 0 || array == NULL) return;
+
+    int max = array[0];
+    int *indices = malloc(array_size * sizeof(int));
+
+    if(indices == NULL) return;
+
+    int index_count = 0;
+
+    for(int i=0; i<array_size; i++) {
+        if(array[i] > max) {
+            max = array[i];
+            index_count = 0;
+            indices[index_count++] = i;
+        } else if(array[i] == max) {
+            indices[index_count++] = i;
+        }
+    }
+
+    printf("The maximum number is %d, at the following indices: ", max);
+    for(int i=0; i<index_count; i++) printf("%d ", indices[i]);
+    printf("\n");
+
+    free(indices);
+}
+
+int main() {
+    int array[] = {9, 23, 10, 23, 25, 23, 11, 25};
+    int array_size = sizeof(array) / sizeof(array[0]);
+
+    find_max_indices(array, array_size);
+
+    return 0;
+}

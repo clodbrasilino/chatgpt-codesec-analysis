@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*map_fn)(const char *);
+
+void map(char** arr, size_t size, map_fn fn) {
+    for(size_t i=0; i<size; ++i) {
+        if(arr[i] != NULL && fn != NULL) {
+            fn(arr[i]);
+        } else {
+            fprintf(stderr, "Null pointer error %zu\n", i);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+void print_fn(const char* string ) {
+    printf("%s\n", string);
+}
+
+int main() {
+    char* strings[] = {
+                        "string 1",
+                        "string 2",
+                        "string 3",
+                        "string 4",
+                        "string 5",
+                        };
+
+    size_t size = sizeof(strings) / sizeof(char*);
+
+    map(strings, size, print_fn);
+
+    return 0;
+}

@@ -1,0 +1,22 @@
+```C
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isOppositeSign(int a, int b){
+    return ((a ^ b) < 0);
+}
+
+int main(){
+    int num1 = -5;
+    int num2 = 10;
+
+    bool result = isOppositeSign(num1, num2);
+
+    if(result)
+        printf("The numbers have opposite signs");
+    else
+        printf("The numbers do not have opposite signs");
+
+    return 0;
+}
+```

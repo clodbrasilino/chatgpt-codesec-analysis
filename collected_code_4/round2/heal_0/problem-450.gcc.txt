@@ -1,0 +1,322 @@
+./collected_code_4/round2//heal_0/problem-450.c: In function 'extractSizeStrings':
+./collected_code_4/round2//heal_0/problem-450.c:21:1: warning: leak of 'extractedStrings[1]' [CWE-401] [-Wanalyzer-malloc-leak]
+   21 | }
+      | ^
+  'extractSizeStrings': events 1-3
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < n')...
+    |   10 |         if(strlen(str[i]) == size) {
+    |      |                      ~
+    |      |                      |
+    |      |                      (2) ...to here
+    |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+    |   12 |             if (extractedStrings[j] == NULL) {
+    |      |                ~      
+    |      |                |
+    |      |                (3) following 'false' branch...
+    |
+  'extractSizeStrings': event 4
+    |
+    |   16 |             strcpy(extractedStrings[j], str[i]);
+    |      |                    ~~~~~~~~~~~~~~~~^~~
+    |      |                                    |
+    |      |                                    (4) ...to here
+    |
+  'extractSizeStrings': events 5-9
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (5) following 'true' branch (when 'i < n')...
+    |   10 |         if(strlen(str[i]) == size) {
+    |      |                      ~
+    |      |                      |
+    |      |                      (6) ...to here
+    |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+    |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (7) allocated here
+    |   12 |             if (extractedStrings[j] == NULL) {
+    |      |                ~      
+    |      |                |
+    |      |                (8) assuming 'extractedStrings[j]' is non-NULL
+    |      |                (9) following 'false' branch...
+    |
+  'extractSizeStrings': event 10
+    |
+    |   16 |             strcpy(extractedStrings[j], str[i]);
+    |      |                    ~~~~~~~~~~~~~~~~^~~
+    |      |                                    |
+    |      |                                    (10) ...to here
+    |
+  'extractSizeStrings': event 11
+    |
+    |   21 | }
+    |      | ^
+    |      | |
+    |      | (11) 'extractedStrings[1]' leaks here; was allocated at (7)
+    |
+./collected_code_4/round2//heal_0/problem-450.c:21:1: warning: leak of 'extractedStrings[2]' [CWE-401] [-Wanalyzer-malloc-leak]
+  'extractSizeStrings': events 1-3
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (1) following 'true' branch (when 'i < n')...
+    |   10 |         if(strlen(str[i]) == size) {
+    |      |                      ~
+    |      |                      |
+    |      |                      (2) ...to here
+    |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+    |   12 |             if (extractedStrings[j] == NULL) {
+    |      |                ~      
+    |      |                |
+    |      |                (3) following 'false' branch...
+    |
+  'extractSizeStrings': event 4
+    |
+    |   16 |             strcpy(extractedStrings[j], str[i]);
+    |      |                    ~~~~~~~~~~~~~~~~^~~
+    |      |                                    |
+    |      |                                    (4) ...to here
+    |
+  'extractSizeStrings': events 5-7
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (5) following 'true' branch (when 'i < n')...
+    |   10 |         if(strlen(str[i]) == size) {
+    |      |                      ~
+    |      |                      |
+    |      |                      (6) ...to here
+    |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+    |   12 |             if (extractedStrings[j] == NULL) {
+    |      |                ~      
+    |      |                |
+    |      |                (7) following 'false' branch...
+    |
+  'extractSizeStrings': event 8
+    |
+    |   16 |             strcpy(extractedStrings[j], str[i]);
+    |      |                    ~~~~~~~~~~~~~~~~^~~
+    |      |                                    |
+    |      |                                    (8) ...to here
+    |
+  'extractSizeStrings': events 9-15
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (9) following 'true' branch (when 'i < n')...
+    |   10 |         if(strlen(str[i]) == size) {
+    |      |           ~          ~
+    |      |           |          |
+    |      |           |          (10) ...to here
+    |      |           (11) following 'true' branch...
+    |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+    |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |                |
+    |      |                                   |                (12) ...to here
+    |      |                                   (13) allocated here
+    |   12 |             if (extractedStrings[j] == NULL) {
+    |      |                ~      
+    |      |                |
+    |      |                (14) assuming 'extractedStrings[j]' is non-NULL
+    |      |                (15) following 'false' branch...
+    |
+  'extractSizeStrings': event 16
+    |
+    |   16 |             strcpy(extractedStrings[j], str[i]);
+    |      |                    ~~~~~~~~~~~~~~~~^~~
+    |      |                                    |
+    |      |                                    (16) ...to here
+    |
+  'extractSizeStrings': events 17-19
+    |
+    |    9 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~^~~
+    |      |                      |
+    |      |                      (17) following 'false' branch (when 'i >= n')...
+    |......
+    |   20 |     return *extractedStrings;
+    |      |            ~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (18) ...to here
+    |   21 | }
+    |      | ~                     
+    |      | |
+    |      | (19) 'extractedStrings[2]' leaks here; was allocated at (13)
+    |
+./collected_code_4/round2//heal_0/problem-450.c:21:1: warning: leak of 'extractedStrings[3]' [CWE-401] [-Wanalyzer-malloc-leak]
+   21 | }
+      | ^
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     char* extractedStrings = extractSizeStrings(str, n, size);
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'extractSizeStrings' from 'main'
+    |
+    +--> 'extractSizeStrings': events 3-6
+           |
+           |    6 | char* extractSizeStrings(char* str[], int n, int size) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'extractSizeStrings'
+           |......
+           |    9 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < n')...
+           |   10 |         if(strlen(str[i]) == size) {
+           |      |                      ~
+           |      |                      |
+           |      |                      (5) ...to here
+           |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+           |   12 |             if (extractedStrings[j] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (6) following 'false' branch...
+           |
+         'extractSizeStrings': event 7
+           |
+           |   16 |             strcpy(extractedStrings[j], str[i]);
+           |      |                    ~~~~~~~~~~~~~~~~^~~
+           |      |                                    |
+           |      |                                    (7) ...to here
+           |
+         'extractSizeStrings': events 8-10
+           |
+           |    9 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~^~~
+           |      |                      |
+           |      |                      (8) following 'true' branch (when 'i < n')...
+           |   10 |         if(strlen(str[i]) == size) {
+           |      |                      ~
+           |      |                      |
+           |      |                      (9) ...to here
+           |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+           |   12 |             if (extractedStrings[j] == NULL) {
+           |      |                ~      
+           |      |                |
+           |      |                (10) following 'false' branch...
+           |
+         'extractSizeStrings': event 11
+           |
+           |   16 |             strcpy(extractedStrings[j], str[i]);
+           |      |                    ~~~~~~~~~~~~~~~~^~~
+           |      |                                    |
+           |      |                                    (11) ...to here
+           |
+         'extractSizeStrings': events 12-14
+           |
+           |    9 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~^~~
+           |      |                      |
+           |      |                      (12) following 'true' branch (when 'i < n')...
+           |   10 |         if(strlen(str[i]) == size) {
+           |      |                      ~
+           |      |                      |
+           |      |                      (13) ...to here
+           |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+           |   12 |             if (extractedStrings[j] == NULL) {
+           |      |                ~      
+           |      |                |
+           |      |                (14) following 'false' branch...
+           |
+         'extractSizeStrings': event 15
+           |
+           |   16 |             strcpy(extractedStrings[j], str[i]);
+           |      |                    ~~~~~~~~~~~~~~~~^~~
+           |      |                                    |
+           |      |                                    (15) ...to here
+           |
+         'extractSizeStrings': events 16-20
+           |
+           |    9 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~^~~
+           |      |                      |
+           |      |                      (16) following 'true' branch (when 'i < n')...
+           |   10 |         if(strlen(str[i]) == size) {
+           |      |                      ~
+           |      |                      |
+           |      |                      (17) ...to here
+           |   11 |             extractedStrings[j] = malloc(strlen(str[i])+1);
+           |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (18) allocated here
+           |   12 |             if (extractedStrings[j] == NULL) {
+           |      |                ~      
+           |      |                |
+           |      |                (19) assuming 'extractedStrings[j]' is non-NULL
+           |      |                (20) following 'false' branch...
+           |
+         'extractSizeStrings': event 21
+           |
+           |   16 |             strcpy(extractedStrings[j], str[i]);
+           |      |                    ~~~~~~~~~~~~~~~~^~~
+           |      |                                    |
+           |      |                                    (21) ...to here
+           |
+         'extractSizeStrings': event 22
+           |
+           |   21 | }
+           |      | ^
+           |      | |
+           |      | (22) 'extractedStrings[3]' leaks here; was allocated at (18)
+           |
+./collected_code_4/round2//heal_0/problem-450.c:20:12: warning: use of uninitialized value 'extractedStrings[0]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   20 |     return *extractedStrings;
+      |            ^~~~~~~~~~~~~~~~~
+  'extractSizeStrings': events 1-2
+    |
+    |    7 |     char* extractedStrings[MAX_STRINGS];
+    |      |           ^~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (1) region created on stack here
+    |......
+    |   20 |     return *extractedStrings;
+    |      |            ~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (2) use of uninitialized value 'extractedStrings[0]' here
+    |
+./collected_code_4/round2//heal_0/problem-450.c:20:12: warning: use of uninitialized value 'extractedStrings[0]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   20 |     return *extractedStrings;
+      |            ^~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     char* extractedStrings = extractSizeStrings(str, n, size);
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'extractSizeStrings' from 'main'
+    |
+    +--> 'extractSizeStrings': events 3-5
+           |
+           |    6 | char* extractSizeStrings(char* str[], int n, int size) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'extractSizeStrings'
+           |    7 |     char* extractedStrings[MAX_STRINGS];
+           |      |           ~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (4) region created on stack here
+           |......
+           |   20 |     return *extractedStrings;
+           |      |            ~~~~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (5) use of uninitialized value 'extractedStrings[0]' here
+           |

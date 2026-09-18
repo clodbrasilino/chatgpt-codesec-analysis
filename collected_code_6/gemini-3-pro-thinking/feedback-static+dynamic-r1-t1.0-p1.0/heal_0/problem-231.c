@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_path_sum(int **triangle, int rows);
+
+int max_path_sum(int **triangle, int rows) {
+    if (!triangle || rows <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc(rows * sizeof(int));
+    if (!dp) {
+        return -1;
+    }
+
+    if (!triangle[rows - 1]) {
+        free(dp);
+        return -1;
+    }
+    for (int i = 0; i < rows; i++) {
+        dp[i] = triangle[rows - 1][i];
+    }
+
+    for (int row = rows - 2; row >= 0; row--) {
+        if (!triangle[row]) {
+            free(dp);
+            return -1;
+        }
+        for (int i = 0; i <= row; i++) {
+            int left = dp[i];
+            int right = dp[i + 1];
+            dp[i] = triangle[row][i] + (left > right ? left : right);
+        }
+    }
+
+    int result = dp[0];
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int rows = 4;
+    int **triangle = (int **)malloc(rows * sizeof(int *));
+    if (!triangle) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        triangle[i] = (int *)malloc((i + 1) * sizeof(int));
+        if (!triangle[i]) {
+            for (int j = 0; j < i; j++) {
+                free(triangle[j]);
+            }
+            free(triangle);
+            return 1;
+        }
+    }
+
+    triangle[0][0] = 3;
+
+    triangle[1][0] = 7;
+    triangle[1][1] = 4;
+
+    triangle[2][0] = 2;
+    triangle[2][1] = 4;
+    triangle[2][2] = 6;
+
+    triangle[3][0] = 8;
+    triangle[3][1] = 5;
+    triangle[3][2] = 9;
+    triangle[3][3] = 3;
+
+    int max_sum = max_path_sum(triangle, rows);
+    
+    if (max_sum != -1) {
+        printf("%d\n", max_sum);
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    return 0;
+}

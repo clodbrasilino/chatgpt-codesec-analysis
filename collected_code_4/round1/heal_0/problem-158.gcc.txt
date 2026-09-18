@@ -1,0 +1,8 @@
+./collected_code_4/round1//heal_0//problem-158.c: In function 'minOper':
+./collected_code_4/round1//heal_0//problem-158.c:17:16: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   17 |         ans += abs(x - arr[i]);
+      |                ^~~
+./collected_code_4/round1//heal_0//problem-158.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

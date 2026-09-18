@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <math.h>
+
+void findPerfectSquares(int start, int end) {
+    if (start > end) {
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+
+    if (start < 0 && end < 0) {
+        printf("No perfect squares found.\n");
+        return;
+    }
+
+    if (start < 0) {
+        start = 0;
+    }
+
+    int first = (int)ceil(sqrt((double)start));
+    int last = (int)floor(sqrt((double)end));
+
+    if (first > last) {
+        printf("No perfect squares found.\n");
+        return;
+    }
+
+    for (int i = first; i <= last; i++) {
+        long long square = (long long)i * i;
+        if (square >= 0 && square <= end) {
+            printf("%lld\n", square);
+        }
+    }
+}
+
+int main(void) {
+    int num1, num2;
+
+    printf("Enter two numbers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    findPerfectSquares(num1, num2);
+
+    return 0;
+}

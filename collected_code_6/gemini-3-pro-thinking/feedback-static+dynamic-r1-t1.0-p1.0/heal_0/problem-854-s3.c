@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sift_down(int *array, size_t start, size_t end);
+int heapify(int *array, size_t count);
+
+void sift_down(int *array, size_t start, size_t end) {
+    size_t root = start;
+    
+    while ((root * 2) + 1 <= end) {
+        size_t child = (root * 2) + 1;
+        size_t swap = root;
+
+        if (array[swap] < array[child]) {
+            swap = child;
+        }
+        
+        if (child + 1 <= end && array[swap] < array[child + 1]) {
+            swap = child + 1;
+        }
+        
+        if (swap == root) {
+            return;
+        } else {
+            int temp = array[root];
+            array[root] = array[swap];
+            array[swap] = temp;
+            root = swap;
+        }
+    }
+}
+
+int heapify(int *array, size_t count) {
+    if (array == NULL || count == 0) {
+        return -1;
+    }
+    
+    if (count == 1) {
+        return 0;
+    }
+
+    size_t start = (count - 2) / 2;
+    
+    while (1) {
+        sift_down(array, start, count - 1);
+        if (start == 0) {
+            break;
+        }
+        start--;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    int data[] = {4, 10, 3, 5, 1, 8, 7, 2, 9, 6};
+    size_t count = sizeof(data) / sizeof(data[0]);
+
+    if (heapify(data, count) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

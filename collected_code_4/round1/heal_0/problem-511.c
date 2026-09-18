@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <limits.h>
+
+int minSumOfFactors(int num) {
+    if (num < 1) {
+        return INT_MAX;
+    }
+
+    int sum = 0;
+    int count = 0;
+
+    while(num % 2 == 0) {
+        count++;
+        num /= 2;
+    }
+   
+    sum += (count != 0) ? 2 : 0;
+    count = 0;
+
+    for(int i = 3; i * i <= num; i += 2) {
+        while(num % i == 0) {
+            count++;
+            num /= i;
+        }
+        if(count != 0) sum += i;
+        count = 0;
+    }
+    
+    if(num > 2) {
+        sum += num;
+    }
+
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    int result = minSumOfFactors(num);
+    if (result != INT_MAX) {
+        printf("The minimum sum of factors of %d is %d\n", num, result);
+    } else {
+        printf("Number should be greater than 0.\n");
+    }
+  
+    return 0;
+}

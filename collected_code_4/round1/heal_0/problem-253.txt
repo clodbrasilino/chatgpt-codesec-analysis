@@ -1,0 +1,22 @@
+```c
+#include <stdio.h>
+
+int count_ints(int *list, int size) { 
+    int count = 0;
+    if(list != NULL && size > 0){
+        for(int i = 0; i < size; i++) {
+            if(list[i] >= INT_MIN && list[i] <= INT_MAX)
+                count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(list)/sizeof(list[0]);
+    int count = count_ints(list, size);
+    printf("%d integers found in the list.\n", count);
+    return 0;
+}
+```

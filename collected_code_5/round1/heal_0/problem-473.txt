@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+#define TUPLE_LENGTH 2
+
+typedef struct {
+    int items[TUPLE_LENGTH];
+} Tuple;
+
+bool tupleInList(Tuple tuple, Tuple *list, int n) {
+    for (int i = 0; i < n; ++i) {
+        bool found = true;
+        for (int j = 0; j < TUPLE_LENGTH; ++j) {
+            if (tuple.items[j] != list[i].items[j]) {
+                found = false;
+                break;
+            }
+        }
+        if (found) return true;
+    }
+    return false;
+}
+
+void findTupleIntersections(Tuple *list1, int n1, Tuple *list2, int n2) {
+    for (int i = 0; i < n1; ++i) {
+        if (tupleInList(list1[i], list2, n2))
+            printf("Intersection found: [%d, %d]\n", list1[i].items[0], list1[i].items[1]);
+    }
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {2, 3}, {3, 1}};
+    Tuple list2[] = {{3, 1}, {4, 5}, {1, 2}};
+    findTupleIntersections(list1, sizeof(list1)/sizeof(Tuple), list2, sizeof(list2)/sizeof(Tuple));
+    return 0;
+}
+```

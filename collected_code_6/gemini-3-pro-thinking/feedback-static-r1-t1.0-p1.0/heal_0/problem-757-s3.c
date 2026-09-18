@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_reverse(const char *str1, const char *str2);
+size_t count_reverse_pairs(const char * const *strings, size_t count);
+
+bool is_reverse(const char *str1, const char *str2) {
+    size_t len1;
+    size_t len2;
+    size_t i;
+
+    if (str1 == NULL || str2 == NULL) {
+        return false;
+    }
+
+    len1 = strlen(str1);
+    len2 = strlen(str2);
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if (str1[i] != str2[len1 - 1 - i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+size_t count_reverse_pairs(const char * const *strings, size_t count) {
+    size_t pairs = 0;
+    size_t i;
+    size_t j;
+
+    if (strings == NULL || count == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+        for (j = i + 1; j < count; j++) {
+            if (strings[j] == NULL) {
+                continue;
+            }
+            if (is_reverse(strings[i], strings[j])) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void) {
+    const char * const string_list[] = {
+        "hello",
+        "olleh",
+        "world",
+        "dlrow",
+        "c",
+        "c",
+        "test"
+    };
+    size_t count = sizeof(string_list) / sizeof(string_list[0]);
+    size_t result;
+
+    result = count_reverse_pairs(string_list, count);
+    printf("%zu\n", result);
+
+    return 0;
+}

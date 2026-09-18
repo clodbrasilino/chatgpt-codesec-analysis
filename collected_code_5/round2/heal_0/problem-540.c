@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findDifference(int arr[], int size) {
+    int maxCount = 0, minCount = size;
+    int i, j;
+    
+    for(i = 0; i < size; ++i) {
+        int count = 0;
+        
+        for(j = 0; j < size; ++j) {
+            if(arr[i] == arr[j])
+                ++count;
+        }
+
+        if(count > maxCount)
+            maxCount = count;
+        if(count < minCount)
+            minCount = count;
+        
+    }
+    return (maxCount - minCount);
+}
+
+int main(){
+    int arr[] = {1,2,3,3,2,1,1,1,2,2,3,3,3,5,5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = findDifference(arr, size);
+    printf("%d", result);
+
+    return 0;
+}

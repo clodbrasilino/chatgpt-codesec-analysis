@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int subtract_tuples(int a[], int b[], int n) {
+    int c[n];
+    for (int i = 0; i < n; i++) {
+        c[i] = a[i] - b[i];
+    }
+    for (int i = 0; i < n; i++) {
+        printf("%d ", c[i]);
+    }
+    return 0;
+}
+
+int main() {
+    int a[] = {1, 2, 3, 4, 5};
+    int b[] = {10, 20, 30, 40, 50};
+    int n = sizeof(a) / sizeof(a[0]);
+    subtract_tuples(a, b, n);
+    return 0;
+}

@@ -1,0 +1,18 @@
+./collected_code_4/round1//heal_0//problem-822.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-822.c:34:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   34 |     printf("Enter a password: ");
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-822.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+./collected_code_4/round1//heal_0//problem-822.c:34:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   34 |     printf("Enter a password: ");
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-822.c:34:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+./collected_code_4/round1//heal_0//problem-822.c:35:5: warning: implicit declaration of function 'scanf' [-Wimplicit-function-declaration]
+   35 |     scanf("%20s", password);
+      |     ^~~~~
+./collected_code_4/round1//heal_0//problem-822.c:35:5: note: include '<stdio.h>' or provide a declaration of 'scanf'
+./collected_code_4/round1//heal_0//problem-822.c:35:5: warning: incompatible implicit declaration of built-in function 'scanf' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-822.c:35:5: note: include '<stdio.h>' or provide a declaration of 'scanf'

@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    char **elements;
+    size_t size;
+} List;
+
+List* convert_tuple_to_list(const Tuple *tuple, const char *str) {
+    if (!tuple || !tuple->elements || !str) {
+        return NULL;
+    }
+
+    List *list = (List *)malloc(sizeof(List));
+    if (!list) {
+        return NULL;
+    }
+
+    list->size = tuple->size * 2;
+    list->elements = (char **)malloc(list->size * sizeof(char *));
+    if (!list->elements) {
+        free(list);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (!tuple->elements[i]) {
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list->elements[j]);
+            }
+            free(list->elements);
+            free(list);
+            return NULL;
+        }
+
+        list->elements[i * 2] = strdup(tuple->elements[i]);
+        if (!list->elements[i * 2]) {
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list->elements[j]);
+            }
+            free(list->elements);
+            free(list);
+            return NULL;
+        }
+
+        list->elements[i * 2 + 1] = strdup(str);
+        if (!list->elements[i * 2 + 1]) {
+            free(list->elements[i * 2]);
+            for (size_t j = 0; j < i * 2; ++j) {
+                free(list->elements[j]);
+            }
+            free(list->elements);
+            free(list);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+void free_list(List *list) {
+    if (list) {
+        if (list->elements) {
+            for (size_t i = 0; i < list->size; ++i) {
+                free(list->elements[i]);
+            }
+            free(list->elements);
+        }
+        free(list);
+    }
+}
+
+int main(void) {
+    char *tuple_elements[] = {"apple", "banana", "cherry"};
+    Tuple tuple = {tuple_elements, 3};
+    const char *str = "fruit";
+
+    List *list = convert_tuple_to_list(&tuple, str);
+    if (list) {
+        for (size_t i = 0; i < list->size; ++i) {
+            printf("%s\n", list->elements[i]);
+        }
+        free_list(list);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

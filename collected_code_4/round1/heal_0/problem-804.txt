@@ -1,0 +1,29 @@
+```C
+#include <stdio.h> 
+#include <stdbool.h> 
+
+bool isProductEven(int a, int b) { 
+    if (a == 0 || b == 0) { 
+        return true; 
+    } 
+    return (a*b) % 2 == 0; 
+} 
+
+int main() { 
+    int num1, num2; 
+
+    printf("Enter first number: "); 
+    scanf("%d", &num1); 
+
+    printf("Enter second number: "); 
+    scanf("%d", &num2); 
+
+    if (isProductEven(num1, num2)) { 
+        printf("Product of entered numbers is even. \n"); 
+    } else { 
+        printf("Product of entered numbers is odd. \n"); 
+    } 
+
+    return 0; 
+}
+```

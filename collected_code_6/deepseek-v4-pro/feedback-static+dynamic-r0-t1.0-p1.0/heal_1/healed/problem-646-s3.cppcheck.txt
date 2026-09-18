@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-646-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-646-s3.c:12:14: style: Condition 'diff>0' is always true [knownConditionTrueFalse]
+    if (diff > 0 && diff > LLONG_MAX / diff) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-646-s3.c:6:29: note: Assuming that condition 'k>n' is not redundant
+    if (n < 0 || k < 0 || k > n) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-646-s3.c:10:39: note: Assignment 'diff=(long long)n-k+1', assigned value is greater than 0
+    long long diff = (long long)n - k + 1;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-646-s3.c:12:14: note: Condition 'diff>0' is always true
+    if (diff > 0 && diff > LLONG_MAX / diff) {
+             ^

@@ -1,0 +1,6 @@
+problem-236-s2.c:22:32:medium:UBSan: signed integer overflow: 246913586419753 * 22222224 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:4250,execs:2625,op:havoc,rep:12)
+problem-236-s2.c:24:34:medium:UBSan: signed integer overflow: 471747370466620 * 30716361 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:615,execs:430,op:havoc,rep:1)
+problem-236-s2.c:36:32:medium:UBSan: signed integer overflow: 235873677554220 * 61432721 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:615,execs:430,op:havoc,rep:1)
+problem-236-s2.c:36:32:medium:UBSan: signed integer overflow: 123456776543210 * 44444445 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:4250,execs:2625,op:havoc,rep:12)
+problem-236-s2.c:42:36:medium:UBSan: signed integer overflow: 235873646837862 * 30716357 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000003,time:615,execs:430,op:havoc,rep:1)
+problem-236-s2.c:42:36:medium:UBSan: signed integer overflow: 123456754320990 * 22222219 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000005,time:4250,execs:2625,op:havoc,rep:12)

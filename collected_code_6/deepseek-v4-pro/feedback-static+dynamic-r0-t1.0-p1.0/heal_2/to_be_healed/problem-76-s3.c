@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+/* Possible weaknesses found:
+ *  'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+ */
+#include <stdint.h>
+
+long long count_squares_in_rectangle(int length, int width) {
+    if (length <= 0 || width <= 0) {
+        return -1;
+    }
+    
+    long long total = 0;
+    long long ll_length = length;
+    long long ll_width = width;
+    int min_dimension = length < width ? length : width;
+    
+    for (int size = 1; size <= min_dimension; size++) {
+        long long count = (ll_length - size + 1) * (ll_width - size + 1);
+        /* Possible weaknesses found:
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'LLONG_MAX'
+         *  'LLONG_MAX' undeclared (first use in this function)
+         */
+        if (count > LLONG_MAX - total) {
+            return -1;
+        }
+        total += count;
+    }
+    
+    return total;
+}
+
+int main(void) {
+    int length, width;
+    
+    printf("Enter rectangle dimensions (length width): ");
+    if (scanf("%d %d", &length, &width) != 2) {
+        fprintf(stderr, "Error: Invalid input format\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = count_squares_in_rectangle(length, width);
+    
+    if (result == -1) {
+        if (length <= 0 || width <= 0) {
+            fprintf(stderr, "Error: Dimensions must be positive integers\n");
+        } else {
+            fprintf(stderr, "Error: Result too large to compute\n");
+        }
+        return EXIT_FAILURE;
+    }
+    
+    printf("Number of squares in %dx%d rectangle: %lld\n", length, width, result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,42 @@
+```c
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
+
+bool word_match(const char *string, const char *word) {
+    int stringLen = strlen(string);
+    int wordLen = strlen(word);
+
+    if (!stringLen || !wordLen || wordLen > stringLen) {
+        return false;
+    }
+
+    const char *comp = string + stringLen - wordLen;
+
+    if (comp > string && isalnum(comp[-1])) {
+        return false;
+    }
+
+    for (int i = 0; i < wordLen; ++i) {
+        if(tolower(comp[i]) != tolower(word[i])) {
+            return false;
+        }
+    }
+
+    return !isalnum(comp[wordLen]);
+}
+
+int main() {
+    const char *string = "This is the target word.";
+    const char *word = "word";
+
+    if (word_match(string, word)) {
+        printf("The word \"%s\" was found at the end of the string \"%s\"\n", word, string);
+    } else {
+        printf("The word \"%s\" was not found at the end of the string \"%s\"\n", word, string);
+    }
+
+    return 0;
+}
+```

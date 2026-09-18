@@ -1,0 +1,42 @@
+/* Possible weaknesses found:
+ *  stray '`' in program
+ */
+```
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void swap(char *a, char *b) {
+    char temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+char* find_next_number(char number[], int n) {
+    int i;
+    for (i = n-1; i > 0; i--)
+        if (number[i] > number[i-1])
+           break;
+    if (i==0) {
+        printf("Next number is not possible");
+        return number;
+    }
+    int x = number[i-1], smallest = i;
+    for (int j = i+1; j < n; j++)
+        if (number[j] > x && number[j] < number[smallest])
+            smallest = j;
+ 
+    swap(&number[smallest], &number[i-1]);
+ 
+    qsort(number + i, n - i, sizeof(char), (int (*)(const void *, const void *)) strcmp);
+    return number;
+}
+
+int main() {
+    char digits[] = "534976";
+    int n = strlen(digits);
+    char* result = find_next_number(digits, n);
+    printf("Next number with same digits is %s\n", result);
+    return 0;
+}

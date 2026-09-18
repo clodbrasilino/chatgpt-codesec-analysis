@@ -1,0 +1,7 @@
+./collected_code_4/round1//heal_0//problem-502.c:3:5: warning: conflicting types for built-in function 'remainder'; expected 'double(double,  double)' [-Wbuiltin-declaration-mismatch]
+    3 | int remainder(int num1, int num2) {
+      |     ^~~~~~~~~
+./collected_code_4/round1//heal_0//problem-502.c:2:1: note: 'remainder' is declared in header '<math.h>'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 

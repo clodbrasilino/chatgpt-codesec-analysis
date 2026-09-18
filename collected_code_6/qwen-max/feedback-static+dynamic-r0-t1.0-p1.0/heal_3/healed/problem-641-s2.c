@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool is_safe_long_mult(long a, long b) {
+    if (a > 0) {
+        if (b > 0) {
+            return LLONG_MAX / a >= b;
+        } else if (b < 0) {
+            return LLONG_MIN / a >= b;
+        }
+    } else if (a < 0) {
+        if (b > 0) {
+            return LLONG_MIN / a <= b;
+        } else if (b < 0) {
+            return LLONG_MAX / a <= b;
+        }
+    }
+    return true;
+}
+
+long long nth_nonagonal(long n) {
+    if (n > 0 && n <= (LONG_MAX - 5) / 7) {
+        if (is_safe_long_mult(n, 7 * n - 5)) {
+            return (n * (7LL * n - 5)) / 2;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if(scanf("%ld", &n) != 1 || n <= 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    long long result = nth_nonagonal(n);
+    if (result == -1) {
+        printf("The computed value is out of range.\n");
+    } else {
+        printf("The %ldth nonagonal number is: %lld\n", n, result);
+    }
+    return 0;
+}

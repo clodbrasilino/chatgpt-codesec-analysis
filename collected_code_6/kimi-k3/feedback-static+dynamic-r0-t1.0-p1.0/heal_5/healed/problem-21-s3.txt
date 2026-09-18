@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+static bool safe_multiply_int(int a, int b, int *result)
+{
+    if (a == 0 || b == 0)
+    {
+        *result = 0;
+        return true;
+    }
+
+    if (a > 0)
+    {
+        if (b > 0)
+        {
+            if (a > INT_MAX / b)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (b < INT_MIN / a)
+            {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        if (b > 0)
+        {
+            if (a < INT_MIN / b)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (a < INT_MAX / b)
+            {
+                return false;
+            }
+        }
+    }
+
+    *result = a * b;
+    return true;
+}
+
+int find_multiples(int n, int m, int **result)
+{
+    int *multiples = NULL;
+    int i;
+    int product;
+
+    if (result == NULL || m <= 0)
+    {
+        return -1;
+    }
+
+    if ((size_t)m > SIZE_MAX / sizeof(int))
+    {
+        return -1;
+    }
+
+    multiples = (int *)malloc((size_t)m * sizeof(int));
+    if (multiples == NULL)
+    {
+        return -1;
+    }
+
+    for (i = 0; i < m; i++)
+    {
+        if (!safe_multiply_int(n, i + 1, &product))
+        {
+            free(multiples);
+            return -1;
+        }
+        multiples[i] = product;
+    }
+
+    *result = multiples;
+    return 0;
+}
+
+int main(void)
+{
+    int n, m;
+    int *multiples = NULL;
+    int i;
+
+    if (printf("Enter the number (n): ") < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Enter the count of multiples (m): ") < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%d", &m) != 1)
+    {
+        fprintf(stderr, "Invalid input for m\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_multiples(n, m, &multiples) != 0)
+    {
+        fprintf(stderr, "Error: Invalid parameters or memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("First %d multiples of %d: ", m, n);
+    for (i = 0; i < m; i++)
+    {
+        printf("%d ", multiples[i]);
+    }
+    printf("\n");
+
+    free(multiples);
+    multiples = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void extractBetweenQuotes(const char *str)
+{
+    regex_t regexCompiled;
+    regmatch_t groupArray[2];
+    const char *regexPattern = "\"(.*?)\"";
+
+    if (regcomp(&regexCompiled, regexPattern, REG_EXTENDED))
+    {
+        printf("Could not compile regular expression.\n");
+        return;
+    };
+
+    char sourceCopy[strlen(str) + 1];
+    strcpy(sourceCopy, str);
+
+    if (regexec(&regexCompiled, sourceCopy, 2, groupArray, 0) == 0)
+    {
+        sourceCopy[groupArray[1].rm_eo] = 0;
+        printf("%s\n", sourceCopy + groupArray[1].rm_so);
+    }
+
+    regfree(&regexCompiled);
+}
+
+int main()
+{
+    const char testString[] = "the \"quick brown\" fox";
+    extractBetweenQuotes(testString);
+    return 0;
+}
+```
+This program is designed to compile and run on systems supporting the POSIX regular expressions library. The function `extractBetweenQuotes(const char *str)` takes a string as input and prints the word(s) between the first pair of quotation marks it encounters. If there are no quotation marks, the program doesn't print anything. If there's an error in compiling the regular expression, the program prints an error message.
+
+Note that this code only extracts the first pair of quotation marks. If you need to extract all pairs of quotation marks, you'll need to loop over this code, slicing the input string at `groupArray[0].rm_eo` until `regexec` returns non-zero (indicating no matches). 
+
+Please, be sure to check an appropriate compiler flags while compiling the C code in POSIX environment. Usually, `-lregex` or `-ltre` may be required.

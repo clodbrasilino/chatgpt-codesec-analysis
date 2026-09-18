@@ -1,0 +1,46 @@
+```C
+#include <stdio.h>
+
+int findDifference(int arr[], int n) {
+    int firstEven = -1;
+    int firstOdd = -1;
+
+    for(int i = 0; i < n; i++) {
+        if(arr[i] % 2 == 0 && firstEven == -1)
+            firstEven = arr[i];
+        if(arr[i] % 2 != 0 && firstOdd == -1)
+            firstOdd = arr[i];
+        if(firstEven != -1 && firstOdd != -1)
+            break;
+    }
+
+    if(firstEven == -1 || firstOdd == -1)
+        return -1;
+    
+    return firstEven - firstOdd;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findDifference(arr, n);
+    
+    if(result == -1) 
+        printf("Array doesn't contain both odd and even numbers.\n");
+    else
+        printf("Difference between first even and odd number is %d\n", result);
+        
+    return 0;
+}
+```
+Here, in the `findDifference` function, I am checking through the array to find the first even and first odd number. Initially `firstEven` and `firstOdd` are set to mark them as not found yet (-1). We break the loop as soon as we find both. 
+
+If after the end of the function, `firstEven` or `firstOdd` is still -1, it means we didn't find one of them. So, we return -1 as a sign of failure.
+
+In the `main` function, we check the returned value from `findDifference` function. If the returned value is -1, we print a message stating that array doesn't contain both odd and even numbers. Otherwise, we print the difference. 
+
+CWE Violations prevented: 
+
+- CWE-664: We control all our resources properly. There is no external file or resource used where it could be left unclosed. Or scenario where allocated memory is not freed.
+- CWE-703: We made sure to properly check and handle the exceptional condition where the array doesn't contain both odd and even numbers.
+- CWE-710: We maintained a neat and proper codestyle that aligns with good C programming practices. There are no coding standards violated.

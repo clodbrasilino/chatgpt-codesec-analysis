@@ -1,0 +1,11 @@
+./collected_code_4/round2//heal_1/healed/problem-272.c: In function 'append_to_list':
+./collected_code_4/round2//heal_1/healed/problem-272.c:31:13: warning: implicit declaration of function 'free_list' [-Wimplicit-function-declaration]
+   31 |             free_list(list);
+      |             ^~~~~~~~~
+./collected_code_4/round2//heal_1/healed/problem-272.c: At top level:
+./collected_code_4/round2//heal_1/healed/problem-272.c:49:6: warning: conflicting types for 'free_list'; have 'void(tuple_list *)'
+   49 | void free_list(tuple_list *list) {
+      |      ^~~~~~~~~
+./collected_code_4/round2//heal_1/healed/problem-272.c:31:13: note: previous implicit declaration of 'free_list' with type 'void(tuple_list *)'
+   31 |             free_list(list);
+      |             ^~~~~~~~~

@@ -1,0 +1,25 @@
+collected_code_5/round1/heal_0/problem-528.c:20:12: error: use of undeclared identifier 'sharedt'; did you mean 'shortest'?
+   20 |         if(sharedt == -1 || lists[i]->len < sharedt){
+      |            ^~~~~~~
+      |            shortest
+collected_code_5/round1/heal_0/problem-528.c:9:5: note: 'shortest' declared here
+    9 | int shortest = -1;
+      |     ^
+collected_code_5/round1/heal_0/problem-528.c:20:45: error: use of undeclared identifier 'sharedt'; did you mean 'shortest'?
+   20 |         if(sharedt == -1 || lists[i]->len < sharedt){
+      |                                             ^~~~~~~
+      |                                             shortest
+collected_code_5/round1/heal_0/problem-528.c:9:5: note: 'shortest' declared here
+    9 | int shortest = -1;
+      |     ^
+collected_code_5/round1/heal_0/problem-528.c:21:13: error: use of undeclared identifier 'sharedt'
+   21 |             sharedt = lists[i]->len;
+      |             ^
+collected_code_5/round1/heal_0/problem-528.c:24:29: error: use of undeclared identifier 'sharedt'; did you mean 'shortest'?
+   24 |         if(lists[i]->len == sharedt){
+      |                             ^~~~~~~
+      |                             shortest
+collected_code_5/round1/heal_0/problem-528.c:9:5: note: 'shortest' declared here
+    9 | int shortest = -1;
+      |     ^
+4 errors generated.

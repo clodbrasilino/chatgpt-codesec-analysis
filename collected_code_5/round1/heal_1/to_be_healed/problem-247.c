@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 1000
+
+int max(int x, int y) { return (x > y) ? x : y; }
+
+int longestPalindromicSubsequence(char *str) {
+   int n = strlen(str);
+   
+   int table[n][n];
+   memset(table, 0, sizeof(table));
+
+   for (int i = 0; i < n; i++)
+      table[i][i] = 1;
+
+   for (int cl = 2; cl <= n; cl++) {
+      for (int i = 0; i < n - cl + 1; i++) {
+         int j = i + cl - 1;
+         if (str[i] == str[j] && cl == 2)
+            table[i][j] = 2;
+         else if (str[i] == str[j])
+            table[i][j] = table[i + 1][j - 1] + 2;
+         else
+            table[i][j] = max(table[i][j - 1], table[i + 1][j]);
+      }
+   }
+
+   return table[0][n - 1];
+}
+
+int main() {
+   char seq[] = "geeksforgeeks";
+   /* Possible weaknesses found:
+    *  Value stored to 'n' during its initialization is never read [deadcode.DeadStores]
+    */
+   int n = strlen(seq);
+   printf ("The length of the longest palindromic "
+            "subsequence is %d\n", 
+            longestPalindromicSubsequence(seq));
+   return 0;
+}

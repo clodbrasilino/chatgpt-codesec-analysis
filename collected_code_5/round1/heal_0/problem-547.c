@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 32
+
+int hammingDist(int x, int y) {
+    int xorVal = x ^ y;
+    int hDist = 0;
+
+    while (xorVal != 0) {
+        hDist += xorVal & 1;
+        xorVal >>= 1;
+    }
+
+    return hDist;
+}
+
+int hammingDistSum(int n) {
+    int sum = 0, i;
+    for (i = 0; i < n; i++) {
+        sum += hammingDist(i, i+1);
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a Number: ");
+    scanf("%d", &n);
+
+    if(n<0){
+        printf("Enter a valid number\n");
+        return 0;
+    }
+    
+    int sum = hammingDistSum(n);
+    printf("Sum of Hamming Distances from 0 to %d: %d\n", n, sum);
+
+    return 0;
+}

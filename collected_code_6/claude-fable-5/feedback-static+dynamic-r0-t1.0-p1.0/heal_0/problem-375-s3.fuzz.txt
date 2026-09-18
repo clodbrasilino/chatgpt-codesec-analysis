@@ -1,0 +1,8 @@
+problem-375-s3.c:14:30:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000007,time:3715,execs:2284,op:havoc,rep:1)
+problem-375-s3.c:25:23:medium:UBSan: signed integer overflow: 9223372036854775806 + 2 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:1089,execs:672,op:havoc,rep:1)
+problem-375-s3.c:25:23:medium:UBSan: signed integer overflow: 9223372036854775800 + 9 cannot be represented in type 'long' (AFL crash: id:000002,sig:06,src:000007,time:3789,execs:2330,op:havoc,rep:1)
+problem-375-s3.c:28:23:medium:UBSan: signed integer overflow: -9223372036854775800 - 9 cannot be represented in type 'long' (AFL crash: id:000003,sig:06,src:000008,time:18452,execs:10770,op:havoc,rep:3)
+problem-375-s3.c:31:16:medium:UBSan: signed integer overflow: -9223372036854775808 - 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000003,sig:06,src:000008,time:18452,execs:10770,op:havoc,rep:3)
+problem-375-s3.c:31:32:medium:UBSan: signed integer overflow: -9223372036854775808 - 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:1089,execs:672,op:havoc,rep:1)
+problem-375-s3.c:31:32:medium:UBSan: signed integer overflow: -9223372036854775808 - 2 cannot be represented in type 'long' (AFL crash: id:000001,sig:06,src:000007,time:3715,execs:2284,op:havoc,rep:1)
+problem-375-s3.c:31:32:medium:UBSan: signed integer overflow: -9223372036854775807 - 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000002,sig:06,src:000007,time:3789,execs:2330,op:havoc,rep:1)

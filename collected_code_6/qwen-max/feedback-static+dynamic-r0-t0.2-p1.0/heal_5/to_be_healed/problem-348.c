@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countSequences(int n, int k) {
+    if (n <= 0 || k <= 0) return 0;
+    long long *dp = (long long*)calloc((k + 1) * (n + 1), sizeof(long long));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i <= k; ++i) {
+        for (int j = 0; j <= n; ++j) {
+            if (i == 0 || j == 0) {
+                dp[i * (n + 1) + j] = 0;
+            } else if (i == 1) {
+                dp[i * (n + 1) + j] = 1;
+            } else {
+                dp[i * (n + 1) + j] = (dp[(i - 1) * (n + 1) + j] + dp[i * (n + 1) + j - 1]) % 1000000007;
+            }
+        }
+    }
+    long long result = dp[k * (n + 1) + n];
+    free(dp);
+    return result;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000004,time:15485,execs:7229,op:havoc,rep:26; likely memory-safety defect
+  */
+
+int main() {
+    int n, k;
+    printf("Enter the length of the sequence and the number of values: ");
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Both inputs must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    long long result = countSequences(n, k);
+    printf("Number of sequences: %lld\n", result);
+    return 0;
+}

@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+
+unsigned int highestPowerof2(unsigned int n) {
+    if(n < 2) return n;
+
+    unsigned int p = (n & (~(n - 1)));
+    while(p > 2){
+        n = n >> 1;
+        p = (n & (~(n - 1)));
+    }
+
+    return n;
+}
+
+int main(void) {
+    unsigned int n = 29;
+    printf("%u\n", highestPowerof2(n));
+    return 0;
+}
+```

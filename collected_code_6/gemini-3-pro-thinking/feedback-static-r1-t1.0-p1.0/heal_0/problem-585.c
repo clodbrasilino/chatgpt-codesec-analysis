@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+void swap_items(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(Item *heap, int size, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < size && heap[left].price < heap[smallest].price) {
+        smallest = left;
+    }
+    if (right < size && heap[right].price < heap[smallest].price) {
+        smallest = right;
+    }
+
+    if (smallest != index) {
+        swap_items(&heap[index], &heap[smallest]);
+        min_heapify(heap, size, smallest);
+    }
+}
+
+void build_min_heap(Item *heap, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) {
+        min_heapify(heap, size, i);
+    }
+}
+
+Item* find_n_expensive_items(const Item *dataset, int data_size, int n, int *out_size) {
+    if (dataset == NULL || data_size <= 0 || n <= 0 || out_size == NULL) {
+        return NULL;
+    }
+
+    int heap_size = (n < data_size) ? n : data_size;
+    *out_size = heap_size;
+
+    Item *heap = (Item *)malloc((size_t)heap_size * sizeof(Item));
+    if (heap == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < heap_size; i++) {
+        heap[i] = dataset[i];
+    }
+
+    build_min_heap(heap, heap_size);
+
+    for (int i = heap_size; i < data_size; i++) {
+        if (dataset[i].price > heap[0].price) {
+            heap[0] = dataset[i];
+            min_heapify(heap, heap_size, 0);
+        }
+    }
+
+    Item *result = (Item *)malloc((size_t)heap_size * sizeof(Item));
+    if (result == NULL) {
+        free(heap);
+        return NULL;
+    }
+
+    for (int i = heap_size - 1; i >= 0; i--) {
+        result[i] = heap[0];
+        heap[0] = heap[i];
+        min_heapify(heap, i, 0);
+    }
+
+    free(heap);
+    return result;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {1, 15.50}, {2, 8.99}, {3, 102.00},
+        {4, 45.00}, {5, 2.50}, {6, 99.99},
+        {7, 300.50}, {8, 12.00}, {9, 50.00},
+        {10, 250.00}
+    };
+    int data_size = (int)(sizeof(dataset) / sizeof(dataset[0]));
+    int n = 3;
+    int out_size = 0;
+
+    Item *expensive_items = find_n_expensive_items(dataset, data_size, n, &out_size);
+    if (expensive_items == NULL) {
+        fprintf(stderr, "Error processing the dataset.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < out_size; i++) {
+        printf("Item ID: %d, Price: %.2f\n", expensive_items[i].id, expensive_items[i].price);
+    }
+
+    free(expensive_items);
+    return EXIT_SUCCESS;
+}

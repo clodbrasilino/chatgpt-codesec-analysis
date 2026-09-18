@@ -1,0 +1,35 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define ROWS 4
+#define COLS 4
+
+int max_nth_column(int matrix[ROWS][COLS], int column) {
+    if (column < 0 || column >= COLS) {
+        printf("Invalid column index\n");
+        return -1;
+    }
+    
+    int max = matrix[0][column];
+    for (int i = 1; i < ROWS; i++) {
+        if (matrix[i][column] > max)
+            max = matrix[i][column];
+    }
+    return max;
+}
+
+int main() {
+    int matrix[ROWS][COLS] = {
+          { 1, 2, 3, 4 },
+          { 5, 6, 7, 8 },
+          { 9, 10, 11, 12 },
+          { 13, 14, 15, 16 }
+    };
+    
+    int column = 1;
+    int res = max_nth_column(matrix, column);
+    if(res != -1){
+        printf("Maximum in %d-th column : %d", column, res);
+    }
+    return 0;
+}

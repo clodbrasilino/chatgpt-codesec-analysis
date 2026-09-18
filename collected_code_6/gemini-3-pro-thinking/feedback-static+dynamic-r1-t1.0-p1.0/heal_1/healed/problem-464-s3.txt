@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *key;
+    int value;
+} DictionaryEntry;
+
+int check_all_values_same(const DictionaryEntry *dict, size_t size) {
+    if (dict == NULL) {
+        return -1; 
+    }
+
+    if (size <= 1) {
+        return 1;
+    }
+
+    int first_value = dict[0].value;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (dict[i].value != first_value) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void) {
+    DictionaryEntry dict_same[] = {
+        {"apple", 10},
+        {"banana", 10},
+        {"cherry", 10}
+    };
+    size_t size_same = sizeof(dict_same) / sizeof(dict_same[0]);
+
+    DictionaryEntry dict_diff[] = {
+        {"apple", 10},
+        {"banana", 20},
+        {"cherry", 10}
+    };
+    size_t size_diff = sizeof(dict_diff) / sizeof(dict_diff[0]);
+
+    for (size_t i = 0; i < size_same; ++i) {
+        printf("Key: %s, Value: %d\n", dict_same[i].key, dict_same[i].value);
+    }
+    printf("dict_same: %d\n\n", check_all_values_same(dict_same, size_same));
+
+    for (size_t i = 0; i < size_diff; ++i) {
+        printf("Key: %s, Value: %d\n", dict_diff[i].key, dict_diff[i].value);
+    }
+    printf("dict_diff: %d\n", check_all_values_same(dict_diff, size_diff));
+
+    return 0;
+}
+```

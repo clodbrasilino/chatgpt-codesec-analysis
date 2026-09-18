@@ -1,0 +1,380 @@
+./collected_code_4/round2//heal_5/healed/problem-87.c: In function 'addItem':
+./collected_code_4/round2//heal_5/healed/problem-87.c:18:7: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   18 |     if(!newItems) {
+      |       ^
+  'main': events 1-2
+    |
+    |   64 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-12
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' succeeds, moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~        ~~~~~~~~~~~
+           |      |              |            |
+           |      |              |            (7) allocated here
+           |      |              (6) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (8) assuming '<unknown>' is non-NULL
+           |      |       (9) following 'false' branch...
+           |......
+           |   29 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (10) ...to here
+           |   30 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch...
+           |......
+           |   35 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   68 |     dict1.items = addItem(dict1.items, &dict1.size, "key2", "value2");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-16
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (16) '<unknown>' leaks here; was allocated at (7)
+           |
+./collected_code_4/round2//heal_5/healed/problem-87.c:20:13: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   20 |             free(items);
+      |             ^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   64 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-12
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' succeeds, moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~        ~~~~~~~~~~~
+           |      |              |            |
+           |      |              |            (7) allocated here
+           |      |              (6) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (8) assuming '<unknown>' is non-NULL
+           |      |       (9) following 'false' branch...
+           |......
+           |   29 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (10) ...to here
+           |   30 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch...
+           |......
+           |   35 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   68 |     dict1.items = addItem(dict1.items, &dict1.size, "key2", "value2");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-21
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' fails
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'true' branch (when 'newItems' is NULL)...
+           |   19 |         if(items){
+           |      |           ~
+           |      |           |
+           |      |           (18) ...to here
+           |      |           (19) following 'true' branch (when 'items' is non-NULL)...
+           |   20 |             free(items);
+           |      |             ~~~~~~~~~~~
+           |      |             |
+           |      |             (20) ...to here
+           |      |             (21) '<unknown>' leaks here; was allocated at (7)
+           |
+./collected_code_4/round2//heal_5/healed/problem-87.c:26:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |         free(newItems);
+      |         ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   64 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-12
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' succeeds, moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~        ~~~~~~~~~~~
+           |      |              |            |
+           |      |              |            (7) allocated here
+           |      |              (6) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (8) assuming '<unknown>' is non-NULL
+           |      |       (9) following 'false' branch...
+           |......
+           |   29 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (10) ...to here
+           |   30 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch...
+           |......
+           |   35 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   68 |     dict1.items = addItem(dict1.items, &dict1.size, "key2", "value2");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-21
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, without moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'true' branch...
+           |   26 |         free(newItems);
+           |      |         ~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) ...to here
+           |      |         (21) '<unknown>' leaks here; was allocated at (7)
+           |
+./collected_code_4/round2//heal_5/healed/problem-87.c:32:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   32 |         free(newItems);
+      |         ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   64 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-12
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' succeeds, moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~        ~~~~~~~~~~~
+           |      |              |            |
+           |      |              |            (7) allocated here
+           |      |              (6) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (8) assuming '<unknown>' is non-NULL
+           |      |       (9) following 'false' branch...
+           |......
+           |   29 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (10) ...to here
+           |   30 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch...
+           |......
+           |   35 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   67 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   68 |     dict1.items = addItem(dict1.items, &dict1.size, "key2", "value2");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-23
+           |
+           |   16 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   17 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, without moving buffer
+           |   18 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   24 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   25 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   29 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   30 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'true' branch...
+           |   31 |         free(newItems[*size].key);
+           |      |                       ~~~~~
+           |      |                       |
+           |      |                       (22) ...to here
+           |   32 |         free(newItems);
+           |      |         ~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (23) '<unknown>' leaks here; was allocated at (7)
+           |

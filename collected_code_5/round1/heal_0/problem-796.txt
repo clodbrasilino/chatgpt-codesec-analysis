@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Dict;
+
+int sumDictValues(Dict *dict, int dictSize) {
+    int sum = 0;
+    for(int i=0; i<dictSize; i++) {
+        sum += dict[i].value;
+    }
+    return sum;
+}
+
+int main() {
+    Dict dict[] = {
+        {1, 10},
+        {2, 20},
+        {3, 30},
+        {4, 40}
+    };
+
+    int dictSize = sizeof(dict) / sizeof(dict[0]);
+    int sum = sumDictValues(dict, dictSize);
+
+    printf("The sum of values in the dictionary is %d\n", sum);
+    return 0;
+}
+
+```

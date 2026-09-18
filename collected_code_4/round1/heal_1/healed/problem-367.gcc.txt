@@ -1,0 +1,279 @@
+./collected_code_4/round1//heal_1/healed//problem-367.c: In function 'main':
+./collected_code_4/round1//heal_1/healed//problem-367.c:76:28: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   76 |     root->left->left->left = createNode(7);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   53 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   54 |     Node* root = createNode(1);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   21 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   54 |     Node* root = createNode(1);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (6) returning to 'main' from 'createNode'
+    |   55 | 
+    |   56 |     if(root == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (7) following 'false' branch (when 'root' is non-NULL)...
+    |......
+    |   61 |     root->left = createNode(2);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) ...to here
+    |      |                  (9) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 10-12
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (10) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   21 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   61 |     root->left = createNode(2);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (13) returning to 'main' from 'createNode'
+    |   62 |     if(root->left == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (14) following 'false' branch...
+    |......
+    |   67 |     root->right = createNode(3);
+    |      |                   ~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (15) ...to here
+    |      |                   (16) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 17-19
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (17) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (18) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   21 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (19) ...to here
+           |
+    <------+
+    |
+  'main': events 20-23
+    |
+    |   67 |     root->right = createNode(3);
+    |      |                   ^~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (20) returning to 'main' from 'createNode'
+    |   68 |     if(root->right == NULL) {
+    |      |       ~            
+    |      |       |
+    |      |       (21) following 'false' branch...
+    |......
+    |   73 |     root->left->left = createNode(4);
+    |      |     ~~~~~~~~~~         ~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (23) calling 'createNode' from 'main'
+    |      |         (22) ...to here
+    |
+    +--> 'createNode': events 24-25
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (24) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (25) following 'true' branch (when 'node' is NULL)...
+           |
+         'createNode': event 26
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (26) ...to here
+           |
+         'createNode': event 27
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (27) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   73 |     root->left->left = createNode(4);
+    |      |                        ^~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (28) returning to 'main' from 'createNode'
+    |   74 |     root->left->right = createNode(5);
+    |      |                         ~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (29) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 30-31
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (30) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (31) following 'true' branch (when 'node' is NULL)...
+           |
+         'createNode': event 32
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (32) ...to here
+           |
+         'createNode': event 33
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (33) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 34-35
+    |
+    |   74 |     root->left->right = createNode(5);
+    |      |                         ^~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (34) returning to 'main' from 'createNode'
+    |   75 |     root->right->left = createNode(6);
+    |      |                         ~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (35) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 36-37
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (36) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (37) following 'true' branch (when 'node' is NULL)...
+           |
+         'createNode': event 38
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (38) ...to here
+           |
+         'createNode': event 39
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (39) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 40-42
+    |
+    |   75 |     root->right->left = createNode(6);
+    |      |                         ^~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (40) returning to 'main' from 'createNode'
+    |   76 |     root->left->left->left = createNode(7);
+    |      |     ~~~~~~~~~~~~~~~~         ~~~~~~~~~~~~~
+    |      |               |              |
+    |      |               |              (42) calling 'createNode' from 'main'
+    |      |               (41) '0' is NULL
+    |
+    +--> 'createNode': events 43-44
+           |
+           |   14 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (43) entry to 'createNode'
+           |......
+           |   17 |     if(node == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (44) following 'true' branch (when 'node' is NULL)...
+           |
+         'createNode': event 45
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (45) ...to here
+           |
+         'createNode': event 46
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (46) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 47-49
+    |
+    |   76 |     root->left->left->left = createNode(7);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+    |      |                            | |
+    |      |                            | (47) returning to 'main' from 'createNode'
+    |      |                            (48) '0' is NULL
+    |      |                            (49) dereference of NULL '*root_18->left.left'
+    |

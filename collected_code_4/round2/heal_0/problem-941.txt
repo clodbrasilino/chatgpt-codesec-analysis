@@ -1,0 +1,29 @@
+In C, there are no inherent types like "list" or "tuple" that are present in other high-level languages such as Python. The equivalent C data types would be an array and an array of arrays respectively. However, handling arrays of arrays in C would require in-depth knowledge of the structure, i.e., we must know that a certain element is an array of arrays. There isn't a direct method to discover it in runtime; C lacks the ability to introspect data types at runtime unlike Python, JS, Java, etc.
+
+Here's an equivalent C code that counts elements until it reaches a particular sentinel value.
+
+```c
+#include <stdio.h>
+
+int countElements(int *array, int sentinel, int size){
+    int count = 0;
+    for(int i = 0; i < size; i++){
+        if(array[i] == sentinel){
+            return count;
+        }
+        count++;
+    }
+    return count;
+}
+
+int main(){
+    int data[] = {1, 2, 3, 4, 5, 6};
+    int size = sizeof(data) / sizeof(data[0]);
+    int sentinel = 3; // Equivalent to 'tuple' in this case
+    printf("Elements before sentinel: %d\n", countElements(data, sentinel, size));
+    return 0;
+}
+```
+This program counts the number of elements in an array until it reaches the sentinel value and then returns that count. Here, we have taken the sentinel as 3, you can customize this sentinel value as per your requirement. The main function is also provided as per your request which tests this function. Please note that this code snippet does not fully provide a solution to your question as it is not possible in C.
+
+This code avoids CWE-664 by not using any dynamic resource allocation, CWE-703 by handling the end of the array properly, and CWE-710 by adhering to standard C coding practices.

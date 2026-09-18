@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+long long int sum(const long long int arr[], int start, int end) {
+
+    if(start < 0 || end < 0 ){
+        printf("Invalid indices. Start and End must be non negative integers.\n");
+        return 0;
+    }
+
+    if(start > end){
+        printf("Invalid range. Start must be less than End.\n");
+        return 0;
+    }
+
+    long long int total = 0;
+    for(int i = start; i <= end; i++){
+        total += arr[i];
+    }
+
+    return total;
+}
+
+int main() {
+    long long int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int start = 2;
+    int end = 5;
+    long long int total = sum(arr, start, end);
+
+    if(total){
+        printf("Sum of elements from index %d to index %d is %lld", start, end, total);
+    }
+
+    return 0;
+}

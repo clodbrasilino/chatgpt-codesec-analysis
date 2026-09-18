@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int numWays(int n, int k) {
+    if (n == 0) return 0;
+    if (n == 1) return k;
+    
+    long long same = k;
+    long long diff = (long long)k * (k - 1);
+    long long total = same + diff;
+    
+    for (int i = 3; i <= n; i++) {
+        same = diff;
+        
+        if (total > LLONG_MAX / (k - 1)) {
+            return -1;
+        }
+        diff = total * (k - 1);
+        
+        if (same > LLONG_MAX - diff) {
+            return -1;
+        }
+        total = same + diff;
+        
+        if (total > INT_MAX) {
+            return -1;
+        }
+    }
+    
+    return (int)total;
+}
+
+int main(void) {
+    int n, k;
+    
+    printf("Enter number of posts (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter number of colors (k): ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Values must be non-negative\n");
+        return 1;
+    }
+    
+    if (k == 0 && n > 0) {
+        printf("0\n");
+        return 0;
+    }
+    
+    if (k == 1 && n > 2) {
+        printf("0\n");
+        return 0;
+    }
+    
+    int result = numWays(n, k);
+    
+    if (result == -1) {
+        fprintf(stderr, "Overflow detected\n");
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

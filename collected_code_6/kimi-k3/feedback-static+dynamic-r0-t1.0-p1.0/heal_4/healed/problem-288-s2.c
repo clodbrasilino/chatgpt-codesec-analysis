@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+static int64_t mul_mod(int64_t a, int64_t b, int64_t mod)
+{
+    uint64_t result = 0;
+    uint64_t ua, ub, umod;
+    
+    if (mod <= 0) {
+        return 0;
+    }
+    
+    umod = (uint64_t)mod;
+    
+    a %= mod;
+    if (a < 0) {
+        a += mod;
+    }
+    ua = (uint64_t)a;
+    
+    b %= mod;
+    if (b < 0) {
+        b += mod;
+    }
+    ub = (uint64_t)b;
+    
+    while (ub > 0) {
+        if (ub & 1) {
+            result = (result + ua) % umod;
+        }
+        ua = (ua * 2) % umod;
+        ub >>= 1;
+    }
+    
+    return (int64_t)result;
+}
+
+static int64_t mod_pow(int64_t base, int64_t exp, int64_t mod)
+{
+    int64_t result = 1;
+    
+    if (mod <= 0) {
+        return 0;
+    }
+    
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
+    
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mul_mod(result, base, mod);
+        }
+        base = mul_mod(base, base, mod);
+        exp >>= 1;
+    }
+    
+    return result;
+}
+
+static size_t count_self_inverse(const int64_t *arr, size_t n, int64_t p)
+{
+    size_t count = 0;
+    
+    if (arr == NULL || p <= 1) {
+        return 0;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        int64_t val = arr[i] % p;
+        if (val < 0) {
+            val += p;
+        }
+        
+        if (val == 0) {
+            continue;
+        }
+        
+        if (mod_pow(val, p - 2, p) == val) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void)
+{
+    size_t n;
+    int64_t p;
+    
+    if (scanf("%zu", &n) != 1 || n == 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%" SCNd64, &p) != 1 || p <= 1) {
+        return EXIT_FAILURE;
+    }
+    
+    int64_t *arr = malloc(n * sizeof(int64_t));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        if (scanf("%" SCNd64, &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    size_t result = count_self_inverse(arr, n, p);
+    printf("%zu\n", result);
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}

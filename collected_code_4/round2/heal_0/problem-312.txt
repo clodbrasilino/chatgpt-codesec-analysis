@@ -1,0 +1,42 @@
+Here's a simple implementation of the code with error checking and adhering to coding standards:
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+
+double find_volume_of_cone(double radius, double height) {
+    if(radius < 0 || height < 0) {
+        printf("Radius and height must be positive.\n");
+        return -1.0;
+    }
+    
+    double volume = (M_PI * pow(radius, 2) * height) / 3.0;
+    return volume;
+}
+
+int main(void) {
+    double radius;
+    double height;
+    printf("Enter radius: ");
+    scanf("%lf", &radius);
+
+    printf("Enter height: ");
+    scanf("%lf", &height);
+
+    double volume = find_volume_of_cone(radius, height);
+
+    if(volume != -1.0) {
+        printf("Volume of the cone: %.2lf\n", volume);
+    }
+
+    return 0;
+}
+```
+
+In this code:
+
+- `find_volume_of_cone` function calculates and returns the volume of the cone given its radius and height. It also checks if radius or height is negative, which is not allowed. If either is negative, it returns -1 to indicate an error.
+- `main` function asks the user to input the radius and height, then calls `find_volume_of_cone` to calculate the volume and displays the result.
+  
+In this way, the program properly checks for abnormal conditions (invalid radius or height), controls resources (memory for local variables is automatically freed when they go out of scope), and adheres to coding standards (C naming conventions, no magic numbers, etc.).

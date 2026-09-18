@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+struct ValueNode {
+    int value;
+    struct ValueNode* next;
+};
+
+struct GroupNode {
+    int key;
+    struct ValueNode* values;
+    struct GroupNode* next;
+};
+
+void free_groups(struct GroupNode* head) {
+    struct GroupNode* current_group = head;
+    while (current_group != NULL) {
+        struct ValueNode* current_val = current_group->values;
+        while (current_val != NULL) {
+            struct ValueNode* temp_val = current_val;
+            current_val = current_val->next;
+            free(temp_val);
+        }
+        struct GroupNode* temp_group = current_group;
+        current_group = current_group->next;
+        free(temp_group);
+    }
+}
+
+struct GroupNode* group_elements(const struct Tuple* tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return NULL;
+    }
+
+    struct GroupNode* group_head = NULL;
+
+    for (size_t i = 0; i < size; i++) {
+        int current_val = tuples[i].first;
+        int current_key = tuples[i].second;
+
+        struct GroupNode* target_group = NULL;
+        struct GroupNode* iter = group_head;
+        
+        while (iter != NULL) {
+            if (iter->key == current_key) {
+                target_group = iter;
+                break;
+            }
+            iter = iter->next;
+        }
+
+        if (target_group == NULL) {
+            target_group = (struct GroupNode*)malloc(sizeof(struct GroupNode));
+            if (target_group == NULL) {
+                free_groups(group_head);
+                return NULL;
+            }
+            target_group->key = current_key;
+            target_group->values = NULL;
+            target_group->next = group_head;
+            group_head = target_group;
+        }
+
+        struct ValueNode* new_val = (struct ValueNode*)malloc(sizeof(struct ValueNode));
+        if (new_val == NULL) {
+            free_groups(group_head);
+            return NULL;
+        }
+        
+        new_val->value = current_val;
+        new_val->next = target_group->values;
+        target_group->values = new_val;
+    }
+
+    return group_head;
+}
+
+void print_groups(const struct GroupNode* head) {
+    const struct GroupNode* current_group = head;
+    while (current_group != NULL) {
+        printf("Key %d: [", current_group->key);
+        const struct ValueNode* current_val = current_group->values;
+        while (current_val != NULL) {
+            printf("%d", current_val->value);
+            if (current_val->next != NULL) {
+                printf(", ");
+            }
+            current_val = current_val->next;
+        }
+        printf("]\n");
+        current_group = current_group->next;
+    }
+}
+
+int main(void) {
+    struct Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {3, 10},
+        {4, 30},
+        {5, 20},
+        {6, 10}
+    };
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    struct GroupNode* grouped_data = group_elements(tuples, size);
+    
+    if (grouped_data != NULL) {
+        print_groups(grouped_data);
+        free_groups(grouped_data);
+    } else if (size > 0) {
+        fprintf(stderr, "Failed to allocate memory for grouping.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

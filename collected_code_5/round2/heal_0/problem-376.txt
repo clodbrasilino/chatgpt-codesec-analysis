@@ -1,0 +1,49 @@
+```C
+#include <stdio.h>
+
+#define MAX 100
+#define custom_value -1   
+
+void findAndReplaceDuplicates(int arr[], int n) {
+  for (int i = 0; i < n; i++) {
+    int count = 1;
+    if (arr[i] != custom_value) {
+      for (int j = i + 1; j < n; j++) {
+        if (arr[i] == arr[j]) {
+          count++;
+          arr[j] = custom_value;
+        }
+      }
+      if (count > 1) {
+        arr[i] = custom_value;
+      }
+    }
+  }
+}
+
+void printArray(int arr[], int n) {
+  for (int i = 0; i < n; i++) {
+    if (arr[i] != custom_value) {
+      printf("%d ", arr[i]);
+    } else {
+      printf("%d ", custom_value);
+    }
+  }
+}
+
+int main() {
+  int arr[MAX], n;
+  printf("Enter number of elements in the array: ");
+  scanf("%d", &n);
+  printf("Enter elements of the array: ");
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &arr[i]);
+  }
+
+  findAndReplaceDuplicates(arr, n);
+  printArray(arr, n);
+
+  return 0;
+}
+
+```

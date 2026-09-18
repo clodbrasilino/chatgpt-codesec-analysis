@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+int countSquaresInRectangle(int length, int breadth) {
+    if(length <= 0 || breadth <= 0) {
+        printf("Invalid input. Both length and breadth must be positive integers.\n");
+        return -1;
+    }
+    int numberOfSquares = 0;
+    while(length && breadth) {
+        if(length > breadth) {
+            length -= breadth;
+        } else {
+            breadth -= length;
+        }
+        numberOfSquares++;
+    }
+    return numberOfSquares;
+}
+
+int main() {
+    int length, breadth;
+    printf("Enter the length of the rectangle: ");
+    if(scanf("%d", &length) != 1) {
+        printf("Invalid input. Please enter an integer.\n");
+        return -1;
+    }
+    printf("Enter the breadth of the rectangle: ");
+    if(scanf("%d", &breadth) != 1) {
+        printf("Invalid input. Please enter an integer.\n");
+        return -1;
+    }
+    int result = countSquaresInRectangle(length, breadth);
+    if(result != -1) {
+        printf("The number of squares in the rectangle is: %d\n", result);
+    }
+    return 0;
+}

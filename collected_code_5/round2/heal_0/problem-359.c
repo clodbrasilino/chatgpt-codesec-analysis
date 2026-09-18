@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <math.h>
+
+int isRootTwice(double a, double b, double c)
+{
+    double discriminant = b*b - 4*a*c;
+    double root1, root2;
+
+    if(discriminant < 0)
+    {
+        return 0;
+    }
+
+    root1 = (-b + sqrt(discriminant)) / (2*a);
+    root2 = (-b - sqrt(discriminant)) / (2*a);
+
+    if(root1 == 2*root2 || root2 == 2*root1)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main()
+{
+    double a, b, c;
+    printf("Enter coefficients a, b, and c: ");
+    scanf("%lf %lf %lf", &a, &b, &c);
+    
+    if(a == 0) 
+    {
+        printf("Not a quadratic equation\n");
+        return -1;
+    }
+
+    if(isRootTwice(a, b, c))
+    {
+        printf("One root is twice the other\n");
+    }
+    else
+    {
+        printf("No root is twice the other\n");
+    }
+
+    return 0;
+}

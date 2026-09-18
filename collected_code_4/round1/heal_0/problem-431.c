@@ -1,0 +1,27 @@
+#include <stdbool.h>
+#include <stddef.h>
+
+bool lists_have_common_element(int *list1, int list1_size, int *list2, int list2_size) {
+    if (!list1 || !list2 || list1_size <= 0 || list2_size <= 0) {
+        return false;
+    }
+
+    for (int i = 0; i < list1_size; i++) {
+        for (int j = 0; j < list2_size; j++) {
+            if (list1[i] == list2[j]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {6, 7, 8, 9, 10};
+
+    bool result = lists_have_common_element(list1, sizeof(list1) / sizeof(int), list2, sizeof(list2) / sizeof(int));
+
+    return result ? 0 : 1;
+}

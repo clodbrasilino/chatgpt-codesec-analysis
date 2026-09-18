@@ -1,0 +1,22 @@
+#include <stdio.h>  
+#define MAX 100
+
+int eulerian(int n, int m) {
+    int euler[MAX][MAX] = {0};
+    int i, j;
+
+    for (i=1; i<=n; i++) {
+        for (j=0; j<=i; j++)
+            if (j==0 || i==0)
+                euler[i][j] = 1;
+            else
+                euler[i][j] = ((i-j)*euler[i-1][j-1]) + ((j+1)*euler[i-1][j]);
+    }   
+    return euler[n][m];
+}
+
+int main() {
+    int n = 3, m = 1;
+    printf("%d", eulerian(n, m));
+    return 0;
+}

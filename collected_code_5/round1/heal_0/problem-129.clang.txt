@@ -1,0 +1,5 @@
+collected_code_5/round1/heal_0/problem-129.c:9:5: error: call to undeclared library function 'memset' with type 'void *(void *, int, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    9 |     memset(magicSquare, 0, sizeof(magicSquare));
+      |     ^
+collected_code_5/round1/heal_0/problem-129.c:9:5: note: include the header <string.h> or explicitly provide a declaration for 'memset'
+1 error generated.

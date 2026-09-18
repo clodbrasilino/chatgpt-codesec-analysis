@@ -1,0 +1,39 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* runLengthEncoding(char* list);
+
+int main() { 
+    char list[] = "aaaabbccd";
+    char* encodedList =  runLengthEncoding(list);
+    printf("%s\n", encodedList); 
+    free(encodedList);
+    return 0;     
+} 
+
+char* runLengthEncoding(char* list) {
+    if(list == NULL){
+        return NULL;
+    }
+    int len = strlen(list);
+    char* result = (char*)malloc(sizeof(char) * len * 2 + 1);
+    if(result == NULL) {
+        return NULL;
+    }
+    int count = 1; 
+    int j = 0;
+    for(int i = 0; i < len; ++i) {
+        if(list[i] == list[i + 1]) {
+            ++count;
+        } else {
+            j += sprintf(&result[j], "%d%c", count, list[i]);
+            count = 1;
+        }
+    } 
+    result[j] = '\0';
+    return result;
+}
+```
+The main function calls the `runLengthEncoding` function on a list. The `runLengthEncoding` function first checks if the input string is NULL, if it is, it returns NULL. It then calculates the length of the input string. After that, it allocates memory for the resulting string, checks if the memory allocation was successful. If it wasn't, it returns NULL. Proceeds to compress the string into unique characters and their frequency. This is done by comparing the current character to the next one and incrementing the count if they're the same. If they're different, the frequency and current character are written into the result and the count is reset to 1. The process is repeated until all the characters in the original string have been processed. During the encoding process, any problems with the encoding, like not enough memory or a NULL input string, are resolved by returning NULL. This ensures that the program won't crash or behave unpredictably. After the encoding process is done, a null character is appended to the end of the string to mark its end and the result string is returned.

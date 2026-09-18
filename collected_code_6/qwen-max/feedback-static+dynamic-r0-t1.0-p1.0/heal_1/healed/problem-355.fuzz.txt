@@ -1,0 +1,2 @@
+problem-355.c:7:26:medium:UBSan: 3e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000000,time:210,execs:100,op:havoc,rep:2)
+problem-355.c:16:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000001,time:799,execs:302,op:havoc,rep:3; likely memory-safety defect

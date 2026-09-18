@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} tuple;
+
+typedef struct {
+    tuple *data;
+    int count;
+    int size;
+} tuple_list;
+
+void init_list(tuple_list *list, int initial_size) {
+    list->data = (tuple *)malloc(sizeof(tuple) * initial_size);
+    list->count = 0;
+    list->size = initial_size;
+    if (list->data == NULL) {
+        perror("Failed to allocate memory for list->data\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void free_list(tuple_list *list);
+
+void append_to_list(tuple_list *list, tuple t) {
+    if (list->count >= list->size) {
+        list->size *= 2;
+        tuple* temp = (tuple *)realloc(list->data, sizeof(tuple) * list->size);
+        if(temp == NULL) {
+            perror("Failed to reallocate memory for list->data\n");
+            free_list(list);
+            exit(EXIT_FAILURE);
+        }
+        list->data = temp;
+    }
+    list->data[list->count++] = t;
+}
+
+tuple extract_rear(tuple_list *list) {
+    if(list->count == 0) {
+        printf("List is empty, no elements to extract\n");
+        exit(EXIT_FAILURE);
+    }
+    tuple t = list->data[--list->count];
+    return t;
+}
+
+void free_list(tuple_list *list) {
+    free(list->data);
+    list->data = NULL;
+    list->count = 0;
+    list->size = 0;
+}
+
+int main(void) {
+    tuple_list list;
+    init_list(&list, 10);
+
+    tuple t1 = {1, 2};
+    append_to_list(&list, t1);
+
+    tuple t2 = {3, 4};
+    append_to_list(&list, t2);
+
+    tuple last = extract_rear(&list);
+    printf("Extracted tuple: (%d, %d)\n", last.first, last.second);
+
+    free_list(&list);
+    return 0;
+}

@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* create_node(int data);
+void free_list(struct Node* head);
+int append_node(struct Node** head, int data);
+int get_nth_item(const struct Node* head, size_t n, int* out_value);
+
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int append_node(struct Node** head, int data) {
+    if (head == NULL) {
+        return -1;
+    }
+    struct Node* new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+    struct Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+int get_nth_item(const struct Node* head, size_t n, int* out_value) {
+    if (head == NULL || out_value == NULL) {
+        return -1;
+    }
+    const struct Node* current = head;
+    size_t count = 0;
+    while (current != NULL) {
+        if (count == n) {
+            *out_value = current->data;
+            return 0;
+        }
+        count++;
+        current = current->next;
+    }
+    return -1;
+}
+
+int main(void) {
+    struct Node* head = NULL;
+    size_t i;
+
+    for (i = 0; i < 10; i++) {
+        if (append_node(&head, (int)(i * 10)) != 0) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int value = 0;
+    size_t target_index = 4;
+
+    if (get_nth_item(head, target_index, &value) == 0) {
+        printf("%d\n", value);
+    } else {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

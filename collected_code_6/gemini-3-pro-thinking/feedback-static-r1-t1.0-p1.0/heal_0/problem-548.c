@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t length_of_lis(const int *nums, size_t n);
+
+size_t length_of_lis(const int *nums, size_t n) {
+    if (nums == NULL || n == 0) {
+        return 0;
+    }
+
+    int *tails = (int *)malloc(n * sizeof(int));
+    if (tails == NULL) {
+        return 0;
+    }
+
+    size_t size = 0;
+    for (size_t i = 0; i < n; i++) {
+        size_t left = 0;
+        size_t right = size;
+        
+        while (left < right) {
+            size_t mid = left + (right - left) / 2;
+            if (tails[mid] < nums[i]) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        
+        tails[left] = nums[i];
+        if (left == size) {
+            size++;
+        }
+    }
+
+    free(tails);
+    return size;
+}
+
+int main(void) {
+    const int nums[] = {10, 9, 2, 5, 3, 7, 101, 18};
+    size_t n = sizeof(nums) / sizeof(nums[0]);
+    
+    size_t result = length_of_lis(nums, n);
+    printf("%zu\n", result);
+    
+    return 0;
+}

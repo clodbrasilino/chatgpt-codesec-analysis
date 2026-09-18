@@ -1,0 +1,36 @@
+#include<stdio.h>
+
+long long int sumOfCubes(int n) {
+    long long int sum = 0;
+    for(int i = 1; i <= n; i++) {
+        sum += i*i*i;
+    }
+    return sum;
+}
+
+long long int sumOfNaturalNumbers(int n) {
+    long long int sum = 0;
+    for(int i = 1; i <= n; i++) {
+        sum += i;
+    }
+    return sum;
+}
+
+long long int calculateDifference(int n) {
+    long long int difference = sumOfCubes(n) - sumOfNaturalNumbers(n);
+    return difference;
+}
+
+int main() {
+    int n;
+    printf("Enter the number n: ");
+    scanf("%d", &n);
+    if(n < 1) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    long long int difference = calculateDifference(n);
+    printf("The difference between the sum of the cubes of the first %d natural numbers and the sum of the first %d natural numbers is: %lld\n", n, n, difference);
+    return 0;
+}

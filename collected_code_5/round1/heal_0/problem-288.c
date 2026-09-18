@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+unsigned long long modInverse(unsigned long long a, unsigned long long p) 
+{ 
+    a = a % p; 
+    for (int x = 1; x < p; x++) 
+        if ((a * x) % p == 1) 
+            return x; 
+    return 0;
+} 
+
+int countSelfInverses(int arr[], int n, int p) 
+{ 
+    int count = 0;
+    for (int i = 0; i < n; i++) 
+    { 
+        if (arr[i] >= p)  
+            continue;  
+        unsigned long long inv = modInverse(arr[i], p); 
+        if (inv == arr[i]) 
+        {   
+            count++;  
+        } 
+    }
+    return count;
+}
+  
+int main() 
+{ 
+    int arr[] = {1, 2, 3, 4, 5}; 
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int p = 7;
+    printf ("Number of self-inverses: %d\n", countSelfInverses(arr, n, p));
+    return 0; 
+} 

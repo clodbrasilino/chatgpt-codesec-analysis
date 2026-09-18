@@ -1,0 +1,55 @@
+./collected_code_4/round2//heal_0/problem-390.c: In function 'prependString':
+./collected_code_4/round2//heal_0/problem-390.c:46:1: warning: leak of 'newStr' [CWE-401] [-Wanalyzer-malloc-leak]
+   46 | }
+      | ^
+  'prependString': events 1-3
+    |
+    |   29 |     if (list != NULL && str != NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'true' branch...
+    |   30 |         for (int i = 0; i < list->size; i++) {
+    |      |                  ~      ~~~~~~~~~~~~~~
+    |      |                  |        |
+    |      |                  |        (3) following 'true' branch...
+    |      |                  (2) ...to here
+    |
+  'prependString': event 4
+    |
+    |   32 |             strcpy(temp, str);
+    |      |             ^~~~~~
+    |      |             |
+    |      |             (4) ...to here
+    |
+  'prependString': events 5-7
+    |
+    |   35 |             char* newStr = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    |      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (5) allocated here
+    |   36 |             if (newStr != NULL) {
+    |      |                ~                   
+    |      |                |
+    |      |                (6) assuming 'newStr' is non-NULL
+    |      |                (7) following 'true' branch (when 'newStr' is non-NULL)...
+    |
+  'prependString': event 8
+    |
+    |   37 |                 strcpy(newStr, temp);
+    |      |                 ^~~~~~
+    |      |                 |
+    |      |                 (8) ...to here
+    |
+  'prependString': events 9-11
+    |
+    |   30 |         for (int i = 0; i < list->size; i++) {
+    |      |                         ~~^~~~~~~~~~~~
+    |      |                           |
+    |      |                           (9) following 'false' branch...
+    |......
+    |   46 | }
+    |      | ~                          
+    |      | |
+    |      | (10) ...to here
+    |      | (11) 'newStr' leaks here; was allocated at (5)
+    |

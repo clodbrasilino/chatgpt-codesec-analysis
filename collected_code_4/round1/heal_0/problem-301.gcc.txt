@@ -1,0 +1,33 @@
+./collected_code_4/round1//heal_0//problem-301.c: In function 'addNode':
+./collected_code_4/round1//heal_0//problem-301.c:23:21: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |     newNode -> next = node;
+      |     ~~~~~~~~~~~~~~~~^~~~~~
+  'addNode': events 1-2
+    |
+    |   22 |     struct node* newNode = (struct node*) malloc(sizeof(struct node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |   23 |     newNode -> next = node;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~                 
+    |      |                     |
+    |      |                     (2) 'newNode' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-301.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-301.c:39:18: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   39 |     dict -> node = NULL;
+      |                  ^
+  'main': event 1
+    |
+    |   38 |     struct dictionary* dict = (struct dictionary*) malloc(sizeof(struct dictionary));
+    |      |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                    |
+    |      |                                                    (1) this call could return NULL
+    |
+  'main': event 2
+    |
+    |   39 |     dict -> node = NULL;
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) 'dict' could be NULL: unchecked value from (1)
+    |

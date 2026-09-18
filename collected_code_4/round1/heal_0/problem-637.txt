@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkNoProfitNoLoss(int costPrice, int sellingPrice) {
+    if(costPrice == sellingPrice) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    int cost, sell;
+    
+    printf("Enter the cost price: ");
+    scanf("%d", &cost);
+    printf("Enter the selling price: ");
+    scanf("%d", &sell);
+
+    bool result = checkNoProfitNoLoss(cost, sell);
+    
+    if(result) {
+        printf("There was no profit no loss in this transaction\n");
+    } else {
+        printf("There was either profit or loss in this transaction\n");
+    }
+
+    return 0;
+}
+```

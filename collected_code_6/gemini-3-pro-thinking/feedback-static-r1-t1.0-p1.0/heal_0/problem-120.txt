@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+int find_max_tuple_product(const struct Tuple *tuples, size_t count, long long *max_product) {
+    if (tuples == NULL || max_product == NULL || count == 0) {
+        return -1;
+    }
+
+    *max_product = (long long)tuples[0].first * tuples[0].second;
+
+    for (size_t i = 1; i < count; i++) {
+        long long current_product = (long long)tuples[i].first * tuples[i].second;
+        if (current_product > *max_product) {
+            *max_product = current_product;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const struct Tuple list_of_tuples[] = {
+        {2, 3},
+        {-5, -6},
+        {4, 7},
+        {8, 2},
+        {0, 10}
+    };
+    
+    size_t count = sizeof(list_of_tuples) / sizeof(list_of_tuples[0]);
+    long long max_prod = 0;
+
+    if (find_max_tuple_product(list_of_tuples, count, &max_prod) == 0) {
+        printf("%lld\n", max_prod);
+    } else {
+        fprintf(stderr, "Invalid input or empty list.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

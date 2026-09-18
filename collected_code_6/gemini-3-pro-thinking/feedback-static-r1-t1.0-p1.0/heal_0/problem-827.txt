@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+
+typedef struct {
+    long *data;
+    size_t length;
+} List;
+
+typedef struct {
+    List *lists;
+    size_t count;
+} ListOfLists;
+
+int sum_column(const ListOfLists *lol, size_t col_index, long long *out_sum);
+void free_list_of_lists(ListOfLists *lol);
+
+int sum_column(const ListOfLists *lol, size_t col_index, long long *out_sum) {
+    if (lol == NULL || out_sum == NULL) {
+        return -1;
+    }
+    if (lol->count > 0 && lol->lists == NULL) {
+        return -1;
+    }
+
+    long long sum = 0;
+
+    for (size_t i = 0; i < lol->count; ++i) {
+        if (lol->lists[i].data == NULL) {
+            return -1;
+        }
+        if (col_index >= lol->lists[i].length) {
+            return -1;
+        }
+
+        long value = lol->lists[i].data[col_index];
+
+        if (value > 0 && sum > LLONG_MAX - value) {
+            return -1;
+        }
+        if (value < 0 && sum < LLONG_MIN - value) {
+            return -1;
+        }
+
+        sum += value;
+    }
+
+    *out_sum = sum;
+    return 0;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol == NULL) {
+        return;
+    }
+    if (lol->lists != NULL) {
+        for (size_t i = 0; i < lol->count; ++i) {
+            free(lol->lists[i].data);
+        }
+        free(lol->lists);
+    }
+    lol->lists = NULL;
+    lol->count = 0;
+}
+
+int main(void) {
+    ListOfLists lol = {NULL, 0};
+    size_t initial_count = 3;
+
+    lol.lists = malloc(initial_count * sizeof(List));
+    if (lol.lists == NULL) {
+        return EXIT_FAILURE;
+    }
+    lol.count = initial_count;
+
+    for (size_t i = 0; i < lol.count; ++i) {
+        lol.lists[i].length = 4;
+        lol.lists[i].data = malloc(lol.lists[i].length * sizeof(long));
+        if (lol.lists[i].data == NULL) {
+            lol.count = i;
+            free_list_of_lists(&lol);
+            return EXIT_FAILURE;
+        }
+        for (size_t j = 0; j < lol.lists[i].length; ++j) {
+            lol.lists[i].data[j] = (long)((i + 1) * (j + 1));
+        }
+    }
+
+    long long result = 0;
+    if (sum_column(&lol, 2, &result) == 0) {
+        printf("%lld\n", result);
+    } else {
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+
+    free_list_of_lists(&lol);
+    return EXIT_SUCCESS;
+}
+```

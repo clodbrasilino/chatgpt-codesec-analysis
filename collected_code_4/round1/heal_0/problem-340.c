@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sortArray(int *arr, int n) {
+    for(int i = 0; i < n-1; i++) {
+        for(int j = 0; j < n-i-1; j++) {
+           if(arr[j] > arr[j+1]) {
+              int temp = arr[j];
+              arr[j] = arr[j+1];
+              arr[j+1] = temp;
+           }
+        }
+    }
+}
+
+int findThreeLowestSum(int *arr, int n) {
+    if(n < 3) {
+        printf("Input array must have at least three elements.\n");
+        exit(1);
+    }
+
+    sortArray(arr, n);
+
+    int sum = 0;
+    int count = 0;
+    for(int i = 0; i < n; i++) {
+        if(arr[i] > 0) {
+            sum += arr[i];
+            count++;
+
+            if(count == 3) {
+                break;
+            }
+        }
+    }
+
+    if(count < 3) {
+        printf("Input array does not have at least three positive numbers.\n");
+        exit(1);
+    }
+
+    return sum;
+}
+
+int main() {
+    int arr[] = {3, 2, 5, 1, -8, 4, -3, 7};
+    int n = sizeof(arr)/sizeof(arr[0]);
+
+    int sum = findThreeLowestSum(arr, n);
+
+    printf("The sum of the three lowest positive numbers is: %d\n", sum);
+
+    return 0;
+}

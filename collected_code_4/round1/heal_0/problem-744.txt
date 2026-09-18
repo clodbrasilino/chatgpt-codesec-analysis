@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+    int *first;
+    int *second;
+}Tuple;
+
+int checkNoneInTuple(Tuple tuple){
+    if(tuple.first == NULL || tuple.second == NULL){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+int main(){
+    int a = 5;
+    int b = 10;
+    Tuple tuple1;
+    tuple1.first = &a;
+    tuple1.second = &b;
+    
+    Tuple tuple2;
+    tuple2.first = NULL;
+    tuple2.second = &b;
+    
+    if(checkNoneInTuple(tuple1)){
+        printf("tuple1 has NULL value\n");
+    }
+    else{
+        printf("No NULL values in tuple1\n");
+    }
+    
+    if(checkNoneInTuple(tuple2)){
+        printf("tuple2 has NULL value\n");
+    }
+    else{
+        printf("No NULL values in tuple2\n");
+    }
+    
+    return 0;
+}
+```
+This code defines a Tuple type which contains two integer pointers as its elements. The function checkNoneInTuple checks if any of these pointers in a given tuple is NULL, returning 1 if it is the case, or 0 if both pointers are not NULL.
+
+In the main function, two tuples are created. tuple1 has both of its pointers set to a valid address (pointing to integers a and b), whereas tuple2 has its first pointer set to NULL. The checkNoneInTuple function is then called for each of these tuples and displays a specific message depending on whether a NULL pointer was found or not.

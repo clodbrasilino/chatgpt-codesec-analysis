@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int count;
+} Record;
+
+typedef struct {
+    int count;
+    int frequency;
+} FrequencyCount;
+
+void check_occurrences(Record* records, int num_records) {
+    if (records == NULL || num_records <= 0) {
+        return;
+    }
+
+    FrequencyCount* freq_counts = (FrequencyCount*)malloc(num_records * sizeof(FrequencyCount));
+    if (freq_counts == NULL) {
+        return;
+    }
+
+    int num_freqs = 0;
+
+    for (int i = 0; i < num_records; i++) {
+        int found = 0;
+        for (int j = 0; j < num_freqs; j++) {
+            if (freq_counts[j].count == records[i].count) {
+                freq_counts[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freq_counts[num_freqs].count = records[i].count;
+            freq_counts[num_freqs].frequency = 1;
+            num_freqs++;
+        }
+    }
+
+    for (int i = 0; i < num_freqs; i++) {
+        if (freq_counts[i].frequency > 1) {
+            printf("Records with count %d occur %d times.\n", freq_counts[i].count, freq_counts[i].frequency);
+        }
+    }
+
+    free(freq_counts);
+}
+
+int main(void) {
+    Record records[] = {
+        {5},
+        {3},
+        {5},
+        {2},
+        {3},
+        {5}
+    };
+    int num_records = sizeof(records) / sizeof(records[0]);
+
+    check_occurrences(records, num_records);
+
+    return 0;
+}
+```

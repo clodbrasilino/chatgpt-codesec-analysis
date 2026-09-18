@@ -1,0 +1,45 @@
+```C
+#include <regex.h>
+#include <stdio.h>
+#include <string.h>
+
+int check_decimal(char *str) {
+    regex_t regex;
+    int ret;
+    char pattern[] = "^[0-9]*.[0-9]{2}$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        printf("Could not compile regex\n");
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == REG_NOMATCH) {
+        printf("Input doesn't match the pattern.\n");
+        return 0;
+    } else if (ret) {
+        printf("Regex execution problem occurred\n");
+        return -2;
+    }
+
+    return 1;
+}
+
+int main(){
+    char str[100];
+    printf("Enter a number with a precision of 2: ");
+    fgets(str, sizeof str, stdin);
+
+    if(check_decimal(str) == 1){
+        printf("The entered string meets the condition\n");
+    } 
+    else{
+        printf("Error: The entered string does not meet the condition\n");
+    }
+
+    return 0;
+}
+```

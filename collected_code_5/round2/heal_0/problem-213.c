@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_STRING_SIZE 256
+
+typedef struct Tuple {
+    char string1[MAX_STRING_SIZE];
+    char string2[MAX_STRING_SIZE];
+} Tuple;
+
+void concatenate_string_tuples(Tuple* tuple1, Tuple* tuple2, Tuple* result) {
+    if(tuple1 == NULL || tuple2 == NULL || result == NULL) {
+        printf("Error: Null pointer received.\n");
+        exit(1);
+    }
+
+    // strcat transfers '\0' also, make sure we have enough space in result
+    if((strlen(tuple1->string1) + strlen(tuple2->string1)) >= MAX_STRING_SIZE ||
+       (strlen(tuple1->string2) + strlen(tuple2->string2)) >= MAX_STRING_SIZE) {
+        printf("Error: Not enough space in result tuple.\n");
+        exit(1);
+    }
+
+    strcpy(result->string1, tuple1->string1);
+    strcat(result->string1, tuple2->string1);
+
+    strcpy(result->string2, tuple1->string2);
+    strcat(result->string2, tuple2->string2);
+}
+
+int main() {
+    Tuple tuple1 = {"Hello", "World"};
+    Tuple tuple2 = {" ", "!!"};
+    Tuple result;
+
+    concatenate_string_tuples(&tuple1, &tuple2, &result);
+
+    printf("Result: (%s, %s)\n", result.string1, result.string2);
+
+    return 0;
+}

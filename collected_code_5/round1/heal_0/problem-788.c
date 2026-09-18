@@ -1,0 +1,63 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+typedef struct
+{
+    char *str;
+    int *list;
+    int size;
+}tuple;
+
+tuple* create_new_tuple(const char* str, const int* lst, int n){
+    tuple* t = malloc(sizeof(tuple));
+    if (t == NULL)
+        return NULL;
+
+    t->str = malloc(strlen(str) + 1);
+    if (t->str == NULL){
+        free(t);
+        return NULL;
+    }
+    strcpy(t->str, str);
+
+    t->list = malloc(sizeof(int) * n);
+    if (t->list == NULL){
+        free(t->str);
+        free(t);
+        return NULL;
+    }
+    for(int i=0; i<n; i++){
+        t->list[i] = lst[i];
+    }
+
+    t->size = n;
+
+    return t;
+}
+
+
+void free_tuple(tuple* t){
+    free(t->str);
+    free(t->list);
+    free(t);
+}
+
+int main(){
+    int list[] = {1, 2, 3, 4, 5};
+    tuple* t = create_new_tuple("example", list, 5);
+
+    if(t == NULL){
+        printf("Failed to create tuple\n");
+        return 1;
+    }
+
+    printf("Tuple created: \nString: %s\nList:",t->str);
+    for(int i = 0; i<t->size; i++){
+        printf(" %d", t->list[i]);
+    }
+    printf("\n");
+
+    free_tuple(t);
+    return 0;
+}

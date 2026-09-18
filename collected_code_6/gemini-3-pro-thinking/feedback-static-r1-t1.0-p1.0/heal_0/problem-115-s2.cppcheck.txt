@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:31:16: style: Variable 'dicts_empty' can be declared as const array [constVariable]
+    Dictionary dicts_empty[3] = {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:38:16: style: Variable 'dicts_mixed' can be declared as const array [constVariable]
+    Dictionary dicts_mixed[3] = {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:7:11: style: struct member 'KeyValuePair::key' is never used. [unusedStructMember]
+    char *key;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:8:11: style: struct member 'KeyValuePair::value' is never used. [unusedStructMember]
+    char *value;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:13:19: style: struct member 'Dictionary::pairs' is never used. [unusedStructMember]
+    KeyValuePair *pairs;
+                  ^

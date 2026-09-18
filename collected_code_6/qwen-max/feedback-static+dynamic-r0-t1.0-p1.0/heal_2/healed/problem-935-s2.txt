@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool is_valid_input(int n) {
+    return n > 0;
+}
+
+uint64_t sum_of_squares(uint64_t n) {
+    if (n > 0xFFFFFFFFFFULL / 2 || 2 * n > 0xFFFFFFFFFFULL - 1) {
+        return 0;
+    }
+    uint64_t result = n * (n + 1) * (2 * n + 1) / 6;
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1 || !is_valid_input(n)) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    uint64_t result = sum_of_squares((uint64_t)n);
+    printf("Sum of squares up to %d is: %llu\n", n, (unsigned long long)result);
+    return 0;
+}
+```

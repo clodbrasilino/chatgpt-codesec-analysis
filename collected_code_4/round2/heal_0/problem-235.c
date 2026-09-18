@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+unsigned int setEvenBits(unsigned int n) {
+    //int with even bits set to 1
+    unsigned int even_set = 0xAAAAAAAA;
+    n = n | even_set;
+    return n;
+}
+
+int main(){
+    unsigned int a = 10;
+    printf("Number with set even bits is %u\n", setEvenBits(a));
+
+    return 0;
+}

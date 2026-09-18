@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* list;
+    struct ListOfLists* next;
+} ListOfLists;
+
+ListOfLists* remove_empty_lists(ListOfLists* head);
+Node* create_node(int data);
+ListOfLists* create_list_of_lists_node(Node* list);
+void free_list(Node* head);
+void free_list_of_lists(ListOfLists* head);
+void print_list_of_lists(const ListOfLists* head);
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+ListOfLists* create_list_of_lists_node(Node* list) {
+    ListOfLists* new_node = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->list = list;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node* head) {
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(ListOfLists* head) {
+    while (head != NULL) {
+        ListOfLists* temp = head;
+        head = head->next;
+        free_list(temp->list);
+        free(temp);
+    }
+}
+
+ListOfLists* remove_empty_lists(ListOfLists* head) {
+    ListOfLists* current = head;
+    ListOfLists* prev = NULL;
+
+    while (current != NULL) {
+        if (current->list == NULL) {
+            ListOfLists* temp = current;
+            if (prev == NULL) {
+                head = current->next;
+                current = head;
+            } else {
+                prev->next = current->next;
+                current = current->next;
+            }
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+void print_list_of_lists(const ListOfLists* head) {
+    const ListOfLists* current_lol = head;
+    while (current_lol != NULL) {
+        const Node* current_node = current_lol->list;
+        while (current_node != NULL) {
+            printf("%d ", current_node->data);
+            current_node = current_node->next;
+        }
+        printf("\n");
+        current_lol = current_lol->next;
+    }
+}
+
+int main(void) {
+    ListOfLists* head = NULL;
+    ListOfLists* tail = NULL;
+    ListOfLists* temp_lol = NULL;
+    Node* n1 = NULL;
+    Node* n2 = NULL;
+    int status = EXIT_SUCCESS;
+
+    temp_lol = create_list_of_lists_node(NULL);
+    if (temp_lol == NULL) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    head = temp_lol;
+    tail = temp_lol;
+
+    n1 = create_node(1);
+    if (n1 == NULL) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    
+    n2 = create_node(2);
+    if (n2 == NULL) {
+        free_list(n1);
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    n1->next = n2;
+
+    temp_lol = create_list_of_lists_node(n1);
+    if (temp_lol == NULL) {
+        free_list(n1);
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    tail->next = temp_lol;
+    tail = temp_lol;
+
+    temp_lol = create_list_of_lists_node(NULL);
+    if (temp_lol == NULL) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+    tail->next = temp_lol;
+    /* Possible weaknesses found:
+     *  Value stored to 'tail' is never read [deadcode.DeadStores]
+     *  Variable 'tail' is assigned a value that is never used. [unreadVariable]
+     */
+    tail = temp_lol;
+
+    head = remove_empty_lists(head);
+
+    print_list_of_lists(head);
+
+cleanup:
+    free_list_of_lists(head);
+    return status;
+}

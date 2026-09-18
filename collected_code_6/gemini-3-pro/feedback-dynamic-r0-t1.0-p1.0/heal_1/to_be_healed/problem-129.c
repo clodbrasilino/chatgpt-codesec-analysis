@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int** generate_magic_square(int n) {
+    if (n % 2 == 0 || n <= 0) {
+        return NULL;
+    }
+
+    int** magic_square = (int**)malloc(n * sizeof(int*));
+    if (!magic_square) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        magic_square[i] = (int*)calloc(n, sizeof(int));
+        if (!magic_square[i]) {
+            for (int k = 0; k < i; k++) {
+                free(magic_square[k]);
+            }
+            free(magic_square);
+            return NULL;
+        }
+    }
+
+    int i = n / 2;
+    int j = n - 1;
+
+    for (int num = 1; num <= n * n;) {
+        if (i == -1 && j == n) {
+            j = n - 2;
+            i = 0;
+        } else {
+            if (j == n) {
+                j = 0;
+            }
+            if (i < 0) {
+                i = n - 1;
+            }
+        }
+
+        if (magic_square[i][j] != 0) {
+            j -= 2;
+            i++;
+            continue;
+        } else {
+            magic_square[i][j] = num++;
+        }
+
+        j++;
+        i--;
+    }
+
+    return magic_square;
+}
+
+void print_magic_square(int** magic_square, int n) {
+    if (!magic_square) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%3d ", magic_square[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void free_magic_square(int** magic_square, int n) {
+    if (!magic_square) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        free(magic_square[i]);
+    }
+    free(magic_square);
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:14396,execs:842,op:havoc,rep:6; likely memory-safety defect
+  */
+
+int main(void) {
+    int n = 0;
+    
+    printf("Enter the size of the magic square (odd number > 0): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0 || n % 2 == 0) {
+        fprintf(stderr, "Size must be an odd positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    int** magic_square = generate_magic_square(n);
+    if (!magic_square) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    print_magic_square(magic_square, n);
+    free_magic_square(magic_square, n);
+
+    return EXIT_SUCCESS;
+}

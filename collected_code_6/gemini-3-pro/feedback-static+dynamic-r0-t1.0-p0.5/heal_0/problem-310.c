@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+Tuple* string_to_tuple(const char *str, const char *delimiter) {
+    if (!str || !delimiter) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->elements = NULL;
+    tuple->count = 0;
+
+    char *str_copy = strdup(str);
+    if (!str_copy) {
+        free(tuple);
+        return NULL;
+    }
+
+    char *saveptr;
+    char *token = strtok_r(str_copy, delimiter, &saveptr);
+
+    while (token != NULL) {
+        char **new_elements = (char **)realloc(tuple->elements, (tuple->count + 1) * sizeof(char *));
+        if (!new_elements) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            free(str_copy);
+            return NULL;
+        }
+        tuple->elements = new_elements;
+
+        tuple->elements[tuple->count] = strdup(token);
+        if (!tuple->elements[tuple->count]) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+            free(tuple);
+            free(str_copy);
+            return NULL;
+        }
+        tuple->count++;
+
+        token = strtok_r(NULL, delimiter, &saveptr);
+    }
+
+    free(str_copy);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *input_string = "apple,banana,cherry,date";
+    const char *delimiter = ",";
+
+    Tuple *my_tuple = string_to_tuple(input_string, delimiter);
+
+    if (my_tuple) {
+        for (size_t i = 0; i < my_tuple->count; i++) {
+            printf("Element %zu: %s\n", i, my_tuple->elements[i]);
+        }
+        free_tuple(my_tuple);
+    } else {
+        fprintf(stderr, "Failed to convert string to tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

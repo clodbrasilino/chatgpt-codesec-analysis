@@ -1,0 +1,10 @@
+collected_code_5/round1/heal_0/problem-222.c:42:5: warning: Address of stack memory associated with local variable 'a' is still referred to by the global variable 'myTuple' upon returning to the caller.  This will be a dangling reference [core.StackAddressEscape]
+   24 |     return 0;
+      |     ^~~~~~~~
+collected_code_5/round1/heal_0/problem-222.c:42:5: warning: Address of stack memory associated with local variable 'b' is still referred to by the global variable 'myTuple' upon returning to the caller.  This will be a dangling reference [core.StackAddressEscape]
+   24 |     return 0;
+      |     ^~~~~~~~
+collected_code_5/round1/heal_0/problem-222.c:42:5: warning: Address of stack memory associated with local variable 'f' is still referred to by the global variable 'myTuple' upon returning to the caller.  This will be a dangling reference [core.StackAddressEscape]
+   25 |     return 0;
+      |     ^~~~~~~~
+3 warnings generated.

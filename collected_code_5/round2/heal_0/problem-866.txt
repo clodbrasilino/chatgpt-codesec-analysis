@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int hasThirtyOneDays(char month_name[]) {
+    char *months_with_31_days[] = {
+        "January", "March", "May", "July", "August", "October", "December"
+    };
+
+    for (int i = 0; i < 7; i++) {
+        if (strcmp(month_name, months_with_31_days[i]) == 0) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+int main() {
+    char month_name[20];
+    printf("Enter a month name: ");
+    fgets(month_name, 20, stdin);
+
+    // To remove newline character if any
+    size_t len = strlen(month_name);
+    if(len > 0 && month_name[len-1] == '\n') {
+        month_name[len-1] = '\0';
+    }
+
+    if (hasThirtyOneDays(month_name)) {
+        printf("The month has 31 days\n");
+    } else {
+        printf("The month doesn't have 31 days\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int first;
+    int second;
+} Tuple;
+
+int sumAlternateChains(Tuple* arr, int n){
+    int sum = 0, flag = 0;
+    for (int i = 0; i < n; i++){
+        if(flag){
+            sum += arr[i].first + arr[i].second;
+        }
+        flag = !flag;
+    }
+    return sum;
+}
+
+int main(){
+    Tuple* arr;
+    int n;
+    printf("Enter the no of tuples: ");
+    scanf("%d", &n);
+    arr = malloc(n * sizeof(Tuple));
+    if(arr == NULL){
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    printf("Enter the tuples:\n");
+    for(int i=0; i<n; i++){
+        scanf("%d%d", &arr[i].first, &arr[i].second);
+    } 
+    int sum = sumAlternateChains(arr, n);
+    printf("Sum of alternate chains of tuples: %d\n", sum);
+    free(arr);
+    return 0;
+}
+```

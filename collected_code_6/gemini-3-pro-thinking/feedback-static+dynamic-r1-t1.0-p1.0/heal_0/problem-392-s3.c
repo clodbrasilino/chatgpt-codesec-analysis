@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MEMO_SIZE 1000000
+
+unsigned long long calculate_max_sum(unsigned long long n, unsigned long long *memo) {
+    if (n == 0) {
+        return 0;
+    }
+
+    if (n < MEMO_SIZE && memo[n] != 0) {
+        return memo[n];
+    }
+
+    unsigned long long sum = calculate_max_sum(n / 2, memo) +
+                             calculate_max_sum(n / 3, memo) +
+                             calculate_max_sum(n / 4, memo) +
+                             calculate_max_sum(n / 5, memo);
+
+    unsigned long long result = (sum > n) ? sum : n;
+
+    if (n < MEMO_SIZE) {
+        memo[n] = result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    unsigned long long n;
+    
+    if (scanf("%llu", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long *memo = (unsigned long long *)calloc(MEMO_SIZE, sizeof(unsigned long long));
+    if (memo == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long max_sum = calculate_max_sum(n, memo);
+
+    if (printf("%llu\n", max_sum) < 0) {
+        free(memo);
+        return EXIT_FAILURE;
+    }
+
+    free(memo);
+
+    return EXIT_SUCCESS;
+}

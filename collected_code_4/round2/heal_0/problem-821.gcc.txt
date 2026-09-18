@@ -1,0 +1,16 @@
+./collected_code_4/round2//heal_0/problem-821.c: In function 'createNode':
+./collected_code_4/round2//heal_0/problem-821.c:14:18: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |     newNode->key = (char *)malloc(strlen(key) + 1);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'createNode': events 1-2
+    |
+    |   12 |     struct dict *newNode = (struct dict*)malloc(sizeof(struct dict));
+    |      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (1) this call could return NULL
+    |   13 | 
+    |   14 |     newNode->key = (char *)malloc(strlen(key) + 1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) 'newNode' could be NULL: unchecked value from (1)
+    |

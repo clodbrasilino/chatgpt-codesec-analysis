@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+double findAverage(int n, int m, int arr[n][m]) {
+    int sum = 0;
+    double avg = 0.0;
+
+    if(n == 0 || m == 0) {
+        return avg;
+    }
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            sum += arr[i][j];
+        }
+    }
+
+    avg = (double)sum/(n*m);
+    return avg;
+}
+
+int main() {
+    int n = 2, m = 2;
+    int arr[n][m];
+
+    arr[0][0] = 1;
+    arr[0][1] = 2;
+    arr[1][0] = 3;
+    arr[1][1] = 4;
+
+    double avg = findAverage(n, m, arr);
+    printf("Average value is %.2f\n", avg);
+
+    return 0;
+}

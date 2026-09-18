@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long carol_number(int n)
+{
+    if (n <= 0 || n > 62) {
+        return -1;
+    }
+    
+    long long power = 1LL << n;
+    long long power_minus_one = power - 1;
+    
+    if (power_minus_one > 0 && power_minus_one > (LLONG_MAX - 2) / power_minus_one) {
+        return -1;
+    }
+    
+    long long result = power_minus_one * power_minus_one - 2;
+    
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    
+    if (printf("Enter n: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = carol_number(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Invalid n or overflow would occur\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Carol number %d: %lld\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

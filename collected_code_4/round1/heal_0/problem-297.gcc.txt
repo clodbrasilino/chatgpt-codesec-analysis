@@ -1,0 +1,43 @@
+./collected_code_4/round1//heal_0//problem-297.c: In function 'createNestedList':
+./collected_code_4/round1//heal_0//problem-297.c:39:20: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   39 |     newNode->array = array;
+      |     ~~~~~~~~~~~~~~~^~~~~~~
+  'createNestedList': events 1-2
+    |
+    |   38 |     NestedList *newNode = (NestedList*) malloc(sizeof(NestedList));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |   39 |     newNode->array = array;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~               
+    |      |                    |
+    |      |                    (2) 'newNode' could be NULL: unchecked value from (1)
+    |
+./collected_code_4/round1//heal_0//problem-297.c: In function 'flatten':
+./collected_code_4/round1//heal_0//problem-297.c:75:31: warning: dereference of possibly-NULL 'flattenArray' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   75 |             flattenArray[i++] = current->array[j];
+      |             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'flatten': event 1
+    |
+    |   70 |     int *flattenArray = (int*) malloc(totalSize * sizeof(int));
+    |      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (1) this call could return NULL
+    |
+  'flatten': events 2-6
+    |
+    |   73 |     while(current != NULL) {
+    |      |                   ^
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'current' is non-NULL)...
+    |   74 |         for(j = 0; j < current->size; j++) {
+    |      |             ~~~~~  ~~~~~~~~~~~~~~~~~
+    |      |               |      |
+    |      |               |      (4) following 'true' branch...
+    |      |               (3) ...to here
+    |   75 |             flattenArray[i++] = current->array[j];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |        |
+    |      |                               |        (5) ...to here
+    |      |                               (6) 'flattenArray + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

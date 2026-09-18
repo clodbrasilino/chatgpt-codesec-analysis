@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:10:31: warning: Expression 'b' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+        if (-a > -INT64_MIN / b) return false;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:9:27: note: Assuming that condition 'b<0' is not redundant
+    } else if (a < 0 && b < 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:10:31: note: Negative value is converted to an unsigned value
+        if (-a > -INT64_MIN / b) return false;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:12:30: warning: Expression 'b' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+        if (a > -INT64_MIN / b) return false;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:11:27: note: Assuming that condition 'b<0' is not redundant
+    } else if (a > 0 && b < 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-86-s3.c:12:30: note: Negative value is converted to an unsigned value
+        if (a > -INT64_MIN / b) return false;
+                             ^

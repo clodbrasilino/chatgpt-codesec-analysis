@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <math.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int findMinDifference(Tuple* tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return -1;
+    }
+
+    int minDiff = INT_MAX;
+
+    for (size_t i = 0; i < size; ++i) {
+        int diff = abs(tuples[i].first - tuples[i].second);
+        if (diff < minDiff) {
+            minDiff = diff;
+        }
+    }
+
+    return minDiff;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {10, 20},
+        {15, 25},
+        {5, 8},
+        {100, 90}
+    };
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+
+    int minDiff = findMinDifference(tuples, size);
+
+    if (minDiff != -1) {
+        printf("Minimum difference: %d\n", minDiff);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

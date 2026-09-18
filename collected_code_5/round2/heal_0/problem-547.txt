@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+
+unsigned int hammingDistance(unsigned int x, unsigned int y)
+{
+    unsigned int xorResult = x ^ y;
+    unsigned int sum = 0;
+    while (xorResult) {
+        sum += xorResult & 1;
+        xorResult >>= 1;
+    }
+    return sum;
+}
+
+unsigned int sumHammingDistances(unsigned int n)
+{
+    unsigned int sum = 0;
+    unsigned int i;
+    for (i = 0; i < n; ++i) {
+        sum += hammingDistance(i, i + 1);
+    }
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    printf("Enter a number: ");
+    scanf("%u", &n);
+    printf("Sum of hamming distances is: %u\n", sumHammingDistances(n));
+    return 0;
+}
+```

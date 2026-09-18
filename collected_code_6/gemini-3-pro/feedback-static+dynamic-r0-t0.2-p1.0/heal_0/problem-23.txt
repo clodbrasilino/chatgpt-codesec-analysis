@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long find_max_sum(int **lists, int *sizes, int num_lists) {
+    if (lists == NULL || sizes == NULL || num_lists <= 0) {
+        return LLONG_MIN;
+    }
+
+    long long max_sum = LLONG_MIN;
+
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL || sizes[i] <= 0) {
+            continue;
+        }
+
+        long long current_sum = 0;
+        for (int j = 0; j < sizes[i]; j++) {
+            current_sum += lists[i][j];
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+        }
+    }
+
+    return max_sum;
+}
+
+int main(void) {
+    int num_lists = 3;
+    
+    int **lists = malloc((size_t)num_lists * sizeof(int *));
+    if (lists == NULL) {
+        return 1;
+    }
+
+    int *sizes = malloc((size_t)num_lists * sizeof(int));
+    if (sizes == NULL) {
+        free(lists);
+        return 1;
+    }
+
+    sizes[0] = 3;
+    lists[0] = malloc((size_t)sizes[0] * sizeof(int));
+    if (lists[0] != NULL) {
+        lists[0][0] = 1;
+        lists[0][1] = 2;
+        lists[0][2] = 3;
+    }
+
+    sizes[1] = 2;
+    lists[1] = malloc((size_t)sizes[1] * sizeof(int));
+    if (lists[1] != NULL) {
+        lists[1][0] = 4;
+        lists[1][1] = 5;
+    }
+
+    sizes[2] = 4;
+    lists[2] = malloc((size_t)sizes[2] * sizeof(int));
+    if (lists[2] != NULL) {
+        lists[2][0] = -1;
+        lists[2][1] = -2;
+        lists[2][2] = -3;
+        lists[2][3] = -4;
+    }
+
+    int allocation_failed = 0;
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            allocation_failed = 1;
+            break;
+        }
+    }
+
+    if (!allocation_failed) {
+        long long max_sum = find_max_sum(lists, sizes, num_lists);
+        if (max_sum != LLONG_MIN) {
+            printf("%lld\n", max_sum);
+        }
+    }
+
+    for (int i = 0; i < num_lists; i++) {
+        free(lists[i]);
+    }
+    free(lists);
+    free(sizes);
+
+    return allocation_failed ? 1 : 0;
+}
+```

@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple* tuples;
+    size_t size;
+} TupleList;
+
+TupleList remove_matching_tuples(const TupleList* list1, const TupleList* list2) {
+    TupleList result = {NULL, 0};
+    
+    if (!list1 || !list2 || list1->size == 0) {
+        return result;
+    }
+
+    result.tuples = (Tuple*)malloc(list1->size * sizeof(Tuple));
+    if (!result.tuples) {
+        return result;
+    }
+
+    for (size_t i = 0; i < list1->size; ++i) {
+        bool match = false;
+        for (size_t j = 0; j < list2->size; ++j) {
+            if (list1->tuples[i].x == list2->tuples[j].x && 
+                list1->tuples[i].y == list2->tuples[j].y) {
+                match = true;
+                break;
+            }
+        }
+        if (!match) {
+            result.tuples[result.size++] = list1->tuples[i];
+        }
+    }
+
+    if (result.size == 0) {
+        free(result.tuples);
+        result.tuples = NULL;
+    } else if (result.size < list1->size) {
+        Tuple* temp = (Tuple*)realloc(result.tuples, result.size * sizeof(Tuple));
+        if (temp) {
+            result.tuples = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple t1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    Tuple t2[] = {{3, 4}, {9, 10}, {7, 8}};
+    
+    TupleList list1 = {t1, sizeof(t1) / sizeof(t1[0])};
+    TupleList list2 = {t2, sizeof(t2) / sizeof(t2[0])};
+
+    TupleList result = remove_matching_tuples(&list1, &list2);
+
+    for (size_t i = 0; i < result.size; ++i) {
+        printf("(%d, %d)\n", result.tuples[i].x, result.tuples[i].y);
+    }
+
+    if (result.tuples) {
+        free(result.tuples);
+    }
+
+    return 0;
+}

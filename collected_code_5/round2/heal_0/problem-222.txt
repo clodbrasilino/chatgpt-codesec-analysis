@@ -1,0 +1,29 @@
+```C
+#include<stdio.h>
+typedef struct {
+    int dataType;
+    void *data;
+} Tuple;
+
+int checkDataTypeConsistency(Tuple* tupleArray, int size){
+    int dataType = tupleArray[0].dataType;
+    for (int i = 1; i < size; i++)
+        if(tupleArray[i].dataType != dataType)
+            return 0;
+    return 1;
+}
+
+int main(){
+    Tuple tupleArray[3];
+    tupleArray[0].dataType = 1;
+    tupleArray[1].dataType = 1;
+    tupleArray[2].dataType = 1;
+
+    int result = checkDataTypeConsistency(tupleArray, 3);
+    printf("%d", result);
+    return 0;
+}
+```
+This code first defines a struct Tuple to hold a dataType identifier and a pointer to the actual data. The checkDataTypeConsistency function then iterates over this tupleArray array checking that all dataType identifiers are the same, and returns 0 if they are not, or 1 if they are.
+
+In the main function, an array of 3 Tuples is created and all are set to have the same dataType. The checkDataTypeConsistency function is then used to verify this, and the result is printed to the screen.

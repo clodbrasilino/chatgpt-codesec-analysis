@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:50:19: style: Condition 'test_str3!=NULL' is always false [knownConditionTrueFalse]
+    if (test_str3 != NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:49:29: note: Assignment 'test_str3=NULL', assigned value is 0
+    const char *test_str3 = NULL;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:50:19: note: Condition 'test_str3!=NULL' is always false
+    if (test_str3 != NULL) {
+                  ^

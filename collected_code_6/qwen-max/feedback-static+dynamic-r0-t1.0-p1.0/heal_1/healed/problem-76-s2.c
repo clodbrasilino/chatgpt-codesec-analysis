@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int count_squares(int width, int height) {
+    if (width <= 0 || height <= 0) return 0;
+    int smaller = (width < height) ? width : height;
+    long long count = 0;
+    for (int i = 1; i <= smaller; ++i) {
+        long long temp = (long long)(width - i + 1) * (height - i + 1);
+        if (count > INT_MAX - temp) return 0;
+        count += temp;
+    }
+    return (int)count;
+}
+
+int main() {
+    int width, height;
+    printf("Enter the width of the rectangle: ");
+    if (scanf("%d", &width) != 1) {
+        fprintf(stderr, "Invalid input for width.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Enter the height of the rectangle: ");
+    if (scanf("%d", &height) != 1) {
+        fprintf(stderr, "Invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+    int result = count_squares(width, height);
+    printf("Number of squares in the rectangle: %d\n", result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int sumOfDivisors(int num) {
+    int sum = 0;
+    for(int i = 1; i <= num; i++) {
+        if(num % i == 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+
+    printf("Enter a number: ");
+    if(scanf("%d", &num) != 1) {
+        printf("Invalid input. Please enter a valid number.\n");
+        return 1;
+    }
+
+    int sum = sumOfDivisors(num);
+
+    printf("The sum of the divisors of %d is %d.\n", num, sum);
+
+    return 0;
+}

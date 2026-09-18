@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 7
+
+int findElementAfterRotations(int arr[], int n, int rotations[], int rotations_length, int index)
+{
+    // Decrease rotations for bigger than n values 
+    for (int i=0; i<rotations_length; i++)
+        rotations[i] = rotations[i] % n;
+
+    // Find the rotation count of all rotations, this will be negative if it exceeds n
+    int totalRotations = 0;
+    for (int i=0; i<rotations_length; i++)
+        totalRotations += rotations[i];
+
+    // Handle case if rotation count is negative
+    totalRotations = (totalRotations + n) % n;
+
+    // Find the element at the index after the rotations
+    return arr[(n - totalRotations + index) % n];
+}
+
+int main()
+{
+    int arr[SIZE] = { 1, 2, 3, 4, 5, 6, 7};
+
+    int rotations[2] = {2, 4};
+    int index = 3;
+
+    int result = findElementAfterRotations(arr, SIZE, rotations, 2, index);
+
+    printf("The element at index %d after rotations is %d\n", index, result);
+
+    return 0;
+}
+```

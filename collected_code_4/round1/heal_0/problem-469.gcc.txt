@@ -1,0 +1,389 @@
+./collected_code_4/round1//heal_0//problem-469.c: In function 'maxProfit':
+./collected_code_4/round1//heal_0//problem-469.c:19:22: warning: dereference of possibly-NULL 'local' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+      |             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'maxProfit': events 1-8
+    |
+    |    5 |     if(pricesSize < 1) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize > 0')...
+    |......
+    |    8 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |         |
+    |      |                              |         (4) ...to here
+    |      |                              (5) this call could return NULL
+    |   18 |         for(int i = 0; i < k + 1; i++) {
+    |      |                        ~~~~~~~~~
+    |      |                          |
+    |      |                          (6) following 'true' branch (when 'k >= i')...
+    |   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |       |
+    |      |                      |       (7) ...to here
+    |      |                      (8) 'local + (long unsigned int)i * 8' could be NULL: unchecked value from (5)
+    |
+./collected_code_4/round1//heal_0//problem-469.c:23:23: warning: dereference of possibly-NULL 'global' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if(pricesSize < 1) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize > 0')...
+    |......
+    |    8 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                                     ~~~~~~~
+    |      |                                        |
+    |      |                                        (4) ...to here
+    |   18 |         for(int i = 0; i < k + 1; i++) {
+    |      |                        ~~~~~~~~~
+    |      |                          |
+    |      |                          (5) following 'true' branch (when 'k >= i')...
+    |      |                          (7) following 'false' branch (when 'k < i')...
+    |   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (6) ...to here
+    |   20 |         }
+    |   21 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |         |
+    |      |                               |         (8) ...to here
+    |      |                               (9) this call could return NULL
+    |   22 |         for(int i = 0; i < k + 1; i++) {
+    |      |                        ~~~~~~~~~
+    |      |                          |
+    |      |                          (10) following 'true' branch (when 'k >= i')...
+    |   23 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |       |
+    |      |                       |       (11) ...to here
+    |      |                       (12) 'global + (long unsigned int)i * 8' could be NULL: unchecked value from (9)
+    |
+./collected_code_4/round1//heal_0//problem-469.c:28:45: warning: dereference of possibly-NULL '*global_137 + _58 + ((long unsigned int)i * 4 + 18446744073709551612)' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |                 local[j][i] = (global[j - 1][i - 1] > local[j][i - 1] + diff) ?
+      |                                ~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-29
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (8) following 'true' branch (when 'k >= i')...
+           |      |                          (10) following 'true' branch (when 'k >= i')...
+           |      |                          (12) following 'true' branch (when 'k >= i')...
+           |      |                          (14) following 'false' branch (when 'k < i')...
+           |   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (9) ...to here
+           |      |                              (11) ...to here
+           |      |                              (13) ...to here
+           |   20 |         }
+           |   21 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (15) ...to here
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (16) following 'true' branch (when 'k >= i')...
+           |      |                          (19) following 'true' branch (when 'k >= i')...
+           |      |                          (21) following 'true' branch (when 'k >= i')...
+           |      |                          (23) following 'false' branch (when 'k < i')...
+           |   23 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (17) ...to here
+           |      |                               (18) this call could return NULL
+           |      |                               (20) ...to here
+           |      |                               (22) ...to here
+           |   24 |         }
+           |   25 |         for(int j = 1; j < k + 1; j++) {
+           |      |                 ~      ~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (25) following 'true' branch (when 'k >= j')...
+           |      |                 (24) ...to here
+           |   26 |             for(int i = 1; i < pricesSize; i++) {
+           |      |                     ~      ~~~~~~~~~~~~~~
+           |      |                     |        |
+           |      |                     |        (27) following 'true' branch (when 'i < pricesSize')...
+           |      |                     (26) ...to here
+           |   27 |                 int diff = prices[i] - prices[i - 1];
+           |      |                                  ~
+           |      |                                  |
+           |      |                                  (28) ...to here
+           |   28 |                 local[j][i] = (global[j - 1][i - 1] > local[j][i - 1] + diff) ?
+           |      |                                ~~~~~~~~~~~~~~~~~~~~
+           |      |                                             |
+           |      |                                             (29) '*global_137 + _58 + ((long unsigned int)i * 4 + 18446744073709551612)' could be NULL: unchecked value from (18)
+           |
+./collected_code_4/round1//heal_0//problem-469.c:28:63: warning: dereference of possibly-NULL '*local_134 + _47 + ((long unsigned int)i * 4 + 18446744073709551612)' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |                 local[j][i] = (global[j - 1][i - 1] > local[j][i - 1] + diff) ?
+      |                                                       ~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-29
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (8) following 'true' branch (when 'k >= i')...
+           |      |                          (10) following 'true' branch (when 'k >= i')...
+           |      |                          (13) following 'true' branch (when 'k >= i')...
+           |      |                          (15) following 'false' branch (when 'k < i')...
+           |   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (9) ...to here
+           |      |                              (11) ...to here
+           |      |                              (12) this call could return NULL
+           |      |                              (14) ...to here
+           |   20 |         }
+           |   21 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (16) ...to here
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (17) following 'true' branch (when 'k >= i')...
+           |      |                          (19) following 'true' branch (when 'k >= i')...
+           |      |                          (21) following 'true' branch (when 'k >= i')...
+           |      |                          (23) following 'false' branch (when 'k < i')...
+           |   23 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (18) ...to here
+           |      |                               (20) ...to here
+           |      |                               (22) ...to here
+           |   24 |         }
+           |   25 |         for(int j = 1; j < k + 1; j++) {
+           |      |                 ~      ~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (25) following 'true' branch (when 'k >= j')...
+           |      |                 (24) ...to here
+           |   26 |             for(int i = 1; i < pricesSize; i++) {
+           |      |                     ~      ~~~~~~~~~~~~~~
+           |      |                     |        |
+           |      |                     |        (27) following 'true' branch (when 'i < pricesSize')...
+           |      |                     (26) ...to here
+           |   27 |                 int diff = prices[i] - prices[i - 1];
+           |      |                                  ~
+           |      |                                  |
+           |      |                                  (28) ...to here
+           |   28 |                 local[j][i] = (global[j - 1][i - 1] > local[j][i - 1] + diff) ?
+           |      |                                                       ~~~~~~~~~~~~~~~
+           |      |                                                               |
+           |      |                                                               (29) '*local_134 + _47 + ((long unsigned int)i * 4 + 18446744073709551612)' could be NULL: unchecked value from (12)
+           |
+./collected_code_4/round1//heal_0//problem-469.c:31:42: warning: dereference of possibly-NULL '*global_137 + _83 + ((long unsigned int)i * 4 + 18446744073709551612)' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |                 global[j][i] = (global[j][i - 1] > local[j][i]) ?
+      |                                 ~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     int maxprofit = maxProfit(k, prices, pricesSize);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-29
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize < 1) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize > 0')...
+           |......
+           |    8 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                     ~~~~~~~
+           |      |                                        |
+           |      |                                        (7) ...to here
+           |   18 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (8) following 'true' branch (when 'k >= i')...
+           |      |                          (10) following 'true' branch (when 'k >= i')...
+           |      |                          (12) following 'true' branch (when 'k >= i')...
+           |      |                          (14) following 'false' branch (when 'k < i')...
+           |   19 |             local[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (9) ...to here
+           |      |                              (11) ...to here
+           |      |                              (13) ...to here
+           |   20 |         }
+           |   21 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                                      ~~~~~~~
+           |      |                                         |
+           |      |                                         (15) ...to here
+           |   22 |         for(int i = 0; i < k + 1; i++) {
+           |      |                        ~~~~~~~~~
+           |      |                          |
+           |      |                          (16) following 'true' branch (when 'k >= i')...
+           |      |                          (18) following 'true' branch (when 'k >= i')...
+           |      |                          (21) following 'true' branch (when 'k >= i')...
+           |      |                          (23) following 'false' branch (when 'k < i')...
+           |   23 |             global[i] = (int*)calloc(pricesSize, sizeof(int));
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (17) ...to here
+           |      |                               (19) ...to here
+           |      |                               (20) this call could return NULL
+           |      |                               (22) ...to here
+           |   24 |         }
+           |   25 |         for(int j = 1; j < k + 1; j++) {
+           |      |                 ~      ~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (25) following 'true' branch (when 'k >= j')...
+           |      |                 (24) ...to here
+           |   26 |             for(int i = 1; i < pricesSize; i++) {
+           |      |                     ~      ~~~~~~~~~~~~~~
+           |      |                     |        |
+           |      |                     |        (27) following 'true' branch (when 'i < pricesSize')...
+           |      |                     (26) ...to here
+           |   27 |                 int diff = prices[i] - prices[i - 1];
+           |      |                                  ~
+           |      |                                  |
+           |      |                                  (28) ...to here
+           |......
+           |   31 |                 global[j][i] = (global[j][i - 1] > local[j][i]) ?
+           |      |                                 ~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (29) '*global_137 + _83 + ((long unsigned int)i * 4 + 18446744073709551612)' could be NULL: unchecked value from (20)
+           |
+./collected_code_4/round1//heal_0//problem-469.c:36:28: warning: use of uninitialized value '*global_137 + _100' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |         int result = global[k][pricesSize - 1];
+      |                      ~~~~~~^~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if(pricesSize < 1) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize > 0')...
+    |......
+    |    8 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   17 |         int** local = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                                     ~~~~~~~
+    |      |                                        |
+    |      |                                        (4) ...to here
+    |   18 |         for(int i = 0; i < k + 1; i++) {
+    |      |                        ~~~~~~~~~
+    |      |                          |
+    |      |                          (5) following 'false' branch (when 'k < i')...
+    |......
+    |   21 |         int** global = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |         |
+    |      |                               |         (6) ...to here
+    |      |                               (7) region created on heap here
+    |   22 |         for(int i = 0; i < k + 1; i++) {
+    |      |                        ~~~~~~~~~
+    |      |                          |
+    |      |                          (8) following 'false' branch (when 'k < i')...
+    |......
+    |   25 |         for(int j = 1; j < k + 1; j++) {
+    |      |                 ~      ~~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (10) following 'false' branch (when 'k < j')...
+    |      |                 (9) ...to here
+    |......
+    |   36 |         int result = global[k][pricesSize - 1];
+    |      |                      ~~~~~~~~~
+    |      |                            |
+    |      |                            (11) ...to here
+    |      |                            (12) use of uninitialized value '*global_137 + _100' here
+    |

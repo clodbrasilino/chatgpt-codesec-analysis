@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node* head) {
+    Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* removeKthElement(Node* head, int k) {
+    if (!head || k <= 0) {
+        return head;
+    }
+
+    if (k == 1) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+        return head;
+    }
+
+    Node* current = head;
+    Node* previous = NULL;
+    int count = 1;
+
+    while (current && count < k) {
+        previous = current;
+        current = current->next;
+        count++;
+    }
+
+    if (!current) {
+        return head;
+    }
+
+    previous->next = current->next;
+    free(current);
+
+    return head;
+}
+
+int main(void) {
+    Node* head = NULL;
+
+    appendNode(&head, 10);
+    appendNode(&head, 20);
+    appendNode(&head, 30);
+    appendNode(&head, 40);
+    appendNode(&head, 50);
+
+    head = removeKthElement(head, 3);
+    printList(head);
+
+    head = removeKthElement(head, 1);
+    printList(head);
+
+    head = removeKthElement(head, 10);
+    printList(head);
+
+    freeList(head);
+
+    return EXIT_SUCCESS;
+}

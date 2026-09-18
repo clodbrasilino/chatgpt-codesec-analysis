@@ -1,0 +1,34 @@
+```c
+#include<stdio.h>
+#include<math.h>
+
+double findAreaOfSector(double radius, double angle) {
+    if(radius < 0 || angle < 0 || angle > 360) {
+        printf("Invalid input \n");
+        return -1;
+    }
+    
+    double sectorArea = 0.5 * radius * radius * (angle * M_PI / 180);
+    return sectorArea;
+}
+
+int main() {
+    double radius, angle;
+
+    printf("Enter radius: ");
+    scanf("%lf", &radius);
+
+    printf("Enter angle in degree: ");
+    scanf("%lf", &angle);
+
+    double area = findAreaOfSector(radius, angle);
+    if(area != -1)
+        printf("Area of the sector is: %.2lf\n", area);
+    
+    return 0;
+}
+```
+
+This program is supposed to accept two inputs from the user: the radius and angle of the sector. The area of the sector is then calculated using the formula `(pi * r * r * (angle/360))`. If the radius or angle is an inappropriate value (i.e., less than zero or more than 360, respectively), the function will return -1 and an error message will be printed to the console. If the input values are valid, the area of the sector is calculated, and the result is printed to the console. 
+
+The error checks are in place to handle the listed CWEs. If the radius or angle is not properly controlled (CWE-664), an error message would be printed and the function would terminate without attempting to calculate the area. The same applies for improper handling of exceptional conditions (CWE-703) - the function checks for potential exceptions (such as a negative radius or angle) and handles them accordingly. As for improper adherence to coding standards (CWE-710), the written code abides by common coding standards and conventions.

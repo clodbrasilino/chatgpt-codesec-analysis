@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-876-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-876-s2.c:25:18: error: expected ')' before 'SCNd64'
+   25 |     if (scanf("%" SCNd64 " %" SCNd64, &x, &y) == 2) {
+      |              ~   ^~~~~~~
+      |                  )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-876-s2.c:4:1: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    3 | #include <limits.h>
+  +++ |+#include <inttypes.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-876-s2.c:27:30: error: expected ')' before 'PRId64'
+   27 |             printf("LCM of %" PRId64 " and %" PRId64 " is %" PRId64 "\n", x, y, lcm(x, y));
+      |                   ~          ^~~~~~~
+      |                              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-876-s2.c:27:31: note: 'PRId64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   27 |             printf("LCM of %" PRId64 " and %" PRId64 " is %" PRId64 "\n", x, y, lcm(x, y));
+      |                               ^~~~~~

@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+int findNthNotMultiple(int n, int num) {
+    int count = 0, i = 1;
+    while(1){
+        if(i % num == 0){
+            i++;
+            continue;
+        }
+        if(++count == n){
+            return i;
+        }
+        i++;
+    }
+    
+    return -1;
+}
+
+int main() {
+   int n = 5;
+   int num = 3;
+
+   printf("The %d'th number which is not a multiple of %d is: %d", n, num, findNthNotMultiple(n, num));
+
+   return 0;
+}
+```

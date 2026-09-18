@@ -1,0 +1,99 @@
+./collected_code_4/round2//heal_0/problem-674.c: In function 'removeDuplicates':
+./collected_code_4/round2//heal_0/problem-674.c:19:17: warning: use of possibly-NULL '*temp.word' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   19 |             if (strcmp(temp->word, token) == 0)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+  'removeDuplicates': events 1-9
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         temp = head;
+    |      |         ~~~~~~~~~~~
+    |      |              |
+    |      |              (2) ...to here
+    |   18 |         while (temp) {
+    |      |                ~~~~
+    |      |                |
+    |      |                (3) following 'false' branch (when 'temp' is NULL)...
+    |......
+    |   25 |         if (temp == NULL) {
+    |      |            ~      
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) following 'true' branch (when 'temp' is NULL)...
+    |   26 |             temp = (struct wordNode *) malloc(sizeof(struct wordNode));
+    |      |                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (6) ...to here
+    |   27 |             temp->word = strdup(token);
+    |      |                          ~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (7) this call could return NULL
+    |......
+    |   30 |             if (head == NULL) {
+    |      |                ~  
+    |      |                |
+    |      |                (8) following 'true' branch (when 'head' is NULL)...
+    |   31 |                 head = temp;
+    |      |                 ~~~~~~~~~~~
+    |      |                      |
+    |      |                      (9) ...to here
+    |
+  'removeDuplicates': events 10-14
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (10) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         temp = head;
+    |      |         ~~~~~~~~~~~
+    |      |              |
+    |      |              (11) ...to here
+    |   18 |         while (temp) {
+    |      |                ~~~~
+    |      |                |
+    |      |                (12) following 'true' branch (when 'temp' is non-NULL)...
+    |   19 |             if (strcmp(temp->word, token) == 0)
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |          |
+    |      |                 |          (13) ...to here
+    |      |                 (14) argument 1 ('*temp.word') from (7) could be NULL where non-null expected
+    |
+In file included from ./collected_code_4/round2//heal_0/problem-674.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:77:10: note: argument 1 of 'strcmp' must be non-null
+   77 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~
+./collected_code_4/round2//heal_0/problem-674.c:27:24: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |             temp->word = strdup(token);
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'removeDuplicates': events 1-8
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         temp = head;
+    |      |         ~~~~~~~~~~~
+    |      |              |
+    |      |              (2) ...to here
+    |   18 |         while (temp) {
+    |      |                ~~~~
+    |      |                |
+    |      |                (3) following 'false' branch (when 'temp' is NULL)...
+    |......
+    |   25 |         if (temp == NULL) {
+    |      |            ~      
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) following 'true' branch (when 'temp' is NULL)...
+    |   26 |             temp = (struct wordNode *) malloc(sizeof(struct wordNode));
+    |      |                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (6) ...to here
+    |      |                                        (7) this call could return NULL
+    |   27 |             temp->word = strdup(token);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (8) 'temp' could be NULL: unchecked value from (7)
+    |

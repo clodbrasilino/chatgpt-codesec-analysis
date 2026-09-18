@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int sum_of_negatives(int arr[], int size){
+    int sum = 0;
+
+    if (arr == NULL || size <= 0) {
+        return sum;
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        if (arr[i] < 0) 
+            sum += arr[i];
+    }
+
+    return sum;
+}
+
+int main() {
+    int arr[] = {-1, 2, -3, 4, -5, -6, 7, -8, 9};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = sum_of_negatives(arr, size);
+
+    printf("Sum of negative numbers: %d\n", result);
+    return 0;
+}

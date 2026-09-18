@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculatePerimeter(double sideLength) {
+    if(sideLength <= 0) {
+        printf("Side length must be greater than zero.\n");
+        exit(1);
+    }
+
+    return 4 * sideLength;
+}
+
+int main() {
+    double sideLength;
+
+    printf("Enter the side length of the rombus: ");
+    scanf("%lf", &sideLength);
+
+    double perimeter = calculatePerimeter(sideLength);
+
+    printf("The perimeter of the rombus is: %.2lf\n", perimeter);
+
+    return 0;
+}
+```

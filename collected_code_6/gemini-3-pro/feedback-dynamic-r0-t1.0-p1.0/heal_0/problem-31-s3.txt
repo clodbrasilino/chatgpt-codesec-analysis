@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int frequency;
+} Element;
+
+typedef struct {
+    Element *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) exit(EXIT_FAILURE);
+    heap->data = (Element*)malloc(capacity * sizeof(Element));
+    if (!heap->data) {
+        free(heap);
+        exit(EXIT_FAILURE);
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(Element *a, Element *b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].frequency < heap->data[smallest].frequency)
+        smallest = left;
+
+    if (right < heap->size && heap->data[right].frequency < heap->data[smallest].frequency)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+void insertMinHeap(MinHeap *heap, Element element) {
+    if (heap->size < heap->capacity) {
+        int i = heap->size++;
+        heap->data[i] = element;
+        while (i != 0 && heap->data[(i - 1) / 2].frequency > heap->data[i].frequency) {
+            swap(&heap->data[i], &heap->data[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    } else if (element.frequency > heap->data[0].frequency) {
+        heap->data[0] = element;
+        minHeapify(heap, 0);
+    }
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void findTopKFrequent(int** lists, int numLists, int* listSizes, int k) {
+    int maxTotalElements = 0;
+    for (int i = 0; i < numLists; i++) {
+        maxTotalElements += listSizes[i];
+    }
+    
+    Element* frequencies = (Element*)calloc(20001, sizeof(Element));
+    if (!frequencies) exit(EXIT_FAILURE);
+    
+    int offset = 10000;
+    
+    for (int i = 0; i < numLists; i++) {
+        for (int j = 0; j < listSizes[i]; j++) {
+            int val = lists[i][j];
+            int idx = val + offset;
+            if (idx >= 0 && idx <= 20000) {
+                frequencies[idx].value = val;
+                frequencies[idx].frequency++;
+            }
+        }
+    }
+
+    MinHeap* heap = createMinHeap(k);
+
+    for (int i = 0; i <= 20000; i++) {
+        if (frequencies[i].frequency > 0) {
+            insertMinHeap(heap, frequencies[i]);
+        }
+    }
+
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i].value);
+    }
+    printf("\n");
+
+    freeMinHeap(heap);
+    free(frequencies);
+}
+
+int main(void) {
+    int list1[] = {1, 3, 5, 7, 7, 7};
+    int list2[] = {2, 3, 5, 7, 8};
+    int list3[] = {3, 5, 7, 9, 9};
+
+    int* lists[] = {list1, list2, list3};
+    int listSizes[] = {6, 5, 5};
+
+    int k = 2;
+    findTopKFrequent(lists, 3, listSizes, k);
+
+    return 0;
+}
+```

@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static inline int get_max3(int a, int b, int c);
+int get_max_gold(int **gold, size_t m, size_t n);
+
+static inline int get_max3(int a, int b, int c) {
+    int max = a;
+    if (b > max) {
+        max = b;
+    }
+    if (c > max) {
+        max = c;
+    }
+    return max;
+}
+
+int get_max_gold(int **gold, size_t m, size_t n) {
+    if (!gold || m == 0 || n == 0) {
+        return -1;
+    }
+
+    if (m > (size_t)-1 / n / sizeof(int)) {
+        return -1;
+    }
+
+    int *dp = (int *)malloc(m * n * sizeof(int));
+    if (!dp) {
+        return -1;
+    }
+
+    size_t c = n;
+    while (c > 0) {
+        c--;
+        for (size_t r = 0; r < m; r++) {
+            if (!gold[r]) {
+                free(dp);
+                return -1;
+            }
+
+            int right = (c == n - 1) ? 0 : dp[r * n + (c + 1)];
+            int right_up = (r == 0 || c == n - 1) ? 0 : dp[(r - 1) * n + (c + 1)];
+            int right_down = (r == m - 1 || c == n - 1) ? 0 : dp[(r + 1) * n + (c + 1)];
+
+            dp[r * n + c] = gold[r][c] + get_max3(right, right_up, right_down);
+        }
+    }
+
+    int max_gold = dp[0];
+    for (size_t r = 1; r < m; r++) {
+        if (dp[r * n] > max_gold) {
+            max_gold = dp[r * n];
+        }
+    }
+
+    free(dp);
+    return max_gold;
+}
+
+int main(void) {
+    size_t m = 3;
+    size_t n = 3;
+
+    int **gold = (int **)malloc(m * sizeof(int *));
+    if (!gold) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < m; i++) {
+        gold[i] = (int *)malloc(n * sizeof(int));
+        if (!gold[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(gold[j]);
+            }
+            free(gold);
+            return EXIT_FAILURE;
+        }
+    }
+
+    gold[0][0] = 1; 
+    gold[0][1] = 3; 
+    gold[0][2] = 3;
+
+    gold[1][0] = 2; 
+    gold[1][1] = 1; 
+    gold[1][2] = 4;
+
+    gold[2][0] = 0; 
+    gold[2][1] = 6; 
+    gold[2][2] = 4;
+
+    int result = get_max_gold(gold, m, n);
+    if (result != -1) {
+        printf("Maximum gold collected: %d\n", result);
+    } else {
+        printf("Error processing gold mine.\n");
+    }
+
+    for (size_t i = 0; i < m; i++) {
+        free(gold[i]);
+    }
+    free(gold);
+
+    return EXIT_SUCCESS;
+}
+```

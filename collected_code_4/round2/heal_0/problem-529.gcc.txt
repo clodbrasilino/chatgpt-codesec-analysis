@@ -1,0 +1,91 @@
+./collected_code_4/round2//heal_0/problem-529.c: In function 'findNthJacobsthalLucas':
+./collected_code_4/round2//heal_0/problem-529.c:38:12: warning: use of uninitialized value 'jn' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   38 |     return jn;
+      |            ^~
+  'findNthJacobsthalLucas': events 1-9
+    |
+    |   24 |     long long j0 = 2, j1 = 1, jn;
+    |      |                               ^~
+    |      |                               |
+    |      |                               (1) region created on stack here
+    |      |                               (2) capacity: 8 bytes
+    |   25 | 
+    |   26 |     if (n==0)
+    |      |        ~                       
+    |      |        |
+    |      |        (3) following 'false' branch (when 'n != 0')...
+    |......
+    |   29 |     if (n==1)
+    |      |        ~                       
+    |      |        |
+    |      |        (4) ...to here
+    |      |        (5) following 'false' branch (when 'n != 1')...
+    |......
+    |   32 |     for(int i = 2; i <= n; i++) {
+    |      |             ~      ~~~~~~      
+    |      |             |        |
+    |      |             |        (7) following 'false' branch (when 'i > n')...
+    |      |             (6) ...to here
+    |......
+    |   38 |     return jn;
+    |      |            ~~                  
+    |      |            |
+    |      |            (8) ...to here
+    |      |            (9) use of uninitialized value 'jn' here
+    |
+./collected_code_4/round2//heal_0/problem-529.c:38:12: warning: use of uninitialized value 'jn' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   38 |     return jn;
+      |            ^~
+  'main': events 1-4
+    |
+    |    5 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   12 |     if(n < 0) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch...
+    |......
+    |   17 |     result = findNthJacobsthalLucas(n);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (3) ...to here
+    |      |              (4) calling 'findNthJacobsthalLucas' from 'main'
+    |
+    +--> 'findNthJacobsthalLucas': events 5-14
+           |
+           |   23 | long long findNthJacobsthalLucas(int n) {
+           |      |           ^~~~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (5) entry to 'findNthJacobsthalLucas'
+           |   24 |     long long j0 = 2, j1 = 1, jn;
+           |      |                               ~~
+           |      |                               |
+           |      |                               (6) region created on stack here
+           |      |                               (7) capacity: 8 bytes
+           |   25 | 
+           |   26 |     if (n==0)
+           |      |        ~   
+           |      |        |
+           |      |        (8) following 'false' branch (when 'n != 0')...
+           |......
+           |   29 |     if (n==1)
+           |      |        ~   
+           |      |        |
+           |      |        (9) ...to here
+           |      |        (10) following 'false' branch (when 'n != 1')...
+           |......
+           |   32 |     for(int i = 2; i <= n; i++) {
+           |      |             ~      ~~~~~~
+           |      |             |        |
+           |      |             |        (12) following 'false' branch (when 'i > n')...
+           |      |             (11) ...to here
+           |......
+           |   38 |     return jn;
+           |      |            ~~
+           |      |            |
+           |      |            (13) ...to here
+           |      |            (14) use of uninitialized value 'jn' here
+           |

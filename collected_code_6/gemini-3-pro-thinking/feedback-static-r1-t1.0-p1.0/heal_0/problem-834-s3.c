@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void free_matrix(int **matrix, int n) {
+    if (matrix == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+int **generate_spiral_matrix(int n) {
+    if (n <= 0) {
+        return NULL;
+    }
+
+    int **matrix = malloc((size_t)n * sizeof(int *));
+    if (matrix == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        matrix[i] = malloc((size_t)n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+
+    int top = 0;
+    int bottom = n - 1;
+    int left = 0;
+    int right = n - 1;
+    int val = 1;
+
+    while (top <= bottom && left <= right) {
+        for (int i = left; i <= right; i++) {
+            matrix[top][i] = val++;
+        }
+        top++;
+
+        for (int i = top; i <= bottom; i++) {
+            matrix[i][right] = val++;
+        }
+        right--;
+
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) {
+                matrix[bottom][i] = val++;
+            }
+            bottom--;
+        }
+
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) {
+                matrix[i][left] = val++;
+            }
+            left++;
+        }
+    }
+
+    return matrix;
+}
+
+void print_matrix(int **matrix, int n) {
+    if (matrix == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%5d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int n = 5;
+
+    int **spiral_matrix = generate_spiral_matrix(n);
+    if (spiral_matrix == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_matrix(spiral_matrix, n);
+    free_matrix(spiral_matrix, n);
+
+    return EXIT_SUCCESS;
+}

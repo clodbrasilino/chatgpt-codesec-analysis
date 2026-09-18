@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+int is_reversed(char* str1, char* str2) {
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    
+    if (len1 != len2)
+        return 0;
+        
+    for (int i = 0; i < len1; i++) {
+        if (str1[i] != str2[len2-i-1])
+            return 0;
+    }
+    
+    return 1;
+}
+
+int count_reversed_pairs(char arr[][MAX_SIZE], int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) { 
+        for (int j = i+1; j < size; j++) {
+            if (is_reversed(arr[i], arr[j])) {
+                count++;
+            }
+        }
+    }
+     
+    return count;
+}
+
+int main() {
+    int size = 0;
+    char arr[5][MAX_SIZE] = {"abc", "def", "cba", "fed", "ghi"};
+    size = sizeof(arr)/sizeof(arr[0]);
+    int count = count_reversed_pairs(arr, size);
+    printf("The number of reversed pairs is: %d\n", count);
+    return 0;
+}

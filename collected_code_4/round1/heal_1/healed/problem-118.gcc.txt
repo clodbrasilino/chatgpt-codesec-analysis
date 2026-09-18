@@ -1,0 +1,84 @@
+./collected_code_4/round1//heal_1/healed//problem-118.c: In function 'convertToList':
+./collected_code_4/round1//heal_1/healed//problem-118.c:19:20: warning: dereference of NULL 'temp' [CWE-476] [-Wanalyzer-null-dereference]
+   19 |         temp->data = str[i];
+      |         ~~~~~~~~~~~^~~~~~~~
+  'convertToList': events 1-6
+    |
+    |   11 |     if (str == NULL || *str == '\0') return NULL;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |   12 | 
+    |   13 |     Node *head = (Node *) malloc(sizeof(Node));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) ...to here
+    |   14 |     if (head == NULL) return NULL;
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'head' is non-NULL)...
+    |   15 | 
+    |   16 |     Node *temp = head;
+    |      |           ~~~~
+    |      |           |
+    |      |           (4) ...to here
+    |   17 |     size_t len = strlen(str);
+    |   18 |     for (size_t i = 0; i < len; i++) {
+    |      |                        ~~~~~~~
+    |      |                          |
+    |      |                          (5) following 'true' branch (when 'i < len')...
+    |   19 |         temp->data = str[i];
+    |      |                         ~
+    |      |                         |
+    |      |                         (6) ...to here
+    |
+  'convertToList': event 7
+    |
+    |   20 |         temp->next = (i < len - 1) ? (Node *) malloc(sizeof(Node)) : NULL;
+    |      |                                                                    ^
+    |      |                                                                    |
+    |      |                                                                    (7) following 'false' branch...
+    |
+  'convertToList': event 8
+    |
+    |   20 |         temp->next = (i < len - 1) ? (Node *) malloc(sizeof(Node)) : NULL;
+    |      |                                                                    ^
+    |      |                                                                    |
+    |      |                                                                    (8) ...to here
+    |
+  'convertToList': event 9
+    |
+    |   20 |         temp->next = (i < len - 1) ? (Node *) malloc(sizeof(Node)) : NULL;
+    |      |                                                                    ^
+    |      |                                                                    |
+    |      |                                                                    (9) '0' is NULL
+    |
+  'convertToList': events 10-19
+    |
+    |   18 |     for (size_t i = 0; i < len; i++) {
+    |      |                        ~~~~~~~
+    |      |                          |
+    |      |                          (17) following 'true' branch (when 'i < len')...
+    |   19 |         temp->data = str[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |                    |    |
+    |      |                    |    (18) ...to here
+    |      |                    (19) dereference of NULL 'temp'
+    |   20 |         temp->next = (i < len - 1) ? (Node *) malloc(sizeof(Node)) : NULL;
+    |      |                    ^
+    |      |                    |
+    |      |                    (10) '0' is NULL
+    |   21 |         if (temp->next == NULL && i < len - 1) {
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |    |              |          |
+    |      |            |    |              |          (13) ...to here
+    |      |            |    |              (14) following 'false' branch...
+    |      |            |    (11) '0' is NULL
+    |      |            (12) following 'true' branch...
+    |......
+    |   30 |         temp = temp->next;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (15) ...to here
+    |      |              (16) 'temp' is NULL
+    |

@@ -1,0 +1,47 @@
+Here is a simple C function that checks if all given tuples (considered as 2D arrays) have the same length.
+
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+int areTupleLengthsEqual(int **tuples, int *lengths, int numberOfTuples) {
+    int i; 
+    for(i = 1; i < numberOfTuples; i++) {
+        if(lengths[i] != lengths[0]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int numberOfTuples = 3; 
+    int lengths[3] = {5, 5, 5}; 
+    int **tuples = (int **)malloc(numberOfTuples * sizeof(int *)); 
+    for(int i = 0; i < numberOfTuples; i++)
+    {
+        tuples[i] = (int *)malloc(lengths[i] * sizeof(int)); 
+    }
+
+    if(areTupleLengthsEqual(tuples, lengths, numberOfTuples)) {
+        printf("All Tuples have equal length\n");
+    }
+    else {
+        printf("All Tuples do not have equal length\n");
+    }
+
+    for(int i = 0; i < numberOfTuples; i++)
+    {
+        free(tuples[i]);
+    }
+    free(tuples);
+
+    return 0; 
+}
+```
+
+This code defines a function `areTupleLengthsEqual` which takes as parameters a double pointer to integers (representing a 2D array of tuples), a pointer to the different lengths of each tuple and the number of tuples provided.
+
+The code then loops through all the lengths and checks if they match the length of the first tuple. If anything doesn't match, it returns 0, otherwise it returns 1.
+
+A example is also provided in the `main` function where `numberOfTuples` tuples are created with their corresponding lengths stored in `lengths` array. The tuples are then tested using the `areTupleLengthsEqual` function and the outcome is printed. The memory allocated for the tuples is freed before the program ends to avoid memory leak (CWE-664). There are no exception handling or coding standard violations (CWE-703, CWE-710) in this code.

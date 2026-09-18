@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+
+void printNegativeNumbers(int* arr, int size) {
+    if (arr == NULL || size <= 0) {
+        printf("Invalid input\n");
+        return;
+    }
+    
+    for (int i=0; i<size; i++) {
+        if (arr[i] < 0) {
+            printf("%d ", arr[i]);
+        }
+    }
+    
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, -2, 3, -4, 5, -6};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    printNegativeNumbers(arr, size);
+    return 0;
+}
+```
+This code declares a function named `printNegativeNumbers`, which takes an array and its size as input and prints all the negative elements in that array. If the size is less than or equal to 0 or if the array is NULL, it prints "Invalid input". The `main` function creates an integer array `arr` and calculates its size, then passes it to `printNegativeNumbers`. If there are any negative numbers in the array, it will print them. Otherwise, it will just print a new line.

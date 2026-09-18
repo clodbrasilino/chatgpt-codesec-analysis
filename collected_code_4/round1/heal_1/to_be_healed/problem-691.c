@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    int second;
+};
+
+struct TupleList {
+    struct Tuple* tuples;
+    size_t size;
+};
+
+struct TupleGroup {
+    int* firstElements;
+    size_t size;
+};
+
+struct TupleGroup groupFirstElementsBySecond(struct TupleList* tupleList, int second) {
+    struct TupleGroup tupleGroup;
+    tupleGroup.firstElements = malloc(sizeof(int) * tupleList->size);
+
+    if(tupleGroup.firstElements == NULL) {
+        tupleGroup.size = 0;
+        return tupleGroup;
+    }
+
+    size_t index = 0;
+    for(size_t i = 0; i < tupleList->size; ++i) {
+        if(tupleList->tuples[i].second == second) {
+            tupleGroup.firstElements[index++] = tupleList->tuples[i].first;
+        }
+    }
+
+    tupleGroup.size = index;
+    /* Possible weaknesses found:
+     *  leak of 'tupleGroup.firstElements' [CWE-401] [-Wanalyzer-malloc-leak]
+     */
+    tupleGroup.firstElements = realloc(tupleGroup.firstElements, sizeof(int) * tupleGroup.size);
+
+    return tupleGroup;
+}
+
+int main() {
+    struct Tuple tuples[] = {{1, 2}, {3, 2}, {5, 1}, {7, 2}};
+    struct TupleList tupleList = {tuples, sizeof(tuples) / sizeof(tuples[0])};
+
+    struct TupleGroup tupleGroup = groupFirstElementsBySecond(&tupleList, 2);
+
+    for(size_t i = 0; i < tupleGroup.size; ++i) {
+        /* Possible weaknesses found:
+         *  dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+         */
+        printf("%d ", tupleGroup.firstElements[i]);
+    }
+
+    free(tupleGroup.firstElements);
+    return 0;
+}

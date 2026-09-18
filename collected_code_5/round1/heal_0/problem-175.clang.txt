@@ -1,0 +1,5 @@
+collected_code_5/round1/heal_0/problem-175.c:40:39: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   40 |     struct Stack* stack = createStack(strlen(exp));
+      |                                       ^
+collected_code_5/round1/heal_0/problem-175.c:40:39: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+1 error generated.

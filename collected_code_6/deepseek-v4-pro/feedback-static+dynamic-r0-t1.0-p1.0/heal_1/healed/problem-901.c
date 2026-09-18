@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long lcm(long long a, long long b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    
+    long long gcd_val = gcd(a, b);
+    long long quotient = a / gcd_val;
+    
+    if (quotient > LLONG_MAX / b) {
+        return -1;
+    }
+    
+    return quotient * b;
+}
+
+long long smallest_multiple(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    long long result = 1;
+    for (int i = 2; i <= n; i++) {
+        result = lcm(result, (long long)i);
+        if (result == -1) {
+            return -1;
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "Input must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = smallest_multiple(n);
+    if (result == -1) {
+        fprintf(stderr, "Overflow: result too large to represent\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Smallest multiple of first %d numbers: %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

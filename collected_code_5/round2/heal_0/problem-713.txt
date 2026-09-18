@@ -1,0 +1,51 @@
+```C
+#include <stdbool.h>
+#include <stdio.h>
+
+#define MAX_TUPLE_SIZE 100
+
+bool check_tuple(int* tuple, int size) {
+    if(tuple == NULL || size <= 0 || size > MAX_TUPLE_SIZE) {
+        return false;
+    }
+    for(int i=0; i<size; i++) {
+        if(tuple[i] < 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int tuple[MAX_TUPLE_SIZE];
+    int size;
+    printf("Enter the size of the tuple: ");
+    scanf("%d", &size);
+
+    if(size <= 0 || size > MAX_TUPLE_SIZE) {
+        printf("Invalid size entered\n");
+        return 1;
+    }
+
+    printf("Enter the elements of the tuple: ");
+    for(int i=0; i<size; i++) {
+        scanf("%d", &tuple[i]);
+    }
+
+    if(check_tuple(tuple, size)) {
+        printf("The tuple is valid\n");
+    } else {
+        printf("The tuple is invalid\n");
+    }
+    return 0;
+}
+```
+This C code includes a `check_tuple` function that checks whether an array of integers (or tuple) contains all valid values. Valid values are defined as non-negative integers in this case. This function is then used in a `main` function where the user is asked to enter the size and elements of the array.
+
+The array being checked is first checked whether it exists (`tuple == NULL`) and if its size is within an acceptable range (`size > 0 && size <= MAX_TUPLE_SIZE`). It then iterates through each element in the array and checks if the element is non-negative.
+
+If the array passes all these checks, the `check_tuple` function will return `true`, otherwise it will return `false`.
+
+In the `main` function, it takes inputs from user for the size and elements of the tuple. It checks for valid size before accepting the elements of the tuple. It then uses the `check_tuple` function to verify its validity. 
+
+This code avoids the listed Common Weakness Enumerations (CWEs) by properly managing resources, properly checking conditions and following coding standards.

@@ -1,0 +1,15 @@
+./collected_code_4/round1//heal_0//problem-253.c: In function 'count_ints':
+./collected_code_4/round1//heal_0//problem-253.c:7:27: error: 'INT_MIN' undeclared (first use in this function)
+    7 |             if(list[i] >= INT_MIN && list[i] <= INT_MAX)
+      |                           ^~~~~~~
+./collected_code_4/round1//heal_0//problem-253.c:2:1: note: 'INT_MIN' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+    1 | #include <stdio.h>
+  +++ |+#include <limits.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-253.c:7:27: note: each undeclared identifier is reported only once for each function it appears in
+    7 |             if(list[i] >= INT_MIN && list[i] <= INT_MAX)
+      |                           ^~~~~~~
+./collected_code_4/round1//heal_0//problem-253.c:7:49: error: 'INT_MAX' undeclared (first use in this function)
+    7 |             if(list[i] >= INT_MIN && list[i] <= INT_MAX)
+      |                                                 ^~~~~~~
+./collected_code_4/round1//heal_0//problem-253.c:7:49: note: 'INT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?

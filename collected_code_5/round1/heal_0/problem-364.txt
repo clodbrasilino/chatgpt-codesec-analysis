@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int minFlips(char *str, int len) {
+    int flipCount = 0;
+    char expectedChar = '0';
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] != expectedChar)
+            flipCount++;
+
+        expectedChar = (expectedChar == '0') ? '1' : '0';
+    }
+
+    return flipCount;
+}
+
+int main() {
+    char str[] = "1010101";
+    int len = strlen(str);
+    printf("%d\n", minFlips(str, len));
+    return 0;
+}
+```
+
+This C function would calculate the number of flips needed to make a binary string have alternating characters. It compares each character in the string to what it expects the character to be (starting with '0') and increments the flip count if they do not match. It then sets the expected character for the next iteration to be the opposite of what it was on the current iteration. 
+
+The main function provides a sample string and prints out the result of calling minFlips on this string.

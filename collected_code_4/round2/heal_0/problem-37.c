@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define N 100
+#define STRING_LEN 100
+
+typedef struct{
+    int type;  // 0 means Integer 1 means char
+    union {
+        int num;
+        char arr[STRING_LEN];
+    }data;
+} Mixed;
+
+int compare(const void* a, const void* b){
+    Mixed* pa = (Mixed*)a;
+    Mixed* pb = (Mixed*)b;
+    
+    if (pa->type == 1 && pb->type == 1 ){
+        return strcmp(pa->data.arr,pb->data.arr);
+    }else if (pa->type == 0 && pb->type == 0 ){
+        return pa->data.num - pb->data.num ;
+    }else if (pa->type == 0 && pb->type ==1){
+        return -1;
+    }else{
+        return 1;
+    }
+}
+
+int main(){
+    int n = 5,i=0;
+    Mixed mixed_data[N];
+
+    mixed_data[i].type = 0;
+    mixed_data[i++].data.num = 20;
+
+    mixed_data[i].type = 1;
+    strcpy(mixed_data[i++].data.arr,"apple");
+
+    mixed_data[i].type = 0;
+    mixed_data[i++].data.num = 10;
+
+    mixed_data[i].type = 1;
+    strcpy(mixed_data[i++].data.arr,"banana");
+    
+    mixed_data[i].type = 1;
+    strcpy(mixed_data[i++].data.arr,"mango");
+    
+    qsort(mixed_data,n,sizeof(Mixed),compare);
+
+    for(i=0;i<n;i++){
+        if (mixed_data[i].type == 0)
+            printf("%d \n", mixed_data[i].data.num);
+        else
+            printf("%s \n", mixed_data[i].data.arr);
+    }
+
+    return 0;
+}

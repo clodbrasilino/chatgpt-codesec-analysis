@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LENGTH 100
+#define INITIAL_WORD_COUNT 1
+#define DELIMITERS " .,;:!?"
+
+typedef struct {
+    char word[MAX_WORD_LENGTH];
+    int count;
+} WordCount;
+
+WordCount* increaseWords(WordCount *words, int count) {
+    words = realloc(words, (count+1) * sizeof(WordCount));
+    if(!words) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    strcpy(words[count].word, "");
+    words[count].count = 0;
+    return words;
+}
+
+void printMostCommon(WordCount *words, int numWords, int n) {
+    int i, j, maxIndex;
+    for(i = 0; i < n; i++) {
+        maxIndex = i;
+        for(j = i+1; j < numWords; j++) {
+            if(words[j].count > words[maxIndex].count) {
+                maxIndex = j;
+            }
+        }
+        if(words[maxIndex].count == 0) {
+            return;
+        }
+        printf("%s: %d\n", words[maxIndex].word, words[maxIndex].count);
+        words[maxIndex].count = 0;
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    
+    char text[1000];
+    getchar();
+    scanf("%[^\n]", text);
+
+    char word[MAX_WORD_LENGTH];
+    WordCount *words = malloc(sizeof(WordCount));
+
+    if(words == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    strcpy(words[0].word, "");
+    words[0].count = 0;
+    int numWords = 1;
+
+    char *token = strtok(text, DELIMITERS);
+    while(token != NULL) {
+        int found = 0;
+        for(int i = 0; i < numWords && !found; i++) {
+            if(strcmp(words[i].word, token) == 0) {
+                words[i].count += 1;
+                found = 1;
+            }
+        }
+        if(!found) {
+            words = increaseWords(words, numWords);
+            strcpy(words[numWords].word, token);
+            words[numWords].count = INITIAL_WORD_COUNT;
+            numWords += 1;
+        }
+        token = strtok(NULL, DELIMITERS);
+    }
+
+    printMostCommon(words, numWords, n);
+
+    return 0;
+}

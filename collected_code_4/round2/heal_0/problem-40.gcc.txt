@@ -1,0 +1,20 @@
+./collected_code_4/round2//heal_0/problem-40.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-40.c:52:19: warning: dereference of possibly-NULL 'array' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   52 |          array[i] = (int *)malloc(column * sizeof(int));
+      |          ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   50 |     int **array = (int **)malloc(row * sizeof(int *));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   51 |     for (int i=0; i<row; i++) {
+    |      |                   ~~~~~    
+    |      |                    |
+    |      |                    (2) following 'true' branch (when 'i < row')...
+    |   52 |          array[i] = (int *)malloc(column * sizeof(int));
+    |      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |        |
+    |      |                   |        (3) ...to here
+    |      |                   (4) 'array + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

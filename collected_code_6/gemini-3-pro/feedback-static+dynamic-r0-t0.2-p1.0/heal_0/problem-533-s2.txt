@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int i;
+        float f;
+        char* s;
+    } data;
+} TupleElement;
+
+typedef struct {
+    TupleElement* elements;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    tuple->elements = (TupleElement*)malloc(size * sizeof(TupleElement));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+Tuple* remove_elements_by_type(const Tuple* input_tuple, DataType type_to_remove) {
+    if (!input_tuple || !input_tuple->elements) {
+        return NULL;
+    }
+
+    size_t new_size = 0;
+    for (size_t i = 0; i < input_tuple->size; ++i) {
+        if (input_tuple->elements[i].type != type_to_remove) {
+            new_size++;
+        }
+    }
+
+    Tuple* new_tuple = create_tuple(new_size);
+    if (!new_tuple) {
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < input_tuple->size; ++i) {
+        if (input_tuple->elements[i].type != type_to_remove) {
+            new_tuple->elements[index++] = input_tuple->elements[i];
+        }
+    }
+
+    return new_tuple;
+}
+
+void print_tuple(const Tuple* tuple) {
+    if (!tuple || !tuple->elements) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < tuple->size; ++i) {
+        switch (tuple->elements[i].type) {
+            case TYPE_INT:
+                printf("%d", tuple->elements[i].data.i);
+                break;
+            case TYPE_FLOAT:
+                printf("%f", tuple->elements[i].data.f);
+                break;
+            case TYPE_STRING:
+                printf("\"%s\"", tuple->elements[i].data.s);
+                break;
+        }
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    Tuple* my_tuple = create_tuple(5);
+    if (!my_tuple) {
+        return 1;
+    }
+
+    my_tuple->elements[0].type = TYPE_INT;
+    my_tuple->elements[0].data.i = 10;
+    
+    my_tuple->elements[1].type = TYPE_FLOAT;
+    my_tuple->elements[1].data.f = 3.14f;
+    
+    my_tuple->elements[2].type = TYPE_STRING;
+    my_tuple->elements[2].data.s = "Hello";
+    
+    my_tuple->elements[3].type = TYPE_INT;
+    my_tuple->elements[3].data.i = 42;
+    
+    my_tuple->elements[4].type = TYPE_FLOAT;
+    my_tuple->elements[4].data.f = 2.71f;
+
+    Tuple* filtered_tuple = remove_elements_by_type(my_tuple, TYPE_INT);
+    if (!filtered_tuple) {
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    print_tuple(filtered_tuple);
+
+    free_tuple(my_tuple);
+    free_tuple(filtered_tuple);
+
+    return 0;
+}
+```

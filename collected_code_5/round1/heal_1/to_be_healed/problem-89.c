@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findClosestSmallerNumber(int n) {
+    // Depending on the use-case, error handling can be improved.
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'INT_MIN'
+     */
+    if(n == INT_MIN) {
+        printf("No smaller integer exists.\n");
+        exit(EXIT_FAILURE);
+    } else {
+        return n - 1;
+    }
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    int closestSmallerNumber = findClosestSmallerNumber(number);
+    printf("Closest smaller number than %d is %d.\n", number, closestSmallerNumber);
+    return 0;
+}

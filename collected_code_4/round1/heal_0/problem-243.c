@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int occurence;
+} Element;
+
+int compare(const void* a, const void* b) {
+    Element* elementA = (Element*)a;
+    Element* elementB = (Element*)b;
+    return (elementB->occurence - elementA->occurence);
+}
+
+void sortList(Element* list, size_t size) {
+    if(list == NULL || size <= 0)
+        return;
+    qsort(list, size, sizeof(Element), compare);
+}
+
+int main(void) {
+    size_t size = 5;
+    Element list[5] = {
+        {3, 7},
+        {2, 5},
+        {1, 9},
+        {4, 2},
+        {5, 1}
+    };
+    
+    sortList(list, size);
+    
+    for (size_t i = 0; i < size; i++) {
+        printf("{%d, %d}\n", list[i].value, list[i].occurence);
+    }
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long difference_cubes_sum(long long n)
+{
+    long long sum_n = (n * (n + 1)) / 2;
+
+    if (sum_n != 0 && sum_n > LLONG_MAX / sum_n) {
+        fprintf(stderr, "Error: computation would overflow.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    long long sum_cubes = sum_n * sum_n;
+    return sum_cubes - sum_n;
+}
+
+int main(void)
+{
+    long long n = 0;
+
+    printf("Enter a natural number n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "Error: n must be a natural number (n >= 1).\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 77935LL) {
+        fprintf(stderr, "Error: n is too large and would cause overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Difference: %lld\n", difference_cubes_sum(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes I made as part of the fix:
+
+1. **Corrected the overflow bound**: The original limit of `n > 3000000LL` was far too permissive. For `n = 3000000`, `sum_n = n(n+1)/2 ≈ 4.5 × 10¹²`, and squaring that yields ≈ 2 × 10²⁵, vastly exceeding `LLONG_MAX` (≈ 9.22 × 10¹⁸). This is exactly the signed integer overflow UBSan/AFL detected. The correct constraint requires `sum_n ≤ √LLONG_MAX ≈ 3037000499`, which means `n ≤ 77935`.
+
+2. **Added a defense-in-depth runtime check**: Inside `difference_cubes_sum`, the multiplication `sum_n * sum_n` is guarded by checking `sum_n > LLONG_MAX / sum_n` *before* performing it, so the function is safe even if called with an unvalidated argument from elsewhere.
+
+3. **Added `<limits.h>`** for `LLONG_MAX`.

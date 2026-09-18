@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+#include <stdlib.h>
+
+int check_string(const char *str) {
+    int slen = strlen(str);
+    char reg_string[slen*2 + 6]; // 2 - for creating pattern, 4 - for adding '^', '.', '$', '\0'
+    sprintf(reg_string, "^%c.*%c$", str[0], str[slen - 1]);
+
+    regex_t regex;
+    int reti;
+
+    reti = regcomp(&regex, reg_string, 0);
+    if (reti) {
+        perror("Could not compile regex");
+        exit(1);
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    if (!reti) return 0;
+    else if (reti == REG_NOMATCH) return 1;
+    else {
+        perror("Regex match failed");
+        exit(1);
+    }
+}
+
+int main() {
+    char testString[100];
+    printf("Enter a string:");
+    fgets(testString, 100, stdin);
+    testString[strcspn(testString, "\n")] = 0; // Remove trailing newline
+    
+    if(check_string(testString)==0) {
+        printf("String starts and ends with the same character\n");
+    } else {
+        printf("String does not start and end with the same character\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringWithEqualEnds(char* s) {
+    int n = strlen(s);
+    int result = 0;
+    int count[256] = {0};
+
+    for (int i = 0; i < n; i++)
+        count[s[i]]++;
+
+    for (int i = 0; i < 256; i++)
+        result = result + ((count[i] * (count[i] + 1)) / 2);
+
+    return result;
+}
+
+int main() {
+    char s[] = "abcab";
+    printf("%d", countSubstringWithEqualEnds(s));
+    return 0;
+}
+```
+
+In this code, `countSubstringWithEqualEnds` is a function that counts the number of substrings that start and end with the same character in the input string `s`. It creates a count array to count the occurrence of each character in the string. It iterates over each character in the string and increments its count in the count array. Then it calculates the number of substrings that start and end with each character by multiplying its count with count+1 and dividing by 2. It adds this value to the result. After iterating over all characters, it returns the result. 
+
+In the `main` function, the program creates a string, passes it to the `countSubstringWithEqualEnds` function, and prints the result.

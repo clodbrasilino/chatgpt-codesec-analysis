@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct list {
+    int data;
+    struct list *next;
+} List;
+
+List *mergeLists(List *first, List *last) {
+    if (!first) {
+        return last;
+    }
+
+    if (!last) {
+        return first;
+    }
+
+    List *temp = first;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = last;
+
+    return first;
+}
+
+void printList(List *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+List *newNode(int data) {
+    List *node = (List *)malloc(sizeof(List));
+    if (!node) {
+        fprintf(stderr, "Memory allocation failed.");
+        exit(1);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int main() {
+    List *res = NULL;
+    List *first = NULL;
+    List *last = NULL;
+
+    first = newNode(5);
+    first->next = newNode(10);
+    first->next->next = newNode(15);
+
+    last = newNode(20);
+    last->next = newNode(25);
+    last->next->next = newNode(30);
+
+    res = mergeLists(first, last);
+
+    printList(res);
+
+    return 0;
+}

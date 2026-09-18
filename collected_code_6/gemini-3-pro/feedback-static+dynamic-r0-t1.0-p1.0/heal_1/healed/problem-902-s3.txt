@@ -1,0 +1,167 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node **buckets;
+    size_t size;
+} Dictionary;
+
+unsigned int hash(const char *key, size_t size) {
+    unsigned int h = 0;
+    while (*key) {
+        h = (h * 31) + (unsigned char)*key++;
+    }
+    return h % size;
+}
+
+Dictionary* create_dictionary(size_t size) {
+    if (size == 0) return NULL;
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->size = size;
+    dict->buckets = (Node **)calloc(size, sizeof(Node *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            Node *next = current->next;
+            free(current->key);
+            free(current);
+            current = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int insert_or_update(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return -1;
+    unsigned int index = hash(key, dict->size);
+    Node *current = dict->buckets[index];
+    
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            current->value += value;
+            return 0;
+        }
+        current = current->next;
+    }
+    
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (!new_node) return -1;
+    new_node->key = strdup(key);
+    if (!new_node->key) {
+        free(new_node);
+        return -1;
+    }
+    new_node->value = value;
+    new_node->next = dict->buckets[index];
+    dict->buckets[index] = new_node;
+    return 0;
+}
+
+Dictionary* combine_dictionaries(Dictionary *d1, Dictionary *d2) {
+    size_t target_size;
+    
+    if (d1) {
+        target_size = d1->size;
+    } else if (d2) {
+        target_size = d2->size;
+    } else {
+        return NULL;
+    }
+    
+    Dictionary *combined = create_dictionary(target_size);
+    if (!combined) return NULL;
+    
+    if (d1) {
+        for (size_t i = 0; i < d1->size; i++) {
+            Node *current = d1->buckets[i];
+            while (current) {
+                if (insert_or_update(combined, current->key, current->value) != 0) {
+                    free_dictionary(combined);
+                    return NULL;
+                }
+                current = current->next;
+            }
+        }
+    }
+    
+    if (d2) {
+        for (size_t i = 0; i < d2->size; i++) {
+            Node *current = d2->buckets[i];
+            while (current) {
+                if (insert_or_update(combined, current->key, current->value) != 0) {
+                    free_dictionary(combined);
+                    return NULL;
+                }
+                current = current->next;
+            }
+        }
+    }
+    
+    return combined;
+}
+
+void print_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        Node *current = dict->buckets[i];
+        while (current) {
+            printf("%s: %d\n", current->key, current->value);
+            current = current->next;
+        }
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary(10);
+    if (!dict1) return 1;
+    
+    Dictionary *dict2 = create_dictionary(10);
+    if (!dict2) {
+        free_dictionary(dict1);
+        return 1;
+    }
+    
+    if (insert_or_update(dict1, "apple", 5) != 0 ||
+        insert_or_update(dict1, "banana", 3) != 0 ||
+        insert_or_update(dict2, "apple", 7) != 0 ||
+        insert_or_update(dict2, "orange", 2) != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    Dictionary *combined = combine_dictionaries(dict1, dict2);
+    if (!combined) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    print_dictionary(combined);
+    
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(combined);
+    
+    return 0;
+}
+```

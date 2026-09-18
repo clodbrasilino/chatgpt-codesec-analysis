@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void multiply_adjacent_elements(int *values, int len, int *result) {
+    if (values == NULL || len <= 0 || result == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < len - 1; ++i) {
+        result[i] = values[i] * values[i + 1];
+    }
+}
+
+int main(){
+    int test[] = {1, 2, 3, 4, 5};
+    int len = sizeof(test) / sizeof(test[0]);
+    int *result = (int *) malloc((len - 1) * sizeof(int));
+
+    if (result == NULL) {
+        printf("Insufficient Memory\n");
+        return 1;
+    }
+
+    multiply_adjacent_elements(test, len, result);
+
+    for(int i = 0; i < len - 1; i++){
+       printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

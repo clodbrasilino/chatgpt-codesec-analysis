@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **concatenate_adjacent(const char *const *tuples, size_t length, size_t *out_length) {
+    if (!tuples || !out_length) {
+        return NULL;
+    }
+
+    if (length < 2) {
+        *out_length = 0;
+        return NULL;
+    }
+
+    size_t res_len = length - 1;
+    char **result = (char **)malloc(res_len * sizeof(char *));
+    if (!result) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < res_len; i++) {
+        if (!tuples[i] || !tuples[i + 1]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        size_t len1 = strlen(tuples[i]);
+        size_t len2 = strlen(tuples[i + 1]);
+
+        result[i] = (char *)malloc(len1 + len2 + 1);
+        if (!result[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        memcpy(result[i], tuples[i], len1);
+        memcpy(result[i] + len1, tuples[i + 1], len2 + 1);
+    }
+
+    *out_length = res_len;
+    return result;
+}
+
+int main(void) {
+    const char *tuples[] = {"apple", "banana", "cherry", "date"};
+    size_t length = sizeof(tuples) / sizeof(tuples[0]);
+    size_t out_length = 0;
+
+    char **concatenated = concatenate_adjacent((const char *const *)tuples, length, &out_length);
+
+    if (concatenated) {
+        for (size_t i = 0; i < out_length; i++) {
+            printf("%s\n", concatenated[i]);
+            free(concatenated[i]);
+        }
+        free(concatenated);
+    }
+
+    return 0;
+}
+```

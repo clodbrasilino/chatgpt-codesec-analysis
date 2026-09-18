@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:36:29: style: Condition 'n_minus_one>0' is always true [knownConditionTrueFalse]
+            if (n_minus_one > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:34:47: note: Assuming that condition 'n_minus_one!=0' is not redundant
+    if (common_difference != 0 && n_minus_one != 0) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:36:29: note: Condition 'n_minus_one>0' is always true
+            if (n_minus_one > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:48:29: style: Condition 'n_minus_one>0' is always true [knownConditionTrueFalse]
+            if (n_minus_one > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:34:47: note: Assuming that condition 'n_minus_one!=0' is not redundant
+    if (common_difference != 0 && n_minus_one != 0) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:48:29: note: Condition 'n_minus_one>0' is always true
+            if (n_minus_one > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:83:19: style: Condition 'num_terms!=0' is always true [knownConditionTrueFalse]
+    if (num_terms != 0 && inner_sum != 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:7:19: note: Assuming that condition 'num_terms<=0' is not redundant
+    if (num_terms <= 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:11:19: note: Assuming condition is false
+    if (num_terms > LLONG_MAX / 2) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:83:19: note: Condition 'num_terms!=0' is always true
+    if (num_terms != 0 && inner_sum != 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:84:23: style: Condition 'num_terms>0' is always true [knownConditionTrueFalse]
+        if (num_terms > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:7:19: note: Assuming that condition 'num_terms<=0' is not redundant
+    if (num_terms <= 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:11:19: note: Assuming condition is false
+    if (num_terms > LLONG_MAX / 2) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-335.c:84:23: note: Condition 'num_terms>0' is always true
+        if (num_terms > 0) {
+                      ^

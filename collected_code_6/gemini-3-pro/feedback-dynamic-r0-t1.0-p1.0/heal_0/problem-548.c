@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int lengthOfLIS(int* nums, int numsSize) {
+    if (numsSize == 0) {
+        return 0;
+    }
+
+    int* tails = (int*)malloc(numsSize * sizeof(int));
+    if (tails == NULL) {
+        return -1;
+    }
+
+    int size = 0;
+    for (int i = 0; i < numsSize; i++) {
+        int left = 0, right = size;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (tails[mid] < nums[i]) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        tails[left] = nums[i];
+        if (left == size) {
+            size++;
+        }
+    }
+
+    free(tails);
+    return size;
+}
+
+int main(void) {
+    int nums[] = {10, 9, 2, 5, 3, 7, 101, 18};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+
+    int result = lengthOfLIS(nums, numsSize);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    return 0;
+}

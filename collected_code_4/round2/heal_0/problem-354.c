@@ -1,0 +1,23 @@
+#include<stdio.h>
+
+int nth_term(int a, int d, int n) {
+    return (a + (n - 1) * d);
+}
+
+int main() {
+    int a, d, n;
+    printf("Enter the first term: ");
+    scanf("%d", &a);
+    printf("Enter the common difference: ");
+    scanf("%d", &d);
+    printf("Enter the term position: ");
+    scanf("%d", &n);
+
+    if(n > 0) {
+        printf("The %dth term of the arithmetic progression is: %d\n",n, nth_term(a, d, n));
+    } else {
+        printf("Invalid term position\n");
+    }
+
+    return 0;
+}

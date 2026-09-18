@@ -1,0 +1,67 @@
+```c
+#include <stdlib.h>
+#include <math.h>
+#include <stdio.h>
+
+struct Node {
+    int data;
+    int power;
+    struct Node* next;
+};
+
+struct Node* create_node(int data, int index) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    if (node == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    node->data = data;
+    node->power = pow(data, index);
+    node->next = NULL;
+    return node;
+}
+
+struct Node* append_node(struct Node* head, int data, int index) {
+    if(head == NULL) {
+        return create_node(data, index);
+    }
+    else {
+        struct Node* current_node = head;
+        while(current_node->next != NULL) {
+            current_node = current_node->next;
+        }
+        current_node->next = create_node(data, index);
+        return head;
+    }
+}
+
+void print_list(struct Node* head) {
+    struct Node* current_node = head;
+    while(current_node != NULL) {
+        printf("Data: %d, Power: %d\n", current_node->data, current_node->power);
+        current_node = current_node->next;
+    }
+}
+
+void delete_list(struct Node* head) {
+    struct Node* current_node;
+    while(head != NULL) {
+        current_node = head;
+        head = head->next;
+        free(current_node);
+    }
+}
+
+int main() {
+    int data[] = {1, 2, 3, 4, 5};
+    struct Node *head = NULL;
+    for(int i = 0; i < 5; ++i) {
+        head = append_node(head, data[i], i);
+    }
+
+    print_list(head);
+    delete_list(head);
+
+    return 0;
+}
+```

@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int calcDigitDistance(int num1, int num2) {
+    int dDist = 0;
+    while (num1 > 0 && num2 > 0) {
+        int d1 = num1 % 10;
+        int d2 = num2 % 10;
+        dDist += abs(d1-d2);
+        num1 /= 10;
+        num2 /= 10;
+    }
+    return dDist;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter first number: ");
+    if(!scanf("%d", &num1)) {
+        printf("Invalid input!");
+        return 1;
+    }
+
+    printf("Enter second number: ");
+    if(!scanf("%d", &num2)) {
+        printf("Invalid input!");
+        return 1;
+    }
+
+    if(num1 < 0 || num2 < 0) {
+        printf("The numbers must be positive.");
+        return 1;
+    }
+
+    int distance = calcDigitDistance(num1, num2);
+    printf("Digit Distance: %d\n", distance);
+    return 0;
+}
+```
+The code starts by including the necessary libraries. Then it defines a function calcDigitDistance to calculate the digit distance.
+
+This function takes two integers num1 and num2 as arguments and initializes dDist as 0. It then enters a loop which will run as long as both num1 and num2 are greater than 0. Inside the loop, it finds the last digit of both num1 and num2 and computes the absolute difference. This difference is added to dDist. Then num1 and num2 are divided by 10 to remove their last digit. The loop continues until no more digits are left in num1 and num2. The function then returns the calculated digit distance.
+
+The main function then asks the user for two numbers, checks if the input is valid and positive, calculates the digit distance utilizing the calcDigitDistance function and finally prints the digit distance out.

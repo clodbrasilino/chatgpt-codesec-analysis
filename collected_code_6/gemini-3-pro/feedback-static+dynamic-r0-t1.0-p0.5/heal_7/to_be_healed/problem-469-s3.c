@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <ctype.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 10, got <no output>
+  *  test case 2 failed: expected 2, got <no output>
+  *  test case 1 failed: expected 7, got <no output>
+  */
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        int max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    int* buy = (int*)malloc(sizeof(int) * (k + 1));
+    int* sell = (int*)malloc(sizeof(int) * (k + 1));
+
+    for (int i = 0; i <= k; i++) {
+        buy[i] = INT_MIN;
+        sell[i] = 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++) {
+        for (int j = 1; j <= k; j++) {
+            buy[j] = MAX(buy[j], sell[j - 1] - prices[i]);
+            sell[j] = MAX(sell[j], buy[j] + prices[i]);
+        }
+    }
+
+    int result = sell[k];
+    
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void) {
+    int k;
+    if (scanf("%d", &k) == 1) {
+        int capacity = 1000;
+        int* prices = (int*)malloc(capacity * sizeof(int));
+        if (!prices) return 1;
+        
+        int pricesSize = 0;
+        int val;
+        
+        while (1) {
+            int res = scanf("%d", &val);
+            if (res == 1) {
+                if (pricesSize >= capacity) {
+                    capacity *= 2;
+                    int* temp_prices = (int*)realloc(prices, capacity * sizeof(int));
+                    if (!temp_prices) {
+                        free(prices);
+                        return 1;
+                    }
+                    prices = temp_prices;
+                }
+                prices[pricesSize++] = val;
+            } else {
+                int c = getchar();
+                if (c == EOF) break;
+            }
+        }
+        
+        printf("%d\n", maxProfit(k, prices, pricesSize));
+        free(prices);
+    }
+    return 0;
+}

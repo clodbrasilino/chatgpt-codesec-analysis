@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ITEMS 5
+#define MAX_STR_SIZE 100
+
+void insertStringAtBeginning(char* str, char* list[MAX_ITEMS]) {
+    char buffer[MAX_STR_SIZE];
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        snprintf(buffer, sizeof(buffer), "%s%s", str, list[i]);
+        if (strlen(buffer) < MAX_STR_SIZE) {
+            list[i] = (char*)realloc(list[i], strlen(buffer) + 1);
+            strcpy(list[i], buffer);
+        }
+        else {
+            printf("Error: New string is too long.\n");
+            return;
+        }
+    }
+}
+
+int main() {
+    char* list[MAX_ITEMS];
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        list[i] = (char*)malloc(MAX_STR_SIZE);
+        strcpy(list[i], "item");
+    }
+
+    insertStringAtBeginning("str_", list);
+
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        printf("%s\n", list[i]);
+        free(list[i]);
+    }
+
+    return 0;
+}
+```

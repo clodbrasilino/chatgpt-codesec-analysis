@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int sumLengthOfNames(char *names[], int count) {
+    int sum = 0;
+    for (int i = 0; i < count; i++) {
+        if(names[i] == NULL) continue;
+        else if(isupper(names[i][0])) sum += strlen(names[i]);
+    }
+    return sum;
+}
+
+int main() {
+    char *names[]={"John", "isaac", "Helen", "romi"};
+    int count = sizeof(names)/sizeof(names[0]);
+    int sum = sumLengthOfNames(names, count);
+    printf("Sum of the length of the names: %d\n", sum);
+    return 0;
+}
+```
+
+This code defines a function, `sumLengthOfNames`, which calculates the sum of the lengths of names in an array of names, after ignoring the names that start with a lowercase letter. The `main` function uses this function to calculate and print the sum of the length of the names. It only includes valid C header files and correctly allocates and manages memory, avoiding CWE-664. The function checks if the passed name is `NULL` before trying to access its first character, avoiding CWE-703. The code is written according to general C coding standards and thus does not contain CWE-710.

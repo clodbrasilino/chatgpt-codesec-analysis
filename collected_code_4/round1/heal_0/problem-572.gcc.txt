@@ -1,0 +1,31 @@
+./collected_code_4/round1//heal_0//problem-572.c: In function 'newArray':
+./collected_code_4/round1//heal_0//problem-572.c:28:12: warning: leak of 'newArray' [CWE-401] [-Wanalyzer-malloc-leak]
+   28 |     return newArray;
+      |            ^~~~~~~~
+  'newArray': events 1-6
+    |
+    |    7 |     int* newArray = (int*)malloc(n * sizeof(int));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) allocated here
+    |......
+    |   10 |     if (newArray == NULL) {
+    |      |        ~                   
+    |      |        |
+    |      |        (2) assuming 'newArray' is non-NULL
+    |      |        (3) following 'false' branch (when 'newArray' is non-NULL)...
+    |......
+    |   15 |     for (int i = 0; i < n; i++) {
+    |      |              ~             
+    |      |              |
+    |      |              (4) ...to here
+    |......
+    |   27 |     newArray = (int*)realloc(newArray, j * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (5) when 'realloc' fails
+    |   28 |     return newArray;
+    |      |            ~~~~~~~~        
+    |      |            |
+    |      |            (6) 'newArray' leaks here; was allocated at (1)
+    |

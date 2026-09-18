@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+size_t count_valid_lists(Node** lists, size_t array_size) {
+    size_t count = 0;
+
+    if (lists == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < array_size; ++i) {
+        if (lists[i] != NULL) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    size_t array_size = 4;
+    Node** lists = (Node**)malloc(array_size * sizeof(Node*));
+    
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lists[0] = create_node(10);
+    if (lists[0] != NULL) {
+        lists[0]->next = create_node(20);
+    }
+
+    lists[1] = NULL;
+
+    lists[2] = create_node(30);
+
+    lists[3] = create_node(40);
+
+    size_t valid_lists_count = count_valid_lists(lists, array_size);
+    printf("%zu\n", valid_lists_count);
+
+    for (size_t i = 0; i < array_size; ++i) {
+        free_list(lists[i]);
+    }
+    free(lists);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int item1;
+    int item2;
+    struct Node* next;
+} Node;
+
+Node* createNode(int item1, int item2) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->item1 = item1;
+    newNode->item2 = item2;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int item1, int item2) {
+    if (head == NULL) {
+        return;
+    }
+    Node* newNode = createNode(item1, item2);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* nextNode;
+    while (current != NULL) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+}
+
+int extractNthElement(Node* head, int n, int* target1, int* target2) {
+    if (head == NULL || target1 == NULL || target2 == NULL || n < 0) {
+        return 0;
+    }
+    Node* current = head;
+    int count = 0;
+    while (current != NULL) {
+        if (count == n) {
+            *target1 = current->item1;
+            *target2 = current->item2;
+            return 1;
+        }
+        count++;
+        current = current->next;
+    }
+    return 0;
+}
+
+int main(void) {
+    Node* head = NULL;
+
+    appendNode(&head, 10, 20);
+    appendNode(&head, 30, 40);
+    appendNode(&head, 50, 60);
+
+    int n = 1;
+    int item1, item2;
+
+    if (extractNthElement(head, n, &item1, &item2)) {
+        printf("(%d, %d)\n", item1, item2);
+    } else {
+        printf("Element not found\n");
+    }
+
+    freeList(head);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void freeList(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void printList(Node* head) {
+    while (head) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+void splitList(Node* head, int k, Node** firstPart, Node** secondPart) {
+    if (!head || !firstPart || !secondPart) return;
+    
+    if (k <= 0) {
+        *firstPart = NULL;
+        *secondPart = head;
+        return;
+    }
+
+    *firstPart = head;
+    Node* current = head;
+    int count = 1;
+
+    while (current && count < k) {
+        current = current->next;
+        count++;
+    }
+
+    if (!current) {
+        *secondPart = NULL;
+        return;
+    }
+
+    *secondPart = current->next;
+    current->next = NULL;
+}
+
+int main(void) {
+    Node* head = NULL;
+    Node* firstPart = NULL;
+    Node* secondPart = NULL;
+
+    for (int i = 1; i <= 5; i++) {
+        appendNode(&head, i);
+    }
+
+    splitList(head, 3, &firstPart, &secondPart);
+
+    printList(firstPart);
+    printList(secondPart);
+
+    freeList(firstPart);
+    freeList(secondPart);
+
+    return 0;
+}
+```

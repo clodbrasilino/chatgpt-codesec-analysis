@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DIGITS 1000
+
+typedef struct {
+    unsigned char digits[MAX_DIGITS];
+    int length;
+} BigInt;
+
+void bigint_init(BigInt *num) {
+    memset(num->digits, 0, MAX_DIGITS);
+    num->length = 1;
+}
+
+void bigint_set_ull(BigInt *num, unsigned long long val) {
+    bigint_init(num);
+    num->length = 0;
+    
+    if (val == 0) {
+        num->digits[0] = 0;
+        num->length = 1;
+        return;
+    }
+    
+    while (val > 0) {
+        num->digits[num->length++] = val % 10;
+        val /= 10;
+    }
+}
+
+void bigint_add(const BigInt *a, const BigInt *b, BigInt *result) {
+    int max_len = a->length > b->length ? a->length : b->length;
+    int carry = 0;
+    int i;
+    
+    bigint_init(result);
+    result->length = 0;
+    
+    for (i = 0; i < max_len || carry; i++) {
+        int digit_a = i < a->length ? a->digits[i] : 0;
+        int digit_b = i < b->length ? b->digits[i] : 0;
+        int sum = digit_a + digit_b + carry;
+        
+        result->digits[result->length++] = sum % 10;
+        carry = sum / 10;
+    }
+}
+
+void bigint_copy(BigInt *dest, const BigInt *src) {
+    memcpy(dest->digits, src->digits, MAX_DIGITS);
+    dest->length = src->length;
+}
+
+void bigint_print(const BigInt *num) {
+    for (int i = num->length - 1; i >= 0; i--) {
+        printf("%d", num->digits[i]);
+    }
+}
+
+void bell_number(int n, BigInt *result) {
+    if (n < 0) {
+        bigint_set_ull(result, 0);
+        return;
+    }
+    if (n == 0) {
+        bigint_set_ull(result, 1);
+        return;
+    }
+    
+    BigInt *bell = (BigInt *)calloc(n + 1, sizeof(BigInt));
+    if (!bell) {
+        bigint_set_ull(result, 0);
+        return;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        bigint_init(&bell[i]);
+    }
+    
+    bigint_set_ull(&bell[0], 1);
+    
+    for (int i = 1; i <= n; i++) {
+        BigInt prev;
+        bigint_init(&prev);
+        bigint_copy(&prev, &bell[0]);
+        bigint_copy(&bell[0], &bell[i - 1]);
+        
+        for (int j = 1; j <= i; j++) {
+            BigInt temp;
+            bigint_init(&temp);
+            bigint_copy(&temp, &bell[j]);
+            bigint_add(&prev, &bell[j - 1], &bell[j]);
+            bigint_copy(&prev, &temp);
+        }
+    }
+    
+    bigint_copy(result, &bell[n]);
+    free(bell);
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:4062,execs:160,op:havoc,rep:1; likely memory-safety defect
+  */
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    BigInt result;
+    bigint_init(&result);
+    
+    bell_number(n, &result);
+    
+    printf("Bell number B_%d = ", n);
+    bigint_print(&result);
+    printf("\n");
+    
+    return 0;
+}

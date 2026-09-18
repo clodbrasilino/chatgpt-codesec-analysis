@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:25:21: style: Condition 'is_prime(p1)' is always false [knownConditionTrueFalse]
+        if (is_prime(p1)) return p1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:25:21: note: Calling function 'is_prime' returns 0
+        if (is_prime(p1)) return p1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:25:21: note: Condition 'is_prime(p1)' is always false
+        if (is_prime(p1)) return p1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:21:24: style: The scope of the variable 'p_next' can be reduced. [variableScope]
+    unsigned long long p_next = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:43:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[]) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-260.c:21:31: style: Variable 'p_next' is assigned a value that is never used. [unreadVariable]
+    unsigned long long p_next = 0;
+                              ^

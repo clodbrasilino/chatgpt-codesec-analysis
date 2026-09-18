@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+double sum_of_inverse_of_divisors(int num) {
+    double sum = 0;
+    for(int i = 1; i <= num; i++) {
+        if(num % i == 0) {
+            sum += 1.0/i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    if(scanf("%d", &num) != 1) {
+        printf("Error! Invalid input. Please enter an integer.\n");
+        return 1;
+    }
+
+    if(num <= 0) {
+        printf("Error! The number should be positive.\n");
+        return 1;
+    }
+
+    double result = sum_of_inverse_of_divisors(num);
+    printf("The sum of inverse of divisors is %.2lf\n", result);
+
+    return 0;
+}
+```

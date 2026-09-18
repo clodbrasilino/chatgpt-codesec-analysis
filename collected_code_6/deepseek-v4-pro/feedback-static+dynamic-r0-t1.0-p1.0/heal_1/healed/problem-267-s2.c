@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long sum_of_squares_of_odd_numbers(int n) {
+    long long ln;
+    
+    if (n <= 0) {
+        return 0;
+    }
+    
+    ln = (long long)n;
+    
+    if (ln > LLONG_MAX / ((2 * ln - 1) * (2 * ln + 1))) {
+        return -1;
+    }
+    
+    return ln * (2 * ln - 1) * (2 * ln + 1) / 3;
+}
+
+int main(void) {
+    long long result;
+    long val;
+    int n;
+    char input[32];
+    char *endptr;
+    
+    printf("Enter a positive integer n: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+    
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Number out of range.\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    
+    if (n <= 0) {
+        fprintf(stderr, "n must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = sum_of_squares_of_odd_numbers(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Overflow detected. n is too large.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of squares of first %d odd natural numbers: %lld\n", 
+           n, result);
+    
+    return EXIT_SUCCESS;
+}

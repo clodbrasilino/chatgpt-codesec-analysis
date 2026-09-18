@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+double findAverageOfEvenNumbers(int n) {
+    if(n <= 0 || n % 2 != 0) {
+        printf("Invalid input. Please enter an even number greater than 0.\n");
+        return -1;
+    }
+
+    int sum = 0;
+    int count = 0;
+
+    for(int i = 0; i <= n; i++)
+    {
+        if(i % 2 == 0)
+        {
+            sum += i;
+            count++;
+        }
+    }
+
+    return (double)sum / count;
+}
+
+int main() {
+    int number;
+    printf("Please enter an even number: ");
+    scanf("%d", &number);
+    
+    double avg = findAverageOfEvenNumbers(number);
+    
+    if(avg != -1) {
+        printf("The average of even numbers till %d is %.2f\n", number, avg);
+    }
+
+    return 0;
+}

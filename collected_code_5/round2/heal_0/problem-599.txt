@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+
+void find_sum_and_average(int n, int *sum, float *average) {
+    if (n < 1) {
+        *sum = 0;
+        *average = 0.0;
+        return;
+    }
+
+    *sum = n * (n + 1) / 2;
+    *average = (float)*sum / n;
+}
+
+int main() {
+    int n;
+    int sum;
+    float average;
+
+    printf("Enter a positive integer: ");
+    scanf("%d", &n);
+
+    if (n < 1) {
+        printf("Error! You entered a non-positive integer.\n");
+        return 1;
+    }
+
+    find_sum_and_average(n, &sum, &average);
+
+    printf("Sum = %d, Average = %.2f\n", sum, average);
+
+    return 0;
+}
+```

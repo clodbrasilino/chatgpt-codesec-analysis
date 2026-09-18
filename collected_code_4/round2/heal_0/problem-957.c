@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int getRightmostSetBit(int n) {
+    return log2(n & -n) + 1;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    
+    int position = getRightmostSetBit(n);
+    printf("The position of the rightmost set bit is: %d", position);
+    
+    return 0;
+}

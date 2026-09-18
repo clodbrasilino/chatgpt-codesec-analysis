@@ -1,0 +1,65 @@
+./collected_code_4/round2//heal_0/problem-157.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-157.c:10:5: warning: use of NULL 'encodedList' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   10 |     printf("%s\n", encodedList);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |    7 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |    8 |     char list[] = "aaaabbccd";
+    |    9 |     char* encodedList =  runLengthEncoding(list);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'runLengthEncoding' from 'main'
+    |
+    +--> 'runLengthEncoding': events 3-6
+           |
+           |   15 | char* runLengthEncoding(char* list) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'runLengthEncoding'
+           |   16 |     if(list == NULL){
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'list' is non-NULL)...
+           |......
+           |   19 |     int len = strlen(list);
+           |      |               ~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) ...to here
+           |   20 |     char* result = (char*)malloc(sizeof(char) * len * 2 + 1);
+           |   21 |     if(result == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (6) following 'true' branch (when 'result' is NULL)...
+           |
+         'runLengthEncoding': event 7
+           |
+           |   22 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (7) ...to here
+           |
+         'runLengthEncoding': event 8
+           |
+           |   22 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (8) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 9-10
+    |
+    |    9 |     char* encodedList =  runLengthEncoding(list);
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (9) returning to 'main' from 'runLengthEncoding'
+    |   10 |     printf("%s\n", encodedList);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (10) argument 1 ('encodedList') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

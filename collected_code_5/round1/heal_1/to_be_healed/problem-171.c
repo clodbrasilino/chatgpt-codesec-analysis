@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+float pentagonPerimeter(float side) {
+    if(side <= 0) {
+        printf("Invalid side length entered.");
+        return -1;
+    }
+    return 5.0 * side;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  'side' declared here
+     */
+    float side;
+    printf("Enter the side length of the pentagon: ");
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'Side'; did you mean 'side'?
+     */
+    scanf("%f", &Side);
+    float perimeter = pentagonPerimeter(side);
+    if(perimeter != -1) {
+        printf("The perimeter of the pentagon is: %.2f\n", perimeter);
+    }
+    return 0;
+}

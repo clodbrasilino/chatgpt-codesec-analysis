@@ -1,0 +1,35 @@
+Here is your code in C,
+
+```c
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+char* removeOddIndexedCharacters(char* str) {
+    size_t str_len = strlen(str);
+    char* str_out = calloc(str_len / 2 + 1, sizeof(char));
+
+    if(str_out == NULL) {
+       printf("Memory allocation failed\n");
+       exit(1);
+    }
+    
+    for(int i = 0; i < str_len; i += 2){
+        str_out[i/2] = str[i];
+    }
+    
+   return str_out;
+}
+
+int main() {
+   char str[] = "abcdefg";
+   char* str_out = removeOddIndexedCharacters(str);
+   printf("%s\n", str_out);
+   free(str_out);
+
+   return 0;
+}
+```
+
+This will not remove elements from the original array; instead, it will copy those characters that are at even indexes to the new dynamically allocated string. It will handle the out of memory condition properly.
+The main function demonstrates usage of this removeOddIndexedCharacters function with string "abcdefg", and after it's use, properly frees memory.

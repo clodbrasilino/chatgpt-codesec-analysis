@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int count_character(char* string, char search_char) {
+    int count = 0;
+    int length = strlen(string);
+    
+    for (int i = 0; i < length; i++) {
+        if (string[i] == search_char) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    char search_string[100];
+    char search_char;
+
+    printf("Enter a string: ");
+    fgets(search_string, sizeof(search_string), stdin);
+
+    printf("Enter a character: ");
+    scanf("%c", &search_char);
+
+    int count = count_character(search_string, search_char);
+    
+    printf("The character '%c' appears %d times in \"%s\"", search_char, count, search_string);
+
+    return 0;
+}

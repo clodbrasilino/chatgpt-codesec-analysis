@@ -1,0 +1,12 @@
+./collected_code_4/round1//heal_0//problem-129.c: In function 'generateSquare':
+./collected_code_4/round1//heal_0//problem-129.c:9:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+    9 |     memset(magicSquare, 0, sizeof(magicSquare));
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-129.c:3:1: note: include '<string.h>' or provide a declaration of 'memset'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+./collected_code_4/round1//heal_0//problem-129.c:9:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+    9 |     memset(magicSquare, 0, sizeof(magicSquare));
+      |     ^~~~~~
+./collected_code_4/round1//heal_0//problem-129.c:9:5: note: include '<string.h>' or provide a declaration of 'memset'

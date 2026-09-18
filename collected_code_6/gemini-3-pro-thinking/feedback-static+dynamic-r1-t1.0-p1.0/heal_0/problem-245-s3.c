@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_bitonic_subsequence(const int *arr, size_t n);
+
+int max_sum_bitonic_subsequence(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    int *msis = (int *)malloc(n * sizeof(int));
+    if (msis == NULL) {
+        return -1;
+    }
+
+    int *msds = (int *)malloc(n * sizeof(int));
+    if (msds == NULL) {
+        free(msis);
+        return -1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        msis[i] = arr[i];
+        for (size_t j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && msis[i] < msis[j] + arr[i]) {
+                msis[i] = msis[j] + arr[i];
+            }
+        }
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        size_t idx = n - 1 - i;
+        msds[idx] = arr[idx];
+        for (size_t j = n - 1; j > idx; j--) {
+            if (arr[idx] > arr[j] && msds[idx] < msds[j] + arr[idx]) {
+                msds[idx] = msds[j] + arr[idx];
+            }
+        }
+    }
+
+    int max_sum = msis[0] + msds[0] - arr[0];
+    for (size_t i = 1; i < n; i++) {
+        int current_sum = msis[i] + msds[i] - arr[i];
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+        }
+    }
+
+    free(msis);
+    free(msds);
+
+    return max_sum;
+}
+
+int main(void) {
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = max_sum_bitonic_subsequence(arr, n);
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

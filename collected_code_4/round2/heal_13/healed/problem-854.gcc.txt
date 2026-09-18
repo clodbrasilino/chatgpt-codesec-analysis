@@ -1,0 +1,327 @@
+./collected_code_4/round2//heal_13/healed/problem-854.c: In function 'insert':
+./collected_code_4/round2//heal_13/healed/problem-854.c:31:29: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   31 |     array->arr[array->used] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   84 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   85 |     Array array;
+    |   86 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-5
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)calloc(initialSize, sizeof(int));
+           |   12 |     if(!array->arr) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch...
+           |......
+           |   15 |     array->size = initialSize;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   86 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'create'
+    |   87 | 
+    |   88 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 8-10
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (8) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch...
+           |......
+           |   31 |     array->arr[array->used] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   88 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'insert'
+    |   89 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 13-18
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (13) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'true' branch...
+           |   21 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (15) ...to here
+           |   22 |         int *temp = realloc(array->arr, array->size * sizeof(int));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (16) when 'realloc' fails
+           |   23 |         if (!temp) {
+           |      |            ~
+           |      |            |
+           |      |            (17) following 'true' branch (when 'temp' is NULL)...
+           |   24 |             free(array->arr);
+           |      |                  ~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) ...to here
+           |
+    <------+
+    |
+  'main': events 19-20
+    |
+    |   89 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) returning to 'main' from 'insert'
+    |   90 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 21-28
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (21) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (22) following 'true' branch...
+           |   21 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (23) ...to here
+           |   22 |         int *temp = realloc(array->arr, array->size * sizeof(int));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (24) when 'realloc' succeeds, moving buffer
+           |      |                     (25) capacity: 0 bytes
+           |   23 |         if (!temp) {
+           |      |            ~
+           |      |            |
+           |      |            (26) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   29 |         array->arr = temp;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (27) ...to here
+           |   30 |     }
+           |   31 |     array->arr[array->used] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (28) out-of-bounds write from byte 0 till byte 3 but region ends at byte 0
+           |
+./collected_code_4/round2//heal_13/healed/problem-854.c:31:29: note: write of 4 bytes to beyond the end of the region
+   31 |     array->arr[array->used] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+./collected_code_4/round2//heal_13/healed/problem-854.c:31:29: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   84 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   85 |     Array array;
+    |   86 |     create(&array, 1);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'create' from 'main'
+    |
+    +--> 'create': events 3-5
+           |
+           |   10 | void create(Array* array, size_t initialSize) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'create'
+           |   11 |     array->arr = (int*)calloc(initialSize, sizeof(int));
+           |   12 |     if(!array->arr) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch...
+           |......
+           |   15 |     array->size = initialSize;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   86 |     create(&array, 1);
+    |      |     ^~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'create'
+    |   87 | 
+    |   88 |     insert(&array, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 8-10
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (8) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch...
+           |......
+           |   31 |     array->arr[array->used] = element;
+           |      |     ~~~~~~~~~~
+           |      |          |
+           |      |          (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   88 |     insert(&array, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'insert'
+    |   89 |     insert(&array, 15);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 13-18
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (13) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (14) following 'true' branch...
+           |   21 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (15) ...to here
+           |   22 |         int *temp = realloc(array->arr, array->size * sizeof(int));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (16) when 'realloc' fails
+           |   23 |         if (!temp) {
+           |      |            ~
+           |      |            |
+           |      |            (17) following 'true' branch (when 'temp' is NULL)...
+           |   24 |             free(array->arr);
+           |      |                  ~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) ...to here
+           |
+    <------+
+    |
+  'main': events 19-20
+    |
+    |   89 |     insert(&array, 15);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (19) returning to 'main' from 'insert'
+    |   90 |     insert(&array, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 21-27
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (21) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (22) following 'true' branch...
+           |   21 |         array->size *= 2;
+           |      |         ~~~~~~~~~~~
+           |      |              |
+           |      |              (23) ...to here
+           |   22 |         int *temp = realloc(array->arr, array->size * sizeof(int));
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (24) when 'realloc' succeeds, moving buffer
+           |      |                     (25) capacity: 0 bytes
+           |   23 |         if (!temp) {
+           |      |            ~
+           |      |            |
+           |      |            (26) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   29 |         array->arr = temp;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   90 |     insert(&array, 30);
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'insert'
+    |   91 |     insert(&array, 40);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 30-33
+           |
+           |   19 | void insert(Array* array, int element) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (30) entry to 'insert'
+           |   20 |     if (array->used == array->size) {
+           |      |        ~
+           |      |        |
+           |      |        (31) following 'false' branch...
+           |......
+           |   31 |     array->arr[array->used] = element;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                  |
+           |      |          (32) ...to here    (33) out-of-bounds write from byte 4 till byte 7 but region ends at byte 0
+           |
+./collected_code_4/round2//heal_13/healed/problem-854.c:31:29: note: write of 4 bytes to beyond the end of the region
+   31 |     array->arr[array->used] = element;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~

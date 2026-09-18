@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_digits(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+
+        char *read_ptr = strings[i];
+        char *write_ptr = strings[i];
+
+        while (*read_ptr != '\0') {
+            if (!isdigit((unsigned char)*read_ptr)) {
+                *write_ptr = *read_ptr;
+                write_ptr++;
+            }
+            read_ptr++;
+        }
+        *write_ptr = '\0';
+    }
+}
+
+int main(void) {
+    char str1[] = "H3ell0o";
+    char str2[] = "W0or1ld2";
+    char str3[] = "999";
+    char str4[] = "N0 D1g1ts H3r3";
+
+    char *string_list[] = {str1, str2, NULL, str3, str4};
+    size_t list_size = sizeof(string_list) / sizeof(string_list[0]);
+
+    remove_digits(string_list, list_size);
+
+    for (size_t i = 0; i < list_size; i++) {
+        if (string_list[i] != NULL) {
+            printf("%s\n", string_list[i]);
+        }
+    }
+
+    return 0;
+}
+```

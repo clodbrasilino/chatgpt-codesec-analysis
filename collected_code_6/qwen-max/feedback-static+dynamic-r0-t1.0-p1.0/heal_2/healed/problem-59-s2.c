@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+long long nth_octagonal_number(long long n) {
+    if (n > 9223372036854775807LL / 3 || 3 * n - 2 > 9223372036854775807LL / n) {
+        fprintf(stderr, "Input too large to compute octagonal number\n");
+        exit(EXIT_FAILURE);
+    }
+    return n * (3LL * n - 2LL);
+}
+
+int main() {
+    long long n;
+    printf("Enter a number: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n <= 0) {
+        fprintf(stderr, "Input should be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    printf("The %lldth octagonal number is %lld\n", n, nth_octagonal_number(n));
+    return EXIT_SUCCESS;
+}

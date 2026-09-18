@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+
+int findParity(unsigned int num) {
+    int parity = 0;
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return parity;
+}
+
+int main() {
+    unsigned int num;
+    printf("Enter a number: ");
+    if (scanf("%u", &num) != 1) {
+        printf("Invalid input.\n");
+        return 0;
+    }
+
+    int result = findParity(num);
+    if(result == 1)
+        printf("The number is odd\n");
+    else
+        printf("The number is even\n");
+    
+    return 0;
+}
+```
+In this code, the findParity function takes an unsigned integer as input and calculates the parity of the number (whether it has an odd or even number of 1 bits). The while loop runs as long as the number is not 0 and in each iteration, the loop bitwise ANDs the number with one less than that number and assigns that to the number itself (which effectively deletes the rightmost set bit). It also toggles the parity variable between 0 and 1. Finally it returns the parity and handles invalid inputs properly.

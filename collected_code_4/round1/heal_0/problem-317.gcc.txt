@@ -1,0 +1,35 @@
+./collected_code_4/round1//heal_0//problem-317.c: In function 'runLengthEncode':
+./collected_code_4/round1//heal_0//problem-317.c:24:31: warning: dereference of possibly-NULL 'encoded' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             encoded[index].ch = str[i-1];
+      |             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'runLengthEncode': events 1-8
+    |
+    |   11 |     if(str == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'str' is non-NULL)...
+    |......
+    |   16 |     int n = strlen(str);
+    |      |             ~~~~~~~~~~~
+    |      |             |
+    |      |             (2) ...to here
+    |   17 |     RunLength* encoded = (RunLength*) malloc(sizeof(RunLength) * n);
+    |      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (3) this call could return NULL
+    |......
+    |   22 |     for(int i = 1; i <= n; i++) {
+    |      |                    ~~~~~~
+    |      |                      |
+    |      |                      (4) following 'true' branch (when 'i <= n')...
+    |   23 |         if(str[i] != str[i-1]) {
+    |      |           ~   ~
+    |      |           |   |
+    |      |           |   (5) ...to here
+    |      |           (6) following 'true' branch...
+    |   24 |             encoded[index].ch = str[i-1];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |    |
+    |      |                               |    (7) ...to here
+    |      |                               (8) 'encoded + (long unsigned int)index * 8' could be NULL: unchecked value from (3)
+    |

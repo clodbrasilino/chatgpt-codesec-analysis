@@ -1,0 +1,19 @@
+./collected_code_4/round1//heal_0//problem-942.c: In function 'newNode':
+./collected_code_4/round1//heal_0//problem-942.c:18:42: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   18 |   struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+      |                                          ^~~~~~
+./collected_code_4/round1//heal_0//problem-942.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+./collected_code_4/round1//heal_0//problem-942.c:18:42: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   18 |   struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+      |                                          ^~~~~~
+./collected_code_4/round1//heal_0//problem-942.c:18:42: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+./collected_code_4/round1//heal_0//problem-942.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-942.c:63:3: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   63 |   free(third);
+      |   ^~~~
+./collected_code_4/round1//heal_0//problem-942.c:63:3: note: include '<stdlib.h>' or provide a declaration of 'free'
+./collected_code_4/round1//heal_0//problem-942.c:63:3: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+./collected_code_4/round1//heal_0//problem-942.c:63:3: note: include '<stdlib.h>' or provide a declaration of 'free'

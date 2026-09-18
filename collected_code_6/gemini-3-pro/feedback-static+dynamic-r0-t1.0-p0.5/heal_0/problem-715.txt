@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} IntTuple;
+
+IntTuple string_to_tuple(const char *str) {
+    IntTuple tuple = {NULL, 0};
+    
+    if (str == NULL) {
+        return tuple;
+    }
+
+    size_t count = 0;
+    const char *ptr = str;
+    while (*ptr) {
+        if (isdigit((unsigned char)*ptr) || (*ptr == '-' && isdigit((unsigned char)*(ptr + 1)))) {
+            count++;
+            while (*ptr && !isspace((unsigned char)*ptr) && *ptr != ',') {
+                ptr++;
+            }
+        } else {
+            ptr++;
+        }
+    }
+
+    if (count == 0) {
+        return tuple;
+    }
+
+    tuple.elements = (int *)malloc(count * sizeof(int));
+    if (tuple.elements == NULL) {
+        return tuple;
+    }
+
+    tuple.size = count;
+    size_t index = 0;
+    ptr = str;
+    char *endptr;
+
+    while (*ptr && index < count) {
+        if (isdigit((unsigned char)*ptr) || (*ptr == '-' && isdigit((unsigned char)*(ptr + 1)))) {
+            tuple.elements[index++] = (int)strtol(ptr, &endptr, 10);
+            ptr = endptr;
+        } else {
+            ptr++;
+        }
+    }
+
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple != NULL && tuple->elements != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    const char *input = "10, -20, 30, 40, 50";
+    
+    IntTuple tuple = string_to_tuple(input);
+    
+    if (tuple.elements != NULL) {
+        printf("(");
+        for (size_t i = 0; i < tuple.size; i++) {
+            printf("%d%s", tuple.elements[i], (i < tuple.size - 1) ? ", " : "");
+        }
+        printf(")\n");
+        
+        free_tuple(&tuple);
+    } else {
+        printf("Failed to parse tuple or empty input.\n");
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t sum_fourth_power_even(int n) {
+    uint64_t sum = 0;
+    for (int i = 1; i <= n; i++) {
+        uint64_t even = 2ULL * i;
+        uint64_t square = even * even;
+        uint64_t fourth = square * square;
+        sum += fourth;
+    }
+    return sum;
+}
+
+int main(void) {
+    char input[64];
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long val = strtol(input, &endptr, 10);
+
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (val <= 0 || val > 1000000) {
+        fprintf(stderr, "Input out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    int n = (int)val;
+    uint64_t result = sum_fourth_power_even(n);
+    
+    if (result > INT64_MAX) {
+        fprintf(stderr, "Result overflow.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%" PRId64 "\n", (int64_t)result);
+    return EXIT_SUCCESS;
+}

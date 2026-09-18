@@ -1,0 +1,15 @@
+./collected_code_4/round2//heal_0/problem-465.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-465.c:41:74: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   41 |     strcpy(dict[0].key, "k1"); strcpy(dict[0].value, "v1"); dict[0].next = &dict[1];
+      |                                                             ~~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   40 |     kv_t *dict = (kv_t *)malloc(4 * sizeof(kv_t));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |   41 |     strcpy(dict[0].key, "k1"); strcpy(dict[0].value, "v1"); dict[0].next = &dict[1];
+    |      |                                                             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                                                          |
+    |      |                                                                          (2) 'dict' could be NULL: unchecked value from (1)
+    |

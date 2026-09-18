@@ -1,0 +1,15 @@
+./collected_code_4/round1//heal_0//problem-444.c: In function 'main':
+./collected_code_4/round1//heal_0//problem-444.c:32:13: warning: dereference of possibly-NULL 't' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     t->size = 5;
+      |     ~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   31 |     Tuple* t = malloc(sizeof(Tuple) + sizeof(int) * 5);
+    |      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (1) this call could return NULL
+    |   32 |     t->size = 5;
+    |      |     ~~~~~~~~~~~ 
+    |      |             |
+    |      |             (2) 't' could be NULL: unchecked value from (1)
+    |

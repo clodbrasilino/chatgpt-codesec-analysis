@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    ITEM_INT,
+    ITEM_LIST
+} ItemType;
+
+typedef struct ListNode {
+    ItemType type;
+    union {
+        int value;
+        struct ListNode* list;
+    } data;
+    struct ListNode* next;
+} ListNode;
+
+void free_list(ListNode* node) {
+    while (node != NULL) {
+        ListNode* temp = node;
+        if (node->type == ITEM_LIST) {
+            free_list(node->data.list);
+        }
+        node = node->next;
+        free(temp);
+    }
+}
+
+ListNode* create_int_node(int value) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (!node) {
+        return NULL;
+    }
+    node->type = ITEM_INT;
+    node->data.value = value;
+    node->next = NULL;
+    return node;
+}
+
+ListNode* create_list_node(ListNode* list) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    if (!node) {
+        return NULL;
+    }
+    node->type = ITEM_LIST;
+    node->data.list = list;
+    node->next = NULL;
+    return node;
+}
+
+int flatten_helper(const ListNode* node, ListNode*** tail_link) {
+    while (node != NULL) {
+        if (node->type == ITEM_INT) {
+            ListNode* new_node = (ListNode*)malloc(sizeof(ListNode));
+            if (!new_node) {
+                return 0;
+            }
+            new_node->type = ITEM_INT;
+            new_node->data.value = node->data.value;
+            new_node->next = NULL;
+            **tail_link = new_node;
+            *tail_link = &new_node->next;
+        } else if (node->type == ITEM_LIST) {
+            if (!flatten_helper(node->data.list, tail_link)) {
+                return 0;
+            }
+        }
+        node = node->next;
+    }
+    return 1;
+}
+
+ListNode* flatten(const ListNode* head) {
+    ListNode* flat_head = NULL;
+    ListNode** tail_link = &flat_head;
+    if (!flatten_helper(head, &tail_link)) {
+        free_list(flat_head);
+        return NULL;
+    }
+    return flat_head;
+}
+
+void print_list(const ListNode* node) {
+    while (node != NULL) {
+        if (node->type == ITEM_INT) {
+            printf("%d ", node->data.value);
+        }
+        node = node->next;
+    }
+    printf("\n");
+}
+
+ListNode* build_test_list(void) {
+    ListNode* sub_list = create_int_node(2);
+    if (!sub_list) return NULL;
+    
+    sub_list->next = create_int_node(3);
+    if (!sub_list->next) {
+        free_list(sub_list);
+        return NULL;
+    }
+
+    ListNode* sub_list_2 = create_int_node(5);
+    if (!sub_list_2) {
+        free_list(sub_list);
+        return NULL;
+    }
+
+    ListNode* head = create_int_node(1);
+    if (!head) {
+        free_list(sub_list);
+        free_list(sub_list_2);
+        return NULL;
+    }
+
+    head->next = create_list_node(sub_list);
+    if (!head->next) {
+        free_list(head);
+        free_list(sub_list);
+        free_list(sub_list_2);
+        return NULL;
+    }
+
+    head->next->next = create_int_node(4);
+    if (!head->next->next) {
+        free_list(head);
+        free_list(sub_list_2);
+        return NULL;
+    }
+
+    head->next->next->next = create_list_node(sub_list_2);
+    if (!head->next->next->next) {
+        free_list(head);
+        free_list(sub_list_2);
+        return NULL;
+    }
+
+    return head;
+}
+
+int main(void) {
+    ListNode* head = build_test_list();
+    if (!head) {
+        return EXIT_FAILURE;
+    }
+
+    ListNode* flat = flatten(head);
+    if (!flat) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    print_list(flat);
+
+    free_list(head);
+    free_list(flat);
+
+    return EXIT_SUCCESS;
+}
+```

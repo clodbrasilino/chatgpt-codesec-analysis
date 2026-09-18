@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct tuple {
+    int a;
+    int b;
+};
+
+int getMaxElement(struct tuple* tuples, int size) {
+    if (size == 0 || tuples == NULL) {
+        printf("Error: Invalid input\n");
+        exit(1);
+    }
+
+    int max = tuples[0].a > tuples[0].b ? tuples[0].a : tuples[0].b;
+    for(int i = 1; i < size; i++) {
+        if(tuples[i].a > max) {
+            max = tuples[i].a;
+        }
+        if(tuples[i].b > max) {
+            max = tuples[i].b;
+        }
+    }
+
+    return max;
+}
+
+int main() {
+    struct tuple tuples[] = {{5, 9}, {3, 10}, {12, 6}};
+    int size = sizeof(tuples) / sizeof(struct tuple);
+    
+    printf("The maximum element is %d\n", getMaxElement(tuples, size));
+    return 0;
+}
+```

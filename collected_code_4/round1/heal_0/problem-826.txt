@@ -1,0 +1,53 @@
+```C
+#include<stdio.h>
+
+enum TriangleType {
+    INVALID = 0,
+    EQUILATERAL = 1,
+    ISOSCELES = 2,
+    SCALENE = 3
+};
+
+enum TriangleType triangleType(double a, double b, double c){
+    if(a <= 0 || b <= 0 || c <= 0)
+        return INVALID;
+
+    if(a + b <= c || a + c <= b || b + c <= a)
+        return INVALID;
+
+    if(a == b && b == c)
+        return EQUILATERAL;
+
+    if(a == b || b == c || c == a)
+        return ISOSCELES;
+
+    return SCALENE;
+}
+
+int main(){
+    double a, b, c;
+
+    printf("Enter sides of triangle: ");
+    scanf("%lf %lf %lf", &a, &b, &c);
+
+    switch(triangleType(a, b, c)){
+        case INVALID:
+            printf("Input is not a valid triangle.\n");
+            break;
+        case EQUILATERAL:
+            printf("Triangle is equilateral.\n");
+            break;
+        case ISOSCELES:
+            printf("Triangle is isosceles.\n");
+            break;
+        case SCALENE:
+            printf("Triangle is scalene.\n");
+            break;
+        default:
+            printf("Error occurred.\n");
+            break;
+    }
+
+    return 0;
+}
+```

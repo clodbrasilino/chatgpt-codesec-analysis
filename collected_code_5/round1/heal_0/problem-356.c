@@ -1,0 +1,23 @@
+#include<stdio.h>
+
+float find_third_angle(float angle1, float angle2) {
+    float angle3 = 180 - (angle1 + angle2);
+    return angle3;
+}
+
+int main() {
+    float angle1, angle2, angle3;
+    printf("Enter first angle: ");
+    scanf("%f", &angle1);
+    printf("Enter second angle: ");
+    scanf("%f", &angle2);
+
+    if(angle1 + angle2 < 180) {
+        angle3 = find_third_angle(angle1, angle2);
+        printf("Third angle is: %.2f", angle3);
+    } else {
+        printf("Invalid angles. Sum of two angles should be less than 180.");
+    }
+
+    return 0;
+}

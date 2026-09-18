@@ -1,0 +1,58 @@
+```C
+#include <stdio.h>
+#include <stdint.h>
+
+typedef enum {
+    INT,
+    FLOAT,
+    DOUBLE
+} type_t;
+
+typedef struct {
+    type_t type;
+    union {
+        int i;
+        float f;
+        double d;
+    } value;
+} item_t;
+
+double get_value(item_t item) {
+    switch (item.type) {
+        case INT:
+            return item.value.i;
+        case FLOAT:
+            return item.value.f;
+        case DOUBLE:
+            return item.value.d;
+        default:
+            return 0;
+    }
+}
+
+double find_min(item_t *list, size_t len) {
+    double min = get_value(list[0]);
+
+    for (size_t i = 1; i < len; i++) {
+        double value = get_value(list[i]);
+
+        if (value < min) {
+            min = value;
+        }
+    }
+
+    return min;
+}
+
+int main() {
+    item_t list[5] = {
+        {INT, .value.i = 1},
+        {FLOAT, .value.f = 2.0f},
+        {DOUBLE, .value.d = 3.0},
+        {INT, .value.i = -4},
+        {FLOAT, .value.f = -5.0f},
+    };
+    printf("Min value: %f\n", find_min(list, 5));
+    return 0;
+}
+```

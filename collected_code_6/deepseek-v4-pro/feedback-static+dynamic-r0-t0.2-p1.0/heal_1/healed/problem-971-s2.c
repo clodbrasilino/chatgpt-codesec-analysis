@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxSegments(int n, int a, int b, int c) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    int *dp = malloc((n + 1) * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = INT_MIN;
+    }
+    
+    dp[0] = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        if (i >= a && dp[i - a] != INT_MIN) {
+            dp[i] = dp[i - a] + 1;
+        }
+        if (i >= b && dp[i - b] != INT_MIN && dp[i - b] + 1 > dp[i]) {
+            dp[i] = dp[i - b] + 1;
+        }
+        if (i >= c && dp[i - c] != INT_MIN && dp[i - c] + 1 > dp[i]) {
+            dp[i] = dp[i - c] + 1;
+        }
+    }
+    
+    int result = dp[n] == INT_MIN ? -1 : dp[n];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int n, a, b, c;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    printf("Enter a, b, c: ");
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = maxSegments(n, a, b, c);
+    
+    if (result == -1) {
+        printf("Cannot form segments\n");
+    } else {
+        printf("Maximum segments: %d\n", result);
+    }
+    
+    return 0;
+}

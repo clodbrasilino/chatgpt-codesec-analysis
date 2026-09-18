@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+
+void findSubstringOccurence(char *str, char *subStr) {
+    int i, j, firstOccur;
+    int len, subLen;
+    int found = 0;
+
+    len = strlen(str);
+    subLen = strlen(subStr);
+
+    for(i = 0; i <= len - subLen; i++) {
+        firstOccur = i;
+
+        for(j = 0; j < subLen; j++) {
+            if(str[i + j] != subStr[j])
+            break;
+        }
+        if(j == subLen) {
+            printf("'%s' found at index: %d \n", subStr, firstOccur);
+            found = 1;
+        }
+    }
+    if(!found)
+    printf("'%s' not found in '%s' \n", subStr, str);
+}
+
+int main() {
+    char str[100];
+    char subStr[100];
+
+    printf("Enter a string: ");
+    if(fgets(str, sizeof(str), stdin) != NULL) {
+        str[strcspn(str, "\n")] = 0;
+    }
+
+    printf("Enter a substring to find: ");
+    if(fgets(subStr, sizeof(subStr), stdin) != NULL) {
+        subStr[strcspn(subStr, "\n")] = 0;
+    }
+
+    findSubstringOccurence(str, subStr);
+
+    return 0;
+}

@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Sublist {
+    Node* head;
+    struct Sublist* next;
+} Sublist;
+
+int* get_last_elements(Sublist* sublists, int* count) {
+    if (!sublists || !count) {
+        if (count) *count = 0;
+        return NULL;
+    }
+
+    int num_sublists = 0;
+    Sublist* current_sublist = sublists;
+    while (current_sublist) {
+        num_sublists++;
+        current_sublist = current_sublist->next;
+    }
+
+    int* last_elements = (int*)malloc(num_sublists * sizeof(int));
+    if (!last_elements) {
+        *count = 0;
+        return NULL;
+    }
+
+    current_sublist = sublists;
+    int index = 0;
+    while (current_sublist) {
+        Node* current_node = current_sublist->head;
+        if (!current_node) {
+            free(last_elements);
+            *count = 0;
+            return NULL;
+        }
+        while (current_node->next) {
+            current_node = current_node->next;
+        }
+        last_elements[index++] = current_node->data;
+        current_sublist = current_sublist->next;
+    }
+
+    *count = num_sublists;
+    return last_elements;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return NULL;
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Sublist* create_sublist(Node* head) {
+    Sublist* new_sublist = (Sublist*)malloc(sizeof(Sublist));
+    if (!new_sublist) return NULL;
+    new_sublist->head = head;
+    new_sublist->next = NULL;
+    return new_sublist;
+}
+
+void free_sublists(Sublist* sublists) {
+    Sublist* current_sublist = sublists;
+    while (current_sublist) {
+        Node* current_node = current_sublist->head;
+        while (current_node) {
+            Node* temp_node = current_node;
+            current_node = current_node->next;
+            free(temp_node);
+        }
+        Sublist* temp_sublist = current_sublist;
+        current_sublist = current_sublist->next;
+        free(temp_sublist);
+    }
+}
+
+int main(void) {
+    Node* n1 = create_node(1);
+    Node* n2 = create_node(2);
+    Node* n3 = create_node(3);
+    if (n1 && n2 && n3) {
+        n1->next = n2;
+        n2->next = n3;
+    }
+
+    Node* n4 = create_node(4);
+    Node* n5 = create_node(5);
+    if (n4 && n5) {
+        n4->next = n5;
+    }
+
+    Sublist* s1 = create_sublist(n1);
+    Sublist* s2 = create_sublist(n4);
+    if (s1 && s2) {
+        s1->next = s2;
+    }
+
+    int count = 0;
+    int* last_elements = get_last_elements(s1, &count);
+
+    if (last_elements) {
+        for (int i = 0; i < count; i++) {
+            printf("%d\n", last_elements[i]);
+        }
+        free(last_elements);
+    }
+
+    free_sublists(s1);
+
+    return 0;
+}

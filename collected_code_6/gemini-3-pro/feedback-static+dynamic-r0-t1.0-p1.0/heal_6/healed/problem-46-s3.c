@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool are_all_distinct(const int *arr, size_t size) {
+    if (arr == NULL) {
+        return false;
+    }
+
+    if (size <= 1) {
+        return true;
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int numbers1[] = {1, 2, 3, 4, 5};
+    size_t size1 = sizeof(numbers1) / sizeof(numbers1[0]);
+
+    int numbers2[] = {1, 2, 3, 4, 2};
+    size_t size2 = sizeof(numbers2) / sizeof(numbers2[0]);
+
+    if (are_all_distinct(numbers1, size1)) {
+        printf("Array 1: All elements are distinct.\n");
+    } else {
+        printf("Array 1: Elements are not all distinct.\n");
+    }
+
+    if (are_all_distinct(numbers2, size2)) {
+        printf("Array 2: All elements are distinct.\n");
+    } else {
+        printf("Array 2: Elements are not all distinct.\n");
+    }
+
+    if (are_all_distinct(NULL, 0)) {
+        printf("Array 3: All elements are distinct.\n");
+    } else {
+        printf("Array 3: Elements are not all distinct (or invalid input).\n");
+    }
+
+    return 0;
+}

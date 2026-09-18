@@ -1,0 +1,21 @@
+./collected_code_4/round1//heal_0//problem-149.c: In function 'longestSubsequence':
+./collected_code_4/round1//heal_0//problem-149.c:30:20: warning: dereference of possibly-NULL 'subsequence' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     subsequence[i] = arr[start++];
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'longestSubsequence': events 1-4
+    |
+    |   27 |   int* subsequence = (int*) malloc(sizeof(int) * maxLength);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   28 | 
+    |   29 |   for(int i = 0; i<maxLength; i++)
+    |      |                  ~~~~~~~~~~~ 
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < maxLength')...
+    |   30 |     subsequence[i] = arr[start++];
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |          |
+    |      |                    |          (3) ...to here
+    |      |                    (4) 'subsequence + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

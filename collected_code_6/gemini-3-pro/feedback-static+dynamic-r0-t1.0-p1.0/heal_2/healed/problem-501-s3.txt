@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long findGCD(long long a, long long b) {
+    unsigned long long ua = a < 0 ? -(unsigned long long)a : (unsigned long long)a;
+    unsigned long long ub = b < 0 ? -(unsigned long long)b : (unsigned long long)b;
+    
+    while (ub != 0) {
+        unsigned long long temp = ub;
+        ub = ua % ub;
+        ua = temp;
+    }
+    
+    return ua;
+}
+
+int main(void) {
+    long long num1, num2;
+    unsigned long long gcd;
+    int items_read;
+
+    items_read = scanf("%lld %lld", &num1, &num2);
+    
+    if (items_read != 2) {
+        fprintf(stderr, "Error: Invalid input. Please enter two integers.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num1 == 0 && num2 == 0) {
+        fprintf(stderr, "Error: GCD of 0 and 0 is undefined.\n");
+        return EXIT_FAILURE;
+    }
+
+    gcd = findGCD(num1, num2);
+    
+    printf("%llu\n", gcd);
+
+    return EXIT_SUCCESS;
+}
+```

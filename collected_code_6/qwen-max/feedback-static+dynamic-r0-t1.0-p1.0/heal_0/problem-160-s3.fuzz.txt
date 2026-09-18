@@ -1,0 +1,7 @@
+problem-160-s3.c:29:15:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000002,time:619,execs:234,op:havoc,rep:8)
+problem-160-s3.c:43:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000002,time:619,execs:234,op:havoc,rep:8)
+problem-160-s3.c:56:12:medium:UBSan: signed integer overflow: 2146666453 + 4444444 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000002,time:9752,execs:3207,op:havoc,rep:8)
+problem-160-s3.c:60:13:medium:UBSan: signed integer overflow: 19744693 * 1199547824 cannot be represented in type 'int' (AFL crash: id:000003,sig:06,src:000002,time:10998,execs:3608,op:havoc,rep:6)
+problem-160-s3.c:60:13:medium:UBSan: signed integer overflow: -198471 * 1199547824 cannot be represented in type 'int' (AFL crash: id:000004,sig:06,src:000002,time:29337,execs:9599,op:havoc,rep:8)
+problem-160-s3.c:61:13:medium:UBSan: signed integer overflow: 1721 * 1014428410 cannot be represented in type 'int' (AFL crash: id:000005,sig:06,src:000018,time:49273,execs:16073,op:havoc,rep:8)
+problem-160-s3.c:65:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:278,execs:109,op:havoc,rep:4; likely memory-safety defect

@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int binaryToInteger(char *binaryTuple) {
+    int len = strlen(binaryTuple);
+    int integer = 0;
+
+    if (len == 0) {
+        printf("Input tuple is empty");
+        return -1;
+    }
+
+    for (int i = 0; i < len; ++i) {
+
+        if (binaryTuple[i] == '1') {
+            integer = integer * 2 + 1;
+        } else if (binaryTuple[i] == '0') {
+            integer *= 2;
+        } else {
+            printf("Input is not a binary tuple");
+            return -1;
+        }
+    }
+    return integer;
+}
+
+int main() {
+    char binaryTuple[] = "1101";
+    int integer = binaryToInteger(binaryTuple);
+
+    if(integer != -1){
+       printf("Integer is %d\n",integer);
+    }
+    return 0;
+}
+```

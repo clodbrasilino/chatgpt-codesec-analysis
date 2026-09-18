@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int process_single_list(int **list, size_t *size, int val1, int val2) {
+    if (list == NULL || *list == NULL || size == NULL) {
+        return -1;
+    }
+
+    size_t orig_size = *size;
+    if (orig_size == 0) {
+        return 0;
+    }
+
+    int *temp = malloc(orig_size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    size_t new_size = 0;
+    int seen1 = 0;
+    int seen2 = 0;
+
+    for (size_t i = 0; i < orig_size; i++) {
+        int current = (*list)[i];
+        int add = 1;
+
+        if (current == val1) {
+            if (seen1) {
+                add = 0;
+            }
+            seen1 = 1;
+        } else if (current == val2) {
+            if (seen2) {
+                add = 0;
+            }
+            seen2 = 1;
+        }
+
+        if (add) {
+            temp[new_size++] = current;
+        }
+    }
+
+    if (new_size == 0) {
+        free(*list);
+        free(temp);
+        *list = NULL;
+        *size = 0;
+        return 0;
+    }
+
+    int *resized = realloc(temp, new_size * sizeof(int));
+    if (resized == NULL) {
+        free(temp);
+        return -1;
+    }
+
+    free(*list);
+    *list = resized;
+    *size = new_size;
+
+    return 0;
+}
+
+int remove_two_duplicates_from_lists(int **lists, size_t *sizes, size_t num_lists, int val1, int val2) {
+    if (lists == NULL || sizes == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        if (process_single_list(&lists[i], &sizes[i], val1, val2) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    size_t num_lists = 2;
+    
+    int **lists = malloc(num_lists * sizeof(int *));
+    if (lists == NULL) {
+        return 1;
+    }
+
+    size_t *sizes = malloc(num_lists * sizeof(size_t));
+    if (sizes == NULL) {
+        free(lists);
+        return 1;
+    }
+
+    sizes[0] = 6;
+    lists[0] = malloc(sizes[0] * sizeof(int));
+    if (lists[0] == NULL) {
+        free(sizes);
+        free(lists);
+        return 1;
+    }
+
+    int data0[] = {1, 2, 2, 3, 4, 4};
+    for (size_t i = 0; i < sizes[0]; i++) {
+        lists[0][i] = data0[i];
+    }
+
+    sizes[1] = 5;
+    lists[1] = malloc(sizes[1] * sizeof(int));
+    if (lists[1] == NULL) {
+        free(lists[0]);
+        free(sizes);
+        free(lists);
+        return 1;
+    }
+
+    int data1[] = {4, 5, 4, 2, 2};
+    for (size_t i = 0; i < sizes[1]; i++) {
+        lists[1][i] = data1[i];
+    }
+
+    int status = remove_two_duplicates_from_lists(lists, sizes, num_lists, 2, 4);
+
+    if (status == 0) {
+        for (size_t i = 0; i < num_lists; i++) {
+            for (size_t j = 0; j < sizes[i]; j++) {
+                printf("%d ", lists[i][j]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL) {
+            free(lists[i]);
+        }
+    }
+    
+    free(sizes);
+    free(lists);
+
+    return status == 0 ? 0 : 1;
+}
+```

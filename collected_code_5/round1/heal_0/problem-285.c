@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int match(const char *text) {
+    size_t len = strlen(text);
+    for (size_t i = 0; i < len - 2; i++) {
+        if (text[i] == 'a' && text[i + 1] == 'b' && text[i + 2] == 'b') {
+            return 1;
+        }
+    }
+
+    if(len > 2) {
+        if (text[len - 3] == 'a' && text[len - 2] == 'b' && text[len - 1] == 'b') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char text1[] = "abc";
+    char text2[] = "abb";
+    char text3[] = "abbb";
+
+    printf("%d\n", match(text1));
+    printf("%d\n", match(text2));
+    printf("%d\n", match(text3));
+
+    return 0;
+}

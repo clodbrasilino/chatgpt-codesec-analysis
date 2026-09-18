@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+int countUnsetBits(int n) {
+    int totalBits = 0;
+    for (int i = 1; i <= n; i++) {
+        int num = i;
+        while (num) {
+            totalBits += (num & 1) ^ 1;
+            num >>= 1;
+        }
+    }
+    return totalBits;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    
+    if(n < 0) {
+        printf("Invalid input. Number must be non-negative.");
+        return -1;
+    }
+    
+    int total = countUnsetBits(n);
+    printf("Total unset bits from 1 to %d is: %d\n", n, total);
+    return 0;
+}
+```

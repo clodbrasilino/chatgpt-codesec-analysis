@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NUMBERS 100
+
+void filter_odd(int* numbers, int size, int* result, int* res_size) {
+    int i, j = 0;
+    for(i = 0; i < size; i++) {
+        if(numbers[i] % 2 == 0) {
+            result[j] = numbers[i];
+            j++;
+        }
+    }
+    *res_size = j;
+}
+
+int main() {
+    int numbers[MAX_NUMBERS]; 
+    int result[MAX_NUMBERS];  
+    int size = 0;
+    int res_size;
+    int num;
+
+    printf("Enter numbers (0 to finish): ");
+    while (scanf("%d", &num) && num != 0 && size < MAX_NUMBERS) {
+        numbers[size] = num;
+        size++;
+    }
+
+    filter_odd(numbers, size, result, &res_size);
+
+    printf("Even numbers: ");
+    for(int i = 0; i < res_size; i++) {
+        printf("%d ", result[i]);
+    }
+
+    return 0;
+}

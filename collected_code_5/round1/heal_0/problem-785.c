@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int* tupleStringToInt(char* str, int* size) {
+    int len = strlen(str), i = 0, j = 0, count = 0;
+    for(i=0; i<len; i++)
+        if(str[i] == ',') 
+            count++;
+    int* arr = calloc(count + 1, sizeof(int));
+    if(!arr) 
+        return NULL;
+    char* token = strtok(str, "(),");
+    while(token != NULL) {
+        arr[j] = atoi(token);
+        token = strtok(NULL, "(),");
+        j++;
+    }
+    *size = count + 1;
+    return arr;
+}
+
+int main() {
+    char str[] = "(1,2,3,4,5)";
+    int size = 0;
+    int* arr = tupleStringToInt(str,&size);
+    if(arr) {
+        int i;
+        for(i=0; i<size; i++)
+            printf("%d ",arr[i]);
+        free(arr);
+    } else {
+        printf("Memory allocation faild");
+        return -1;
+    }
+    return 0;
+}

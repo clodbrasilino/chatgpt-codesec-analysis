@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxPairSum(int *arr, int size, int k){
+    int i, j, maxSum = 0, sum;
+
+    for(i = 0; i < size; i++) {
+        for(j = i+1; j < size; j++) {
+            sum = arr[i] + arr[j];
+            if(sum < k && sum > maxSum){
+                maxSum = sum;
+            }
+        }
+    }
+
+    return maxSum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 7;
+
+    int result = maxPairSum(arr, size, k);
+    printf("Max Pair Sum: %d", result);
+  
+    return 0;
+}
+```
+In the code above, a function named `maxPairSum` is implemented, which gets the maximum sum of disjoint pairs from the array less than a given number `k`. Disjoint pairs mean pairs of numbers in the array that do not have indexes that overlap each other.
+
+This code works by looping over each pair of integers in the array, calculating their sum (`sum`), and comparing this sum with the maximum sum seen so far (`maxSum`). If the pair's sum is greater than `maxSum` and also less than `k`, then `maxSum` is updated to be this sum. The function returns `maxSum`, which is then printed in the main function.
+
+This logic ensures that we get the maximum possible sum of disjoint pairs that is also less than `k`. If no such pairs are found, the function will return 0.

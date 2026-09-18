@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+
+long long int sumOfCubes(int n) {
+    long long int sum = 0;
+    int i;
+
+    for (i = 2; i <= n * 2; i = i + 2) {
+        sum += i * i * i;
+    }
+
+    return sum;
+}
+
+int main() {
+    int n;
+    
+    printf("Enter a number:\n");
+    scanf("%d", &n);
+    
+    if(n < 0){
+        printf("Invalid input! Please enter a positive integer.\n");
+        return -1;
+    }
+    
+    printf("Cube sum of first %d even natural numbers is: %lld\n", n, sumOfCubes(n));
+    return 0;
+}
+```
+This code first checks if the given number is negative, and if it is, it will display an error message and exit the program. This prevents CWE-703: Improper Check or Handling of Exceptional Conditions. The function sumOfCubes correctly controls the resources (i.e., the variables) it uses, avoiding CWE-664: Improper Control of a Resource Through its Lifetime. The code is also written according to C coding conventions, thus avoiding CWE-710: Improper Adherence to Coding Standards.

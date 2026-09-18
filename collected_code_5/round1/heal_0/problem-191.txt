@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int isMonthHas30Days(const char* monthName) {
+    if(monthName == NULL) {
+        return -1;
+    }
+    
+    const char* month_30_days[] = {"April", "June", "September", "November", NULL};
+
+    int i = 0;
+    while(month_30_days[i] != NULL) {
+        if(strcmp(monthName, month_30_days[i]) == 0) {
+            return 1;
+        }
+        i++;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    char* month = "April";
+
+    int result = isMonthHas30Days(month);
+    
+    if(result == -1) {
+        printf("Error: invalid input.\n");
+        return 0;
+    }
+    
+    if(result == 1) {
+        printf("%s has 30 days.\n", month);
+    } else {
+        printf("%s does not have 30 days.\n", month);
+    }
+    return 0;
+}
+```

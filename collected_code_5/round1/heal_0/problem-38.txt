@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double findDivision(int* arr, int size) {
+    int i = 0;
+    int even = 0;
+    int odd = 0;
+
+    while(even == 0 && i < size) {
+        if(arr[i] % 2 == 0)
+            even = arr[i];
+        i++;
+    }
+    if(even == 0)
+        return -1;
+
+    while(odd == 0 && i < size) {
+        if(arr[i] % 2 != 0)
+            odd = arr[i];
+        i++;
+    }
+
+    if(odd == 0)
+        return -1;
+
+    return (double)even / odd;
+}
+
+int main() {
+    int arr[] = {5, 2, 6, 9, 11, 3};
+    int size = sizeof(arr)/sizeof(arr[0]);
+
+    double result = findDivision(arr, size);
+
+    if(result == -1){
+        printf("No even and odd numbers found\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %.2f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

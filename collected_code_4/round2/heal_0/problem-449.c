@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+bool isValidTriangle(Point a, Point b, Point c) {
+    if ((a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y)) == 0)
+        return false;
+    return true;
+}
+
+int main() {
+    Point a, b, c;
+    a.x = 1;
+    a.y = 2;
+    b.x = 2;
+    b.y = 4;
+    c.x = 3;
+    c.y = 6;
+
+    if(isValidTriangle(a, b, c))
+        printf("The given points can form a triangle\n");
+    else
+        printf("The given points cannot form a triangle\n");
+
+    return 0;
+}

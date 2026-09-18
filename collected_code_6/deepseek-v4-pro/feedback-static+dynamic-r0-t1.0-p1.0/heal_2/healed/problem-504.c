@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <limits.h>
+
+long long cube_sum_natural(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long ll_i = (long long)i;
+        long long cube = ll_i * ll_i * ll_i;
+        if (cube < 0 || sum > LLONG_MAX - cube) {
+            return -1;
+        }
+        sum += cube;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    long long result = cube_sum_natural(n);
+    if (result == -1) {
+        printf("Overflow detected.\n");
+        return 1;
+    }
+    printf("Cube sum of first %d natural numbers: %lld\n", n, result);
+    return 0;
+}

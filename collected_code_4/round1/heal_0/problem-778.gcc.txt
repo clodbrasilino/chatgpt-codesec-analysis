@@ -1,0 +1,1343 @@
+./collected_code_4/round1//heal_0//problem-778.c: In function 'newNode':
+./collected_code_4/round1//heal_0//problem-778.c:12:16: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     temp->data = data;
+      |     ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   49 | {
+    |   50 |     Node *head = newNode(1);
+    |      |                  ~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data)
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 | {
+           |   11 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |   12 |     temp->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) 'temp' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-778.c: In function 'packDuplicates':
+./collected_code_4/round1//heal_0//problem-778.c:31:18: warning: leak of 'node' [CWE-401] [-Wanalyzer-malloc-leak]
+   31 |             node = prev->next;
+      |             ~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   55 |     head->next->next->next->next->next = newNode(4);
+    |      |                                          ~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data)
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 | {
+           |   11 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |   12 |     temp->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) assuming 'temp' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   55 |     head->next->next->next->next->next = newNode(4);
+    |      |                                          ^~~~~~~~~~
+    |      |                                          |
+    |      |                                          (6) returning to 'main' from 'newNode'
+    |......
+    |   59 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~                       
+    |      |     |
+    |      |     (7) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 8
+           |
+           |   40 | void printList(Node *node)
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'printList'
+           |
+         'printList': events 9-10
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (9) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (10) ...to here
+           |
+         'printList': events 11-12
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (11) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (12) ...to here
+           |
+         'printList': events 13-14
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (13) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (14) ...to here
+           |
+         'printList': events 15-16
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (15) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (16) ...to here
+           |
+         'printList': events 17-18
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (17) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) ...to here
+           |
+         'printList': events 19-20
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (19) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) ...to here
+           |
+         'printList': events 21-22
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (21) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (22) ...to here
+           |
+         'printList': events 23-24
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (23) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   46 | }
+           |      | ~               
+           |      | |
+           |      | (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-26
+    |
+    |   59 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     head = packDuplicates(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (26) calling 'packDuplicates' from 'main'
+    |
+    +--> 'packDuplicates': event 27
+           |
+           |   17 | Node* packDuplicates(Node* head)
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (27) entry to 'packDuplicates'
+           |
+         'packDuplicates': event 28
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (28) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 29
+           |
+           |cc1:
+           | (29): ...to here
+           |
+         'packDuplicates': events 30-35
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (31) ...to here
+           |      |                                  (30) following 'true' branch...
+           |      |                                  (32) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (33) ...to here
+           |      |           (34) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (35) ...to here
+           |
+         'packDuplicates': event 36
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (36) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 37
+           |
+           |cc1:
+           | (37): ...to here
+           |
+         'packDuplicates': events 38-43
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (39) ...to here
+           |      |                                  (38) following 'true' branch...
+           |      |                                  (40) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (41) ...to here
+           |      |           (42) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (43) ...to here
+           |
+         'packDuplicates': event 44
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (44) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 45
+           |
+           |cc1:
+           | (45): ...to here
+           |
+         'packDuplicates': events 46-51
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (47) ...to here
+           |      |                                  (46) following 'true' branch...
+           |      |                                  (48) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (49) ...to here
+           |      |           (50) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (51) ...to here
+           |
+         'packDuplicates': event 52
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (52) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 53
+           |
+           |cc1:
+           | (53): ...to here
+           |
+         'packDuplicates': events 54-59
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (55) ...to here
+           |      |                                  (54) following 'true' branch...
+           |      |                                  (56) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (57) ...to here
+           |      |           (58) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (59) ...to here
+           |
+         'packDuplicates': event 60
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (60) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 61
+           |
+           |cc1:
+           | (61): ...to here
+           |
+         'packDuplicates': events 62-65
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (62) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (63) ...to here
+           |      |           (64) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (65) ...to here
+           |
+         'packDuplicates': events 66-68
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (66) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   31 |             node = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (68) 'node' leaks here; was allocated at (4)
+           |......
+           |   37 |     return dummy->next;
+           |      |            ~~~~~~~~~~~
+           |      |                 |
+           |      |                 (67) ...to here
+           |
+./collected_code_4/round1//heal_0//problem-778.c:34:18: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |             node = node->next;
+      |             ~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     head->next->next->next = newNode(3);
+    |      |                              ~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data)
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 | {
+           |   11 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |   12 |     temp->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) assuming 'temp' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   53 |     head->next->next->next = newNode(3);
+    |      |                              ^~~~~~~~~~
+    |      |                              |
+    |      |                              (6) returning to 'main' from 'newNode'
+    |......
+    |   59 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~           
+    |      |     |
+    |      |     (7) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 8
+           |
+           |   40 | void printList(Node *node)
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'printList'
+           |
+         'printList': events 9-10
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (9) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (10) ...to here
+           |
+         'printList': events 11-12
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (11) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (12) ...to here
+           |
+         'printList': events 13-14
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (13) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (14) ...to here
+           |
+         'printList': events 15-16
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (15) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (16) ...to here
+           |
+         'printList': events 17-18
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (17) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) ...to here
+           |
+         'printList': events 19-20
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (19) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) ...to here
+           |
+         'printList': events 21-22
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (21) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (22) ...to here
+           |
+         'printList': events 23-24
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (23) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   46 | }
+           |      | ~               
+           |      | |
+           |      | (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-26
+    |
+    |   59 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     head = packDuplicates(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (26) calling 'packDuplicates' from 'main'
+    |
+    +--> 'packDuplicates': event 27
+           |
+           |   17 | Node* packDuplicates(Node* head)
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (27) entry to 'packDuplicates'
+           |
+         'packDuplicates': event 28
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (28) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 29
+           |
+           |cc1:
+           | (29): ...to here
+           |
+         'packDuplicates': events 30-35
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (31) ...to here
+           |      |                                  (30) following 'true' branch...
+           |      |                                  (32) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (33) ...to here
+           |      |           (34) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (35) ...to here
+           |
+         'packDuplicates': event 36
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (36) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 37
+           |
+           |cc1:
+           | (37): ...to here
+           |
+         'packDuplicates': events 38-43
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (39) ...to here
+           |      |                                  (38) following 'true' branch...
+           |      |                                  (40) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (41) ...to here
+           |      |           (42) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (43) ...to here
+           |
+         'packDuplicates': event 44
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (44) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 45
+           |
+           |cc1:
+           | (45): ...to here
+           |
+         'packDuplicates': events 46-51
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (47) ...to here
+           |      |                                  (46) following 'true' branch...
+           |      |                                  (48) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (49) ...to here
+           |      |           (50) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (51) ...to here
+           |
+         'packDuplicates': event 52
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (52) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 53
+           |
+           |cc1:
+           | (53): ...to here
+           |
+         'packDuplicates': events 54-59
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (55) ...to here
+           |      |                                  (54) following 'true' branch...
+           |      |                                  (56) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (57) ...to here
+           |      |           (58) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (59) ...to here
+           |
+         'packDuplicates': event 60
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (60) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 61
+           |
+           |cc1:
+           | (61): ...to here
+           |
+         'packDuplicates': events 62-66
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (62) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (63) ...to here
+           |      |           (64) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (65) ...to here
+           |   34 |             node = node->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (66) '<unknown>' leaks here; was allocated at (4)
+           |
+./collected_code_4/round1//heal_0//problem-778.c:34:18: warning: leak of 'node' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |             node = node->next;
+      |             ~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   52 |     head->next->next = newNode(3);
+    |      |                        ~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | Node* newNode(int data)
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'newNode'
+           |   10 | {
+           |   11 |     Node* temp = (Node*)malloc(sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) allocated here
+           |   12 |     temp->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) assuming 'temp' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   52 |     head->next->next = newNode(3);
+    |      |                        ^~~~~~~~~~
+    |      |                        |
+    |      |                        (6) returning to 'main' from 'newNode'
+    |......
+    |   59 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~     
+    |      |     |
+    |      |     (7) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 8
+           |
+           |   40 | void printList(Node *node)
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'printList'
+           |
+         'printList': events 9-10
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (9) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (10) ...to here
+           |
+         'printList': events 11-12
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (11) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (12) ...to here
+           |
+         'printList': events 13-14
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (13) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (14) ...to here
+           |
+         'printList': events 15-16
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (15) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (16) ...to here
+           |
+         'printList': events 17-18
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (17) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) ...to here
+           |
+         'printList': events 19-20
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (19) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (20) ...to here
+           |
+         'printList': events 21-22
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (21) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (22) ...to here
+           |
+         'printList': events 23-24
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (23) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   46 | }
+           |      | ~               
+           |      | |
+           |      | (24) ...to here
+           |
+    <------+
+    |
+  'main': events 25-26
+    |
+    |   59 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     head = packDuplicates(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (26) calling 'packDuplicates' from 'main'
+    |
+    +--> 'packDuplicates': event 27
+           |
+           |   17 | Node* packDuplicates(Node* head)
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (27) entry to 'packDuplicates'
+           |
+         'packDuplicates': event 28
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (28) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 29
+           |
+           |cc1:
+           | (29): ...to here
+           |
+         'packDuplicates': events 30-35
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (31) ...to here
+           |      |                                  (30) following 'true' branch...
+           |      |                                  (32) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (33) ...to here
+           |      |           (34) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (35) ...to here
+           |
+         'packDuplicates': event 36
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (36) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 37
+           |
+           |cc1:
+           | (37): ...to here
+           |
+         'packDuplicates': events 38-43
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (39) ...to here
+           |      |                                  (38) following 'true' branch...
+           |      |                                  (40) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (41) ...to here
+           |      |           (42) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (43) ...to here
+           |
+         'packDuplicates': event 44
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (44) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 45
+           |
+           |cc1:
+           | (45): ...to here
+           |
+         'packDuplicates': events 46-51
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (47) ...to here
+           |      |                                  (46) following 'true' branch...
+           |      |                                  (48) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (49) ...to here
+           |      |           (50) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (51) ...to here
+           |
+         'packDuplicates': event 52
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (52) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 53
+           |
+           |cc1:
+           | (53): ...to here
+           |
+         'packDuplicates': events 54-59
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (55) ...to here
+           |      |                                  (54) following 'true' branch...
+           |      |                                  (56) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (57) ...to here
+           |      |           (58) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (59) ...to here
+           |
+         'packDuplicates': event 60
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (60) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 61
+           |
+           |cc1:
+           | (61): ...to here
+           |
+         'packDuplicates': events 62-66
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (62) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (63) ...to here
+           |      |           (64) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (65) ...to here
+           |   34 |             node = node->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (66) 'node' leaks here; was allocated at (4)
+           |
+./collected_code_4/round1//heal_0//problem-778.c:37:17: warning: leak of 'dummy' [CWE-401] [-Wanalyzer-malloc-leak]
+   37 |     return dummy->next;
+      |            ~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main()
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   59 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 3
+           |
+           |   40 | void printList(Node *node)
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'printList'
+           |
+         'printList': events 4-5
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (4) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (5) ...to here
+           |
+         'printList': events 6-7
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (6) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (7) ...to here
+           |
+         'printList': events 8-9
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (8) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |
+         'printList': events 10-11
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (10) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (11) ...to here
+           |
+         'printList': events 12-13
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (12) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (13) ...to here
+           |
+         'printList': events 14-15
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (14) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (15) ...to here
+           |
+         'printList': events 16-17
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (16) following 'true' branch (when 'node' is non-NULL)...
+           |   43 |         printf("%d ", node->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (17) ...to here
+           |
+         'printList': events 18-19
+           |
+           |   42 |     while(node != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (18) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   46 | }
+           |      | ~               
+           |      | |
+           |      | (19) ...to here
+           |
+    <------+
+    |
+  'main': events 20-21
+    |
+    |   59 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) returning to 'main' from 'printList'
+    |   60 | 
+    |   61 |     head = packDuplicates(head);
+    |      |            ~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (21) calling 'packDuplicates' from 'main'
+    |
+    +--> 'packDuplicates': events 22-23
+           |
+           |   17 | Node* packDuplicates(Node* head)
+           |      |       ^~~~~~~~~~~~~~
+           |      |       |
+           |      |       (22) entry to 'packDuplicates'
+           |   18 | {
+           |   19 |     Node *dummy = newNode(0);
+           |      |                   ~~~~~~~~~~
+           |      |                   |
+           |      |                   (23) calling 'newNode' from 'packDuplicates'
+           |
+           +--> 'newNode': events 24-26
+                  |
+                  |    9 | Node* newNode(int data)
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'newNode'
+                  |   10 | {
+                  |   11 |     Node* temp = (Node*)malloc(sizeof(Node));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (25) allocated here
+                  |   12 |     temp->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (26) assuming 'temp' is non-NULL
+                  |
+           <------+
+           |
+         'packDuplicates': event 27
+           |
+           |   19 |     Node *dummy = newNode(0);
+           |      |                   ^~~~~~~~~~
+           |      |                   |
+           |      |                   (27) returning to 'packDuplicates' from 'newNode'
+           |
+         'packDuplicates': event 28
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (28) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 29
+           |
+           |cc1:
+           | (29): ...to here
+           |
+         'packDuplicates': events 30-35
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (31) ...to here
+           |      |                                  (30) following 'true' branch...
+           |      |                                  (32) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (33) ...to here
+           |      |           (34) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (35) ...to here
+           |
+         'packDuplicates': event 36
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (36) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 37
+           |
+           |cc1:
+           | (37): ...to here
+           |
+         'packDuplicates': events 38-43
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (39) ...to here
+           |      |                                  (38) following 'true' branch...
+           |      |                                  (40) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (41) ...to here
+           |      |           (42) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (43) ...to here
+           |
+         'packDuplicates': event 44
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (44) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 45
+           |
+           |cc1:
+           | (45): ...to here
+           |
+         'packDuplicates': events 46-51
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (47) ...to here
+           |      |                                  (46) following 'true' branch...
+           |      |                                  (48) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (49) ...to here
+           |      |           (50) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (51) ...to here
+           |
+         'packDuplicates': event 52
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (52) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 53
+           |
+           |cc1:
+           | (53): ...to here
+           |
+         'packDuplicates': events 54-59
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |      |
+           |      |                                  |      (55) ...to here
+           |      |                                  (54) following 'true' branch...
+           |      |                                  (56) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (57) ...to here
+           |      |           (58) following 'true' branch...
+           |   30 |             prev->next = node->next;
+           |      |                          ~~~~~~~~~~
+           |      |                              |
+           |      |                              (59) ...to here
+           |
+         'packDuplicates': event 60
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (60) following 'true' branch (when 'node' is non-NULL)...
+           |
+         'packDuplicates': event 61
+           |
+           |cc1:
+           | (61): ...to here
+           |
+         'packDuplicates': events 62-65
+           |
+           |   26 |         while(node->next != NULL && node->data == node->next->data){
+           |      |               ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (62) following 'false' branch...
+           |......
+           |   29 |         if(prev->next != node){
+           |      |           ~~~~~~~~~~~             
+           |      |           |    |
+           |      |           |    (63) ...to here
+           |      |           (64) following 'false' branch...
+           |......
+           |   33 |             prev = prev->next;
+           |      |             ~~~~~~~~~~~~~~~~~     
+           |      |                  |
+           |      |                  (65) ...to here
+           |
+         'packDuplicates': events 66-68
+           |
+           |   25 |     while(node != NULL){
+           |      |                ^
+           |      |                |
+           |      |                (66) following 'false' branch (when 'node' is NULL)...
+           |......
+           |   37 |     return dummy->next;
+           |      |            ~~~~~~~~~~~
+           |      |                 |
+           |      |                 (67) ...to here
+           |      |                 (68) 'dummy' leaks here; was allocated at (25)
+           |

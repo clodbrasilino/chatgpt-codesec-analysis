@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct Point {
+    int x;
+    int y;
+} Point;
+
+int isTriangleValid(Point a, Point b, Point c) {
+    double ab = sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+    double bc = sqrt(pow(c.x - b.x, 2) + pow(c.y - b.y, 2));
+    double ca = sqrt(pow(a.x - c.x, 2) + pow(a.y - c.y, 2));
+
+    if ((ab + bc > ca) && (bc + ca > ab) && (ca + ab > bc)) {
+        return 1;
+    } else {
+        return 0;
+    }    
+}
+
+int main() {
+    Point a = {0, 0};
+    Point b = {0, 3};
+    Point c = {4, 0};
+    
+
+    if(isTriangleValid(a, b, c)) {
+        printf("The given points form a valid triangle.");
+    } else {
+        printf("The given points do not form a valid triangle.");
+    }
+
+    return 0;
+}
+```

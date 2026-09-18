@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_prime(int n) {
+    if (n < 2) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int nth_nsw_prime(int n) {
+    if (n <= 0) return -1;
+    
+    int count = 0;
+    int k = 0;
+    
+    while (count < n) {
+        int candidate = 2 * k * k + 2 * k + 1;
+        if (is_prime(candidate)) {
+            count++;
+            if (count == n) {
+                return candidate;
+            }
+        }
+        k++;
+    }
+    
+    return -1;
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:3695,execs:1545,op:havoc,rep:2; likely memory-safety defect
+  */
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "n must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = nth_nsw_prime(n);
+    if (result == -1) {
+        fprintf(stderr, "Failed to find prime\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

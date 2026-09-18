@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_7/healed/problem-129-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_7/healed/problem-129-s3.c:54:15: warning: Either the condition 'j>=0' is redundant or the array 'square[10][10]' is accessed at index square[-1][-1], which is out of bounds. [negativeIndex]
+        square[i][j] = num++;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_7/healed/problem-129-s3.c:48:34: note: Assuming that condition 'j>=0' is not redundant
+        if (i >= 0 && i < n && j >= 0 && j < n && square[i][j] != 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_7/healed/problem-129-s3.c:54:15: note: Negative array index
+        square[i][j] = num++;
+              ^

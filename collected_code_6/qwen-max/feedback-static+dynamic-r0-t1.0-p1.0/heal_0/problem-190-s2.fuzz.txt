@@ -1,0 +1,4 @@
+problem-190-s2.c:7:18:medium:UBSan: signed integer overflow: 60192233 * 125803761 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:13,execs:16,op:(null),pos:0)
+problem-190-s2.c:7:18:medium:UBSan: signed integer overflow: 1139355592 * 125803761 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:26,execs:19,op:quick,pos:1)
+problem-190-s2.c:7:18:medium:UBSan: signed integer overflow: 1139355592 * 1199545584 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:36,execs:21,op:quick,pos:3)
+problem-190-s2.c:9:0:error:Fuzzing found a crash (signal 6) on input id:000003,sig:06,src:000001,time:538,execs:146,op:havoc,rep:1; likely memory-safety defect

@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
+}
+
+int findlcm(int arr[], int n) {
+    int lcm = arr[0];
+    for (int i = 1; i < n; i++)
+        lcm = (arr[i]*lcm) / gcd(arr[i], lcm);
+
+    return lcm;
+}
+
+int main() {
+    int arr[] = {2, 7, 3, 9, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("LCM of array elements: %d", findlcm(arr, n));
+
+    return 0;
+}

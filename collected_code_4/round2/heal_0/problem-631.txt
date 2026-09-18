@@ -1,0 +1,24 @@
+While C is a powerful and versatile programming language, it does not natively support regular expressions (regex) like some higher-level languages (e.g., Python, JavaScript, etc.).
+
+However, you could still achieve your target by manually iterating over each character in the string and replacing whitespaces or underscores accordingly. Here's an example function that does this:
+
+```c
+#include <string.h>
+
+void replace_chars(char* str) {
+    for(int i = 0; i < strlen(str); i++) {
+        if(str[i] == ' ') {
+            str[i] = '_';
+        } else if(str[i] == '_') {
+            str[i] = ' ';
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello_World this is_a_test";
+    replace_chars(str);
+    printf("%s", str);
+    return 0;
+}
+```

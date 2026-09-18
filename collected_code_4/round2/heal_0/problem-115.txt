@@ -1,0 +1,32 @@
+In C, there are no built-in data structures such as dictionaries or hashmaps unlike Python, Java etc. However, for the context, let's assume that dictionaries are arrays here, and an empty dictionary means this array doesn't contain any elements. Here's how you can check if all arrays in a list of arrays are empty.
+
+Notes:
+1. we're excluding error checkings for simplicity,
+2. C doesn't represent a list as a language-specific structure. So, we're creating a 2D array to represent a list of arrays (dictionaries).
+
+```c
+#include <stdbool.h>
+#include <stddef.h>
+
+bool areAllEmpty(int arr[][10], size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = 0; j < 10; j++) {
+            if (arr[i][j] != 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    int dictionaries[5][10] = {{0}, {0}, {0}, {0}, {0}};
+    if (areAllEmpty(dictionaries, 5)) {
+        printf("All dictionaries are empty\n");
+    } else {
+        printf("All dictionaries are not empty\n");
+    }
+    return 0;
+}
+```
+This piece of code declares a 2D array "dictionaries" of size 5x10. We're simulating dictionaries as arrays of length 10, and initializing them with all elements as 0 (which means they're all empty). Then, it calls the function areAllEmpty by passing the array and its size. The function areAllEmpty checks every element of every dictionary in the list and if it encounters any element which is not 0, then it returns false which means some dictionary is not empty. If the function can successfully check every dictionary without encountering a non-zero element, then it returns true which means all dictionaries are empty.

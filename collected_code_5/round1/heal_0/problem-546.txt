@@ -1,0 +1,40 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int find_last_occurrence(char* str, char ch) {
+    int lastIndex = -1;
+    int i;
+    
+    for(i = 0; str[i] != '\0'; i++) {
+        if(str[i] == ch)
+            lastIndex = i;
+    }
+    return lastIndex;
+}
+
+int main() {
+    char str[100];
+    char ch;
+    int index;
+    
+    printf("Enter a string: ");
+    fgets(str, 100, stdin);
+    str[strcspn(str, "\n")] = '\0'; 
+
+    printf("Enter character to find last occurrence: ");
+    scanf(" %c", &ch);
+    
+    index = find_last_occurrence(str, ch);
+
+    if(index == -1) {
+        printf("Character not found in the string.\n");
+    } else {
+        printf("Last occurrence of '%c' is at index %d.\n", ch, index);
+    }
+    
+    return 0;
+}
+```
+This C function will find and return the index of the last occurrence of a character in a string. If the character is not found in the string, it will return -1.
+The user is asked to input a string and a character. The program will then find the last occurrence of the character in the string and print its index. If the character is not found, the program will inform the user that the character was not found in the string.

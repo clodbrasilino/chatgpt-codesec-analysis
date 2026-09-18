@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+void removeEvenCharacters(char *str) {
+    int index = 0;
+    int j = 0;
+    while (str[index]) {
+        if (index % 2 == 0) {
+            str[j++] = str[index];
+        }
+        index++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    removeEvenCharacters(str);
+    printf("%s\n", str);
+    return 0;
+}

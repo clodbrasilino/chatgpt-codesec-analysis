@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+
+int longestConsecutiveSubsequence(int arr[], int size) {
+    int number, sequence;
+    int i, j;
+    number = 1;
+    sequence = 1;
+
+    for(i = 0; i < size - 1; i++) {
+        if (arr[i+1] == arr[i] + 1) {
+        number++;
+        if (number > sequence) sequence = number;
+        } else {
+        number = 1;
+        }
+    }
+    return sequence;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size = sizeof(arr) / sizeof(int);
+
+    int result = longestConsecutiveSubsequence(arr, size);
+    printf("%d\n", result);
+
+    return 0;
+}
+```
+To demonstrate safe programming is a concept that covers a vast area; it includes handling of exceptional conditions, proper control of resources, and adhering to coding standards. The given code does not violate these principles. This program determines the length of the longest sequence of consecutive integers in an array. The program safely iterates over the array without risk of out-of-bounds errors as it checks the size of array appropriately. Moreover, the program adheres to C standards, it has no memory leaks or other improper control of resources.
+
+Avoiding CWE-664: The life-cycle of all resources, which in this case is memory space for integer array and integers, are handled by system properly. There is no dynamic memory allocation, hence no room for memory leak.
+
+Avoiding CWE-703: There is no expectation of any exception as all operations handled are safe and free from exceptions.
+
+Avoiding CWE-710: The code is written in a structured manner, following the standard coding conventions and Syntax in C programming, hence complying with the coding standards.

@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+int find_occurrences(char* str, char* to_find) {
+    int count = 0;
+    char *ptr = str;
+    while ((ptr = strstr(ptr, to_find)) != NULL) {
+        count++;
+        ptr++;
+    }
+    return count;
+}
+
+int main() {
+    char str[] = "1. list item 1. list item 1. list item 2. list item 2. list item 2. list item";
+    char to_find[] = "std";
+    int count = find_occurrences(str, to_find);
+    printf("Occurrences of 'std': %d\n", count);
+    return 0;
+}

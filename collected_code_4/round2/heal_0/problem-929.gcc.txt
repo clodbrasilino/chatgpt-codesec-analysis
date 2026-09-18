@@ -1,0 +1,172 @@
+./collected_code_4/round2//heal_0/problem-929.c: In function 'findRepeatedItems':
+./collected_code_4/round2//heal_0/problem-929.c:27:35: warning: dereference of possibly-NULL 'items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |             items[itemCount].item = tuple[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'findRepeatedItems': events 1-5
+    |
+    |   18 | Item* findRepeatedItems(int* tuple, int size, int* resultSize) {
+    |      |       ^~~~~~~~~~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'findRepeatedItems'
+    |   19 |     Item* items = malloc(size * sizeof(Item));
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) this call could return NULL
+    |......
+    |   22 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < size')...
+    |   23 |         int index = itemExists(items, itemCount, tuple[i]);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |                                 |
+    |      |                     |                                 (4) ...to here
+    |      |                     (5) calling 'itemExists' from 'findRepeatedItems'
+    |
+    +--> 'itemExists': events 6-8
+           |
+           |    9 | int itemExists(Item* items, int size, int item) {
+           |      |     ^~~~~~~~~~
+           |      |     |
+           |      |     (6) entry to 'itemExists'
+           |   10 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (7) following 'false' branch (when 'i >= size')...
+           |......
+           |   15 |     return -1;
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'findRepeatedItems': events 9-12
+    |
+    |   23 |         int index = itemExists(items, itemCount, tuple[i]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (9) returning to 'findRepeatedItems' from 'itemExists'
+    |   24 |         if (index != -1) {
+    |      |            ~         
+    |      |            |
+    |      |            (10) following 'false' branch (when 'index == -1')...
+    |......
+    |   27 |             items[itemCount].item = tuple[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |      |
+    |      |                                   |      (11) ...to here
+    |      |                                   (12) 'items + (long unsigned int)itemCount * 8' could be NULL: unchecked value from (2)
+    |
+./collected_code_4/round2//heal_0/problem-929.c:35:12: warning: leak of 'items' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |     return items;
+      |            ^~~~~
+  'main': events 1-2
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   43 |     Item* repeatedItems = findRepeatedItems(tuple, tupleSize, &resultSize);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'findRepeatedItems' from 'main'
+    |
+    +--> 'findRepeatedItems': events 3-7
+           |
+           |   18 | Item* findRepeatedItems(int* tuple, int size, int* resultSize) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findRepeatedItems'
+           |   19 |     Item* items = malloc(size * sizeof(Item));
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) allocated here
+           |......
+           |   22 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < size')...
+           |   23 |         int index = itemExists(items, itemCount, tuple[i]);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                                 |
+           |      |                     |                                 (6) ...to here
+           |      |                     (7) calling 'itemExists' from 'findRepeatedItems'
+           |
+           +--> 'itemExists': events 8-10
+                  |
+                  |    9 | int itemExists(Item* items, int size, int item) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (8) entry to 'itemExists'
+                  |   10 |     for (int i = 0; i < size; i++) {
+                  |      |                     ~~~~~~~~
+                  |      |                       |
+                  |      |                       (9) following 'false' branch (when 'i >= size')...
+                  |......
+                  |   15 |     return -1;
+                  |      |            ~
+                  |      |            |
+                  |      |            (10) ...to here
+                  |
+           <------+
+           |
+         'findRepeatedItems': events 11-17
+           |
+           |   22 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (15) following 'true' branch (when 'i < size')...
+           |   23 |         int index = itemExists(items, itemCount, tuple[i]);
+           |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                                 |
+           |      |                     |                                 (16) ...to here
+           |      |                     (11) returning to 'findRepeatedItems' from 'itemExists'
+           |      |                     (17) calling 'itemExists' from 'findRepeatedItems'
+           |   24 |         if (index != -1) {
+           |      |            ~         
+           |      |            |
+           |      |            (12) following 'false' branch (when 'index == -1')...
+           |......
+           |   27 |             items[itemCount].item = tuple[i];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |      |
+           |      |                                   |      (13) ...to here
+           |      |                                   (14) assuming 'items' is non-NULL
+           |
+           +--> 'itemExists': events 18-22
+                  |
+                  |    9 | int itemExists(Item* items, int size, int item) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (18) entry to 'itemExists'
+                  |   10 |     for (int i = 0; i < size; i++) {
+                  |      |                     ~~~~~~~~  ~~~
+                  |      |                       |        |
+                  |      |                       |        (22) ...to here
+                  |      |                       (19) following 'true' branch (when 'i < size')...
+                  |   11 |         if (items[i].item == item) {
+                  |      |            ~     ~
+                  |      |            |     |
+                  |      |            |     (20) ...to here
+                  |      |            (21) following 'false' branch...
+                  |
+           <------+
+           |
+         'findRepeatedItems': events 23-25
+           |
+           |   23 |         int index = itemExists(items, itemCount, tuple[i]);
+           |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (23) returning to 'findRepeatedItems' from 'itemExists'
+           |......
+           |   34 |     items = realloc(items, itemCount * sizeof(Item));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (24) when 'realloc' fails
+           |   35 |     return items;
+           |      |            ~~~~~     
+           |      |            |
+           |      |            (25) 'items' leaks here; was allocated at (4)
+           |

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-36-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-36-s2.c:28:19: warning: Either the condition 'denominator<0' is redundant or there is division by zero at line 28. [zerodivcond]
+    u_num = u_num % u_den;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-36-s2.c:25:45: note: Assuming that condition 'denominator<0' is not redundant
+    uint64_t u_den = (uint64_t)(denominator < 0 ? -(int64_t)denominator : denominator);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-36-s2.c:25:22: note: Assignment 'u_den=(uint64_t)(denominator<0?-(int64_t)denominator:denominator)', assigned value is 0
+    uint64_t u_den = (uint64_t)(denominator < 0 ? -(int64_t)denominator : denominator);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-36-s2.c:28:19: note: Division by zero
+    u_num = u_num % u_den;
+                  ^

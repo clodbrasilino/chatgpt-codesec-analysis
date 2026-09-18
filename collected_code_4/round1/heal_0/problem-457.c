@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* newNode(int data) { 
+    Node* temp = (Node*) malloc(sizeof(Node)); 
+    temp -> data = data; 
+    temp -> next = NULL; 
+    return temp; 
+} 
+
+int findMinLength(Node *node) {
+    int count = 0;
+    Node *temp = node;
+    if (node == NULL) {
+        return 0;
+    }
+    while(temp != NULL) {
+        temp = temp->next;
+        ++count;
+    }
+    return count;
+}
+
+int main() {
+    Node* node = newNode(1);
+    node->next = newNode(2);
+    node->next->next = newNode(3);
+    node->next->next->next = newNode(4);
+    printf("Length of Minimum Sublist is %d\n", findMinLength(node));
+    free(node->next->next->next);
+    free(node->next->next);
+    free(node->next);
+    free(node);
+    return 0;
+}

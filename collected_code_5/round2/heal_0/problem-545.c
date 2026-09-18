@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int toggleBits(int num) {
+    int toggleFirstLast = (1 << ((sizeof(int) * 8) - 1)) | 1;
+    return num ^ toggleFirstLast;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    int result = toggleBits(num);
+    printf("Result: %d\n", result);
+    return 0;
+}

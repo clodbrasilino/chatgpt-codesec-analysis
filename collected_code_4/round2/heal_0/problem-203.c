@@ -1,0 +1,28 @@
+#include<stdio.h>
+
+int hammingDistance(int a, int b) {
+    int xorResult = a ^ b;
+    int distance = 0;
+    
+    while (xorResult) {
+        distance += xorResult & 1;
+        xorResult >>= 1;
+    }
+
+    return distance;
+}
+
+int main() {
+    int a, b;
+    
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &a, &b) != 2) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    
+    int distance = hammingDistance(a, b);
+    printf("Hamming distance: %d\n", distance);
+    
+    return 0;
+}

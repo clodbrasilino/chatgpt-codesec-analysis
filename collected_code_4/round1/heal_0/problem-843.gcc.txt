@@ -1,0 +1,323 @@
+./collected_code_4/round1//heal_0//problem-843.c: In function 'createMinHeap':
+./collected_code_4/round1//heal_0//problem-843.c:19:13: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     h->harr = (int*)malloc(sizeof(int) * size);
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   90 |     printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-4
+           |
+           |   55 | int nthSuperUglyNumber(int n, int primes[], int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   56 |     MinHeap* h = createMinHeap(n);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createMinHeap' from 'nthSuperUglyNumber'
+           |
+           +--> 'createMinHeap': events 5-7
+                  |
+                  |   17 | MinHeap* createMinHeap(int size) {
+                  |      |          ^~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createMinHeap'
+                  |   18 |     MinHeap* h = (MinHeap*)malloc(sizeof(MinHeap));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |   19 |     h->harr = (int*)malloc(sizeof(int) * size);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |             |
+                  |      |             (7) 'h' could be NULL: unchecked value from (6)
+                  |
+./collected_code_4/round1//heal_0//problem-843.c: In function 'minHeapify':
+./collected_code_4/round1//heal_0//problem-843.c:36:31: warning: use of uninitialized value '*_13 + _15' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if(r < h->count && h->harr[r] < h->harr[smallest])
+      |                        ~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   90 |     printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-4
+           |
+           |   55 | int nthSuperUglyNumber(int n, int primes[], int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   56 |     MinHeap* h = createMinHeap(n);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createMinHeap' from 'nthSuperUglyNumber'
+           |
+           +--> 'createMinHeap': events 5-6
+                  |
+                  |   17 | MinHeap* createMinHeap(int size) {
+                  |      |          ^~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createMinHeap'
+                  |   18 |     MinHeap* h = (MinHeap*)malloc(sizeof(MinHeap));
+                  |   19 |     h->harr = (int*)malloc(sizeof(int) * size);
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (6) region created on heap here
+                  |
+           <------+
+           |
+         'nthSuperUglyNumber': events 7-16
+           |
+           |   56 |     MinHeap* h = createMinHeap(n);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'nthSuperUglyNumber' from 'createMinHeap'
+           |......
+           |   62 |     for(int i = 0; i < k; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (8) following 'true' branch (when 'i < k')...
+           |      |                      (10) following 'true' branch (when 'i < k')...
+           |      |                      (12) following 'false' branch (when 'i >= k')...
+           |   63 |         idx[i] = val[i] = 0;
+           |      |                     ~
+           |      |                     |
+           |      |                     (9) ...to here
+           |      |                     (11) ...to here
+           |......
+           |   66 |     for(int count = 1; count < n; count++) {
+           |      |             ~~~~~      ~~~~~~~~~
+           |      |             |                |
+           |      |             (13) ...to here  (14) following 'true' branch (when 'count < n')...
+           |   67 |         int next = getMin(h);
+           |      |                    ~~~~~~~~~
+           |      |                    |
+           |      |                    (15) ...to here
+           |      |                    (16) calling 'getMin' from 'nthSuperUglyNumber'
+           |
+           +--> 'getMin': events 17-19
+                  |
+                  |   45 | int getMin(MinHeap* h) {
+                  |      |     ^~~~~~
+                  |      |     |
+                  |      |     (17) entry to 'getMin'
+                  |   46 |     if(h->count == 0) return -1;
+                  |      |       ~
+                  |      |       |
+                  |      |       (18) following 'false' branch...
+                  |   47 |     return h->harr[0];
+                  |      |            ~~~~~~~
+                  |      |             |
+                  |      |             (19) ...to here
+                  |
+           <------+
+           |
+         'nthSuperUglyNumber': events 20-33
+           |
+           |   67 |         int next = getMin(h);
+           |      |                    ^~~~~~~~~
+           |      |                    |
+           |      |                    (20) returning to 'nthSuperUglyNumber' from 'getMin'
+           |......
+           |   70 |         for(int i = 0; i < k; i++) {
+           |      |                        ~~~~~  ~~~
+           |      |                          |     |
+           |      |                          |     (24) ...to here
+           |      |                          (21) following 'true' branch (when 'i < k')...
+           |      |                          (25) following 'true' branch (when 'i < k')...
+           |      |                          (27) following 'true' branch (when 'i < k')...
+           |   71 |             if(val[i] == next) {
+           |      |               ~   ~ 
+           |      |               |   |
+           |      |               |   (22) ...to here
+           |      |               |   (26) ...to here
+           |      |               |   (28) ...to here
+           |      |               (23) following 'false' branch...
+           |      |               (29) following 'true' branch...
+           |   72 |                 val[i] = ugly[++idx[i]] * primes[i];
+           |      |                                    ~
+           |      |                                    |
+           |      |                                    (30) ...to here
+           |   73 |                 if(h->count < n) {
+           |      |                   ~ 
+           |      |                   |
+           |      |                   (31) following 'false' branch...
+           |......
+           |   77 |                     replaceMin(h, val[i]);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                |
+           |      |                     |                (32) ...to here
+           |      |                     (33) calling 'replaceMin' from 'nthSuperUglyNumber'
+           |
+           +--> 'replaceMin': events 34-35
+                  |
+                  |   50 | void replaceMin(MinHeap* h, int val) {
+                  |      |      ^~~~~~~~~~
+                  |      |      |
+                  |      |      (34) entry to 'replaceMin'
+                  |   51 |     h->harr[0] = val;
+                  |   52 |     minHeapify(h, 0);
+                  |      |     ~~~~~~~~~~~~~~~~
+                  |      |     |
+                  |      |     (35) calling 'minHeapify' from 'replaceMin'
+                  |
+                  +--> 'minHeapify': events 36-41
+                         |
+                         |   29 | void minHeapify(MinHeap* h, int idx) {
+                         |      |      ^~~~~~~~~~
+                         |      |      |
+                         |      |      (36) entry to 'minHeapify'
+                         |......
+                         |   34 |     if(l < h->count && h->harr[l] < h->harr[smallest])
+                         |      |       ~                ~~~~~~~
+                         |      |       |                 |
+                         |      |       |                 (38) ...to here
+                         |      |       (37) following 'true' branch...
+                         |   35 |         smallest = l;
+                         |   36 |     if(r < h->count && h->harr[r] < h->harr[smallest])
+                         |      |       ~                ~~~~~~~~~~
+                         |      |       |                 |     |
+                         |      |       |                 |     (41) use of uninitialized value '*_13 + _15' here
+                         |      |       |                 (40) ...to here
+                         |      |       (39) following 'true' branch...
+                         |
+./collected_code_4/round1//heal_0//problem-843.c: In function 'nthSuperUglyNumber':
+./collected_code_4/round1//heal_0//problem-843.c:57:16: warning: dereference of possibly-NULL '*h.harr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   57 |     h->harr[0] = 1;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   90 |     printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-4
+           |
+           |   55 | int nthSuperUglyNumber(int n, int primes[], int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   56 |     MinHeap* h = createMinHeap(n);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createMinHeap' from 'nthSuperUglyNumber'
+           |
+           +--> 'createMinHeap': events 5-6
+                  |
+                  |   17 | MinHeap* createMinHeap(int size) {
+                  |      |          ^~~~~~~~~~~~~
+                  |      |          |
+                  |      |          (5) entry to 'createMinHeap'
+                  |   18 |     MinHeap* h = (MinHeap*)malloc(sizeof(MinHeap));
+                  |   19 |     h->harr = (int*)malloc(sizeof(int) * size);
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (6) this call could return NULL
+                  |
+           <------+
+           |
+         'nthSuperUglyNumber': events 7-8
+           |
+           |   56 |     MinHeap* h = createMinHeap(n);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'nthSuperUglyNumber' from 'createMinHeap'
+           |   57 |     h->harr[0] = 1;
+           |      |     ~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (8) '*h.harr' could be NULL: unchecked value from (6)
+           |
+./collected_code_4/round1//heal_0//problem-843.c:63:16: warning: dereference of possibly-NULL 'idx' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   63 |         idx[i] = val[i] = 0;
+      |         ~~~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   90 |     printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-7
+           |
+           |   55 | int nthSuperUglyNumber(int n, int primes[], int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |......
+           |   60 |     int* idx = (int*)malloc(sizeof(int) * k);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) this call could return NULL
+           |   61 |     int* val = (int*)malloc(sizeof(int) * k);
+           |   62 |     for(int i = 0; i < k; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < k')...
+           |   63 |         idx[i] = val[i] = 0;
+           |      |         ~~~~~~~~~~~~~~~~~~~
+           |      |                |    |
+           |      |                |    (6) ...to here
+           |      |                (7) 'idx + (long unsigned int)i * 4' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-843.c:63:25: warning: dereference of possibly-NULL 'val' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   63 |         idx[i] = val[i] = 0;
+      |                  ~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   90 |     printf("Super ugly number is: %d\n", nthSuperUglyNumber(n, primes, k));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-7
+           |
+           |   55 | int nthSuperUglyNumber(int n, int primes[], int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |......
+           |   61 |     int* val = (int*)malloc(sizeof(int) * k);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) this call could return NULL
+           |   62 |     for(int i = 0; i < k; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i < k')...
+           |   63 |         idx[i] = val[i] = 0;
+           |      |                  ~~~~~~~~~~
+           |      |                     |   |
+           |      |                     |   (7) 'val + (long unsigned int)i * 4' could be NULL: unchecked value from (4)
+           |      |                     (6) ...to here
+           |

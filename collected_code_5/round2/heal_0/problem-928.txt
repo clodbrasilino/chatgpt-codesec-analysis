@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+char* convertDateFormat(char* date) {
+    static char newDate[11];
+    strncpy(newDate + 0, date + 8, 2);
+    strncpy(newDate + 2, date + 4, 4);
+    strncpy(newDate + 6, date + 0, 4);
+    newDate[10] = '\0';
+    return newDate;
+}
+
+int main() {
+    char date[] = "2022-09-11";
+    char* newDate = convertDateFormat(date);
+    printf("%s\n", newDate);
+    return 0;
+}
+```

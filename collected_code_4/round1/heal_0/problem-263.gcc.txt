@@ -1,0 +1,16 @@
+./collected_code_4/round1//heal_0//problem-263.c: In function 'make_node':
+./collected_code_4/round1//heal_0//problem-263.c:37:15: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |     node->key = (char *)malloc(strlen(key) + 1);
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'make_node': events 1-2
+    |
+    |   35 |     KeyValueNode* node = (KeyValueNode*)malloc(sizeof(KeyValueNode));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |   36 | 
+    |   37 |     node->key = (char *)malloc(strlen(key) + 1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) 'node' could be NULL: unchecked value from (1)
+    |

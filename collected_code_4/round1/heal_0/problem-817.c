@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+void divisibleByMOrN(int numbers[], int size, int m, int n) {
+    for(int i=0; i<size; i++) {
+        if(numbers[i] % m == 0 || numbers[i] % n == 0) 
+           printf("%d ", numbers[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int numbers[] = {10, 15, 20, 25, 30, 35, 40, 45, 50};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    divisibleByMOrN(numbers, size, 5, 10);
+    return 0;
+}

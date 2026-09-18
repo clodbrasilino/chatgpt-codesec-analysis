@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int count_bools(bool arr[], int size) {
+    int count = 0;
+    for(int i = 0; i < size; i++){
+        if(arr[i] == true) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    bool list[] = {true, false, true, false, true, false, true, true};
+    int size = sizeof(list) / sizeof(bool);
+
+    int trueCount = count_bools(list, size);
+
+    printf("The number of true booleans is: %d\n", trueCount);
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void sort_strings(char **strings, int n) {
+    int i, j;
+    char *temp;
+
+    for(i = 0; i < n-1; i++) {
+        for(j = 0; j < n-i-1; j++) {
+            if(atoi(strings[j]) > atoi(strings[j+1])) {
+                temp = strings[j];
+                strings[j] = strings[j+1];
+                strings[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int i, n;
+    char *strings[10];
+    n = 5;
+
+    strings[0] = "3";
+    strings[1] = "1";
+    strings[2] = "9";
+    strings[3] = "4";
+    strings[4] = "2";
+
+    printf("Before sorting the list is: \n");
+    for(i = 0; i < n; i++)
+        printf("%s ", strings[i]);
+
+    sort_strings(strings, n);
+
+    printf("\nAfter sorting the list is: \n");
+    for(i = 0 ; i < n; i++)
+        printf("%s ", strings[i]);   
+
+    return 0;
+}

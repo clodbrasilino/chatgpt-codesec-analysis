@@ -1,0 +1,35 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+int maxDifference(int arr[], int arr_size) {
+    if(arr_size < 2) {
+        return -1;
+    }
+    int max_diff = arr[1] - arr[0];
+    int min_element = arr[0];
+    int i;
+    for(i = 1; i < arr_size; i++) {
+        if (arr[i] - min_element > max_diff) {
+            max_diff = arr[i] - min_element;
+        }
+        if (arr[i] < min_element) {
+            min_element = arr[i];
+        }  
+    }
+    return max_diff;
+}
+
+int main() {
+    int arr[] = {8, 19, 3, 2, 7};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int max_diff = maxDifference(arr, size);
+    if(max_diff != -1) {
+        printf("Maximum difference is %d", max_diff);
+    } 
+    else {
+        printf("Invalid input. Array size should be greater than or equal to 2");
+    }
+    return 0;
+}
+```

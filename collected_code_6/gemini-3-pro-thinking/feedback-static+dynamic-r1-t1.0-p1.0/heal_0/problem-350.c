@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* minimize_string(const char* str) {
+    size_t len;
+    size_t counts[256] = {0};
+    size_t max_count = 0;
+    unsigned char max_char = 0;
+    char* result;
+    size_t j = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len; ++i) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; ++i) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            max_char = (unsigned char)i;
+        }
+    }
+
+    result = (char*)malloc(len - max_count + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; ++i) {
+        if ((unsigned char)str[i] != max_char) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* input = "abracadabra";
+    char* output = minimize_string(input);
+
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

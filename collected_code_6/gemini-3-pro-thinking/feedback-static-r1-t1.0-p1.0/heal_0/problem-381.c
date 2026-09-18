@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} InnerList;
+
+void sort_lists(InnerList *arr, size_t count, size_t index);
+int allocate_inner_list(InnerList *list, size_t size);
+void free_all(InnerList *lists, size_t initialized_count);
+
+void sort_lists(InnerList *arr, size_t count, size_t index) {
+    if (!arr || count <= 1) {
+        return;
+    }
+    
+    for (size_t i = 1; i < count; i++) {
+        InnerList key = arr[i];
+        size_t j = i;
+        
+        while (j > 0) {
+            int val_prev = (arr[j - 1].size > index) ? arr[j - 1].data[index] : INT_MIN;
+            int val_key = (key.size > index) ? key.data[index] : INT_MIN;
+            
+            if (val_prev > val_key) {
+                arr[j] = arr[j - 1];
+                j--;
+            } else {
+                break;
+            }
+        }
+        arr[j] = key;
+    }
+}
+
+int allocate_inner_list(InnerList *list, size_t size) {
+    if (!list) {
+        return -1;
+    }
+    if (size == 0) {
+        list->data = NULL;
+        list->size = 0;
+        return 0;
+    }
+    
+    list->data = (int *)malloc(size * sizeof(int));
+    if (!list->data) {
+        return -1;
+    }
+    
+    list->size = size;
+    return 0;
+}
+
+void free_all(InnerList *lists, size_t initialized_count) {
+    if (!lists) {
+        return;
+    }
+    for (size_t i = 0; i < initialized_count; i++) {
+        free(lists[i].data);
+    }
+    free(lists);
+}
+
+int main(void) {
+    size_t list_count = 3;
+    size_t sort_index = 1;
+    
+    InnerList *lists = (InnerList *)malloc(list_count * sizeof(InnerList));
+    if (!lists) {
+        return EXIT_FAILURE;
+    }
+
+    if (allocate_inner_list(&lists[0], 3) != 0) {
+        free_all(lists, 0);
+        return EXIT_FAILURE;
+    }
+    lists[0].data[0] = 5;
+    lists[0].data[1] = 9;
+    lists[0].data[2] = 1;
+
+    if (allocate_inner_list(&lists[1], 2) != 0) {
+        free_all(lists, 1);
+        return EXIT_FAILURE;
+    }
+    lists[1].data[0] = 2;
+    lists[1].data[1] = 4;
+
+    if (allocate_inner_list(&lists[2], 4) != 0) {
+        free_all(lists, 2);
+        return EXIT_FAILURE;
+    }
+    lists[2].data[0] = 8;
+    lists[2].data[1] = 1;
+    lists[2].data[2] = 7;
+    lists[2].data[3] = 6;
+
+    sort_lists(lists, list_count, sort_index);
+
+    for (size_t i = 0; i < list_count; i++) {
+        for (size_t j = 0; j < lists[i].size; j++) {
+            printf("%d ", lists[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    free_all(lists, list_count);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-392-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-392-s3.c:32:19: style: Condition 'memo_size<=0' is always false [knownConditionTrueFalse]
+    if (memo_size <= 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-392-s3.c:27:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-392-s3.c:31:29: note: Assignment 'memo_size=n+1', assigned value is greater than 1
+    long long memo_size = n + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-392-s3.c:32:19: note: Condition 'memo_size<=0' is always false
+    if (memo_size <= 0) {
+                  ^

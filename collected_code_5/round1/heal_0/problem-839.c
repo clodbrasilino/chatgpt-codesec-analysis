@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Tuple {
+    char *first;
+    char *second;
+};
+
+int compare(const void *a, const void *b) {
+    struct Tuple *tupleA = (struct Tuple *)a;
+    struct Tuple *tupleB = (struct Tuple *)b;
+    return strcmp(tupleA->first, tupleB->first);
+}
+
+void sortTuples(struct Tuple *tuples, int len) {
+    qsort(tuples, len, sizeof(struct Tuple), compare);
+}
+
+void printTuples(struct Tuple *tuples, int len) {
+    for (int i = 0; i < len; i++) {
+    printf("First: %s, Second: %s\n", tuples[i].first, tuples[i].second);
+    }
+}
+
+int main() {
+    struct Tuple tuples[] = {
+    {"zebra", "apple"},
+    {"aardvark", "banana"},
+    {"monkey", "cat"},
+    {"lion", "dog"}
+    };
+
+    int len = sizeof(tuples) / sizeof(tuples[0]);
+    printTuples(tuples, len);
+    
+    printf("\nAfter sorting:\n");
+    sortTuples(tuples, len);
+    
+    printTuples(tuples, len);
+
+    return 0;
+}

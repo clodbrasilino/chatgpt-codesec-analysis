@@ -1,0 +1,7 @@
+./collected_code_4/round1//heal_0//problem-644.c: In function 'reverseArray':
+./collected_code_4/round1//heal_0//problem-644.c:8:27: warning: 'sizeof' on array function parameter 'arr' will return size of 'int *' [-Wsizeof-array-argument]
+    8 |     if(pos<0 || pos>sizeof(arr)/sizeof(arr[0])) {
+      |                           ^
+./collected_code_4/round1//heal_0//problem-644.c:3:23: note: declared here
+    3 | void reverseArray(int arr[], int pos) {
+      |                   ~~~~^~~~~

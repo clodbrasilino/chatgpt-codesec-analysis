@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+// Function to count bidirectional tuple pairs
+int countPairs(int arr[], int lenArr) {
+    int count = 0;
+    for (int i = 0; i < lenArr; i++) { 
+        for (int j = i+1; j < lenArr; j++) {
+            if (arr[i] == arr[j]) {
+                count++;}
+        }
+    }
+    return count;
+}
+
+int main() {
+  int arr[100], n;
+
+  printf("Enter the number of elements in the array: ");
+  scanf("%d", &n);
+
+  printf("Enter the elements of the array: ");
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &arr[i]);
+  }
+
+  int count = countPairs(arr, n);
+
+  printf("The number of bidirectional tuple pairs is: %d\n", count);
+
+  return 0;
+}

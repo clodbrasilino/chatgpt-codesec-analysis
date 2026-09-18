@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HASH_SIZE 1000003
+
+typedef struct HashNode {
+    long long key;
+    long long value;
+    struct HashNode* next;
+} HashNode;
+
+HashNode* hashTable[HASH_SIZE];
+
+void initHashTable() {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        hashTable[i] = NULL;
+    }
+}
+
+long long get_val(long long key) {
+    int index = key % HASH_SIZE;
+    HashNode* curr = hashTable[index];
+    while (curr != NULL) {
+        if (curr->key == key) {
+            return curr->value;
+        }
+        curr = curr->next;
+    }
+    return -1;
+}
+
+int put_val(long long key, long long value) {
+    int index = key % HASH_SIZE;
+    HashNode* newNode = (HashNode*)malloc(sizeof(HashNode));
+    if (newNode == NULL) {
+        return -1;
+    }
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = hashTable[index];
+    hashTable[index] = newNode;
+    return 0;
+}
+
+void freeHashTable() {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode* curr = hashTable[i];
+        while (curr != NULL) {
+            HashNode* temp = curr;
+            curr = curr->next;
+            free(temp);
+        }
+        hashTable[i] = NULL;
+    }
+}
+
+long long max(long long a, long long b) {
+    return (a > b) ? a : b;
+}
+
+long long safe_add(long long a, long long b) {
+    if (a > 0 && b > 9223372036854775807LL - a) {
+        return 9223372036854775807LL;
+    }
+    if (a < 0 && b < -9223372036854775807LL - 1 - a) {
+        return -9223372036854775807LL - 1;
+    }
+    return a + b;
+}
+
+long long findMaxSum(long long n) {
+    if (n == 0) {
+        return 0;
+    }
+    long long val = get_val(n);
+    if (val != -1) {
+        return val;
+    }
+    
+    long long s1 = findMaxSum(n / 2);
+    long long s2 = findMaxSum(n / 3);
+    long long s3 = findMaxSum(n / 4);
+    long long s4 = findMaxSum(n / 5);
+    
+    long long sum = safe_add(s1, s2);
+    sum = safe_add(sum, s3);
+    sum = safe_add(sum, s4);
+    
+    long long result = max(sum, n);
+    
+    if (put_val(n, result) != 0) {
+        fprintf(stderr, "Memory allocation failure\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    return result;
+}
+
+int main() {
+    long long n;
+    
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    initHashTable();
+    
+    long long result = findMaxSum(n);
+    printf("%lld\n", result);
+    
+    freeHashTable();
+    
+    return EXIT_SUCCESS;
+}

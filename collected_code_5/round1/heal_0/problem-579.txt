@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+bool checkElementInArray(int num, int array[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (num == array[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void findDissimilarElements(int array1[], int size1, int array2[], int size2) {
+    int dissimilarArray[MAX_SIZE];
+    int k = 0;
+
+    for (int i = 0; i < size1; i++) {
+        if (!checkElementInArray(array1[i], array2, size2)) {
+            dissimilarArray[k++] = array1[i];
+        }
+    }
+
+    for (int i = 0; i < size2; i++) {
+        if (!checkElementInArray(array2[i], array1, size1)) {
+            dissimilarArray[k++] = array2[i];
+        }
+    }
+
+    printf("Dissimilar elements are: ");
+    for (int i = 0; i < k; i++) {
+        printf("%d ", dissimilarArray[i]);
+    }
+}
+
+int main() {
+    int array1[] = {1, 2, 3, 4, 5};
+    int array2[] = {4, 5, 6, 7, 8};
+    int size1 = sizeof(array1) / sizeof(array1[0]);
+    int size2 = sizeof(array2) / sizeof(array2[0]);
+
+    findDissimilarElements(array1, size1, array2, size2);
+
+    return 0;
+}
+```

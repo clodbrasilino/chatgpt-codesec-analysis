@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_lucky_numbers(int n) {
+    if (n <= 0) {
+        return;
+    }
+
+    int *numbers = NULL;
+    int count = n * 10;
+    if (count < 100) {
+        count = 100;
+    }
+
+    numbers = (int *)malloc(count * sizeof(int));
+    if (numbers == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        numbers[i] = i + 1;
+    }
+
+    int step = 2;
+    int remaining = count;
+
+    while (step <= remaining) {
+        int new_index = 0;
+        for (int i = 0; i < remaining; i++) {
+            if ((i + 1) % step != 0) {
+                numbers[new_index++] = numbers[i];
+            }
+        }
+        remaining = new_index;
+        
+        int next_step_index = step - 1;
+        if (next_step_index >= remaining) {
+            break;
+        }
+        step = numbers[next_step_index];
+        if (step > remaining) {
+            break;
+        }
+    }
+
+    if (n > remaining) {
+        n = remaining;
+    }
+
+    for (int i = 0; i < n; i++) {
+        printf("%d", numbers[i]);
+        if (i < n - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+
+    free(numbers);
+}
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:39320,execs:544,op:havoc,rep:5; likely memory-safety defect
+  */
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    print_lucky_numbers(n);
+
+    return 0;
+}

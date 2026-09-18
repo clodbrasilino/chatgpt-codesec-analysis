@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+#define NO_OF_CHARS 256
+
+int checkPermutation(char* str1, char* str2) {
+    int count[NO_OF_CHARS] = { 0 };
+    if (strlen(str1) != strlen(str2)) {
+        return 0;
+    }
+
+    for (int i = 0; str1[i] && str2[i]; i++) {
+        count[str1[i]]++;
+        count[str2[i]]--;
+    }
+
+    for (int i = 0; i < NO_OF_CHARS; i++) {
+        if (count[i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main() {
+    char str1[] = "abcd";
+    char str2[] = "dcba";
+    if (checkPermutation(str1, str2)) {
+        printf("Strings are permutations of each other\n");
+    } else {
+        printf("Strings are not permutations of each other\n");
+    }
+    return 0;
+}

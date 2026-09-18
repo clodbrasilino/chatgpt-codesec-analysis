@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct SubList {
+    int data;
+    struct SubList* next;
+};
+
+struct ListOfLists {
+    struct SubList* sub_list;
+    struct ListOfLists* next;
+};
+
+size_t count_lists(const struct ListOfLists* head) {
+    size_t count = 0;
+    const struct ListOfLists* current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+void free_sub_list(struct SubList* head) {
+    struct SubList* current = head;
+    while (current != NULL) {
+        struct SubList* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(struct ListOfLists* head) {
+    struct ListOfLists* current = head;
+    while (current != NULL) {
+        struct ListOfLists* temp = current;
+        current = current->next;
+        if (temp->sub_list != NULL) {
+            free_sub_list(temp->sub_list);
+        }
+        free(temp);
+    }
+}
+
+struct SubList* create_sub_list_node(int data) {
+    struct SubList* node = (struct SubList*)malloc(sizeof(struct SubList));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+struct ListOfLists* create_list_of_lists_node(struct SubList* sub_list) {
+    struct ListOfLists* node = (struct ListOfLists*)malloc(sizeof(struct ListOfLists));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        if (sub_list != NULL) {
+            free_sub_list(sub_list);
+        }
+        exit(EXIT_FAILURE);
+    }
+    node->sub_list = sub_list;
+    node->next = NULL;
+    return node;
+}
+
+int main(void) {
+    struct SubList* list1 = create_sub_list_node(10);
+    struct SubList* list2 = create_sub_list_node(20);
+    struct SubList* list3 = create_sub_list_node(30);
+
+    struct ListOfLists* head = create_list_of_lists_node(list1);
+    head->next = create_list_of_lists_node(list2);
+    head->next->next = create_list_of_lists_node(list3);
+
+    size_t total_lists = count_lists(head);
+    printf("%zu\n", total_lists);
+
+    free_list_of_lists(head);
+
+    return EXIT_SUCCESS;
+}
+```

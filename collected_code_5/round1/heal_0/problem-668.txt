@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeDuplicates(char* str) {
+
+    int hash = 0; 
+    int currIndex = 0; 
+  
+    for(int i = 0; str[i]; i++) {
+
+        int temp = 1;
+        temp = temp << (str[i] - 'a'); 
+        
+        if((hash & temp) == 0) {
+            str[currIndex++] = str[i];
+            hash |= temp;   
+        }
+    }
+    
+    str[currIndex] = '\0'; 
+    return str;
+}
+
+int main() {
+
+    char str[] = "aabbbcc";
+    printf("%s\n", removeDuplicates(str));
+    return 0;
+}
+```
+In this code, the function to remove duplicates is defined, which takes a character array as an input. The main function initializes a test character array and use the function to remove the duplicates. The new string is printed to check the output. This is a simple solution that utilizes a hash object (in this case a simple int variable), and a bitwise operation to implement a simple form of 'hashing'. This hash is then used to check/ignore duplicate entries while iterating through the original string, thus removing duplicate characters. Consequently, only one occurrence of a character is left in the input string.

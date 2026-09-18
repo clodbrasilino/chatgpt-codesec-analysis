@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct InnerNode {
+    int data;
+    struct InnerNode *next;
+} InnerNode;
+
+typedef struct OuterNode {
+    InnerNode *inner_list;
+    struct OuterNode *next;
+} OuterNode;
+
+unsigned long long count_and_square_lists(const OuterNode *head) {
+    unsigned long long count = 0;
+    const OuterNode *current = head;
+    
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    
+    return count * count;
+}
+
+void free_inner_list(InnerNode *head) {
+    InnerNode *current = head;
+    while (current != NULL) {
+        InnerNode *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_outer_list(OuterNode *head) {
+    OuterNode *current = head;
+    while (current != NULL) {
+        OuterNode *temp = current;
+        current = current->next;
+        free_inner_list(temp->inner_list);
+        free(temp);
+    }
+}
+
+OuterNode* add_outer_node(OuterNode **head) {
+    if (head == NULL) {
+        return NULL;
+    }
+    
+    OuterNode *new_node = (OuterNode *)malloc(sizeof(OuterNode));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->inner_list = NULL;
+    new_node->next = *head;
+    *head = new_node;
+    
+    return new_node;
+}
+
+InnerNode* add_inner_node(InnerNode **head, int value) {
+    if (head == NULL) {
+        return NULL;
+    }
+    
+    InnerNode *new_node = (InnerNode *)malloc(sizeof(InnerNode));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->data = value;
+    new_node->next = *head;
+    *head = new_node;
+    
+    return new_node;
+}
+
+int main(void) {
+    OuterNode *list_of_lists = NULL;
+
+    OuterNode *outer1 = add_outer_node(&list_of_lists);
+    if (outer1 == NULL) {
+        return EXIT_FAILURE;
+    }
+    if (add_inner_node(&(outer1->inner_list), 1) == NULL) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+    if (add_inner_node(&(outer1->inner_list), 2) == NULL) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+
+    OuterNode *outer2 = add_outer_node(&list_of_lists);
+    if (outer2 == NULL) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+    if (add_inner_node(&(outer2->inner_list), 3) == NULL) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+
+    const OuterNode *outer3 = add_outer_node(&list_of_lists);
+    if (outer3 == NULL) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = count_and_square_lists(list_of_lists);
+    
+    if (printf("%llu\n", result) < 0) {
+        free_outer_list(list_of_lists);
+        return EXIT_FAILURE;
+    }
+
+    free_outer_list(list_of_lists);
+    return EXIT_SUCCESS;
+}

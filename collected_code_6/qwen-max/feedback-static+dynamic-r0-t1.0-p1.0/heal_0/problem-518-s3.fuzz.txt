@@ -1,0 +1,2 @@
+problem-518-s3.c:5:16:medium:UBSan: nan is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:609,execs:265,op:havoc,rep:4)
+problem-518-s3.c:6:22:medium:UBSan: signed integer overflow: -2147483648 * -2147483648 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:609,execs:265,op:havoc,rep:4)

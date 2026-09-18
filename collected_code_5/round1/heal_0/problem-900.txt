@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int prependNumberToString(int num, char *strOrig, char **strNew) {
+    if (strOrig == NULL || strNew == NULL) {
+        return -1;
+    }
+    int length = snprintf(NULL, 0, "%d", num);
+    *strNew = malloc(length + strlen(strOrig) + 1);
+    if (*strNew == NULL) {
+        return -1;
+    }
+    sprintf(*strNew, "%d%s", num, strOrig);
+    return 0;
+}
+
+int main() {
+    char *strOrig = "Hello World!";
+    char *strNew = NULL;
+    int result = prependNumberToString(123, strOrig, &strNew);
+    if (result == 0) {
+        printf("%s\n", strNew);
+        free(strNew);
+    } else {
+        printf("Error occurred\n");
+    }
+    return 0;
+}
+```
+
+This program defines a function (`prependNumberToString`) that prepends a specified number to the beginning of a provided string, and the new string is returned through a pointer argument. It checks if the input string or the output string pointer is `NULL` and returns `-1` immediately if it is, so as to avoid null dereference.
+
+A `snprintf` is used to calculate the number of digits in the number (the space required). Then memory of the necessary size is allocated for the new string.
+
+If the allocation succeeds, `sprintf` is used to format the number and the original string into the new string. If allocation fails (indicated by `malloc` returning `NULL`), `-1` is returned as an error code.
+
+In the `main` function, it uses this function to prepend `123` to `"Hello World!"` and print the result.
+
+Memory that was allocated with `malloc` is freed with `free` after it is no longer needed, to avoid memory leaks (CWE-664).

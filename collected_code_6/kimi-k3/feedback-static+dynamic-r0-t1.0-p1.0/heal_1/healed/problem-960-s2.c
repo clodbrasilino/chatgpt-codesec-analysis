@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long countTilings(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    long long *dp = (long long *)malloc((n + 1) * sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+    
+    dp[0] = 1;
+    dp[1] = 1;
+    
+    for (int i = 2; i <= n; i++) {
+        if (dp[i - 1] > LLONG_MAX - dp[i - 2]) {
+            free(dp);
+            return -2;
+        }
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    
+    long long result = dp[n];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter the length of the board (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    long long result = countTilings(n);
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    if (result == -2) {
+        fprintf(stderr, "Result exceeds maximum representable value (overflow)\n");
+        return 1;
+    }
+    
+    printf("Number of ways to tile 2 x %d board: %lld\n", n, result);
+    return 0;
+}

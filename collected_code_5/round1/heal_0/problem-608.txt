@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+
+int bellNumber(int num) {
+    int bell[num+1][num+1];
+    bell[0][0] = 1;
+    for (int i=1; i<=num; i++) {
+        bell[i][0] = bell[i-1][i-1];
+        for (int j=1; j<=i; j++) {
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
+        }
+    }
+    return bell[num][0];
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    printf("The %dth Bell number is %d\n", number, bellNumber(number));
+    return 0;
+}
+```
+In this code, we define a function bellNumber to calculate the nth Bell number. Bell numbers count the number of different ways to partition a set of size n, and they satisfy a recurrence relation which is used to calculate them in this code.
+
+In the bellNumber function, we create a two-dimensional integer array bell to store intermediate results, with the size of the array determined by the input num. The array is structured such that the element bell[i][j] represents the jth partition of the set of size i.
+
+We initialize the first Bell number bell[0][0] to be 1, then iterate from i = 1 to num to calculate each Bell number. The ith Bell number bell[i][0] is defined to be the element bell[i-1][i-1], which is the last partition of the set of size i-1. For each j from 1 to i, we update bell[i][j] to be the sum of the elements bell[i-1][j-1] and bell[i][j-1], representing the addition of a new partition from the j-1th partition of the set of size i-1, and the jth partition of the set of size i.
+
+Finally, in the main function, we prompt the user for an integer number to calculate the corresponding Bell number, then call bellNumber on this number and print the result.

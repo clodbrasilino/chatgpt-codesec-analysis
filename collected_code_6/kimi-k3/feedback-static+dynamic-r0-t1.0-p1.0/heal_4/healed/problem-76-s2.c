@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_squares(long long m, long long n) {
+    if (m <= 0 || n <= 0) {
+        return 0;
+    }
+    
+    if (m < n) {
+        long long temp = m;
+        m = n;
+        n = temp;
+    }
+    
+    __int128 result = (__int128)n * (n + 1) * (3 * (__int128)m - n + 1) / 6;
+    
+    return (long long)result;
+}
+
+int main(void) {
+    long long m, n;
+    
+    if (scanf("%lld %lld", &m, &n) != 2) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", count_squares(m, n));
+    fflush(stdout);
+    
+    return EXIT_SUCCESS;
+}

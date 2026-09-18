@@ -1,0 +1,57 @@
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct Tuple {
+    int *array;
+    int size;
+} tuple;
+
+tuple* create_tuple(int* elements, int size) {
+    tuple *t = malloc(sizeof(tuple));
+    if(t == NULL) {
+        printf("Error in memory allocation\n");
+        exit(1);
+    }
+    t->array = malloc(size * sizeof(int));
+    if(t->array == NULL) {
+        free(t);
+        printf("Error in memory allocation\n");
+        exit(1);
+    }
+    for(int i = 0; i < size; i++) {
+        t->array[i] = elements[i];
+    }
+    t->size = size;
+    return t;
+}
+
+void delete_tuple(tuple* t) {
+    free(t->array);
+    free(t);
+}
+
+int check_tuple_size(tuple* t, int k) {
+    if(t == NULL) {
+        printf("Tuple does not exist\n");
+        return 0;
+    }
+    if(t->size == k) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    int elements[5] = {1, 2, 3, 4, 5};
+    tuple *t = create_tuple(elements, 5);
+    if(check_tuple_size(t, 5)) {
+        printf("Tuple contains exactly 5 elements\n");
+    } else {
+        printf("Tuple does not contain 5 elements\n");
+    }
+    delete_tuple(t);
+    return 0;
+}
+```

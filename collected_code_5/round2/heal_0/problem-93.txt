@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+
+long power(int a, int b){
+    long result = 1;
+    if (b < 0) {
+        printf("Negative power is not supported.\n");
+        return -1;
+    }
+    for(int i = 0; i < b; i++){
+        result *= a;
+    }
+    return result;
+}
+
+int main() {
+    int base, exponent;
+    printf("Enter base: ");
+    if(scanf("%d", &base) != 1) {
+        printf("Invalid input.\n"); 
+        return 1;
+    }
+
+    printf("Enter exponent: ");
+    if(scanf("%d", &exponent) != 1) {
+        printf("Invalid input.\n"); 
+        return 1;
+    }
+    
+    long pow = power(base, exponent);
+    if(pow != -1){
+        printf("%d to the power of %d is %ld.\n", base, exponent, pow);
+    }
+    return 0;
+}
+```

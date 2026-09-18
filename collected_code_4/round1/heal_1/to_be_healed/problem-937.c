@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define ASCII_SIZE 256
+
+char mostCommonChar(const char* str) {
+    int count[ASCII_SIZE] = {0};
+    int len = strlen(str);
+    int max = 0;
+    char result;
+
+    for(int i = 0; i < len; i++) {
+        count[(int)str[i]]++;
+        if(max < count[(int)str[i]]) {
+            max = count[(int)str[i]];
+            result = str[i];
+        }
+    }
+    /* Possible weaknesses found:
+     *  use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+     */
+    return result;
+}
+
+int main() {
+    char str[] = "test string";
+    printf("Most common character: %c\n", mostCommonChar(str));
+    return 0;
+}

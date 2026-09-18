@@ -1,0 +1,31 @@
+Here is a C function for finding the ratio of positive numbers in an array:
+
+```C
+#include <stdio.h>
+
+double findPositiveRatio(int* arr, int size) {
+    int i, positive_count = 0;
+
+    if(arr == NULL || size <= 0) {
+        return 0.0;
+    }
+
+    for(i = 0; i < size; i++) {
+        if(arr[i] > 0) {
+            positive_count++;
+        }
+    }
+
+    return (double)positive_count / size;
+}
+
+int main() {
+    int arr[] = {10, -20, 30, -40, 50};
+
+    printf("The ratio of positive numbers is %.2f\n", findPositiveRatio(arr, 5));
+
+    return 0;
+}
+```
+
+Here, the array is checked to ensure it is not NULL and its size is positive to avoid any segmentation faults (CWE-703). The function findPositiveRatio is safely designed to manage the array resource throughout its entire lifetime and it correctly adheres to standard C coding practices (CWE-664, CWE-710). The function finds and counts all positive numbers in the given array, and then calculates their ratio to the total number of elements in that array. Resulting ratio is displayed in the main function.

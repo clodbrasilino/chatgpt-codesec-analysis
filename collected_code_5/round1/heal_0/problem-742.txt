@@ -1,0 +1,35 @@
+```C
+#include <math.h>
+#include <stdio.h>
+
+double CalcTetrahedronArea(double edge) {
+    if (edge <= 0) {
+        printf("Edge length cannot be less than or equal to 0\n");
+        return -1;
+    }
+
+    const double area = sqrt(3) * pow(edge, 2);
+    return area;
+}
+
+int main() {
+    double edge;
+    printf("Enter edge length of the tetrahedron:\n");
+    scanf("%lf", &edge);
+
+    double area = CalcTetrahedronArea(edge);
+    if (area != -1) {
+        printf("Area of the tetrahedron is: %.2lf\n", area);
+    }
+
+    return 0;
+}
+```
+
+This C code includes a function for calculating the area of a tetrahedron named "CalcTetrahedronArea", which accepts the edge length as input. The function first checks if the edge length is less than or equal to zero, which is an invalid input condition. If this happens, an error message will be printed to the console and the function will return -1 as an error code.
+
+This error checking code prevents any potential math errors that can occur due to a negative or zero edge length.
+
+In the main function, the program will first prompt the user to input the edge length, then this number is passed to the "CalcTetrahedronArea" function. The area will be calculated unless there's an error which prevents the calculation, in which case the error message will have been printed within the "CalcTetrahedronArea" function.
+
+The result will then be printed to the console unless there was a problem calculating the area (signified by a return code of -1).

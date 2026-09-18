@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'alpha', got 
+  *  test case 0 failed: expected 'python', got ���
+  *  test case 1 failed: expected 'string', got ���
+  */
+
+char* remove_parenthesis(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int depth = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j++] = input[i];
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    char buffer[2048];
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        
+        char* res = remove_parenthesis(buffer);
+        if (res != NULL) {
+            printf("%s\n", res);
+            free(res);
+        }
+    }
+    return 0;
+}

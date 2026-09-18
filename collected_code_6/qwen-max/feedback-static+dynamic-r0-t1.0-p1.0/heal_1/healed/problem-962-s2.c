@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <limits.h>
+
+int sum_of_evens(int l, int r) {
+    long sum = 0;
+    if (l > r) {
+        return (int)sum;
+    }
+    if (l % 2 != 0) {
+        l++;
+    }
+    for (int i = l; i <= r; i += 2) {
+        if (sum > INT_MAX - i) {
+            return 0;
+        }
+        sum += i;
+    }
+    return (int)sum;
+}
+
+int main() {
+    int l, r;
+    printf("Enter the range (l and r): ");
+    scanf("%d %d", &l, &r);
+    int result = sum_of_evens(l, r);
+    printf("Sum of even numbers between %d and %d is: %d\n", l, r, result);
+    return 0;
+}

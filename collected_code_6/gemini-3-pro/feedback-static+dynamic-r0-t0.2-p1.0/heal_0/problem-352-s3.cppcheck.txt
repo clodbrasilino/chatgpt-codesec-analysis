@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352-s3.c:41:31: style: Condition 'areAllCharactersUnique(test_str3)' is always false [knownConditionTrueFalse]
+    if (areAllCharactersUnique(test_str3)) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352-s3.c:41:31: note: Calling function 'areAllCharactersUnique' returns 0
+    if (areAllCharactersUnique(test_str3)) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-352-s3.c:41:31: note: Condition 'areAllCharactersUnique(test_str3)' is always false
+    if (areAllCharactersUnique(test_str3)) {
+                              ^

@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+int sum_of_divisors(int num) {
+    int sum = 1;
+    for(int i = 2; i*i <= num; i++){
+        if(num % i == 0){
+            if(i*i != num)
+                sum += i + num/i;
+            else
+                sum += i;
+        }
+    }
+    return sum;
+}
+
+int is_amicable(int num1, int num2){
+    return num1 != num2 && sum_of_divisors(num1) == num2 && sum_of_divisors(num2) == num1;
+}
+
+int sum_amicable_numbers(int range){
+    int sum = 0;
+    for(int i = 1; i <= range; i++){
+        int d1 = sum_of_divisors(i);
+        if(d1 <= range && is_amicable(i, d1)){
+            sum += i;
+        } 
+    }
+    return sum;
+}
+
+int main(){
+    int range;
+    printf("Enter the range number: ");
+    scanf("%d", &range);
+
+    int total_amica_num_sum = sum_amicable_numbers(range);
+    printf("The sum of all Amicable numbers from 1 to %d is: %d\n.", range, total_amica_num_sum);
+
+    return 0;
+}

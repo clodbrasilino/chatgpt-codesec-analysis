@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+
+long long int decagonalNumber(int n) { 
+  if(n <= 0) 
+    return 0; 
+  return ((4 * (n * n)) - (3 * n)); 
+} 
+
+int main() { 
+  int n = 4; 
+  printf("The %dth decagonal number is %lld\n", n, decagonalNumber(n));
+  return 0;
+} 
+```

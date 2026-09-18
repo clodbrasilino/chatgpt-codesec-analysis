@@ -1,0 +1,21 @@
+#include <stdio.h>
+#define SIZE 5
+
+void findDivisible(int* arr, int size, int m, int n){
+    for(int i = 0; i < size; i++){
+        if(arr[i] % m == 0 && arr[i] % n == 0){
+            printf("%d ", arr[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr[SIZE] = {10, 20, 30, 40, 50};
+    int m = 10;
+    int n = 2;
+    
+    findDivisible(arr, SIZE, m, n);
+    
+    return 0;
+}

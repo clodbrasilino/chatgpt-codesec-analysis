@@ -1,0 +1,30 @@
+In C, there is no explicit data type for tuple. However, we can mimic its behavior using an array. Here is a simple C function that will count the occurrence of an element in an array.
+
+```c
+#include <stdio.h>
+
+int countOccurrences(int *array, int element, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (array[i] == element)
+            count++;
+    }
+    return count;
+}
+
+int main() {
+   int array[] = {1, 2, 3, 4, 2, 3, 2, 4, 5, 6, 2, 2};
+   int size = sizeof(array) / sizeof(array[0]);
+   int element = 2;
+
+   int occurrence = countOccurrences(array, element, size);
+
+   printf("Element %d occurred %d times\n", element, occurrence);
+
+   return 0;
+}
+```
+
+This program works by going through each element of the array from beginning to end and increases the counter each time it encounters the specified element. It returns the count as the total occurrences of the given element.
+
+Notice that we properly handle array iteration (potential `CWE-664`) by using the size of an array as the stopping condition for the for loop. There are no special conditions to handle exceptional conditions (`CWE-703`). Finally, the program complies with general coding standards (`CWE-710`).

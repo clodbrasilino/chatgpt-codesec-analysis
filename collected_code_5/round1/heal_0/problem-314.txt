@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+
+int findMaxSum(int matrix[2][], int n) {
+    int incl = MAX(matrix[0][0], matrix[1][0]);
+    int excl = 0;
+    int exclNew;
+    int i;
+
+    for (i = 1; i < n; i++) {
+        exclNew = (incl > excl) ? incl : excl;
+        incl = excl + MAX(matrix[0][i], matrix[1][i]);
+        excl = exclNew;
+    }
+    return ((incl > excl) ? incl : excl);
+}
+
+int main() {
+    int matrix[2][4] = {{1, 2, 9, 5}, {5, 8, 4, 1}};
+    int n = sizeof(matrix[0]) / sizeof(matrix[0][0]);
+    printf("%d\n", findMaxSum(matrix, n));
+    return 0;
+}
+```
+
+In this program, the findMaxSum function is used to find out the maximum sum such that no two chosen numbers are adjacent in the provided 2xN matrix. The function uses a dynamic programming approach where it maintains two variables, incl and excl, representing the maximum sum, including or excluding the previous element, respectively.
+
+In the main function, a 2x4 matrix is used to test the findMaxSum function. The number of columns (n) is calculated by dividing the size of matrix's row by the size of an element. The maximum sum is then printed.

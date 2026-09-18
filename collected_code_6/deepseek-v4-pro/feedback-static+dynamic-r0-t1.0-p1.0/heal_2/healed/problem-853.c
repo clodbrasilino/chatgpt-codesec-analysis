@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t sum_of_odd_factors(int64_t n) {
+    int64_t sum = 0;
+    double sqrt_val = sqrt((double)n);
+    
+    if (sqrt_val > (double)INT64_MAX) {
+        int64_t limit = INT64_MAX;
+        for (int64_t i = 1; i <= limit && i <= n; i++) {
+            if (n % i == 0) {
+                if (i % 2 == 1) {
+                    if (sum > INT64_MAX - i) {
+                        return INT64_MAX;
+                    }
+                    sum += i;
+                }
+                
+                int64_t paired_factor = n / i;
+                if (paired_factor != i && paired_factor % 2 == 1) {
+                    if (sum > INT64_MAX - paired_factor) {
+                        return INT64_MAX;
+                    }
+                    sum += paired_factor;
+                }
+            }
+        }
+        return sum;
+    }
+    
+    int64_t limit = (int64_t)sqrt_val;
+    
+    for (int64_t i = 1; i <= limit; i++) {
+        if (n % i == 0) {
+            if (i % 2 == 1) {
+                if (sum > INT64_MAX - i) {
+                    return INT64_MAX;
+                }
+                sum += i;
+            }
+            
+            int64_t paired_factor = n / i;
+            if (paired_factor != i && paired_factor % 2 == 1) {
+                if (sum > INT64_MAX - paired_factor) {
+                    return INT64_MAX;
+                }
+                sum += paired_factor;
+            }
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int64_t number;
+    
+    printf("Enter a number: ");
+    if (scanf("%" SCNd64, &number) != 1 || number <= 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int64_t result = sum_of_odd_factors(number);
+    printf("Sum of odd factors: %" PRId64 "\n", result);
+    
+    return 0;
+}

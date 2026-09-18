@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double calculate_std_dev(int data[], int n) {
+    double sum = 0.0, mean, standard_deviation = 0.0;
+
+    for (int i = 0; i < n; ++i) {
+        sum += data[i];
+    }
+
+    mean = sum/n;
+
+    for (int i = 0; i < n; ++i) {
+        standard_deviation += pow(data[i] - mean, 2);
+    }
+
+    return sqrt(standard_deviation/n);
+}
+
+int main() {
+    int data[1000];
+    int n;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return -1;
+    }
+    if (n > 1000 || n <= 0) {
+        printf("Invalid number of elements\n");
+        return -1;
+    }
+    printf("Enter elements: ");
+    for (int i = 0; i < n; ++i)
+        if (scanf("%d", &data[i]) != 1) {
+            printf("Invalid input\n");
+            return -1;
+        }
+    printf("\nStandard Deviation = %.6lf", calculate_std_dev(data, n));
+
+    return 0;
+}
+```
+This code includes the main function, error checking, reading input from user, calling standard deviation function, and displaying the output. The code does not use any resource improperly, checks all conditions carefully and adheres to C coding standards. The function `calculate_std_dev` computes the standard deviation of `n` numbers stored in the array `data`. If the input is incorrect or the number of elements is not positive or exceeds 1000, error message is displayed and program is terminated. To avoid any floating point exception, integer division is not performed and resulting standard deviation is returned as `double`.

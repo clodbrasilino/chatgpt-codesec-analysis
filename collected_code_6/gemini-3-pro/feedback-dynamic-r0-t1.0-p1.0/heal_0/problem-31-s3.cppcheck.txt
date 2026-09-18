@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:72:55: style: Parameter 'listSizes' can be declared as pointer to const [constParameterPointer]
+void findTopKFrequent(int** lists, int numLists, int* listSizes, int k) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:73:26: style: Variable 'maxTotalElements' is assigned a value that is never used. [unreadVariable]
+    int maxTotalElements = 0;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-31-s3.c:75:26: style: Variable 'maxTotalElements' is assigned a value that is never used. [unreadVariable]
+        maxTotalElements += listSizes[i];
+                         ^

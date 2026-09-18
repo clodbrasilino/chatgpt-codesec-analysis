@@ -1,0 +1,57 @@
+./collected_code_4/round1//heal_0//problem-351.c: In function 'firstElementKTimes':
+./collected_code_4/round1//heal_0//problem-351.c:10:18: warning: use of uninitialized value '*arr_24(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   10 |         count[arr[i]]++;
+      |               ~~~^~~
+  'main': events 1-7
+    |
+    |   19 | int main(void) {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   24 |     int *arr = malloc(n * sizeof(int));
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) region created on heap here
+    |   25 | 
+    |   26 |     if (arr == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'arr' is non-NULL)...
+    |......
+    |   31 |     printf("Enter the elements in the array: \n");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |   32 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (5) following 'false' branch...
+    |......
+    |   36 |     printf("Enter the occurrence count: ");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) ...to here
+    |......
+    |   39 |     int result = firstElementKTimes(arr, n, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (7) calling 'firstElementKTimes' from 'main'
+    |
+    +--> 'firstElementKTimes': events 8-11
+           |
+           |    6 | int firstElementKTimes(int *arr, int n, int k) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (8) entry to 'firstElementKTimes'
+           |......
+           |    9 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (9) following 'true' branch (when 'i < n')...
+           |   10 |         count[arr[i]]++;
+           |      |               ~~~~~~
+           |      |                  |
+           |      |                  (10) ...to here
+           |      |                  (11) use of uninitialized value '*arr_24(D) + _2' here
+           |

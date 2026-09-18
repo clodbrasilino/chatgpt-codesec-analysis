@@ -1,0 +1,16 @@
+collected_code_5/round1/heal_0/problem-290.c:26:27: warning: Use of memory allocated with size zero [unix.Malloc]
+   21 |     int** result = (int**)malloc(*sizeMax * sizeof(int*));
+      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   22 |     if(!result) exit(1);
+   23 |     int count = 0;
+   24 |     for (int i = 0; i < lol.size; i++) {
+   25 |         if (lol.sizeList[i] == max) {
+   26 |             result[count] = lol.list[i];
+      |                           ^
+collected_code_5/round1/heal_0/problem-290.c:37:11: warning: Value stored to 'maxLists' during its initialization is never read [deadcode.DeadStores]
+   37 |     int** maxLists = findMaxLenList(lol, &sizeMax);
+      |           ^~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+collected_code_5/round1/heal_0/problem-290.c:39:5: warning: Potential leak of memory pointed to by 'maxLists' [unix.Malloc]
+   39 |     return 0;
+      |     ^~~~~~~~
+3 warnings generated.

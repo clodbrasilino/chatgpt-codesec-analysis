@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkOneBitDifference(int num1, int num2) {
+    int xor = num1 ^ num2;
+    return xor && !(xor & (xor - 1));
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter first number: ");
+    scanf("%d", &num1);
+    printf("Enter second number: ");
+    scanf("%d", &num2);
+   
+    if (checkOneBitDifference(num1, num2)) {
+        printf("Numbers differ at one bit position only.\n");
+    } else {
+        printf("Numbers do not differ at one bit position only.\n");
+    }
+   
+    return 0;
+}
+```
+
+In the function `checkOneBitDifference`, we first calculate the XOR of num1 and num2. This will give us a number that has 1's everywhere the bit values of num1 and num2 differ. We then check that there is at least one bit set to 1 in this result (`xor &&`) and that exactly one bit is set to 1 (`!(xor & (xor - 1))`). We return the result of this check, which indicates whether num1 and num2 differ at exactly one bit position.
+
+In the `main` function, we ask the user to enter two integers and then check whether they differ at exactly one bit position using `checkOneBitDifference`. We print a different message to the console depending on whether they differ at exactly one bit position or not.

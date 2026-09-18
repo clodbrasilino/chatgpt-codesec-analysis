@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+float calculateZeroRatio(int* array, int size) {
+    if (!array || size <= 0) {
+        printf("Invalid array or array size.\n");
+        return -1;
+    }
+
+    int zeroCount = 0;
+    for (int i = 0; i < size; ++i) {
+        if (array[i] == 0) {
+            zeroCount++;
+        }
+    }
+
+    return (float)zeroCount / size;
+}
+
+int main() {
+    int array[] = {1, 2, 0, 0, 5, 0, 8, 9, 0};
+    int size = sizeof(array) / sizeof(array[0]);
+
+    float zeroRatio = calculateZeroRatio(array, size);
+
+    if (zeroRatio != -1) {
+        printf("The ratio of zeros in the array is: %.2f\n", zeroRatio);
+    }
+
+    return 0;
+}

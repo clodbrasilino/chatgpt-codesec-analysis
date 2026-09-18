@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected True, got 0
+  */
+
+bool has_decreasing_trend(const float *sequence, size_t length) {
+    if (sequence == NULL || length <= 1) {
+        return false; 
+    }
+
+    for (size_t i = 1; i < length; i++) {
+        if (sequence[i - 1] < sequence[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    float *sequence = NULL;
+    size_t length = 0;
+    size_t capacity = 0;
+    float num;
+    int res;
+
+    while ((res = scanf("%f", &num)) != EOF) {
+        if (res == 1) {
+            if (length >= capacity) {
+                capacity = capacity == 0 ? 16 : capacity * 2;
+                float *temp = realloc(sequence, capacity * sizeof(float));
+                if (!temp) {
+                    free(sequence);
+                    return EXIT_FAILURE;
+                }
+                sequence = temp;
+            }
+            sequence[length++] = num;
+        } else {
+            scanf("%*c");
+        }
+    }
+
+    if (has_decreasing_trend(sequence, length)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    free(sequence);
+    return EXIT_SUCCESS;
+}

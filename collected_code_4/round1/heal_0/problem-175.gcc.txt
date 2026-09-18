@@ -1,0 +1,110 @@
+./collected_code_4/round1//heal_0//problem-175.c: In function 'areParenthesesBalanced':
+./collected_code_4/round1//heal_0//problem-175.c:40:39: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   40 |     struct Stack* stack = createStack(strlen(exp));
+      |                                       ^~~~~~
+./collected_code_4/round1//heal_0//problem-175.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    4 | 
+./collected_code_4/round1//heal_0//problem-175.c:40:39: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   40 |     struct Stack* stack = createStack(strlen(exp));
+      |                                       ^~~~~~
+./collected_code_4/round1//heal_0//problem-175.c:40:39: note: include '<string.h>' or provide a declaration of 'strlen'
+./collected_code_4/round1//heal_0//problem-175.c: In function 'createStack':
+./collected_code_4/round1//heal_0//problem-175.c:13:21: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     stack->capacity = capacity;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'areParenthesesBalanced': events 1-2
+    |
+    |   38 | bool areParenthesesBalanced(char exp[]) {
+    |      |      ^~~~~~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'areParenthesesBalanced'
+    |   39 |     int i = 0;
+    |   40 |     struct Stack* stack = createStack(strlen(exp));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'createStack' from 'areParenthesesBalanced'
+    |
+    +--> 'createStack': events 3-5
+           |
+           |   11 | struct Stack* createStack(unsigned capacity) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'createStack'
+           |   12 |     struct Stack* stack = (struct Stack*) malloc(sizeof(struct Stack));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) this call could return NULL
+           |   13 |     stack->capacity = capacity;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (5) 'stack' could be NULL: unchecked value from (4)
+           |
+./collected_code_4/round1//heal_0//problem-175.c: In function 'push':
+./collected_code_4/round1//heal_0//problem-175.c:22:32: warning: dereference of possibly-NULL '*stack.array + (sizetype)*stack.top' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |     stack->array[++stack->top] = item;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'areParenthesesBalanced': events 1-2
+    |
+    |   38 | bool areParenthesesBalanced(char exp[]) {
+    |      |      ^~~~~~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'areParenthesesBalanced'
+    |   39 |     int i = 0;
+    |   40 |     struct Stack* stack = createStack(strlen(exp));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'createStack' from 'areParenthesesBalanced'
+    |
+    +--> 'createStack': events 3-4
+           |
+           |   11 | struct Stack* createStack(unsigned capacity) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'createStack'
+           |......
+           |   15 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |
+    <------+
+    |
+  'areParenthesesBalanced': events 5-10
+    |
+    |   40 |     struct Stack* stack = createStack(strlen(exp));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (5) returning to 'areParenthesesBalanced' from 'createStack'
+    |   41 |     while (exp[i]) {
+    |      |            ~~~             
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |   42 |         if (exp[i] == '(')
+    |      |            ~   ~           
+    |      |            |   |
+    |      |            |   (7) ...to here
+    |      |            (8) following 'true' branch...
+    |   43 |             push(stack, exp[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |             |              |
+    |      |             |              (9) ...to here
+    |      |             (10) calling 'push' from 'areParenthesesBalanced'
+    |
+    +--> 'push': events 11-14
+           |
+           |   19 | void push(struct Stack* stack, char item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (11) entry to 'push'
+           |   20 |     if (stack->top == stack->capacity - 1)
+           |      |        ~
+           |      |        |
+           |      |        (12) following 'false' branch...
+           |   21 |         return;
+           |   22 |     stack->array[++stack->top] = item;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                     |
+           |      |          (13) ...to here       (14) '*stack.array + (sizetype)*stack.top' could be NULL: unchecked value from (4)
+           |

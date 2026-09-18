@@ -1,0 +1,38 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+// Function to maximize sum of digits
+void divideNumber(int num) {
+    if(num < 10) {
+        printf("%d %d", 0, num);
+        return;
+    }
+    char numArr[50];
+    snprintf(numArr, sizeof numArr, "%d", num);
+
+    int length = strlen(numArr);    
+
+    int digit, d, len = length-1;
+    for(digit=9; digit>=0; digit--) {
+        for(d = 0; d<=len; d++) {
+            if((numArr[d]- '0') == digit) {
+                printf("%d",digit);
+                memmove(&numArr[d], &numArr[d + 1], len-d);
+                len--;
+                digit = 10;
+            }
+        }
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Divided such that sum of digits is maximum: \n");
+    divideNumber(num);
+    return 0;
+}

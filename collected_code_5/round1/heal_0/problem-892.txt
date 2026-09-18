@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+char *remove_extra_spaces(char *input) {
+    int i = 0, j = 0;
+    bool found_space = false;
+    while (input[i] != '\0') {
+        if (input[i] != ' ') {
+            input[j++] = input[i];
+            found_space = false;
+        }
+        else if (input[i] == ' ' && !found_space) {
+            input[j++] = input[i];
+            found_space = true;
+        }
+        i++;
+    }
+    input[j] = '\0';
+    return input;
+}
+
+int main() {
+    char str[] = "Remove    Extra    Spaces";
+    printf("%s\n", remove_extra_spaces(str));
+    return 0;
+}
+```
+
+The `remove_extra_spaces` function uses two integers `i` and `j` to keep track of the char being read and the char being written to respectively. If the current char is not a space, it is copied to the output and `found_space` is set to `false`. If it is a space and no space has been found yet (`found_space = false`), the space is copied to the output and `found_home` is set to `true`. If a space is found when `found_space` is already `true`, it is ignored. This effectively removes multiple consecutive spaces from the input string. The input string is modified in place, so no additional storage is required.
+
+In the `main` function, a test string is created and passed to the `remove_extra_spaces` function. The result is then printed to the console.

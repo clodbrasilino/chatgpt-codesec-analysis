@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_product_even(int num1, int num2) {
+    long long product = (long long)num1 * (long long)num2;
+    return product % 2 == 0;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two numbers:\n");
+    if(scanf("%d %d", &num1, &num2) != 2){
+        printf("Invalid input!\n");
+        return 1;
+    }
+
+    if(is_product_even(num1, num2)) {
+        printf("Product of numbers is even.\n");
+    } else {
+        printf("Product of numbers is odd.\n");
+    }
+    return 0;
+}

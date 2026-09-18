@@ -1,0 +1,18 @@
+./collected_code_4/round2//heal_0/problem-65.c: In function 'sum':
+./collected_code_4/round2//heal_0/problem-65.c:12:33: warning: passing argument 1 of 'sum' from incompatible pointer type [-Wincompatible-pointer-types]
+   12 |     return head->data + sum(head->next);
+      |                             ~~~~^~~~~~
+      |                                 |
+      |                                 int *
+./collected_code_4/round2//heal_0/problem-65.c:8:22: note: expected 'struct Node *' but argument is of type 'int *'
+    8 | int sum(struct Node* head)
+      |         ~~~~~~~~~~~~~^~~~
+./collected_code_4/round2//heal_0/problem-65.c: In function 'main':
+./collected_code_4/round2//heal_0/problem-65.c:17:29: warning: initialization of 'int *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   17 |     struct Node node2 = {2, &node3};
+      |                             ^
+./collected_code_4/round2//heal_0/problem-65.c:17:29: note: (near initialization for 'node2.next')
+./collected_code_4/round2//heal_0/problem-65.c:18:29: warning: initialization of 'int *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   18 |     struct Node node1 = {1, &node2};
+      |                             ^
+./collected_code_4/round2//heal_0/problem-65.c:18:29: note: (near initialization for 'node1.next')

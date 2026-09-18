@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+
+int sumNonRepeated(int arr[], int n) {
+    int sum = 0;
+    int i, j, count;
+
+    for (i=0; i<n; i++) {
+        count = 0;
+        for (j=0; j<n; j++) {
+            if (arr[i] == arr[j])
+                count++;
+            if (count > 1)
+                break;
+        }
+        if (count == 1)
+            sum += arr[i];
+    }
+
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 1, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Sum of non-repeated elements is: %d", sumNonRepeated(arr, n));
+    
+    return 0;
+}
+```
+This program will work as follows:
+
+1. The `sumNonRepeated` function takes the array and its size as parameters. It iterates over each element of the array.
+2. For each element, it iterates through the array again to count how many times that element appears. If the element appears more than once, it breaks out of the inner loop.
+3. If the count is exactly 1 (meaning the element is not repeated), it adds the element to the sum.
+4. Once all elements have been processed, it returns the sum.
+5. The `main` function defines an array of integers, calculates the size of the array, and prints out the sum of non-repeated elements.

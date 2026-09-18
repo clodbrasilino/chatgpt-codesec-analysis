@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strcmp'
+  */
+
+typedef struct {
+    char* key;
+    char* value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair* pairs;
+    size_t size;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t size) {
+    Dictionary* dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->pairs = malloc(sizeof(KeyValuePair) * size);
+    if (dict->pairs == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = size;
+    return dict;
+}
+
+void delete_dictionary(Dictionary* dict) {
+    if (dict != NULL) {
+        free(dict->pairs);
+        free(dict);
+    }
+}
+
+int is_key_present(Dictionary* dict, char* key) {
+    if (dict == NULL || key == NULL) return -1;
+
+    for (size_t i = 0; i < dict->size; ++i) {
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+         */
+        if (dict->pairs[i].key != NULL && strcmp(dict->pairs[i].key, key) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    Dictionary* dict = create_dictionary(5);
+
+    if (dict != NULL) {
+        dict->pairs[0].key = "Key1";
+        dict->pairs[0].value = "Value1";
+        dict->pairs[1].key = "Key2";
+        dict->pairs[1].value = "Value2";
+        
+        char* keyToFind = "Key1";
+        int result = is_key_present(dict, keyToFind);
+        
+        if (result == -1) {
+            printf("Invalid input or dictionary is not initialized\n");
+        } else if (result == 0) {
+            printf("Key not present\n");
+        } else {
+            printf("Key is present\n");
+        }
+        delete_dictionary(dict);
+    } else {
+        printf("Failed to allocate dictionary\n");
+    }
+
+    return 0;
+}

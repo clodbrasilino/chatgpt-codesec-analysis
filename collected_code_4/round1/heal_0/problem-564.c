@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int countUnequalPairs(int* arr, int n){
+    int pairsCount = 0;
+    for(int i=0; i<n-1; i++){
+        for(int j=i+1; j<n; j++){
+            if(arr[i] != arr[j])
+                pairsCount++;
+        }
+    }
+    return pairsCount;
+}
+
+int main(){
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int count = countUnequalPairs(arr, n);
+    printf("Number of unequal pairs: %d\n", count);
+    return 0;
+}

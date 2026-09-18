@@ -1,0 +1,34 @@
+#include<stdio.h>
+
+int last_digit_of_factorial(int n)
+{
+    if(n < 0)
+        return -1;
+
+    if(n == 0 || n == 1)
+        return 1;
+
+    // Table of last digits of numbers from 0 to 9
+    int lastDigit[10] = {1, 1, 2, 6, 4, 2, 2, 4, 2, 8};
+
+    if(n >= 10)
+        return 0;
+
+    return lastDigit[n];
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    int result = last_digit_of_factorial(num);
+
+    if(result == -1) {
+       printf("Factorial is not defined for negative numbers.\n");
+    } else {
+       printf("Last digit in factorial of %d is %d\n", num, result);
+    }
+
+    return 0;
+}

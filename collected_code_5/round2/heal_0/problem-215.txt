@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+struct RLENode {
+    char data;
+    int count;
+    struct RLENode *next;
+};
+
+void decodeRLE(struct RLENode *root) {
+  struct RLENode *traverse = root;
+  while(traverse != NULL) {
+    for(int i = 0; i < traverse->count; i++) {
+      printf("%c", traverse->data);
+    }
+    traverse = traverse->next;
+  }
+}
+
+int main() {
+  struct RLENode *root = NULL, *last = NULL;
+  
+  while(1){
+    struct RLENode *newNode = (struct RLENode*)malloc(sizeof(struct RLENode));
+    if(newNode == NULL) {
+      fprintf(stderr, "Failed to allocate memory for new node. Exiting...\n");
+      return EXIT_FAILURE;
+    }
+    if(scanf("%c-%d\n", &(newNode->data), &(newNode->count)) != 2) {
+      free(newNode);
+      break;
+    }
+    newNode->next = NULL;
+    
+    if(root == NULL) {
+      root = newNode;
+    } else {
+      last->next = newNode;
+    }
+    last = newNode;
+  }
+  
+  decodeRLE(root);
+  
+  while(root != NULL) {
+    struct RLENode* temp = root;
+    root = root->next;
+    free(temp);
+  }
+  
+  return 0;
+}
+```

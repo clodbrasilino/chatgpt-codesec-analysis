@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int perrin(int n) {
+    if (n == 0 || n == 2) return 3;
+    if (n == 3 || n == 1) return 0;
+    else return perrin(n - 2) + perrin(n - 3);
+}
+
+int perrinSum(int n){
+    int sum = 0;
+    for (int i = 0; i <= n; ++i) {
+        sum += perrin(i);
+    }
+    return sum;
+}
+
+int main(){
+    int n = 0;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    if (n < 0) {
+        printf("Please enter a non-negative integer.\n");
+        return 0;
+    }
+    printf("The sum of Perrin numbers up to %d is %d\n", n, perrinSum(n));
+    return 0;
+}

@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <float.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double myFunction(double x) {
+    return sin(x);
+}
+
+double findMin(double start, double end, double stepSize) {
+    double minVal = DBL_MAX;
+    double val;
+    
+    for (double x=start; x<=end; x+=stepSize) {
+        val = myFunction(x);
+        if (val < minVal) {
+            minVal = val;
+        }
+    }
+    return minVal;
+}
+
+int main() {
+    double start = 0.0;
+    double end = 2*PI;
+    double stepSize = 0.01;
+    double minVal;
+
+    minVal = findMin(start, end, stepSize);
+    printf("The minimum value is: %.2f\n", minVal);
+
+    return 0;
+}
+```

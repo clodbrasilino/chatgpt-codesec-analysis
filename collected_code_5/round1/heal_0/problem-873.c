@@ -1,0 +1,30 @@
+#include<stdio.h>
+
+long long fib(int n)
+{
+    if(n <= 1)
+        return n;
+    else
+        return fib(n - 1) + fib(n - 2);
+}
+
+int main()
+{
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    if(n < 0)
+    {
+        printf("Error! Fibonacci sequence is not defined for negative numbers.\n");
+        return -1;
+    }
+    else
+    {
+        for(int i = 0; i < n; i++)
+        {
+            printf("%lld ", fib(i));
+        }
+        printf("\n");
+        return 0;
+    }
+}

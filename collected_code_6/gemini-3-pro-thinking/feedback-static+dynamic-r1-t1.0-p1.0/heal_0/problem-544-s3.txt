@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+char* flatten_tuples(const Tuple* tuples, size_t count) {
+    if (!tuples && count > 0) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        char* empty_str = malloc(1);
+        if (!empty_str) {
+            return NULL;
+        }
+        empty_str[0] = '\0';
+        return empty_str;
+    }
+
+    size_t total_len = 1;
+    for (size_t i = 0; i < count; i++) {
+        int len;
+        if (i < count - 1) {
+            len = snprintf(NULL, 0, "(%d, %d), ", tuples[i].first, tuples[i].second);
+        } else {
+            len = snprintf(NULL, 0, "(%d, %d)", tuples[i].first, tuples[i].second);
+        }
+        
+        if (len < 0) {
+            return NULL;
+        }
+        total_len += (size_t)len;
+    }
+
+    char* result = malloc(total_len);
+    if (!result) {
+        return NULL;
+    }
+
+    size_t current_pos = 0;
+    for (size_t i = 0; i < count; i++) {
+        int len;
+        if (i < count - 1) {
+            len = snprintf(result + current_pos, total_len - current_pos, "(%d, %d), ", tuples[i].first, tuples[i].second);
+        } else {
+            len = snprintf(result + current_pos, total_len - current_pos, "(%d, %d)", tuples[i].first, tuples[i].second);
+        }
+
+        if (len < 0 || (size_t)len >= total_len - current_pos) {
+            free(result);
+            return NULL;
+        }
+        current_pos += (size_t)len;
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple my_tuples[] = {
+        {1, 2},
+        {3, 4},
+        {-5, 42}
+    };
+    size_t count = sizeof(my_tuples) / sizeof(my_tuples[0]);
+
+    char* flattened = flatten_tuples(my_tuples, count);
+    if (!flattened) {
+        fprintf(stderr, "Failed to flatten tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", flattened);
+    free(flattened);
+
+    return EXIT_SUCCESS;
+}
+```

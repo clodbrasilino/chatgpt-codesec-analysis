@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+int maxSublistLength(Node* head) {
+    if (head == NULL) {
+        return 0;
+    }
+
+    int maxLength = 0;
+    int currentLength = 1;
+    Node* current = head;
+
+    while (current->next != NULL) {
+        if (current->data <= current->next->data) {
+            currentLength++;
+        } else {
+            if (currentLength > maxLength) {
+                maxLength = currentLength;
+            }
+            currentLength = 1;
+        }
+        current = current->next;
+    }
+
+    if (currentLength > maxLength) {
+        maxLength = currentLength;
+    }
+
+    return maxLength;
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node* head) {
+    while (head != NULL) {
+        Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void) {
+    Node* head = createNode(1);
+    if (head == NULL) return EXIT_FAILURE;
+    
+    head->next = createNode(2);
+    if (head->next == NULL) { freeList(head); return EXIT_FAILURE; }
+    
+    head->next->next = createNode(5);
+    if (head->next->next == NULL) { freeList(head); return EXIT_FAILURE; }
+    
+    head->next->next->next = createNode(3);
+    if (head->next->next->next == NULL) { freeList(head); return EXIT_FAILURE; }
+    
+    head->next->next->next->next = createNode(4);
+    if (head->next->next->next->next == NULL) { freeList(head); return EXIT_FAILURE; }
+    
+    head->next->next->next->next->next = createNode(6);
+    if (head->next->next->next->next->next == NULL) { freeList(head); return EXIT_FAILURE; }
+    
+    head->next->next->next->next->next->next = createNode(7);
+    if (head->next->next->next->next->next->next == NULL) { freeList(head); return EXIT_FAILURE; }
+
+    int maxLen = maxSublistLength(head);
+    printf("%d\n", maxLen);
+
+    freeList(head);
+
+    return EXIT_SUCCESS;
+}

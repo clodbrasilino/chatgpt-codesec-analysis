@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef enum {
+    SUCCESS = 0,
+    ERROR_NULL_POINTER = 1,
+    ERROR_OUT_OF_BOUNDS = 2
+} StatusCode;
+
+StatusCode extract_nth_element(const Tuple *list, size_t list_size, size_t n, Tuple *out_tuple);
+
+StatusCode extract_nth_element(const Tuple *list, size_t list_size, size_t n, Tuple *out_tuple) {
+    if (list == NULL || out_tuple == NULL) {
+        return ERROR_NULL_POINTER;
+    }
+    
+    if (n >= list_size) {
+        return ERROR_OUT_OF_BOUNDS;
+    }
+    
+    *out_tuple = list[n];
+    
+    return SUCCESS;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {7, 8}
+    };
+    
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    Tuple extracted;
+    StatusCode status;
+
+    status = extract_nth_element(tuples, num_tuples, 2, &extracted);
+    if (status == SUCCESS) {
+        printf("%d, %d\n", extracted.first, extracted.second);
+    } else {
+        return 1;
+    }
+
+    status = extract_nth_element(tuples, num_tuples, 10, &extracted);
+    if (status == ERROR_OUT_OF_BOUNDS) {
+        printf("Index out of bounds.\n");
+    } else {
+        return 1;
+    }
+
+    return 0;
+}

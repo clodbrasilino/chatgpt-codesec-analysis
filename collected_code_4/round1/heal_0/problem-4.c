@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(int array[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && array[left] > array[largest])
+        largest = left;
+    if (right < n && array[right] > array[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&array[i], &array[largest]);
+        heapify(array, n, largest);
+    }
+}
+
+void buildHeap(int array[], int n) {
+    int start = (n / 2) - 1;
+    for (int i = start; i >= 0; i--) {
+        heapify(array, n, i);
+    }
+}
+
+int findLargest(int array[], int n) {
+    buildHeap(array, n);
+    return array[0];
+}
+
+int main(){
+    int arr[] = {10, 20, 15, 30, 40};
+    int n = sizeof(arr)/sizeof(arr[0]);
+
+    int largest = findLargest(arr, n);
+
+    printf("Largest number in the array is: %d \n", largest);
+
+    return 0;
+}

@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double radians_to_degrees(double radians) {
+    return radians * (180.0 / M_PI);
+}
+
+int main() {
+    double radians;
+    printf("Enter the value in radians: ");
+    if (scanf("%lf", &radians) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        return 1;
+    }
+  
+    printf("Value in degrees: %.2lf\n", radians_to_degrees(radians));
+    return 0;
+}

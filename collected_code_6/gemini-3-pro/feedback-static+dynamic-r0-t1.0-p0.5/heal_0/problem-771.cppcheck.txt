@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-771.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-771.c:94:30: style: Condition 'isBalanced(expr5)' is always false [knownConditionTrueFalse]
+    printf("%s\n", isBalanced(expr5) ? "Balanced" : "Not Balanced");
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-771.c:94:30: note: Calling function 'isBalanced' returns 0
+    printf("%s\n", isBalanced(expr5) ? "Balanced" : "Not Balanced");
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-771.c:94:30: note: Condition 'isBalanced(expr5)' is always false
+    printf("%s\n", isBalanced(expr5) ? "Balanced" : "Not Balanced");
+                             ^

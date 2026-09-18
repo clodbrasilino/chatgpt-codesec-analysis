@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ASCII_SIZE 256
+
+char findMaxOccurringChar(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    int count[ASCII_SIZE] = {0};
+    int max = -1;
+    char result = '\0';
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (max < count[(unsigned char)str[i]]) {
+            max = count[(unsigned char)str[i]];
+            result = str[i];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "sample string for testing";
+    char max_char = findMaxOccurringChar(test_str);
+
+    if (max_char != '\0') {
+        printf("Maximum occurring character is '%c'\n", max_char);
+    } else {
+        printf("Invalid or empty string provided.\n");
+    }
+
+    return 0;
+}
+```

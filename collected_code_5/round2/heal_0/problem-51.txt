@@ -1,0 +1,29 @@
+```c
+#include<stdio.h>
+
+int isEquilateral(int a, int b, int c){
+    if (a == b && b == c)
+        return 1;
+    else
+        return 0;
+}
+
+int main(){
+    int side1, side2, side3;
+
+    printf("Enter sides of triangle: \n");
+    scanf("%d%d%d", &side1, &side2, &side3);
+
+    if(side1<=0 || side2<=0 || side3<=0){
+        printf("Invalid input\n");
+        return -1;
+    }
+
+    if (isEquilateral(side1, side2, side3))
+        printf("The triangle is equilateral.\n");
+    else
+        printf("The triangle is not equilateral.\n");
+
+    return 0;
+}
+```

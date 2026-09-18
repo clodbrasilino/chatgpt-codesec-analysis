@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+double geometric_sum(int n) {
+    double result = 0.0;
+    
+    if (n < 1) {
+        return 0.0;
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        result += pow(0.5, i - 1);
+    }
+    
+    return result;
+}
+
+int main(void) {
+    char buffer[256];
+    int n;
+    
+    printf("Enter n: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (sscanf(buffer, "%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 1) {
+        fprintf(stderr, "n must be at least 1\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Geometric sum: %.10f\n", geometric_sum(n));
+    return EXIT_SUCCESS;
+}

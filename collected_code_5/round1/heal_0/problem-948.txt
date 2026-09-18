@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    int size;
+} Tuple;
+
+// Function to get a tuple item
+int getTupleItem(Tuple *tuple, int index) {
+    if (tuple == NULL || index < 0 || index >= tuple->size) {
+        printf("Invalid operation\n");
+        exit(1);
+    }
+    return tuple->items[index];
+}
+
+// Main function
+int main() {
+    int items[] = {10, 20, 30, 40, 50};
+    Tuple tuple = {.items = items, .size = 5};
+    
+    int index = 2;
+    int item = getTupleItem(&tuple, index);
+    
+    printf("Item at index %d is %d\n", index, item);
+    
+    return 0;
+}
+```

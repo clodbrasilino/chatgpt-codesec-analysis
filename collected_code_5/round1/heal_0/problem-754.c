@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+#define N 5
+
+void findCommon(int arr1[], int arr2[], int arr3[], int n1, int n2, int n3) {
+    int i = 0, j = 0, k = 0;
+
+    while (i < n1 && j < n2 && k < n3)
+    {
+        if (arr1[i] == arr2[j] && arr2[j] == arr3[k]) {
+            printf("%d ", arr1[i]);
+            i++;
+            j++;
+            k++;
+        }
+        else if (arr1[i] < arr2[j])
+            i++;
+        else if (arr2[j] < arr3[k])
+            j++;
+        else
+            k++;
+    }
+}
+
+int main() {
+    int arr1[N] = {1, 5, 7, 10, 20};
+    int arr2[N] = {3, 7, 15, 20, 40};
+    int arr3[N] = {7, 20, 35, 40, 50};
+
+    printf("Common elements are ");
+    findCommon(arr1, arr2, arr3, N, N, N);
+    printf("\n");
+    return 0;
+}

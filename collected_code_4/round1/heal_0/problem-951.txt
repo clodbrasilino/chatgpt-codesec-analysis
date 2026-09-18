@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+
+typedef struct {
+    int index;
+    int value;
+} Tuple;
+
+int findMaxSimilarIndex(Tuple *list1, Tuple *list2, int size1, int size2) {
+    int i, j;
+    int maxIndex = -1;
+
+    for(i = 0; i < size1; i++) {
+        for(j = 0; j < size2; j++) {
+            if(list1[i].index == list2[j].index && list1[i].index > maxIndex) {
+                maxIndex = list1[i].index;
+            }
+        }
+    }
+
+    return maxIndex;
+}
+
+int main() {
+    Tuple list1[] = { {1, 10}, {2, 20}, {3, 30}, {4, 40} };
+    Tuple list2[] = { {1, 100}, {2, 200}, {5, 500}, {6, 600} };
+    int size1 = sizeof(list1) / sizeof(Tuple);
+    int size2 = sizeof(list2) / sizeof(Tuple);
+
+    int maxIndex = findMaxSimilarIndex(list1, list2, size1, size2);
+    printf("The maximum similar index is: %d\n", maxIndex);
+
+    return 0;
+}
+```

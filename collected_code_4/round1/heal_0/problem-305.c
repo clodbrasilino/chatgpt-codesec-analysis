@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100  // Defining the maximum size of the array
+
+int match_words(char word_list[MAX_SIZE][MAX_SIZE], int list_size, char *word1, char *word2){
+    int word1_present = 0;
+    int word2_present = 0;
+
+    for(int i = 0; i < list_size; i++){
+        if(word_list[i][0] != 'p') return -1;  // Checks if the word starts with 'p'
+        if(!word1_present && strcmp(word_list[i], word1) == 0) word1_present = 1;  // Checks if word1 is present in the list
+        if(!word2_present && strcmp(word_list[i], word2) == 0) word2_present = 1;  // Checks if word2 is present in the list
+        if(word1_present && word2_present) return 1;
+    }
+    return 0;
+}
+
+int main(){
+    char word_list[MAX_SIZE][MAX_SIZE];
+    int list_size;
+    
+    printf("Enter the number of words: ");
+    scanf("%d", &list_size);
+
+    printf("Enter the words (each starting with 'p'):\n");
+    for(int i = 0; i < list_size; i++) scanf("%s", word_list[i]);
+
+    char word1[MAX_SIZE], word2[MAX_SIZE];
+
+    printf("Enter word 1: ");
+    scanf("%s", word1);
+    printf("Enter word 2: ");
+    scanf("%s", word2);
+
+    if(word1[0] != 'p' || word2[0] != 'p'){
+        printf("Error: Words should start with 'p'\n");
+        return -1;
+    }
+
+    int matched = match_words(word_list, list_size, word1, word2);
+
+    if(matched == 1) printf("Both words are present in the list\n");
+    else if(matched == -1) printf("Error: All words in the list should start with 'p'\n");
+    else printf("Atleast one word is not present in the list\n");
+
+    return 0;
+}

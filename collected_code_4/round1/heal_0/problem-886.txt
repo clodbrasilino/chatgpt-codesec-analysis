@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+float avg_from_list(int *list, int size) {
+    int sum = 0;
+    if(list != NULL && size > 0) {
+        for(int i=0; i<size; i++) {
+            sum += list[i];
+        }
+        return ((float)sum / size);
+    }
+    return 0.0;
+}
+
+int main() {
+    int list[5] = {1, 2, 3, 4, 5};
+    printf("Average is: %.2f", avg_from_list(list, 5));
+    
+    return 0;
+}
+```
+This C program calculates the average of the numbers in an array of integers. To avoid CWE-664, the function `avg_from_list` checks whether the array passed as a parameter is not NULL before processing it. In addition, it checks if the size of the array greater than 0 to avoid accessing unallocated memory. For CWE-703, the function returns 0.0 if the input list is NULL or size is less than or equal to 0. Several best practices and coding standards (CWE-710) such as proper indentation, use of whitespace, declaring variables at the beginning of blocks, and using brackets even for single line conditionals and loops are followed.

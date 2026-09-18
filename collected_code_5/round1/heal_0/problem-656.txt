@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int minAbsoluteSumDifference(int* arr1, int size1, int* arr2, int size2) {
+    if (size1 != size2 || arr1 == NULL || arr2 == NULL) {
+        return -1;
+    }
+    
+    int minSum = 0;
+    for (int i = 0; i < size1; i++) {
+        minSum += abs(arr1[i] - arr2[i]);
+    }
+    return minSum;
+}
+
+int main() {
+    int arr1[] = {2, 3, 4, 5, 6};
+    int arr2[] = {1, 7, 2, 9, 0};
+
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    int result = minAbsoluteSumDifference(arr1, size1, arr2, size2);
+    if (result != -1) {
+        printf("The minimum sum of absolute differences of two arrays is %d\n", result);
+    } else {
+        printf("Error: Invalid arrays or sizes do not match\n");
+    }
+
+    return 0;
+}
+```
+This C program defines a function `minAbsoluteSumDifference` to calculate the minimum sum of absolute differences of two arrays. The minimum absolute difference for each pair of corresponding elements from the two arrays is accumulated and returned as the result. The main function invokes `minAbsoluteSumDifference` with two sample arrays `arr1` and `arr2` for demonstration. 
+
+Proper check or handling for exceptional conditions is ensured by checking the size of both arrays are equal and not NULL, which prevents undefined behavior or application crashes.
+
+It avoids CWE-703: Improper Check or Handling of Exceptional Conditions by handling situations where arrays are NULL or sizes do not match.
+
+It avoids CWE-664: Improper Control of a Resource Through its Lifetime as there is no dynamic memory allocation, hence no risk of resources being mishandled or not properly freed. 
+
+It does not violate CWE-710: Improper Adherence to Coding Standards as all coding standards and conventions for C programming are followed.

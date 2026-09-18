@@ -1,0 +1,38 @@
+./collected_code_4/round2//heal_1/healed/problem-342.c: In function 'findSmallestRange':
+./collected_code_4/round2//heal_1/healed/problem-342.c:66:21: warning: dereference of possibly-NULL 'harr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   66 |         harr[i].val = arr[i][0];
+      |         ~~~~~~~~~~~~^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |  104 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  113 |     Range r = findSmallestRange(arr, N, K);
+    |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'findSmallestRange' from 'main'
+    |
+    +--> 'findSmallestRange': events 3-7
+           |
+           |   59 | Range findSmallestRange(int arr[][3], int N, int K) {
+           |      |       ^~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findSmallestRange'
+           |......
+           |   63 |     Node* harr = (Node*)malloc(K * sizeof(Node));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |   64 | 
+           |   65 |     for (i = 0; i < K; i++) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < K')...
+           |   66 |         harr[i].val = arr[i][0];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |    |
+           |      |                     |    (6) ...to here
+           |      |                     (7) 'harr + (long unsigned int)i * 12' could be NULL: unchecked value from (4)
+           |

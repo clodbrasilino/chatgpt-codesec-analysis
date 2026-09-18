@@ -1,0 +1,42 @@
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alphanumeric(char *str) {
+    int i = 0, j = 0;
+    char temp[strlen(str) + 1];
+
+    while (str[i]) {
+        if (isalnum((unsigned char)str[i])) {
+            temp[j++] = str[i];
+        }
+        i++;
+    }
+
+    temp[j] = '\0';
+    strcpy(str, temp);
+}
+
+int main(void) {
+    char str[] = "Hell@o, W0r!d";
+
+    printf("Before: %s\n", str);
+    remove_non_alphanumeric(str);
+    printf("After: %s\n", str);
+
+    return 0;
+}
+```
+Here's a breakdown of the code:
+
+- In the main() function, a character array str[] is initialized with a string. This string is then printed before and after the call to the function remove_non_alphanumeric().
+- The remove_non_alphanumeric() function takes in a string (character array) as a parameter and removes all non-alphanumeric characters from it.
+- Inside the function:
+  - Two integer variables i and j are initialized to 0. i is used to iterate through each character in the string and j is used to store the indices of the alphanumeric characters.
+  - A temporary char array temp[] is declared with the length of the original string plus 1 for terminating null character
+  - A while loop is used to iterate over each character in the string.
+  - The isalnum() function from the ctype.h library is used to check if each character is alphanumeric. If it is, it is copied to the temp array at the index j, and then j is incremented.
+  - After all the characters in the string have been processed, a null character is appended to the temp array to indicate the end of the string.
+  - The original string is then replaced by the temp string using the strcpy() function from the string.h library.

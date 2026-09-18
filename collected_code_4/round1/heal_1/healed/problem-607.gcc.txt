@@ -1,0 +1,93 @@
+./collected_code_4/round1//heal_1/healed//problem-607.c: In function 'main':
+./collected_code_4/round1//heal_1/healed//problem-607.c:55:9: warning: double-'free' of 'matches' [CWE-415] [-Wanalyzer-double-free]
+   55 |         free(matches);
+      |         ^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     n = search_pattern(str, pattern, &matches);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'search_pattern' from 'main'
+    |
+    +--> 'search_pattern': events 3-4
+           |
+           |    6 | int search_pattern(const char *str, const char *pattern, int **matches) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'search_pattern'
+           |......
+           |   14 |     if ((error = regcomp(&reg, pattern, REG_EXTENDED)) != 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'error == 0')...
+           |
+         'search_pattern': event 5
+           |
+           |cc1:
+           | (5): ...to here
+           |
+         'search_pattern': events 6-11
+           |
+           |   20 |     while (res != REG_NOMATCH) {
+           |      |                ^
+           |      |                |
+           |      |                (6) following 'true' branch (when 'res != 1')...
+           |   21 |         res = regexec(&reg, str, 1, &match, 0);
+           |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) ...to here
+           |   22 |         if (!res) {
+           |   23 |             int *temp = realloc(*matches, (n + 1) * sizeof(int));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (8) state of '&HEAP_ALLOCATED_REGION(82)': 'start' -> 'nonnull' (NULL origin)
+           |      |                         (9) when 'realloc' succeeds, moving buffer
+           |   24 |             if (!temp) {
+           |      |                ~
+           |      |                |
+           |      |                (10) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   30 |             *matches = temp;
+           |      |             ~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (11) ...to here
+           |
+         'search_pattern': events 12-14
+           |
+           |   20 |     while (res != REG_NOMATCH) {
+           |      |                ^
+           |      |                |
+           |      |                (12) following 'true' branch (when 'res != 1')...
+           |   21 |         res = regexec(&reg, str, 1, &match, 0);
+           |      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (13) ...to here
+           |......
+           |   37 |             free(*matches);
+           |      |             ~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (14) first 'free' here
+           |
+    <------+
+    |
+  'main': events 15-18
+    |
+    |   53 |     n = search_pattern(str, pattern, &matches);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (15) returning to 'main' from 'search_pattern'
+    |   54 |     if (n == -1) {
+    |      |        ~ 
+    |      |        |
+    |      |        (16) following 'true' branch (when 'n == -1')...
+    |   55 |         free(matches);
+    |      |         ~~~~~~~~~~~~~
+    |      |         |
+    |      |         (17) ...to here
+    |      |         (18) second 'free' here; first 'free' was at (14)
+    |

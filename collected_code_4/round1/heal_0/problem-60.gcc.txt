@@ -1,0 +1,26 @@
+./collected_code_4/round1//heal_0//problem-60.c: In function 'longestSeqLength':
+./collected_code_4/round1//heal_0//problem-60.c:9:17: warning: dereference of possibly-NULL 'diff' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |         diff[i] = arr[i + 1] - arr[i];
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  'longestSeqLength': events 1-6
+    |
+    |    5 |     if (n <= 1) return n;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'n > 1')...
+    |    6 | 
+    |    7 |     int *diff = malloc(sizeof(int) * (n - 1));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |                       |
+    |      |                 |                       (2) ...to here
+    |      |                 (3) this call could return NULL
+    |    8 |     for (int i = 0; i < n - 1; i++) {
+    |      |                     ~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch...
+    |    9 |         diff[i] = arr[i + 1] - arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |    |
+    |      |                 |    (5) ...to here
+    |      |                 (6) 'diff + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |

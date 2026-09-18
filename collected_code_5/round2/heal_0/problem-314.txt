@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+int max(int a, int b) { 
+    return a > b ? a : b; 
+}
+
+int findMaxSum(int grid[][2], int n) {
+    
+    int incl = grid[0][0];
+    int excl = 0;
+    int excl_new;
+    int i;
+ 
+    for (i = 1; i < n; i++) {
+         excl_new = (incl > excl) ? incl : excl;
+         incl = excl + max(grid[i][0], grid[i][1]);
+         excl = excl_new;
+    }
+    return ((incl > excl) ? incl : excl);
+}
+
+int main() {
+    int grid[][2] = {{1, 2}, {9, 10}, {15, 1}, {5, 6}, {3, 100}, {12, 2}};
+    int n = sizeof(grid) / sizeof(grid[0]);
+    printf("Maximum sum such that no two numbers are adjacent %d \n", findMaxSum(grid, n));
+    return 0;
+}
+```
+In the provided code, the findMaxSum function takes an input 2D array and its length, then computes the maximum sum of elements such that no two chosen numbers are adjacent. It does this by maintaining two variables - incl for the maximum sum including the previous element and excl for the maximum sum excluding the previous element. In the loop, a new value for excl is calculated (the maximum of the old incl and excl), then incl and excl are updated. Finally, the maximum of incl and excl is returned. The main function demonstrates usage of the findMaxSum function with a grid of size 2 x 6. It prints the result to the standard console.

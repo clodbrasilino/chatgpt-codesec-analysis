@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c:14:25: style: Condition 'power_minus_one>0' is always true [knownConditionTrueFalse]
+    if (power_minus_one > 0 && power_minus_one > (LLONG_MAX - 2) / power_minus_one) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c:7:11: note: Assuming that condition 'n<=0' is not redundant
+    if (n <= 0 || n > 62) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c:11:21: note: power is assigned '1LL<<n' here.
+    long long power = 1LL << n;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c:12:39: note: Assignment 'power_minus_one=power-1', assigned value is greater than 0
+    long long power_minus_one = power - 1;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-360-s3.c:14:25: note: Condition 'power_minus_one>0' is always true
+    if (power_minus_one > 0 && power_minus_one > (LLONG_MAX - 2) / power_minus_one) {
+                        ^

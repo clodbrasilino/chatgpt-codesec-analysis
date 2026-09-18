@@ -1,0 +1,1344 @@
+./collected_code_4/round2//heal_11/healed/problem-87.c: In function 'addItem':
+./collected_code_4/round2//heal_11/healed/problem-87.c:17:7: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |     if(!newItems) {
+      |       ^
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-5
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'addItem'
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 9-11
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 12
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-22
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, moving buffer
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   21 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   22 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   27 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   28 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch...
+           |......
+           |   34 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (23) returning to 'main' from 'addItem'
+    |   68 | 
+    |   69 |     dictionary result = mergeDicts(dict1, dict2, dict3);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (24) calling 'mergeDicts' from 'main'
+    |
+    +--> 'mergeDicts': events 25-32
+           |
+           |   46 | dictionary mergeDicts(dictionary dict1, dictionary dict2, dictionary dict3) {
+           |      |            ^~~~~~~~~~
+           |      |            |
+           |      |            (25) entry to 'mergeDicts'
+           |......
+           |   49 |     for(size_t i = 0; i < dict1.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (26) following 'false' branch...
+           |......
+           |   52 |     for(size_t i = 0; i < dict2.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (28) following 'false' branch...
+           |      |                (27) ...to here
+           |......
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (30) following 'true' branch...
+           |      |                (29) ...to here
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (32) calling 'addItem' from 'mergeDicts'                     (31) ...to here
+           |
+           +--> 'addItem': events 33-35
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (34) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 36
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (36) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 37-40
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (38) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (37) returning to 'mergeDicts' from 'addItem'                (39) ...to here
+           |      |                        (40) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 41-46
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (41) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (42) when 'realloc' succeeds, moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (43) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~        ~~~~~~~~~~~
+                  |      |              |            |
+                  |      |              |            (45) allocated here
+                  |      |              (44) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (46) assuming '<unknown>' is non-NULL
+                  |
+           <------+
+           |
+         'mergeDicts': events 47-50
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (48) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (47) returning to 'mergeDicts' from 'addItem'                (49) ...to here
+           |      |                        (50) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 51-52
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (52) '<unknown>' leaks here; was allocated at (45)
+                  |
+./collected_code_4/round2//heal_11/healed/problem-87.c:23:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   23 |         free(newItems);
+      |         ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-5
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'addItem'
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 9-11
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 12
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-22
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, moving buffer
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   21 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   22 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   27 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   28 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch...
+           |......
+           |   34 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (23) returning to 'main' from 'addItem'
+    |   68 | 
+    |   69 |     dictionary result = mergeDicts(dict1, dict2, dict3);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (24) calling 'mergeDicts' from 'main'
+    |
+    +--> 'mergeDicts': events 25-32
+           |
+           |   46 | dictionary mergeDicts(dictionary dict1, dictionary dict2, dictionary dict3) {
+           |      |            ^~~~~~~~~~
+           |      |            |
+           |      |            (25) entry to 'mergeDicts'
+           |......
+           |   49 |     for(size_t i = 0; i < dict1.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (26) following 'false' branch...
+           |......
+           |   52 |     for(size_t i = 0; i < dict2.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (28) following 'false' branch...
+           |      |                (27) ...to here
+           |......
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (30) following 'true' branch...
+           |      |                (29) ...to here
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (32) calling 'addItem' from 'mergeDicts'                     (31) ...to here
+           |
+           +--> 'addItem': events 33-35
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (34) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 36
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (36) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 37-40
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (38) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (37) returning to 'mergeDicts' from 'addItem'                (39) ...to here
+           |      |                        (40) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 41-46
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (41) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (42) when 'realloc' succeeds, moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (43) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~        ~~~~~~~~~~~
+                  |      |              |            |
+                  |      |              |            (45) allocated here
+                  |      |              (44) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (46) assuming '<unknown>' is non-NULL
+                  |
+           <------+
+           |
+         'mergeDicts': events 47-50
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (48) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (47) returning to 'mergeDicts' from 'addItem'                (49) ...to here
+           |      |                        (50) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 51-57
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (52) when 'realloc' succeeds, without moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (53) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~
+                  |      |              |
+                  |      |              (54) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (55) following 'true' branch...
+                  |   23 |         free(newItems);
+                  |      |         ~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (56) ...to here
+                  |      |         (57) '<unknown>' leaks here; was allocated at (45)
+                  |
+./collected_code_4/round2//heal_11/healed/problem-87.c:30:9: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   30 |         free(newItems);
+      |         ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-5
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'addItem'
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 9-11
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 12
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-22
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, moving buffer
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   21 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   22 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   27 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   28 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch...
+           |......
+           |   34 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (23) returning to 'main' from 'addItem'
+    |   68 | 
+    |   69 |     dictionary result = mergeDicts(dict1, dict2, dict3);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (24) calling 'mergeDicts' from 'main'
+    |
+    +--> 'mergeDicts': events 25-32
+           |
+           |   46 | dictionary mergeDicts(dictionary dict1, dictionary dict2, dictionary dict3) {
+           |      |            ^~~~~~~~~~
+           |      |            |
+           |      |            (25) entry to 'mergeDicts'
+           |......
+           |   49 |     for(size_t i = 0; i < dict1.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (26) following 'false' branch...
+           |......
+           |   52 |     for(size_t i = 0; i < dict2.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (28) following 'false' branch...
+           |      |                (27) ...to here
+           |......
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (30) following 'true' branch...
+           |      |                (29) ...to here
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (32) calling 'addItem' from 'mergeDicts'                     (31) ...to here
+           |
+           +--> 'addItem': events 33-35
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (34) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 36
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (36) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 37-40
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (38) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (37) returning to 'mergeDicts' from 'addItem'                (39) ...to here
+           |      |                        (40) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 41-46
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (41) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (42) when 'realloc' succeeds, moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (43) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~        ~~~~~~~~~~~
+                  |      |              |            |
+                  |      |              |            (45) allocated here
+                  |      |              (44) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (46) assuming '<unknown>' is non-NULL
+                  |
+           <------+
+           |
+         'mergeDicts': events 47-50
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (48) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (47) returning to 'mergeDicts' from 'addItem'                (49) ...to here
+           |      |                        (50) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 51-59
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (52) when 'realloc' succeeds, without moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (53) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~
+                  |      |              |
+                  |      |              (54) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (55) following 'false' branch...
+                  |......
+                  |   27 |     newItems[*size].value = strdup(value);
+                  |      |              ~~~~~
+                  |      |              |
+                  |      |              (56) ...to here
+                  |   28 |     if(!newItems[*size].value) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (57) following 'true' branch...
+                  |   29 |         free(newItems[*size].key);
+                  |      |                       ~~~~~
+                  |      |                       |
+                  |      |                       (58) ...to here
+                  |   30 |         free(newItems);
+                  |      |         ~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (59) '<unknown>' leaks here; was allocated at (45)
+                  |
+./collected_code_4/round2//heal_11/healed/problem-87.c: In function 'mergeDicts':
+./collected_code_4/round2//heal_11/healed/problem-87.c:56:22: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-5
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'addItem'
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 9-11
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 12
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-22
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, moving buffer
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   21 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   22 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   27 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   28 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch...
+           |......
+           |   34 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (23) returning to 'main' from 'addItem'
+    |   68 | 
+    |   69 |     dictionary result = mergeDicts(dict1, dict2, dict3);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (24) calling 'mergeDicts' from 'main'
+    |
+    +--> 'mergeDicts': events 25-32
+           |
+           |   46 | dictionary mergeDicts(dictionary dict1, dictionary dict2, dictionary dict3) {
+           |      |            ^~~~~~~~~~
+           |      |            |
+           |      |            (25) entry to 'mergeDicts'
+           |......
+           |   49 |     for(size_t i = 0; i < dict1.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (26) following 'false' branch...
+           |......
+           |   52 |     for(size_t i = 0; i < dict2.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (28) following 'false' branch...
+           |      |                (27) ...to here
+           |......
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (30) following 'true' branch...
+           |      |                (29) ...to here
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (32) calling 'addItem' from 'mergeDicts'                     (31) ...to here
+           |
+           +--> 'addItem': events 33-35
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (34) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 36
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (36) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 37-40
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (38) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (37) returning to 'mergeDicts' from 'addItem'                (39) ...to here
+           |      |                        (40) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 41-46
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (41) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (42) when 'realloc' succeeds, moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (43) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~        ~~~~~~~~~~~
+                  |      |              |            |
+                  |      |              |            (45) allocated here
+                  |      |              (44) ...to here
+                  |   22 |     if(!newItems[*size].key) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (46) assuming '<unknown>' is non-NULL
+                  |
+           <------+
+           |
+         'mergeDicts': events 47-50
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (48) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (47) returning to 'mergeDicts' from 'addItem'                (49) ...to here
+           |      |                        (50) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 51-53
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (51) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (52) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (53) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 54
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (54) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 55-56
+           |
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      | |
+           |      |                      | (55) returning to 'mergeDicts' from 'addItem'
+           |      |                      (56) '<unknown>' leaks here; was allocated at (45)
+           |
+./collected_code_4/round2//heal_11/healed/problem-87.c:56:22: warning: leak of 'result.items' [CWE-401] [-Wanalyzer-malloc-leak]
+   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 3-5
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (3) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (5) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 6
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   65 |     dict1.items = addItem(dict1.items, &dict1.size, "key1", "value1");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'addItem'
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 9-11
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (9) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (10) when 'realloc' fails
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'true' branch (when 'newItems' is NULL)...
+           |
+         'addItem': event 12
+           |
+           |   18 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   66 |     dict2.items = addItem(dict2.items, &dict2.size, "key3", "value3");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (13) returning to 'main' from 'addItem'
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (14) calling 'addItem' from 'main'
+    |
+    +--> 'addItem': events 15-22
+           |
+           |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+           |      |       ^~~~~~~
+           |      |       |
+           |      |       (15) entry to 'addItem'
+           |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (16) when 'realloc' succeeds, moving buffer
+           |   17 |     if(!newItems) {
+           |      |       ~
+           |      |       |
+           |      |       (17) following 'false' branch (when 'newItems' is non-NULL)...
+           |......
+           |   21 |     newItems[*size].key = strdup(key);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (18) ...to here
+           |   22 |     if(!newItems[*size].key) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch...
+           |......
+           |   27 |     newItems[*size].value = strdup(value);
+           |      |              ~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |   28 |     if(!newItems[*size].value) {
+           |      |       ~
+           |      |       |
+           |      |       (21) following 'false' branch...
+           |......
+           |   34 |     (*size)++;
+           |      |     ~~~~~~~
+           |      |      |
+           |      |      (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     dict3.items = addItem(dict3.items, &dict3.size, "key5", "value5");
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (23) returning to 'main' from 'addItem'
+    |   68 | 
+    |   69 |     dictionary result = mergeDicts(dict1, dict2, dict3);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (24) calling 'mergeDicts' from 'main'
+    |
+    +--> 'mergeDicts': events 25-32
+           |
+           |   46 | dictionary mergeDicts(dictionary dict1, dictionary dict2, dictionary dict3) {
+           |      |            ^~~~~~~~~~
+           |      |            |
+           |      |            (25) entry to 'mergeDicts'
+           |......
+           |   49 |     for(size_t i = 0; i < dict1.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (26) following 'false' branch...
+           |......
+           |   52 |     for(size_t i = 0; i < dict2.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (28) following 'false' branch...
+           |      |                (27) ...to here
+           |......
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                ~      ~~~~~~~~~~~~~~
+           |      |                |        |
+           |      |                |        (30) following 'true' branch...
+           |      |                (29) ...to here
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (32) calling 'addItem' from 'mergeDicts'                     (31) ...to here
+           |
+           +--> 'addItem': events 33-35
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (33) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (34) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (35) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 36
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (36) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 37-40
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (38) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (37) returning to 'mergeDicts' from 'addItem'                (39) ...to here
+           |      |                        (40) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 41-45
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (41) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (42) allocated here
+                  |      |                      (43) when 'realloc' succeeds, moving buffer
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (44) following 'false' branch (when 'newItems' is non-NULL)...
+                  |......
+                  |   21 |     newItems[*size].key = strdup(key);
+                  |      |              ~~~~~
+                  |      |              |
+                  |      |              (45) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 46-49
+           |
+           |   55 |     for(size_t i = 0; i < dict3.size; ++i) {
+           |      |                       ~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (47) following 'true' branch...
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |                                                            |
+           |      |                        (46) returning to 'mergeDicts' from 'addItem'                (48) ...to here
+           |      |                        (49) calling 'addItem' from 'mergeDicts'
+           |
+           +--> 'addItem': events 50-52
+                  |
+                  |   15 | item* addItem(item* items, size_t* size, char* key, char* value) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (50) entry to 'addItem'
+                  |   16 |     item* newItems = realloc(items, (*size + 1) * sizeof(item));
+                  |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (51) when 'realloc' fails
+                  |   17 |     if(!newItems) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (52) following 'true' branch (when 'newItems' is NULL)...
+                  |
+                'addItem': event 53
+                  |
+                  |   18 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (53) ...to here
+                  |
+           <------+
+           |
+         'mergeDicts': events 54-55
+           |
+           |   56 |         result.items = addItem(result.items, &result.size, dict3.items[i].key, dict3.items[i].value);
+           |      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      | |
+           |      |                      | (54) returning to 'mergeDicts' from 'addItem'
+           |      |                      (55) 'result.items' leaks here; was allocated at (42)
+           |

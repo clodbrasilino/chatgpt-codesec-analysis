@@ -50,14 +50,17 @@ int64_t nCrModP(int64_t n, int64_t r, int64_t p) {
     free(fact);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:9477,execs:3270,op:havoc,rep:10; likely memory-safety defect
+  */
 
 int main(void) {
     int64_t n, r, p;
     
     /* Possible weaknesses found:
-     *  %lld in format string (no. 1) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
      *  %lld in format string (no. 3) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
      *  %lld in format string (no. 2) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
+     *  %lld in format string (no. 1) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
      */
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
         fprintf(stderr, "Invalid input\n");

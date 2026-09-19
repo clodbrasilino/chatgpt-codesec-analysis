@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c:29:68: style: Array index 'max_divisor' is used before limits check. [arrayIndexThenCheck]
+                    if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c:32:37: style: Condition 'current_gcd<=1000' is always true [knownConditionTrueFalse]
+                    if (current_gcd <= 1000) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c:26:48: note: Assuming condition 'current_gcd<=1000' is true
+            if (current_gcd > 1 && current_gcd <= 1000) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c:29:82: note: Assuming condition is false
+                    if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
+                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-339-s3.c:32:37: note: Condition 'current_gcd<=1000' is always true
+                    if (current_gcd <= 1000) {
+                                    ^

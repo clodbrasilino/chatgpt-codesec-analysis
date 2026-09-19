@@ -8,17 +8,14 @@ int is_perfect_square(long long num) {
     if (num == 0) {
         return 1;
     }
-    long long sqrt_floor = (long long)round(sqrt((double)num));
-    if (sqrt_floor * sqrt_floor == num) {
-        return 1;
+    long long sqrt_floor = (long long)sqrt((double)num);
+    while (sqrt_floor * sqrt_floor > num) {
+        sqrt_floor--;
     }
-    if ((sqrt_floor - 1) * (sqrt_floor - 1) == num) {
-        return 1;
+    while ((sqrt_floor + 1) * (sqrt_floor + 1) <= num) {
+        sqrt_floor++;
     }
-    if ((sqrt_floor + 1) * (sqrt_floor + 1) == num) {
-        return 1;
-    }
-    return 0;
+    return (sqrt_floor * sqrt_floor == num);
 }
 
 int main(void) {

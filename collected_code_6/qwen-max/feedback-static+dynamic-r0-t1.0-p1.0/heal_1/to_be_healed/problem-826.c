@@ -4,6 +4,7 @@ char* findTriangleType(int a, int b, int c) {
     if (a <= 0 || b <= 0 || c <= 0) return "Invalid";
     /* Possible weaknesses found:
      * UBSan: signed integer overflow: 1073741824 + 1139355592 cannot be represented in type 'int'
+     * UBSan: signed integer overflow: 1724130190 + 1199545584 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000005,time:3372,execs:1402,op:havoc,rep:9)
      */
     if (a + b <= c || a + c <= b || b + c <= a) return "Not a triangle";
 

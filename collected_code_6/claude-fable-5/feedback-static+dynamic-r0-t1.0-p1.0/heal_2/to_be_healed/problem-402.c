@@ -1,16 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static long long mulmod(long long a, long long b, long long mod)
+{
+    return (long long)((unsigned __int128)a * (unsigned __int128)b %
+                       (unsigned __int128)mod);
+}
+
 long long power(long long base, long long exp, long long mod)
 {
-    long long result = 1;
-    base = base % mod;
+    long long result = 1 % mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
     while (exp > 0) {
         if (exp & 1) {
-            result = (result * base) % mod;
+            result = mulmod(result, base, mod);
         }
         exp >>= 1;
-        base = (base * base) % mod;
+        base = mulmod(base, base, mod);
     }
     return result;
 }
@@ -28,24 +37,26 @@ static long long ncr_small(long long n, long long r, long long p)
     if (r == 0 || r == n) {
         return 1 % p;
     }
-
-    long long *fact = malloc((size_t)(n + 1) * sizeof(long long));
-    if (fact == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+    if (r > n - r) {
+        r = n - r;
     }
 
-    fact[0] = 1;
-    for (long long i = 1; i <= n; i++) {
-        fact[i] = (fact[i - 1] * i) % p;
+    /* Possible weaknesses found:
+     *  Same expression used in consecutive assignments of 'numerator' and 'denominator'.
+     *  Same expression used in consecutive assignments of 'numerator' and 'denominator'. [duplicateAssignExpression]
+     */
+    long long numerator = 1 % p;
+    /* Possible weaknesses found:
+     *  Same expression used in consecutive assignments of 'numerator' and 'denominator'.
+     */
+    long long denominator = 1 % p;
+
+    for (long long i = 0; i < r; i++) {
+        numerator = mulmod(numerator, (n - i) % p, p);
+        denominator = mulmod(denominator, (i + 1) % p, p);
     }
 
-    long long result = fact[n];
-    result = (result * mod_inverse(fact[r], p)) % p;
-    result = (result * mod_inverse(fact[n - r], p)) % p;
-
-    free(fact);
-    return result;
+    return mulmod(numerator, mod_inverse(denominator, p), p);
 }
  /* Possible weaknesses found:
   *  test case 2 failed: expected 10, got 0
@@ -58,16 +69,21 @@ long long ncr_mod_p(long long n, long long r, long long p)
     }
 
     long long result = 1 % p;
+
     while (n > 0 || r > 0) {
         long long ni = n % p;
         long long ri = r % p;
+
         if (ri > ni) {
             return 0;
         }
-        result = (result * ncr_small(ni, ri, p)) % p;
+
+        result = mulmod(result, ncr_small(ni, ri, p), p);
+
         n /= p;
         r /= p;
     }
+
     return result;
 }
 

@@ -7,7 +7,6 @@ long long int sumOfXorPairs(const int* arr, size_t n) {
     }
 
     long long int sum = 0;
-    
     for (int i = 0; i < 32; i++) {
         long long int zeroCount = 0;
         long long int oneCount = 0;
@@ -24,7 +23,7 @@ long long int sumOfXorPairs(const int* arr, size_t n) {
     return sum;
 }
 
-int main(void) {
+int main() {
     int* arr = NULL;
     size_t n = 0;
     int temp = 0;

@@ -1,4 +1,1 @@
-problem-926.c:22:46:medium:UBSan: signed integer overflow: 21 * 2432902008176640000 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:483,execs:237,op:havoc,rep:5)
-problem-926.c:24:46:medium:UBSan: signed integer overflow: 2 * -4702111234474983745 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:483,execs:237,op:havoc,rep:5)
-problem-926.c:24:74:medium:UBSan: signed integer overflow: -4702111234474983746 + -4702111234474983746 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:483,execs:237,op:havoc,rep:5)
-problem-926.c:33:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000001,time:3002,execs:542,op:havoc,rep:6; likely memory-safety defect
+problem-926.c:0:0: info: fuzzed - no sanitizer findings

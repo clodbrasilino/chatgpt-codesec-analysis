@@ -2,11 +2,9 @@
 #include <math.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <stdint.h>
 
-int countDigits(int n) {
+int countDigits(long long n) {
     int count = 0;
-    if (n == 0) return 1;
     while (n != 0) {
         n /= 10;
         count++;
@@ -14,39 +12,43 @@ int countDigits(int n) {
     return count;
 }
 
-bool isArmstrong(int num) {
-    if (num < 0) return false;
-    int n = countDigits(num);
-    int result = 0;
-    int temp = num;
+bool isArmstrong(long long num) {
+    if (num < 0 || num > INT_MAX) {
+        return false;
+    }
 
-    for (; temp; temp /= 10) {
-        int remainder = temp % 10;
-        uint64_t powerResult = 1;
-        for (int i = 0; i < n; ++i) {
-            if (remainder == 0 || UINT64_MAX / remainder < powerResult) {
-                return false;
-            }
-            powerResult *= remainder;
-        }
-        if (result > INT_MAX - (int)powerResult) {
+    long long n = 0, result = 0, originalNum = num;
+    while (originalNum != 0) {
+        originalNum /= 10;
+        n++;
+    }
+
+    originalNum = num;
+    while (originalNum != 0) {
+        int remainder = originalNum % 10;
+        long long powResult = (long long)pow(remainder, n);
+        if (powResult > INT_MAX) {
             return false;
         }
-        result += powerResult;
+        result += powResult;
+        if (result > INT_MAX) {
+            return false;
+        }
+        originalNum /= 10;
     }
 
     return (result == num);
 }
 
 int main() {
-    int number;
+    long long number;
     printf("Enter a number: ");
-    scanf("%d", &number);
+    scanf("%lld", &number);
 
     if (isArmstrong(number)) {
-        printf("%d is an Armstrong number.\n", number);
+        printf("%lld is an Armstrong number.\n", number);
     } else {
-        printf("%d is not an Armstrong number.\n", number);
+        printf("%lld is not an Armstrong number.\n", number);
     }
 
     return 0;

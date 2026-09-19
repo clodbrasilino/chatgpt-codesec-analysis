@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <inttypes.h>
 
 uint64_t modPow(uint64_t base, uint64_t exp, uint64_t modulus) {
     uint64_t result = 1;
@@ -31,17 +30,24 @@ uint64_t nCrModPFermat(uint64_t n, uint64_t r, uint64_t p) {
 
     return (numerator * modInverse(denominator, p)) % p;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:8884,execs:874,op:havoc,rep:3; likely memory-safety defect
-  */
 
 int main() {
     uint64_t n, r, p;
-    int scanned = scanf("%" SCNu64 " %" SCNu64 " %" SCNu64, &n, &r, &p);
-    if (scanned != 3) {
-        fprintf(stderr, "Error: Invalid input\n");
-        return 1;
-    }
-    printf("%" PRIu64 "\n", nCrModPFermat(n, r, p));
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     */
+    scanf("%llu", &n);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     */
+    scanf("%llu", &r);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     */
+    scanf("%llu", &p);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+     */
+    printf("%llu\n", nCrModPFermat(n, r, p));
     return 0;
 }

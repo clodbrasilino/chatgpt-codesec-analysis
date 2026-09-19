@@ -1,21 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 3, got <no output>
-  *  test case 0 failed: expected 1, got <no output>
-  *  test case 1 failed: expected 4, got <no output>
+  *  test case 1 failed: expected 4, got 2
+  *  test case 2 failed: expected 3, got 1
   */
 
 int minOperations(int a, int b) {
+    if (a == b) {
+        return 0;
+    }
+    
     int diff = abs(a - b);
     int operations = 0;
-
+    
     operations += diff / 5;
     diff %= 5;
-
+    
+    operations += diff / 3;
+    diff %= 3;
+    
     operations += diff / 2;
     diff %= 2;
-
+    
     operations += diff;
     
     return operations;

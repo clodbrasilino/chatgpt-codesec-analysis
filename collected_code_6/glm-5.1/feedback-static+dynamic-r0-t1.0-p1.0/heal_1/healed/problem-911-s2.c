@@ -46,8 +46,11 @@ int pop_min_heap(int *heap, int *size) {
 }
 
 void push_max_heap(int *heap, int *size, int value) {
-    value = -value;
-    heap[*size] = value;
+    if (value == INT_MIN) {
+        heap[*size] = INT_MIN + 1;
+    } else {
+        heap[*size] = -value;
+    }
     int i = *size;
     (*size)++;
     while (i > 0) {
@@ -63,7 +66,12 @@ void push_max_heap(int *heap, int *size, int value) {
 
 int pop_max_heap(int *heap, int *size) {
     if (*size == 0) return INT_MIN;
-    int root = -heap[0];
+    int root = heap[0];
+    if (root == INT_MIN + 1) {
+        root = INT_MIN;
+    } else {
+        root = -root;
+    }
     heap[0] = heap[*size - 1];
     (*size)--;
     int i = 0;
@@ -86,10 +94,10 @@ int pop_max_heap(int *heap, int *size) {
 long long maximumProduct(const int *nums, int numsSize) {
     if (numsSize < 3) return 0;
 
-    int max_heap[3];
+    int max_heap[numsSize > 3 ? numsSize : 3];
     int max_heap_size = 0;
 
-    int min_heap[3];
+    int min_heap[numsSize > 3 ? numsSize : 3];
     int min_heap_size = 0;
 
     for (int i = 0; i < numsSize; i++) {

@@ -3,10 +3,18 @@
 
 unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, const int *values, int num_values) {
     int i, j, k;
-    int min_val = values[0], max_val = values[0];
+    int min_val, max_val;
     unsigned long long *prev = NULL, *curr = NULL;
     unsigned long long result = 0;
     int offset, max_sum;
+    int dp_size;
+
+    if (length <= 0 || num_values <= 0 || values == NULL) {
+        return 0;
+    }
+
+    min_val = values[0];
+    max_val = values[0];
 
     for (i = 1; i < num_values; i++) {
         if (values[i] < min_val) min_val = values[i];
@@ -20,17 +28,18 @@ unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, cons
         min_val = 0;
     }
 
-    if (length <= 0) {
-        return 0;
-    }
-
     max_sum = length * max_val;
     if (max_sum < 0) {
         return 0;
     }
 
     offset = -min_val * length;
-    int dp_size = max_sum + offset + 2;
+
+    if (max_sum > INT_MAX - offset - 2) {
+        return 0;
+    }
+
+    dp_size = max_sum + offset + 2;
     if (dp_size <= 0) {
         return 0;
     }
@@ -46,9 +55,7 @@ unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, cons
     for (i = 0; i < num_values; i++) {
         int shifted = offset + values[i];
         if (shifted >= 0 && shifted < dp_size) {
-            if (values[i] >= 0 || shifted >= offset) {
-                prev[shifted] += 1;
-            }
+            prev[shifted] += 1;
         }
     }
 
@@ -60,10 +67,8 @@ unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, cons
             if (prev[k] > 0) {
                 for (i = 0; i < num_values; i++) {
                     int new_sum = k + values[i];
-                    if (new_sum >= offset) {
-                        if (new_sum < dp_size) {
-                            curr[new_sum] += prev[k];
-                        }
+                    if (new_sum >= offset && new_sum < dp_size) {
+                        curr[new_sum] += prev[k];
                     }
                 }
             }

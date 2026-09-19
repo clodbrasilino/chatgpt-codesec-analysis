@@ -38,11 +38,16 @@ int64_t sum_of_product_binomial(int64_t n)
             return -1;
         }
         
-        if (coeff > 0 && sum > INT64_MAX - coeff * coeff) {
-            return -1;
+        if (coeff > 0) {
+            if (coeff > INT64_MAX / coeff) {
+                return -1;
+            }
+            int64_t square = coeff * coeff;
+            if (sum > INT64_MAX - square) {
+                return -1;
+            }
+            sum += square;
         }
-        
-        sum += coeff * coeff;
     }
     
     return sum;

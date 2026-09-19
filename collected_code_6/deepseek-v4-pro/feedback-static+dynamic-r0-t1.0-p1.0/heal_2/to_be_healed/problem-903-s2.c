@@ -8,12 +8,15 @@ int count_total_bits(int n) {
         count++;
         temp >>= 1;
     }
+    if (count == 0) {
+        count = 1;
+    }
     return count;
 }
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got <no output>
-  *  test case 1 failed: expected 4, got <no output>
-  *  test case 2 failed: expected 17, got <no output>
+  *  test case 2 failed: expected 17, got 28
+  *  test case 0 failed: expected 1, got 2
+  *  test case 1 failed: expected 4, got 8
   */
 
 unsigned long long count_unset_bits(int n) {
@@ -26,10 +29,10 @@ unsigned long long count_unset_bits(int n) {
     unsigned long long set_bits = 0;
     
     for (int i = 0; i < total_bits; i++) {
-        int pattern_length = 1 << (i + 1);
-        int full_patterns = (n + 1) / pattern_length;
-        int remainder = (n + 1) % pattern_length;
-        int ones_in_full_pattern = 1 << i;
+        unsigned int pattern_length = 1u << (i + 1);
+        unsigned int full_patterns = (n + 1u) / pattern_length;
+        unsigned int remainder = (n + 1u) % pattern_length;
+        unsigned int ones_in_full_pattern = 1u << i;
         
         set_bits += (unsigned long long)full_patterns * ones_in_full_pattern;
         

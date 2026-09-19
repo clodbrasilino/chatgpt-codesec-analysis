@@ -3,19 +3,15 @@
 
 unsigned int set_leftmost_unset_bit(unsigned int n)
 {
+    unsigned int temp;
     unsigned int mask;
-    unsigned int temp = ~n;
 
     if (n == UINT_MAX)
     {
         return n;
     }
 
-    if (n == 0U)
-    {
-        return 1U;
-    }
-
+    temp = ~n;
     mask = temp & (0U - temp);
     n |= mask;
 

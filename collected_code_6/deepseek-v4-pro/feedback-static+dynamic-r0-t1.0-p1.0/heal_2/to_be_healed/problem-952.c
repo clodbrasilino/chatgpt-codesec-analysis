@@ -18,9 +18,9 @@ long long mod_inverse(long long a, long long mod) {
     return mod_pow(a, mod - 2, mod);
 }
  /* Possible weaknesses found:
+  *  test case 0 failed: expected 6, got <no output>
   *  test case 1 failed: expected 11, got <no output>
   *  test case 2 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
   */
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -36,7 +36,7 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 
     long long *fact = (long long *)malloc(p * sizeof(long long));
     if (fact == NULL) {
-        exit(1);
+        return 0;
     }
 
     fact[0] = 1;
@@ -66,6 +66,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 int main(void) {
     long long n, r, p;
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        return 1;
+    }
+    if (p <= 0) {
         return 1;
     }
     printf("%lld\n", ncr_mod_p(n, r, p));

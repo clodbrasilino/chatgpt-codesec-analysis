@@ -61,6 +61,11 @@ int main(void)
         return EXIT_FAILURE;
     }
 
+    if (base < 0 || base > 100 || exponent < 0 || exponent > 1000) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
     result = sum_of_digits_power(base, exponent);
 
     if (result < 0) {

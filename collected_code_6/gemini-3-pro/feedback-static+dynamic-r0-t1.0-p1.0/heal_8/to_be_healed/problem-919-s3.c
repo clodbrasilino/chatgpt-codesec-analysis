@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 struct Node {
-    long long data;
+    int data;
     struct Node* next;
 };
  /* Possible weaknesses found:
@@ -13,21 +13,24 @@ struct Node {
 
 long long multiplyListItems(struct Node* head) {
     if (head == NULL) {
-        return 0; 
+        return 0;
     }
 
-    unsigned long long result = 1;
+    long long result = 1;
     struct Node* current = head;
 
     while (current != NULL) {
-        result *= (unsigned long long)current->data;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -4606099703834428 * 222222221 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000007,time:6663,execs:2048,op:havoc,rep:6)
+         */
+        result *= (long long)current->data;
         current = current->next;
     }
 
-    return (long long)result;
+    return result;
 }
 
-struct Node* createNode(long long data) {
+struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
         exit(EXIT_FAILURE);
@@ -49,11 +52,11 @@ void freeList(struct Node* head) {
 }
 
 int main(void) {
-    long long val;
+    int val;
     struct Node* head = NULL;
     struct Node* tail = NULL;
 
-    while (scanf("%lld", &val) == 1) {
+    while (scanf("%d", &val) == 1) {
         struct Node* newNode = createNode(val);
         if (head == NULL) {
             head = newNode;
@@ -65,12 +68,7 @@ int main(void) {
     }
 
     long long product = multiplyListItems(head);
-    
-    if (head != NULL) {
-        printf("%lld\n", product);
-    } else {
-        printf("0\n");
-    }
+    printf("%lld\n", product);
 
     freeList(head);
 

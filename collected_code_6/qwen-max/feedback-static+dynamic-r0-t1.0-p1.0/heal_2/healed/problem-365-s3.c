@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 
 int count_digits(long num) {
-    int count = 0;
     if (num == 0) return 1;
-    if (num < 0) num = -num;
+    if (num < 0) num = -(long long)num;
+    int count = 0;
     while (num > 0) {
         num /= 10;
         count++;
@@ -15,8 +17,8 @@ int main() {
     long number;
     printf("Enter a number: ");
     if (scanf("%ld", &number) != 1) {
-        printf("Invalid input.\n");
-        return 1;
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
     }
     printf("Number of digits: %d\n", count_digits(number));
     return 0;

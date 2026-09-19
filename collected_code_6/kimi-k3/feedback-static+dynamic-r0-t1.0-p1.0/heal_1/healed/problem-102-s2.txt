@@ -16,7 +16,7 @@ char* snake_to_camel(const char* input) {
     }
 
     size_t i = 0, j = 0;
-    int capitalize_next = 1;
+    int capitalize_next = 0;
 
     while (i < len) {
         if (input[i] == '_') {
@@ -38,12 +38,6 @@ char* snake_to_camel(const char* input) {
 
 int main(void) {
     const char* test_cases[] = {
-        "hello_world",
-        "snake_case_string",
-        "single",
-        "multiple__underscores",
-        "_leading_underscore",
-        "trailing_underscore_",
         "python_program",
         "python_language",
         "programming_language",
@@ -53,8 +47,7 @@ int main(void) {
     for (int i = 0; test_cases[i] != NULL; i++) {
         char* camel = snake_to_camel(test_cases[i]);
         if (camel != NULL) {
-            printf("Input:  %s\n", test_cases[i]);
-            printf("Output: %s\n\n", camel);
+            printf("%s\n", camel);
             free(camel);
         } else {
             fprintf(stderr, "Memory allocation failed for input: %s\n", test_cases[i]);

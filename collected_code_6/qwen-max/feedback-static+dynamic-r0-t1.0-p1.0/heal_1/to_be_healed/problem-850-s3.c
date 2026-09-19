@@ -6,6 +6,7 @@ bool canFormTriangle(int angle1, int angle2, int angle3) {
         return false;
     }
     /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 1139355592 + 1199545584 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:33719,execs:13655,op:havoc,rep:1)
      * UBSan: signed integer overflow: 1139355592 + 1199545584 cannot be represented in type 'int'
      */
     if (angle1 + angle2 + angle3 != 180) {

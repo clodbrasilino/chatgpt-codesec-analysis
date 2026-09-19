@@ -1,5 +1,5 @@
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-479-s3.c:7:24: error: call to undeclared library function 'labs' with type 'long (long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    7 |     if (num < 0) num = labs(num);
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-479-s3.c:6:24: error: call to undeclared library function 'labs' with type 'long (long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    6 |     if (num < 0) num = labs(num);
       |                        ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-479-s3.c:7:24: note: include the header <stdlib.h> or explicitly provide a declaration for 'labs'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-479-s3.c:6:24: note: include the header <stdlib.h> or explicitly provide a declaration for 'labs'
 1 error generated.

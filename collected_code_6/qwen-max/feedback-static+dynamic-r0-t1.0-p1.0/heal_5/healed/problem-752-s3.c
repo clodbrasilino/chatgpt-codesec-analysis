@@ -1,11 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
 
-long long jacobsthal(long n) {
-    if (n == 0) return 1;
+uint64_t jacobsthal(uint64_t n) {
+    if (n == 0) return 0;
     if (n == 1) return 1;
-    long long a = 1, b = 1;
-    for (long i = 2; i <= n; ++i) {
-        long long c = a + 2 * b;
+    uint64_t a = 0, b = 1;
+    for (uint64_t i = 2; i <= n; ++i) {
+        uint64_t c = a + 2 * b;
         a = b;
         b = c;
     }
@@ -13,9 +16,18 @@ long long jacobsthal(long n) {
 }
 
 int main() {
-    long n;
+    char input[16];
     printf("Enter the value of n: ");
-    scanf("%ld", &n);
-    printf("The %ldth Jacobsthal number is: %lld\n", n, jacobsthal(n));
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    char *endptr;
+    uint64_t n = strtoull(input, &endptr, 10);
+    if (*endptr != '\n' || endptr == input) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    printf("The %" PRIu64 "th Jacobsthal number is: %" PRIu64 "\n", n, jacobsthal(n));
     return 0;
 }

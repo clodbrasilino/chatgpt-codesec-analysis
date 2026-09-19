@@ -9,32 +9,28 @@ char *snake_to_camel(const char *snake) {
     }
 
     size_t len = strlen(snake);
+    if (len == 0) {
+        return NULL;
+    }
+
     char *camel = malloc(len + 1);
     if (camel == NULL) {
         return NULL;
     }
 
     size_t j = 0;
-    int capitalize_next = 0;
-    int first_char = 1;
+    int capitalize_next = 1;
 
     for (size_t i = 0; i < len; i++) {
         if (snake[i] == '_') {
-            if (!first_char && j > 0) {
-                capitalize_next = 1;
-            }
+            capitalize_next = 1;
         } else {
             if (capitalize_next) {
-                camel[j++] = toupper((unsigned char)snake[i]);
+                camel[j++] = (char)toupper((unsigned char)snake[i]);
                 capitalize_next = 0;
             } else {
-                if (first_char) {
-                    camel[j++] = toupper((unsigned char)snake[i]);
-                } else {
-                    camel[j++] = snake[i];
-                }
+                camel[j++] = (char)tolower((unsigned char)snake[i]);
             }
-            first_char = 0;
         }
     }
 
@@ -48,16 +44,21 @@ char *snake_to_camel(const char *snake) {
 }
 
 int main(void) {
-    const char *test1 = "hello_world";
-    const char *test2 = "_leading_underscore";
-    const char *test3 = "trailing_underscore_";
-    const char *test4 = "multiple__underscores";
-    const char *test5 = "already_camel";
-    const char *test6 = "single";
-    const char *test7 = "";
-    const char *test8 = NULL;
+    const char *test1 = "python_program";
+    const char *test2 = "python_language";
+    const char *test3 = "programming_language";
+    const char *test4 = "hello_world";
+    const char *test5 = "_leading_underscore";
+    const char *test6 = "trailing_underscore_";
+    const char *test7 = "multiple__underscores";
+    const char *test8 = "already_camel";
+    const char *test9 = "single";
+    const char *test10 = "";
+    const char *test11 = NULL;
 
-    char *result = snake_to_camel(test1);
+    char *result;
+
+    result = snake_to_camel(test1);
     printf("%s -> %s\n", test1, result ? result : "(null)");
     free(result);
 
@@ -82,10 +83,22 @@ int main(void) {
     free(result);
 
     result = snake_to_camel(test7);
-    printf("\"%s\" -> %s\n", test7, result ? result : "(null)");
+    printf("%s -> %s\n", test7, result ? result : "(null)");
     free(result);
 
     result = snake_to_camel(test8);
+    printf("%s -> %s\n", test8, result ? result : "(null)");
+    free(result);
+
+    result = snake_to_camel(test9);
+    printf("%s -> %s\n", test9, result ? result : "(null)");
+    free(result);
+
+    result = snake_to_camel(test10);
+    printf("\"%s\" -> %s\n", test10, result ? result : "(null)");
+    free(result);
+
+    result = snake_to_camel(test11);
     printf("NULL -> %s\n", result ? result : "(null)");
     free(result);
 

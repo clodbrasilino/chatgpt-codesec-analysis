@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 71, got 45
+  *  test case 0 failed: expected 11, got 6
   *  test case 1 failed: expected 7, got 0
-  *  test case 2 failed: expected 71, got 0
-  *  test case 0 failed: expected 11, got 0
   */
 
 int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
-    if (arr == NULL || n <= 0 || i < 0 || k < 0 || i >= n || k >= n || k < i) {
+    if (arr == NULL || n <= 0 || i < 0 || k < 0 || i >= k || k >= n) {
         return 0;
     }
 
@@ -30,39 +30,61 @@ int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
         }
     }
 
-    int sum = 0;
-    int prev = -1;
-    int prev_index = -1;
+    if (arr[k] <= arr[i]) {
+        free(dp);
+        return 0;
+    }
 
-    for (int j = i; j <= k; j++) {
-        if (prev == -1 || arr[j] > prev) {
-            if (dp[j] == arr[j] || (prev != -1 && dp[j] == dp[prev_index] + arr[j])) {
-                sum += arr[j];
-                prev = arr[j];
-                prev_index = j;
+    int max_i = dp[i];
+
+    int valid = 0;
+    if (i == 0) {
+        valid = 1;
+    } else {
+        for (int l = 0; l < i; l++) {
+            if (arr[l] < arr[i]) {
+                if (dp[l] + arr[i] == dp[i]) {
+                    valid = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!valid) {
+        free(dp);
+        return 0;
+    }
+
+    int max_mid = 0;
+    int found_mid = 0;
+    for (int j = i + 1; j < k; j++) {
+        if (arr[j] > arr[i] && arr[j] < arr[k]) {
+            if (!found_mid) {
+                max_mid = dp[j];
+                found_mid = 1;
+            } else if (dp[j] > max_mid) {
+                max_mid = dp[j];
             }
         }
     }
 
     free(dp);
-    return sum;
+    
+    if (found_mid) {
+        return max_mid + arr[k];
+    } else {
+        return max_i + arr[k];
+    }
 }
 
 int main() {
-    int arr1[] = {1, 101, 2, 3, 100, 4, 5};
-    int n1 = sizeof(arr1) / sizeof(arr1[0]);
-    int result1 = max_sum_increasing_subsequence(arr1, n1, 0, 1);
-    printf("%d\n", result1);
+    int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    int arr2[] = {1, 101, 2, 3, 100, 4, 5};
-    int n2 = sizeof(arr2) / sizeof(arr2[0]);
-    int result2 = max_sum_increasing_subsequence(arr2, n2, 2, 3);
-    printf("%d\n", result2);
-
-    int arr3[] = {1, 101, 2, 3, 100, 4, 5};
-    int n3 = sizeof(arr3) / sizeof(arr3[0]);
-    int result3 = max_sum_increasing_subsequence(arr3, n3, 4, 6);
-    printf("%d\n", result3);
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 1, 2));
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 3, 4));
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 4, 6));
 
     return 0;
 }

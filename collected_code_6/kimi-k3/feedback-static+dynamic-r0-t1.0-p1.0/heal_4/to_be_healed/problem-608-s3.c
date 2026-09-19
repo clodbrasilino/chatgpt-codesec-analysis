@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 15, got 1
   *  test case 1 failed: expected 5, got 1
   *  test case 0 failed: expected 2, got 1
-  *  test case 2 failed: expected 15, got 1
   */
 
 unsigned long long bell_number(int n)
 {
-    if (n < 0) {
+    if (n < 0 || n > 25) {
         return 0;
     }
 
-    unsigned long long *bell = (unsigned long long *)calloc((size_t)n + 2, sizeof(unsigned long long));
+    unsigned long long *bell = (unsigned long long *)calloc((size_t)n + 1, sizeof(unsigned long long));
     if (bell == NULL) {
         return 0;
     }
@@ -24,10 +24,9 @@ unsigned long long bell_number(int n)
         for (int j = i - 1; j >= 1; j--) {
             bell[j] = bell[j] + bell[j - 1];
         }
-        bell[0] = bell[i];
     }
 
-    unsigned long long result = bell[0];
+    unsigned long long result = bell[n];
     free(bell);
     return result;
 }

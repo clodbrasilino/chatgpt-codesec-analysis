@@ -1,9 +1,10 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 void print_lucky_numbers(int n) {
-    if (n <= 0) {
+    if (n <= 0 || n > INT_MAX / 10) {
         return;
     }
 
@@ -22,7 +23,7 @@ void print_lucky_numbers(int n) {
 
     while (step_index < count && step_index < n) {
         int step = numbers[step_index];
-        if (step == 0) {
+        if (step <= 0) {
             break;
         }
 
@@ -45,7 +46,7 @@ void print_lucky_numbers(int n) {
     free(numbers);
 }
 
-int main() {
+int main(void) {
     int n;
     if (scanf("%d", &n) != 1) {
         return 1;

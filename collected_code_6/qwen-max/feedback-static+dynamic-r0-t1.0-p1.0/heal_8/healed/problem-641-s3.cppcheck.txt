@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:9:44: warning: Expression 'b' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+    if (a > 0 && b < 0 && a > (INT64_MIN / b)) return false;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:9:20: note: Assuming that condition 'b<0' is not redundant
+    if (a > 0 && b < 0 && a > (INT64_MIN / b)) return false;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:9:44: note: Negative value is converted to an unsigned value
+    if (a > 0 && b < 0 && a > (INT64_MIN / b)) return false;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:10:44: warning: Expression 'a' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+    if (a < 0 && b > 0 && b > (INT64_MIN / a)) return false;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:10:11: note: Assuming that condition 'a<0' is not redundant
+    if (a < 0 && b > 0 && b > (INT64_MIN / a)) return false;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-641-s3.c:10:44: note: Negative value is converted to an unsigned value
+    if (a < 0 && b > 0 && b > (INT64_MIN / a)) return false;
+                                           ^

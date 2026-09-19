@@ -25,14 +25,18 @@ int* find_dissimilar(const int *tuple1, int size1, const int *tuple2, int size2,
     int count = 0;
 
     for (int i = 0; i < size1; i++) {
-        if (!is_present(tuple2, size2, tuple1[i]) && !is_present(result, count, tuple1[i])) {
-            result[count++] = tuple1[i];
+        if (!is_present(tuple2, size2, tuple1[i])) {
+            if (!is_present(result, count, tuple1[i])) {
+                result[count++] = tuple1[i];
+            }
         }
     }
 
     for (int i = 0; i < size2; i++) {
-        if (!is_present(tuple1, size1, tuple2[i]) && !is_present(result, count, tuple2[i])) {
-            result[count++] = tuple2[i];
+        if (!is_present(tuple1, size1, tuple2[i])) {
+            if (!is_present(result, count, tuple2[i])) {
+                result[count++] = tuple2[i];
+            }
         }
     }
 
@@ -54,11 +58,14 @@ int main() {
         return 1;
     }
 
-    printf("Dissimilar elements: ");
+    printf("[");
     for (int i = 0; i < result_size; i++) {
-        printf("%d ", dissimilar[i]);
+        printf("%d", dissimilar[i]);
+        if (i < result_size - 1) {
+            printf(", ");
+        }
     }
-    printf("\n");
+    printf("]\n");
 
     free(dissimilar);
     return 0;

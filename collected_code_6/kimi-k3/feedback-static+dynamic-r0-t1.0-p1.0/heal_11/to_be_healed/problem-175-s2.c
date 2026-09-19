@@ -9,7 +9,7 @@ bool is_valid_parentheses(const char *s)
 {
     if (s == NULL)
     {
-        return true;
+        return false;
     }
 
     int balance = 0;
@@ -62,13 +62,13 @@ int main(void)
         i++;
     }
 
-    const char *null_test = NULL;
-    /* Possible weaknesses found:
-     *  Calling function 'is_valid_parentheses' returns 1
-     *  Condition 'is_valid_parentheses(null_test)' is always true [knownConditionTrueFalse]
-     *  Condition 'is_valid_parentheses(null_test)' is always true
-     */
-    printf("Input: NULL -> %s\n", is_valid_parentheses(null_test) ? "Valid" : "Invalid");
+    printf("Input: NULL -> %s\n",
+           /* Possible weaknesses found:
+            *  Condition 'is_valid_parentheses(NULL)' is always false
+            *  Condition 'is_valid_parentheses(NULL)' is always false [knownConditionTrueFalse]
+            *  Calling function 'is_valid_parentheses' returns 0
+            */
+           is_valid_parentheses(NULL) ? "Valid" : "Invalid");
 
     return 0;
 }

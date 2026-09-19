@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 0 failed: expected 20, got <no output>
-  *  test case 2 failed: expected 5, got <no output>
+  *  test case 2 failed: expected 5, got 2
+  *  test case 1 failed: expected 2, got 1
+  *  test case 0 failed: expected 20, got 3
   */
 
 int count_squares(int length, int width) {
-    if (length < 0 || width < 0) {
+    if (length <= 0 || width <= 0) {
         return -1;
     }
     return (length < width ? length : width);
@@ -15,6 +15,7 @@ int count_squares(int length, int width) {
 
 int main() {
     int length, width;
+
     printf("Enter the length of the rectangle: ");
     if (scanf("%d", &length) != 1) {
         fprintf(stderr, "Invalid input for length.\n");
@@ -29,11 +30,14 @@ int main() {
 
     int max_square_side = count_squares(length, width);
     if (max_square_side == -1) {
-        fprintf(stderr, "Negative dimensions are not allowed.\n");
+        fprintf(stderr, "Non-positive dimensions are not allowed.\n");
         return EXIT_FAILURE;
     }
 
     int number_of_squares = (length / max_square_side) * (width / max_square_side);
+    if (number_of_squares == 0) {
+        number_of_squares = 1;
+    }
     printf("The number of squares in the rectangle is: %d\n", number_of_squares);
 
     return EXIT_SUCCESS;

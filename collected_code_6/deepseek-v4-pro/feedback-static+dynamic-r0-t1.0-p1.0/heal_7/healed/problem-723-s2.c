@@ -9,7 +9,13 @@ typedef struct PairNode {
 } PairNode;
 
 unsigned int hash_pair(int a, int b, int table_size) {
-    unsigned int h = (unsigned int)a * 2654435761u + (unsigned int)b * 2246822519u;
+    int first = a < b ? a : b;
+    int second = a < b ? b : a;
+    unsigned long long key = (unsigned long long)first * 1000000007ULL + (unsigned long long)second;
+    unsigned int ha = (unsigned int)(key >> 32);
+    unsigned int hb = (unsigned int)(key & 0xFFFFFFFF);
+    unsigned int h = ha ^ hb;
+    h = h * 2654435761u;
     return h % (unsigned int)table_size;
 }
 
@@ -36,8 +42,10 @@ void free_map(PairNode **map, int size) {
 void map_insert(PairNode **map, int size, int a, int b, int count) {
     unsigned int index = hash_pair(a, b, size);
     PairNode *current = map[index];
+    int first = a < b ? a : b;
+    int second = a < b ? b : a;
     while (current != NULL) {
-        if (current->first == a && current->second == b) {
+        if (current->first == first && current->second == second) {
             current->count += count;
             return;
         }
@@ -48,8 +56,8 @@ void map_insert(PairNode **map, int size, int a, int b, int count) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    new_node->first = a;
-    new_node->second = b;
+    new_node->first = first;
+    new_node->second = second;
     new_node->count = count;
     new_node->next = map[index];
     map[index] = new_node;
@@ -58,8 +66,10 @@ void map_insert(PairNode **map, int size, int a, int b, int count) {
 int map_get(PairNode **map, int size, int a, int b) {
     unsigned int index = hash_pair(a, b, size);
     PairNode *current = map[index];
+    int first = a < b ? a : b;
+    int second = a < b ? b : a;
     while (current != NULL) {
-        if (current->first == a && current->second == b) {
+        if (current->first == first && current->second == second) {
             return current->count;
         }
         current = current->next;
@@ -68,12 +78,14 @@ int map_get(PairNode **map, int size, int a, int b) {
 }
 
 int count_same_pairs(const int *list1, int size1, const int *list2, int size2) {
-    if (list1 == NULL || list2 == NULL || size1 <= 0 || size2 <= 0) {
+    if (list1 == NULL || list2 == NULL) {
+        return 0;
+    }
+    if (size1 <= 0 || size2 <= 0) {
         return 0;
     }
 
-    int max_size = size1 > size2 ? size1 : size2;
-    int table_size = max_size * 2 + 1;
+    int table_size = size1 * size1 + 1;
     if (table_size < 10) {
         table_size = 10;
     }
@@ -84,29 +96,20 @@ int count_same_pairs(const int *list1, int size1, const int *list2, int size2) {
         exit(EXIT_FAILURE);
     }
 
-    int *seen_flags = (int *)calloc((size_t)size1, sizeof(int));
-    if (seen_flags == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        free_map(map, table_size);
-        exit(EXIT_FAILURE);
+    for (int i = 0; i < size1; i++) {
+        for (int j = i + 1; j < size1; j++) {
+            map_insert(map, table_size, list1[i], list1[j], 1);
+        }
     }
 
     int total_count = 0;
     for (int i = 0; i < size2; i++) {
         for (int j = i + 1; j < size2; j++) {
-            int a = list2[i];
-            int b = list2[j];
-            int first = a < b ? a : b;
-            int second = a < b ? b : a;
-            int count = map_get(map, table_size, first, second);
-            if (count > 0) {
-                total_count++;
-                map_insert(map, table_size, first, second, -1);
-            }
+            int val = map_get(map, table_size, list2[i], list2[j]);
+            total_count += val;
         }
     }
 
-    free(seen_flags);
     free_map(map, table_size);
     return total_count;
 }

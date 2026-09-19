@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 1, got <no output>
-  *  test case 1 failed: expected 0, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
+  *  test case 1 failed: expected 0, got 3
+  *  test case 2 failed: expected 1, got 2
   */
 
 int count_hexadecimal_numbers(unsigned long long start, unsigned long long end) {
@@ -48,13 +47,11 @@ int main(void) {
     unsigned long long start, end;
     int result;
 
-    printf("Enter start of range (decimal): ");
     if (scanf("%llu", &start) != 1) {
         fprintf(stderr, "Invalid input for start\n");
         return EXIT_FAILURE;
     }
 
-    printf("Enter end of range (decimal): ");
     if (scanf("%llu", &end) != 1) {
         fprintf(stderr, "Invalid input for end\n");
         return EXIT_FAILURE;
@@ -67,7 +64,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    printf("Count of hexadecimal numbers in range: %d\n", result);
+    printf("%d\n", result);
 
     return EXIT_SUCCESS;
 }

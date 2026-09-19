@@ -31,6 +31,9 @@ int find_nth_carol(int n, unsigned long long *result) {
     *result = power_of_two * (power_of_two - 2) - 1;
     return 0;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000005,time:13057,execs:4978,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main(void) {
     int n;

@@ -13,6 +13,7 @@ char* find_first_repeated_word(const char* str) {
 
     char* words[MAX_WORDS];
     int word_count = 0;
+    
     char* str_copy = strdup(str);
     if (str_copy == NULL) {
         return NULL;
@@ -21,46 +22,42 @@ char* find_first_repeated_word(const char* str) {
     char* token = strtok(str_copy, " \t\n\r.,;:!?\"'()[]{}");
     
     while (token != NULL && word_count < MAX_WORDS) {
-        char* lower_token = strdup(token);
+        int token_len = strlen(token);
+        char* lower_token = (char*)malloc(token_len + 1);
         if (lower_token == NULL) {
-            free(str_copy);
             for (int i = 0; i < word_count; i++) {
                 free(words[i]);
             }
+            free(str_copy);
             return NULL;
         }
         
-        for (int i = 0; lower_token[i]; i++) {
-            lower_token[i] = tolower((unsigned char)lower_token[i]);
+        for (int i = 0; i < token_len; i++) {
+            lower_token[i] = tolower((unsigned char)token[i]);
         }
+        lower_token[token_len] = '\0';
         
-        int found = 0;
         for (int i = 0; i < word_count; i++) {
             if (strcmp(words[i], lower_token) == 0) {
-                found = 1;
-                break;
+                char* result = strdup(words[i]);
+                free(lower_token);
+                for (int j = 0; j < word_count; j++) {
+                    free(words[j]);
+                }
+                free(str_copy);
+                return result;
             }
         }
         
-        if (!found) {
-            words[word_count] = lower_token;
-            word_count++;
-            token = strtok(NULL, " \t\n\r.,;:!?\"'()[]{}");
-        } else {
-            char* result = strdup(token);
-            free(lower_token);
-            free(str_copy);
-            for (int j = 0; j < word_count; j++) {
-                free(words[j]);
-            }
-            return result;
-        }
+        words[word_count] = lower_token;
+        word_count++;
+        token = strtok(NULL, " \t\n\r.,;:!?\"'()[]{}");
     }
     
-    free(str_copy);
     for (int i = 0; i < word_count; i++) {
         free(words[i]);
     }
+    free(str_copy);
     
     return NULL;
 }
@@ -70,8 +67,8 @@ int main() {
     
     printf("Enter a string: ");
     if (fgets(input, sizeof(input), stdin) == NULL) {
-        printf("Error reading input.\n");
-        return 1;
+        printf("None\n");
+        return 0;
     }
     
     input[strcspn(input, "\n")] = '\0';

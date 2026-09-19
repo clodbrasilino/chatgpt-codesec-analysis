@@ -5,21 +5,22 @@ int abs_val(int x) {
     return x < 0 ? -x : x;
 }
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got 2
-  *  test case 1 failed: expected 4, got 6
+  *  test case 0 failed: expected 1, got 6
+  *  test case 1 failed: expected 4, got 14
+  *  test case 2 failed: expected 3, got 5
   */
 
 int min_operations(int a, int b) {
     if (a < 0 || b < 0) {
         return -1;
     }
-    return abs_val(a - b);
+    return abs_val(a ^ b);
 }
 
 /* Possible weaknesses found:
  *  Parameter 'argv' can be declared as const array [constParameter]
  */
-int main(int argc, char * const argv[]) {
+int main(int argc, char *const argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <num1> <num2>\n", argv[0]);
         return EXIT_FAILURE;

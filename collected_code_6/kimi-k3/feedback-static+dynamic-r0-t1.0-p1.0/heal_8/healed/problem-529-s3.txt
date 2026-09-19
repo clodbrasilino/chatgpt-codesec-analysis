@@ -24,7 +24,7 @@ long long jacobsthal_lucas(int n) {
         if (prev1 > (LLONG_MAX - prev2) / 2) {
             return -1;
         }
-        current = prev1 + 2 * prev2;
+        current = 2 * prev1 + prev2;
         prev2 = prev1;
         prev1 = current;
     }

@@ -30,6 +30,9 @@ int minCoins(int coins[], int n, int value) {
     
     return dp[value];
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000000,time:1479,execs:700,op:havoc,rep:13; likely memory-safety defect
+  */
 
 int main(void) {
     int coins[] = {1, 5, 10, 25};

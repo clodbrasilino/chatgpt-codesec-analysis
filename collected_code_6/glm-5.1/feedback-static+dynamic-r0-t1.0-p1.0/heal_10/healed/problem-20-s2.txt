@@ -7,18 +7,31 @@ bool is_woodall(unsigned long long n) {
         return false;
     }
 
-    for (unsigned long long i = 1; i <= 64; i++) {
-        unsigned long long term = (1ULL << i) - 1;
-        if (term != 0 && i > n / term) {
+    unsigned long long power_of_two = 2;
+    unsigned long long i = 1;
+
+    while (1) {
+        unsigned long long term = power_of_two - 1;
+
+        if (i > UINT64_MAX / term) {
             break;
         }
-        unsigned long long product = i * term;
-        if (product == n) {
+
+        unsigned long long w = i * term;
+
+        if (w == n) {
             return true;
         }
-        if (term == 0) {
+
+        if (w > n) {
             break;
         }
+
+        i++;
+        if (power_of_two > UINT64_MAX / 2) {
+            break;
+        }
+        power_of_two <<= 1;
     }
 
     return false;

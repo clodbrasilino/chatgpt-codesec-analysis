@@ -4,6 +4,7 @@
 int count_sequences(int n, int m) {
     if (n == 0) return 1;
     /* Possible weaknesses found:
+     * UBSan: variable length array bound evaluates to non-positive value -1316746359 (AFL crash: id:000000,sig:11,src:000002,time:7,execs:15,op:(null),pos:0)
      * UBSan: variable length array bound evaluates to non-positive value -1130036471
      */
     int dp[n + 1][m + 1];

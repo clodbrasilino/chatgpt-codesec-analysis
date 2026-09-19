@@ -30,9 +30,6 @@ char *remove_parenthesis_area(const char *str)
         } else if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
-            } else {
-                result[j] = str[i];
-                j++;
             }
         } else if (depth == 0) {
             result[j] = str[i];

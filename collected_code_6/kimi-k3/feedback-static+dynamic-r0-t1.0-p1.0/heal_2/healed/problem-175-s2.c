@@ -9,6 +9,11 @@ bool is_valid_parentheses(const char *s)
         return false;
     }
 
+    if (s[0] == '\0')
+    {
+        return true;
+    }
+
     int balance = 0;
     size_t i = 0;
 

@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-311-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-311-s2.c:9:24: portability: Shifting signed 64-bit value by 63 bits is implementation-defined behaviour [shiftTooManyBitsSigned]
+        if (!(n & ((1L << i)))) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-311-s2.c:8:18: note: Assignment 'i=63', assigned value is 63
+    for (int i = 63; i >= 0; --i) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-311-s2.c:9:24: note: Shift
+        if (!(n & ((1L << i)))) {
+                       ^

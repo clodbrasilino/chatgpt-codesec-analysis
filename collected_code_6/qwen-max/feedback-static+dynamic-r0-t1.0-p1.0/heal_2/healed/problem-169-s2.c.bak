@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long int calculate_pell_number(long n) {
+    if (n < 0 || n > 92) return 0;
+    if (n == 1) return 1;
+    if (n == 2) return 2;
+
+    long long int a = 0, b = 1;
+    for (long i = 2; i <= n; ++i) {
+        long long int c = 2 * b + a;
+        if (c < 0) return 0;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) != 1 || n < 0 || n > 92) {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer less than or equal to 92.\n");
+        return EXIT_FAILURE;
+    }
+
+    long long int result = calculate_pell_number(n);
+    printf("The %ldth Pell number is: %lld\n", n, result);
+
+    return 0;
+}

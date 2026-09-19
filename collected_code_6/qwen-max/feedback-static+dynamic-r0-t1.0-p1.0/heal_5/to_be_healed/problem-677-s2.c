@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdbool.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected False, got 1
-  *  test case 2 failed: expected True, got 0
+  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
   */
 
 bool is_valid_triangle(int a, int b, int c) {
-    return (a > 0) && (b > 0) && (c > 0) && (a + b > c) && (a + c > b) && (b + c > a);
+    if (a <= 0 || b <= 0 || c <= 0) return false;
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'INT_MAX'
+     *  'INT_MAX' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    if (a >= INT_MAX - b || a >= INT_MAX - c || b >= INT_MAX - c) return false;
+    return (a + b > c) && (a + c > b) && (b + c > a);
 }
 
 int main() {

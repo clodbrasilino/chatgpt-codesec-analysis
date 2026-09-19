@@ -1,11 +1,15 @@
 #include <stdio.h>
+#include <limits.h>
 
 double average_of_evens(int n) {
-    if (n <= 0) return 0.0;
+    if (n <= 0 || n % 2 != 0) return 0.0;
 
-    int sum = 0;
+    long long sum = 0;
     int count = 0;
     for (int i = 2; i <= n; i += 2) {
+        if (sum > LLONG_MAX - i) {
+            return 0.0;
+        }
         sum += i;
         count++;
     }
@@ -14,7 +18,7 @@ double average_of_evens(int n) {
 
 int main() {
     int n;
-    printf("Enter an integer: ");
+    printf("Enter an even number: ");
     if (scanf("%d", &n) != 1) {
         printf("Invalid input.\n");
         return 1;

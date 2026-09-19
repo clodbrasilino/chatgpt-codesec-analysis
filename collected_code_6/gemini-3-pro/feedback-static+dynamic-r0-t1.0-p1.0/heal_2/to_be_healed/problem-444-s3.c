@@ -13,8 +13,8 @@ typedef struct {
     size_t count;
 } TupleList;
  /* Possible weaknesses found:
-  *  test case 0 failed: expected '[(2,), (9,), (2,), (2,)]', got <no output>
   *  test case 2 failed: expected '[(8, 4), (8, 12), (1, 7), (6, 9)]', got <no output>
+  *  test case 0 failed: expected '[(2,), (9,), (2,), (2,)]', got <no output>
   *  test case 1 failed: expected '[(3, 2, 1), (4, 9, 2), (1, 2, 3), (8, 2, 1)]', got <no output>
   */
 
@@ -65,6 +65,9 @@ void freeTupleList(TupleList *list) {
         free(list);
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000023,time:27010,execs:13066,op:quick,pos:22; likely memory-safety defect
+  */
 
 int main(void) {
     char line1[4096];
@@ -85,6 +88,9 @@ int main(void) {
             t->size = 0;
             while (*p && *p != ')') {
                 if (isdigit((unsigned char)*p) || *p == '-') {
+                    /* Possible weaknesses found:
+                     * ASan: heap-buffer-overflow (AFL crash: id:000001,sig:11,src:000015,time:27603,execs:13340,op:havoc,rep:15)
+                     */
                     t->elements[t->size++] = strtol(p, &p, 10);
                 } else {
                     p++;

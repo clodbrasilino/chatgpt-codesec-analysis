@@ -1,19 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 13, got 1
-  *  test case 0 failed: expected 11, got 1
-  *  test case 1 failed: expected 7, got 0
+  *  test case 1 failed: expected 7, got 1
+  *  test case 0 failed: expected 11, got 0
+  *  test case 2 failed: expected 13, got 0
   */
 
 int is_polite(unsigned int n) {
-    return n > 0 && (n & (n - 1)) != 0;
+    if (n == 0) return 0;
+    return (n & (n - 1)) == 0;
 }
 
 unsigned int nth_polite(unsigned int n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     unsigned int count = 0;
     unsigned int num = 1;
     while (1) {
@@ -34,11 +33,10 @@ int main(int argc, const char *argv[]) {
     }
     char *endptr;
     long n = strtol(argv[1], &endptr, 10);
-    if (*endptr != '\0' || n <= 0 || n > 1000000) {
+    if (*endptr != '\0' || n <= 0) {
         fprintf(stderr, "Invalid input: %s\n", argv[1]);
         return EXIT_FAILURE;
     }
-    unsigned int result = nth_polite((unsigned int)n);
-    printf("%u\n", result);
+    printf("%u\n", nth_polite((unsigned int)n));
     return EXIT_SUCCESS;
 }

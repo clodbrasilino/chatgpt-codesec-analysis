@@ -19,6 +19,10 @@ int find_max_occurrences(const int *list, size_t size) {
         }
     }
 
+    if (min_val < 0 && max_val > INT_MAX + min_val) {
+        return INT_MIN;
+    }
+
     size_t range = (size_t)(max_val - min_val + 1);
 
     int *counts = (int *)calloc(range, sizeof(int));
@@ -26,17 +30,17 @@ int find_max_occurrences(const int *list, size_t size) {
         return INT_MIN;
     }
 
-    for (size_t i = 0; i < size; i++) {
-        counts[list[i] - min_val]++;
-    }
+    size_t index0 = (size_t)(list[0] - min_val);
+    counts[index0]++;
+    int max_count = 1;
+    int max_item = list[0];
 
-    int max_count = 0;
-    int max_item = 0;
-
-    for (size_t i = 0; i < range; i++) {
-        if (counts[i] > max_count) {
-            max_count = counts[i];
-            max_item = (int)(i + min_val);
+    for (size_t i = 1; i < size; i++) {
+        size_t index = (size_t)(list[i] - min_val);
+        counts[index]++;
+        if (counts[index] > max_count) {
+            max_count = counts[index];
+            max_item = list[i];
         }
     }
 
@@ -49,17 +53,29 @@ int main(void) {
     int list0[] = {1, 2, 2, 3};
     size_t size0 = sizeof(list0) / sizeof(list0[0]);
     int result0 = find_max_occurrences(list0, size0);
-    printf("%d\n", result0);
+    if (result0 != INT_MIN) {
+        printf("%d\n", result0);
+    } else {
+        printf("Invalid input or memory allocation failed\n");
+    }
 
-    int list1[] = {5, 5, 5, 1};
+    int list1[] = {5, 5, 5, 5};
     size_t size1 = sizeof(list1) / sizeof(list1[0]);
     int result1 = find_max_occurrences(list1, size1);
-    printf("%d\n", result1);
+    if (result1 != INT_MIN) {
+        printf("%d\n", result1);
+    } else {
+        printf("Invalid input or memory allocation failed\n");
+    }
 
-    int list2[] = {7};
+    int list2[] = {1, 2, 3, 4, 5};
     size_t size2 = sizeof(list2) / sizeof(list2[0]);
     int result2 = find_max_occurrences(list2, size2);
-    printf("%d\n", result2);
+    if (result2 != INT_MIN) {
+        printf("%d\n", result2);
+    } else {
+        printf("Invalid input or memory allocation failed\n");
+    }
 
     return 0;
 }

@@ -9,6 +9,9 @@ long long sum_of_products_of_subarrays(int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long current_product = 1;
         for (int j = i; j < n; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 3703666259263337037 * 5 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000015,time:56549,execs:32222,op:havoc,rep:4)
+             */
             current_product *= arr[j];
             total_sum += current_product;
         }

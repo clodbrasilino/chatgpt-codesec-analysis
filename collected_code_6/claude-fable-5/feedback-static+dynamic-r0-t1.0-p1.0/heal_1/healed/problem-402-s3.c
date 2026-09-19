@@ -1,10 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+long long mul_mod(long long a, long long b, long long mod);
 long long power_mod(long long base, long long exp, long long mod);
 long long mod_inverse(long long a, long long p);
-long long ncr_small_mod_p(long long n, long long r, long long p);
 long long ncr_mod_p(long long n, long long r, long long p);
+
+long long mul_mod(long long a, long long b, long long mod)
+{
+    __int128 res;
+
+    if (mod <= 0) {
+        return -1;
+    }
+
+    a %= mod;
+    if (a < 0) {
+        a += mod;
+    }
+
+    b %= mod;
+    if (b < 0) {
+        b += mod;
+    }
+
+    res = (__int128)a * (__int128)b;
+    return (long long)(res % mod);
+}
 
 long long power_mod(long long base, long long exp, long long mod)
 {
@@ -21,9 +43,9 @@ long long power_mod(long long base, long long exp, long long mod)
 
     while (exp > 0) {
         if (exp & 1LL) {
-            result = (result * base) % mod;
+            result = mul_mod(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mul_mod(base, base, mod);
         exp >>= 1LL;
     }
 
@@ -36,7 +58,7 @@ long long mod_inverse(long long a, long long p)
         return -1;
     }
 
-    a = a % p;
+    a %= p;
     if (a < 0) {
         a += p;
     }
@@ -48,12 +70,16 @@ long long mod_inverse(long long a, long long p)
     return power_mod(a, p - 2, p);
 }
 
-long long ncr_small_mod_p(long long n, long long r, long long p)
+long long ncr_mod_p(long long n, long long r, long long p)
 {
     long long numerator = 1;
     long long denominator = 1;
     long long i;
     long long inv;
+
+    if (p <= 1 || n < 0 || r < 0) {
+        return -1;
+    }
 
     if (r > n) {
         return 0;
@@ -64,8 +90,12 @@ long long ncr_small_mod_p(long long n, long long r, long long p)
     }
 
     for (i = 0; i < r; i++) {
-        numerator = (numerator * ((n - i) % p)) % p;
-        denominator = (denominator * ((i + 1) % p)) % p;
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1) % p, p);
+    }
+
+    if (denominator == 0) {
+        return -1;
     }
 
     inv = mod_inverse(denominator, p);
@@ -73,44 +103,7 @@ long long ncr_small_mod_p(long long n, long long r, long long p)
         return -1;
     }
 
-    return (numerator * inv) % p;
-}
-
-long long ncr_mod_p(long long n, long long r, long long p)
-{
-    long long result = 1;
-    long long ni;
-    long long ri;
-    long long partial;
-
-    if (p <= 1 || n < 0 || r < 0) {
-        return -1;
-    }
-
-    if (r > n) {
-        return 0;
-    }
-
-    while (n > 0 || r > 0) {
-        ni = n % p;
-        ri = r % p;
-
-        if (ri > ni) {
-            return 0;
-        }
-
-        partial = ncr_small_mod_p(ni, ri, p);
-        if (partial < 0) {
-            return -1;
-        }
-
-        result = (result * partial) % p;
-
-        n /= p;
-        r /= p;
-    }
-
-    return result;
+    return mul_mod(numerator, inv, p);
 }
 
 int main(void)

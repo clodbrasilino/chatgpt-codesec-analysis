@@ -8,6 +8,9 @@ long long perrin_number(long n) {
 
     long long a = 3, b = 0, c = 2;
     for (long i = 3; i <= n; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 4840428246616975367 + 6412202219048207347 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:305,execs:315,op:havoc,rep:9)
+         */
         long long d = a + b;
         a = b;
         b = c;
@@ -19,13 +22,13 @@ long long perrin_number(long n) {
 long long sum_perrin_numbers(long n) {
     long long sum = 0;
     for (long i = 0; i <= n; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 8494359425057768730 + 2758271040607413982 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:305,execs:315,op:havoc,rep:9)
+         */
         sum += perrin_number(i);
     }
     return sum;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:361,execs:157,op:havoc,rep:2; likely memory-safety defect
-  */
 
 int main() {
     long n;

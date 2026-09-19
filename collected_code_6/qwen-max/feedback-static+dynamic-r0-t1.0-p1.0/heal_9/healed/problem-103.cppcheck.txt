@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-103.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-103.c:23:15: style: Condition 'n-m==0' is always false [knownConditionTrueFalse]
+    if (n - m == 0 || eulerian_number(n - 1, m - 1) > INT64_MAX / (n - m))
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-103.c:10:11: note: Assuming that condition 'm>=n' is not redundant
+    if (m >= n || n < 0 || m < 0)
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-103.c:12:16: note: Assuming condition is false
+    if (n > 63 || m > 63) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-103.c:23:15: note: Condition 'n-m==0' is always false
+    if (n - m == 0 || eulerian_number(n - 1, m - 1) > INT64_MAX / (n - m))
+              ^

@@ -42,6 +42,7 @@ char *remove_parenthesis_area(const char *str)
     }
 
     result[j] = '\0';
+
     return result;
 }
 

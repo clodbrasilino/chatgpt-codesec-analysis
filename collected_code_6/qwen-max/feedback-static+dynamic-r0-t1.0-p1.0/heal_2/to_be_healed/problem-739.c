@@ -5,7 +5,8 @@ int find_smallest_triangular_index(int n) {
     double lower_bound = pow(10, (n-1));
     double root = (sqrt(1 + 8 * lower_bound) - 1) / 2;
     /* Possible weaknesses found:
-     * UBSan: inf is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:7,execs:15,op:(null),pos:0)
+     * UBSan: inf is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:4,execs:15,op:(null),pos:0)
+     * UBSan: inf is outside the range of representable values of type 'int'
      */
     return (int)ceil(root);
 }

@@ -6,8 +6,8 @@ bool isDifferenceOfSquares(int n) {
     int x = 0, y = 1;
     while (x <= y) {
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 46341 * 46341 cannot be represented in type 'int'
          * UBSan: signed integer overflow: -2147479015 - 947900944 cannot be represented in type 'int'
+         * UBSan: signed integer overflow: 46341 * 46341 cannot be represented in type 'int'
          */
         int diff = y * y - x * x;
         if (diff == n) {
@@ -20,6 +20,9 @@ bool isDifferenceOfSquares(int n) {
     }
     return false;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:46,execs:30,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main() {
     int num;

@@ -10,8 +10,8 @@ void initializeMagicSquare(int n, int square[][10]) {
 
 int isMagicSquare(int n, int square[][10]) {
     /* Possible weaknesses found:
-     *  The scope of the variable 'colSum' can be reduced. [variableScope]
      *  The scope of the variable 'rowSum' can be reduced. [variableScope]
+     *  The scope of the variable 'colSum' can be reduced. [variableScope]
      */
     int sumDiag1 = 0, sumDiag2 = 0, rowSum, colSum;
 
@@ -29,12 +29,19 @@ int isMagicSquare(int n, int square[][10]) {
         sumDiag2 += square[i][n - 1 - i];
     }
 
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -1285418553 * -409466702 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:1883,execs:726,op:havoc,rep:3)
+     * UBSan: signed integer overflow: -1285418553 * -1285418553 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:1883,execs:726,op:havoc,rep:3)
+     */
     return (sumDiag1 == n * (n * n + 1) / 2 && sumDiag2 == n * (n * n + 1) / 2);
 }
 
 void generateMagicSquare(int n, int square[][10]) {
     initializeMagicSquare(n, square);
     int i = n / 2, j = n - 1;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -1285418553 * -1285418553 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:1883,execs:726,op:havoc,rep:3)
+     */
     for (int num = 1; num <= n * n;) {
         if (i == -1 && j == n) {   
             j = n - 2;
@@ -47,17 +54,28 @@ void generateMagicSquare(int n, int square[][10]) {
                 i = n - 1;
             }
         }
+        /* Possible weaknesses found:
+         * UBSan: index -4 out of bounds for type 'int[10]' (AFL crash: id:000003,sig:06,src:000008,time:29928,execs:10222,op:havoc,rep:7)
+         * UBSan: index -6 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000006,time:10049,execs:3553,op:havoc,rep:3)
+         */
         if (square[i][j]) {
             j -= 2;
             i++;
             continue;
         } else {
+            /* Possible weaknesses found:
+             * UBSan: index -8 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000006,time:10049,execs:3553,op:havoc,rep:3)
+             * UBSan: index -28 out of bounds for type 'int[10]' (AFL crash: id:000003,sig:06,src:000008,time:29928,execs:10222,op:havoc,rep:7)
+             */
             square[i][j] = num++;
         }
         j++; 
         i--; 
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:114,execs:60,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int n;

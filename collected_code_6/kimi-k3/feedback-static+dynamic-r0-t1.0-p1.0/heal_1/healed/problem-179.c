@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int isKeithNumber(int num) {
     if (num < 10) {
@@ -24,12 +25,16 @@ int isKeithNumber(int num) {
         temp /= 10;
     }
 
-    int sum = 0;
+    long long sum = 0;
 
     while (sum < num) {
         sum = 0;
         for (int i = 0; i < count; i++) {
             sum += digits[i];
+            if (sum > INT_MAX) {
+                free(digits);
+                return 0;
+            }
         }
 
         if (sum == num) {
@@ -40,7 +45,7 @@ int isKeithNumber(int num) {
         for (int i = 0; i < count - 1; i++) {
             digits[i] = digits[i + 1];
         }
-        digits[count - 1] = sum;
+        digits[count - 1] = (int)sum;
     }
 
     free(digits);

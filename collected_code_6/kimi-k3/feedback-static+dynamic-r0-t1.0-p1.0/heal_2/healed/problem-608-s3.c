@@ -3,11 +3,11 @@
 
 unsigned long long bell_number(int n)
 {
-    if (n < 0) {
+    if (n < 0 || n > 25) {
         return 0;
     }
 
-    unsigned long long *bell = (unsigned long long *)calloc((size_t)n + 2, sizeof(unsigned long long));
+    unsigned long long *bell = (unsigned long long *)calloc((size_t)n + 1, sizeof(unsigned long long));
     if (bell == NULL) {
         return 0;
     }

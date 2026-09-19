@@ -6,7 +6,7 @@
 long setLeftMostUnsetBit(long n) {
     long result = n;
     bool found = false;
-    for (int i = sizeof(n) * CHAR_BIT - 2; i >= 0; --i) {
+    for (int i = 61; i >= 0; --i) {
         if (!(n & (1L << i))) {
             result |= (1L << i);
             found = true;

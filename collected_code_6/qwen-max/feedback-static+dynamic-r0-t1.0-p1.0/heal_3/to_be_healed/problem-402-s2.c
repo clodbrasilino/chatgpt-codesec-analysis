@@ -9,9 +9,13 @@ unsigned long long modInverse(unsigned long long a, unsigned long long m) {
         return 0;
 
     while (a > 1) {
+        if (m == 0) {
+            return 0;
+        }
         unsigned long long q = a / m;
         unsigned long long t = m;
-        m = a % m, a = t;
+        m = a % m;
+        a = t;
         t = x0;
         x0 = x1 - q * x0;
         x1 = t;
@@ -33,18 +37,19 @@ unsigned long long factorialMod(unsigned long long n, unsigned long long p) {
     return result;
 }
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 10, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
-  *  test case 1 failed: expected 25, got <no output>
+  *  test case 2 failed: expected 10, got 0
   */
 
 unsigned long long ncrModP(unsigned long long n, unsigned long long r, unsigned long long p) {
-    if (r > n)
+    if (r > n || p <= 1)
         return 0;
 
     unsigned long long numerator = factorialMod(n, p);
     unsigned long long denominator = (factorialMod(r, p) * factorialMod(n - r, p)) % p;
+    
     unsigned long long denominatorInv = modInverse(denominator, p);
+    if (denominatorInv == 0)
+        return 0;
 
     return (numerator * denominatorInv) % p;
 }

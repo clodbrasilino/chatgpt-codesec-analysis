@@ -8,6 +8,13 @@ unsigned long long countTotalSetBits(unsigned long long n) {
     for (i = 0; (1ULL << i) <= n; i++) {
         unsigned long long bit_mask = 1ULL << i;
         unsigned long long period = bit_mask << 1;
+        
+        if (period == 0) {
+            unsigned long long full_cycles = (n + 1) / 2;
+            count += full_cycles;
+            break;
+        }
+        
         unsigned long long full_cycles = (n + 1) / period;
         unsigned long long remainder = (n + 1) % period;
         
@@ -20,10 +27,13 @@ unsigned long long countTotalSetBits(unsigned long long n) {
     return count;
 }
 
+unsigned long long countTotalSetBitsFrom1(unsigned long long n) {
+    if (n == 0) return 0;
+    return countTotalSetBits(n) - countTotalSetBits(0);
+}
+
 unsigned long long countTotalUnsetBits(unsigned long long n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     
     unsigned long long total_bits = 0;
     unsigned long long temp = n;

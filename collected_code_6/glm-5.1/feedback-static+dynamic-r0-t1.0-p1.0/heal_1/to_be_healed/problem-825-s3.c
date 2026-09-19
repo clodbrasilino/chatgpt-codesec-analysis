@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected [2, 4, 9], got <no output>
+  *  test case 1 failed: expected [2, 3], got <no output>
+  *  test case 2 failed: expected [1, 0], got <no output>
+  */
 
 int *access_elements(const int *list, size_t list_size, const size_t *indices, size_t indices_size, size_t *result_size) {
     if (list == NULL || indices == NULL || result_size == NULL) {

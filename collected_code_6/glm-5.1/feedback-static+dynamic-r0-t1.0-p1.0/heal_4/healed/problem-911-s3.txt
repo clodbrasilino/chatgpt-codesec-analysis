@@ -2,14 +2,18 @@
 #include <stdlib.h>
 #include <limits.h>
 
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 void push_min(int *heap, int *size, int value) {
     heap[*size] = value;
     int i = *size;
     (*size)++;
     while (i > 0 && heap[(i - 1) / 2] > heap[i]) {
-        int temp = heap[(i - 1) / 2];
-        heap[(i - 1) / 2] = heap[i];
-        heap[i] = temp;
+        swap(&heap[(i - 1) / 2], &heap[i]);
         i = (i - 1) / 2;
     }
 }
@@ -26,32 +30,25 @@ int pop_min(int *heap, int *size) {
         if (left < *size && heap[left] < heap[smallest]) smallest = left;
         if (right < *size && heap[right] < heap[smallest]) smallest = right;
         if (smallest == i) break;
-        int temp = heap[i];
-        heap[i] = heap[smallest];
-        heap[smallest] = temp;
+        swap(&heap[i], &heap[smallest]);
         i = smallest;
     }
     return min_val;
 }
 
 void push_max(int *heap, int *size, int value) {
-    if (value == INT_MIN) {
-        heap[*size] = INT_MIN;
-    } else {
-        heap[*size] = -value;
-    }
+    value = -value;
+    heap[*size] = value;
     int i = *size;
     (*size)++;
     while (i > 0 && heap[(i - 1) / 2] > heap[i]) {
-        int temp = heap[(i - 1) / 2];
-        heap[(i - 1) / 2] = heap[i];
-        heap[i] = temp;
+        swap(&heap[(i - 1) / 2], &heap[i]);
         i = (i - 1) / 2;
     }
 }
 
 int pop_max(int *heap, int *size) {
-    int max_val = (heap[0] == INT_MIN) ? INT_MIN : -heap[0];
+    int max_val = -heap[0];
     heap[0] = heap[*size - 1];
     (*size)--;
     int i = 0;
@@ -62,9 +59,7 @@ int pop_max(int *heap, int *size) {
         if (left < *size && heap[left] < heap[smallest]) smallest = left;
         if (right < *size && heap[right] < heap[smallest]) smallest = right;
         if (smallest == i) break;
-        int temp = heap[i];
-        heap[i] = heap[smallest];
-        heap[smallest] = temp;
+        swap(&heap[i], &heap[smallest]);
         i = smallest;
     }
     return max_val;
@@ -73,50 +68,39 @@ int pop_max(int *heap, int *size) {
 int maximumProduct(const int *nums, int numsSize) {
     if (numsSize < 3) return 0;
     
-    int *min_heap = malloc(3 * sizeof(int));
-    if (!min_heap) return 0;
-    int min_size = 0;
-
-    int *max_heap = malloc(2 * sizeof(int));
-    if (!max_heap) { free(min_heap); return 0; }
+    int *max_heap = malloc((numsSize + 1) * sizeof(int));
+    if (!max_heap) return 0;
     int max_size = 0;
 
+    int *min_heap = malloc((numsSize + 1) * sizeof(int));
+    if (!min_heap) { free(max_heap); return 0; }
+    int min_size = 0;
+
     for (int i = 0; i < numsSize; i++) {
-        if (min_size < 3) {
-            push_min(min_heap, &min_size, nums[i]);
-        } else {
-            if (nums[i] < min_heap[0]) {
-                pop_min(min_heap, &min_size);
-                push_min(min_heap, &min_size, nums[i]);
-            }
+        push_max(max_heap, &max_size, nums[i]);
+        if (max_size > 3) {
+            pop_max(max_heap, &max_size);
         }
 
-        if (max_size < 2) {
-            push_max(max_heap, &max_size, nums[i]);
-        } else {
-            int current_top = (max_heap[0] == INT_MIN) ? INT_MIN : -max_heap[0];
-            if (nums[i] > current_top) {
-                pop_max(max_heap, &max_size);
-                push_max(max_heap, &max_size, nums[i]);
-            }
+        push_min(min_heap, &min_size, nums[i]);
+        if (min_size > 2) {
+            pop_min(min_heap, &min_size);
         }
     }
 
-    int min1 = pop_min(min_heap, &min_size);
-    int min2 = pop_min(min_heap, &min_size);
-    int min3 = pop_min(min_heap, &min_size);
-
     int max1 = pop_max(max_heap, &max_size);
     int max2 = pop_max(max_heap, &max_size);
+    int max3 = pop_max(max_heap, &max_size);
 
-    free(min_heap);
+    int min1 = pop_min(min_heap, &min_size);
+    int min2 = pop_min(min_heap, &min_size);
+
     free(max_heap);
+    free(min_heap);
 
-    long long product1 = (long long)min1 * min2 * min3;
-    long long product2 = (long long)min1 * max2 * max1;
-    long long product3 = (long long)max1 * max2 * min1;
-    long long result = product1 > product2 ? product1 : product2;
-    if (product3 > result) result = product3;
+    long long product1 = (long long)max2 * max3;
+    long long product2 = (long long)min1 * min2;
+    long long result = (product1 > product2 ? product1 : product2) * max1;
 
     if (result > INT_MAX) return INT_MAX;
     if (result < INT_MIN) return INT_MIN;

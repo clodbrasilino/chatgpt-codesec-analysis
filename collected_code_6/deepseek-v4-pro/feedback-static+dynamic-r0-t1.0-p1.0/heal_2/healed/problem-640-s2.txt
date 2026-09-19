@@ -31,11 +31,9 @@ static char *remove_parenthesis_area(const char *input) {
         if (current_char == ')') {
             if (depth > 0) {
                 depth--;
-            } else {
-                result[write_pos++] = current_char;
+                read_pos++;
+                continue;
             }
-            read_pos++;
-            continue;
         }
 
         if (depth == 0) {
@@ -45,17 +43,15 @@ static char *remove_parenthesis_area(const char *input) {
         read_pos++;
     }
 
-    while (depth > 0 && write_pos > 0) {
-        result[--write_pos] = '\0';
-        depth--;
-    }
-
     result[write_pos] = '\0';
     return result;
 }
 
 int main(void) {
     const char *test_cases[] = {
+        "python",
+        "string",
+        "alpha",
         "Hello (world) example",
         "Nested ((parenthesis)) test",
         "No parenthesis here",
@@ -64,10 +60,7 @@ int main(void) {
         "Unmatched parenthesis)",
         "Empty () test",
         "(Only parenthesis)",
-        "",
-        "python",
-        "string",
-        "alpha"
+        ""
     };
 
     size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);

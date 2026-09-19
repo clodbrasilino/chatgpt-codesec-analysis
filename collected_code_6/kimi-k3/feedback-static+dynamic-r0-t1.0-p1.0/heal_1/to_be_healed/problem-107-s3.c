@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 6, got <no output>
+  *  test case 2 failed: expected 1, got <no output>
+  *  test case 1 failed: expected 0, got <no output>
+  */
 
 int count_hexadecimal_numbers(unsigned long long start, unsigned long long end) {
     int count = 0;

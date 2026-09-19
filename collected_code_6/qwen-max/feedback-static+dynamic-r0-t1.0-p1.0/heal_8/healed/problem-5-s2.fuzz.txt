@@ -1,2 +1,1 @@
-problem-5-s2.c:9:19:medium:UBSan: signed integer overflow: 2 * -1558553600 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1076,execs:525,op:havoc,rep:9)
-problem-5-s2.c:9:24:medium:UBSan: signed integer overflow: 733219840 + 2003193856 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1076,execs:525,op:havoc,rep:9)
+problem-5-s2.c:10:26:medium:UBSan: signed integer overflow: 6882627592338442563 * 2 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:315,execs:338,op:havoc,rep:7)

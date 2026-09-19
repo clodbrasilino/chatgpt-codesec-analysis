@@ -16,8 +16,8 @@ long find_smallest_triangular_index(int n) {
     }
     
     /* Possible weaknesses found:
-     *  Value stored to 'sqrt_val' during its initialization is never read [deadcode.DeadStores]
      *  Variable 'sqrt_val' is assigned a value that is never used. [unreadVariable]
+     *  Value stored to 'sqrt_val' during its initialization is never read [deadcode.DeadStores]
      */
     double sqrt_val = sqrt(discriminant);
     if (errno == EDOM) {
@@ -25,6 +25,9 @@ long find_smallest_triangular_index(int n) {
     }
     
     double k = (-1.0 + sqrt(1.0 + 8.0 * lower_bound)) / 2.0;
+    /* Possible weaknesses found:
+     * UBSan: inf is outside the range of representable values of type 'long' (AFL crash: id:000000,sig:06,src:000001,time:303,execs:135,op:havoc,rep:3)
+     */
     long index = (long)ceil(k);
     
     if (index < 0) {

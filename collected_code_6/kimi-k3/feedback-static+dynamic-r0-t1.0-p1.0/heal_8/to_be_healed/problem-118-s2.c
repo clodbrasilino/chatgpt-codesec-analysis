@@ -29,16 +29,17 @@ Node* create_node(const char *data) {
 }
  /* Possible weaknesses found:
   *  test case 0 failed: expected ['python', 'programming'], got []
-  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got []
   *  test case 2 failed: expected ['write', 'a', 'program'], got []
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got []
   */
 
 Node* string_to_list(const char *str, const char *delim) {
-    if (str == NULL || delim == NULL) {
+    if (str == NULL || delim == NULL || strlen(delim) == 0) {
         return NULL;
     }
     
-    char *str_copy = (char*)malloc(strlen(str) + 1);
+    size_t str_len = strlen(str);
+    char *str_copy = (char*)malloc(str_len + 1);
     if (str_copy == NULL) {
         return NULL;
     }
@@ -46,6 +47,7 @@ Node* string_to_list(const char *str, const char *delim) {
     
     Node *head = NULL;
     Node *tail = NULL;
+    
     char *token = strtok(str_copy, delim);
     
     while (token != NULL) {
@@ -86,27 +88,33 @@ void free_list(Node *head) {
 }
 
 void print_list(Node *head) {
+    printf("[");
     Node *current = head;
     while (current != NULL) {
-        printf("%s", current->data);
+        printf("'%s'", current->data);
         if (current->next != NULL) {
-            printf(" -> ");
+            printf(", ");
         }
         current = current->next;
     }
-    printf("\n");
+    printf("]\n");
 }
 
 int main(void) {
-    const char *inputs[] = {
-        "python,programming",
+    const char *test_cases[] = {
+        "python programming",
         "lists,tuples,strings",
-        "write,a,program"
+        "write a program"
     };
-    const char *delimiter = ",";
+    const char *delimiters[] = {
+        " ",
+        ",",
+        " "
+    };
+    int num_tests = 3;
     
-    for (int i = 0; i < 3; i++) {
-        Node *list = string_to_list(inputs[i], delimiter);
+    for (int i = 0; i < num_tests; i++) {
+        Node *list = string_to_list(test_cases[i], delimiters[i]);
         if (list == NULL) {
             fprintf(stderr, "Failed to convert string to list\n");
             return EXIT_FAILURE;

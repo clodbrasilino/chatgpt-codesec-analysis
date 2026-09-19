@@ -18,9 +18,7 @@ long long mod_inverse(long long a, long long mod) {
     return mod_pow(a, mod - 2, mod);
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 11, got <no output>
-  *  test case 2 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
+  *  test case 1 failed: expected 11, got 0
   */
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -36,7 +34,7 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 
     long long *fact = (long long *)malloc(p * sizeof(long long));
     if (fact == NULL) {
-        exit(1);
+        return 0;
     }
 
     fact[0] = 1;
@@ -45,9 +43,10 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     }
 
     long long result = 1;
-    while (n > 0 || r > 0) {
-        long long ni = n % p;
-        long long ri = r % p;
+    long long tn = n, tr = r;
+    while (tn > 0 || tr > 0) {
+        long long ni = tn % p;
+        long long ri = tr % p;
         if (ri > ni) {
             free(fact);
             return 0;
@@ -55,17 +54,23 @@ long long ncr_mod_p(long long n, long long r, long long p) {
         result = (result * fact[ni]) % p;
         result = (result * mod_inverse(fact[ri], p)) % p;
         result = (result * mod_inverse(fact[ni - ri], p)) % p;
-        n /= p;
-        r /= p;
+        tn /= p;
+        tr /= p;
     }
 
     free(fact);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:59532,execs:9871,op:havoc,rep:8; likely memory-safety defect
+  */
 
 int main(void) {
     long long n, r, p;
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        return 1;
+    }
+    if (p <= 1) {
         return 1;
     }
     printf("%lld\n", ncr_mod_p(n, r, p));

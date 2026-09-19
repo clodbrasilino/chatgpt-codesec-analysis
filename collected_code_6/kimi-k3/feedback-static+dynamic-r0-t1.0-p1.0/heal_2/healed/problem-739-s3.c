@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <errno.h>
 #include <limits.h>
 
 long find_smallest_triangular_index(int n) {
@@ -8,30 +9,26 @@ long find_smallest_triangular_index(int n) {
         return -1;
     }
     
-    if (n > 18) {
-        return -1;
-    }
-    
     double lower_bound = pow(10.0, n - 1);
-    double discriminant = 1.0 + 8.0 * lower_bound;
+    double discriminant = 2.0 * lower_bound - 2.0;
     
-    if (isinf(discriminant) || isnan(discriminant)) {
+    if (discriminant < 0.0) {
         return -1;
     }
     
-    double k = (-1.0 + sqrt(discriminant)) / 2.0;
+    errno = 0;
+    if (sqrt(discriminant) >= 0.0 && errno == EDOM) {
+        return -1;
+    }
     
-    if (isinf(k) || isnan(k)) {
+    double k = (-1.0 + sqrt(1.0 + 8.0 * lower_bound)) / 2.0;
+    
+    if (!isfinite(k) || k < 0.0 || k >= (double)LONG_MAX) {
         return -1;
     }
     
     double ceil_k = ceil(k);
-    
-    if (isinf(ceil_k) || isnan(ceil_k)) {
-        return -1;
-    }
-    
-    if (ceil_k > (double)LONG_MAX || ceil_k < (double)LONG_MIN) {
+    if (!isfinite(ceil_k) || ceil_k >= (double)LONG_MAX) {
         return -1;
     }
     

@@ -1,12 +1,26 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int find_nth_non_multiple(int n, int k) {
     if (n <= 0 || k <= 1) {
         return -1;
     }
-    return n + (n - 1) / (k - 1);
+
+    if (n > INT_MAX / k) {
+        return -1;
+    }
+
+    long long numerator = (long long)n - 1;
+    long long denominator = (long long)k - 1;
+    long long quotient = numerator / denominator;
+
+    if (quotient > (long long)INT_MAX - n) {
+        return -1;
+    }
+
+    return (int)(n + quotient);
 }
 
 int main(void) {

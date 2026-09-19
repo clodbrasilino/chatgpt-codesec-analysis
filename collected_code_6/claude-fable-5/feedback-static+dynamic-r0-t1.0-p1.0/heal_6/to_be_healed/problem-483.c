@@ -1,15 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static unsigned long long gcd_ull(unsigned long long a, unsigned long long b)
+static unsigned long long addmod(unsigned long long a, unsigned long long b, unsigned long long m)
 {
-    while (b != 0ULL) {
-        unsigned long long t = a % b;
-        a = b;
-        b = t;
+    a %= m;
+    b %= m;
+    if (a >= m - b) {
+        return a - (m - b);
+    }
+    return a + b;
+}
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    unsigned long long result = 0ULL;
+
+    a %= m;
+    b %= m;
+    while (b > 0ULL) {
+        if (b & 1ULL) {
+            result = addmod(result, a, m);
+        }
+        a = addmod(a, a, m);
+        b >>= 1;
     }
 
-    return a;
+    return result;
 }
  /* Possible weaknesses found:
   *  test case 2 failed: expected 4, got 5
@@ -17,7 +33,8 @@ static unsigned long long gcd_ull(unsigned long long a, unsigned long long b)
 
 static long long first_factorial_divisible_by(long long x)
 {
-    unsigned long long remaining;
+    unsigned long long remainder;
+    unsigned long long ux;
     unsigned long long n;
 
     if (x <= 0LL) {
@@ -28,12 +45,11 @@ static long long first_factorial_divisible_by(long long x)
         return 1LL;
     }
 
-    remaining = (unsigned long long)x;
-
-    for (n = 2ULL; n <= (unsigned long long)x; n++) {
-        unsigned long long g = gcd_ull(remaining, n);
-        remaining /= g;
-        if (remaining == 1ULL) {
+    ux = (unsigned long long)x;
+    remainder = 1ULL;
+    for (n = 1ULL; n <= ux; n++) {
+        remainder = mulmod(remainder, n, ux);
+        if (remainder == 0ULL) {
             return (long long)n;
         }
     }
@@ -47,7 +63,6 @@ int main(void)
     long long result;
     int scan_status;
 
-    printf("Enter a positive integer: ");
     scan_status = scanf("%lld", &x);
     if (scan_status != 1) {
         fprintf(stderr, "Error: invalid input.\n");
@@ -65,7 +80,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    printf("The first natural number whose factorial is divisible by %lld is %lld\n", x, result);
+    printf("%lld\n", result);
 
     return EXIT_SUCCESS;
 }

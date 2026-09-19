@@ -5,7 +5,7 @@ int isSumOfTwoSquares(long n) {
     if (n < 0) return 0;
     for (long i = 0; i * i <= n; ++i) {
         long j = sqrt(n - i * i);
-        if (i * i + j * j == n) {
+        if (i * i + j * j == n && j * j == (n - i * i)) {
             return 1;
         }
     }

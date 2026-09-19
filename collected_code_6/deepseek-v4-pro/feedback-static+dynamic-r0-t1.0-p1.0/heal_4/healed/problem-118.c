@@ -13,61 +13,62 @@ Node *string_to_list(const char *str) {
         return NULL;
     }
 
-    size_t len = strlen(str);
-    if (len == 0) {
-        return NULL;
-    }
-
     Node *head = NULL;
     Node *tail = NULL;
-    size_t start = 0;
-    size_t end = 0;
+    const char *p = str;
 
-    while (end <= len) {
-        if (end == len || isspace((unsigned char)str[end])) {
-            if (end > start) {
-                size_t word_len = end - start;
-                char *word = (char *)malloc(word_len + 1);
-                if (word == NULL) {
-                    Node *current = head;
-                    while (current != NULL) {
-                        Node *next = current->next;
-                        free(current->data);
-                        free(current);
-                        current = next;
-                    }
-                    return NULL;
-                }
-                memcpy(word, str + start, word_len);
-                word[word_len] = '\0';
-
-                Node *new_node = (Node *)malloc(sizeof(Node));
-                if (new_node == NULL) {
-                    free(word);
-                    Node *current = head;
-                    while (current != NULL) {
-                        Node *next = current->next;
-                        free(current->data);
-                        free(current);
-                        current = next;
-                    }
-                    return NULL;
-                }
-
-                new_node->data = word;
-                new_node->next = NULL;
-
-                if (head == NULL) {
-                    head = new_node;
-                    tail = new_node;
-                } else {
-                    tail->next = new_node;
-                    tail = new_node;
-                }
-            }
-            start = end + 1;
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            p++;
         }
-        end++;
+
+        if (*p == '\0') {
+            break;
+        }
+
+        const char *start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        size_t word_len = p - start;
+        char *word = (char *)malloc(word_len + 1);
+        if (word == NULL) {
+            Node *current = head;
+            while (current != NULL) {
+                Node *next = current->next;
+                free(current->data);
+                free(current);
+                current = next;
+            }
+            return NULL;
+        }
+        memcpy(word, start, word_len);
+        word[word_len] = '\0';
+
+        Node *new_node = (Node *)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            free(word);
+            Node *current = head;
+            while (current != NULL) {
+                Node *next = current->next;
+                free(current->data);
+                free(current);
+                current = next;
+            }
+            return NULL;
+        }
+
+        new_node->data = word;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
     }
 
     return head;
@@ -84,28 +85,34 @@ void free_list(Node *head) {
 }
 
 void print_list(Node *head) {
-    Node *current = head;
-    int first = 1;
+    if (head == NULL) {
+        printf("[]\n");
+        return;
+    }
     printf("[");
+    Node *current = head;
     while (current != NULL) {
-        if (!first) {
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
             printf(", ");
         }
-        printf("\"%s\"", current->data);
-        first = 0;
         current = current->next;
     }
     printf("]\n");
 }
 
 int main(void) {
-    const char *test_str = "python programming";
-    Node *list = string_to_list(test_str);
+    char input[1024];
 
-    if (list != NULL) {
-        print_list(list);
-        free_list(list);
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
     }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    Node *list = string_to_list(input);
+    print_list(list);
+    free_list(list);
 
     return 0;
 }

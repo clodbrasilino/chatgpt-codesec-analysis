@@ -1,41 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-int partition(int *arr, int low, int high) {
-    int pivot = arr[high];
-    int i = low - 1;
-    
-    for (int j = low; j < high; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }
-    
-    int temp = arr[i + 1];
-    arr[i + 1] = arr[high];
-    arr[high] = temp;
-    
-    return i + 1;
-}
-
-int quickselect(int *arr, int low, int high, int k) {
-    if (low <= high) {
-        int pivot_index = partition(arr, low, high);
-        
-        if (pivot_index == k) {
-            return arr[pivot_index];
-        } else if (pivot_index < k) {
-            return quickselect(arr, pivot_index + 1, high, k);
-        } else {
-            return quickselect(arr, low, pivot_index - 1, k);
-        }
-    }
-    
-    return -1;
-}
  /* Possible weaknesses found:
   *  test case 2 failed: expected 36, got 25
   *  test case 1 failed: expected 8, got 24
@@ -43,23 +7,30 @@ int quickselect(int *arr, int low, int high, int k) {
 
 int find_kth_element(const int *arr, int size, int k) {
     if (arr == NULL || size <= 0 || k < 0 || k >= size) {
-        fprintf(stderr, "Invalid input parameters\n");
-        exit(EXIT_FAILURE);
+        return -1;
     }
     
-    int *temp_arr = (int *)malloc(size * sizeof(int));
-    if (temp_arr == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
     }
     
     for (int i = 0; i < size; i++) {
-        temp_arr[i] = arr[i];
+        temp[i] = arr[i];
     }
     
-    int result = quickselect(temp_arr, 0, size - 1, k);
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (temp[j] > temp[j + 1]) {
+                int swap = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = swap;
+            }
+        }
+    }
     
-    free(temp_arr);
+    int result = temp[k];
+    free(temp);
     return result;
 }
 
@@ -68,15 +39,10 @@ int main(void) {
     int size = sizeof(arr) / sizeof(arr[0]);
     int k = 2;
     int result = find_kth_element(arr, size, k);
-    printf("Element at index %d: %d\n", k, result);
-    
-    int arr2[] = {3, 8, 36};
-    size = sizeof(arr2) / sizeof(arr2[0]);
-    
-    for (int i = 0; i < size; i++) {
-        result = find_kth_element(arr2, size, i);
-        printf("Element at index %d: %d\n", i, result);
+    if (result != -1) {
+        printf("Element at index %d: %d\n", k, result);
+    } else {
+        printf("Error: invalid input\n");
     }
-    
     return 0;
 }

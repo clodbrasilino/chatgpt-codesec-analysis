@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected True, got 0
+  */
 
 static bool is_woodall(uint64_t number)
 {

@@ -17,8 +17,8 @@ static bool is_sum_of_two_squares(long long n)
          */
         long long remainder = n - a * a;
         /* Possible weaknesses found:
-         *  Invalid sqrt() argument nr 1. The value is -1 but the valid values are '0.0:'. [invalidFunctionArg]
          *  Invalid argument
+         *  Invalid sqrt() argument nr 1. The value is -1 but the valid values are '0.0:'. [invalidFunctionArg]
          */
         long long b = (long long)sqrt((double)remainder);
 
@@ -32,6 +32,9 @@ static bool is_sum_of_two_squares(long long n)
 
     return false;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:10358,execs:273,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main(void)
 {

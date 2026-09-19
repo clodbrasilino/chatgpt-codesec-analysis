@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
 bool is_woodall(unsigned long long n) {
     if (n == 0) {
         return false;
     }
 
-    for (unsigned long long k = 1; k < 64; k++) {
+    for (unsigned long long k = 1; k < sizeof(unsigned long long) * CHAR_BIT; k++) {
         unsigned long long power = 1ULL << k;
         unsigned long long term = k * (power - 1);
 
@@ -14,7 +15,7 @@ bool is_woodall(unsigned long long n) {
             return true;
         }
 
-        if (term > n) {
+        if (term > n || power == 0) {
             return false;
         }
     }

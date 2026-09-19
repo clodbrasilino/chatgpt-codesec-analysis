@@ -13,10 +13,13 @@ int max_sum_2xn(int** grid, int n) {
     
     for (int i = 0; i < n; i++) {
         /* Possible weaknesses found:
-         *  Value stored to 'col1' is never read [deadcode.DeadStores]
          *  Variable 'col1' is assigned a value that is never used. [unreadVariable]
+         *  Value stored to 'col1' is never read [deadcode.DeadStores]
          */
         col1 = (i > 0) ? grid[0][i-1] + grid[1][i-1] : 0;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1303176077 + 1303176078 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000009,time:42023,execs:16134,op:havoc,rep:3)
+         */
         col2 = grid[0][i] + grid[1][i];
         
         int new_exclude = (include > exclude) ? include : exclude;

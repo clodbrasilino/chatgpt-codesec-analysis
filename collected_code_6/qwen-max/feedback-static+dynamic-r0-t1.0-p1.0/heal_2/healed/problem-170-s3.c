@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int sum_between_indices(const int *numbers, int start_index, int end_index) {
-    if (start_index < 0 || end_index < 0 || end_index < start_index) {
+int sum_between_indices(const int *numbers, int start_index, int end_index, int array_length) {
+    if (start_index < 0 || end_index < 0 || end_index < start_index || end_index - start_index > 1000 || start_index >= array_length || end_index >= array_length) {
         return -1;
     }
 
@@ -15,14 +15,15 @@ int sum_between_indices(const int *numbers, int start_index, int end_index) {
 
 int main() {
     const int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(numbers) / sizeof(numbers[0]);
 
     int start_index, end_index;
     printf("Enter the start index: ");
-    scanf("%d", &start_index);
+    if (scanf("%d", &start_index) != 1) return 1;
     printf("Enter the end index: ");
-    scanf("%d", &end_index);
+    if (scanf("%d", &end_index) != 1) return 1;
 
-    int result = sum_between_indices(numbers, start_index, end_index);
+    int result = sum_between_indices(numbers, start_index, end_index, n);
     if (result == -1) {
         printf("Invalid indices.\n");
     } else {

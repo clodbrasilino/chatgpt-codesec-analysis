@@ -28,6 +28,9 @@ bool is_keith_number(long n) {
     }
     return false;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:594,execs:226,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main() {
     long number;

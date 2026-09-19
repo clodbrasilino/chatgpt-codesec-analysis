@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'string', got ��F
-  *  test case 2 failed: expected 'alpha', got 
-  *  test case 0 failed: expected 'python', got ��F
+  *  test case 1 failed: expected 'string', got ���
+  *  test case 0 failed: expected 'python', got `��
+  *  test case 2 failed: expected 'alpha', got ���
   */
 
 char *remove_parenthesis_area(const char *str)
@@ -47,6 +47,7 @@ char *remove_parenthesis_area(const char *str)
     }
 
     result[j] = '\0';
+
     return result;
 }
 

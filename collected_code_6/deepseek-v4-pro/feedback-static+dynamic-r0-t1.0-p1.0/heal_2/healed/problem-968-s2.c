@@ -3,70 +3,42 @@
 #include <math.h>
 
 #define PI 3.14159265358979323846
-#define GOLDEN_RATIO 0.61803398874989484820
-#define MAX_ITERATIONS 1000
 
 double f(double x, int n, const double *coeffs, int period) {
     double result = 0.0;
-    double omega = 2.0 * PI * x / period;
-    double cos_val = cos(omega);
-    double sin_val = sin(omega);
-    double cos_k = 1.0;
-    double sin_k = 0.0;
-    double cos_next, sin_next;
-    
-    result += coeffs[0] * cos_k + coeffs[1] * sin_k;
-    
-    for (int k = 1; k < n; k++) {
-        cos_next = cos_k * cos_val - sin_k * sin_val;
-        sin_next = sin_k * cos_val + cos_k * sin_val;
-        cos_k = cos_next;
-        sin_k = sin_next;
-        
-        result += coeffs[2*k] * cos_k + coeffs[2*k+1] * sin_k;
+    for (int k = 0; k < n; k++) {
+        result += coeffs[2*k] * cos(2 * PI * k * x / period) 
+               + coeffs[2*k+1] * sin(2 * PI * k * x / period);
     }
-    
     return result;
 }
 
 double find_max(double a, double b, double tol, int n, const double *coeffs, int period) {
     double c, d, fc, fd;
-    int iteration_count = 0;
+    double gr = (sqrt(5.0) - 1.0) / 2.0;
     
-    if (tol <= 0.0) {
-        tol = 1e-10;
+    if (isnan(a) || isnan(b) || isnan(tol) || isinf(a) || isinf(b)) {
+        return a;
     }
     
-    c = b - GOLDEN_RATIO * (b - a);
-    d = a + GOLDEN_RATIO * (b - a);
+    c = b - gr * (b - a);
+    d = a + gr * (b - a);
     fc = f(c, n, coeffs, period);
     fd = f(d, n, coeffs, period);
     
-    while (fabs(b - a) > tol && iteration_count < MAX_ITERATIONS) {
-        iteration_count++;
-        
-        if (isnan(fc) || isnan(fd) || isinf(fc) || isinf(fd)) {
-            return (a + b) / 2.0;
-        }
-        
+    while (fabs(b - a) > tol) {
         if (fc < fd) {
             a = c;
             c = d;
             fc = fd;
-            d = a + GOLDEN_RATIO * (b - a);
+            d = a + gr * (b - a);
             fd = f(d, n, coeffs, period);
         } else {
             b = d;
             d = c;
             fd = fc;
-            c = b - GOLDEN_RATIO * (b - a);
+            c = b - gr * (b - a);
             fc = f(c, n, coeffs, period);
-        }
-        
-        if (a > b) {
-            double temp = a;
-            a = b;
-            b = temp;
         }
     }
     
@@ -77,26 +49,26 @@ int main(void) {
     int n, period;
     double *coeffs = NULL;
     double a, b, tol;
-    int result;
     
     printf("Enter number of harmonics (including fundamental): ");
-    fflush(stdout);
-    result = scanf("%d", &n);
-    if (result != 1 || n <= 0 || n > 1000000) {
+    if (scanf("%d", &n) != 1 || n <= 0) {
         fprintf(stderr, "Invalid input\n");
         return 1;
     }
     
-    coeffs = malloc(2 * n * sizeof(double));
+    if (n > 10000) {
+        fprintf(stderr, "Too many harmonics\n");
+        return 1;
+    }
+    
+    coeffs = malloc(2 * (size_t)n * sizeof(double));
     if (coeffs == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
     
     printf("Enter period: ");
-    fflush(stdout);
-    result = scanf("%d", &period);
-    if (result != 1 || period <= 0 || period > 1000000) {
+    if (scanf("%d", &period) != 1 || period <= 0) {
         fprintf(stderr, "Invalid input\n");
         free(coeffs);
         return 1;
@@ -104,8 +76,7 @@ int main(void) {
     
     printf("Enter %d coefficients (a0, b0, a1, b1, ...):\n", 2*n);
     for (int i = 0; i < 2*n; i++) {
-        result = scanf("%lf", &coeffs[i]);
-        if (result != 1) {
+        if (scanf("%lf", &coeffs[i]) != 1) {
             fprintf(stderr, "Invalid input\n");
             free(coeffs);
             return 1;
@@ -113,18 +84,14 @@ int main(void) {
     }
     
     printf("Enter interval [a, b] to search: ");
-    fflush(stdout);
-    result = scanf("%lf %lf", &a, &b);
-    if (result != 2 || a >= b) {
+    if (scanf("%lf %lf", &a, &b) != 2 || a >= b) {
         fprintf(stderr, "Invalid interval\n");
         free(coeffs);
         return 1;
     }
     
     printf("Enter tolerance: ");
-    fflush(stdout);
-    result = scanf("%lf", &tol);
-    if (result != 1 || tol <= 0) {
+    if (scanf("%lf", &tol) != 1 || tol <= 0) {
         fprintf(stderr, "Invalid tolerance\n");
         free(coeffs);
         return 1;
@@ -132,12 +99,6 @@ int main(void) {
     
     double x_max = find_max(a, b, tol, n, coeffs, period);
     double max_val = f(x_max, n, coeffs, period);
-    
-    if (isnan(max_val) || isinf(max_val)) {
-        fprintf(stderr, "Numerical error in computation\n");
-        free(coeffs);
-        return 1;
-    }
     
     printf("Maximum value f(%.10f) = %.10f\n", x_max, max_val);
     

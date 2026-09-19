@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 11, got <no output>
+  *  test case 2 failed: expected 26, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
+  */
 
 unsigned long long eulerian_number(int n, int m) {
     /* Possible weaknesses found:
@@ -14,8 +19,8 @@ unsigned long long eulerian_number(int n, int m) {
      */
     if (n == 0) {
         /* Possible weaknesses found:
-         *  Condition 'm==0' is always false
          *  Condition 'm==0' is always false [knownConditionTrueFalse]
+         *  Condition 'm==0' is always false
          */
         return (m == 0) ? 1 : 0;
     }

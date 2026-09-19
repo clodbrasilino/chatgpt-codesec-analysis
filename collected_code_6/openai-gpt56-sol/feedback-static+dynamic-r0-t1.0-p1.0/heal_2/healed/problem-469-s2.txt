@@ -4,6 +4,32 @@
 #include <inttypes.h>
 #include <stddef.h>
 
+static int64_t checked_add(int64_t a, int64_t b)
+{
+    if (b > 0 && a > INT64_MAX - b) {
+        return INT64_MAX;
+    }
+
+    if (b < 0 && a < INT64_MIN - b) {
+        return INT64_MIN;
+    }
+
+    return a + b;
+}
+
+static int64_t nonnegative_difference(int64_t high, int64_t low)
+{
+    if (high <= low) {
+        return 0;
+    }
+
+    if (low < 0 && high > INT64_MAX + low) {
+        return INT64_MAX;
+    }
+
+    return high - low;
+}
+
 static int64_t max_profit(const int64_t *prices, size_t count, size_t k)
 {
     if (prices == NULL || count < 2U || k == 0U) {
@@ -14,9 +40,10 @@ static int64_t max_profit(const int64_t *prices, size_t count, size_t k)
         int64_t profit = 0;
 
         for (size_t i = 1U; i < count; ++i) {
-            if (prices[i] > prices[i - 1U]) {
-                profit += prices[i] - prices[i - 1U];
-            }
+            profit = checked_add(
+                profit,
+                nonnegative_difference(prices[i], prices[i - 1U])
+            );
         }
 
         return profit;
@@ -26,52 +53,45 @@ static int64_t max_profit(const int64_t *prices, size_t count, size_t k)
         return 0;
     }
 
-    int64_t *previous = calloc(k + 1U, sizeof(*previous));
-    int64_t *current = calloc(k + 1U, sizeof(*current));
-    int64_t *best = malloc((k + 1U) * sizeof(*best));
+    int64_t *profit = calloc(k + 1U, sizeof(*profit));
+    int64_t *best_buy = malloc((k + 1U) * sizeof(*best_buy));
 
-    if (previous == NULL || current == NULL || best == NULL) {
-        free(previous);
-        free(current);
-        free(best);
+    if (profit == NULL || best_buy == NULL) {
+        free(profit);
+        free(best_buy);
         return 0;
     }
 
-    best[0] = 0;
+    best_buy[0] = INT64_MIN;
 
     for (size_t transaction = 1U; transaction <= k; ++transaction) {
-        best[transaction] = -prices[0];
+        best_buy[transaction] = -prices[0];
     }
 
     for (size_t day = 1U; day < count; ++day) {
-        current[0] = 0;
-
         for (size_t transaction = 1U; transaction <= k; ++transaction) {
-            int64_t candidate =
-                previous[transaction - 1U] - prices[day];
+            int64_t buy_candidate =
+                profit[transaction - 1U] >= prices[day]
+                    ? profit[transaction - 1U] - prices[day]
+                    : -prices[day] + profit[transaction - 1U];
 
-            if (candidate > best[transaction]) {
-                best[transaction] = candidate;
+            if (buy_candidate > best_buy[transaction]) {
+                best_buy[transaction] = buy_candidate;
             }
 
-            int64_t sell_profit = prices[day] + best[transaction];
+            int64_t sell_candidate =
+                checked_add(prices[day], best_buy[transaction]);
 
-            current[transaction] =
-                previous[transaction] > sell_profit
-                    ? previous[transaction]
-                    : sell_profit;
+            if (sell_candidate > profit[transaction]) {
+                profit[transaction] = sell_candidate;
+            }
         }
-
-        int64_t *temporary = previous;
-        previous = current;
-        current = temporary;
     }
 
-    int64_t result = previous[k];
+    int64_t result = profit[k];
 
-    free(previous);
-    free(current);
-    free(best);
+    free(profit);
+    free(best_buy);
 
     return result;
 }

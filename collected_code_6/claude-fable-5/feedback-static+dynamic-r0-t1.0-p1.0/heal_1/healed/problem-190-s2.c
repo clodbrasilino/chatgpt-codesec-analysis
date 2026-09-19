@@ -1,21 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
 {
-    long long side_x;
-    long long side_y;
+    unsigned long long side_x;
+    unsigned long long side_y;
+    unsigned long long inner;
+    unsigned long long product;
 
-    side_x = x2 - x1;
-    if (side_x < 0)
+    if (x2 >= x1)
     {
-        side_x = -side_x;
+        side_x = (unsigned long long)x2 - (unsigned long long)x1;
+    }
+    else
+    {
+        side_x = (unsigned long long)x1 - (unsigned long long)x2;
     }
 
-    side_y = y2 - y1;
-    if (side_y < 0)
+    if (y2 >= y1)
     {
-        side_y = -side_y;
+        side_y = (unsigned long long)y2 - (unsigned long long)y1;
+    }
+    else
+    {
+        side_y = (unsigned long long)y1 - (unsigned long long)y2;
     }
 
     if (side_x != side_y)
@@ -23,12 +32,26 @@ long long countIntegralPoints(long long x1, long long y1, long long x2, long lon
         return -1;
     }
 
-    if (side_x <= 1)
+    if (side_x < 2)
     {
         return 0;
     }
 
-    return (side_x - 1) * (side_x - 1);
+    inner = side_x - 1ULL;
+
+    if (inner > (unsigned long long)LLONG_MAX / inner)
+    {
+        return -2;
+    }
+
+    product = inner * inner;
+
+    if (product > (unsigned long long)LLONG_MAX)
+    {
+        return -2;
+    }
+
+    return (long long)product;
 }
 
 int main(void)
@@ -54,9 +77,15 @@ int main(void)
     }
 
     result = countIntegralPoints(x1, y1, x2, y2);
-    if (result < 0)
+    if (result == -1)
     {
         fprintf(stderr, "The given coordinates do not form a square\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == -2)
+    {
+        fprintf(stderr, "Result too large to represent\n");
         return EXIT_FAILURE;
     }
 

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c: In function 'count_squares':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:17:36: error: 'INT_MAX' undeclared (first use in this function)
+   17 |         if (next_max_square_side > INT_MAX || next_max_square_side > length || next_max_square_side > width) {
+      |                                    ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:3:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-347-s2.c:17:36: note: each undeclared identifier is reported only once for each function it appears in
+   17 |         if (next_max_square_side > INT_MAX || next_max_square_side > length || next_max_square_side > width) {
+      |                                    ^~~~~~~

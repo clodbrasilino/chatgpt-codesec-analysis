@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-179-s2.c: In function 'is_keith_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-179-s2.c:28:23: error: 'INT_MAX' undeclared (first use in this function)
+   28 |             if (sum > INT_MAX - terms[i]) {
+      |                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-179-s2.c:5:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <string.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-179-s2.c:28:23: note: each undeclared identifier is reported only once for each function it appears in
+   28 |             if (sum > INT_MAX - terms[i]) {
+      |                       ^~~~~~~

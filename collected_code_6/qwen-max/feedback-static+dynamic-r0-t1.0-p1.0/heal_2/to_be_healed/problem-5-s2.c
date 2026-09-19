@@ -6,15 +6,25 @@
   */
 
 int countWays(int n) {
-    if (n == 0) return 1;
-    if (n == 1) return 1;
-    int a = 1, b = 1;
+    if (n == 0 || n == 1) return 1;
+    int a = 1, b = 1, c;
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
     for (int i = 2; i <= n; ++i) {
-        int c = a + b * 2;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1855077841 + 367173574 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:33,execs:47,op:havoc,rep:7)
+         * UBSan: signed integer overflow: 1855077841 * 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:33,execs:47,op:havoc,rep:7)
+         */
+        c = a + b * 2;
         a = b;
         b = c;
     }
-    return b;
+    /* Possible weaknesses found:
+     *  Uninitialized variable: c
+     *  Uninitialized variable: c [uninitvar]
+     */
+    return c;
 }
 
 int main() {

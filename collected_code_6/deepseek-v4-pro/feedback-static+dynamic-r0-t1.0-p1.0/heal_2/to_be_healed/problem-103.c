@@ -1,26 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 11, got <no output>
+  *  test case 2 failed: expected 26, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
+  */
 
 long long eulerian_number(int n, int m) {
-    /* Possible weaknesses found:
-     *  Assuming that condition 'm>=n' is not redundant
-     */
-    if (m < 0 || n < 0 || m >= n) {
-        if (n == 0 && m == 0) {
-            return 1;
-        }
+    if (m < 0 || n < 0 || m > n) {
         return 0;
     }
 
-    /* Possible weaknesses found:
-     *  Assuming that condition 'n==0' is not redundant
-     */
     if (n == 0) {
-        /* Possible weaknesses found:
-         *  Condition 'm==0' is always false
-         *  Condition 'm==0' is always false [knownConditionTrueFalse]
-         */
-        return m == 0 ? 1 : 0;
+        return 1;
+    }
+
+    if (m >= n) {
+        return 0;
     }
 
     long long *dp = (long long*)calloc((size_t)n + 1, sizeof(long long));
@@ -31,6 +27,11 @@ long long eulerian_number(int n, int m) {
     dp[0] = 1;
     for (int i = 1; i <= n; i++) {
         for (int j = i; j >= 1; j--) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 8 * 1300365805079109480 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:424,execs:196,op:havoc,rep:1)
+             * UBSan: signed integer overflow: 14 * 1300365805079109480 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:424,execs:196,op:havoc,rep:1)
+             * UBSan: signed integer overflow: 6795622177941569380 + 4663059128687439720 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:424,execs:196,op:havoc,rep:1)
+             */
             dp[j] = (i - j) * dp[j - 1] + (j + 1) * dp[j];
         }
         dp[0] = 1;

@@ -1,34 +1,32 @@
 #include <stdio.h>
-#include <limits.h>
 
 unsigned long long count_total_unset_bits(unsigned long long n) {
     if (n == 0) return 0;
     
-    unsigned long long result = 0;
-    int total_bits = sizeof(unsigned long long) * CHAR_BIT;
+    unsigned long long total_bits = 0;
+    unsigned long long temp = n;
+    while (temp > 0) {
+        total_bits++;
+        temp >>= 1;
+    }
     
-    for (int bit_position = 0; bit_position < total_bits; bit_position++) {
-        unsigned long long bit_mask = 1ULL << bit_position;
-        
-        if (bit_mask > n) {
-            break;
-        }
-        
+    unsigned long long total_set_bits = 0;
+    for (unsigned long long i = 0; i < total_bits; i++) {
+        unsigned long long bit_mask = 1ULL << i;
         unsigned long long cycle_length = bit_mask << 1;
         
-        unsigned long long total_numbers = n + 1;
-        unsigned long long full_cycles = total_numbers / cycle_length;
-        unsigned long long remainder = total_numbers % cycle_length;
+        if (cycle_length == 0) break;
         
-        unsigned long long total_set_bits = full_cycles * bit_mask;
+        unsigned long long full_cycles = (n + 1) / cycle_length;
+        unsigned long long remainder = (n + 1) % cycle_length;
+        
+        total_set_bits += full_cycles * bit_mask;
         if (remainder > bit_mask) {
             total_set_bits += remainder - bit_mask;
         }
-        
-        result += total_numbers - total_set_bits;
     }
     
-    return result;
+    return (n + 1) * total_bits - total_set_bits;
 }
 
 int main(void) {
@@ -41,7 +39,7 @@ int main(void) {
     }
     
     unsigned long long result = count_total_unset_bits(n);
-    printf("Total unset bits from 1 to %llu: %llu\n", n, result);
+    printf("%llu\n", result);
     
     return 0;
 }

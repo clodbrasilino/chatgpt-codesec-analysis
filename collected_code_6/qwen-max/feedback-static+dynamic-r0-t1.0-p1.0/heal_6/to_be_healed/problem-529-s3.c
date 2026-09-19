@@ -1,18 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 31, got <no output>
-  *  test case 2 failed: expected 17, got <no output>
-  *  test case 1 failed: expected 5, got <no output>
+  *  test case 0 failed: expected 31, got 53
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
   */
 
-int nth_jacobsthal_lucas(int n) {
+uint64_t nth_jacobsthal_lucas(uint32_t n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
 
-    int a = 2, b = 1;
-    for (int i = 2; i <= n; i++) {
-        int c = 2 * a + b;
+    uint64_t a = 2, b = 1;
+    for (uint32_t i = 2; i <= n; i++) {
+        uint64_t c = a + 2 * b;
+        if (c < a || c < 2 * b) {
+            fprintf(stderr, "Integer overflow detected.\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
         b = c;
     }
@@ -27,13 +33,13 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    int result = nth_jacobsthal_lucas(n);
-    if (n >= 0) {
-        printf("The %dth Jacobsthal-Lucas number is: %d\n", n, result);
-    } else {
-        fprintf(stderr, "Input must be a non-negative integer.\n");
+    if (n < 0) {
+        fprintf(stderr, "Negative input is not allowed.\n");
         return EXIT_FAILURE;
     }
+
+    uint64_t result = nth_jacobsthal_lucas((uint32_t)n);
+    printf("The %" PRId32 "th Jacobsthal-L Lucas number is: %" PRIu64 "\n", n, result);
 
     return EXIT_SUCCESS;
 }

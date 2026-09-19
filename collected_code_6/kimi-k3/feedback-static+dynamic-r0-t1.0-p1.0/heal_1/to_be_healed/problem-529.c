@@ -3,9 +3,9 @@
 #include <errno.h>
 #include <limits.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 31, got 53
   *  test case 1 failed: expected 5, got 4
   *  test case 2 failed: expected 17, got 22
+  *  test case 0 failed: expected 31, got 53
   */
 
 long long jacobsthal_lucas(int n) {
@@ -17,6 +17,10 @@ long long jacobsthal_lucas(int n) {
     long long current = 0;
     
     for (int i = 2; i <= n; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2 * 4611686018427387905 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:50,execs:38,op:havoc,rep:12)
+         * UBSan: signed integer overflow: 9223372036854775807 - -9223372036854775806 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:50,execs:38,op:havoc,rep:12)
+         */
         if (prev1 > LLONG_MAX - 2 * prev2) {
             errno = ERANGE;
             return -1;

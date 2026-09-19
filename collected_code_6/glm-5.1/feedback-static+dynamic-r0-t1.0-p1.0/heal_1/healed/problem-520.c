@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long gcd(long long a, long long b) {
     while (b != 0) {
@@ -19,7 +20,11 @@ long long find_lcm(const long long *arr, size_t n) {
         if (arr[i] == 0) {
             return 0;
         }
-        result = (result / gcd(result, arr[i])) * arr[i];
+        long long common = gcd(result, arr[i]);
+        if (arr[i] / common > LLONG_MAX / result) {
+            return -1;
+        }
+        result = (result / common) * arr[i];
     }
     return result;
 }

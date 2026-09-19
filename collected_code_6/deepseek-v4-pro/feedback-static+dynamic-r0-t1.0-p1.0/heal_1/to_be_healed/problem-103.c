@@ -2,8 +2,8 @@
 #include <stdlib.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 11, got <no output>
-  *  test case 0 failed: expected 4, got <no output>
   *  test case 2 failed: expected 26, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
   */
 
 long long eulerian_number(int n, int m) {
@@ -18,8 +18,8 @@ long long eulerian_number(int n, int m) {
      */
     if (n == 0) {
         /* Possible weaknesses found:
-         *  Condition 'm==0' is always false
          *  Condition 'm==0' is always false [knownConditionTrueFalse]
+         *  Condition 'm==0' is always false
          */
         return m == 0 ? 1 : 0;
     }
@@ -41,6 +41,9 @@ long long eulerian_number(int n, int m) {
     free(dp);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:405,execs:285,op:havoc,rep:14; likely memory-safety defect
+  */
 
 int main(void) {
     int n, m;

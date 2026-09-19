@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
   *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
   *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
-  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
   */
 
 int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2, int* result_size) {

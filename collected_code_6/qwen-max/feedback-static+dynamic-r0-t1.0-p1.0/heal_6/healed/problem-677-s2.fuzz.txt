@@ -1,1 +1,2 @@
-problem-677-s2.c:0:0: info: fuzzed - no sanitizer findings
+problem-677-s2.c:6:11:medium:UBSan: signed integer overflow: 2093175460 + 2076732068 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:602,execs:600,op:havoc,rep:9)
+problem-677-s2.c:6:24:medium:UBSan: signed integer overflow: 1658710016 + 1316134912 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000005,time:37089,execs:32216,op:havoc,rep:6)

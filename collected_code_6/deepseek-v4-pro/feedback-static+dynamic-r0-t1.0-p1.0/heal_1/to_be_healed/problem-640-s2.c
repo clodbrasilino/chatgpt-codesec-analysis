@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got @��
-  *  test case 1 failed: expected 'string', got ���
-  *  test case 2 failed: expected 'alpha', got ���
+  *  test case 0 failed: expected 'python', got @��
+  *  test case 1 failed: expected 'string', got ���
+  *  test case 2 failed: expected 'alpha', got ���
   */
 
 static char *remove_parenthesis_area(const char *input) {

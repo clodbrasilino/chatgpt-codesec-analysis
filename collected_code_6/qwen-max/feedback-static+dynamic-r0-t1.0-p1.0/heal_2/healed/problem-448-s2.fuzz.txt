@@ -1,1 +1,2 @@
-problem-448-s2.c:0:0: info: fuzzed - no sanitizer findings
+problem-448-s2.c:11:25:medium:UBSan: signed integer overflow: 4840428246616975367 + 6412202219048207347 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:366,execs:330,op:havoc,rep:2)
+problem-448-s2.c:23:13:medium:UBSan: signed integer overflow: 8494359425057768730 + 2758271040607413982 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:366,execs:330,op:havoc,rep:2)

@@ -1,1 +1,9 @@
-problem-520.c:0:0: info: fuzzed - no sanitizer findings
+problem-520.c:6:20:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000002,sig:06,src:000020,time:49110,execs:30178,op:havoc,rep:1)
+problem-520.c:7:20:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000020,time:36246,execs:22679,op:havoc,rep:6)
+problem-520.c:22:18:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000002,sig:06,src:000020,time:49110,execs:30178,op:havoc,rep:1)
+problem-520.c:30:23:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000020,time:36246,execs:22679,op:havoc,rep:6)
+problem-520.c:33:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000020,time:36246,execs:22679,op:havoc,rep:6)
+problem-520.c:33:43:medium:UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000020,time:36246,execs:22679,op:havoc,rep:6)
+problem-520.c:36:0:high:ASan: FPE (AFL crash: id:000002,sig:06,src:000020,time:49110,execs:30178,op:havoc,rep:1)
+problem-520.c:36:26:medium:UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000020,time:49110,execs:30178,op:havoc,rep:1)
+problem-520.c:40:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000020,time:33298,execs:20972,op:havoc,rep:8; likely memory-safety defect

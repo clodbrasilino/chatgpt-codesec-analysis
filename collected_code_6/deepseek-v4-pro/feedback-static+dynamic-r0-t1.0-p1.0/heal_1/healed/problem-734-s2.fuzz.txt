@@ -1,1 +1,4 @@
-problem-734-s2.c:0:0: info: fuzzed - no sanitizer findings
+problem-734-s2.c:11:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000006,time:7060,execs:2347,op:havoc,rep:2)
+problem-734-s2.c:11:45:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000006,time:7060,execs:2347,op:havoc,rep:2)
+problem-734-s2.c:18:23:medium:UBSan: signed integer overflow: -8251401944285471526 + -2062850484676271420 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000008,time:21136,execs:6840,op:havoc,rep:3)
+problem-734-s2.c:23:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:5141,execs:1705,op:havoc,rep:2; likely memory-safety defect

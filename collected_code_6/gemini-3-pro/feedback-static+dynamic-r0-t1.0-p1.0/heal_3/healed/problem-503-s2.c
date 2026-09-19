@@ -2,32 +2,24 @@
 #include <stdlib.h>
 
 int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
-    if (arr == NULL || out_size == NULL) {
+    if (out_size == NULL) {
         return NULL;
     }
 
-    if (size == 0) {
+    if (arr == NULL || size < 2) {
         *out_size = 0;
-        return malloc(1);
-    }
-
-    if (size == 1) {
-        *out_size = 1;
-        int* res = malloc(sizeof(int));
-        if (res != NULL) {
-            res[0] = arr[0];
-        }
-        return res;
+        return NULL;
     }
 
     *out_size = size - 1;
     int* result = malloc(*out_size * sizeof(int));
     if (result == NULL) {
+        *out_size = 0;
         return NULL;
     }
 
     for (size_t i = 0; i < *out_size; i++) {
-        result[i] = (int)((unsigned int)arr[i] + (unsigned int)arr[i + 1]);
+        result[i] = arr[i] + arr[i + 1];
     }
 
     return result;
@@ -52,8 +44,6 @@ int main(void) {
                 input = temp;
             }
             input[size++] = val;
-        } else if (res == EOF) {
-            break;
         } else {
             int c = getchar();
             if (c == EOF) {
@@ -65,18 +55,16 @@ int main(void) {
     size_t out_size = 0;
     int* result = add_consecutive(input, size, &out_size);
     
-    if (result != NULL || size == 0) {
-        printf("[");
-        for (size_t i = 0; i < out_size; i++) {
-            printf("%d", result[i]);
-            if (i < out_size - 1) {
-                printf(", ");
-            }
+    printf("[");
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d", result[i]);
+        if (i < out_size - 1) {
+            printf(", ");
         }
-        printf("]\n");
-        free(result);
     }
+    printf("]\n");
 
+    free(result);
     free(input);
     return 0;
 }

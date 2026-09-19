@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-926.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-926.c:31:31: warning: Either the condition 'sum<0' is redundant or there is division by zero at line 31. [zerodivcond]
+        if (i - 1 > INT64_MAX / sum) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-926.c:27:17: note: Assuming that condition 'sum<0' is not redundant
+        if (sum < 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-926.c:31:31: note: Division by zero
+        if (i - 1 > INT64_MAX / sum) {
+                              ^

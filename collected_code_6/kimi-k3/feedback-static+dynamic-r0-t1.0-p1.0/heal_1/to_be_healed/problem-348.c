@@ -27,6 +27,9 @@ ll count_sequences(int length) {
     if (min_val >= 0) {
         ll result = 1;
         for (int i = 0; i < length; i++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 4611686018427387904 * 4 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000000,sig:06,src:000008,time:12456,execs:5248,op:havoc,rep:3)
+             */
             result *= num_values;
         }
         return result;
@@ -75,6 +78,10 @@ ll count_sequences(int length) {
                 
                 ll new_idx = new_sum + offset;
                 if (new_idx >= 0 && new_idx < size) {
+                    /* Possible weaknesses found:
+                     * UBSan: signed integer overflow: 6063861390644594843 + 3975250549198072254 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000001,sig:06,src:000008,time:12882,execs:5356,op:havoc,rep:2)
+                     * UBSan: signed integer overflow: 7057808179262681224 + 2946127768511332654 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000004,sig:06,src:000009,time:36971,execs:11531,op:havoc,rep:24)
+                     */
                     dp_new[new_idx] += dp[idx];
                 }
             }
@@ -89,6 +96,11 @@ ll count_sequences(int length) {
     for (ll sum = 0; sum <= max_reach; sum++) {
         ll idx = sum + offset;
         if (idx >= 0 && idx < size) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 2683948844843011196 + 7624788253942790228 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000001,sig:06,src:000008,time:12882,execs:5356,op:havoc,rep:2)
+             * UBSan: signed integer overflow: 5620373852622583763 + 3683590725552388792 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000003,sig:06,src:000009,time:30066,execs:10212,op:havoc,rep:2)
+             * UBSan: signed integer overflow: 8771868364471143639 + 1288093645305579246 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000004,sig:06,src:000009,time:36971,execs:11531,op:havoc,rep:24)
+             */
             total += dp[idx];
         }
     }
@@ -100,6 +112,9 @@ ll count_sequences(int length) {
     
     return total;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000009,time:15122,execs:6133,op:havoc,rep:12; likely memory-safety defect
+  */
 
 int main(void) {
     int length;

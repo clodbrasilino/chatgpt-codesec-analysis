@@ -16,6 +16,9 @@ int sumOddLengthSubarrays(int *arr, int arrSize) {
         int right_even = right / 2;
         int left_odd = (left + 1) / 2;
         int right_odd = (right + 1) / 2;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1666666666 * 14 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000014,time:24784,execs:17851,op:havoc,rep:1)
+         */
         total += arr[i] * (left_even * right_even + left_odd * right_odd);
     }
     return total;

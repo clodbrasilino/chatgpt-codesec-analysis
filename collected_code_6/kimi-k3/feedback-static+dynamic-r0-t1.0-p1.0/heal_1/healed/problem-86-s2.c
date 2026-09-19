@@ -7,7 +7,11 @@ long long centered_hexagonal(int n) {
     if (n < 1) {
         return -1;
     }
-    return (long long)n * n * n - (long long)(n - 1) * (n - 1) * (n - 1);
+    long long ln = (long long)n;
+    if (ln > 2097151) {
+        return -1;
+    }
+    return ln * ln * ln - (ln - 1) * (ln - 1) * (ln - 1);
 }
 
 int main(void) {
@@ -18,6 +22,7 @@ int main(void) {
     long long result;
 
     if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
         return EXIT_FAILURE;
     }
 
@@ -25,10 +30,12 @@ int main(void) {
     val = strtol(input, &endptr, 10);
     
     if (errno != 0 || endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
 
-    if (val < 1 || val > INT_MAX) {
+    if (val < 1 || val > 2097151) {
+        fprintf(stderr, "Input out of valid range\n");
         return EXIT_FAILURE;
     }
 
@@ -36,6 +43,7 @@ int main(void) {
     result = centered_hexagonal(n);
     
     if (result < 0) {
+        fprintf(stderr, "Calculation error\n");
         return EXIT_FAILURE;
     }
 

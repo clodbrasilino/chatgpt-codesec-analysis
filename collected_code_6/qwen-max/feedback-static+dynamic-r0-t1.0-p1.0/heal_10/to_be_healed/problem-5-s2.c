@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 3, got 4
-  *  test case 1 failed: expected 153, got 40
-  *  test case 2 failed: expected 2131, got 217
+  *  test case 2 failed: expected 2131, got 19601
+  *  test case 1 failed: expected 153, got 577
   */
 
-int countWays(int n) {
-    if (n % 2 != 0) return 0;
-    if (n == 0) return 1;
-    int a = 1, b = 1;
-    for (int i = 2; i <= n; i += 2) {
-        int c = 3 * a + b;
+int64_t countWays(int n) {
+    if (n == 0 || n == 1) return 1;
+    int64_t a = 1, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        if (b > (INT64_MAX - a) / 2) return -1;
+        int64_t c = a + b * 2;
+        if (c < a || c < b * 2) return -1;
         a = b;
         b = c;
     }
@@ -25,7 +27,11 @@ int main() {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    int result = countWays(n);
-    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %d\n", n, result);
+    int64_t result = countWays(n);
+    if (result == -1) {
+        fprintf(stderr, "Overflow detected\n");
+        return EXIT_FAILURE;
+    }
+    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %lld\n", n, (long long)result);
     return EXIT_SUCCESS;
 }

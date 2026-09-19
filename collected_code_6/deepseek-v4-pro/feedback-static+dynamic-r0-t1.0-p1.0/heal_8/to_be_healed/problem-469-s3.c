@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <string.h>
  /* Possible weaknesses found:
+  *  test case 1 failed: expected 7, got 0
   *  test case 0 failed: expected 10, got 5
   *  test case 2 failed: expected 2, got 0
-  *  test case 1 failed: expected 7, got 0
   */
 
 int max_profit(int k, const int prices[], int n) {
@@ -28,19 +28,20 @@ int max_profit(int k, const int prices[], int n) {
     }
 
     for (int t = 1; t <= k; t++) {
-        int max_diff = INT_MIN;
+        int max_diff = -prices[0];
         for (int d = 1; d < n; d++) {
             int idx = t * n + d;
-            int prev_idx = (t - 1) * n + d - 1;
+            int prev_day_idx = t * n + (d - 1);
+            int prev_txn_idx = (t - 1) * n + d;
 
-            int candidate = dp[prev_idx] - prices[d - 1];
+            int val1 = dp[prev_day_idx];
+            int val2 = prices[d] + max_diff;
+            dp[idx] = (val1 > val2) ? val1 : val2;
+
+            int candidate = dp[prev_txn_idx] - prices[d];
             if (candidate > max_diff) {
                 max_diff = candidate;
             }
-
-            int val1 = dp[idx - 1];
-            int val2 = prices[d] + max_diff;
-            dp[idx] = (val1 > val2) ? val1 : val2;
         }
     }
 

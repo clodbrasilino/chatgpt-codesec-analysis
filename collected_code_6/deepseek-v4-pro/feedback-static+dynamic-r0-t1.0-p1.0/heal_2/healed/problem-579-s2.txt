@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2, int* result_size) {
-    int* result = (int*)malloc((size1 + size2) * sizeof(int));
+    int max_size = size1 + size2;
+    int* result = (int*)malloc(max_size * sizeof(int));
     if (result == NULL) {
         *result_size = 0;
         return NULL;
@@ -61,9 +62,9 @@ int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2,
 }
 
 int main() {
-    int tuple1[] = {3, 6, 7, 10};
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {4, 5, 6, 7, 8};
     int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
-    int tuple2[] = {3, 6, 8, 9, 11};
     int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
     int result_size;
     int* dissimilar = find_dissimilar(tuple1, size1, tuple2, size2, &result_size);
@@ -73,14 +74,11 @@ int main() {
         return 1;
     }
 
-    printf("[");
+    printf("Dissimilar elements: ");
     for (int i = 0; i < result_size; i++) {
-        printf("%d", dissimilar[i]);
-        if (i < result_size - 1) {
-            printf(", ");
-        }
+        printf("%d ", dissimilar[i]);
     }
-    printf("]\n");
+    printf("\n");
 
     free(dissimilar);
     return 0;

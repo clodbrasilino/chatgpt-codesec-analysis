@@ -1,21 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 153, got <no output>
-  *  test case 2 failed: expected 2131, got <no output>
-  *  test case 0 failed: expected 3, got <no output>
+  *  test case 2 failed: expected 2131, got 19601
+  *  test case 1 failed: expected 153, got 577
   */
 
-int countWays(int n) {
-    if (n % 2 != 0) return 0;
-    if (n == 0) return 1;
-    int a = 1, b = 1;
-    for (int i = 2; i <= n; i += 2) {
-        int c = a * 3 + b;
+int64_t countWays(int n) {
+    if (n == 0 || n == 1) return 1;
+    int64_t a = 1, b = 1, c;
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    for (int i = 2; i <= n; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 6882627592338442563 * 2 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000000,time:53,execs:73,op:havoc,rep:1)
+         */
+        c = a + b * 2;
+        /* Possible weaknesses found:
+         *  Redundant condition: If 'c < 0', the comparison 'c > 9223372036854775807' is always true. [redundantCondition]
+         */
+        if (c < 0 || c > 9223372036854775807) break;
         a = b;
         b = c;
     }
-    return b;
+    /* Possible weaknesses found:
+     *  Uninitialized variable: c
+     *  Uninitialized variable: c [uninitvar]
+     */
+    return c;
 }
 
 int main() {
@@ -25,7 +38,10 @@ int main() {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    int result = countWays(n);
-    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %d\n", n, result);
+    int64_t result = countWays(n);
+    /* Possible weaknesses found:
+     *  %lld in format string (no. 2) requires 'long long' but the argument type is 'signed long'. [invalidPrintfArgType_sint]
+     */
+    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %lld\n", n, result);
     return EXIT_SUCCESS;
 }

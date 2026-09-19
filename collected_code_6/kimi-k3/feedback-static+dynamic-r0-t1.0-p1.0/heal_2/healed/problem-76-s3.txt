@@ -1,15 +1,20 @@
 ```c
 #include <stdio.h>
+#include <limits.h>
 
 long long count_squares(int m, int n) {
     if (m <= 0 || n <= 0) {
         return 0;
     }
+    int min_dim = (m < n) ? m : n;
+    int max_dim = (m < n) ? n : m;
     long long total = 0;
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= n; j++) {
-            total += (long long)(m - i + 1) * (n - j + 1);
+    for (int i = 1; i <= min_dim; i++) {
+        long long term = (long long)(max_dim - i + 1) * (min_dim - i + 1);
+        if (total > LLONG_MAX - term) {
+            return -1;
         }
+        total += term;
     }
     return total;
 }

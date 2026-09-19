@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t power(int64_t base, int64_t exp, int64_t mod) {
+    int64_t result = 1;
+    base %= mod;
+    if (base < 0) base += mod;
+    while (exp > 0) {
+        if (exp & 1) {
+            result = (int64_t)((__int128)result * base % mod);
+        }
+        base = (int64_t)((__int128)base * base % mod);
+        exp >>= 1;
+    }
+    return result;
+}
+
+int64_t gcdExtended(int64_t a, int64_t b, int64_t *x, int64_t *y) {
+    if (a == 0) {
+        *x = 0;
+        *y = 1;
+        return b;
+    }
+    int64_t x1, y1;
+    int64_t gcd = gcdExtended(b % a, a, &x1, &y1);
+    *x = y1 - (b / a) * x1;
+    *y = x1;
+    return gcd;
+}
+
+int64_t modInverse(int64_t n, int64_t mod) {
+    int64_t x, y;
+    int64_t gcd = gcdExtended(n, mod, &x, &y);
+    if (gcd != 1) {
+        return -1;
+    }
+    return (x % mod + mod) % mod;
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 11, got 0
+  */
+
+int64_t nCrModP(int64_t n, int64_t r, int64_t p) {
+    if (r < 0 || r > n) {
+        return 0;
+    }
+    if (r == 0 || r == n) {
+        return 1;
+    }
+    if (r > n - r) {
+        r = n - r;
+    }
+    
+    if (n >= p) {
+        int64_t result = 1;
+        while (n > 0 || r > 0) {
+            int64_t ni = n % p;
+            int64_t ri = r % p;
+            if (ri > ni) {
+                return 0;
+            }
+            
+            int64_t *fact = (int64_t *)malloc((size_t)(ni + 1) * sizeof(int64_t));
+            if (fact == NULL) {
+                return -1;
+            }
+            
+            fact[0] = 1;
+            for (int64_t i = 1; i <= ni; i++) {
+                fact[i] = (int64_t)((__int128)fact[i - 1] * i % p);
+            }
+            
+            int64_t numerator = fact[ni];
+            int64_t denominator = (int64_t)((__int128)fact[ri] * fact[ni - ri] % p);
+            int64_t inverse = modInverse(denominator, p);
+            
+            if (inverse == -1) {
+                free(fact);
+                return 0;
+            }
+            
+            result = (int64_t)((__int128)result * ((__int128)numerator * inverse % p) % p);
+            
+            free(fact);
+            
+            n /= p;
+            r /= p;
+        }
+        return result;
+    } else {
+        int64_t *fact = (int64_t *)malloc((size_t)(n + 1) * sizeof(int64_t));
+        if (fact == NULL) {
+            return -1;
+        }
+        
+        fact[0] = 1;
+        for (int64_t i = 1; i <= n; i++) {
+            fact[i] = (int64_t)((__int128)fact[i - 1] * i % p);
+        }
+        
+        int64_t numerator = fact[n];
+        int64_t denominator = (int64_t)((__int128)fact[r] * fact[n - r] % p);
+        int64_t inverse = modInverse(denominator, p);
+        
+        if (inverse == -1) {
+            free(fact);
+            return 0;
+        }
+        
+        int64_t result = (int64_t)((__int128)numerator * inverse % p);
+        
+        free(fact);
+        return result;
+    }
+}
+
+int main(void) {
+    int64_t n, r, p;
+    
+    if (scanf("%" SCNd64 " %" SCNd64 " %" SCNd64, &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (p <= 1) {
+        fprintf(stderr, "Modulus must be greater than 1\n");
+        return EXIT_FAILURE;
+    }
+    
+    int64_t result = nCrModP(n, r, p);
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%" PRId64 "\n", result);
+    return EXIT_SUCCESS;
+}

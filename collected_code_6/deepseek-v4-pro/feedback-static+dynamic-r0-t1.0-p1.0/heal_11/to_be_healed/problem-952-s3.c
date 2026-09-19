@@ -5,84 +5,74 @@
 
 int64_t mul_mod(int64_t a, int64_t b, int64_t mod) {
     int64_t result = 0;
-    int64_t x = a % mod;
-    int64_t y = b % mod;
+    int64_t ua, ub;
     
-    if (x < 0) x += mod;
-    if (y < 0) y += mod;
-    
-    while (y > 0) {
-        if (y & 1) {
-            int64_t tmp;
-            if (x > INT64_MAX - result) {
-                int64_t diff = INT64_MAX - result;
-                int64_t remaining = x - diff;
-                tmp = result - mod;
-                if (tmp < INT64_MIN + remaining) {
-                    tmp += mod;
-                }
-                tmp += remaining;
-            } else {
-                tmp = result + x;
-            }
-            if (tmp >= mod) {
-                tmp -= mod;
-                if (tmp >= mod) {
-                    tmp -= mod;
-                }
-            }
-            if (tmp < 0) {
-                tmp += mod;
-                if (tmp < 0) {
-                    tmp += mod;
-                }
-            }
-            result = tmp;
-        }
-        int64_t tmp;
-        if (x > INT64_MAX - x) {
-            int64_t diff = INT64_MAX - x;
-            int64_t remaining = x - diff;
-            tmp = x - mod;
-            if (tmp < INT64_MIN + remaining) {
-                tmp += mod;
-            }
-            tmp += remaining;
-        } else {
-            tmp = x + x;
-        }
-        if (tmp >= mod) {
-            tmp -= mod;
-            if (tmp >= mod) {
-                tmp -= mod;
-            }
-        }
-        if (tmp < 0) {
-            tmp += mod;
-            if (tmp < 0) {
-                tmp += mod;
-            }
-        }
-        x = tmp;
-        y >>= 1;
+    if (mod <= 0) {
+        return 0;
     }
     
+    ua = a % mod;
+    if (ua < 0) {
+        ua += mod;
+    }
+    ub = b % mod;
+    if (ub < 0) {
+        ub += mod;
+    }
+    
+    while (ub > 0) {
+        if (ub & 1) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: -8173347561818554368 + -6366401023241617408 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000003,sig:06,src:000002,time:16394,execs:13857,op:havoc,rep:2)
+             * UBSan: signed integer overflow: 4043043718662367440 + 5362793740816404480 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000002,sig:06,src:000001,time:13360,execs:11161,op:havoc,rep:7)
+             * UBSan: signed integer overflow: 6968879105195611400 + 7755741870158512128 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000004,sig:06,src:000056,time:19201,execs:16221,op:havoc,rep:1)
+             * UBSan: signed integer overflow: -8828999244582221166 + -3467651256385336384 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000006,sig:06,src:000059,time:25705,execs:21905,op:havoc,rep:4)
+             * UBSan: signed integer overflow: 4514801476312595825 + 5890555912263738328 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000005,sig:06,src:000042,time:24944,execs:21221,op:havoc,rep:7)
+             * UBSan: signed integer overflow: 299404854558720000 + 9017369737297920000 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000001,time:4470,execs:3698,op:havoc,rep:5)
+             */
+            result = (result + ua);
+            if (result >= mod) {
+                result -= mod;
+            }
+        }
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 7011906707722862592 + 7011906707722862592 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000003,sig:06,src:000002,time:16394,execs:13857,op:havoc,rep:2)
+         * UBSan: signed integer overflow: 4611686018427387904 + 4611686018427387904 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:3888,execs:3185,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 9017369737297920000 + 9017369737297920000 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000001,time:4470,execs:3698,op:havoc,rep:5)
+         * UBSan: signed integer overflow: 5362793740816404480 + 5362793740816404480 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000002,sig:06,src:000001,time:13360,execs:11161,op:havoc,rep:7)
+         * UBSan: signed integer overflow: 5151613078831366144 + 5151613078831366144 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000006,sig:06,src:000059,time:25705,execs:21905,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 4865804016353280000 + 4865804016353280000 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000005,sig:06,src:000042,time:24944,execs:21221,op:havoc,rep:7)
+         * UBSan: signed integer overflow: 7159895961083535360 + 7159895961083535360 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000004,sig:06,src:000056,time:19201,execs:16221,op:havoc,rep:1)
+         */
+        ua = (ua + ua);
+        if (ua >= mod) {
+            ua -= mod;
+        }
+        ub >>= 1;
+    }
     return result;
 }
 
 int64_t power_mod(int64_t base, int64_t exp, int64_t mod) {
     int64_t result = 1;
-    base %= mod;
-    if (base < 0) base += mod;
+    int64_t b;
+    
+    if (mod <= 0) {
+        return 0;
+    }
+    
+    b = base % mod;
+    if (b < 0) {
+        b += mod;
+    }
     
     while (exp > 0) {
         if (exp & 1) {
-            result = mul_mod(result, base, mod);
+            result = mul_mod(result, b, mod);
         }
-        base = mul_mod(base, base, mod);
+        b = mul_mod(b, b, mod);
         exp >>= 1;
     }
-    
     return result;
 }
 
@@ -94,55 +84,55 @@ int64_t mod_inverse(int64_t a, int64_t p) {
   */
 
 int64_t ncr_mod_p(int64_t n, int64_t r, int64_t p) {
-    if (r > n) {
+    int64_t numerator, denominator, inverse;
+    int64_t i;
+    
+    if (r > n || r < 0) {
         return 0;
     }
-    /* Possible weaknesses found:
-     *  Assuming that condition 'r==n' is not redundant
-     */
     if (r == 0 || r == n) {
         return 1;
     }
     
-    /* Possible weaknesses found:
-     *  Condition 'n-r<0' is always false
-     *  Condition 'n-r<0' is always false [knownConditionTrueFalse]
-     */
-    if (n - r < 0) {
-        return 0;
-    }
     if (r > n - r) {
         r = n - r;
     }
-
-    int64_t numerator = 1;
-    int64_t denominator = 1;
-
-    for (int64_t i = 0; i < r; i++) {
+    
+    numerator = 1;
+    denominator = 1;
+    
+    for (i = 0; i < r; i++) {
         int64_t term1 = (n - i) % p;
-        if (term1 < 0) term1 += p;
-        numerator = mul_mod(numerator, term1, p);
-        
+        if (term1 < 0) {
+            term1 += p;
+        }
         int64_t term2 = (i + 1) % p;
-        if (term2 < 0) term2 += p;
+        if (term2 < 0) {
+            term2 += p;
+        }
+        if (term2 == 0) {
+            return 0;
+        }
+        numerator = mul_mod(numerator, term1, p);
         denominator = mul_mod(denominator, term2, p);
     }
-
-    return mul_mod(numerator, mod_inverse(denominator, p), p);
+    
+    inverse = mod_inverse(denominator, p);
+    return mul_mod(numerator, inverse, p);
 }
 
 int main(void) {
     int64_t n, r, p;
-
+    
     if (scanf("%" SCNd64 " %" SCNd64 " %" SCNd64, &n, &r, &p) != 3) {
         return 1;
     }
-
+    
     if (p <= 1) {
         return 1;
     }
-
+    
     printf("%" PRId64 "\n", ncr_mod_p(n, r, p));
-
+    
     return 0;
 }

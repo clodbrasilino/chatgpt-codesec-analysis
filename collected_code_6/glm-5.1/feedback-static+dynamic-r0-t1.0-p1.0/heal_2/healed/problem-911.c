@@ -2,20 +2,20 @@
 #include <stdlib.h>
 #include <limits.h>
 
-void push_min(int **heap, int *size, int *capacity, int value) {
-    if (*size >= *capacity) {
-        *capacity *= 2;
-        *heap = (int *)realloc(*heap, *capacity * sizeof(int));
-    }
-    (*heap)[*size] = value;
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void push_min(int *heap, int *size, int value) {
+    heap[*size] = value;
     int i = *size;
     (*size)++;
     while (i > 0) {
         int parent = (i - 1) / 2;
-        if ((*heap)[parent] > (*heap)[i]) {
-            int temp = (*heap)[parent];
-            (*heap)[parent] = (*heap)[i];
-            (*heap)[i] = temp;
+        if (heap[parent] > heap[i]) {
+            swap(&heap[parent], &heap[i]);
             i = parent;
         } else {
             break;
@@ -39,9 +39,7 @@ int pop_min(int *heap, int *size) {
             smallest = right;
         }
         if (smallest != i) {
-            int temp = heap[i];
-            heap[i] = heap[smallest];
-            heap[smallest] = temp;
+            swap(&heap[i], &heap[smallest]);
             i = smallest;
         } else {
             break;
@@ -50,20 +48,18 @@ int pop_min(int *heap, int *size) {
     return min_val;
 }
 
-void push_max(int **heap, int *size, int *capacity, int value) {
-    if (*size >= *capacity) {
-        *capacity *= 2;
-        *heap = (int *)realloc(*heap, *capacity * sizeof(int));
+void push_max(int *heap, int *size, int capacity, int value) {
+    if (*size >= capacity) {
+        return;
     }
-    (*heap)[*size] = -value;
+    value = -value;
+    heap[*size] = value;
     int i = *size;
     (*size)++;
     while (i > 0) {
         int parent = (i - 1) / 2;
-        if ((*heap)[parent] > (*heap)[i]) {
-            int temp = (*heap)[parent];
-            (*heap)[parent] = (*heap)[i];
-            (*heap)[i] = temp;
+        if (heap[parent] > heap[i]) {
+            swap(&heap[parent], &heap[i]);
             i = parent;
         } else {
             break;
@@ -87,9 +83,7 @@ int pop_max(int *heap, int *size) {
             smallest = right;
         }
         if (smallest != i) {
-            int temp = heap[i];
-            heap[i] = heap[smallest];
-            heap[smallest] = temp;
+            swap(&heap[i], &heap[smallest]);
             i = smallest;
         } else {
             break;
@@ -103,15 +97,13 @@ int maximumProduct(const int *nums, int numsSize) {
         return 0;
     }
     
-    int min_capacity = 4;
-    int *min_heap = (int *)malloc(min_capacity * sizeof(int));
+    int *min_heap = (int *)malloc(4 * sizeof(int));
     if (!min_heap) {
         return 0;
     }
     int min_size = 0;
     
-    int max_capacity = 3;
-    int *max_heap = (int *)malloc(max_capacity * sizeof(int));
+    int *max_heap = (int *)malloc(3 * sizeof(int));
     if (!max_heap) {
         free(min_heap);
         return 0;
@@ -119,39 +111,34 @@ int maximumProduct(const int *nums, int numsSize) {
     int max_size = 0;
 
     for (int i = 0; i < numsSize; i++) {
-        push_min(&min_heap, &min_size, &min_capacity, nums[i]);
+        push_min(min_heap, &min_size, nums[i]);
         if (min_size > 3) {
             pop_min(min_heap, &min_size);
         }
 
-        push_max(&max_heap, &max_size, &max_capacity, nums[i]);
-        if (max_size > 2) {
+        push_max(max_heap, &max_size, 3, nums[i]);
+        if (max_size > 3) {
             pop_max(max_heap, &max_size);
         }
     }
 
     int max1 = pop_max(max_heap, &max_size);
     int max2 = pop_max(max_heap, &max_size);
+    int max3 = pop_max(max_heap, &max_size);
 
     int min1 = pop_min(min_heap, &min_size);
     int min2 = pop_min(min_heap, &min_size);
     int min3 = pop_min(min_heap, &min_size);
 
-    long long product1 = (long long)min1 * min2;
-    long long product2 = (long long)max1 * max2;
-    
-    long long res1 = product1 * min3;
-    long long res2 = product2 * max1;
+    long long product1 = (long long)max1 * max2 * max3;
+    long long product2 = (long long)min1 * min2 * max1;
 
-    long long max_res = res1 > res2 ? res1 : res2;
+    long long result = product1 > product2 ? product1 : product2;
 
     free(min_heap);
     free(max_heap);
 
-    if (max_res > INT_MAX) {
-        return INT_MAX;
-    }
-    return (int)max_res;
+    return (int)result;
 }
 
 int main() {

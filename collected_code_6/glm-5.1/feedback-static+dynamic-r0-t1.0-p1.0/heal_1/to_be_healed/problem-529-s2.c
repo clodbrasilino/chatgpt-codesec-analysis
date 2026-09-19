@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 31, got 42
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 6
+  */
 
 unsigned long long jacobsthal_lucas(int n) {
     if (n < 0) {

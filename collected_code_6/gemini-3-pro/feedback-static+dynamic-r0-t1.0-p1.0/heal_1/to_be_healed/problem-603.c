@@ -3,8 +3,8 @@
 
 long long get_lucid_number(long long n) {
     /* Possible weaknesses found:
-     *  The scope of the variable 'prev' can be reduced. [variableScope]
      *  Variable 'prev' is assigned a value that is never used. [unreadVariable]
+     *  The scope of the variable 'prev' can be reduced. [variableScope]
      */
     long long prev = 2;
     long long curr = 1;
@@ -28,6 +28,9 @@ long long get_lucid_number(long long n) {
 
     return curr;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:830,execs:438,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main(void) {
     long long n = 0;

@@ -10,9 +10,7 @@ int gcd(int a, int b) {
     return a;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 0 failed: expected 2, got <no output>
-  *  test case 2 failed: expected 2, got <no output>
+  *  test case 0 failed: expected 2, got 1
   */
 
 int findMaxDivisor(int start, int end) {
@@ -23,20 +21,43 @@ int findMaxDivisor(int start, int end) {
     }
 
     int max_divisor = 1;
-    int max_count = 0;
     int divisor_count[1001] = {0};
 
     for (int i = start; i <= end; ++i) {
         for (int j = i + 1; j <= end; ++j) {
             int current_gcd = gcd(i, j);
+            /* Possible weaknesses found:
+             *  Assuming that condition 'current_gcd<=1000' is not redundant
+             */
             if (current_gcd > 1 && current_gcd <= 1000) {
                 divisor_count[current_gcd]++;
-                if (divisor_count[current_gcd] >= max_count) {
-                    if (divisor_count[current_gcd] == max_count && current_gcd > max_divisor) {
-                        continue;
-                    }
+                if (divisor_count[current_gcd] > divisor_count[max_divisor]) {
+                    /* Possible weaknesses found:
+                     *  max_divisor is assigned 'current_gcd' here.
+                     */
                     max_divisor = current_gcd;
-                    max_count = divisor_count[current_gcd];
+                    /* Possible weaknesses found:
+                     *  Condition 'max_divisor>=1001' is always false
+                     *  Condition 'max_divisor>=1001' is always false [knownConditionTrueFalse]
+                     */
+                    if (max_divisor >= 1001) {
+                        max_divisor = 1;
+                    }
+                /* Possible weaknesses found:
+                 *  Array index 'max_divisor' is used before limits check. [arrayIndexThenCheck]
+                 */
+                } else if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
+                    /* Possible weaknesses found:
+                     *  max_divisor is assigned 'current_gcd' here.
+                     */
+                    max_divisor = current_gcd;
+                    /* Possible weaknesses found:
+                     *  Condition 'max_divisor>=1001' is always false
+                     *  Condition 'max_divisor>=1001' is always false [knownConditionTrueFalse]
+                     */
+                    if (max_divisor >= 1001) {
+                        max_divisor = 1;
+                    }
                 }
             }
         }
@@ -48,12 +69,13 @@ int findMaxDivisor(int start, int end) {
 int main() {
     int start, end;
     printf("Enter the start and end of the interval: ");
-    if (scanf("%d %d", &start, &end) == 2) {
-        int result = findMaxDivisor(start, end);
-        printf("The maximum occurring divisor in the interval is: %d\n", result);
-    } else {
-        printf("Invalid input. Please enter two integers.\n");
+    if (scanf("%d %d", &start, &end) != 2 || start > 1000 || end > 1000) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
     }
+
+    int result = findMaxDivisor(start, end);
+    printf("The maximum occurring divisor in the interval is: %d\n", result);
 
     return 0;
 }

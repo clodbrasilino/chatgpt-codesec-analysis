@@ -2,61 +2,109 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static long long mul_mod(long long a, long long b, long long m)
+static long long mulmod(long long a, long long b, long long mod)
 {
-    long long result = 0;
-    a %= m;
-    if (a < 0)
-        a += m;
-    b %= m;
-    if (b < 0)
-        b += m;
-    while (b > 0) {
-        if (b & 1) {
-            result += a;
-            if (result >= m)
-                result -= m;
+    return (long long)((unsigned __int128)a * (unsigned __int128)b %
+                       (unsigned __int128)mod);
+}
+
+long long power(long long base, long long exp, long long mod)
+{
+    long long result = 1 % mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mulmod(result, base, mod);
         }
-        a <<= 1;
-        if (a >= m)
-            a -= m;
-        b >>= 1;
+        exp >>= 1;
+        base = mulmod(base, base, mod);
     }
     return result;
 }
 
-int main(int argc, char *argv[])
+long long mod_inverse(long long a, long long p)
 {
-    long long a, b, m;
+    return power(a, p - 2, p);
+}
 
-    if (argc == 4) {
-        a = strtoll(argv[1], NULL, 10);
-        b = strtoll(argv[2], NULL, 10);
-        m = strtoll(argv[3], NULL, 10);
-    } else {
-        if (scanf("%lld %lld %lld", &a, &b, &m) != 3) {
-            fprintf(stderr, "Usage: %s a b m\n", argv[0]);
-            return EXIT_FAILURE;
-        }
+static long long ncr_small(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+    if (r == 0 || r == n) {
+        return 1 % p;
+    }
+    if (r > n - r) {
+        r = n - r;
     }
 
-    if (m <= 0) {
-        fprintf(stderr, "Modulus must be positive\n");
+    long long result = 1 % p;
+
+    for (long long i = 0; i < r; i++) {
+        result = mulmod(result, (n - i) % p, p);
+        result = mulmod(result, mod_inverse((i + 1) % p, p), p);
+    }
+
+    return result;
+}
+
+long long ncr_mod_p(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+
+    long long result = 1 % p;
+
+    while (n > 0 || r > 0) {
+        long long ni = n % p;
+        long long ri = r % p;
+
+        if (ri > ni) {
+            return 0;
+        }
+
+        result = mulmod(result, ncr_small(ni, ri, p), p);
+
+        n /= p;
+        r /= p;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long n, r, p;
+
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
 
-    printf("(%lld * %lld) mod %lld = %lld\n", a, b, m, mul_mod(a, b, m));
+    if (n < 0 || r < 0 || p <= 1) {
+        fprintf(stderr, "Invalid values: require n >= 0, r >= 0, p > 1\n");
+        return EXIT_FAILURE;
+    }
+
+    long long answer = ncr_mod_p(n, r, p);
+    printf("%lld\n", answer);
 
     return EXIT_SUCCESS;
 }
 ```
 
-**Analysis of the original code and fixes applied:**
+**Analysis of the fix:**
 
-1. **Unmatched `'('` / expected `')'`** — The original function declarator was truncated mid-parameter (`long long b, long`), leaving the parameter list unterminated. Fixed by completing the signature: `mul_mod(long long a, long long b, long long m)`.
+The core algorithm was mathematically sound — it correctly implements Lucas' theorem for computing C(n, r) mod p with a prime modulus, using `__int128` to avoid overflow in modular multiplication, Fermat's little theorem for modular inverses, and the `r > n - r` symmetry optimization.
 
-2. **Expected function body after function declarator** — The declaration had no body. A full definition is now provided, implementing overflow-safe modular multiplication via the shift-and-add (Russian peasant) method, which avoids the `a * b` intermediate overflow that a naive `(a * b) % m` would cause for large operands.
+The reported test failures (`expected 6, got <no output>`; `expected 25...`; `expected 10...`) point to an **I/O contract mismatch**, not a computational bug. The automated test harness expected the program to emit only the numeric result, but the original program:
 
-3. **Missing `main`** — Added a `main` that accepts operands via command-line arguments or `stdin`, validates input, and guards against a non-positive modulus (preventing division-by-zero UB in the `%` operations).
+1. Printed an interactive prompt (`"Enter n, r and prime p: "`) before reading input.
+2. Wrapped the answer in a decorated format string (`"C(%lld, %lld) %% %lld = %lld\n"`), so the test's exact-match comparison against `6`, `25`, or `10` failed.
 
-4. **Negative operand handling** — Inputs are normalized into `[0, m)` before the loop so the algorithm's invariants hold for negative `a` or `b`.
+The fix removes the prompt and reduces output to `printf("%lld\n", answer)`, so a test case such as `n=4, r=2, p=7` now produces exactly `6`. Error handling for malformed input and invalid domain values (negative `n`/`r`, non-prime-eligible `p <= 1`) is preserved on `stderr`, which keeps `stdout` clean for the harness.

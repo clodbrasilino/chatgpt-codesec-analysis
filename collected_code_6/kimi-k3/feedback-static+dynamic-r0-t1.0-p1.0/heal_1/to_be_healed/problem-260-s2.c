@@ -23,9 +23,9 @@ long long nth_nsw_prime(int n) {
     long long s0 = 1, s1 = 1, s2;
     
     /* Possible weaknesses found:
+     *  Condition 'is_prime(s0)' is always false
      *  Condition 'is_prime(s0)' is always false [knownConditionTrueFalse]
      *  Calling function 'is_prime' returns 0
-     *  Condition 'is_prime(s0)' is always false
      */
     if (is_prime(s0)) {
         count++;
@@ -51,6 +51,9 @@ long long nth_nsw_prime(int n) {
         s1 = s2;
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:4648,execs:15,op:(null),pos:0; likely memory-safety defect
+  */
 
 int main() {
     int n;

@@ -37,6 +37,10 @@ int64_t sum_of_product_binomial(int64_t n)
             return -1;
         }
         
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 5414950296 * 5414950296 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:370,execs:197,op:havoc,rep:3)
+         * UBSan: signed integer overflow: 9223372036854775807 - -7571801439268615616 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:370,execs:197,op:havoc,rep:3)
+         */
         if (coeff > 0 && sum > INT64_MAX - coeff * coeff) {
             return -1;
         }

@@ -34,6 +34,9 @@ int isKeithNumber(int num) {
     while (sum < num) {
         sum = 0;
         for (int i = 0; i < count; i++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 1380457380 + 1381813446 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:2177,execs:861,op:havoc,rep:2)
+             */
             sum += digits[i];
         }
 

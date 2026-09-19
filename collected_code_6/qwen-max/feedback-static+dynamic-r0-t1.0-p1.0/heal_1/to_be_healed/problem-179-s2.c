@@ -23,13 +23,16 @@ bool is_keith_number(int n) {
     }
 
     /* Possible weaknesses found:
-     *  Unused variable: new_term [unusedVariable]
      *  The scope of the variable 'sum' can be reduced. [variableScope]
+     *  Unused variable: new_term [unusedVariable]
      */
     int sum, new_term, i;
     while (1) {
         sum = 0;
         for (i = 0; i < len; i++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 1190505639 + 1191675110 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:3292,execs:1189,op:havoc,rep:1)
+             */
             sum += terms[i];
         }
         if (sum > n) {

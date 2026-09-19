@@ -8,18 +8,18 @@ typedef struct Tuple {
     struct Tuple *next;
 } Tuple;
 
-static int checked_add(long long a, long long b, long long *result)
+static int checked_add(long long left, long long right, long long *result)
 {
     if (result == NULL) {
         return -1;
     }
 
-    if ((b > 0 && a > LLONG_MAX - b) ||
-        (b < 0 && a < LLONG_MIN - b)) {
+    if ((right > 0 && left > LLONG_MAX - right) ||
+        (right < 0 && left < LLONG_MIN - right)) {
         return -1;
     }
 
-    *result = a + b;
+    *result = left + right;
     return 0;
 }
 
@@ -82,6 +82,11 @@ int main(void)
         return EXIT_FAILURE;
     }
 
+    if (count > SIZE_MAX / sizeof(Tuple)) {
+        fputs("Input size is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
     for (size_t i = 0; i < count; ++i) {
         Tuple *node = malloc(sizeof(*node));
 
@@ -117,6 +122,5 @@ int main(void)
 
     printf("%lld %lld\n", even_sum, odd_sum);
     free_chain(head);
-
     return EXIT_SUCCESS;
 }

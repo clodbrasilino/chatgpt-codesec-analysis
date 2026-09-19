@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+ /* Possible weaknesses found:
+  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
 
 int* generate_initial_terms(int n, int *len) {
     char s[20];
@@ -26,8 +29,14 @@ bool is_keith_number(int n) {
         int sum = 0;
         for (int i = 0; i < len; i++) {
             /* Possible weaknesses found:
-             * UBSan: signed integer overflow: 1323896192 + 1325196698 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1932,execs:942,op:havoc,rep:4)
+             *  use of undeclared identifier 'INT_MAX'
+             *  'INT_MAX' undeclared (first use in this function)
+             *  each undeclared identifier is reported only once for each function it appears in
              */
+            if (sum > INT_MAX - terms[i]) {
+                free(terms);
+                return false;
+            }
             sum += terms[i];
         }
         if (sum > n) {

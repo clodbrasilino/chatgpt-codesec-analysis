@@ -1,6 +1,7 @@
 ```c
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
 bool is_perfect_square(long long num)
 {
@@ -15,17 +16,23 @@ bool is_perfect_square(long long num)
     long long left = 1;
     long long right = num;
     
-    if (right > 3037000499LL) {
-        right = 3037000499LL;
+    if (right > LLONG_MAX / 2) {
+        right = LLONG_MAX / 2;
     }
     
     while (left <= right) {
         long long mid = left + (right - left) / 2;
         
-        if (mid <= num / mid) {
-            if (mid * mid == num) {
-                return true;
-            }
+        if (mid > 0 && mid > LLONG_MAX / mid) {
+            right = mid - 1;
+            continue;
+        }
+        
+        long long square = mid * mid;
+        
+        if (square == num) {
+            return true;
+        } else if (square < num) {
             left = mid + 1;
         } else {
             right = mid - 1;

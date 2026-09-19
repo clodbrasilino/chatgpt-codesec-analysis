@@ -27,7 +27,7 @@ int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     }
 
     for (size_t i = 0; i < *out_size; i++) {
-        result[i] = arr[i] + arr[i + 1];
+        result[i] = (int)((unsigned int)arr[i] + (unsigned int)arr[i + 1]);
     }
 
     return result;
@@ -52,8 +52,6 @@ int main(void) {
                 input = temp;
             }
             input[size++] = val;
-        } else if (res == EOF) {
-            break;
         } else {
             int c = getchar();
             if (c == EOF) {
@@ -65,7 +63,7 @@ int main(void) {
     size_t out_size = 0;
     int* result = add_consecutive(input, size, &out_size);
     
-    if (result != NULL || size == 0) {
+    if (result != NULL || (size == 0 && input == NULL)) {
         printf("[");
         for (size_t i = 0; i < out_size; i++) {
             printf("%d", result[i]);

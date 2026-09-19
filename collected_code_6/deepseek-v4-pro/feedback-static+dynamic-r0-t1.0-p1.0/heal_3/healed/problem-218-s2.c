@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int minOperations(int a, int b) {
     if (a == b) {
         return 0;
     }
     
-    int diff = abs(a - b);
+    long long diff = llabs((long long)a - (long long)b);
     int operations = 0;
     
     operations += diff / 5;
@@ -16,7 +17,10 @@ int minOperations(int a, int b) {
     diff %= 2;
     
     if (diff == 1) {
-        operations += 1;
+        operations += 2;
+        if (operations > 1) {
+            operations--;
+        }
     }
     
     return operations;

@@ -54,6 +54,9 @@ int isKeith(int num) {
     free(arr);
     return 0;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000001,time:2657,execs:447,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int num;

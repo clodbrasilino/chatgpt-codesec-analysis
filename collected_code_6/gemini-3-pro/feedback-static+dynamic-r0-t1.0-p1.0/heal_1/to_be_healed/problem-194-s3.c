@@ -22,6 +22,9 @@ int octalToDecimal(long long octalNumber) {
             return -1; 
         }
         
+        /* Possible weaknesses found:
+         * UBSan: 2.45427e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1047,execs:493,op:havoc,rep:2)
+         */
         decimalNumber += remainder * pow(8, i);
         ++i;
         temp /= 10;

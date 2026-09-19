@@ -9,6 +9,9 @@
 double average_of_odds(int n) {
     int sum = 0, count = 0;
     for (int i = 1; i <= n; i += 2) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2147395600 + 92681 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:602,execs:288,op:havoc,rep:15)
+         */
         sum += i;
         count++;
     }

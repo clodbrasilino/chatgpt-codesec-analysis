@@ -20,14 +20,18 @@ int* find_dissimilar(const int *tuple1, int size1, const int *tuple2, int size2,
     int count = 0;
 
     for (int i = 0; i < size1; i++) {
-        if (!is_present(tuple2, size2, tuple1[i]) && !is_present(result, count, tuple1[i])) {
-            result[count++] = tuple1[i];
+        if (!is_present(tuple2, size2, tuple1[i])) {
+            if (!is_present(result, count, tuple1[i])) {
+                result[count++] = tuple1[i];
+            }
         }
     }
 
     for (int i = 0; i < size2; i++) {
-        if (!is_present(tuple1, size1, tuple2[i]) && !is_present(result, count, tuple2[i])) {
-            result[count++] = tuple2[i];
+        if (!is_present(tuple1, size1, tuple2[i])) {
+            if (!is_present(result, count, tuple2[i])) {
+                result[count++] = tuple2[i];
+            }
         }
     }
 
@@ -36,7 +40,7 @@ int* find_dissimilar(const int *tuple1, int size1, const int *tuple2, int size2,
 }
 
 int main() {
-    int tuple1[] = {3, 6, 7, 10};
+    int tuple1[] = {1, 2, 3, 4, 5};
     int tuple2[] = {4, 5, 6, 7, 8};
     int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
     int size2 = sizeof(tuple2) / sizeof(tuple2[0]);

@@ -27,7 +27,15 @@ static long long count_ways(int n, int k)
     for (i = 3; i <= n; i++) {
         prev_total = total;
         same = diff;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 454035801278179584 * 332 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:1101,execs:733,op:havoc,rep:4)
+         * UBSan: signed integer overflow: -8534745662271520768 * 8 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000002,time:23217,execs:14352,op:havoc,rep:5)
+         */
         diff = prev_total * (long long)(k - 1);
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 5331035125903073280 + 5145412149792673792 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:1101,execs:733,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 1001315178588930048 + 8910683232849100800 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000002,time:23217,execs:14352,op:havoc,rep:5)
+         */
         total = same + diff;
     }
 

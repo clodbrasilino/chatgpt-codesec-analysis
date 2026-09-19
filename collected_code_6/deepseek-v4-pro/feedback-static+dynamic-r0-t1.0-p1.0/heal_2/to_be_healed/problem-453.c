@@ -1,45 +1,54 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h>
 
-int sum_even_factors(int n) {
+int64_t sum_even_factors(int64_t n) {
     if (n <= 0) return 0;
+    /* Possible weaknesses found:
+     *  Assuming that condition 'n%2!=0' is not redundant
+     */
     if (n % 2 != 0) return 0;
 
-    int sum = 0;
-    int temp = n;
+    int64_t sum = 0;
+    int64_t temp = n;
     while (temp % 2 == 0) {
         sum += 2;
         temp /= 2;
     }
-    if (temp == 1) {
-        sum -= 2;
-    } else {
+    if (temp != 1) {
         sum += 2;
     }
 
-    int limit = (int)sqrt((double)n);
-    for (int i = 3; i <= limit; i += 2) {
+    int64_t limit = (int64_t)sqrt((double)n);
+    for (int64_t i = 3; i <= limit; i += 2) {
         if (n % i == 0) {
-            int counterpart = n / i;
+            if (i % 2 == 0) sum += i;
+            int64_t counterpart = n / i;
             if (counterpart != i && counterpart % 2 == 0) sum += counterpart;
         }
     }
 
     /* Possible weaknesses found:
-     * UBSan: signed integer overflow: 943247682 + 2121118182 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:14309,execs:6551,op:havoc,rep:7)
-     * UBSan: signed integer overflow: 1158202962 + 2144395572 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:6112,execs:2713,op:havoc,rep:8)
+     *  Condition 'n%2==0' is always true [knownConditionTrueFalse]
+     *  Condition 'n%2==0' is always true
      */
-    if (n != 2) sum += n;
+    if (n % 2 == 0 && n != 2) sum += n;
     return sum;
 }
 
 int main(void) {
-    int number;
+    int64_t number;
     printf("Enter a number: ");
-    if (scanf("%d", &number) != 1) {
+    /* Possible weaknesses found:
+     *  %lld in format string (no. 1) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
+     */
+    if (scanf("%lld", &number) != 1) {
         fprintf(stderr, "Invalid input\n");
         return 1;
     }
-    printf("Sum of even factors: %d\n", sum_even_factors(number));
+    /* Possible weaknesses found:
+     *  %lld in format string (no. 1) requires 'long long' but the argument type is 'signed long'. [invalidPrintfArgType_sint]
+     */
+    printf("Sum of even factors: %lld\n", sum_even_factors(number));
     return 0;
 }

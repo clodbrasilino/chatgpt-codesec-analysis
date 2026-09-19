@@ -1,5 +1,7 @@
 ```c
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 void initializeMagicSquare(int n, int square[][10]) {
     for (int i = 0; i < n; ++i) {
@@ -9,7 +11,8 @@ void initializeMagicSquare(int n, int square[][10]) {
     }
 }
 
-int isMagicSquare(int n, int square[][10]) {
+bool isMagicSquare(int n, int square[][10]) {
+    int64_t expectedSum = (int64_t)n * (n * n + 1) / 2;
     int sumDiag1 = 0, sumDiag2 = 0;
 
     for (int i = 0; i < n; ++i) {
@@ -18,14 +21,14 @@ int isMagicSquare(int n, int square[][10]) {
             rowSum += square[i][j];
             colSum += square[j][i];
         }
-        if (rowSum != n * (n * n + 1) / 2 || colSum != n * (n * n + 1) / 2) {
-            return 0;
+        if (rowSum != expectedSum || colSum != expectedSum) {
+            return false;
         }
         sumDiag1 += square[i][i];
         sumDiag2 += square[i][n - 1 - i];
     }
 
-    return (sumDiag1 == n * (n * n + 1) / 2 && sumDiag2 == n * (n * n + 1) / 2);
+    return (sumDiag1 == expectedSum && sumDiag2 == expectedSum);
 }
 
 void generateMagicSquare(int n, int square[][10]) {
@@ -43,7 +46,7 @@ void generateMagicSquare(int n, int square[][10]) {
                 i = n - 1;
             }
         }
-        if (square[i][j]) {
+        if (square[i][j] != 0) {
             j -= 2;
             i++;
             continue;
@@ -61,7 +64,6 @@ int main() {
     scanf("%d", &n);
 
     int magicSquare[10][10];
-
     if (n % 2 == 0 || n > 10) {
         printf("Invalid input. Size must be an odd number and less than or equal to 10.\n");
         return 1;

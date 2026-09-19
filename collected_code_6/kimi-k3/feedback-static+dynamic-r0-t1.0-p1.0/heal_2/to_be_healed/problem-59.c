@@ -10,29 +10,29 @@ int octagonal_number(int n, long long *result)
         return -1;
     }
 
-    /* Possible weaknesses found:
-     *  Assuming that condition 'n<1' is not redundant
-     */
     if (n < 1)
     {
         return -1;
     }
 
     /* Possible weaknesses found:
-     *  Assignment 'multiplier=3LL*n-2LL', assigned value is greater than 0
+     * UBSan: signed integer overflow: 9223372036854775807 + 2 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:106,execs:94,op:havoc,rep:3)
      */
-    long long multiplier = 3LL * n - 2LL;
-    
-    /* Possible weaknesses found:
-     *  Condition 'multiplier!=0' is always true
-     *  Condition 'multiplier!=0' is always true [knownConditionTrueFalse]
-     */
-    if (multiplier != 0 && n > LLONG_MAX / multiplier)
+    if (n > (LLONG_MAX + 2LL) / 3LL)
     {
         return -1;
     }
 
-    *result = (long long)n * multiplier;
+    long long factor = 3LL * n - 2LL;
+
+    if (n > LLONG_MAX / factor)
+    {
+        return -1;
+    }
+
+    long long value = (long long)n * factor;
+
+    *result = value;
     return 0;
 }
 

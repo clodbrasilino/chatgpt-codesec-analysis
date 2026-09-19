@@ -1,16 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int compare(const void *a, const void *b) {
-    int arg1 = *(const int *)a;
-    int arg2 = *(const int *)b;
-    if (arg1 < arg2) return -1;
-    if (arg1 > arg2) return 1;
-    return 0;
-}
-
 int find_kth_element(const int *arr, int size, int k) {
-    if (arr == NULL || size <= 0 || k < 1 || k > size) {
+    if (arr == NULL || size <= 0 || k < 0 || k >= size) {
         return -1;
     }
     
@@ -23,21 +15,69 @@ int find_kth_element(const int *arr, int size, int k) {
         temp[i] = arr[i];
     }
     
-    qsort(temp, size, sizeof(int), compare);
+    for (int i = 0; i < size - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < size; j++) {
+            if (temp[j] < temp[min_idx]) {
+                min_idx = j;
+            }
+        }
+        if (min_idx != i) {
+            int swap = temp[i];
+            temp[i] = temp[min_idx];
+            temp[min_idx] = swap;
+        }
+    }
     
-    int result = temp[k - 1];
+    int result = temp[k];
+    free(temp);
+    return result;
+}
+
+int compare_asc(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int find_kth_element_sorted(const int *arr, int size, int k) {
+    if (arr == NULL || size <= 0 || k < 0 || k >= size) {
+        return -1;
+    }
+    
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        temp[i] = arr[i];
+    }
+    
+    qsort(temp, size, sizeof(int), compare_asc);
+    
+    int result = temp[k];
     free(temp);
     return result;
 }
 
 int main(void) {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90};
-    int size = sizeof(arr) / sizeof(arr[0]);
-    int k = 4;
+    int arr1[] = {64, 34, 25, 12, 22, 11, 90};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int k1 = 4;
     
-    int result = find_kth_element(arr, size, k);
-    if (result != -1) {
-        printf("%d\n", result);
+    int result1 = find_kth_element(arr1, size1, k1);
+    if (result1 != -1) {
+        printf("The %dth element is: %d\n", k1, result1);
+    } else {
+        printf("Invalid input parameters\n");
+    }
+    
+    int arr2[] = {1, 2, 3, 4, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 2;
+    
+    int result2 = find_kth_element(arr2, size2, k2);
+    if (result2 != -1) {
+        printf("The %dth element is: %d\n", k2, result2);
     } else {
         printf("Invalid input parameters\n");
     }

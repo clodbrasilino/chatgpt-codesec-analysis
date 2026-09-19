@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long gcd(long long a, long long b) {
     while (b != 0) {
@@ -19,15 +20,19 @@ long long find_lcm(const long long *arr, size_t n) {
         if (arr[i] == 0) {
             return 0;
         }
+        long long common = gcd(result, arr[i]);
+        if (arr[i] / common > LLONG_MAX / result) {
+            return -1;
+        }
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 9223372036854775807 * 3 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:1757,execs:1097,op:havoc,rep:1)
+         * UBSan: signed integer overflow: 64 * 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000013,time:57296,execs:19023,op:havoc,rep:3)
          */
-        result = (result / gcd(result, arr[i])) * arr[i];
+        result = (result / common) * arr[i];
     }
     return result;
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000014,time:31356,execs:13900,op:havoc,rep:3; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000011,time:26259,execs:5683,op:havoc,rep:1; likely memory-safety defect
   */
 
 int main(void) {

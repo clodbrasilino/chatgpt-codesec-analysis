@@ -1,41 +1,66 @@
 ```c
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
 
-uint64_t countSetBits(uint64_t n) {
-    uint64_t count = 0;
-    int i = 0;
-    int totalBits = sizeof(uint64_t) * 8;
+int countSetBits(int n) {
+    int totalBits = sizeof(int) * CHAR_BIT;
     uint64_t power = 1;
+    uint64_t limit = (uint64_t)n + 1;
+    uint64_t count = 0;
     
-    while (i < totalBits && power <= n) {
-        uint64_t totalPairs = (n + 1) / (power * 2);
-        uint64_t remainder = (n + 1) % (power * 2);
+    for (int i = 0; i < totalBits; i++) {
+        if (power > limit) {
+            break;
+        }
         
-        count += totalPairs * power;
+        uint64_t totalPairs = limit / (power * 2);
+        uint64_t remainder = limit % (power * 2);
+        uint64_t pairBits = totalPairs * power;
+        
+        count += pairBits;
         if (remainder > power) {
-            count += remainder - power;
+            uint64_t extraBits = remainder - power;
+            count += extraBits;
         }
         
         power <<= 1;
-        i++;
     }
     
-    return count;
+    return (int)count;
 }
 
 int main(void) {
-    unsigned int input;
+    int n;
+    char buffer[32];
     
     printf("Enter a number: ");
-    if (scanf("%u", &input) != 1) {
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
         printf("Invalid input\n");
         return 1;
     }
     
-    uint64_t n = (uint64_t)input;
-    printf("Total set bits from 1 to %u: %llu\n", input, (unsigned long long)countSetBits(n));
+    char *endptr;
+    long val = strtol(buffer, &endptr, 10);
+    
+    if (endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (val < 0) {
+        printf("Please enter a non-negative number\n");
+        return 1;
+    }
+    
+    if (val > INT_MAX) {
+        printf("Number too large\n");
+        return 1;
+    }
+    
+    n = (int)val;
+    printf("Total set bits from 1 to %d: %d\n", n, countSetBits(n));
     
     return 0;
 }

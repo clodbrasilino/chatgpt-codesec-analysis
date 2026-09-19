@@ -24,6 +24,9 @@ unsigned long long count_subsequences(int *arr, int n, unsigned long long k) {
 
     return count;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000018,time:50523,execs:31365,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int n;

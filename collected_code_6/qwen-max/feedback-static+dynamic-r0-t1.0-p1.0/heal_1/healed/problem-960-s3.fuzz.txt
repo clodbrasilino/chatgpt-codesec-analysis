@@ -1,1 +1,1 @@
-problem-960-s3.c:8:15:medium:UBSan: signed integer overflow: 1134903170 + 1836311903 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000002,time:409,execs:199,op:havoc,rep:2)
+problem-960-s3.c:9:15:medium:UBSan: signed integer overflow: 4660046610375530309 + 7540113804746346429 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:308,execs:282,op:havoc,rep:2)

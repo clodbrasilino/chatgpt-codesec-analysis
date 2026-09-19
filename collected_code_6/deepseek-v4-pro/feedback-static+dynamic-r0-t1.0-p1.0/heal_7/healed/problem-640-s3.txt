@@ -22,70 +22,58 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == '(') {
             depth++;
             i++;
-            continue;
-        }
-        if (str[i] == ')') {
+        } else if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
+                i++;
+            } else {
+                result[j++] = str[i];
+                i++;
+            }
+        } else {
+            if (depth == 0) {
+                result[j++] = str[i];
             }
             i++;
-            continue;
         }
-        if (depth == 0) {
-            result[j++] = str[i];
-        }
-        i++;
     }
 
     result[j] = '\0';
+
+    char *final_result = realloc(result, j + 1);
+    if (final_result != NULL) {
+        return final_result;
+    }
 
     return result;
 }
 
 int main(void) {
-    const char *test1 = "Hello (this is a test) World";
-    const char *test2 = "No parentheses here";
-    const char *test3 = "Nested ((parentheses) test) example";
-    const char *test4 = "Unmatched (parenthesis";
-    const char *test5 = "Multiple (first) and (second) removal";
+    const char *tests[] = {
+        "alpha",
+        "python",
+        "string",
+        "Hello (this is a test) World",
+        "No parentheses here",
+        "Nested ((parentheses) test) example",
+        "Unmatched (parenthesis",
+        "Multiple (first) and (second) removal",
+        NULL
+    };
 
-    char *result = NULL;
-
-    result = remove_parenthesis_area(test1);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
+    for (int i = 0; tests[i] != NULL; i++) {
+        char *result = remove_parenthesis_area(tests[i]);
+        if (result != NULL) {
+            printf("%s\n", result);
+            free(result);
+        }
     }
 
-    result = remove_parenthesis_area(test2);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test3);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test4);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test5);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(NULL);
-    if (result == NULL) {
+    char *null_result = remove_parenthesis_area(NULL);
+    if (null_result == NULL) {
         printf("NULL input handled\n");
     } else {
-        free(result);
+        free(null_result);
     }
 
     return 0;

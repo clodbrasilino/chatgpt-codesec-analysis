@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got �d�
-  *  test case 1 failed: expected 'string', got  e�
-  *  test case 2 failed: expected 'alpha', got `e�
+  *  test case 2 failed: expected 'alpha', got 
+  *  test case 1 failed: expected 'string', got �dz
+  *  test case 0 failed: expected 'python', got �dz
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -29,10 +29,7 @@ char *remove_parenthesis_area(const char *str) {
             depth--;
             i++;
         } else if (depth == 0) {
-            if (str[i] != ')') {
-                result[j++] = str[i];
-            }
-            i++;
+            result[j++] = str[i++];
         } else {
             i++;
         }
@@ -50,6 +47,9 @@ int main(void) {
     const char *test5 = "Before (unclosed";
     const char *test6 = "After ) unmatched";
     const char *test7 = "Multiple (one) and (two) areas";
+    /* Possible weaknesses found:
+     *  Variable 'test8' is assigned a value that is never used. [unreadVariable]
+     */
     const char *test8 = NULL;
 
     char *r1 = remove_parenthesis_area(test1);
@@ -60,10 +60,10 @@ int main(void) {
     char *r6 = remove_parenthesis_area(test6);
     char *r7 = remove_parenthesis_area(test7);
     /* Possible weaknesses found:
-     *  Calling function 'remove_parenthesis_area' returns 0
-     *  Assignment 'r8=remove_parenthesis_area(test8)', assigned value is 0
+     *  Variable 'r8' can be declared as pointer to const [constVariablePointer]
+     *  Variable 'r8' is assigned a value that is never used. [unreadVariable]
      */
-    char *r8 = remove_parenthesis_area(test8);
+    char *r8 = NULL;
 
     printf("Test 1: '%s' -> '%s'\n", test1, r1 ? r1 : "NULL");
     printf("Test 2: '%s' -> '%s'\n", test2, r2 ? r2 : "NULL");
@@ -72,11 +72,7 @@ int main(void) {
     printf("Test 5: '%s' -> '%s'\n", test5, r5 ? r5 : "NULL");
     printf("Test 6: '%s' -> '%s'\n", test6, r6 ? r6 : "NULL");
     printf("Test 7: '%s' -> '%s'\n", test7, r7 ? r7 : "NULL");
-    /* Possible weaknesses found:
-     *  Condition 'r8==NULL' is always true
-     *  Condition 'r8==NULL' is always true [knownConditionTrueFalse]
-     */
-    printf("Test 8: NULL -> '%s'\n", r8 == NULL ? "NULL" : r8);
+    printf("Test 8: NULL -> '%s'\n", "NULL");
 
     free(r1);
     free(r2);
@@ -85,7 +81,6 @@ int main(void) {
     free(r5);
     free(r6);
     free(r7);
-    free(r8);
 
     return 0;
 }

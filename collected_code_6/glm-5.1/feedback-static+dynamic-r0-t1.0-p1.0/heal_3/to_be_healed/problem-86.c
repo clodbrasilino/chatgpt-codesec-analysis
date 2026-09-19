@@ -1,19 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 217, got <no output>
-  *  test case 0 failed: expected 271, got <no output>
-  *  test case 1 failed: expected 7, got <no output>
+  *  test case 2 failed: expected 217, got 225
+  *  test case 1 failed: expected 7, got 8
+  *  test case 0 failed: expected 271, got 280
   */
 
 unsigned long long centered_hexagonal(int n) {
     if (n < 1) {
         return 0;
     }
-    return 3ULL * n * n - 3ULL * n + 1ULL;
+    return (unsigned long long)(3 * n - 2) * n;
 }
 
-int main(int argc, char const * const * argv) {
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
     if (argc != 2) {
         return EXIT_FAILURE;
     }

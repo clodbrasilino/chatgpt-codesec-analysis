@@ -11,9 +11,9 @@ int count_total_bits(int n) {
     return count;
 }
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got <no output>
   *  test case 1 failed: expected 4, got <no output>
   *  test case 2 failed: expected 17, got <no output>
+  *  test case 0 failed: expected 1, got <no output>
   */
 
 unsigned long long count_unset_bits(int n) {
@@ -26,6 +26,9 @@ unsigned long long count_unset_bits(int n) {
     unsigned long long set_bits = 0;
     
     for (int i = 0; i < total_bits; i++) {
+        /* Possible weaknesses found:
+         * UBSan: left shift of 1 by 31 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:441,execs:285,op:havoc,rep:4)
+         */
         int pattern_length = 1 << (i + 1);
         int full_patterns = (n + 1) / pattern_length;
         int remainder = (n + 1) % pattern_length;

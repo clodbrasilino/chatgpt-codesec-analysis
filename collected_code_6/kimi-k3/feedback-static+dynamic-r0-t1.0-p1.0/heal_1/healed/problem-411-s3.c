@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 char* snake_to_camel(const char* input) {
     if (input == NULL) {
@@ -15,20 +14,22 @@ char* snake_to_camel(const char* input) {
     }
 
     size_t i = 0, j = 0;
-    int capitalize_next = 1;
+    int capitalize_next = 0;
 
     while (i < len) {
         if (input[i] == '_') {
             capitalize_next = 1;
             i++;
-        } else {
-            if (capitalize_next && islower((unsigned char)input[i])) {
-                result[j++] = toupper((unsigned char)input[i]);
+        } else if (capitalize_next) {
+            if (input[i] >= 'a' && input[i] <= 'z') {
+                result[j++] = input[i] - 32;
             } else {
                 result[j++] = input[i];
             }
             capitalize_next = 0;
             i++;
+        } else {
+            result[j++] = input[i++];
         }
     }
 

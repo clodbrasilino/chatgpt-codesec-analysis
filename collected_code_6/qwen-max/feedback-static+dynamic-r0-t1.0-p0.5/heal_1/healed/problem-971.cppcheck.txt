@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-971.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-971.c:7:42: warning: Either the condition 'b>0' is redundant or there is division by zero at line 7. [zerodivcond]
+        for (int j = 0; j <= (n - i * a) / b; ++j) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-971.c:8:28: note: Assuming that condition 'b>0' is not redundant
+            if (a > 0 && b > 0 && c > 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-971.c:7:42: note: Division by zero
+        for (int j = 0; j <= (n - i * a) / b; ++j) {
+                                         ^

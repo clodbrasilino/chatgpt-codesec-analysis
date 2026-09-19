@@ -11,32 +11,21 @@ long long jacobsthal_lucas(int n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
     
-    long long a = 2;
-    long long b = 1;
-    long long result = 0;
+    long long prev2 = 2;
+    long long prev1 = 1;
+    long long current = 0;
     
     for (int i = 2; i <= n; i++) {
-        if (a > LLONG_MAX / 2) {
-            fprintf(stderr, "Error: overflow detected\n");
+        if (prev1 > (LLONG_MAX - prev2) / 2) {
+            fprintf(stderr, "Error: integer overflow would occur\n");
             exit(EXIT_FAILURE);
         }
-        long long term = 2 * a;
-        
-        if (term > 0 && b > LLONG_MAX - term) {
-            fprintf(stderr, "Error: overflow detected\n");
-            exit(EXIT_FAILURE);
-        }
-        if (term < 0 && b < LLONG_MIN - term) {
-            fprintf(stderr, "Error: overflow detected\n");
-            exit(EXIT_FAILURE);
-        }
-        
-        result = b + term;
-        a = b;
-        b = result;
+        current = 2 * prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
     }
     
-    return result;
+    return current;
 }
 
 int main(void) {

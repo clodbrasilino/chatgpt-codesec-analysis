@@ -1,26 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes PRId64>
+#include <inttypes.h>
+#include <limits.h>
 
-typedef struct {
-    long long high;
-    long long low;
-} bigint;
+long long lucas_number(int n) {
+    if (n == 0) return 2;
+    if (n == 1) return 1;
 
-bigint add(bigint a, bigint b) {
-    bigint result = {0, 0};
-    result.low = a.low + b.low;
-    result.high = a.high + b.high + (result.low < a.low);
-    return result;
-}
-
-bigint lucas_number(int n) {
-    if (n == 0) return (bigint){0, 2};
-    if (n == 1) return (bigint){0, 1};
-
-    bigint a = {0, 2}, b = {0, 1};
+    long long a = 2, b = 1;
     for (int i = 2; i <= n; ++i) {
-        bigint c = add(a, b);
+        if (a > LLONG_MAX - b) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        long long c = a + b;
         a = b;
         b = c;
     }
@@ -40,7 +33,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    bigint result = lucas_number(n);
-    printf("The %dth Lucas number is: %" PRId64 "%020" PRId64 "\n", n, result.high, result.low);
+    long long result = lucas_number(n);
+    printf("The %dth Lucas number is: %lld\n", n, result);
     return EXIT_SUCCESS;
 }

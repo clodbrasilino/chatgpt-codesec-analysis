@@ -10,6 +10,9 @@ long long lucas_number(int n) {
      */
     long long a = 2, b = 1, c;
     for (int i = 2; i <= n; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 3980154972736918051 + 6440026026380244498 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:1200,execs:512,op:havoc,rep:8)
+         */
         c = a + b;
         a = b;
         b = c;

@@ -8,6 +8,13 @@ unsigned long long countTotalSetBits(unsigned long long n) {
     for (i = 0; (1ULL << i) <= n; i++) {
         unsigned long long bit_mask = 1ULL << i;
         unsigned long long period = bit_mask << 1;
+        
+        if (period == 0) {
+            unsigned long long full_cycles = (n + 1) / 2;
+            count += full_cycles;
+            break;
+        }
+        
         unsigned long long full_cycles = (n + 1) / period;
         unsigned long long remainder = (n + 1) % period;
         
@@ -19,16 +26,19 @@ unsigned long long countTotalSetBits(unsigned long long n) {
     
     return count;
 }
+
+unsigned long long countTotalSetBitsFrom1(unsigned long long n) {
+    if (n == 0) return 0;
+    return countTotalSetBits(n) - countTotalSetBits(0);
+}
  /* Possible weaknesses found:
   *  test case 1 failed: expected 4, got 11
-  *  test case 2 failed: expected 17, got 32
   *  test case 0 failed: expected 1, got 4
+  *  test case 2 failed: expected 17, got 32
   */
 
 unsigned long long countTotalUnsetBits(unsigned long long n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     
     unsigned long long total_bits = 0;
     unsigned long long temp = n;
@@ -43,9 +53,6 @@ unsigned long long countTotalUnsetBits(unsigned long long n) {
     
     return total_positions - set_bits;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:773,execs:485,op:havoc,rep:4; likely memory-safety defect
-  */
 
 int main(void) {
     unsigned long long n;

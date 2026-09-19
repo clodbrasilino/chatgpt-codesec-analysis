@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-int octalToDecimal(long long octalNumber) {
-    int decimalNumber = 0;
-    int i = 0;
+long long octalToDecimal(long long octalNumber) {
+    long long decimalNumber = 0;
+    long long multiplier = 1;
     long long temp = octalNumber;
 
     if (octalNumber < 0) {
@@ -18,8 +17,8 @@ int octalToDecimal(long long octalNumber) {
             return -1; 
         }
         
-        decimalNumber += remainder * pow(8, i);
-        ++i;
+        decimalNumber += remainder * multiplier;
+        multiplier *= 8;
         temp /= 10;
     }
 
@@ -28,7 +27,7 @@ int octalToDecimal(long long octalNumber) {
 
 int main(void) {
     long long octalNumber;
-    int decimalNumber;
+    long long decimalNumber;
 
     if (scanf("%lld", &octalNumber) != 1) {
         return EXIT_FAILURE;
@@ -40,7 +39,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    printf("%d\n", decimalNumber);
+    printf("%lld\n", decimalNumber);
 
     return EXIT_SUCCESS;
 }

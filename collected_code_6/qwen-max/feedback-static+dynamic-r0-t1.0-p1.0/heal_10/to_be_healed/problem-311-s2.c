@@ -2,21 +2,22 @@
 #include <limits.h>
 #include <stdbool.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 14, got <no output>
-  *  test case 2 failed: expected 15, got <no output>
-  *  test case 1 failed: expected 14, got <no output>
+  *  test case 2 failed: expected 15, got 4611686018427387919
+  *  test case 1 failed: expected 14, got 4611686018427387916
+  *  test case 0 failed: expected 14, got 4611686018427387914
   */
 
 long setLeftMostUnsetBit(long n) {
     long result = n;
-    int bits = sizeof(n) * CHAR_BIT - 1;
-    for (int i = bits; i >= 0; --i) {
-        if (!(n & ((unsigned long)1 << i))) {
-            result |= ((unsigned long)1 << i);
-            return result;
+    bool found = false;
+    for (int i = 62; i >= 0; --i) {
+        if (!(n & ((1L << i)))) {
+            result |= (1L << i);
+            found = true;
+            break;
         }
     }
-    return -1;
+    return found ? result : -1;
 }
 
 int main() {

@@ -21,12 +21,21 @@ bool isSubsetSumDivisible(int *arr, int n, int m) {
             if (table[i - 1][j]) {
                 table[i][j] = true;
             } else {
+                /* Possible weaknesses found:
+                 * ASan: dynamic-stack-buffer-overflow (AFL crash: id:000003,sig:06,src:000002,time:231,execs:74,op:havoc,rep:2)
+                 * UBSan: index -1 out of bounds for type 'bool[m]' (AFL crash: id:000003,sig:06,src:000002,time:231,execs:74,op:havoc,rep:2)
+                 * UBSan: index -7 out of bounds for type 'bool[m]' (AFL crash: id:000006,sig:06,src:000002,time:1122,execs:316,op:havoc,rep:3)
+                 * UBSan: index -5 out of bounds for type 'bool[m]' (AFL crash: id:000007,sig:06,src:000002,time:15734,execs:3887,op:havoc,rep:2)
+                 */
                 table[i][j] = table[i - 1][(j - arr[i-1] + m) % m];
             }
         }
     }
     return table[n][0];
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:12,execs:10,op:(null),pos:0; likely memory-safety defect
+  */
 
 int main() {
     int arr[MAX_SIZE], n, m;

@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-453.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-453.c:35:18: error: expected ')' before 'SCNd64'
+   35 |     if (scanf("%" SCNd64, &number) != 1) {
+      |              ~   ^~~~~~~
+      |                  )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-453.c:4:1: note: 'SCNd64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    3 | #include <stdint.h>
+  +++ |+#include <inttypes.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-453.c:39:36: error: expected ')' before 'PRId64'
+   39 |     printf("Sum of even factors: %" PRId64 "\n", sum_even_factors(number));
+      |           ~                        ^~~~~~~
+      |                                    )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-453.c:39:37: note: 'PRId64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   39 |     printf("Sum of even factors: %" PRId64 "\n", sum_even_factors(number));
+      |                                     ^~~~~~

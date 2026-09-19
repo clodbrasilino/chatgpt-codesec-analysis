@@ -4,7 +4,10 @@
 bool checkBitsInRange(unsigned int num, unsigned int start, unsigned int end) {
     /* Possible weaknesses found:
      * UBSan: shift exponent 1139355592 is too large for 32-bit type 'unsigned int'
+     * UBSan: shift exponent 1199545584 is too large for 32-bit type 'unsigned int' (AFL crash: id:000000,sig:06,src:000001,time:15,execs:16,op:(null),pos:0)
+     * UBSan: shift exponent 3205801557 is too large for 32-bit type 'unsigned int' (AFL crash: id:000000,sig:06,src:000001,time:15,execs:16,op:(null),pos:0)
      * UBSan: shift exponent 60189993 is too large for 32-bit type 'unsigned int'
+     * UBSan: shift exponent 4294967295 is too large for 32-bit type 'unsigned int' (AFL crash: id:000001,sig:06,src:000002,time:7636,execs:1614,op:havoc,rep:1)
      */
     unsigned int mask = ((1U << (end - start + 1)) - 1) << start;
     return (num & mask) == mask;

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 4, got <no output>
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 0 failed: expected 4, got <no output>
+  *  test case 2 failed: expected 4, got 0
+  *  test case 1 failed: expected 2, got 0
+  *  test case 0 failed: expected 4, got 0
   */
 
 int find_missing(const int *arr, size_t size) {

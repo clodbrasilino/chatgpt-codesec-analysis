@@ -14,13 +14,17 @@ unsigned long long fibonacci(int n) {
         return 1;
     }
     
-    unsigned long long a = 0, b = 1, c;
+    unsigned long long prev2 = 0;
+    unsigned long long prev1 = 1;
+    unsigned long long current = 0;
+    
     for (int i = 2; i <= n; i++) {
-        c = a + b;
-        a = b;
-        b = c;
+        current = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
     }
-    return b;
+    
+    return current;
 }
 
 int main(void) {

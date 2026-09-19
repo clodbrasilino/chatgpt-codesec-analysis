@@ -11,6 +11,9 @@ double average_of_cubes(int n) {
 
     long sum = 0;
     for (int i = 1; i <= n; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 9223193340756366400 + 473384830201856 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:510,execs:212,op:havoc,rep:2)
+         */
         sum += (long)i * i * i;
     }
     return (double)sum / n;

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 2, got 0
   *  test case 2 failed: expected 4, got 0
+  *  test case 1 failed: expected 2, got 0
   *  test case 0 failed: expected 4, got 0
   */
 
@@ -11,30 +11,46 @@ int find_missing(const int *arr, size_t size) {
         return -1;
     }
 
-    for (size_t i = 0; i < size; i++) {
-        if (arr[i] != (int)i) {
-            return (int)i;
+    if (arr[0] != 0) {
+        return 0;
+    }
+
+    size_t low = 0;
+    size_t high = size - 1;
+
+    while (low < high) {
+        size_t mid = low + (high - low + 1) / 2;
+
+        if (arr[mid] == (int)mid) {
+            low = mid;
+        } else {
+            high = mid - 1;
         }
     }
 
-    return (int)size;
+    return (int)low + 1;
 }
 
 int main(void) {
-    int arr0[] = {0, 1, 2, 4, 5, 6};
-    int missing0 = find_missing(arr0, sizeof(arr0) / sizeof(arr0[0]));
-    printf("%d\n", missing0);
-
-    int arr1[] = {1, 2, 3, 4, 5};
-    int missing1 = find_missing(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    int arr1[] = {0, 1, 3, 4, 5, 6};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int missing1 = find_missing(arr1, size1);
     printf("%d\n", missing1);
 
-    int arr2[] = {0, 1, 2, 3, 4};
-    int missing2 = find_missing(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    int arr2[] = {1, 2, 3, 4, 5};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int missing2 = find_missing(arr2, size2);
     printf("%d\n", missing2);
 
-    int missing3 = find_missing(NULL, 0);
+    int arr3[] = {0, 1, 2, 3, 5};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int missing3 = find_missing(arr3, size3);
     printf("%d\n", missing3);
+
+    const int *arr4 = NULL;
+    size_t size4 = 0;
+    int missing4 = find_missing(arr4, size4);
+    printf("%d\n", missing4);
 
     return 0;
 }

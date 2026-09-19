@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
 long long perrin_number(long n) {
-    if (n < 0 || n > LLONG_MAX) return -1;
     if (n == 0) return 3;
     if (n == 1) return 0;
     if (n == 2) return 2;
 
-    long long a = 3, b = 0, c = 2;
+    long long a = 3, b = 0, c = 2, d;
     for (long i = 3; i <= n; ++i) {
-        long long d = a + b;
+        if (__builtin_add_overflow(a, b, &d)) {
+            fprintf(stderr, "Overflow detected in perrin_number\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
         b = c;
         c = d;
@@ -19,12 +20,14 @@ long long perrin_number(long n) {
 }
 
 long long sum_perrin_numbers(long n) {
-    if (n < 0 || n > LLONG_MAX) return -1;
     long long sum = 0;
+    long long temp;
     for (long i = 0; i <= n; ++i) {
-        long long pnum = perrin_number(i);
-        if (pnum == -1) return -1;
-        sum += pnum;
+        if (__builtin_add_overflow(sum, perrin_number(i), &temp)) {
+            fprintf(stderr, "Overflow detected in sum_perrin_numbers\n");
+            exit(EXIT_FAILURE);
+        }
+        sum = temp;
     }
     return sum;
 }
@@ -38,11 +41,6 @@ int main() {
     }
 
     long long result = sum_perrin_numbers(n);
-    if (result == -1) {
-        fprintf(stderr, "Input out of range or error occurred.\n");
-        return EXIT_FAILURE;
-    }
-    
     printf("Sum of Perrin numbers up to P(%ld): %lld\n", n, result);
     
     return EXIT_SUCCESS;

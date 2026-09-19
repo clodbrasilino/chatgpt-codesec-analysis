@@ -2,16 +2,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static long long mulmod(long long a, long long b, long long mod)
+{
+    return (long long)((unsigned __int128)a * (unsigned __int128)b %
+                       (unsigned __int128)mod);
+}
+
 long long power(long long base, long long exp, long long mod)
 {
-    long long result = 1;
-    base = base % mod;
+    long long result = 1 % mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
     while (exp > 0) {
         if (exp & 1) {
-            result = (result * base) % mod;
+            result = mulmod(result, base, mod);
         }
         exp >>= 1;
-        base = (base * base) % mod;
+        base = mulmod(base, base, mod);
     }
     return result;
 }
@@ -29,24 +38,19 @@ static long long ncr_small(long long n, long long r, long long p)
     if (r == 0 || r == n) {
         return 1 % p;
     }
-
-    long long *fact = malloc((size_t)(n + 1) * sizeof(long long));
-    if (fact == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+    if (r > n - r) {
+        r = n - r;
     }
 
-    fact[0] = 1;
-    for (long long i = 1; i <= n; i++) {
-        fact[i] = (fact[i - 1] * i) % p;
+    long long numerator = 1 % p;
+    long long denominator = 1 % p;
+
+    for (long long i = 0; i < r; i++) {
+        numerator = mulmod(numerator, (n - i) % p, p);
+        denominator = mulmod(denominator, (i + 1) % p, p);
     }
 
-    long long result = fact[n];
-    result = (result * mod_inverse(fact[r], p)) % p;
-    result = (result * mod_inverse(fact[n - r], p)) % p;
-
-    free(fact);
-    return result;
+    return mulmod(numerator, mod_inverse(denominator, p), p);
 }
 
 long long ncr_mod_p(long long n, long long r, long long p)
@@ -56,16 +60,21 @@ long long ncr_mod_p(long long n, long long r, long long p)
     }
 
     long long result = 1 % p;
+
     while (n > 0 || r > 0) {
         long long ni = n % p;
         long long ri = r % p;
+
         if (ri > ni) {
             return 0;
         }
-        result = (result * ncr_small(ni, ri, p)) % p;
+
+        result = mulmod(result, ncr_small(ni, ri, p), p);
+
         n /= p;
         r /= p;
     }
+
     return result;
 }
 
@@ -91,4 +100,12 @@ int main(void)
 }
 ```
 
-The key fix addresses the noted weakness (expected 10, got 0): the original code computed factorials modulo `p` directly, so whenever `n >= p` the factorial contained a multiple of `p` and collapsed to 0 — e.g., `C(5, 2) mod 3` returned 0 instead of the correct `10 mod 3 = 1`, or `C(n, r)` cases where the true answer like 10 was wiped out. The rewrite applies Lucas' theorem, decomposing `n` and `r` in base `p` and multiplying the small binomial coefficients `C(ni, ri) mod p`, each of which is safely computable via modular factorials and Fermat inverses since `ni, ri < p`. This also bounds the factorial table allocation to at most `p` entries per call, avoiding huge allocations for large `n`.
+Key changes made to address the identified weaknesses:
+
+1. **Signed integer overflow in modular multiplication** (in `power` and factorial computation): all modular products now go through `mulmod`, which performs the multiplication in `unsigned __int128`, so intermediate products can never overflow `long long`.
+
+2. **Signed integer overflow of `n + 1` and the heap-buffer-overflow in `malloc((n + 1) * sizeof(long long))`**: the factorial table has been eliminated entirely. `ncr_small` computes the binomial coefficient with an O(r) running product, so there is no allocation that can overflow or be undersized for `LLONG_MAX` inputs.
+
+3. **Wrong result "expected 10, got 0"**: this occurred whenever `p <= n`, because `n!` contains the factor `p`, making `fact[n] % p == 0` and `mod_inverse(0, p)` meaningless. The rewrite implements Lucas' theorem (`ncr_mod_p` decomposes `n` and `r` in base `p`), which is mathematically correct for any prime `p`, including `p <= n`.
+
+4. `power` now normalizes negative bases and computes `1 % mod` for the initial result, keeping behavior well-defined for all valid inputs.

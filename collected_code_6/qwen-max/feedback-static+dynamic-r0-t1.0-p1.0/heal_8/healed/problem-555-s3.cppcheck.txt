@@ -1,13 +1,4 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c:12:17: warning: Either the condition 'n>0' is redundant or there is division by zero at line 12. [zerodivcond]
-    if (temp_sq / temp != temp) return 0;
-                ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c:8:11: note: Assuming that condition 'n>0' is not redundant
-    if (n > 0 && LLONG_MAX / n < n * (n + 1)) return 0;
-          ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c:10:18: note: temp is assigned '(n*(n+1))/2' here.
-    int64_t temp = (n * (n + 1)) / 2;
-                 ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c:12:17: note: Division by zero
-    if (temp_sq / temp != temp) return 0;
-                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-555-s3.c:8:84: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    unsigned long long result = (unsigned long long)n * ((n + 1) % 2 ? (n + 1) / 2 : (n + 1) / 2);
+                                                                                   ^

@@ -5,6 +5,10 @@ typedef struct {
     int value;
 } Tuple;
 
+int compare_ints(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
 int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int* result_size) {
     if (list1 == NULL || list2 == NULL || result_size == NULL) {
         if (result_size != NULL) {
@@ -18,43 +22,63 @@ int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int
         return NULL;
     }
 
-    int max_size = size1 < size2 ? size1 : size2;
-    int* result = (int*)malloc(max_size * sizeof(int));
-    if (result == NULL) {
+    int* arr1 = (int*)malloc(size1 * sizeof(int));
+    int* arr2 = (int*)malloc(size2 * sizeof(int));
+    if (arr1 == NULL || arr2 == NULL) {
+        free(arr1);
+        free(arr2);
         *result_size = -1;
         return NULL;
     }
 
-    int count = 0;
     for (int i = 0; i < size1; i++) {
-        for (int j = 0; j < size2; j++) {
-            if (list1[i].value == list2[j].value) {
-                int found = 0;
-                for (int k = 0; k < count; k++) {
-                    if (result[k] == list1[i].value) {
-                        found = 1;
-                        break;
-                    }
-                }
-                if (!found) {
-                    result[count] = list1[i].value;
-                    count++;
-                }
-                break;
+        arr1[i] = list1[i].value;
+    }
+    for (int i = 0; i < size2; i++) {
+        arr2[i] = list2[i].value;
+    }
+
+    qsort(arr1, size1, sizeof(int), compare_ints);
+    qsort(arr2, size2, sizeof(int), compare_ints);
+
+    int max_size = size1 < size2 ? size1 : size2;
+    int* temp_result = (int*)malloc(max_size * sizeof(int));
+    if (temp_result == NULL) {
+        free(arr1);
+        free(arr2);
+        *result_size = -1;
+        return NULL;
+    }
+
+    int i = 0, j = 0, count = 0;
+    while (i < size1 && j < size2) {
+        if (arr1[i] < arr2[j]) {
+            i++;
+        } else if (arr1[i] > arr2[j]) {
+            j++;
+        } else {
+            if (count == 0 || temp_result[count - 1] != arr1[i]) {
+                temp_result[count] = arr1[i];
+                count++;
             }
+            i++;
+            j++;
         }
     }
 
+    free(arr1);
+    free(arr2);
+
     *result_size = count;
     if (count == 0) {
-        free(result);
+        free(temp_result);
         return NULL;
     }
 
-    int* final_result = (int*)realloc(result, count * sizeof(int));
+    int* final_result = (int*)realloc(temp_result, count * sizeof(int));
     if (final_result == NULL) {
         *result_size = -1;
-        free(result);
+        free(temp_result);
         return NULL;
     }
 

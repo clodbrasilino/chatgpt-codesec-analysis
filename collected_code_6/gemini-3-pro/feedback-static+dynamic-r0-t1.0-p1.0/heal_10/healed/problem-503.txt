@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length) {
     if (list == NULL || out_length == NULL) {
@@ -7,20 +8,9 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
         return NULL;
     }
 
-    if (length == 0) {
+    if (length < 2) {
         *out_length = 0;
         return NULL;
-    }
-
-    if (length == 1) {
-        int* result = (int*)malloc(sizeof(int));
-        if (result == NULL) {
-            *out_length = 0;
-            return NULL;
-        }
-        result[0] = list[0];
-        *out_length = 1;
-        return result;
     }
 
     *out_length = length - 1;
@@ -31,7 +21,7 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
     }
 
     for (size_t i = 0; i < *out_length; i++) {
-        result[i] = list[i] + list[i + 1];
+        result[i] = (int)((unsigned int)list[i] + (unsigned int)list[i + 1]);
     }
 
     return result;
@@ -48,7 +38,7 @@ int main(void) {
 
     int ch;
     while ((ch = getchar()) != EOF) {
-        if ((ch >= '0' && ch <= '9') || ch == '-') {
+        if (isdigit((unsigned char)ch) || ch == '-' || ch == '+') {
             ungetc(ch, stdin);
             int num;
             if (scanf("%d", &num) == 1) {
@@ -63,25 +53,13 @@ int main(void) {
                 }
                 list[length++] = num;
             } else {
-                getchar();
+                getchar(); 
             }
         }
     }
 
-    if (length == 0) {
-        printf("[]\n");
-        free(list);
-        return EXIT_SUCCESS;
-    }
-
     size_t out_length = 0;
     int* result = add_consecutive_numbers(list, length, &out_length);
-
-    if (result == NULL && out_length == 0) {
-        printf("[]\n");
-        free(list);
-        return EXIT_SUCCESS;
-    }
 
     printf("[");
     for (size_t i = 0; i < out_length; i++) {
@@ -94,8 +72,7 @@ int main(void) {
 
     if (result != NULL) {
         free(result);
-    } 
-
+    }
     free(list);
     return EXIT_SUCCESS;
 }

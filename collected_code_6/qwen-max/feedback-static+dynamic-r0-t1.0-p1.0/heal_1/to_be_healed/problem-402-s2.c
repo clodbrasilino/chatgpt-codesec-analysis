@@ -3,8 +3,8 @@
 
 unsigned long long modInverse(unsigned long long a, unsigned long long m) {
     /* Possible weaknesses found:
-     *  The scope of the variable 'q' can be reduced. [variableScope]
      *  The scope of the variable 't' can be reduced. [variableScope]
+     *  The scope of the variable 'q' can be reduced. [variableScope]
      */
     unsigned long long m0 = m, t, q;
     unsigned long long x0 = 0, x1 = 1;
@@ -50,6 +50,9 @@ unsigned long long ncrModP(unsigned long long n, unsigned long long r, unsigned 
 
     return (numerator * denominatorInv) % p;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:14031,execs:26,op:quick,pos:4; likely memory-safety defect
+  */
 
 int main() {
     unsigned long long n, r, p;

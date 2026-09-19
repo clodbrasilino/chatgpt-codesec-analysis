@@ -1,16 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 size_t count_squares(int width, int height) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'width<=0' is not redundant
+     *  Assuming that condition 'height<=0' is not redundant
+     */
     if (width <= 0 || height <= 0) {
         return 0;
     }
     size_t count = 0;
     for (int side = 1; side <= (width < height ? width : height); ++side) {
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 1724130190 * 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:765,execs:412,op:havoc,rep:1)
+         *  Assignment 'w=width-side+1', assigned value is greater than 0
          */
-        count += (width - side + 1) * (height - side + 1);
+        int w = width - side + 1;
+        /* Possible weaknesses found:
+         *  Assignment 'h=height-side+1', assigned value is greater than 0
+         */
+        int h = height - side + 1;
+        /* Possible weaknesses found:
+         *  Condition 'w>0' is always true [knownConditionTrueFalse]
+         *  Condition 'w>0' is always true
+         *  Condition 'h>0' is always true [knownConditionTrueFalse]
+         *  Condition 'h>0' is always true
+         */
+        if (w > 0 && h > 0 && (long long)w * h <= SIZE_MAX) {
+            count += (size_t)w * (size_t)h;
+        } else {
+            break;
+        }
     }
     return count;
 }
@@ -23,10 +43,6 @@ int main() {
         return EXIT_FAILURE;
     }
     size_t result = count_squares(w, h);
-    if (result == 0 && (w > 0 && h > 0)) {
-        fprintf(stderr, "Unexpected error in calculation\n");
-        return EXIT_FAILURE;
-    }
     printf("Number of squares in the rectangle: %zu\n", result);
     return 0;
 }

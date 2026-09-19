@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-long long sum_odd_factors(long long n);
+long long sum_odd_factors(long long n, int *overflow);
 
-long long sum_odd_factors(long long n)
+long long sum_odd_factors(long long n, int *overflow)
 {
     long long res;
     long long i;
+
+    *overflow = 0;
 
     if (n <= 0)
     {
@@ -26,15 +28,37 @@ long long sum_odd_factors(long long n)
         while (n % i == 0)
         {
             n /= i;
-            curr_term *= i;
-            curr_sum += curr_term;
+            if (__builtin_mul_overflow(curr_term, i, &curr_term))
+            {
+                *overflow = 1;
+                return 0;
+            }
+            if (__builtin_add_overflow(curr_sum, curr_term, &curr_sum))
+            {
+                *overflow = 1;
+                return 0;
+            }
         }
-        res *= curr_sum;
+        if (__builtin_mul_overflow(res, curr_sum, &res))
+        {
+            *overflow = 1;
+            return 0;
+        }
     }
 
     if (n > 1)
     {
-        res *= (1 + n);
+        long long factor;
+        if (__builtin_add_overflow(n, 1, &factor))
+        {
+            *overflow = 1;
+            return 0;
+        }
+        if (__builtin_mul_overflow(res, factor, &res))
+        {
+            *overflow = 1;
+            return 0;
+        }
     }
 
     return res;
@@ -44,6 +68,7 @@ int main(void)
 {
     long long n;
     long long result;
+    int overflow;
 
     printf("Enter a positive integer: ");
     if (scanf("%lld", &n) != 1)
@@ -58,7 +83,13 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    result = sum_odd_factors(n);
+    result = sum_odd_factors(n, &overflow);
+    if (overflow)
+    {
+        fprintf(stderr, "Error: arithmetic overflow while computing result\n");
+        return EXIT_FAILURE;
+    }
+
     printf("Sum of odd factors of %lld is %lld\n", n, result);
 
     return EXIT_SUCCESS;

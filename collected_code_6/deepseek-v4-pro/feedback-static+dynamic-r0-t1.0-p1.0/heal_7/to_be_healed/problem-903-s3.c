@@ -1,14 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-static unsigned long long countTotalSetBits(unsigned long long n) {
+unsigned long long countTotalSetBits(unsigned long long n) {
     unsigned long long count = 0;
     unsigned long long i = 0;
     
-    for (i = 0; (1ULL << i) <= n; i++) {
+    while (1) {
         unsigned long long bit_mask = 1ULL << i;
+        if (bit_mask > n && i > 0) break;
+        
         unsigned long long period = bit_mask << 1;
+        
+        /* Possible weaknesses found:
+         * UBSan: division by zero (AFL crash: id:000000,sig:06,src:000000,time:574,execs:439,op:havoc,rep:3)
+         */
         unsigned long long full_cycles = (n + 1) / period;
         unsigned long long remainder = (n + 1) % period;
         
@@ -16,25 +21,21 @@ static unsigned long long countTotalSetBits(unsigned long long n) {
         if (remainder > bit_mask) {
             count += remainder - bit_mask;
         }
+        
+        i++;
+        if (i >= 64) break;
     }
     
     return count;
 }
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 4, got 11
+  *  test case 0 failed: expected 1, got 4
+  *  test case 2 failed: expected 17, got 32
+  */
 
-static unsigned long long countTotalSetBitsFrom1(unsigned long long n) {
-    if (n == 0) {
-        return 0;
-    }
-    return countTotalSetBits(n);
-}
-
-static unsigned long long countTotalUnsetBits(unsigned long long n) {
-    /* Possible weaknesses found:
-     *  Assuming that condition 'n==0' is not redundant
-     */
-    if (n == 0) {
-        return 0;
-    }
+unsigned long long countTotalUnsetBits(unsigned long long n) {
+    if (n == 0) return 0;
     
     unsigned long long total_bits = 0;
     unsigned long long temp = n;
@@ -45,58 +46,10 @@ static unsigned long long countTotalUnsetBits(unsigned long long n) {
     }
     
     unsigned long long total_positions = total_bits * (n + 1);
-    unsigned long long set_bits_from_0 = countTotalSetBits(n);
-    unsigned long long set_bits_from_1 = set_bits_from_0;
+    unsigned long long set_bits = countTotalSetBits(n);
     
-    /* Possible weaknesses found:
-     *  Condition 'n>0' is always true [knownConditionTrueFalse]
-     *  Condition 'n>0' is always true
-     */
-    if (n > 0) {
-        unsigned long long zero_set_bits = 0;
-        unsigned long long temp_zero = 0;
-        while (temp_zero > 0) {
-            zero_set_bits += (temp_zero & 1);
-            temp_zero >>= 1;
-        }
-        set_bits_from_1 = set_bits_from_0 - zero_set_bits;
-    }
-    
-    unsigned long long max_val = (1ULL << total_bits) - 1;
-    unsigned long long leading_zeros = 0;
-    unsigned long long val = n;
-    
-    for (unsigned long long j = 0; j < total_bits; j++) {
-        if ((val & (1ULL << (total_bits - 1 - j))) == 0) {
-            leading_zeros++;
-        } else {
-            break;
-        }
-    }
-    
-    unsigned long long unset_bits = 0;
-    unsigned long long x;
-    for (x = 1; x <= n; x++) {
-        unsigned long long bits_in_x = 0;
-        unsigned long long tx = x;
-        while (tx > 0) {
-            bits_in_x++;
-            tx >>= 1;
-        }
-        unsigned long long set_in_x = __builtin_popcountll(x);
-        unset_bits += (bits_in_x - set_in_x);
-    }
-    
-    (void)total_positions;
-    (void)set_bits_from_1;
-    (void)max_val;
-    (void)leading_zeros;
-    
-    return unset_bits;
+    return total_positions - set_bits;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:199,execs:152,op:havoc,rep:4; likely memory-safety defect
-  */
 
 int main(void) {
     unsigned long long n;

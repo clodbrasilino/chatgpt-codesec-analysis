@@ -49,6 +49,11 @@ void free_list(Node *head) {
  */
 void map_power(int *bases, int size, Node **result) {
     if (result == NULL || bases == NULL || size <= 0) {
+        /* Possible weaknesses found:
+         * ASan: SEGV
+         * UBSan: store to null pointer of type 'int'
+         * UBSan: member access within null pointer of type 'Node' (aka 'struct Node')
+         */
         return;
     }
     

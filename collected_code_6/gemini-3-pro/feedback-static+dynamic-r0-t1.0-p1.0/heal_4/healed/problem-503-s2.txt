@@ -1,3 +1,4 @@
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,6 +15,7 @@ int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     *out_size = size - 1;
     int* result = malloc(*out_size * sizeof(int));
     if (result == NULL) {
+        *out_size = 0;
         return NULL;
     }
 
@@ -34,20 +36,20 @@ int main(void) {
         int res = scanf("%d", &val);
         if (res == 1) {
             if (size >= capacity) {
-                capacity = (capacity == 0) ? 16 : capacity * 2;
-                int* temp = realloc(input, capacity * sizeof(int));
+                size_t new_capacity = (capacity == 0) ? 16 : capacity * 2;
+                int* temp = realloc(input, new_capacity * sizeof(int));
                 if (!temp) {
                     free(input);
                     return 1;
                 }
                 input = temp;
+                capacity = new_capacity;
             }
             input[size++] = val;
         } else if (res == EOF) {
             break;
         } else {
-            int c = getchar();
-            if (c == EOF || c == '\n' || c == ']') {
+            if (getchar() == EOF) {
                 break;
             }
         }
@@ -69,3 +71,4 @@ int main(void) {
     free(input);
     return 0;
 }
+```

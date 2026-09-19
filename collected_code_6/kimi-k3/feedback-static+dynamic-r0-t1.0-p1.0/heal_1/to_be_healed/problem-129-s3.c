@@ -92,6 +92,9 @@ void print_magic_square(int **square, int n) {
         printf("\n");
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:30974,execs:2596,op:havoc,rep:13; likely memory-safety defect
+  */
 
 int main(void) {
     int n;

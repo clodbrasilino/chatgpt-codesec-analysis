@@ -1,1 +1,13 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-537.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-537.c:85:16: style: Condition 'result!=NULL' is always false [knownConditionTrueFalse]
+    if (result != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-537.c:83:44: note: Calling function 'find_first_repeated_word' returns 0
+    char* result = find_first_repeated_word(input);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-537.c:83:44: note: Assignment 'result=find_first_repeated_word(input)', assigned value is 0
+    char* result = find_first_repeated_word(input);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-537.c:85:16: note: Condition 'result!=NULL' is always false
+    if (result != NULL) {
+               ^

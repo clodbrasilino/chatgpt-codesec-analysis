@@ -11,6 +11,9 @@ double average_of_evens(int n) {
     int sum = 0;
     int count = 0;
     for (int i = 2; i <= n; i += 2) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2147441940 + 92682 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:46,execs:34,op:havoc,rep:4)
+         */
         sum += i;
         count++;
     }

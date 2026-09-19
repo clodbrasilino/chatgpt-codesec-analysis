@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
-  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
   *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
   */
 
 int* find_dissimilar(const int* t1, int s1, const int* t2, int s2, int* res_size) {
@@ -58,11 +58,17 @@ int main() {
     int res_size = 0;
     int* res = find_dissimilar(t1, s1, t2, s2, &res_size);
     if (res != NULL) {
+        printf("[");
         for (int i = 0; i < res_size; i++) {
-            printf("%d ", res[i]);
+            printf("%d", res[i]);
+            if (i < res_size - 1) {
+                printf(", ");
+            }
         }
-        printf("\n");
+        printf("]\n");
         free(res);
+    } else {
+        printf("[]\n");
     }
     return 0;
 }

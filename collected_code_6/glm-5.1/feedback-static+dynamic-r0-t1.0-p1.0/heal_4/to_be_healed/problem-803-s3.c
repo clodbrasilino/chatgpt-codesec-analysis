@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 int is_perfect_square(long long num) {
     if (num < 0) {
@@ -7,25 +8,21 @@ int is_perfect_square(long long num) {
     if (num == 0) {
         return 1;
     }
-    long long low = 1;
-    long long high = num;
-    while (low <= high) {
-        long long mid = low + (high - low) / 2;
-        long long sq = mid * mid;
-        if (sq == num) {
-            return 1;
-        }
-        if (sq < num) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
+    long long sqrt_floor = (long long)sqrt((double)num);
+    while (sqrt_floor > 0 && sqrt_floor * sqrt_floor > num) {
+        sqrt_floor--;
     }
-    return 0;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 3037000500 * 3037000500 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:101,execs:133,op:havoc,rep:5)
+     */
+    while (sqrt_floor <= 3037000499LL && (sqrt_floor + 1) * (sqrt_floor + 1) <= num) {
+        sqrt_floor++;
+    }
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 3037000500 * 3037000500 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:101,execs:133,op:havoc,rep:5)
+     */
+    return (sqrt_floor * sqrt_floor == num);
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:260,execs:136,op:havoc,rep:1; likely memory-safety defect
-  */
 
 int main(void) {
     long long val;

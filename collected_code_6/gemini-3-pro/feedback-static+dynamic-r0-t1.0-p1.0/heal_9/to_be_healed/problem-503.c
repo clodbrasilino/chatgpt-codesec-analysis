@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   */
 
 int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length) {
@@ -12,20 +13,9 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
         return NULL;
     }
 
-    if (length == 0) {
+    if (length < 2) {
         *out_length = 0;
         return NULL;
-    }
-
-    if (length == 1) {
-        int* result = (int*)malloc(sizeof(int));
-        if (result == NULL) {
-            *out_length = 0;
-            return NULL;
-        }
-        result[0] = list[0];
-        *out_length = 1;
-        return result;
     }
 
     *out_length = length - 1;
@@ -36,7 +26,7 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
     }
 
     for (size_t i = 0; i < *out_length; i++) {
-        result[i] = list[i] + list[i + 1];
+        result[i] = (int)((unsigned int)list[i] + (unsigned int)list[i + 1]);
     }
 
     return result;
@@ -68,17 +58,10 @@ int main(void) {
         } else if (res == EOF) {
             break;
         } else {
-            int ch = getchar();
-            if (ch == EOF) {
+            if (getchar() == EOF) {
                 break;
             }
         }
-    }
-
-    if (length == 0) {
-        printf("[]\n");
-        free(list);
-        return EXIT_SUCCESS;
     }
 
     size_t out_length = 0;
@@ -95,8 +78,7 @@ int main(void) {
 
     if (result != NULL) {
         free(result);
-    } 
-
+    }
     free(list);
     return EXIT_SUCCESS;
 }

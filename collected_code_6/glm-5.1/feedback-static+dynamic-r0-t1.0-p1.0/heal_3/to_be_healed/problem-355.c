@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 1, got 0
   *  test case 0 failed: expected 8, got 4
+  *  test case 1 failed: expected 1, got 0
   */
 
 int count_rectangles(int r) {
@@ -23,8 +23,12 @@ int count_rectangles(int r) {
         while (low <= high) {
             long long mid = low + (high - low) / 2;
             if (mid * mid <= max_y_sq) {
-                y_bound = mid;
-                low = mid + 1;
+                if (x * x + mid * mid < r_sq) {
+                    y_bound = mid;
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
             } else {
                 high = mid - 1;
             }
@@ -41,7 +45,6 @@ int count_rectangles(int r) {
  */
 int main(int argc, char * const argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s <radius>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -49,7 +52,6 @@ int main(int argc, char * const argv[]) {
     long val = strtol(argv[1], &endptr, 10);
 
     if (*endptr != '\0' || val <= 0 || val > 2147483647) {
-        fprintf(stderr, "Invalid radius. Must be a positive integer <= 2147483647.\n");
         return EXIT_FAILURE;
     }
 

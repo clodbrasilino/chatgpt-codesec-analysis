@@ -3,9 +3,9 @@
 #include <errno.h>
 #include <limits.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 31, got 53
-  *  test case 2 failed: expected 17, got 22
   *  test case 1 failed: expected 5, got 4
+  *  test case 2 failed: expected 17, got 22
+  *  test case 0 failed: expected 31, got 53
   */
 
 long long jacobsthal_lucas(int n) {
@@ -14,6 +14,9 @@ long long jacobsthal_lucas(int n) {
     }
     if (n == 0) {
         return 2;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 2 * 4611686018427387905 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:373,execs:162,op:havoc,rep:4)
+     */
     }
     if (n == 1) {
         return 1;

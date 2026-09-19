@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 long long lucas_number(int n) {
     if (n == 0) return 2;
@@ -8,9 +9,13 @@ long long lucas_number(int n) {
     long long a = 2, b = 1;
     for (int i = 2; i <= n; ++i) {
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 3980154972736918051 + 6440026026380244498 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:281,execs:125,op:havoc,rep:5)
+         * UBSan: signed integer overflow: 3980154972736918051 + 6440026026380244498 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:141,execs:142,op:havoc,rep:4)
          */
         long long c = a + b;
+        if (c < a || c < b) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
         b = c;
     }

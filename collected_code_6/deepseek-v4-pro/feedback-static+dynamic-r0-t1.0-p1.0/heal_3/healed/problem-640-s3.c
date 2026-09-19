@@ -26,9 +26,10 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
-            } else {
-                result[j++] = str[i];
+                i++;
+                continue;
             }
+            result[j++] = str[i];
             i++;
             continue;
         }
@@ -40,15 +41,23 @@ char *remove_parenthesis_area(const char *str) {
 
     result[j] = '\0';
 
+    char *final_result = realloc(result, j + 1);
+    if (final_result != NULL) {
+        return final_result;
+    }
+
     return result;
 }
 
 int main(void) {
-    const char *test1 = "Hello (this is a test) World";
-    const char *test2 = "No parentheses here";
-    const char *test3 = "Nested ((parentheses) test) example";
-    const char *test4 = "Unmatched (parenthesis";
-    const char *test5 = "Multiple (first) and (second) removal";
+    const char *test1 = "alpha";
+    const char *test2 = "python";
+    const char *test3 = "string";
+    const char *test4 = "Hello (this is a test) World";
+    const char *test5 = "No parentheses here";
+    const char *test6 = "Nested ((parentheses) test) example";
+    const char *test7 = "Unmatched (parenthesis";
+    const char *test8 = "Multiple (first) and (second) removal";
 
     char *result = NULL;
 
@@ -77,6 +86,24 @@ int main(void) {
     }
 
     result = remove_parenthesis_area(test5);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = remove_parenthesis_area(test6);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = remove_parenthesis_area(test7);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = remove_parenthesis_area(test8);
     if (result != NULL) {
         printf("%s\n", result);
         free(result);

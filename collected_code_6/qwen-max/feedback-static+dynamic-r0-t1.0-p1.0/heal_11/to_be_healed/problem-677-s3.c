@@ -7,6 +7,9 @@
   */
 
 bool is_valid_triangle(int a, int b, int c) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 952207132 + 1933270813 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000006,time:48306,execs:23093,op:havoc,rep:2)
+     */
     return a > 0 && b > 0 && c > 0 && (a + b > c) && (a + c > b) && (b + c > a);
 }
 

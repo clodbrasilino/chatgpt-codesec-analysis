@@ -1,0 +1,5 @@
+problem-402-s2.c:12:34:medium:UBSan: division by zero (AFL crash: id:000002,sig:06,src:000002,time:21937,execs:1173,op:havoc,rep:4)
+problem-402-s2.c:29:31:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000002,time:14595,execs:1005,op:havoc,rep:3)
+problem-402-s2.c:40:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000002,time:14595,execs:1005,op:havoc,rep:3)
+problem-402-s2.c:42:0:high:ASan: FPE (AFL crash: id:000002,sig:06,src:000002,time:21937,execs:1173,op:havoc,rep:4)
+problem-402-s2.c:46:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:1755,execs:875,op:havoc,rep:1; likely memory-safety defect

@@ -10,7 +10,7 @@ static int is_smart_number(int num, const int *primes, int prime_count)
     int temp = num;
     int i;
     
-    for (i = 0; i < prime_count && primes[i] * primes[i] <= temp; i++) {
+    for (i = 0; i < prime_count && primes[i] <= temp / primes[i]; i++) {
         if (temp % primes[i] == 0) {
             distinct_factors++;
             while (temp % primes[i] == 0) {
@@ -38,17 +38,19 @@ static int generate_primes(int limit, int **primes_out)
         return 0;
     }
     
-    sieve = (int *)malloc((limit + 1) * sizeof(int));
+    sieve = (int *)malloc((size_t)(limit + 1) * sizeof(int));
     if (sieve == NULL) {
         return -1;
     }
     
-    memset(sieve, 0, (limit + 1) * sizeof(int));
+    memset(sieve, 0, (size_t)(limit + 1) * sizeof(int));
     
     for (i = 2; i <= limit; i++) {
         if (sieve[i] == 0) {
-            for (j = i * 2; j <= limit; j += i) {
-                sieve[j] = 1;
+            if (i <= limit / 2) {
+                for (j = i * 2; j <= limit; j += i) {
+                    sieve[j] = 1;
+                }
             }
         }
     }
@@ -59,7 +61,13 @@ static int generate_primes(int limit, int **primes_out)
         }
     }
     
-    primes = (int *)malloc(count * sizeof(int));
+    if (count == 0) {
+        free(sieve);
+        *primes_out = NULL;
+        return 0;
+    }
+    
+    primes = (int *)malloc((size_t)count * sizeof(int));
     if (primes == NULL) {
         free(sieve);
         return -1;
@@ -83,7 +91,7 @@ int find_nth_smart_number(int n)
     int prime_count;
     int count = 0;
     int num = 2;
-    int limit = 10000;
+    int limit = 1000;
     
     if (n <= 0) {
         return -1;
@@ -95,16 +103,26 @@ int find_nth_smart_number(int n)
     }
     
     while (count < n) {
-        if (primes[prime_count - 1] * primes[prime_count - 1] <= num) {
+        if (prime_count > 0 && num > limit / num && 
+            primes[prime_count - 1] <= num / primes[prime_count - 1]) {
             free(primes);
+            primes = NULL;
+            
+            if (limit > INT_MAX / 10) {
+                return -1;
+            }
             limit *= 10;
+            
             prime_count = generate_primes(limit, &primes);
             if (prime_count < 0) {
                 return -1;
             }
+            if (prime_count == 0) {
+                return -1;
+            }
         }
         
-        if (is_smart_number(num, primes, prime_count)) {
+        if (prime_count > 0 && is_smart_number(num, primes, prime_count)) {
             count++;
         }
         
@@ -112,12 +130,11 @@ int find_nth_smart_number(int n)
             break;
         }
         
-        num++;
-        
         if (num == INT_MAX) {
             free(primes);
             return -1;
         }
+        num++;
     }
     
     free(primes);

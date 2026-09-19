@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
-#include <ctype.h>
 
 char *snake_to_camel(const char *input) {
     if (input == NULL) {
@@ -15,22 +14,43 @@ char *snake_to_camel(const char *input) {
         return NULL;
     }
 
+    regex_t regex;
+    int ret = regcomp(&regex, "_([a-z])", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
     size_t result_index = 0;
     size_t input_index = 0;
-    
-    while (input_index < len) {
-        if (input[input_index] == '_') {
-            input_index++;
-            if (input_index < len && input[input_index] >= 'a' && input[input_index] <= 'z') {
-                result[result_index++] = toupper((unsigned char)input[input_index]);
-                input_index++;
-            }
-        } else {
-            result[result_index++] = input[input_index++];
+    regmatch_t match;
+
+    while (input_index < len && regexec(&regex, input + input_index, 1, &match, 0) == 0) {
+        if (match.rm_so > 0) {
+            size_t copy_len = match.rm_so;
+            memcpy(result + result_index, input + input_index, copy_len);
+            result_index += copy_len;
         }
+
+        if (match.rm_eo - match.rm_so >= 2) {
+            char upper = input[input_index + match.rm_so + 1];
+            if (upper >= 'a' && upper <= 'z') {
+                upper = upper - 'a' + 'A';
+            }
+            result[result_index++] = upper;
+        }
+
+        input_index += match.rm_eo;
+    }
+
+    if (input_index < len) {
+        size_t remaining = len - input_index;
+        memcpy(result + result_index, input + input_index, remaining);
+        result_index += remaining;
     }
 
     result[result_index] = '\0';
+    regfree(&regex);
     return result;
 }
 

@@ -3,6 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['MSM', '240', 'is', '104', '129', 'best', '10'], got <no output>
+  *  test case 2 failed: expected ['Flutter', '484', 'is', '77', '129', 'Magnificent', '45'], got <no output>
+  *  test case 1 failed: expected ['Dart', '368', 'is', '100', '181', 'Super', '18'], got <no output>
+  */
 
 char* increment_numeric_values(const char* input, int k) {
     if (input == NULL) {

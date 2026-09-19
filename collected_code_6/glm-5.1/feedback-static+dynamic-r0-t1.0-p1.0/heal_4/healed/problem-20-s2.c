@@ -8,19 +8,27 @@ bool is_woodall(unsigned long long n) {
     }
 
     unsigned long long i = 1;
+    unsigned long long power_of_two = 2;
 
     while (1) {
-        if (i >= 64) {
+        if (power_of_two - 1 > n / i) {
             break;
         }
-        unsigned long long w = i * ((1ULL << i) - 1);
+
+        unsigned long long w = i * (power_of_two - 1);
         if (w == n) {
             return true;
         }
+        
         if (w > n) {
             break;
         }
+
         i++;
+        if (i >= 64) {
+            break;
+        }
+        power_of_two <<= 1;
     }
 
     return false;

@@ -11,6 +11,10 @@ int gcd(int a, int b) {
 }
 
 int lcm(int a, int b) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -79 * -1094795586 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:418,execs:198,op:havoc,rep:2)
+     * UBSan: signed integer overflow: -1026405035 * 9 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:8501,execs:521,op:havoc,rep:2)
+     */
     return (a / gcd(a, b)) * b;
 }
 
@@ -24,6 +28,9 @@ int findLCM(int arr[], int n) {
     }
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:16,execs:17,op:(null),pos:0; likely memory-safety defect
+  */
 
 int main() {
     int n;

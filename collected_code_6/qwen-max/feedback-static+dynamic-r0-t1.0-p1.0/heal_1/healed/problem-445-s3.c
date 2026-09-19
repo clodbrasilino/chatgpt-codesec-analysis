@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
 
-void multiplyTuples(const int *tuple1, const int *tuple2, int *result, size_t length) {
+void multiplyTuples(const int *tuple1, const int *tuple2, int64_t *result, size_t length) {
     for (size_t i = 0; i < length; ++i) {
-        result[i] = tuple1[i] * tuple2[i];
+        int64_t prod = (int64_t)tuple1[i] * (int64_t)tuple2[i];
+        if (prod > INT_MAX || prod < INT_MIN) {
+            fprintf(stderr, "Integer overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        result[i] = (int)prod;
     }
 }
 
@@ -17,7 +24,7 @@ int main() {
 
     int *tuple1 = malloc(length * sizeof(int));
     int *tuple2 = malloc(length * sizeof(int));
-    int *result = malloc(length * sizeof(int));
+    int64_t *result = malloc(length * sizeof(int64_t));
 
     if (tuple1 == NULL || tuple2 == NULL || result == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -53,7 +60,7 @@ int main() {
 
     printf("Resultant tuple:\n");
     for (size_t i = 0; i < length; ++i) {
-        printf("%d ", result[i]);
+        printf("%lld ", result[i]);
     }
     printf("\n");
 

@@ -2,7 +2,9 @@
 #include <stdbool.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected True, got 0
+  *  test case 0 failed: expected True, got <no output>
+  *  test case 1 failed: expected False, got <no output>
+  *  test case 2 failed: expected True, got <no output>
   */
 
 bool is_valid_parentheses(const char *s)

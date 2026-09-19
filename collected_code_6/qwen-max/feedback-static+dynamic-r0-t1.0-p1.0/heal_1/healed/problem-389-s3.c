@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 long long lucas_number(int n) {
     if (n == 0) return 2;

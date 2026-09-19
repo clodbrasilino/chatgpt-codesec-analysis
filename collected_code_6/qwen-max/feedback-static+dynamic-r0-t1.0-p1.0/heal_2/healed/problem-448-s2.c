@@ -17,30 +17,21 @@ long long perrin(long n) {
 }
 
 long long sum_of_perrin(long n) {
+    if (n < 0) return 0;
     long long sum = 0;
-    long long prev = 0;
     for (long i = 0; i <= n; i++) {
-        long long current = perrin(i);
-        if (i > 0 && current < prev) {
-            return -1; // Return -1 to indicate an overflow
-        }
-        sum += current;
-        prev = current;
+        sum += perrin(i);
     }
     return sum;
 }
 
 int main() {
     long n;
-    if (scanf("%ld", &n) != 1) {
+    if (scanf("%ld", &n) != 1 || n < 0) {
         return EXIT_FAILURE;
     }
 
     long long result = sum_of_perrin(n);
-    if (result == -1) {
-        fprintf(stderr, "Overflow detected\n");
-        return EXIT_FAILURE;
-    }
     printf("The sum of the first %ld Perrin numbers is: %lld\n", n, result);
 
     return EXIT_SUCCESS;

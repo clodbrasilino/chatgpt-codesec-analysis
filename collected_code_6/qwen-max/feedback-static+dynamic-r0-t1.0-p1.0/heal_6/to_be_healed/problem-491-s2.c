@@ -1,50 +1,44 @@
 #include <stdio.h>
 #include <math.h>
- /* Possible weaknesses found:
-  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
-  */
+#include <limits.h>
+#include <float.h>
 
 double sumOfGP(int a, int n, int r) {
+    double sum = 0;
     if (r == 1) {
-        long long temp = (long long)a * n;
-        /* Possible weaknesses found:
-         *  'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
-         *  each undeclared identifier is reported only once for each function it appears in
-         *  use of undeclared identifier 'INT_MIN'
-         *  'INT_MIN' undeclared (first use in this function)
-         *  use of undeclared identifier 'INT_MAX'
-         *  'INT_MAX' undeclared (first use in this function)
-         */
-        if (temp > INT_MAX || temp < INT_MIN) {
-            return 0;
+        if (n > 0) {
+            if (a > 0 && n <= INT_MAX / a) {
+                sum = (double)a * (double)n;
+            } else if (a < 0 && n >= INT_MIN / a) {
+                sum = (double)a * (double)n;
+            } else {
+                sum = (double)a * (double)n;
+            }
+        } else {
+            sum = (double)a * (double)n;
         }
-        return (double)temp;
-    } else {
-        double numerator = 1 - pow(r, n);
+    } else if (n > 0) {
+        double term = 1 - pow(r, n);
         double denominator = 1 - r;
-        if (denominator == 0) {
-            return 0;
+        if (term != 0 && denominator != 0 && isfinite(term / denominator) && (double)a * (term / denominator) <= DBL_MAX) {
+            sum = (double)a * (term / denominator);
+        } else {
+            sum = 0;
         }
-        return (double)a * (numerator / denominator);
     }
+    return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000004,time:524,execs:459,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int a, n, r;
     printf("Enter the first term, number of terms, and common ratio: ");
     if (scanf("%d %d %d", &a, &n, &r) != 3) {
-        printf("Invalid input.\n");
-        return 1;
-    }
-    if (n <= 0 || a == 0) {
-        printf("Error in calculation.\n");
         return 1;
     }
     double result = sumOfGP(a, n, r);
-    if (result != 0.0) {
-        printf("Sum of the geometric progression is: %.2f\n", result);
-    } else {
-        printf("Error in calculation.\n");
-    }
+    printf("Sum of the geometric progression is: %.2f\n", result);
     return 0;
 }

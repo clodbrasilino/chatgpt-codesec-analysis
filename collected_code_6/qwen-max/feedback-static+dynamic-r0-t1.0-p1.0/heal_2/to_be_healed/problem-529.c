@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 5, got 4
-  *  test case 2 failed: expected 17, got 22
   *  test case 0 failed: expected 31, got 53
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
   */
 
 long long jacobsthal_lucas(long n) {
@@ -12,6 +12,10 @@ long long jacobsthal_lucas(long n) {
 
     long long a = 2, b = 1;
     for (long i = 2; i <= n; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2 * 8898502541752731604 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:136,execs:132,op:havoc,rep:8)
+         * UBSan: signed integer overflow: 8898502541752731604 + 6072282894802703026 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:136,execs:132,op:havoc,rep:8)
+         */
         long long c = a + 2 * b;
         a = b;
         b = c;

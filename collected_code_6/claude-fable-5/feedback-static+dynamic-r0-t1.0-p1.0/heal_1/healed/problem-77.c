@@ -7,23 +7,26 @@ int digit_sum_difference(long long number)
 {
     int even_sum = 0;
     int odd_sum = 0;
+    unsigned long long magnitude;
 
     if (number < 0) {
-        number = -number;
+        magnitude = (unsigned long long)(-(number + 1)) + 1ULL;
+    } else {
+        magnitude = (unsigned long long)number;
     }
 
-    if (number == 0) {
+    if (magnitude == 0ULL) {
         return 0;
     }
 
-    while (number > 0) {
-        int digit = (int)(number % 10);
+    while (magnitude > 0ULL) {
+        int digit = (int)(magnitude % 10ULL);
         if ((digit % 2) == 0) {
             even_sum += digit;
         } else {
             odd_sum += digit;
         }
-        number /= 10;
+        magnitude /= 10ULL;
     }
 
     return even_sum - odd_sum;

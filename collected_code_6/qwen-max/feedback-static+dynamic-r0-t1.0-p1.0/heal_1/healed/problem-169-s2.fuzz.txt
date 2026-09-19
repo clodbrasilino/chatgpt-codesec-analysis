@@ -1,1 +1,2 @@
-problem-169-s2.c:17:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:6,execs:15,op:(null),pos:0; likely memory-safety defect
+problem-169-s2.c:11:29:medium:UBSan: signed integer overflow: 2 * 4866752642924153522 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:61,execs:74,op:havoc,rep:16)
+problem-169-s2.c:11:33:medium:UBSan: signed integer overflow: 5052016396815640554 + 4866752642924153522 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:61,execs:74,op:havoc,rep:16)

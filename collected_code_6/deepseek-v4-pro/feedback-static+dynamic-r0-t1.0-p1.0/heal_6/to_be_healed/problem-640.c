@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 'alpha', got ��+
-  *  test case 0 failed: expected 'python', got `�+
-  *  test case 1 failed: expected 'string', got ��+
+  *  test case 0 failed: expected 'python', got @�
+  *  test case 2 failed: expected 'alpha', got ��
+  *  test case 1 failed: expected 'string', got ��
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -25,14 +25,13 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == '(') {
             depth++;
             i++;
-        } else if (str[i] == ')' && depth > 0) {
-            depth--;
-            i++;
-        } else if (depth == 0) {
-            if (str[i] != ')') {
-                result[j++] = str[i];
+        } else if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
             }
             i++;
+        } else if (depth == 0) {
+            result[j++] = str[i++];
         } else {
             i++;
         }
@@ -44,9 +43,9 @@ char *remove_parenthesis_area(const char *str) {
 
 int main(void) {
     const char *test1 = "python";
-    const char *test2 = "string";
-    const char *test3 = "alpha";
-    const char *test4 = "((()))";
+    const char *test2 = "alpha";
+    const char *test3 = "string";
+    const char *test4 = "Nested (paren(thesis) area) test";
     const char *test5 = "Before (unclosed";
     const char *test6 = "After ) unmatched";
     const char *test7 = "Multiple (one) and (two) areas";
@@ -60,8 +59,8 @@ int main(void) {
     char *r6 = remove_parenthesis_area(test6);
     char *r7 = remove_parenthesis_area(test7);
     /* Possible weaknesses found:
-     *  Calling function 'remove_parenthesis_area' returns 0
      *  Assignment 'r8=remove_parenthesis_area(test8)', assigned value is 0
+     *  Calling function 'remove_parenthesis_area' returns 0
      */
     char *r8 = remove_parenthesis_area(test8);
 

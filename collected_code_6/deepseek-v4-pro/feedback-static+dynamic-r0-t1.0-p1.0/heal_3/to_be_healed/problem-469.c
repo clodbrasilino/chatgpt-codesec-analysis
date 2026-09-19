@@ -37,12 +37,15 @@ int maxProfit(int k, const int *prices, int pricesSize) {
     }
 
     for (int i = 0; i < pricesSize; i++) {
+        int prevSell = 0;
         for (int j = 1; j <= k; j++) {
-            int newBuy = sell[j - 1] - prices[i];
+            int oldBuy = buy[j];
+            int newBuy = prevSell - prices[i];
             buy[j] = buy[j] > newBuy ? buy[j] : newBuy;
 
-            int newSell = buy[j] + prices[i];
+            int newSell = oldBuy + prices[i];
             sell[j] = sell[j] > newSell ? sell[j] : newSell;
+            prevSell = sell[j];
         }
     }
 

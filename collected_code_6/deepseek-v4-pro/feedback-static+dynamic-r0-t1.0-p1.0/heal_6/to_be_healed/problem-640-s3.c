@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 'alpha', got  �v
-  *  test case 0 failed: expected 'python', got ��v
-  *  test case 1 failed: expected 'string', got ��v
+  *  test case 1 failed: expected 'string', got �s
+  *  test case 2 failed: expected 'alpha', got �s
+  *  test case 0 failed: expected 'python', got `s
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -26,80 +26,65 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == '(') {
             depth++;
             i++;
-            continue;
-        }
-        if (str[i] == ')') {
+        } else if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
             } else {
                 result[j++] = str[i];
             }
             i++;
-            continue;
+        } else {
+            if (depth == 0) {
+                result[j++] = str[i];
+            }
+            i++;
         }
-        if (depth == 0) {
-            result[j++] = str[i];
-        }
-        i++;
     }
 
     result[j] = '\0';
+
+    char *final_result = realloc(result, j + 1);
+    if (final_result != NULL) {
+        return final_result;
+    }
 
     return result;
 }
 
 int main(void) {
-    const char *test1 = "Hello (this is a test) World";
-    const char *test2 = "No parentheses here";
-    const char *test3 = "Nested ((parentheses) test) example";
-    const char *test4 = "Unmatched (parenthesis";
-    const char *test5 = "Multiple (first) and (second) removal";
+    const char *tests[] = {
+        "alpha",
+        "python",
+        "string",
+        "Hello (this is a test) World",
+        "No parentheses here",
+        "Nested ((parentheses) test) example",
+        "Unmatched (parenthesis",
+        "Multiple (first) and (second) removal",
+        NULL
+    };
 
-    char *result = NULL;
-
-    result = remove_parenthesis_area(test1);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test2);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test3);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test4);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
-    }
-
-    result = remove_parenthesis_area(test5);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free(result);
+    for (int i = 0; tests[i] != NULL; i++) {
+        char *result = remove_parenthesis_area(tests[i]);
+        if (result != NULL) {
+            printf("%s\n", result);
+            free(result);
+        }
     }
 
     /* Possible weaknesses found:
      *  Calling function 'remove_parenthesis_area' returns 0
-     *  Assignment 'result=remove_parenthesis_area(NULL)', assigned value is 0
+     *  Assignment 'null_result=remove_parenthesis_area(NULL)', assigned value is 0
      */
-    result = remove_parenthesis_area(NULL);
+    char *null_result = remove_parenthesis_area(NULL);
     /* Possible weaknesses found:
-     *  Condition 'result==NULL' is always true [knownConditionTrueFalse]
-     *  Condition 'result==NULL' is always true
+     *  Condition 'null_result==NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'null_result==NULL' is always true
      */
-    if (result == NULL) {
+    if (null_result == NULL) {
         printf("NULL input handled\n");
     } else {
-        free(result);
+        free(null_result);
     }
 
     return 0;

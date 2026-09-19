@@ -5,7 +5,7 @@
 void removeLeadingZeros(char *ipAddress) {
     char *token;
     char *saveptr;
-    char *result = (char *)malloc(strlen(ipAddress) + 1);
+    char *result = malloc(strlen(ipAddress) + 1);
     if (result == NULL) {
         return;
     }
@@ -25,7 +25,9 @@ void removeLeadingZeros(char *ipAddress) {
         token = strtok_r(NULL, ".", &saveptr);
     }
 
-    result[strlen(result) - 1] = '\0';
+    if (strlen(result) > 0) {
+        result[strlen(result) - 1] = '\0';
+    }
     strcpy(ipAddress, result);
     free(result);
 }
@@ -33,7 +35,9 @@ void removeLeadingZeros(char *ipAddress) {
 int main() {
     char ipAddress[100];
     printf("Enter an IP address: ");
-    fgets(ipAddress, sizeof(ipAddress), stdin);
+    if (fgets(ipAddress, sizeof(ipAddress), stdin) == NULL) {
+        return 1;
+    }
     ipAddress[strcspn(ipAddress, "\n")] = '\0';
 
     removeLeadingZeros(ipAddress);

@@ -6,7 +6,7 @@
 
 char *camel_to_snake(const char *input) {
     regex_t regex;
-    regmatch_t matches[3];
+    regmatch_t matches[2];
     const char *pattern = "([a-z0-9])([A-Z])";
     size_t input_len = strlen(input);
     size_t output_len = input_len + 1;
@@ -18,7 +18,7 @@ char *camel_to_snake(const char *input) {
         return NULL;
     }
 
-    while (regexec(&regex, cursor, 3, matches, 0) == 0) {
+    while (regexec(&regex, cursor, 2, matches, 0) == 0) {
         output_len++;
         cursor += matches[0].rm_eo;
     }
@@ -32,15 +32,15 @@ char *camel_to_snake(const char *input) {
     cursor = input;
     out_ptr = output;
 
-    while (regexec(&regex, cursor, 3, matches, 0) == 0) {
-        size_t prefix_len = matches[1].rm_eo - matches[1].rm_so;
-        size_t match_len = matches[0].rm_eo - matches[0].rm_so;
+    while (regexec(&regex, cursor, 2, matches, 0) == 0) {
+        size_t prefix_len = matches[1].rm_eo;
+        size_t match_len = matches[0].rm_eo;
 
         memcpy(out_ptr, cursor, prefix_len);
         out_ptr += prefix_len;
 
         *out_ptr++ = '_';
-        *out_ptr++ = tolower((unsigned char)cursor[matches[2].rm_so]);
+        *out_ptr++ = tolower(cursor[matches[1].rm_eo]);
 
         cursor += match_len;
     }
@@ -53,6 +53,9 @@ char *camel_to_snake(const char *input) {
 
 int main(void) {
     const char *tests[] = {
+        "chromeCast",
+        "googleAssistant",
+        "quadCore",
         "camelCase",
         "helloWorld",
         "thisIsATest",

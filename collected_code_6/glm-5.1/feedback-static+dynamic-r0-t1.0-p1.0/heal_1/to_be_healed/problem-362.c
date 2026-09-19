@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 1, got 0
+  *  test case 0 failed: expected 2, got 0
+  *  test case 1 failed: expected 1, got 0
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'list' can be declared as pointer to const [constParameterPointer]

@@ -15,10 +15,13 @@ static int is_perfect_square(long long num)
 
     low = 1;
     high = num / 2;
+    if (high > 3037000499LL) {
+        high = 3037000499LL;
+    }
 
     while (low <= high) {
-        long long mid = low + (high - low) / 2;
-        long long sq = mid * mid;
+        const long long mid = low + (high - low) / 2;
+        const long long sq = mid * mid;
         if (sq == num) {
             return 1;
         } else if (sq < num) {

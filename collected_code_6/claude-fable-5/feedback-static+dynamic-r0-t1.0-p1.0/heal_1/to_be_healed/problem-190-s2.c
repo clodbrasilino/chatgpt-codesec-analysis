@@ -31,6 +31,9 @@ long long countIntegralPoints(long long x1, long long y1, long long x2, long lon
         return 0;
     }
 
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775802 * 9223372036854775802 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:13977,execs:9059,op:havoc,rep:2)
+     */
     return (side_x - 1) * (side_x - 1);
 }
 

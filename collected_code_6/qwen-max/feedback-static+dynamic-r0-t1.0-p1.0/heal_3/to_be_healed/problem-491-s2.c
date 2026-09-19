@@ -1,38 +1,46 @@
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
+ /* Possible weaknesses found:
+  *  'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+  */
 
 double sumOfGP(int a, int n, int r) {
+    double sum = 0;
     if (r == 1) {
-        if (n > INT_MAX / a || (a < 0 && n < INT_MIN / a)) {
-            return 0;
+        if (n > 0) {
+            if (a > 0 && n <= INT_MAX / a) {
+                sum = a * n;
+            } else if (a < 0 && n <= INT_MIN / a) {
+                sum = a * n;
+            } else {
+                sum = a * (double)n;
+            }
+        } else {
+            sum = a * (double)n;
         }
-        return (double)a * n;
-    } else {
-        double numerator = 1 - pow(r, n);
-        double denominator = 1 - r;
-        if (denominator == 0) {
-            return 0;
+    } else if (n >= 0) {
+        /* Possible weaknesses found:
+         *  use of undeclared identifier 'DBL_MAX'
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  'DBL_MAX' undeclared (first use in this function)
+         */
+        if (a * (1 - pow(r, n)) / (1 - r) <= DBL_MAX) {
+            sum = a * (1 - pow(r, n)) / (1 - r);
+        } else {
+            sum = 0; /* or handle the overflow as needed */
         }
-        return (double)a * (numerator / denominator);
     }
+    return sum;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000004,time:1284,execs:593,op:havoc,rep:1; likely memory-safety defect
-  */
 
 int main() {
     int a, n, r;
     printf("Enter the first term, number of terms, and common ratio: ");
     if (scanf("%d %d %d", &a, &n, &r) != 3) {
-        printf("Invalid input.\n");
         return 1;
     }
     double result = sumOfGP(a, n, r);
-    if (result != 0.0) {
-        printf("Sum of the geometric progression is: %.2f\n", result);
-    } else {
-        printf("Error in calculation.\n");
-    }
+    printf("Sum of the geometric progression is: %.2f\n", result);
     return 0;
 }

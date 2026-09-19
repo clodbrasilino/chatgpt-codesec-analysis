@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int count_pairs_with_sum(const int *arr, size_t size, int sum) {
     if (arr == NULL) {
@@ -10,6 +11,10 @@ int count_pairs_with_sum(const int *arr, size_t size, int sum) {
 
     for (size_t i = 0; i < size; i++) {
         for (size_t j = i + 1; j < size; j++) {
+            if ((arr[j] > 0 && arr[i] > INT_MAX - arr[j]) || 
+                (arr[j] < 0 && arr[i] < INT_MIN - arr[j])) {
+                continue;
+            }
             if (arr[i] + arr[j] == sum) {
                 count++;
             }

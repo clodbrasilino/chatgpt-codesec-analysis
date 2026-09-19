@@ -3,12 +3,56 @@
 
 static long long mul_mod(long long a, long long b, long long mod)
 {
-    return (long long)(((unsigned __int128)a * (unsigned __int128)b) % (unsigned __int128)mod);
+    long long result;
+
+    if (mod <= 0)
+    {
+        return 0;
+    }
+    a %= mod;
+    b %= mod;
+    if (a < 0)
+    {
+        a += mod;
+    }
+    if (b < 0)
+    {
+        b += mod;
+    }
+    result = 0;
+    while (b > 0)
+    {
+        if (b & 1)
+        {
+            result += a;
+            if (result >= mod)
+            {
+                result -= mod;
+            }
+        }
+        a <<= 1;
+        if (a >= mod)
+        {
+            a -= mod;
+        }
+        b >>= 1;
+    }
+    return result;
 }
 
 static long long power_mod(long long base, long long exp, long long mod)
 {
-    long long result = 1 % mod;
+    long long result;
+
+    if (mod <= 0)
+    {
+        return 0;
+    }
+    if (mod == 1)
+    {
+        return 0;
+    }
+    result = 1;
     base = base % mod;
     if (base < 0)
     {
@@ -28,6 +72,15 @@ static long long power_mod(long long base, long long exp, long long mod)
 
 static long long mod_inverse(long long a, long long p)
 {
+    a %= p;
+    if (a < 0)
+    {
+        a += p;
+    }
+    if (a == 0)
+    {
+        return 0;
+    }
     return power_mod(a, p - 2, p);
 }
 
@@ -39,13 +92,17 @@ static int is_prime(long long p)
     {
         return 0;
     }
-    if (p % 2 == 0)
+    if (p == 2 || p == 3)
     {
-        return p == 2;
+        return 1;
     }
-    for (i = 3; i <= p / i; i += 2)
+    if (p % 2 == 0 || p % 3 == 0)
     {
-        if (p % i == 0)
+        return 0;
+    }
+    for (i = 5; i <= p / i; i += 6)
+    {
+        if (p % i == 0 || p % (i + 2) == 0)
         {
             return 0;
         }
@@ -57,9 +114,14 @@ static long long ncr_small(long long n, long long r, long long p)
 {
     long long numerator;
     long long denominator;
+    long long inv;
     long long i;
 
-    if (r < 0 || r > n)
+    if (r < 0 || n < 0)
+    {
+        return 0;
+    }
+    if (r > n)
     {
         return 0;
     }
@@ -74,73 +136,6 @@ static long long ncr_small(long long n, long long r, long long p)
 
     numerator = 1 % p;
     denominator = 1 % p;
-    for (i = 1; i <= r; i++)
+    for (i = 0; i < r; i++)
     {
-        numerator = mul_mod(numerator, (n - r + i) % p, p);
-        denominator = mul_mod(denominator, i % p, p);
-    }
-
-    if (denominator == 0)
-    {
-        return 0;
-    }
-
-    return mul_mod(numerator, mod_inverse(denominator, p), p);
-}
-
-static long long ncr_mod_p(long long n, long long r, long long p)
-{
-    long long result = 1 % p;
-
-    if (r < 0 || r > n)
-    {
-        return 0;
-    }
-
-    while (n > 0 || r > 0)
-    {
-        long long ni = n % p;
-        long long ri = r % p;
-        if (ri > ni)
-        {
-            return 0;
-        }
-        result = mul_mod(result, ncr_small(ni, ri, p), p);
-        n /= p;
-        r /= p;
-    }
-
-    return result;
-}
-
-int main(void)
-{
-    long long n;
-    long long r;
-    long long p;
-    long long result;
-
-    printf("Enter n, r, and prime p: ");
-    if (scanf("%lld %lld %lld", &n, &r, &p) != 3)
-    {
-        fprintf(stderr, "Error: invalid input\n");
-        return EXIT_FAILURE;
-    }
-
-    if (n < 0 || r < 0 || p <= 1)
-    {
-        fprintf(stderr, "Error: n and r must be non-negative, p must be a prime greater than 1\n");
-        return EXIT_FAILURE;
-    }
-
-    if (!is_prime(p))
-    {
-        fprintf(stderr, "Error: p must be a prime number\n");
-        return EXIT_FAILURE;
-    }
-
-    result = ncr_mod_p(n, r, p);
-    printf("C(%lld, %lld) mod %lld = %lld\n", n, r, p, result);
-
-    return EXIT_SUCCESS;
-}
+        long long num

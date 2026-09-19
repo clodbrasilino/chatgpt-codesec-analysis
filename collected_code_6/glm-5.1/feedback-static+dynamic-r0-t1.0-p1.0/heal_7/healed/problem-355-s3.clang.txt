@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-355-s3.c:14:38: error: call to undeclared library function 'sqrt' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         long long y_max = (long long)sqrt((double)y_max_sq);
+      |                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-355-s3.c:14:38: note: include the header <math.h> or explicitly provide a declaration for 'sqrt'
+1 error generated.

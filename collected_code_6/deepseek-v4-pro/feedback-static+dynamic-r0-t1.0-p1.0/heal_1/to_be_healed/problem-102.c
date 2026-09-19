@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
-  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
-  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
   */
 
 char *snake_to_camel(const char *snake) {
@@ -93,8 +93,8 @@ int main(void) {
      */
     result = snake_to_camel(test8);
     /* Possible weaknesses found:
-     *  Condition 'result' is always false [knownConditionTrueFalse]
      *  Condition 'result' is always false
+     *  Condition 'result' is always false [knownConditionTrueFalse]
      */
     printf("NULL -> %s\n", result ? result : "(null)");
     free(result);

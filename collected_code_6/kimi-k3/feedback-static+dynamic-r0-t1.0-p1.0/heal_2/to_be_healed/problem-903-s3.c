@@ -3,8 +3,8 @@
 #include <inttypes.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 4, got <no output>
-  *  test case 0 failed: expected 1, got <no output>
   *  test case 2 failed: expected 17, got <no output>
+  *  test case 0 failed: expected 1, got <no output>
   */
 
 static uint64_t count_unset_bits(uint64_t n)
@@ -37,6 +37,9 @@ static uint64_t count_unset_bits(uint64_t n)
 
     return total_unset;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:200,execs:106,op:havoc,rep:6; likely memory-safety defect
+  */
 
 int main(void)
 {

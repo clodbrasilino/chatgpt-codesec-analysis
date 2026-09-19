@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected True, got <no output>
-  *  test case 0 failed: expected False, got <no output>
-  *  test case 2 failed: expected True, got <no output>
+  *  test case 2 failed: expected True, got 0
+  *  test case 0 failed: expected False, got 1
   */
 
 bool is_valid_triangle(int a, int b, int c) {
+    if (a < 0 || b < 0 || c < 0) return false;
+    if (a > INT_MAX - b) return false;
+    if (a > INT_MAX - c) return false;
+    if (b > INT_MAX - c) return false;
     return (a + b > c) && (a + c > b) && (b + c > a);
 }
 

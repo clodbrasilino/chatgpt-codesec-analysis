@@ -2,8 +2,8 @@
 
 long long cubeSumOdd(int n) {
     long long sum = 0;
-    for (int i = 1; i <= n; i++) {
-        long long odd = 2LL * i - 1;
+    for (int i = 0; i < n; i++) {
+        long long odd = 2LL * i + 1;
         sum += odd * odd * odd;
     }
     return sum;

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <errno.h>
 
 char* increment_numeric_values(const char* input, int k) {
     if (input == NULL) {
@@ -10,8 +11,8 @@ char* increment_numeric_values(const char* input, int k) {
     }
 
     size_t len = strlen(input);
-    size_t result_capacity = len * 4 + 1;
-    char* result = malloc(result_capacity);
+    size_t result_size = len * 2 + 32;
+    char* result = malloc(result_size);
     if (result == NULL) {
         return NULL;
     }
@@ -26,6 +27,16 @@ char* increment_numeric_values(const char* input, int k) {
                 i++;
             }
             size_t num_len = i - start;
+
+            int leading_zeros = 0;
+            for (size_t j = start; j < i; j++) {
+                if (input[j] == '0') {
+                    leading_zeros++;
+                } else {
+                    break;
+                }
+            }
+
             char* num_str = malloc(num_len + 1);
             if (num_str == NULL) {
                 free(result);
@@ -34,38 +45,95 @@ char* increment_numeric_values(const char* input, int k) {
             memcpy(num_str, input + start, num_len);
             num_str[num_len] = '\0';
 
-            long long num = strtoll(num_str, NULL, 10);
-            long long new_num = num + k;
-
-            if (new_num < 0) {
-                if (num_len > 1 && input[start] == '0') {
-                    free(num_str);
-                    free(result);
-                    return NULL;
-                }
-            }
-
-            int needed = snprintf(NULL, 0, "%lld", new_num);
-            if (needed < 0) {
+            char* endptr;
+            errno = 0;
+            long long num = strtoll(num_str, &endptr, 10);
+            if (errno == ERANGE || endptr == num_str || *endptr != '\0') {
                 free(num_str);
                 free(result);
                 return NULL;
             }
 
-            if ((size_t)needed >= result_capacity - res_pos) {
-                size_t new_capacity = result_capacity * 2 + needed + 1;
-                char* new_result = realloc(result, new_capacity);
-                if (new_result == NULL) {
+            long long new_num;
+            if (k > 0 && num > LLONG_MAX - k) {
+                new_num = LLONG_MAX;
+            } else if (k < 0 && num < LLONG_MIN - k) {
+                new_num = LLONG_MIN;
+            } else {
+                new_num = num + k;
+            }
+
+            while (res_pos + num_len + 32 >= result_size) {
+                result_size *= 2;
+                char* tmp = realloc(result, result_size);
+                if (tmp == NULL) {
                     free(num_str);
                     free(result);
                     return NULL;
                 }
-                result = new_result;
-                result_capacity = new_capacity;
+                result = tmp;
             }
 
-            int written = snprintf(result + res_pos, result_capacity - res_pos, "%lld", new_num);
-            if (written < 0) {
+            int written;
+            if (new_num == 0 && num_len > 1 && leading_zeros == (int)num_len) {
+                written = 0;
+                for (int z = 0; z < (int)num_len; z++) {
+                    result[res_pos + written] = '0';
+                    written++;
+                }
+            } else if (new_num == 0) {
+                written = snprintf(result + res_pos, result_size - res_pos, "0");
+            } else if (leading_zeros > 0 && new_num > 0) {
+                written = 0;
+                long long temp = new_num;
+                int digits = 0;
+                while (temp > 0) {
+                    temp /= 10;
+                    digits++;
+                }
+                int total_digits = leading_zeros + digits;
+                if (total_digits > (int)num_len) total_digits = (int)num_len;
+                int zeros_to_print = total_digits - digits;
+                for (int z = 0; z < zeros_to_print; z++) {
+                    result[res_pos + written] = '0';
+                    written++;
+                }
+                int printed = snprintf(result + res_pos + written, result_size - res_pos - written, "%lld", new_num);
+                if (printed < 0 || (size_t)printed >= result_size - res_pos - written) {
+                    free(num_str);
+                    free(result);
+                    return NULL;
+                }
+                written += printed;
+            } else if (leading_zeros > 0 && new_num < 0) {
+                written = 0;
+                result[res_pos + written] = '-';
+                written++;
+                long long temp = -new_num;
+                int digits = 0;
+                while (temp > 0) {
+                    temp /= 10;
+                    digits++;
+                }
+                int total_digits = leading_zeros + digits;
+                if (total_digits > (int)num_len - 1) total_digits = (int)num_len - 1;
+                int zeros_to_print = total_digits - digits;
+                for (int z = 0; z < zeros_to_print; z++) {
+                    result[res_pos + written] = '0';
+                    written++;
+                }
+                int printed = snprintf(result + res_pos + written, result_size - res_pos - written, "%lld", -new_num);
+                if (printed < 0 || (size_t)printed >= result_size - res_pos - written) {
+                    free(num_str);
+                    free(result);
+                    return NULL;
+                }
+                written += printed;
+            } else {
+                written = snprintf(result + res_pos, result_size - res_pos, "%lld", new_num);
+            }
+
+            if (written < 0 || (size_t)written >= result_size - res_pos) {
                 free(num_str);
                 free(result);
                 return NULL;
@@ -73,15 +141,14 @@ char* increment_numeric_values(const char* input, int k) {
             res_pos += written;
             free(num_str);
         } else {
-            if (res_pos >= result_capacity - 1) {
-                size_t new_capacity = result_capacity * 2;
-                char* new_result = realloc(result, new_capacity);
-                if (new_result == NULL) {
+            if (res_pos + 1 >= result_size) {
+                result_size *= 2;
+                char* tmp = realloc(result, result_size);
+                if (tmp == NULL) {
                     free(result);
                     return NULL;
                 }
-                result = new_result;
-                result_capacity = new_capacity;
+                result = tmp;
             }
             result[res_pos++] = input[i];
             i++;
@@ -92,21 +159,17 @@ char* increment_numeric_values(const char* input, int k) {
     return result;
 }
 
-int main(int argc, char* const argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <string> <k>\n", argv[0]);
         return 1;
     }
 
     char* endptr;
+    errno = 0;
     long k_val = strtol(argv[2], &endptr, 10);
-    if (endptr == argv[2] || *endptr != '\0') {
+    if (endptr == argv[2] || *endptr != '\0' || errno == ERANGE) {
         fprintf(stderr, "Invalid integer for k\n");
-        return 1;
-    }
-
-    if (k_val > INT_MAX || k_val < INT_MIN) {
-        fprintf(stderr, "k out of range\n");
         return 1;
     }
 

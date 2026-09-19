@@ -1,8 +1,13 @@
 #include <stdio.h>
+#include <stdint.h>
 
-int sumOfOddFactors(int n) {
-    int sum = 0;
+int64_t sumOfOddFactors(int n) {
+    int64_t sum = 0;
     int i;
+
+    if (n <= 0) {
+        return 0;
+    }
 
     for (i = 1; i * i <= n; i++) {
         if (n % i == 0) {
@@ -27,7 +32,7 @@ int main(void) {
         return 1;
     }
 
-    printf("Sum of odd factors: %d\n", sumOfOddFactors(num));
+    printf("Sum of odd factors: %ld\n", sumOfOddFactors(num));
 
     return 0;
 }

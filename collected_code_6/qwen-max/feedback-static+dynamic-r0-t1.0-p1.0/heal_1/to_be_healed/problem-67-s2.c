@@ -16,6 +16,9 @@ unsigned long long bell_number(int n) {
     }
     return bell[n][0];
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:486,execs:210,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main() {
     int n;

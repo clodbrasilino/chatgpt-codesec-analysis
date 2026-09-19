@@ -1,1 +1,4 @@
-problem-339-s3.c:42:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:9,execs:15,op:(null),pos:0; likely memory-safety defect
+problem-339-s3.c:27:17:medium:UBSan: index 1555 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
+problem-339-s3.c:28:21:medium:UBSan: index 1555 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
+problem-339-s3.c:28:50:medium:UBSan: index 1558 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
+problem-339-s3.c:37:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:777,execs:332,op:havoc,rep:2; likely memory-safety defect

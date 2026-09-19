@@ -11,21 +11,22 @@ int countDigits(int n) {
 }
 
 int isArmstrong(int num) {
-    int n = 0, result = 0, temp = num;
-
-    while (temp != 0) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'remainder' can be reduced. [variableScope]
+     */
+    int n = 0, result = 0, remainder;
+    for (int originalNum = num; originalNum != 0; originalNum /= 10) {
         n++;
-        temp /= 10;
     }
 
-    temp = num;
-    while (temp != 0) {
-        int remainder = temp % 10;
+    for (int originalNum = num; originalNum != 0; originalNum /= 10) {
+        remainder = originalNum % 10;
         /* Possible weaknesses found:
          * UBSan: 3.48679e+09 is outside the range of representable values of type 'int'
+         * UBSan: 3.48783e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1243,execs:1169,op:havoc,rep:8)
+         * UBSan: 3.48678e+09 is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000001,time:2577,execs:2375,op:havoc,rep:10)
          */
         result += pow(remainder, n);
-        temp /= 10;
     }
 
     return (result == num);

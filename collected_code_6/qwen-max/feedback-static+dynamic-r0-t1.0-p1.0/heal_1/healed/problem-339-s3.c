@@ -18,30 +18,35 @@ int findMaxDivisor(int start, int end) {
     }
 
     int max_divisor = 1;
-    int divisor_count[1001] = {0};
+    int *divisor_count = (int *)calloc(1001, sizeof(int));
+    if (divisor_count == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
 
     for (int i = start; i <= end; ++i) {
         for (int j = i + 1; j <= end; ++j) {
             int current_gcd = gcd(i, j);
             if (current_gcd > 1) {
                 divisor_count[current_gcd]++;
-                if (divisor_count[current_gcd] >= divisor_count[max_divisor]) {
-                    if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
-                        continue;
-                    }
+                if (divisor_count[current_gcd] > divisor_count[max_divisor]) {
                     max_divisor = current_gcd;
                 }
             }
         }
     }
 
+    free(divisor_count);
     return max_divisor;
 }
 
 int main() {
     int start, end;
     printf("Enter the start and end of the interval: ");
-    scanf("%d %d", &start, &end);
+    if (scanf("%d %d", &start, &end) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
 
     int result = findMaxDivisor(start, end);
     printf("The maximum occurring divisor in the interval is: %d\n", result);

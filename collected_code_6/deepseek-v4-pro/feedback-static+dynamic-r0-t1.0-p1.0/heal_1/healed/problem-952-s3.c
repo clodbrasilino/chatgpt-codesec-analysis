@@ -1,24 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-long long power_mod(long long base, long long exp, long long mod) {
-    long long result = 1;
+int64_t mul_mod(int64_t a, int64_t b, int64_t mod) {
+    int64_t result = 0;
+    a %= mod;
+    b %= mod;
+    while (b > 0) {
+        if (b & 1) {
+            result = (result + a) % mod;
+        }
+        a = (a * 2) % mod;
+        b >>= 1;
+    }
+    return result;
+}
+
+int64_t power_mod(int64_t base, int64_t exp, int64_t mod) {
+    int64_t result = 1;
     base %= mod;
     while (exp > 0) {
         if (exp & 1) {
-            result = (result * base) % mod;
+            result = mul_mod(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mul_mod(base, base, mod);
         exp >>= 1;
     }
     return result;
 }
 
-long long mod_inverse(long long a, long long p) {
+int64_t mod_inverse(int64_t a, int64_t p) {
     return power_mod(a, p - 2, p);
 }
 
-long long ncr_mod_p(long long n, long long r, long long p) {
+int64_t ncr_mod_p(int64_t n, int64_t r, int64_t p) {
     if (r > n) {
         return 0;
     }
@@ -29,19 +44,19 @@ long long ncr_mod_p(long long n, long long r, long long p) {
         r = n - r;
     }
 
-    long long numerator = 1;
-    long long denominator = 1;
+    int64_t numerator = 1;
+    int64_t denominator = 1;
 
-    for (long long i = 0; i < r; i++) {
-        numerator = (numerator * ((n - i) % p)) % p;
-        denominator = (denominator * ((i + 1) % p)) % p;
+    for (int64_t i = 0; i < r; i++) {
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1) % p, p);
     }
 
-    return (numerator * mod_inverse(denominator, p)) % p;
+    return mul_mod(numerator, mod_inverse(denominator, p), p);
 }
 
 int main(void) {
-    long long n, r, p;
+    int64_t n, r, p;
 
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
         return 1;

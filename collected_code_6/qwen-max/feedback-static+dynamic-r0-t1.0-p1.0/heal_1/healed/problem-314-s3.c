@@ -24,17 +24,39 @@ int findMaxSum(int** grid, int n) {
 int main() {
     int n;
     printf("Enter the number of columns: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
 
     int** grid = (int**)malloc(2 * sizeof(int*));
+    if (grid == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
     for (int i = 0; i < 2; i++) {
         grid[i] = (int*)malloc(n * sizeof(int));
+        if (grid[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int j = 0; j < i; j++) {
+                free(grid[j]);
+            }
+            free(grid);
+            return 1;
+        }
     }
 
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < n; j++) {
             printf("Enter element for row %d, column %d: ", i, j);
-            scanf("%d", &grid[i][j]);
+            if (scanf("%d", &grid[i][j]) != 1) {
+                fprintf(stderr, "Invalid input\n");
+                for (int k = 0; k < 2; k++) {
+                    free(grid[k]);
+                }
+                free(grid);
+                return 1;
+            }
         }
     }
 

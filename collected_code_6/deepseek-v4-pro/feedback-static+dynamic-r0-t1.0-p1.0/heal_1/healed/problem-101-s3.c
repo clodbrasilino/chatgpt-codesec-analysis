@@ -15,13 +15,17 @@ int find_kth_element(const int *arr, int size, int k) {
         temp[i] = arr[i];
     }
     
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - i - 1; j++) {
-            if (temp[j] > temp[j + 1]) {
-                int swap = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = swap;
+    for (int i = 0; i < k + 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < size; j++) {
+            if (temp[j] < temp[min_idx]) {
+                min_idx = j;
             }
+        }
+        if (min_idx != i) {
+            int swap = temp[i];
+            temp[i] = temp[min_idx];
+            temp[min_idx] = swap;
         }
     }
     

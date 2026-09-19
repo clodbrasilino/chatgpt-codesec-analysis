@@ -43,13 +43,11 @@ int main(void) {
     unsigned long long start, end;
     int result;
 
-    printf("Enter start of range (decimal): ");
     if (scanf("%llu", &start) != 1) {
         fprintf(stderr, "Invalid input for start\n");
         return EXIT_FAILURE;
     }
 
-    printf("Enter end of range (decimal): ");
     if (scanf("%llu", &end) != 1) {
         fprintf(stderr, "Invalid input for end\n");
         return EXIT_FAILURE;
@@ -62,7 +60,7 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    printf("Count of hexadecimal numbers in range: %d\n", result);
+    printf("%d\n", result);
 
     return EXIT_SUCCESS;
 }

@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 double average_of_cubes(int n) {
     if (n <= 0) return 0.0;
 
-    long long sum = 0;
+    int64_t sum = 0;
     for (int i = 1; i <= n; ++i) {
-        sum += (long long)i * i * i;
+        int64_t cube = (int64_t)i * (int64_t)i * (int64_t)i;
+        if (__builtin_add_overflow(sum, cube, &sum)) {
+            fprintf(stderr, "Integer overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
     }
     return (double)sum / n;
 }

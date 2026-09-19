@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
+  */
 
 int* add_consecutive_numbers(const int* list, size_t size, size_t* result_size) {
     if (list == NULL || result_size == NULL) {

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 4, got <no output>
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 0 failed: expected 4, got <no output>
+  *  test case 0 failed: expected 4, got 0
+  *  test case 1 failed: expected 2, got 0
+  *  test case 2 failed: expected 4, got 0
   */
 
 int find_missing(const int *arr, size_t size) {
@@ -35,7 +35,7 @@ int find_missing(const int *arr, size_t size) {
 }
 
 int main(void) {
-    int arr1[] = {0, 1, 2, 4, 5, 6};
+    int arr1[] = {0, 1, 3, 4, 5, 6};
     size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
     int missing1 = find_missing(arr1, size1);
     printf("%d\n", missing1);
@@ -45,7 +45,7 @@ int main(void) {
     int missing2 = find_missing(arr2, size2);
     printf("%d\n", missing2);
 
-    int arr3[] = {0, 1, 2, 3, 4};
+    int arr3[] = {0, 1, 2, 3, 5};
     size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
     int missing3 = find_missing(arr3, size3);
     printf("%d\n", missing3);

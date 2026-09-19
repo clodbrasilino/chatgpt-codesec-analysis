@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 0.54, got 3
+  *  test case 2 failed: expected 0.56, got 3
+  *  test case 1 failed: expected 0.69, got 5
+  */
 
 int positive_count(const int *array, size_t size) {
     int count = 0;

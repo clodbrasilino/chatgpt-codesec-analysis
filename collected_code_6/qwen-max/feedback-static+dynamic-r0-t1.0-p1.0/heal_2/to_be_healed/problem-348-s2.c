@@ -16,26 +16,26 @@ int count_sequences(long long arr[], int n, int k, long long dp[51][51][201]) {
     }
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:420,execs:65,op:havoc,rep:3; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:21,execs:21,op:havoc,rep:15; likely memory-safety defect
   */
 
 int main() {
     long long arr[] = {1, 2, 3};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int k_target;
-    printf("Enter the length of the sequence: ");
-    scanf("%d", &k_target);
-
+    int k;
+    printf("Enter the value of k: ");
+    scanf("%d", &k);
+    
     long long dp[51][51][201];
     for (int i = 0; i < 51; ++i) {
         for (int j = 0; j < 51; ++j) {
-            for (int k = 0; k < 201; ++k) {
-                dp[i][j][k] = -1;
+            for (int m = 0; m < 201; ++m) {
+                dp[i][j][m] = -1;
             }
         }
     }
 
-    int result = count_sequences(arr, n, k_target, dp);
+    int result = count_sequences(arr, n, k, dp);
     printf("Total sequences: %d\n", result);
 
     return 0;

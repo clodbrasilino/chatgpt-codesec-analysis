@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got 2
   *  test case 2 failed: expected 3, got 4
+  *  test case 0 failed: expected 1, got 2
   */
 
 int min_operations(int a, int b) {
@@ -10,7 +10,7 @@ int min_operations(int a, int b) {
         return -1;
     }
     if (a == b) {
-        return 0;
+        return 1;
     }
     if (a > b) {
         int temp = a;
@@ -18,14 +18,17 @@ int min_operations(int a, int b) {
         b = temp;
     }
     int ops = 0;
-    while (a != 0 && b % a != 0) {
+    while (b % a != 0) {
         ops += b / a;
         int rem = b % a;
         b = a;
         a = rem;
-    }
-    if (a == 0) {
-        return -1;
+        /* Possible weaknesses found:
+         *  Condition 'a==0' is always false [knownConditionTrueFalse]
+         */
+        if (a == 0) {
+            return -1;
+        }
     }
     ops += b / a;
     return ops;

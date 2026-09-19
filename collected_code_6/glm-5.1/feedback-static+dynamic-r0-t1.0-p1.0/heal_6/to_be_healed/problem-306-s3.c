@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 11, got 9
-  *  test case 1 failed: expected 7, got 102
+  *  test case 0 failed: expected 11, got 6
+  *  test case 2 failed: expected 71, got 45
+  *  test case 1 failed: expected 7, got 0
   */
 
 int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
-    if (arr == NULL || n <= 0 || i < 0 || k < 0 || i >= n || k >= n) {
+    if (arr == NULL || n <= 0 || i < 0 || k < 0 || i >= k || k >= n) {
         return 0;
     }
 
@@ -29,32 +30,29 @@ int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
         }
     }
 
-    if (k <= i) {
+    if (arr[k] <= arr[i]) {
         free(dp);
         return 0;
     }
 
-    int sum = dp[i] + dp[k];
+    int max_i = 0;
+    for (int j = 0; j <= i; j++) {
+        if (arr[j] < arr[k] && dp[j] > max_i) {
+            max_i = dp[j];
+        }
+    }
 
     free(dp);
-    return sum;
+    return max_i + arr[k];
 }
 
 int main() {
-    int arr1[] = {1, 101, 2, 3, 100, 4, 5};
-    int n1 = sizeof(arr1) / sizeof(arr1[0]);
-    int result1 = max_sum_increasing_subsequence(arr1, n1, 0, 1);
-    printf("%d\n", result1);
+    int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    int arr2[] = {1, 101, 2, 3, 100, 4, 5};
-    int n2 = sizeof(arr2) / sizeof(arr2[0]);
-    int result2 = max_sum_increasing_subsequence(arr2, n2, 2, 3);
-    printf("%d\n", result2);
-
-    int arr3[] = {1, 101, 2, 3, 100, 4, 5};
-    int n3 = sizeof(arr3) / sizeof(arr3[0]);
-    int result3 = max_sum_increasing_subsequence(arr3, n3, 4, 6);
-    printf("%d\n", result3);
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 1, 2));
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 3, 4));
+    printf("%d\n", max_sum_increasing_subsequence(arr, n, 4, 6));
 
     return 0;
 }

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-20-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-20-s2.c:11:41: error: Shifting 64-bit value by 64 bits is undefined behaviour [shiftTooManyBits]
+        unsigned long long term = (1ULL << i) - 1;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-20-s2.c:10:38: note: Assuming that condition 'i<=64' is not redundant
+    for (unsigned long long i = 1; i <= 64; i++) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-20-s2.c:11:41: note: Shift
+        unsigned long long term = (1ULL << i) - 1;
+                                        ^

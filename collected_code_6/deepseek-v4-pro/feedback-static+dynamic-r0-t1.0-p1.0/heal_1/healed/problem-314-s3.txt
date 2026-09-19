@@ -8,10 +8,10 @@ int max_sum_2xn(int** grid, int n) {
     int include = 0, exclude = 0;
     
     for (int i = 0; i < n; i++) {
-        int col2 = grid[0][i] + grid[1][i];
+        long long col2 = (long long)grid[0][i] + (long long)grid[1][i];
         
         int new_exclude = (include > exclude) ? include : exclude;
-        int new_include = exclude + col2;
+        int new_include = exclude + (int)col2;
         exclude = new_exclude;
         include = new_include;
     }

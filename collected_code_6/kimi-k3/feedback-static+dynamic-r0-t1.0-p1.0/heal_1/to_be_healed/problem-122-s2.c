@@ -3,9 +3,9 @@
 #include <string.h>
 #include <limits.h>
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 2664, got 0
   *  test case 0 failed: expected 30, got 0
   *  test case 1 failed: expected 273, got 1
-  *  test case 2 failed: expected 2664, got 0
   */
 
 /* Possible weaknesses found:
@@ -130,6 +130,9 @@ int find_nth_smart_number(int n)
     free(primes);
     return num;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:1003,execs:394,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main(void)
 {

@@ -1,10 +1,12 @@
 ```c
 #include <stdio.h>
 #include <math.h>
+#include <limits.h>
 
 int findFirstDigit(long num) {
-    if (num == 0) return 0;
     if (num < 0) num = -num;
+    if (num == 0) return 0;
+    if (num == LONG_MAX) return 9;
     int digits = (int)log10(num);
     return (int)(num / pow(10, digits));
 }

@@ -41,6 +41,9 @@ static uint64_t modInverse(uint64_t n, uint64_t mod) {
     int64_t x, y;
     extendedGcd(n, mod, &x, &y);
     int64_t res = x % (int64_t)mod;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -5705555555555555555 + -7035632962598440505 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000009,time:7729,execs:4142,op:havoc,rep:4)
+     */
     if (res < 0) res += (int64_t)mod;
     return (uint64_t)res;
 }

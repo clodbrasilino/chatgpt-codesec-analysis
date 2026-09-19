@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int min_operations(int num1, int num2) {
-    int steps = 0;
-    while (num2 > num1) {
-        if (num2 % 2 == 0) {
-            num2 /= 2;
-        } else {
-            num2++;
-        }
+    long long diff = llabs((long long)num1 - (long long)num2);
+    long long steps = 0;
+    long long current_sum = 0;
+
+    while (current_sum < diff || (current_sum - diff) % 2 != 0) {
         steps++;
+        current_sum += steps;
     }
-    return steps + (num1 - num2);
+
+    return (int)steps;
 }
 
 int main(void) {

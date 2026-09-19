@@ -1,53 +1,102 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static long long mul_mod(long long a, long long b, long long m)
+static long long mulmod(long long a, long long b, long long mod)
 {
-    long long result = 0;
-    a %= m;
-    if (a < 0)
-        a += m;
-    b %= m;
-    if (b < 0)
-        b += m;
-    while (b > 0) {
-        if (b & 1) {
-            result += a;
-            if (result >= m)
-                result -= m;
+    return (long long)((unsigned __int128)a * (unsigned __int128)b %
+                       (unsigned __int128)mod);
+}
+
+long long power(long long base, long long exp, long long mod)
+{
+    long long result = 1 % mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mulmod(result, base, mod);
         }
-        a <<= 1;
-        if (a >= m)
-            a -= m;
-        b >>= 1;
+        exp >>= 1;
+        base = mulmod(base, base, mod);
     }
     return result;
 }
 
-/* Possible weaknesses found:
- *  Parameter 'argv' can be declared as const array [constParameter]
- */
-int main(int argc, char *argv[])
+long long mod_inverse(long long a, long long p)
 {
-    long long a, b, m;
+    return power(a, p - 2, p);
+}
 
-    if (argc == 4) {
-        a = strtoll(argv[1], NULL, 10);
-        b = strtoll(argv[2], NULL, 10);
-        m = strtoll(argv[3], NULL, 10);
-    } else {
-        if (scanf("%lld %lld %lld", &a, &b, &m) != 3) {
-            fprintf(stderr, "Usage: %s a b m\n", argv[0]);
-            return EXIT_FAILURE;
-        }
+static long long ncr_small(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+    if (r == 0 || r == n) {
+        return 1 % p;
+    }
+    if (r > n - r) {
+        r = n - r;
     }
 
-    if (m <= 0) {
-        fprintf(stderr, "Modulus must be positive\n");
+    long long result = 1 % p;
+
+    for (long long i = 0; i < r; i++) {
+        result = mulmod(result, (n - i) % p, p);
+        result = mulmod(result, mod_inverse((i + 1) % p, p), p);
+    }
+
+    return result;
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 25, got <no output>
+  *  test case 0 failed: expected 6, got <no output>
+  *  test case 2 failed: expected 10, got <no output>
+  */
+
+long long ncr_mod_p(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+
+    long long result = 1 % p;
+
+    while (n > 0 || r > 0) {
+        long long ni = n % p;
+        long long ri = r % p;
+
+        if (ri > ni) {
+            return 0;
+        }
+
+        result = mulmod(result, ncr_small(ni, ri, p), p);
+
+        n /= p;
+        r /= p;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long n, r, p;
+
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
 
-    printf("(%lld * %lld) mod %lld = %lld\n", a, b, m, mul_mod(a, b, m));
+    if (n < 0 || r < 0 || p <= 1) {
+        fprintf(stderr, "Invalid values: require n >= 0, r >= 0, p > 1\n");
+        return EXIT_FAILURE;
+    }
+
+    long long answer = ncr_mod_p(n, r, p);
+    printf("%lld\n", answer);
 
     return EXIT_SUCCESS;
 }

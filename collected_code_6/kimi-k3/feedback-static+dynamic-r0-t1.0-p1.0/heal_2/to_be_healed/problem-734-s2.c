@@ -2,8 +2,8 @@
 #include <stdlib.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 5, got <no output>
-  *  test case 2 failed: expected 84, got <no output>
   *  test case 0 failed: expected 20, got <no output>
+  *  test case 2 failed: expected 84, got <no output>
   */
 
 long long sumOfSubarrayProducts(const int *arr, int n) {
@@ -16,7 +16,13 @@ long long sumOfSubarrayProducts(const int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 5860100855664 * 149477148 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000010,time:11755,execs:4672,op:havoc,rep:4)
+             */
             product *= arr[j];
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 8954201229096669058 + 8415830224286769344 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000010,time:11755,execs:4672,op:havoc,rep:4)
+             */
             totalSum += product;
         }
     }

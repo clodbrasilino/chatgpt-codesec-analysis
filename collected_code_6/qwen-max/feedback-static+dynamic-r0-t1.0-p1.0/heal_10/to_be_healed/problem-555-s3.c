@@ -4,36 +4,33 @@
 #include <limits.h>
 
 long long sum_of_cubes(long n) {
-    if (n > 0x1FFFFF || n < -0x1FFFFF) return 0;
-    if (n > 0 && LLONG_MAX / n / n < n + 1) return 0;
-    if (n < 0 && LLONG_MIN / n / n > n + 1) return 0;
-    int64_t temp = (n * (n + 1)) / 2;
     /* Possible weaknesses found:
-     * UBSan: signed integer overflow: 55555611111 * 55555611111 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:609,execs:260,op:havoc,rep:5)
+     * UBSan: signed integer overflow: 3333333332333 * 3333333332333 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:129,execs:156,op:havoc,rep:2)
      */
-    int64_t temp_sq = temp * temp;
-    if (temp == 0) return 0;
-    return temp_sq;
+    if (n > 0 && (unsigned long long)n * n * n > ULLONG_MAX / (n * n)) return 0;
+    unsigned long long result = (unsigned long long)n * (n + 1) / 2;
+    if (result * result > ULLONG_MAX) return 0;
+    return (long long)(result * result);
 }
 
 long long sum_of_numbers(long n) {
-    if (n > 0x1FFFFF || n < -0x1FFFFF) return 0;
-    if (n > 0 && LLONG_MAX / n < 2) return 0;
-    if (n < 0 && LLONG_MIN / n > 2) return 0;
-    int64_t temp = n * (n + 1);
-    if (temp % 2 != 0) return 0;
-    return temp / 2;
+    if (n > 0 && (unsigned long long)n * (n + 1) > ULLONG_MAX / 2) return 0;
+    unsigned long long result = (unsigned long long)n * (n + 1) / 2;
+    return (long long)result;
 }
 
 long long difference(long n) {
-    return sum_of_cubes(n) - sum_of_numbers(n);
+    long long cubes = sum_of_cubes(n);
+    long long numbers = sum_of_numbers(n);
+    if (cubes < 0 || numbers < 0) return 0;
+    return cubes - numbers;
 }
 
 int main() {
     long n;
     printf("Enter a natural number: ");
     if (scanf("%ld", &n) != 1 || n < 1) {
-        printf("Invalid input. Please enter a valid natural number.\n");
+        printf("Please enter a valid natural number.\n");
         return 1;
     }
 

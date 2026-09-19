@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-362.c:30:9: warning: Value stored to 'max_item' during its initialization is never read [deadcode.DeadStores]
+   30 |     int max_item = list[0];
+      |         ^~~~~~~~   ~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-362.c:37:13: warning: Value stored to 'max_item' is never read [deadcode.DeadStores]
+   37 |             max_item = list[i];
+      |             ^          ~~~~~~~
+2 warnings generated.

@@ -3,6 +3,9 @@
 #include <stdint.h>
 
 uint64_t find_Lobb_number(uint32_t n) {
+    if (n > 32) {
+        return 0;
+    }
     uint64_t result = (1ULL << (2 * n)) - 1;
     return result + (n & 1);
 }

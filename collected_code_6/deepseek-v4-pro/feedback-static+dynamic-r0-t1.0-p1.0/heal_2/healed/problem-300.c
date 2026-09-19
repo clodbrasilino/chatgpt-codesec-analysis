@@ -1,36 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <stdint.h>
-#include <inttypes.h>
 
-uint64_t count_binary_sequences(int n) {
+long long count_binary_sequences(int n) {
     if (n <= 0) {
         return 0;
     }
     
-    uint64_t *dp = (uint64_t *)calloc((size_t)n + 1, sizeof(uint64_t));
+    long long *dp = (long long *)calloc(n + 1, sizeof(long long));
     if (dp == NULL) {
-        return 0;
+        return -1;
     }
     
     dp[0] = 1;
     for (int i = 1; i <= n; i++) {
         for (int j = i; j >= 1; j--) {
-            if (dp[j] > UINT64_MAX - dp[j - 1]) {
+            if (dp[j] > LLONG_MAX - dp[j - 1]) {
                 free(dp);
-                return 0;
+                return -1;
             }
             dp[j] += dp[j - 1];
         }
     }
     
-    uint64_t total = 0;
+    long long total = 0;
     for (int k = 0; k <= n; k++) {
-        if (dp[k] > 0 && dp[k] > UINT64_MAX / dp[k]) {
+        if (dp[k] > LLONG_MAX / dp[k]) {
             free(dp);
-            return 0;
+            return -1;
         }
-        total += dp[k] * dp[k];
+        long long square = dp[k] * dp[k];
+        if (total > LLONG_MAX - square) {
+            free(dp);
+            return -1;
+        }
+        total += square;
     }
     
     free(dp);
@@ -50,17 +55,12 @@ int main(void) {
         return 1;
     }
     
-    if (n > 60) {
-        fprintf(stderr, "n too large, would overflow\n");
-        return 1;
-    }
-    
-    uint64_t result = count_binary_sequences(n);
-    if (result == 0) {
+    long long result = count_binary_sequences(n);
+    if (result == -1) {
         fprintf(stderr, "Overflow or memory allocation failed\n");
         return 1;
     }
     
-    printf("%" PRIu64 "\n", result);
+    printf("%lld\n", result);
     return 0;
 }

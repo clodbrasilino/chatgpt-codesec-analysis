@@ -3,48 +3,37 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_STRING_LEN 1024
-
 char *snake_to_camel(const char *input) {
-    char *result = NULL;
-    size_t i = 0;
-    size_t j = 0;
-    size_t len;
-    int capitalize_next = 0;
-
     if (input == NULL) {
         return NULL;
     }
 
-    len = strlen(input);
-    if (len == 0 || len >= MAX_STRING_LEN) {
-        return NULL;
-    }
-
-    result = malloc(len + 1);
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
     if (result == NULL) {
         return NULL;
     }
 
-    if (input[0] >= 'a' && input[0] <= 'z') {
-        result[j++] = (char)toupper((unsigned char)input[0]);
-        i = 1;
-    }
+    size_t i = 0;
+    size_t j = 0;
+    int capitalize_next = 1;
 
-    for (; i < len; i++) {
+    while (i < len) {
         if (input[i] == '_') {
-            if (i + 1 < len && input[i + 1] >= 'a' && input[i + 1] <= 'z') {
+            if (i + 1 < len && islower((unsigned char)input[i + 1])) {
                 capitalize_next = 1;
+                i++;
             } else {
-                result[j++] = input[i];
+                result[j++] = input[i++];
             }
         } else {
-            if (capitalize_next && input[i] >= 'a' && input[i] <= 'z') {
+            if (capitalize_next) {
                 result[j++] = (char)toupper((unsigned char)input[i]);
                 capitalize_next = 0;
             } else {
                 result[j++] = input[i];
             }
+            i++;
         }
     }
 
@@ -58,9 +47,9 @@ int main(void) {
         "snake_case_string_example",
         "single",
         "multiple__underscores",
+        "android_tv",
         "google_pixel",
         "apple_watch",
-        "android_tv",
         NULL
     };
     int i;

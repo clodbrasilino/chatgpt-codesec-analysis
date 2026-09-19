@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got �b�
-  *  test case 1 failed: expected 'string', got �b�
+  *  test case 0 failed: expected 'python', got �"�
+  *  test case 1 failed: expected 'string', got �"�
   *  test case 2 failed: expected 'alpha', got 
   */
 

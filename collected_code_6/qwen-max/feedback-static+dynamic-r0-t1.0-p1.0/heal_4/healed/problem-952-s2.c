@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <inttypes.h>
-#include <errno.h>
 
 uint64_t modPow(uint64_t base, uint64_t exp, uint64_t modulus) {
     uint64_t result = 1;
@@ -35,15 +33,9 @@ uint64_t nCrModPFermat(uint64_t n, uint64_t r, uint64_t p) {
 
 int main() {
     uint64_t n, r, p;
-    int scanned = scanf("%" SCNu64 " %" SCNu64 " %" SCNu64, &n, &r, &p);
-    if (scanned != 3) {
-        fprintf(stderr, "Error: Invalid input\n");
-        return 1;
-    }
-    if (n >= (1ULL << 63) || r >= (1ULL << 63) || p >= (1ULL << 63)) {
-        fprintf(stderr, "Error: Input values are too large\n");
-        return 1;
-    }
-    printf("%" PRIu64 "\n", nCrModPFermat(n, r, p));
+    scanf("%llu", &n);
+    scanf("%llu", &r);
+    scanf("%llu", &p);
+    printf("%llu\n", nCrModPFermat(n, r, p));
     return 0;
 }

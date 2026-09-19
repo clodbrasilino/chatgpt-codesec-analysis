@@ -1,23 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
-  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
   *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
   */
 
 int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2, int* result_size) {
-    int* result = (int*)malloc((size1 + size2) * sizeof(int));
+    if (tuple1 == NULL || tuple2 == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    int max_size = size1 + size2;
+    int* result = (int*)malloc(max_size * sizeof(int));
     if (result == NULL) {
         *result_size = 0;
         return NULL;
     }
 
+    int* seen = (int*)malloc(max_size * sizeof(int));
+    if (seen == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
     int count = 0;
-    int found;
 
     for (int i = 0; i < size1; i++) {
-        found = 0;
+        int found = 0;
         for (int j = 0; j < size2; j++) {
             if (tuple1[i] == tuple2[j]) {
                 found = 1;
@@ -25,21 +39,22 @@ int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2,
             }
         }
         if (!found) {
-            int duplicate = 0;
+            int is_duplicate = 0;
             for (int k = 0; k < count; k++) {
                 if (result[k] == tuple1[i]) {
-                    duplicate = 1;
+                    is_duplicate = 1;
                     break;
                 }
             }
-            if (!duplicate) {
-                result[count++] = tuple1[i];
+            if (!is_duplicate) {
+                result[count] = tuple1[i];
+                count++;
             }
         }
     }
 
     for (int i = 0; i < size2; i++) {
-        found = 0;
+        int found = 0;
         for (int j = 0; j < size1; j++) {
             if (tuple2[i] == tuple1[j]) {
                 found = 1;
@@ -47,34 +62,49 @@ int* find_dissimilar(const int* tuple1, int size1, const int* tuple2, int size2,
             }
         }
         if (!found) {
-            int duplicate = 0;
+            int is_duplicate = 0;
             for (int k = 0; k < count; k++) {
                 if (result[k] == tuple2[i]) {
-                    duplicate = 1;
+                    is_duplicate = 1;
                     break;
                 }
             }
-            if (!duplicate) {
-                result[count++] = tuple2[i];
+            if (!is_duplicate) {
+                result[count] = tuple2[i];
+                count++;
             }
         }
     }
 
+    free(seen);
     *result_size = count;
-    return result;
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int* final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    return final_result;
 }
 
 int main() {
-    int tuple1[] = {1, 4, 7, 9};
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {4, 5, 6, 7, 8};
     int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
-    int tuple2[] = {1, 4, 5, 8};
     int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
     int result_size;
     int* dissimilar = find_dissimilar(tuple1, size1, tuple2, size2, &result_size);
 
-    if (dissimilar == NULL && result_size == 0) {
-        printf("Memory allocation failed or no dissimilar elements\n");
-        return 1;
+    if (dissimilar == NULL) {
+        printf("[]\n");
+        return 0;
     }
 
     printf("[");

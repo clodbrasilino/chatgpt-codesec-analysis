@@ -40,6 +40,9 @@ long long sum_of_divisors(long long n)
 
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:36134,execs:865,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main(void)
 {

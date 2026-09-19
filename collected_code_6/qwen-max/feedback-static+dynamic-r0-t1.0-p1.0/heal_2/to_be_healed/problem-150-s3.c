@@ -1,16 +1,18 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
 bool is_in_sequence(int n) {
     int a = 0, b = 1;
     while (a <= n) {
         if (a == n) return true;
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 1134903170 + 1836311903 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000006,time:4333,execs:1933,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 1134903170 + 1836311903 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:1014,execs:1096,op:havoc,rep:4)
          */
-        int c = a + b;
+        int next = a + b;
+        if (next < 0 || next > INT_MAX) break;
         a = b;
-        b = c;
+        b = next;
     }
     return false;
 }

@@ -11,9 +11,9 @@ int min(int x, int y, int z) {
     }
 }
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 16, got -1301590720
   *  test case 1 failed: expected 12, got -1301590864
   *  test case 0 failed: expected 8, got -946975658
-  *  test case 2 failed: expected 16, got -1301590720
   */
 
 int minCost(int cost[MAX_SIZE][MAX_SIZE], int m, int n) {
@@ -31,6 +31,9 @@ int minCost(int cost[MAX_SIZE][MAX_SIZE], int m, int n) {
     }
 
     for (j = 1; j <= n; j++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 444444536 + 2062812956 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000025,time:59925,execs:25916,op:havoc,rep:2)
+         */
         tc[0][j] = tc[0][j - 1] + cost[0][j];
     }
 

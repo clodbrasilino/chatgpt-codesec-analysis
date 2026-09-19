@@ -1,6 +1,7 @@
 ```c
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 int64_t sum_even_natural(int64_t l, int64_t r)
 {
@@ -22,20 +23,34 @@ int64_t sum_even_natural(int64_t l, int64_t r)
         return 0;
     }
 
-    int64_t count = (last - first) / 2 + 1;
-    return count * (first + last) / 2;
+    uint64_t uf = (uint64_t)first;
+    uint64_t ul = (uint64_t)last;
+    uint64_t count = (ul - uf) / 2 + 1;
+    uint64_t sum = uf + ul;
+    uint64_t result;
+
+    if (count % 2 == 0)
+    {
+        result = (count / 2) * sum;
+    }
+    else
+    {
+        result = count * (sum / 2);
+    }
+
+    return (int64_t)result;
 }
 
 int main(void)
 {
-    long long l, r;
+    int64_t l, r;
 
-    if (scanf("%lld %lld", &l, &r) != 2)
+    if (scanf("%" SCNd64 " %" SCNd64, &l, &r) != 2)
     {
         return 1;
     }
 
-    printf("%lld\n", sum_even_natural(l, r));
+    printf("%" PRId64 "\n", sum_even_natural(l, r));
     return 0;
 }
 ```

@@ -3,8 +3,8 @@
 #include <math.h>
 #include <limits.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected False, got <no output>
   *  test case 1 failed: expected True, got <no output>
+  *  test case 2 failed: expected False, got <no output>
   *  test case 0 failed: expected False, got <no output>
   */
 
@@ -30,6 +30,9 @@ bool is_perfect_square(long long num)
     
     return (root * root == num);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:1244,execs:568,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main(void)
 {

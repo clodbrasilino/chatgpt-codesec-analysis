@@ -20,13 +20,13 @@ int main() {
     int k, r;
 
     printf("Enter the number of colors (max 3): ");
-    if (scanf("%d", &r) != 1 || r > 3 || r <= 0) {
+    if (scanf("%d", &r) != 1 || getchar() != '\n' || r > 3 || r <= 0) {
         fprintf(stderr, "Invalid input\n");
         return 1;
     }
 
     printf("Enter the number of selections: ");
-    if (scanf("%d", &k) != 1 || k <= 0) {
+    if (scanf("%d", &k) != 1 || getchar() != '\n' || k <= 0) {
         fprintf(stderr, "Invalid input\n");
         return 1;
     }

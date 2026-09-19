@@ -9,7 +9,7 @@ int isArmstrong(int num) {
     }
 
     int originalNum = num;
-    int result = 0;
+    long long result = 0;
     int n = 0;
 
     int temp = num;
@@ -21,11 +21,11 @@ int isArmstrong(int num) {
     temp = num;
     while (temp != 0) {
         int remainder = temp % 10;
-        result += pow(remainder, n);
+        result += (long long)round(pow(remainder, n));
         temp /= 10;
     }
 
-    if (result == originalNum) {
+    if (result == (long long)originalNum) {
         return 1;
     } else {
         return 0;

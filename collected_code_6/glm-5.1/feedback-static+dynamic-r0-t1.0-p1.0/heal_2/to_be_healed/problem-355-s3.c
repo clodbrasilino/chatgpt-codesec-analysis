@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 8, got <no output>
-  *  test case 2 failed: expected 0, got <no output>
+  *  test case 0 failed: expected 8, got 4
+  *  test case 1 failed: expected 1, got 0
   */
 
 long long count_rectangles(int r) {
@@ -16,20 +15,17 @@ long long count_rectangles(int r) {
     long long r_sq = (long long)r * r;
     
     for (long long x = 1; x <= r; x++) {
-        for (long long y = 1; y <= r; y++) {
-            if (x * x + y * y <= r_sq) {
-                count++;
-            }
+        long long x_sq = x * x;
+        long long y_max_sq = r_sq - x_sq;
+        for (long long y = 1; y * y <= y_max_sq; y++) {
+            count++;
         }
     }
 
     return count * 4;
 }
 
-/* Possible weaknesses found:
- *  Parameter 'argv' can be declared as const array [constParameter]
- */
-int main(int argc, char * const argv[]) {
+int main(int argc, char const * const argv[]) {
     if (argc != 2) {
         return EXIT_FAILURE;
     }

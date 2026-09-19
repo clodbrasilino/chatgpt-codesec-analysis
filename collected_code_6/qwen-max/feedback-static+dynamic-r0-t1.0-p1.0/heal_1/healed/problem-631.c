@@ -4,26 +4,34 @@
 
 void swap_whitespace_underscore(char *str) {
     regex_t re;
-    if (regcomp(&re, " ", REG_EXTENDED) != 0) return;
-    regmatch_t match;
-    while (regexec(&re, str, 1, &match, 0) == 0) {
-        memmove(str + match.rm_so + 1, str + match.rm_so, strlen(str + match.rm_so) + 1);
-        str[match.rm_so] = '_';
+    if (regcomp(&re, " ", REG_EXTENDED) == 0) {
+        regmatch_t match;
+        while (regexec(&re, str, 1, &match, 0) == 0) {
+            memmove(str + match.rm_so + 1, str + match.rm_so, strlen(str + match.rm_so) + 1);
+            str[match.rm_so] = '_';
+        }
+        regfree(&re);
     }
-    regfree(&re);
 
-    if (regcomp(&re, "_", REG_EXTENDED) != 0) return;
-    while (regexec(&re, str, 1, &match, 0) == 0) {
-        memmove(str + match.rm_so + 1, str + match.rm_so, strlen(str + match.rm_so) + 1);
-        str[match.rm_so] = ' ';
+    if (regcomp(&re, "_", REG_EXTENDED) == 0) {
+        regmatch_t match;
+        while (regexec(&re, str, 1, &match, 0) == 0) {
+            size_t len = strlen(str + match.rm_so);
+            if (strlen(str) - match.rm_so <= 1024 - 1) {
+                memmove(str + match.rm_so + 1, str + match.rm_so, len + 1);
+                str[match.rm_so] = ' ';
+            } else {
+                break;
+            }
+        }
+        regfree(&re);
     }
-    regfree(&re);
 }
 
 int main() {
     char input[1024];
     fgets(input, 1024, stdin);
-    input[strcspn(input, "\n")] = 0; 
+    input[strcspn(input, "\n")] = 0;
     swap_whitespace_underscore(input);
     printf("%s\n", input);
     return 0;

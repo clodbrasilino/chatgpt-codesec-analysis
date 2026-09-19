@@ -18,6 +18,9 @@ void swap_whitespace_underscore(char *str) {
 
     if (regcomp(&re, "_", REG_EXTENDED) != 0) return;
     while (regexec(&re, str, 1, &match, 0) == 0) {
+        /* Possible weaknesses found:
+         * ASan: stack-buffer-overflow (AFL crash: id:000001,sig:11,src:000000,time:2488,execs:438,op:havoc,rep:8)
+         */
         memmove(str + match.rm_so + 1, str + match.rm_so, strlen(str + match.rm_so) + 1);
         str[match.rm_so] = ' ';
     }

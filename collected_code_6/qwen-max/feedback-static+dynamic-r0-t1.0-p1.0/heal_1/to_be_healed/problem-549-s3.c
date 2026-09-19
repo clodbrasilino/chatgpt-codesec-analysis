@@ -8,6 +8,9 @@ uint64_t sum_of_fifth_power(int n) {
 
     while (count < n) {
         sum += (uint64_t)current * current * current * current * current;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000009,time:40881,execs:1815,op:havoc,rep:1)
+         */
         current += 2;
         count++;
     }

@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void multiplyTuples(const int *tuple1, const int *tuple2, int *result, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        result[i] = tuple1[i] * tuple2[i];
+    }
+}
+
+int main() {
+    size_t length;
+    printf("Enter the length of the tuples: ");
+    if (scanf("%zu", &length) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int *tuple1 = malloc(length * sizeof(int));
+    int *tuple2 = malloc(length * sizeof(int));
+    int *result = malloc(length * sizeof(int));
+
+    if (tuple1 == NULL || tuple2 == NULL || result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(tuple1);
+        free(tuple2);
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter elements of first tuple:\n");
+    for (size_t i = 0; i < length; ++i) {
+        if (scanf("%d", &tuple1[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(tuple1);
+            free(tuple2);
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Enter elements of second tuple:\n");
+    for (size_t i = 0; i < length; ++i) {
+        if (scanf("%d", &tuple2[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(tuple1);
+            free(tuple2);
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    multiplyTuples(tuple1, tuple2, result, length);
+
+    printf("Resultant tuple:\n");
+    for (size_t i = 0; i < length; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(tuple1);
+    free(tuple2);
+    free(result);
+    return EXIT_SUCCESS;
+}

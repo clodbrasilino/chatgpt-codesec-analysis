@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
   */
 
@@ -12,20 +13,9 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
         return NULL;
     }
 
-    if (length == 0) {
+    if (length < 2) {
         *out_length = 0;
         return NULL;
-    }
-
-    if (length == 1) {
-        int* result = (int*)malloc(sizeof(int));
-        if (result == NULL) {
-            *out_length = 0;
-            return NULL;
-        }
-        result[0] = list[0];
-        *out_length = 1;
-        return result;
     }
 
     *out_length = length - 1;
@@ -36,6 +26,11 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
     }
 
     for (size_t i = 0; i < *out_length; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1468588942 + 747385742 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000017,time:55899,execs:21867,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 1228654364 + 1228654364 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:30182,execs:11421,op:havoc,rep:14)
+         * UBSan: signed integer overflow: -1305424328 + -1196716488 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:2376,execs:645,op:havoc,rep:11)
+         */
         result[i] = list[i] + list[i + 1];
     }
 
@@ -52,9 +47,8 @@ int main(void) {
     }
 
     int num;
-    while (1) {
-        int res = scanf("%d", &num);
-        if (res == 1) {
+    while (!feof(stdin)) {
+        if (scanf("%d", &num) == 1) {
             if (length == capacity) {
                 capacity *= 2;
                 int* temp = (int*)realloc(list, capacity * sizeof(int));
@@ -65,17 +59,11 @@ int main(void) {
                 list = temp;
             }
             list[length++] = num;
-        } else if (res == EOF) {
-            break;
         } else {
-            getchar();
+            if (getchar() == EOF) {
+                break;
+            }
         }
-    }
-
-    if (length == 0) {
-        printf("[]\n");
-        free(list);
-        return EXIT_SUCCESS;
     }
 
     size_t out_length = 0;
@@ -92,8 +80,7 @@ int main(void) {
 
     if (result != NULL) {
         free(result);
-    } 
-
+    }
     free(list);
     return EXIT_SUCCESS;
 }

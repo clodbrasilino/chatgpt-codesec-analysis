@@ -3,9 +3,9 @@
 #include <string.h>
 #include <regex.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'GooglePixel', got googlePixel
-  *  test case 2 failed: expected 'AppleWatch', got appleWatch
-  *  test case 0 failed: expected 'AndroidTv', got androidTv
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
   */
 
 char* snake_to_camel(const char* input) {

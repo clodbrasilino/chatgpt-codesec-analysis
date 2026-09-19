@@ -1,26 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
- /* Possible weaknesses found:
-  *  test case 2 failed: expected 6775685320645824322581483068371419745979053216268760300, got -8539980777762638612
-  */
+/* Possible weaknesses found:
+ *  'PRIu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+ */
+#include <stdint.h>
 
-unsigned long long bell_number(int n) {
-    unsigned long long *bell = (unsigned long long*)calloc((n+1) * (n+1), sizeof(unsigned long long));
-    if (bell == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+uint64_t bell_number(int n) {
+    if (n < 0 || n > 63) {
+        fprintf(stderr, "Input out of range\n");
         exit(EXIT_FAILURE);
     }
-    unsigned long long (*arr)[n+1] = (unsigned long long (*)[n+1])bell;
-    arr[0][0] = 1;
-    for (int i = 1; i <= n; i++) {
-        arr[i][0] = arr[i-1][i-1];
-        for (int j = 1; j <= i; j++)
-            arr[i][j] = arr[i-1][j-1] + arr[i][j-1];
+    uint64_t bell[n+1][n+1];
+    int i, j;
+
+    bell[0][0] = 1;
+    for (i = 1; i <= n; i++) {
+        bell[i][0] = bell[i-1][i-1];
+        for (j = 1; j <= i; j++)
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
     }
-    unsigned long long result = arr[n][0];
-    free(bell);
-    return result;
+    return bell[n][0];
 }
 
 int main() {
@@ -30,12 +29,13 @@ int main() {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    if (n < 0) {
-        fprintf(stderr, "Number of elements must be non-negative\n");
-        return EXIT_FAILURE;
-    }
 
-    unsigned long long result = bell_number(n);
+    uint64_t result = bell_number(n);
+    /* Possible weaknesses found:
+     *  expected ')' before 'PRIu64'
+     *  expected ')'
+     *  to match this '('
+     */
     printf("The number of ways to partition a set of %d elements is: %" PRIu64 "\n", n, result);
 
     return EXIT_SUCCESS;

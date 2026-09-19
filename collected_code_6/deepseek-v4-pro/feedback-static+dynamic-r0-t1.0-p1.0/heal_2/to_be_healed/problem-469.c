@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 10, got 5
+  *  test case 2 failed: expected 2, got 0
+  *  test case 1 failed: expected 7, got 0
+  */
 
 int maxProfit(int k, const int *prices, int pricesSize) {
     if (prices == NULL || pricesSize < 2 || k <= 0) {

@@ -2,35 +2,116 @@
 #include <stdlib.h>
 #include <limits.h>
 
-long long maximumProduct(const int *nums, int numsSize) {
-    if (numsSize < 3) return 0;
-    
-    long long max1 = LLONG_MIN, max2 = LLONG_MIN, max3 = LLONG_MIN;
-    long long min1 = LLONG_MAX, min2 = LLONG_MAX;
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-    for (int i = 0; i < numsSize; i++) {
-        long long val = nums[i];
-        if (val >= max1) {
-            max3 = max2;
-            max2 = max1;
-            max1 = val;
-        } else if (val >= max2) {
-            max3 = max2;
-            max2 = val;
-        } else if (val > max3) {
-            max3 = val;
-        }
-
-        if (val <= min1) {
-            min2 = min1;
-            min1 = val;
-        } else if (val <= min2) {
-            min2 = val;
+void push_min_heap(int *heap, int *size, int value) {
+    if (*size >= 4) return;
+    heap[*size] = value;
+    int i = *size;
+    (*size)++;
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (heap[parent] > heap[i]) {
+            swap(&heap[parent], &heap[i]);
+            i = parent;
+        } else {
+            break;
         }
     }
+}
 
-    long long product1 = max1 * max2 * max3;
-    long long product2 = max1 * min1 * min2;
+int pop_min_heap(int *heap, int *size) {
+    if (*size == 0) return INT_MIN;
+    int root = heap[0];
+    heap[0] = heap[*size - 1];
+    (*size)--;
+    int i = 0;
+    while (1) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int smallest = i;
+        if (left < *size && heap[left] < heap[smallest]) smallest = left;
+        if (right < *size && heap[right] < heap[smallest]) smallest = right;
+        if (smallest != i) {
+            swap(&heap[i], &heap[smallest]);
+            i = smallest;
+        } else {
+            break;
+        }
+    }
+    return root;
+}
+
+void push_max_heap(int *heap, int *size, int value) {
+    if (*size >= 4) return;
+    long long stored = (value == INT_MIN) ? (long long)INT_MIN + 1 : -(long long)value;
+    heap[*size] = (int)stored;
+    int i = *size;
+    (*size)++;
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (heap[parent] > heap[i]) {
+            swap(&heap[parent], &heap[i]);
+            i = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+int pop_max_heap(int *heap, int *size) {
+    if (*size == 0) return INT_MIN;
+    int root = heap[0];
+    long long actual = (root == INT_MIN + 1) ? INT_MIN : -(long long)root;
+    heap[0] = heap[*size - 1];
+    (*size)--;
+    int i = 0;
+    while (1) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int smallest = i;
+        if (left < *size && heap[left] < heap[smallest]) smallest = left;
+        if (right < *size && heap[right] < heap[smallest]) smallest = right;
+        if (smallest != i) {
+            swap(&heap[i], &heap[smallest]);
+            i = smallest;
+        } else {
+            break;
+        }
+    }
+    return (int)actual;
+}
+
+long long maximumProduct(const int *nums, int numsSize) {
+    if (numsSize < 3) return 0;
+
+    int max_heap[4];
+    int max_heap_size = 0;
+
+    int min_heap[4];
+    int min_heap_size = 0;
+
+    for (int i = 0; i < numsSize; i++) {
+        push_max_heap(max_heap, &max_heap_size, nums[i]);
+        pop_max_heap(max_heap, &max_heap_size);
+
+        push_min_heap(min_heap, &min_heap_size, nums[i]);
+        pop_min_heap(min_heap, &min_heap_size);
+    }
+
+    int max1 = pop_max_heap(max_heap, &max_heap_size);
+    int max2 = pop_max_heap(max_heap, &max_heap_size);
+    int max3 = pop_max_heap(max_heap, &max_heap_size);
+
+    int min1 = pop_min_heap(min_heap, &min_heap_size);
+    int min2 = pop_min_heap(min_heap, &min_heap_size);
+
+    long long product1 = (long long)max1 * max2 * max3;
+    long long product2 = (long long)max1 * min1 * min2;
 
     return product1 > product2 ? product1 : product2;
 }

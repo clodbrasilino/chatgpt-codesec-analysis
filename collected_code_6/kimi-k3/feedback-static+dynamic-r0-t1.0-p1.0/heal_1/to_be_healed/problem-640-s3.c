@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got �Pz
-  *  test case 2 failed: expected 'alpha', got @Qz
   *  test case 1 failed: expected 'string', got 
+  *  test case 2 failed: expected 'alpha', got @q\
+  *  test case 0 failed: expected 'python', got �p\
   */
 
 char *remove_parenthesis_area(const char *str)

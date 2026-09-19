@@ -1,20 +1,33 @@
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
 
-uint64_t countSetBits(uint64_t n) {
-    uint64_t count = 0;
+int countSetBits(int n) {
+    int count = 0;
     int i = 0;
-    int totalBits = sizeof(uint64_t) * 8;
+    int totalBits = sizeof(int) * CHAR_BIT;
     uint64_t power = 1;
+    uint64_t limit = (uint64_t)n + 1;
     
-    while (i < totalBits && power <= n) {
-        uint64_t totalPairs = (n + 1) / (power * 2);
-        uint64_t remainder = (n + 1) % (power * 2);
+    while (i < totalBits) {
+        if (power > limit) {
+            break;
+        }
         
-        count += totalPairs * power;
+        uint64_t totalPairs = limit / (power * 2);
+        uint64_t remainder = limit % (power * 2);
+        uint64_t pairBits = totalPairs * power;
+        
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2138888408 + 194443264 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000011,time:42777,execs:25170,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 1777777773 + 444444432 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000004,time:1140,execs:985,op:havoc,rep:1)
+         * UBSan: signed integer overflow: 1777777793 + 444444448 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000004,time:1657,execs:1404,op:havoc,rep:2)
+         */
+        count += (int)pairBits;
         if (remainder > power) {
-            count += remainder - power;
+            uint64_t extraBits = remainder - power;
+            count += (int)extraBits;
         }
         
         power <<= 1;
@@ -25,25 +38,35 @@ uint64_t countSetBits(uint64_t n) {
 }
 
 int main(void) {
-    int input;
+    int n;
+    char buffer[32];
     
     printf("Enter a number: ");
-    if (scanf("%d", &input) != 1) {
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
         printf("Invalid input\n");
         return 1;
     }
     
-    if (input < 0) {
+    char *endptr;
+    long val = strtol(buffer, &endptr, 10);
+    
+    if (endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (val < 0) {
         printf("Please enter a non-negative number\n");
         return 1;
     }
     
-    uint64_t n = (uint64_t)input;
-    /* Possible weaknesses found:
-     *  %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
-     *  %u in format string (no. 1) requires 'unsigned int' but the argument type is 'signed int'. [invalidPrintfArgType_uint]
-     */
-    printf("Total set bits from 1 to %u: %llu\n", input, countSetBits(n));
+    if (val > INT_MAX) {
+        printf("Number too large\n");
+        return 1;
+    }
+    
+    n = (int)val;
+    printf("Total set bits from 1 to %d: %d\n", n, countSetBits(n));
     
     return 0;
 }

@@ -12,6 +12,9 @@ uint64_t sum_of_fifth_powers(int n) {
     }
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:18991,execs:656,op:havoc,rep:3; likely memory-safety defect
+  */
 
 int main() {
     int n;

@@ -25,6 +25,10 @@ bool is_keith_number(int n) {
     while (1) {
         int sum = 0;
         for (int i = 0; i < len; i++) {
+            if (sum > INT_MAX - terms[i]) {
+                free(terms);
+                return false;
+            }
             sum += terms[i];
         }
         if (sum > n) {

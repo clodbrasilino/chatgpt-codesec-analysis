@@ -16,7 +16,9 @@ static long long first_factorial_divisible_by(long long x)
 
     remainder = 1LL;
     for (n = 1LL; n <= x; n++) {
-        remainder = (remainder * (n % x)) % x;
+        remainder = (long long)(((unsigned __int128)(unsigned long long)remainder *
+                                 (unsigned long long)(n % x)) %
+                                (unsigned long long)x);
         if (remainder == 0LL) {
             return n;
         }

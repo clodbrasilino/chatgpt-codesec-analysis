@@ -1,21 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <inttypes.h>
+ /* Possible weaknesses found:
+  *  'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
 
 long long int calculate_pell_number(long n) {
-    if (n < 0 || n > 92) return 0;
+    if (n <= 0) return 0;
     if (n == 1) return 1;
     if (n == 2) return 2;
 
     long long int a = 0, b = 1;
     for (long i = 2; i <= n; ++i) {
         /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 2 * 4866752642924153522 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:885,execs:326,op:havoc,rep:1)
+         *  expected ')' before '__int128_t'
+         *  expected ')'
+         *  to match this '('
          */
-        long long int c = 2 * b + a;
-        if (c < 0) return 0;
+        __int128_t c = 2 * (unsigned __int128_t)b + a;
+        /* Possible weaknesses found:
+         *  use of undeclared identifier 'LLONG_MIN'
+         *  'LLONG_MAX' undeclared (first use in this function)
+         *  use of undeclared identifier 'LLONG_MAX'
+         *  'LLONG_MIN' undeclared (first use in this function)
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  'LLONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+         */
+        if (c > LLONG_MAX || c < LLONG_MIN) {
+            fprintf(stderr, "Overflow detected.\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
-        b = c;
+        b = (long long int)c;
     }
     return b;
 }
@@ -23,9 +39,9 @@ long long int calculate_pell_number(long n) {
 int main() {
     long n;
     printf("Enter the value of n: ");
-    if (scanf("%ld", &n) != 1 || n < 0 || n > 92) {
-        fprintf(stderr, "Invalid input. Please enter a non-negative integer less than or equal to 92.\n");
-        return EXIT_FAILURE;
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
     }
 
     long long int result = calculate_pell_number(n);

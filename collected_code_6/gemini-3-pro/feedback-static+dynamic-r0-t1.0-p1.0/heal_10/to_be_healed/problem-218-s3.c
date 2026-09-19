@@ -1,30 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 3, got 2
+  *  test case 0 failed: expected 1, got 2
+  *  test case 2 failed: expected 3, got 1
+  *  test case 1 failed: expected 4, got 2
   */
 
-int min_operations(int num1, int num2) {
-    int steps = 0;
-    while (num2 > num1) {
-        if (num2 % 2 != 0) {
-            num2++;
-        } else {
-            num2 /= 2;
-        }
-        steps++;
+int min_operations(int a, int b) {
+    if (a == b) return 0;
+    if (a < b) {
+        int diff = b - a;
+        if (diff % 2 != 0) return 1;
+        return 2;
+    } else {
+        int diff = a - b;
+        if (diff % 2 == 0) return 1;
+        return 2;
     }
-    return steps + (num1 - num2);
 }
 
 int main(void) {
-    int num1, num2;
-    
-    if (scanf("%d %d", &num1, &num2) != 2) {
-        return EXIT_FAILURE;
+    int t;
+    if (scanf("%d", &t) == 1) {
+        while (t-- > 0) {
+            int a, b;
+            if (scanf("%d %d", &a, &b) == 2) {
+                printf("%d\n", min_operations(a, b));
+            }
+        }
     }
-    
-    printf("%d\n", min_operations(num1, num2));
-    
-    return EXIT_SUCCESS;
+    return 0;
 }

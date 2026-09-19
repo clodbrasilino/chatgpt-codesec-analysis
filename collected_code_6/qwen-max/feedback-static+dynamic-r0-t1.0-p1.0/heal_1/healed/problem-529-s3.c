@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 int nth_jacobsthal_lucas(int n) {
     if (n == 0) return 2;
@@ -22,8 +23,8 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    int result = nth_jacobsthal_lucas(n);
-    printf("The %dth Jacobsthal-Lucas number is: %d\n", n, result);
+    int64_t result = (int64_t)nth_jacobsthal_lucas(n);
+    printf("The %dth Jacobsthal-Lucas number is: %ld\n", n, result);
 
     return EXIT_SUCCESS;
 }

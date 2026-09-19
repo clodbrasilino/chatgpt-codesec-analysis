@@ -28,29 +28,15 @@ int findMaxDivisor(int start, int end) {
             int current_gcd = gcd(i, j);
             if (current_gcd > 1) {
                 /* Possible weaknesses found:
-                 *  Either the condition 'current_gcd<=1000' is redundant or the array 'divisor_count[1001]' is accessed at index 1001, which is out of bounds. [arrayIndexOutOfBoundsCond]
-                 *  Array index out of bounds
+                 * UBSan: index 1555 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
                  */
                 divisor_count[current_gcd]++;
                 /* Possible weaknesses found:
-                 *  Either the condition 'current_gcd<=1000' is redundant or the array 'divisor_count[1001]' is accessed at index 1001, which is out of bounds. [arrayIndexOutOfBoundsCond]
-                 *  Array index out of bounds
+                 * UBSan: index 1558 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
+                 * UBSan: index 1555 out of bounds for type 'int[1001]' (AFL crash: id:000001,sig:06,src:000003,time:794,execs:345,op:havoc,rep:7)
                  */
-                if (divisor_count[current_gcd] >= divisor_count[max_divisor]) {
-                    /* Possible weaknesses found:
-                     *  Either the condition 'current_gcd<=1000' is redundant or the array 'divisor_count[1001]' is accessed at index 1001, which is out of bounds. [arrayIndexOutOfBoundsCond]
-                     *  Array index out of bounds
-                     *  Array index 'max_divisor' is used before limits check. [arrayIndexThenCheck]
-                     */
-                    if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
-                        continue;
-                    }
-                    /* Possible weaknesses found:
-                     *  Assuming that condition 'current_gcd<=1000' is not redundant
-                     */
-                    if (current_gcd <= 1000) {
-                        max_divisor = current_gcd;
-                    }
+                if (divisor_count[current_gcd] > divisor_count[max_divisor]) {
+                    max_divisor = current_gcd;
                 }
             }
         }
@@ -58,11 +44,17 @@ int findMaxDivisor(int start, int end) {
 
     return max_divisor;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:777,execs:332,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main() {
     int start, end;
     printf("Enter the start and end of the interval: ");
-    scanf("%d %d", &start, &end);
+    if (scanf("%d %d", &start, &end) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
 
     int result = findMaxDivisor(start, end);
     printf("The maximum occurring divisor in the interval is: %d\n", result);

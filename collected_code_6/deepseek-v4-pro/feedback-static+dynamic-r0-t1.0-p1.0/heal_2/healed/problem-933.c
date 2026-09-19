@@ -1,62 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <regex.h>
 #include <ctype.h>
 
 char *camel_to_snake(const char *input) {
-    regex_t regex;
-    regmatch_t matches[3];
-    const char *pattern = "([a-z0-9])([A-Z])";
     size_t input_len = strlen(input);
     size_t output_len = input_len + 1;
-    const char *cursor = input;
+    size_t i, j;
     char *output;
-    char *out_ptr;
+    int prev_lower = 0;
 
-    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
-        return NULL;
+    if (input_len == 0) {
+        output = (char *)malloc(1);
+        if (output != NULL) {
+            output[0] = '\0';
+        }
+        return output;
     }
 
-    while (regexec(&regex, cursor, 3, matches, 0) == 0) {
-        output_len++;
-        cursor += matches[0].rm_eo;
+    for (i = 0; i < input_len; i++) {
+        if (isupper(input[i]) && i > 0 && prev_lower) {
+            output_len++;
+        }
+        prev_lower = islower(input[i]) || isdigit(input[i]) || input[i] == '_';
     }
 
     output = (char *)malloc(output_len);
     if (output == NULL) {
-        regfree(&regex);
         return NULL;
     }
 
-    cursor = input;
-    out_ptr = output;
+    j = 0;
+    prev_lower = 0;
 
-    while (regexec(&regex, cursor, 3, matches, 0) == 0) {
-        size_t first_part_len = matches[0].rm_so;
-        size_t prefix_len = matches[1].rm_eo - matches[1].rm_so;
-        size_t match_len = matches[0].rm_eo - matches[0].rm_so;
-
-        memcpy(out_ptr, cursor, first_part_len);
-        out_ptr += first_part_len;
-
-        memcpy(out_ptr, cursor + matches[1].rm_so, prefix_len);
-        out_ptr += prefix_len;
-
-        *out_ptr++ = '_';
-        *out_ptr++ = tolower((unsigned char)cursor[matches[2].rm_so]);
-
-        cursor += match_len;
+    for (i = 0; i < input_len; i++) {
+        if (isupper(input[i]) && i > 0 && prev_lower) {
+            output[j++] = '_';
+        }
+        output[j++] = tolower(input[i]);
+        prev_lower = islower(input[i]) || isdigit(input[i]) || input[i] == '_';
     }
 
-    strcpy(out_ptr, cursor);
-
-    regfree(&regex);
+    output[j] = '\0';
     return output;
 }
 
 int main(void) {
     const char *tests[] = {
+        "chromeCast",
+        "googleAssistant",
+        "quadCore",
         "camelCase",
         "helloWorld",
         "thisIsATest",

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 long long lucas_number(int n) {
     if (n == 0) return 2;
@@ -8,6 +9,10 @@ long long lucas_number(int n) {
     long long a = 2, b = 1;
     for (int i = 2; i <= n; ++i) {
         long long c = a + b;
+        if (c < a || c < b) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
         b = c;
     }

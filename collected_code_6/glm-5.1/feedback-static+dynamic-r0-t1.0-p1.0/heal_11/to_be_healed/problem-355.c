@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 1, got 0
-  *  test case 0 failed: expected 8, got 0
   */
 
 int count_rectangles(int r) {
@@ -16,31 +14,43 @@ int count_rectangles(int r) {
 
     for (long long x = 1; x < r; x++) {
         long long max_y_sq = r_sq - x * x;
-        long long y_bound = (long long)floor(sqrt((double)max_y_sq));
 
-        while (y_bound > 0 && y_bound * y_bound > max_y_sq) {
-            y_bound--;
+        if (x * x >= r_sq) {
+            break;
         }
+        
+        long long low = 1;
+        long long high = r - 1;
+        long long y_bound = 0;
 
-        if (x <= y_bound) {
-            count += (int)y_bound - 1;
+        while (low <= high) {
+            long long mid = low + (high - low) / 2;
+            if (mid * mid <= max_y_sq) {
+                y_bound = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
         }
+        
+        count += (int)y_bound;
     }
 
     return count * 8;
 }
 
-int main(int argc, char * const * const argv) {
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s <radius>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     char *endptr;
     long val = strtol(argv[1], &endptr, 10);
 
-    if (*endptr != '\0' || val <= 0 || val > 2147483647) {
-        fprintf(stderr, "Invalid radius. Must be a positive integer <= 2147483647.\n");
+    if (*endptr != '\0' || val <= 1 || val > 2147483647) {
         return EXIT_FAILURE;
     }
 

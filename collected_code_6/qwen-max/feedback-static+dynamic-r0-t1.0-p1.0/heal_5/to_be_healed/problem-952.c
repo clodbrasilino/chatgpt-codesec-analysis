@@ -29,8 +29,13 @@ long long ncrModP(int n, int r, int p) {
     for (int i = 1; i <= n; i++)
         fac[i] = (fac[i - 1] * i) % p;
 
-    return (modInverse(fac[r], p) * modInverse(fac[n - r], p) % p * fac[n]) % p;
+    long long invFacR = modInverse(fac[r], p);
+    long long invFacNR = modInverse(fac[n - r], p);
+    return (fac[n] * invFacR % p * invFacNR % p) % p;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000001,time:847,execs:713,op:havoc,rep:7; likely memory-safety defect
+  */
 
 int main() {
     int n, r, p;
@@ -40,13 +45,13 @@ int main() {
         return 1;
     }
 
-    if (n < 0 || r < 0 || p <= 1) {
+    if (n < 0 || r < 0 || p <= 0) {
         printf("Invalid input\n");
         return 1;
     }
 
     if (r > n) {
-        printf("Invalid input: r should be less than or equal to n\n");
+        printf("r should be less than or equal to n\n");
         return 1;
     }
 

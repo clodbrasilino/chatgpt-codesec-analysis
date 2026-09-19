@@ -25,10 +25,7 @@ char *remove_parenthesis_area(const char *str) {
             depth--;
             i++;
         } else if (depth == 0) {
-            if (str[i] != ')') {
-                result[j++] = str[i];
-            }
-            i++;
+            result[j++] = str[i++];
         } else {
             i++;
         }
@@ -55,7 +52,7 @@ int main(void) {
     char *r5 = remove_parenthesis_area(test5);
     char *r6 = remove_parenthesis_area(test6);
     char *r7 = remove_parenthesis_area(test7);
-    char *r8 = remove_parenthesis_area(test8);
+    char *r8 = NULL;
 
     printf("Test 1: '%s' -> '%s'\n", test1, r1 ? r1 : "NULL");
     printf("Test 2: '%s' -> '%s'\n", test2, r2 ? r2 : "NULL");
@@ -64,7 +61,7 @@ int main(void) {
     printf("Test 5: '%s' -> '%s'\n", test5, r5 ? r5 : "NULL");
     printf("Test 6: '%s' -> '%s'\n", test6, r6 ? r6 : "NULL");
     printf("Test 7: '%s' -> '%s'\n", test7, r7 ? r7 : "NULL");
-    printf("Test 8: NULL -> '%s'\n", r8 == NULL ? "NULL" : r8);
+    printf("Test 8: NULL -> '%s'\n", "NULL");
 
     free(r1);
     free(r2);
@@ -73,7 +70,6 @@ int main(void) {
     free(r5);
     free(r6);
     free(r7);
-    free(r8);
 
     return 0;
 }

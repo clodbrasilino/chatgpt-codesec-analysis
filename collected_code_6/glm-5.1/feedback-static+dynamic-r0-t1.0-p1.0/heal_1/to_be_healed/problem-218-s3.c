@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 3, got 4
+  *  test case 0 failed: expected 1, got 2
+  */
 
 int min_operations(int a, int b) {
     if (a <= 0 || b <= 0) {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 long long sumOfSubarrayProducts(const int *arr, int n) {
     if (arr == NULL || n <= 0) {
@@ -11,8 +12,21 @@ long long sumOfSubarrayProducts(const int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
-            product *= arr[j];
-            totalSum += product;
+            if (arr[j] != 0 && product > LLONG_MAX / llabs((long long)arr[j])) {
+                product = LLONG_MAX;
+            } else if (arr[j] != 0 && product < LLONG_MIN / llabs((long long)arr[j])) {
+                product = LLONG_MIN;
+            } else {
+                product *= arr[j];
+            }
+            
+            if (product > 0 && totalSum > LLONG_MAX - product) {
+                totalSum = LLONG_MAX;
+            } else if (product < 0 && totalSum < LLONG_MIN - product) {
+                totalSum = LLONG_MIN;
+            } else {
+                totalSum += product;
+            }
         }
     }
     
@@ -27,7 +41,12 @@ int main(void) {
         return EXIT_FAILURE;
     }
     
-    int *arr = malloc(n * sizeof(int));
+    if ((size_t)n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = malloc((size_t)n * sizeof(int));
     if (arr == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;

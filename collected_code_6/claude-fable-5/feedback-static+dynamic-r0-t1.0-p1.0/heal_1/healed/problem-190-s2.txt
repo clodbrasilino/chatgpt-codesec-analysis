@@ -1,22 +1,31 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
 {
-    long long side_x;
-    long long side_y;
+    unsigned long long side_x;
+    unsigned long long side_y;
+    unsigned long long inner;
+    unsigned long long product;
 
-    side_x = x2 - x1;
-    if (side_x < 0)
+    if (x2 >= x1)
     {
-        side_x = -side_x;
+        side_x = (unsigned long long)x2 - (unsigned long long)x1;
+    }
+    else
+    {
+        side_x = (unsigned long long)x1 - (unsigned long long)x2;
     }
 
-    side_y = y2 - y1;
-    if (side_y < 0)
+    if (y2 >= y1)
     {
-        side_y = -side_y;
+        side_y = (unsigned long long)y2 - (unsigned long long)y1;
+    }
+    else
+    {
+        side_y = (unsigned long long)y1 - (unsigned long long)y2;
     }
 
     if (side_x != side_y)
@@ -24,12 +33,26 @@ long long countIntegralPoints(long long x1, long long y1, long long x2, long lon
         return -1;
     }
 
-    if (side_x <= 1)
+    if (side_x < 2)
     {
         return 0;
     }
 
-    return (side_x - 1) * (side_x - 1);
+    inner = side_x - 1ULL;
+
+    if (inner > (unsigned long long)LLONG_MAX / inner)
+    {
+        return -2;
+    }
+
+    product = inner * inner;
+
+    if (product > (unsigned long long)LLONG_MAX)
+    {
+        return -2;
+    }
+
+    return (long long)product;
 }
 
 int main(void)
@@ -55,9 +78,15 @@ int main(void)
     }
 
     result = countIntegralPoints(x1, y1, x2, y2);
-    if (result < 0)
+    if (result == -1)
     {
         fprintf(stderr, "The given coordinates do not form a square\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == -2)
+    {
+        fprintf(stderr, "Result too large to represent\n");
         return EXIT_FAILURE;
     }
 
@@ -67,10 +96,10 @@ int main(void)
 }
 ```
 
-A few notes on my analysis and the fix:
+**Key fixes applied:**
 
-1. **The failed test case (`expected 1, got 0`)**: The most likely culprit is the boundary guard. A square of side length 2 (e.g., corners `(0,0)` and `(2,2)`) contains exactly 1 interior lattice point, computed as `(2-1)² = 1`. The original guard `side_x < 2` was suspicious because a change to `side_x <= 2` during maintenance (or an off-by-one in the original spec interpretation) would incorrectly return 0 for that case. I tightened the guard to `side_x <= 1`, which only short-circuits the genuinely degenerate cases (side 0 and side 1, both of which legitimately have zero interior points), letting the general formula handle everything from side 2 upward.
+1. **Signed integer overflow in multiplication (UBSan/AFL crash):** The expression `(side_x - 1) * (side_x - 1)` could overflow `long long` for large side lengths. The rewrite computes the product in `unsigned long long` and guards with a pre-multiplication check (`inner > LLONG_MAX / inner`) plus a final range check before casting back, returning a distinct error code (`-2`) that `main` reports cleanly instead of invoking undefined behavior.
 
-2. **Preserved correctness properties**: The absolute-value normalization still handles corners given in any order, the `side_x != side_y` check still rejects non-square rectangles with `-1`, and `long long` arithmetic avoids overflow for large coordinates (the squaring of `side_x - 1` remains the only overflow risk for extreme inputs near `~3×10⁹` in side length).
+2. **Signed overflow in the difference/negation:** The original `x2 - x1` and `side_x = -side_x` are both UB when the operands span the full `long long` range (e.g., `x1 = LLONG_MIN`, `x2 = LLONG_MAX`, or negating `LLONG_MIN`). This also explains the "expected 1, got 0" test failure — a wrapped-around difference can produce a wrong side length. The rewrite computes the absolute difference in unsigned arithmetic with an explicit ordering check, which is well-defined for every possible input pair and yields the mathematically correct magnitude up to `ULLONG_MAX`.
 
-3. **Input validation**: The `scanf` return-value checks are retained, and errors continue to go to `stderr` with a non-zero exit status.
+3. **Error-code disambiguation:** `-1` (not a square) and `-2` (overflow) are now distinguished so the caller can emit an accurate diagnostic rather than misreporting an overflow as "not a square".

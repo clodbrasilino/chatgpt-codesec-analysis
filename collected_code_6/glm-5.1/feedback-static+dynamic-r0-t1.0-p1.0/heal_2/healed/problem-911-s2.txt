@@ -24,7 +24,7 @@ void push_min_heap(int *heap, int *size, int value) {
 }
 
 int pop_min_heap(int *heap, int *size) {
-    if (*size == 0) return -1;
+    if (*size == 0) return INT_MIN;
     int root = heap[0];
     heap[0] = heap[*size - 1];
     (*size)--;
@@ -46,8 +46,8 @@ int pop_min_heap(int *heap, int *size) {
 }
 
 void push_max_heap(int *heap, int *size, int value) {
-    value = -value;
-    heap[*size] = value;
+    long long stored = (value == INT_MIN) ? (long long)INT_MIN + 1 : -(long long)value;
+    heap[*size] = (int)stored;
     int i = *size;
     (*size)++;
     while (i > 0) {
@@ -62,8 +62,9 @@ void push_max_heap(int *heap, int *size, int value) {
 }
 
 int pop_max_heap(int *heap, int *size) {
-    if (*size == 0) return -1;
-    int root = -heap[0];
+    if (*size == 0) return INT_MIN;
+    int root = heap[0];
+    long long actual = (root == INT_MIN + 1) ? INT_MIN : -(long long)root;
     heap[0] = heap[*size - 1];
     (*size)--;
     int i = 0;
@@ -80,37 +81,39 @@ int pop_max_heap(int *heap, int *size) {
             break;
         }
     }
-    return root;
+    return (int)actual;
 }
 
 long long maximumProduct(const int *nums, int numsSize) {
     if (numsSize < 3) return 0;
-    
-    long long max1 = LLONG_MIN, max2 = LLONG_MIN, max3 = LLONG_MIN;
-    long long min1 = LLONG_MAX, min2 = LLONG_MAX;
+
+    int max_heap[4];
+    int max_heap_size = 0;
+
+    int min_heap[4];
+    int min_heap_size = 0;
 
     for (int i = 0; i < numsSize; i++) {
-        if (nums[i] >= max1) {
-            max3 = max2;
-            max2 = max1;
-            max1 = nums[i];
-        } else if (nums[i] >= max2) {
-            max3 = max2;
-            max2 = nums[i];
-        } else if (nums[i] > max3) {
-            max3 = nums[i];
+        push_max_heap(max_heap, &max_heap_size, nums[i]);
+        if (max_heap_size > 3) {
+            pop_max_heap(max_heap, &max_heap_size);
         }
 
-        if (nums[i] <= min1) {
-            min2 = min1;
-            min1 = nums[i];
-        } else if (nums[i] <= min2) {
-            min2 = nums[i];
+        push_min_heap(min_heap, &min_heap_size, nums[i]);
+        if (min_heap_size > 3) {
+            pop_min_heap(min_heap, &min_heap_size);
         }
     }
 
-    long long product1 = max1 * max2 * max3;
-    long long product2 = max1 * min1 * min2;
+    int max1 = pop_max_heap(max_heap, &max_heap_size);
+    int max2 = pop_max_heap(max_heap, &max_heap_size);
+    int max3 = pop_max_heap(max_heap, &max_heap_size);
+
+    int min1 = pop_min_heap(min_heap, &min_heap_size);
+    int min2 = pop_min_heap(min_heap, &min_heap_size);
+
+    long long product1 = (long long)max1 * max2 * max3;
+    long long product2 = (long long)max1 * min1 * min2;
 
     return product1 > product2 ? product1 : product2;
 }

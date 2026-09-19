@@ -1,32 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
+#include <stdint.h>
 
-static long long mul_mod(long long a, long long b, long long p) {
-    long long res = 0;
-    a %= p;
-    if (a < 0) a += p;
-    b %= p;
-    if (b < 0) b += p;
+typedef unsigned long long ull;
+
+ull mul_mod(ull a, ull b, ull p) {
+    ull res = 0;
+    a = a % p;
     while (b > 0) {
-        if (b & 1) {
-            res = (res + a);
-            if (res >= p) res -= p;
-        }
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 4611686018427387904 + 4611686018427387904 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:483,execs:335,op:havoc,rep:1)
-         */
-        a = (a + a);
-        if (a >= p) a -= p;
-        b >>= 1;
+        if (b & 1)
+            res = (res + a) % p;
+        a = (a << 1) % p;
+        b = b >> 1;
     }
     return res;
 }
 
-long long power(long long x, long long y, long long p) {
-    long long res = 1;
+ull power(ull x, ull y, ull p) {
+    ull res = 1;
     x = x % p;
-    if (x < 0) x += p;
     while (y > 0) {
         if (y & 1)
             res = mul_mod(res, x, p);
@@ -36,11 +28,21 @@ long long power(long long x, long long y, long long p) {
     return res;
 }
 
-long long mod_inverse(long long n, long long p) {
+ull mod_inverse(ull n, ull p) {
     return power(n, p - 2, p);
 }
+
+int is_prime(ull n) {
+    if (n < 2) return 0;
+    if (n == 2) return 1;
+    if (n % 2 == 0) return 0;
+    for (ull i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return 0;
+    }
+    return 1;
+}
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 11, got 10
+  *  test case 1 failed: expected 11, got -1
   */
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -50,50 +52,76 @@ long long ncr_mod_p(long long n, long long r, long long p) {
         return 1;
     if (n - r < r)
         r = n - r;
-    
-    long long *fact = (long long *)malloc((r + 1) * sizeof(long long));
+
+    if (!is_prime((ull)p))
+        return -1;
+
+    if (n >= p) {
+        long long result = 1;
+        long long n_curr = n;
+        long long r_curr = r;
+        while (n_curr > 0 || r_curr > 0) {
+            long long ni = n_curr % p;
+            long long ri = r_curr % p;
+            if (ri > ni) {
+                return 0;
+            }
+            long long term = ncr_mod_p(ni, ri, p);
+            if (term == -1)
+                return -1;
+            result = (result * term) % p;
+            n_curr /= p;
+            r_curr /= p;
+        }
+        return result;
+    }
+
+    ull *fact = (ull *)malloc(((size_t)n + 1) * sizeof(ull));
     if (fact == NULL)
         return -1;
-    
+
     fact[0] = 1;
-    for (long long i = 1; i <= r; i++) {
-        long long term = (n - r + i) % p;
-        fact[i] = mul_mod(fact[i - 1], term, p);
+    ull mod = (ull)p;
+    for (long long i = 1; i <= n; i++)
+        fact[i] = mul_mod(fact[i - 1], (ull)i, mod);
+
+    ull num = fact[n];
+    ull den = mul_mod(fact[r], fact[n - r], mod);
+
+    if (den == 0) {
+        free(fact);
+        return -1;
     }
-    
-    long long numerator = fact[r];
-    long long denominator = 1;
-    for (long long i = 1; i <= r; i++) {
-        denominator = mul_mod(denominator, i % p, p);
-    }
-    
-    long long result = mul_mod(numerator, mod_inverse(denominator, p), p);
-    
+
+    ull den_inv = mod_inverse(den, mod);
+    ull result = mul_mod(num, den_inv, mod);
+
     free(fact);
-    return result;
+    return (long long)result;
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000001,time:45937,execs:26100,op:havoc,rep:3; likely memory-safety defect
-  */
 
 int main(void) {
     long long n, r, p;
-    
-    while (scanf("%" SCNd64 " %" SCNd64 " %" SCNd64, &n, &r, &p) == 3) {
-        if (n < 0 || r < 0 || p <= 1) {
-            fprintf(stderr, "Invalid parameters\n");
-            continue;
-        }
-        
-        long long result = ncr_mod_p(n, r, p);
-        
-        if (result == -1) {
-            fprintf(stderr, "Memory allocation failed\n");
-            continue;
-        }
-        
-        printf("%" PRId64 "\n", result);
+
+    printf("Enter n, r, and p: ");
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
     }
-    
+
+    if (n < 0 || r < 0 || p <= 1) {
+        fprintf(stderr, "Invalid parameters\n");
+        return 1;
+    }
+
+    long long result = ncr_mod_p(n, r, p);
+
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed or p is not prime\n");
+        return 1;
+    }
+
+    printf("%lldC%lld mod %lld = %lld\n", n, r, p, result);
+
     return 0;
 }

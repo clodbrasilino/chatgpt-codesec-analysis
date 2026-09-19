@@ -9,29 +9,25 @@ int maxSumNonAdjacent(int *grid, int n) {
 
     for (int i = 0; i < 2 * n; i++) {
         int newExclude = (include > exclude) ? include : exclude;
-        
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 1111111111 + 1412952519 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000011,time:58629,execs:22621,op:havoc,rep:13)
-         */
         include = exclude + grid[i];
         exclude = newExclude;
     }
-    
+
     return (include > exclude) ? include : exclude;
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000005,time:3081,execs:1174,op:havoc,rep:13; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:675,execs:676,op:havoc,rep:2; likely memory-safety defect
   */
 
 int main() {
     int n;
     printf("Enter the size of the grid (2 x n): ");
     if (scanf("%d", &n) != 1 || n <= 0) {
-        fprintf(stderr, "Invalid input\n");
+        fprintf(stderr, "Invalid grid size\n");
         exit(EXIT_FAILURE);
     }
 
-    int *grid = (int *)malloc(2 * n * sizeof(int));
+    int *grid = malloc(2 * n * sizeof(int));
     if (grid == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
@@ -40,7 +36,7 @@ int main() {
     printf("Enter the elements of the grid: ");
     for (int i = 0; i < 2 * n; i++) {
         if (scanf("%d", &grid[i]) != 1) {
-            fprintf(stderr, "Invalid input\n");
+            fprintf(stderr, "Input error\n");
             free(grid);
             exit(EXIT_FAILURE);
         }

@@ -3,15 +3,16 @@
 #include <stdlib.h>
 
 long long eulerian_number(int n, int m) {
-    if (m < 0 || n < 0 || m >= n) {
-        if (n == 0 && m == 0) {
-            return 1;
-        }
+    if (m < 0 || n < 0 || m > n) {
         return 0;
     }
 
     if (n == 0) {
-        return m == 0 ? 1 : 0;
+        return 1;
+    }
+
+    if (m >= n) {
+        return 0;
     }
 
     long long *dp = (long long*)calloc((size_t)n + 1, sizeof(long long));

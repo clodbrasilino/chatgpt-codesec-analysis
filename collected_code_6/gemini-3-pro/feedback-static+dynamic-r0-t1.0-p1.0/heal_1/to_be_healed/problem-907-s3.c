@@ -58,6 +58,9 @@ void print_lucky_numbers(int n) {
 
     free(numbers);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:490,execs:256,op:havoc,rep:3; likely memory-safety defect
+  */
 
 int main() {
     int n;

@@ -53,11 +53,17 @@ int main() {
     int res_size = 0;
     int* res = find_dissimilar(t1, s1, t2, s2, &res_size);
     if (res != NULL) {
+        printf("[");
         for (int i = 0; i < res_size; i++) {
-            printf("%d ", res[i]);
+            printf("%d", res[i]);
+            if (i < res_size - 1) {
+                printf(", ");
+            }
         }
-        printf("\n");
+        printf("]\n");
         free(res);
+    } else {
+        printf("[]\n");
     }
     return 0;
 }

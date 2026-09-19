@@ -3,145 +3,115 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <stddef.h>
+#include <limits.h>
 
-static void swap_int(int *a, int *b)
+static int multiply_int64(int64_t a, int64_t b, int64_t *result)
 {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+    if (a > 0) {
+        if ((b > 0 && a > INT64_MAX / b) ||
+            (b < 0 && b < INT64_MIN / a)) {
+            return -1;
+        }
+    } else if (a < 0) {
+        if ((b > 0 && a < INT64_MIN / b) ||
+            (b < 0 && a < INT64_MAX / b)) {
+            return -1;
+        }
+    }
+
+    *result = a * b;
+    return 0;
 }
 
-static void min_heap_sift_up(int heap[], size_t index)
+static int product_of_three(int a, int b, int c, int64_t *result)
 {
-    while (index > 0U) {
-        size_t parent = (index - 1U) / 2U;
+    int64_t intermediate;
 
-        if (heap[parent] <= heap[index]) {
-            break;
-        }
-
-        swap_int(&heap[parent], &heap[index]);
-        index = parent;
+    if (multiply_int64((int64_t)a, (int64_t)b, &intermediate) != 0) {
+        return -1;
     }
-}
 
-static void max_heap_sift_up(int heap[], size_t index)
-{
-    while (index > 0U) {
-        size_t parent = (index - 1U) / 2U;
-
-        if (heap[parent] >= heap[index]) {
-            break;
-        }
-
-        swap_int(&heap[parent], &heap[index]);
-        index = parent;
-    }
-}
-
-static void min_heap_replace_root(int heap[], size_t size, int value)
-{
-    size_t index = 0U;
-
-    heap[0] = value;
-
-    for (;;) {
-        size_t left = index * 2U + 1U;
-        size_t right = left + 1U;
-        size_t smallest = index;
-
-        if (left < size && heap[left] < heap[smallest]) {
-            smallest = left;
-        }
-
-        if (right < size && heap[right] < heap[smallest]) {
-            smallest = right;
-        }
-
-        if (smallest == index) {
-            break;
-        }
-
-        swap_int(&heap[index], &heap[smallest]);
-        index = smallest;
-    }
-}
-
-static void max_heap_replace_root(int heap[], size_t size, int value)
-{
-    size_t index = 0U;
-
-    heap[0] = value;
-
-    for (;;) {
-        size_t left = index * 2U + 1U;
-        size_t right = left + 1U;
-        size_t largest = index;
-
-        if (left < size && heap[left] > heap[largest]) {
-            largest = left;
-        }
-
-        if (right < size && heap[right] > heap[largest]) {
-            largest = right;
-        }
-
-        if (largest == index) {
-            break;
-        }
-
-        swap_int(&heap[index], &heap[largest]);
-        index = largest;
-    }
+    return multiply_int64(intermediate, (int64_t)c, result);
 }
 
 static int maximum_product_of_three(const int array[], size_t length,
                                     int64_t *result)
 {
-    int largest[3] = {0, 0, 0};
-    int smallest[2] = {0, 0};
-    size_t largest_size = 0U;
-    size_t smallest_size = 0U;
+    int largest1;
+    int largest2;
+    int largest3;
+    int smallest1;
+    int smallest2;
+    int64_t product_largest;
+    int64_t product_mixed;
 
     if (array == NULL || result == NULL || length < 3U) {
         return -1;
     }
 
-    for (size_t i = 0U; i < length; ++i) {
+    largest1 = array[0];
+    largest2 = array[1];
+    largest3 = array[2];
+
+    if (largest1 < largest2) {
+        int temp = largest1;
+        largest1 = largest2;
+        largest2 = temp;
+    }
+
+    if (largest2 < largest3) {
+        int temp = largest2;
+        largest2 = largest3;
+        largest3 = temp;
+    }
+
+    if (largest1 < largest2) {
+        int temp = largest1;
+        largest1 = largest2;
+        largest2 = temp;
+    }
+
+    smallest1 = array[0];
+    smallest2 = array[1];
+
+    if (smallest1 > smallest2) {
+        int temp = smallest1;
+        smallest1 = smallest2;
+        smallest2 = temp;
+    }
+
+    for (size_t i = 3U; i < length; ++i) {
         int value = array[i];
 
-        if (largest_size < 3U) {
-            largest[largest_size] = value;
-            min_heap_sift_up(largest, largest_size);
-            ++largest_size;
-        } else if (value > largest[0]) {
-            min_heap_replace_root(largest, largest_size, value);
-        }
-
-        if (smallest_size < 2U) {
-            smallest[smallest_size] = value;
-            max_heap_sift_up(smallest, smallest_size);
-            ++smallest_size;
-        } else if (value < smallest[0]) {
-            max_heap_replace_root(smallest, smallest_size, value);
+        if (value >= largest1) {
+            largest3 = largest2;
+            largest2 = largest1;
+            largest1 = value;
+        } else if (value >= largest2) {
+            largest3 = largest2;
+            largest2 = value;
+        } else if (value > largest3) {
+            largest3 = value;
         }
     }
 
-    int largest_value = largest[0];
+    for (size_t i = 2U; i < length; ++i) {
+        int value = array[i];
 
-    if (largest[1] > largest_value) {
-        largest_value = largest[1];
+        if (value <= smallest1) {
+            smallest2 = smallest1;
+            smallest1 = value;
+        } else if (value < smallest2) {
+            smallest2 = value;
+        }
     }
 
-    if (largest[2] > largest_value) {
-        largest_value = largest[2];
+    if (product_of_three(largest1, largest2, largest3,
+                         &product_largest) != 0 ||
+        product_of_three(smallest1, smallest2, largest1,
+                         &product_mixed) != 0) {
+        return -1;
     }
-
-    int64_t product_largest =
-        (int64_t)largest[0] * (int64_t)largest[1] * (int64_t)largest[2];
-    int64_t product_mixed =
-        (int64_t)smallest[0] * (int64_t)smallest[1] *
-        (int64_t)largest_value;
 
     *result = product_largest > product_mixed
                   ? product_largest
@@ -153,7 +123,7 @@ static int maximum_product_of_three(const int array[], size_t length,
 int main(void)
 {
     size_t length;
-    int *array = NULL;
+    int *array;
     int64_t result;
 
     if (scanf("%zu", &length) != 1 ||
@@ -169,7 +139,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    for (size_t i = 0U; i < length; ++i) {
+    for (size_t i = 0; i < length; ++i) {
         if (scanf("%d", &array[i]) != 1) {
             fprintf(stderr, "Invalid array element\n");
             free(array);
@@ -184,7 +154,7 @@ int main(void)
     }
 
     printf("%" PRId64 "\n", result);
-    free(array);
 
+    free(array);
     return EXIT_SUCCESS;
 }

@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 271, got 380
+  *  test case 2 failed: expected 217, got 306
+  *  test case 1 failed: expected 7, got 12
+  */
 
 unsigned long long centered_hexagonal(int n) {
     if (n < 1) {

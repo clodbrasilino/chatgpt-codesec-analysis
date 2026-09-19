@@ -1,6 +1,4 @@
-problem-291-s3.c:12:36:medium:UBSan: signed integer overflow: -1211913337 * 2937467870373124464 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000002,time:8,execs:15,op:(null),pos:0)
-problem-291-s3.c:12:44:medium:UBSan: signed integer overflow: 3559958832009428378 + 5760134388741632240 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:2171,execs:528,op:havoc,rep:15)
-problem-291-s3.c:13:40:medium:UBSan: signed integer overflow: 3559958832009428378 + 5760134388741632240 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:2171,execs:528,op:havoc,rep:15)
-problem-291-s3.c:20:17:medium:UBSan: signed integer overflow: -6439069776308146982 + -3447490278619531900 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:2171,execs:528,op:havoc,rep:15)
-problem-291-s3.c:20:17:medium:UBSan: signed integer overflow: 3562937516635623168 + 5768565503124342272 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000003,sig:06,src:000002,time:43372,execs:10450,op:havoc,rep:12)
-problem-291-s3.c:22:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000002,time:2639,execs:633,op:havoc,rep:2; likely memory-safety defect
+problem-291-s3.c:12:0:high:ASan: FPE (AFL crash: id:000001,sig:06,src:000001,time:758,execs:920,op:havoc,rep:15)
+problem-291-s3.c:12:33:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000001,time:758,execs:920,op:havoc,rep:15)
+problem-291-s3.c:12:41:medium:UBSan: signed integer overflow: 3559958832009428378 + 5760134388741632240 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:611,execs:754,op:havoc,rep:5)
+problem-291-s3.c:17:14:medium:UBSan: signed integer overflow: 5195179504519237332 + 8658632507532062220 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000005,time:54016,execs:48113,op:havoc,rep:8)

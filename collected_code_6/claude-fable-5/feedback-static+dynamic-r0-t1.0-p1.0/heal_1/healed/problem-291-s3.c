@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-static long long count_ways(int n, int k)
+static long long count_ways(int n, int k, int *overflow)
 {
     long long same;
     long long diff;
     long long total;
     int i;
+
+    *overflow = 0;
 
     if (n <= 0 || k <= 0) {
         return 0;
@@ -18,12 +21,28 @@ static long long count_ways(int n, int k)
 
     same = (long long)k;
     diff = (long long)k * (long long)(k - 1);
+
+    if (same > LLONG_MAX - diff) {
+        *overflow = 1;
+        return 0;
+    }
     total = same + diff;
 
     for (i = 3; i <= n; i++) {
         long long prev_total = total;
+
         same = diff;
+
+        if (k > 1 && prev_total > LLONG_MAX / (long long)(k - 1)) {
+            *overflow = 1;
+            return 0;
+        }
         diff = prev_total * (long long)(k - 1);
+
+        if (same > LLONG_MAX - diff) {
+            *overflow = 1;
+            return 0;
+        }
         total = same + diff;
     }
 
@@ -34,6 +53,7 @@ int main(void)
 {
     int n;
     int k;
+    int overflow;
     long long result;
 
     printf("Enter number of posts: ");
@@ -58,7 +78,12 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    result = count_ways(n, k);
+    result = count_ways(n, k, &overflow);
+    if (overflow) {
+        fprintf(stderr, "Error: result overflows 64-bit signed integer\n");
+        return EXIT_FAILURE;
+    }
+
     printf("Number of ways: %lld\n", result);
 
     return EXIT_SUCCESS;

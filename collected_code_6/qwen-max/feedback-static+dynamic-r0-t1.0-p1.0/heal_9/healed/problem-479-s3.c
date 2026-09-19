@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
 #include <limits.h>
+#include <stdlib.h>
 
 int findFirstDigit(long num) {
     if (num == 0) return 0;
-    if (num < 0) num = labs(num);
-    int digits = (int)(log10((double)num) + 0.5);
-    return (int)(num / pow(10, digits));
+    if (num == LONG_MAX) return 9;
+
+    unsigned long unum = labs(num);
+    int digits = 0;
+    unsigned long n = unum;
+    while (n >= 10) {
+        n /= 10;
+        digits++;
+    }
+    unsigned long first_digit = unum / (unsigned long)powl(10.0L, digits);
+    return (int)first_digit;
 }
 
 int main() {
     long number;
     printf("Enter a number: ");
-    if (scanf("%ld", &number) != 1) {
-        printf("Invalid input\n");
-        return 1;
-    }
+    scanf("%ld", &number);
     int firstDigit = findFirstDigit(number);
-    if (firstDigit >= 0) {
-        printf("The first digit is %d\n", firstDigit);
-    } else {
-        printf("Invalid input\n");
-    }
+    printf("The first digit is %d\n", firstDigit);
     return 0;
 }

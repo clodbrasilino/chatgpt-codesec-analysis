@@ -1,24 +1,19 @@
 #include <stdio.h>
 #include <limits.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 15, got 31
   *  test case 1 failed: expected 14, got 13
   *  test case 0 failed: expected 14, got 11
+  *  test case 2 failed: expected 15, got 31
   */
 
 unsigned int set_leftmost_unset_bit(unsigned int n)
 {
-    unsigned int mask;
     unsigned int temp;
+    unsigned int mask;
 
     if (n == UINT_MAX)
     {
         return n;
-    }
-
-    if (n == 0U)
-    {
-        return 1U;
     }
 
     temp = ~n;

@@ -16,6 +16,9 @@ int max_volume_cuboid(int sum) {
              *  Condition 'k>0' is always true
              */
             if (k > 0) {
+                /* Possible weaknesses found:
+                 * UBSan: signed integer overflow: 458976 * 4679 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:1004,execs:517,op:havoc,rep:5)
+                 */
                 int vol = i * j * k;
                 if (vol > maxVol) {
                     maxVol = vol;
@@ -25,6 +28,9 @@ int max_volume_cuboid(int sum) {
     }
     return maxVol;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:234,execs:141,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int sum;

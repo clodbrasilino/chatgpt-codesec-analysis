@@ -26,6 +26,9 @@ long long sum_of_perrin(long n) {
     }
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:1025,execs:486,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main() {
     long n;

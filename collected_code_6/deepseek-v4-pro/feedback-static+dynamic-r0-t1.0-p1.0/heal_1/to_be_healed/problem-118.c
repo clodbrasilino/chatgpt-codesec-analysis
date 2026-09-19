@@ -7,9 +7,9 @@ typedef struct Node {
     struct Node *next;
 } Node;
  /* Possible weaknesses found:
-  *  test case 0 failed: expected ['python', 'programming'], got ["python","�"
-  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
   *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
   */
 
 Node *string_to_list(const char *str) {

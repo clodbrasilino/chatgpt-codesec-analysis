@@ -1,7 +1,7 @@
 #include <stdio.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 1, got 2
   *  test case 2 failed: expected 5, got 12
+  *  test case 1 failed: expected 1, got 2
   *  test case 0 failed: expected 11, got 29
   */
 
@@ -18,6 +18,9 @@ long long jacobsthal(long n) {
     }
     return b;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:6,execs:15,op:(null),pos:0; likely memory-safety defect
+  */
 
 int main() {
     long n;

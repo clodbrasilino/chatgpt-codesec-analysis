@@ -1,16 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
+
+long long mulmod(long long a, long long b, long long mod) {
+    __int128 res = (__int128)a * (__int128)b;
+    res %= mod;
+    if (res < 0) {
+        res += mod;
+    }
+    return (long long)res;
+}
 
 long long power(long long base, long long exp, long long mod) {
     long long result = 1;
-    base = base % mod;
-    if (base < 0) base += mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
     while (exp > 0) {
         if (exp % 2 == 1) {
-            result = (result * base) % mod;
+            result = mulmod(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mulmod(base, base, mod);
         exp = exp / 2;
     }
     return result;
@@ -20,18 +32,44 @@ long long modInverse(long long n, long long p) {
     return power(n, p - 2, p);
 }
 
+int isPrime(long long p) {
+    if (p < 2) {
+        return 0;
+    }
+    if (p == 2) {
+        return 1;
+    }
+    if (p % 2 == 0) {
+        return 0;
+    }
+    for (long long i = 3; i <= p / i; i += 2) {
+        if (p % i == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 long long nCrModP(long long n, long long r, long long p) {
     if (r > n) {
         return 0;
     }
     if (r == 0 || r == n) {
-        return 1;
+        return 1 % p;
     }
     if (r > n - r) {
         r = n - r;
     }
-    
-    if (n >= p) {
+
+    if (p == 2) {
+        return ((r & (n - r)) == 0) ? 1 : 0;
+    }
+
+    if (!isPrime(p)) {
+        return 0;
+    }
+
+    if (r >= p) {
         long long result = 1;
         while (n > 0 || r > 0) {
             long long ni = n % p;
@@ -40,57 +78,63 @@ long long nCrModP(long long n, long long r, long long p) {
                 return 0;
             }
             
-            long long numerator = 1;
+            long long num = 1;
             for (long long i = 0; i < ri; i++) {
-                numerator = (numerator * (ni - i)) % p;
+                num = mulmod(num, (ni - i) % p, p);
             }
             
-            long long denominator = 1;
+            long long den = 1;
             for (long long i = 1; i <= ri; i++) {
-                denominator = (denominator * i) % p;
+                den = mulmod(den, i, p);
             }
             
-            result = (result * numerator % p) * modInverse(denominator, p) % p;
+            result = mulmod(result, mulmod(num, modInverse(den, p), p), p);
+            
             n /= p;
             r /= p;
         }
         return result;
     }
-    
+
     long long numerator = 1;
     for (long long i = 0; i < r; i++) {
-        numerator = (numerator * (n - i)) % p;
+        long long term = (n - i) % p;
+        numerator = mulmod(numerator, term, p);
     }
-    
+
     long long denominator = 1;
     for (long long i = 1; i <= r; i++) {
-        denominator = (denominator * i) % p;
+        denominator = mulmod(denominator, i % p, p);
     }
-    
-    long long result = (numerator * modInverse(denominator, p)) % p;
+
+    if (denominator == 0) {
+        return 0;
+    }
+
+    long long result = mulmod(numerator, modInverse(denominator, p), p);
     return result;
 }
 
 int main(void) {
     long long n, r, p;
-    
+
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    
-    if (n < 0 || r < 0 || p <= 1) {
+
+    if (n < 0 || r < 0 || p <= 0) {
         fprintf(stderr, "Invalid parameters\n");
         return EXIT_FAILURE;
     }
-    
+
     if (r > n) {
         printf("0\n");
         return EXIT_SUCCESS;
     }
-    
+
     long long result = nCrModP(n, r, p);
     printf("%lld\n", result);
-    
+
     return EXIT_SUCCESS;
 }

@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['MSM', '240', 'is', '104', '129', 'best', '10'], got <no output>
+  *  test case 2 failed: expected ['Flutter', '484', 'is', '77', '129', 'Magnificent', '45'], got <no output>
+  *  test case 1 failed: expected ['Dart', '368', 'is', '100', '181', 'Super', '18'], got <no output>
+  */
 
 char* increment_numeric_values(const char* input, int k) {
     if (input == NULL) {
@@ -99,14 +104,14 @@ int main(void) {
     }
     
     /* Possible weaknesses found:
-     *  Variable 'result5' can be declared as pointer to const [constVariablePointer]
      *  Calling function 'increment_numeric_values' returns 0
+     *  Variable 'result5' can be declared as pointer to const [constVariablePointer]
      *  Assignment 'result5=increment_numeric_values(NULL,5)', assigned value is 0
      */
     char* result5 = increment_numeric_values(NULL, 5);
     /* Possible weaknesses found:
-     *  Condition 'result5==NULL' is always true [knownConditionTrueFalse]
      *  Condition 'result5==NULL' is always true
+     *  Condition 'result5==NULL' is always true [knownConditionTrueFalse]
      */
     if (result5 == NULL) {
         printf("NULL input handled\n");

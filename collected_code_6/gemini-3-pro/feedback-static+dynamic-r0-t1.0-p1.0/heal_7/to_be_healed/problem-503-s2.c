@@ -1,31 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
-  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   */
 
 int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     if (out_size == NULL) {
         return NULL;
     }
-
     if (arr == NULL || size < 2) {
         *out_size = 0;
         return NULL;
     }
-
     *out_size = size - 1;
     int* result = malloc(*out_size * sizeof(int));
     if (result == NULL) {
+        *out_size = 0;
         return NULL;
     }
-
     for (size_t i = 0; i < *out_size; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1592357251 + 1260588259 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:8505,execs:2891,op:havoc,rep:16)
+         */
         result[i] = arr[i] + arr[i + 1];
     }
-
     return result;
 }
 
@@ -34,27 +34,25 @@ int main(void) {
     size_t size = 0;
     size_t capacity = 0;
     int val;
-    int ch;
+    int c;
 
-    while ((ch = getchar()) != EOF) {
-        if (ch == '\n' || ch == ']') {
-            break;
-        }
-        if (ch == '-' || (ch >= '0' && ch <= '9')) {
-            ungetc(ch, stdin);
+    while ((c = getchar()) != EOF) {
+        if (c == '-' || (c >= '0' && c <= '9')) {
+            ungetc(c, stdin);
             if (scanf("%d", &val) == 1) {
                 if (size >= capacity) {
-                    capacity = (capacity == 0) ? 16 : capacity * 2;
-                    int* temp = realloc(input, capacity * sizeof(int));
+                    size_t new_capacity = (capacity == 0) ? 16 : capacity * 2;
+                    int* temp = realloc(input, new_capacity * sizeof(int));
                     if (!temp) {
                         free(input);
                         return 1;
                     }
                     input = temp;
+                    capacity = new_capacity;
                 }
                 input[size++] = val;
             } else {
-                getchar(); 
+                getchar();
             }
         }
     }
@@ -73,5 +71,6 @@ int main(void) {
 
     free(result);
     free(input);
+    
     return 0;
 }

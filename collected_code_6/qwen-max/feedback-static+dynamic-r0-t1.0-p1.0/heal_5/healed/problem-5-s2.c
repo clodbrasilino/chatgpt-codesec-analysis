@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
 
-int countWays(int n) {
-    if (n % 2 != 0) return 0;
-    if (n == 0) return 1;
-    int a = 1, b = 1;
-    for (int i = 2; i <= n / 2; i++) {
-        int c = a * 3 + b;
+int64_t countWays(int n) {
+    if (n == 0 || n == 1) return 1;
+    int64_t a = 1, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        int64_t c = a + b * 2;
+        if (c < 0 || c > INT64_MAX) break;
         a = b;
         b = c;
     }
@@ -20,7 +22,7 @@ int main() {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    int result = countWays(n);
-    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %d\n", n, result);
+    int64_t result = countWays(n);
+    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %lld\n", n, (long long)result);
     return EXIT_SUCCESS;
 }

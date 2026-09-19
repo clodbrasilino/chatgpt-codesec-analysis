@@ -3,8 +3,8 @@
 #include <stdbool.h>
 
 /* Possible weaknesses found:
- *  Parameter 'b' can be declared as pointer to const [constParameterPointer]
  *  Parameter 'a' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'b' can be declared as pointer to const [constParameterPointer]
  */
 int minSwapsToEqual(char *a, char *b) {
     int count01 = 0, count10 = 0;
@@ -20,6 +20,9 @@ int minSwapsToEqual(char *a, char *b) {
     }
     return (count01 + count10) / 2;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000020,time:39909,execs:15407,op:havoc,rep:12; likely memory-safety defect
+  */
 
 int main() {
     char a[100], b[100];

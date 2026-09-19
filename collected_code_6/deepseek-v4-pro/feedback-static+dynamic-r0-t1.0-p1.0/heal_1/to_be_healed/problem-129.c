@@ -21,6 +21,9 @@ void generate_magic_square(int n, int **magic) {
         }
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:33442,execs:3109,op:havoc,rep:10; likely memory-safety defect
+  */
 
 int main(void) {
     int n, i, j;

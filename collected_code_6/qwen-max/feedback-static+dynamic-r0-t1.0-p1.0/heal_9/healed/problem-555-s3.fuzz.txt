@@ -1,1 +1,1 @@
-problem-555-s3.c:11:28:medium:UBSan: signed integer overflow: 55555611111 * 55555611111 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:609,execs:260,op:havoc,rep:5)
+problem-555-s3.c:7:66:medium:UBSan: signed integer overflow: 3333333332333 * 3333333332333 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:129,execs:156,op:havoc,rep:2)

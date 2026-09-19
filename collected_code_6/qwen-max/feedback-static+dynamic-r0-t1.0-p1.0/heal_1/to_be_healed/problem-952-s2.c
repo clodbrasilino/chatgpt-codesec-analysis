@@ -30,13 +30,16 @@ uint64_t nCrModPFermat(uint64_t n, uint64_t r, uint64_t p) {
 
     return (numerator * modInverse(denominator, p)) % p;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:35152,execs:85,op:flip2,pos:5; likely memory-safety defect
+  */
 
 int main() {
     uint64_t n, r, p;
     /* Possible weaknesses found:
      *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
-     *  %llu in format string (no. 3) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
      *  %llu in format string (no. 2) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     *  %llu in format string (no. 3) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
      */
     scanf("%llu %llu %llu", &n, &r, &p);
     /* Possible weaknesses found:

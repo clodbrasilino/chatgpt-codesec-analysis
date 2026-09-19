@@ -3,7 +3,7 @@
 
 unsigned long long bell_number(int n)
 {
-    if (n < 0) {
+    if (n < 0 || n > 25) {
         return 0;
     }
 
@@ -15,10 +15,11 @@ unsigned long long bell_number(int n)
     bell[0] = 1;
 
     for (int i = 1; i <= n; i++) {
-        bell[i] = bell[i - 1];
+        bell[i] = bell[0];
         for (int j = i - 1; j >= 1; j--) {
-            bell[j] += bell[j - 1];
+            bell[j] = bell[j] + bell[j - 1];
         }
+        bell[0] = bell[i];
     }
 
     unsigned long long result = bell[n];

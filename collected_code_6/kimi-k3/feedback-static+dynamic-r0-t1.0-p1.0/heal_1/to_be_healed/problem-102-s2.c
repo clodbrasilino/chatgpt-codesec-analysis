@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
-  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
-  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
   */
 
 char* snake_to_camel(const char* input) {

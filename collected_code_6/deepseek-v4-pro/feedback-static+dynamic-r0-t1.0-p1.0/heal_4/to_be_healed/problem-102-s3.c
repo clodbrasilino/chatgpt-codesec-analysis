@@ -19,7 +19,10 @@ char *snake_to_camel(const char *snake) {
 
     if (snake[0] == '_') {
         camel[j++] = '_';
-        i++;
+        while (i < len && snake[i] == '_') {
+            i++;
+        }
+        capitalize_next = 1;
     }
 
     for (; i < len; i++) {
@@ -99,12 +102,11 @@ int main(void) {
         free(result);
     }
 
-    const char *null_test = NULL;
     /* Possible weaknesses found:
-     *  Assignment 'result=snake_to_camel(null_test)', assigned value is 0
      *  Calling function 'snake_to_camel' returns 0
+     *  Assignment 'result=snake_to_camel(NULL)', assigned value is 0
      */
-    result = snake_to_camel(null_test);
+    result = snake_to_camel(NULL);
     /* Possible weaknesses found:
      *  Condition 'result!=NULL' is always false
      *  Condition 'result!=NULL' is always false [knownConditionTrueFalse]

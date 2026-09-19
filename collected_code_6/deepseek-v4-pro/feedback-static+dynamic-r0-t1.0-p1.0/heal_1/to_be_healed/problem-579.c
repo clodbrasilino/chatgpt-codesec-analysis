@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'tuple1' can be declared as const array [constParameter]

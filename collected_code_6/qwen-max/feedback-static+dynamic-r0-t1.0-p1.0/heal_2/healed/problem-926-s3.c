@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
-bool is_overflow(long a, long b) {
-    if (b > 0 && a > LONG_MAX - b) return true;
-    if (b < 0 && a < LONG_MIN - b) return true;
-    return false;
+bool is_input_valid(long n) {
+    return n >= 0 && n < 14; // Restrict input to prevent overflow
 }
 
 long derangement(long n) {
     long a = 1, b = 0;
     for (long i = 0; i <= n; ++i) {
         long temp = (i + 1) * (a + b);
-        if (is_overflow(b, temp)) return -1;
+        if ((i + 1) > 0 && (a + b) > 0 && (temp / (i + 1)) != (a + b)) return -1;
         a = b;
         b = temp;
     }
@@ -21,11 +20,10 @@ long derangement(long n) {
 int main() {
     long n;
     printf("Enter the value of n: ");
-    if (scanf("%ld", &n) != 1) return 1;
-    if (n < 0) return 1;
+    if (scanf("%ld", &n) != 1 || !is_input_valid(n)) return 1;
     long result = derangement(n);
     if (result == -1) {
-        printf("Computation overflowed.\n");
+        printf("Error: Integer overflow detected.\n");
     } else {
         printf("The %ld-th derangement number is: %ld\n", n, result);
     }

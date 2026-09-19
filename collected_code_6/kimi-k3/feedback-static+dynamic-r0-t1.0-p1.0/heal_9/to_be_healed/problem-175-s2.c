@@ -9,6 +9,11 @@ bool is_valid_parentheses(const char *s)
 {
     if (s == NULL)
     {
+        return false;
+    }
+
+    if (strlen(s) == 0)
+    {
         return true;
     }
 
@@ -61,14 +66,6 @@ int main(void)
                is_valid_parentheses(test_cases[i]) ? "Valid" : "Invalid");
         i++;
     }
-
-    const char *null_test = NULL;
-    /* Possible weaknesses found:
-     *  Calling function 'is_valid_parentheses' returns 1
-     *  Condition 'is_valid_parentheses(null_test)' is always true [knownConditionTrueFalse]
-     *  Condition 'is_valid_parentheses(null_test)' is always true
-     */
-    printf("Input: NULL -> %s\n", is_valid_parentheses(null_test) ? "Valid" : "Invalid");
 
     return 0;
 }

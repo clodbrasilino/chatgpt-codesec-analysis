@@ -1,24 +1,54 @@
 #include <stdio.h>
-#include <stdlib.h>
-
-long long sum_of_squares(long long n) {
-    return n * (n + 1) * (2 * n + 1) / 6;
-}
-
-long long sum_of_naturals(long long n) {
-    return n * (n + 1) / 2;
-}
- /* Possible weaknesses found:
-  *  test case 1 failed: expected 210, got <no output>
-  *  test case 0 failed: expected 30, got <no output>
-  *  test case 2 failed: expected 6, got <no output>
-  */
+#include <limits.h>
 
 long long difference(long long n) {
-    long long sum_n = sum_of_naturals(n);
-    long long sum_sq = sum_of_squares(n);
-    long long sum_cubes = sum_n * sum_n;
-    return sum_cubes - sum_sq;
+    long long sum_n;
+    long long sum_cubes;
+    
+    if (n < 1) {
+        return -1;
+    }
+    
+    if (n % 2 == 0) {
+        if (n > LLONG_MAX / (n + 1) * 2) {
+            return -1;
+        }
+        if (n + 1 > LLONG_MAX / (n / 2)) {
+            return -1;
+        }
+        sum_n = n / 2;
+        if (sum_n > LLONG_MAX / (n + 1)) {
+            return -1;
+        }
+        sum_n = sum_n * (n + 1);
+    } else {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:366,execs:190,op:havoc,rep:3)
+         */
+        if (n > LLONG_MAX / ((n + 1) / 2)) {
+            return -1;
+        }
+        sum_n = (n + 1) / 2;
+        if (sum_n > LLONG_MAX / n) {
+            return -1;
+        }
+        sum_n = sum_n * n;
+    }
+    
+    if (sum_n > 3037000499LL) {
+        return -1;
+    }
+    
+    if (sum_n > LLONG_MAX / sum_n) {
+        return -1;
+    }
+    sum_cubes = sum_n * sum_n;
+    
+    if (sum_cubes > LLONG_MAX - sum_n) {
+        return -1;
+    }
+    
+    return sum_cubes - sum_n;
 }
 
 int main(void) {
@@ -30,7 +60,13 @@ int main(void) {
         return 1;
     }
     
-    printf("%lld\n", difference(n));
+    long long result = difference(n);
+    if (result == -1) {
+        printf("Overflow occurred\n");
+        return 1;
+    }
+    
+    printf("Difference: %lld\n", result);
     
     return 0;
 }

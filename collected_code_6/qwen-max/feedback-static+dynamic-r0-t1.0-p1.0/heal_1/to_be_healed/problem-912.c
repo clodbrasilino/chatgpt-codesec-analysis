@@ -3,6 +3,9 @@
 #include <stdint.h>
 
 uint64_t find_Lobb_number(uint32_t n) {
+    /* Possible weaknesses found:
+     * UBSan: shift exponent 444 is too large for 64-bit type 'unsigned long long' (AFL crash: id:000000,sig:06,src:000001,time:532,execs:226,op:havoc,rep:6)
+     */
     uint64_t result = (1ULL << (2 * n)) - 1;
     return result + (n & 1);
 }

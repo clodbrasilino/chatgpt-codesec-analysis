@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  */
 
 char *snake_to_camel(const char *snake) {
     if (snake == NULL) {
@@ -9,6 +14,10 @@ char *snake_to_camel(const char *snake) {
     }
 
     size_t len = strlen(snake);
+    if (len == 0) {
+        return NULL;
+    }
+
     char *camel = malloc(len + 1);
     if (camel == NULL) {
         return NULL;
@@ -16,11 +25,11 @@ char *snake_to_camel(const char *snake) {
 
     size_t j = 0;
     int capitalize_next = 0;
-    int first_char = 1;
+    int has_content = 0;
 
     for (size_t i = 0; i < len; i++) {
         if (snake[i] == '_') {
-            if (!first_char && j > 0) {
+            if (has_content) {
                 capitalize_next = 1;
             }
         } else {
@@ -28,13 +37,9 @@ char *snake_to_camel(const char *snake) {
                 camel[j++] = toupper((unsigned char)snake[i]);
                 capitalize_next = 0;
             } else {
-                if (first_char) {
-                    camel[j++] = toupper((unsigned char)snake[i]);
-                } else {
-                    camel[j++] = snake[i];
-                }
+                camel[j++] = snake[i];
             }
-            first_char = 0;
+            has_content = 1;
         }
     }
 
@@ -93,8 +98,8 @@ int main(void) {
      */
     result = snake_to_camel(test8);
     /* Possible weaknesses found:
-     *  Condition 'result!=NULL' is always false
      *  Condition 'result!=NULL' is always false [knownConditionTrueFalse]
+     *  Condition 'result!=NULL' is always false
      */
     if (result != NULL) {
         printf("NULL -> %s\n", result);

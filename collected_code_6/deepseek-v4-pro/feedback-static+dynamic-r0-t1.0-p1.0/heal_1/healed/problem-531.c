@@ -1,40 +1,66 @@
 #include <stdio.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <stdint.h>
 
 int minCoins(const int coins[], int n, int value) {
     if (value < 0) {
         return -1;
     }
     
-    int dp[value + 1];
+    if (value > 1000000) {
+        return -1;
+    }
+    
+    if (value == 0) {
+        return 0;
+    }
+    
+    int *dp = malloc((size_t)(value + 1) * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+    
     dp[0] = 0;
     
     for (int i = 1; i <= value; i++) {
         dp[i] = INT_MAX;
         for (int j = 0; j < n; j++) {
-            if (coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
-                int prev = dp[i - coins[j]] + 1;
-                if (prev < dp[i]) {
-                    dp[i] = prev;
+            if (coins[j] > 0 && coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
+                int prev = dp[i - coins[j]];
+                if (prev != INT_MAX) {
+                    int candidate = prev + 1;
+                    if (candidate < dp[i]) {
+                        dp[i] = candidate;
+                    }
                 }
             }
         }
     }
     
+    int result;
     if (dp[value] == INT_MAX) {
-        return -1;
+        result = -1;
+    } else {
+        result = dp[value];
     }
     
-    return dp[value];
+    free(dp);
+    return result;
 }
 
 int main(void) {
     int coins[] = {1, 5, 10, 25};
-    int n = sizeof(coins) / sizeof(coins[0]);
-    int value;
+    int n = (int)(sizeof(coins) / sizeof(coins[0]));
+    int value = 0;
     
     printf("Enter value: ");
     if (scanf("%d", &value) != 1) {
+        return 1;
+    }
+    
+    if (value < 0) {
+        printf("Cannot make change for negative amount\n");
         return 1;
     }
     

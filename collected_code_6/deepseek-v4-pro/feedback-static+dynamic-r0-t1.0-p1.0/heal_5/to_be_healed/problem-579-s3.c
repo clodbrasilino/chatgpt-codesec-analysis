@@ -10,9 +10,9 @@ int is_present(const int *arr, int size, int value) {
     return 0;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
-  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
   *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
   */
 
 int* find_dissimilar(const int *tuple1, int size1, const int *tuple2, int size2, int *result_size) {
@@ -25,23 +25,38 @@ int* find_dissimilar(const int *tuple1, int size1, const int *tuple2, int size2,
     int count = 0;
 
     for (int i = 0; i < size1; i++) {
-        if (!is_present(tuple2, size2, tuple1[i]) && !is_present(result, count, tuple1[i])) {
-            result[count++] = tuple1[i];
+        if (!is_present(tuple2, size2, tuple1[i])) {
+            if (!is_present(result, count, tuple1[i])) {
+                result[count++] = tuple1[i];
+            }
         }
     }
 
     for (int i = 0; i < size2; i++) {
-        if (!is_present(tuple1, size1, tuple2[i]) && !is_present(result, count, tuple2[i])) {
-            result[count++] = tuple2[i];
+        if (!is_present(tuple1, size1, tuple2[i])) {
+            if (!is_present(result, count, tuple2[i])) {
+                result[count++] = tuple2[i];
+            }
         }
     }
 
+    int *final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result == NULL && count > 0) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
     *result_size = count;
-    return result;
+    return (count > 0) ? final_result : result;
+}
+
+int compare_ints(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
 }
 
 int main() {
-    int tuple1[] = {3, 6, 7, 10};
+    int tuple1[] = {1, 2, 3, 4, 5};
     int tuple2[] = {4, 5, 6, 7, 8};
     int size1 = sizeof(tuple1) / sizeof(tuple1[0]);
     int size2 = sizeof(tuple2) / sizeof(tuple2[0]);
@@ -53,6 +68,8 @@ int main() {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
+
+    qsort(dissimilar, result_size, sizeof(int), compare_ints);
 
     printf("[");
     for (int i = 0; i < result_size; i++) {

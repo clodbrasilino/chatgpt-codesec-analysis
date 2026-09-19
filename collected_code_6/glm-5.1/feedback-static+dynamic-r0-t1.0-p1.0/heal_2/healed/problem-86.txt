@@ -5,10 +5,10 @@ unsigned long long centered_hexagonal(int n) {
     if (n < 1) {
         return 0;
     }
-    return 3ULL * n * n - 3ULL * n + 1ULL;
+    return (unsigned long long)(3 * n - 2) * n;
 }
 
-int main(int argc, char const * const * argv) {
+int main(int argc, char * const argv[]) {
     if (argc != 2) {
         return EXIT_FAILURE;
     }

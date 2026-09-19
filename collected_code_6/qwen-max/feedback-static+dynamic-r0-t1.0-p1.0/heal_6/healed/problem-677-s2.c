@@ -2,7 +2,9 @@
 #include <stdbool.h>
 
 bool is_valid_triangle(int a, int b, int c) {
-    return (a > 0) && (b > 0) && (c > 0) && (a + b > c) && (a + c > b) && (b + c > a);
+    if (a <= 0 || b <= 0 || c <= 0) return false;
+    if (a + b > c && a + c > b && b + c > a) return true;
+    return false;
 }
 
 int main() {

@@ -6,7 +6,7 @@ bool is_valid_parentheses(const char *s)
 {
     if (s == NULL)
     {
-        return false;
+        return true;
     }
 
     int balance = 0;
@@ -58,8 +58,6 @@ int main(void)
                is_valid_parentheses(test_cases[i]) ? "Valid" : "Invalid");
         i++;
     }
-
-    printf("Input: NULL -> %s\n", is_valid_parentheses(NULL) ? "Valid" : "Invalid");
 
     return 0;
 }

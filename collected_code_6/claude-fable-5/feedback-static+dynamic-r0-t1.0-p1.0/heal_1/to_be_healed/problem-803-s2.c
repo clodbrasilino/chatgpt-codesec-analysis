@@ -26,6 +26,9 @@ static int is_perfect_square(long long num)
 
     while (low <= high) {
         mid = low + (high - low) / 2;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 833333333333334 * 833333333333334 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:440,execs:288,op:havoc,rep:1)
+         */
         sq = mid * mid;
         if (sq == num) {
             return 1;

@@ -2,17 +2,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <limits.h>
 
-long long eulerian_number(int n, int m) {
-    if (n == 0) {
-        return m == 0 ? 1 : 0;
-    }
-    if (m < 0 || m >= n) {
+int64_t eulerian_number(int n, int m) {
+    if (m < 0 || n < 0 || m > n) {
         return 0;
     }
 
-    long long *dp = (long long*)calloc((size_t)n + 1, sizeof(long long));
+    if (n == 0) {
+        return 1;
+    }
+
+    if (m >= n) {
+        return 0;
+    }
+
+    if ((size_t)n > SIZE_MAX / sizeof(int64_t) - 1) {
+        return -1;
+    }
+
+    int64_t *dp = (int64_t*)calloc((size_t)n + 1, sizeof(int64_t));
     if (dp == NULL) {
         return -1;
     }
@@ -20,28 +30,38 @@ long long eulerian_number(int n, int m) {
     dp[0] = 1;
     for (int i = 1; i <= n; i++) {
         for (int j = i; j >= 1; j--) {
-            if (dp[j - 1] > 0 && (i - j) > LLONG_MAX / dp[j - 1]) {
-                free(dp);
-                return -2;
-            }
-            long long term1 = (i - j) * dp[j - 1];
+            int64_t term1 = 0;
+            int64_t term2 = 0;
 
-            if (dp[j] > 0 && (j + 1) > LLONG_MAX / dp[j]) {
-                free(dp);
-                return -2;
+            if (i - j != 0) {
+                if (dp[j - 1] > INT64_MAX / (i - j) || dp[j - 1] < INT64_MIN / (i - j)) {
+                    free(dp);
+                    return -1;
+                }
+                term1 = (int64_t)(i - j) * dp[j - 1];
             }
-            long long term2 = (j + 1) * dp[j];
 
-            if (term1 > 0 && term2 > LLONG_MAX - term1) {
+            if (dp[j] > INT64_MAX / (j + 1) || dp[j] < INT64_MIN / (j + 1)) {
                 free(dp);
-                return -2;
+                return -1;
             }
+            term2 = (int64_t)(j + 1) * dp[j];
+
+            if (term1 > 0 && term2 > 0 && term1 > INT64_MAX - term2) {
+                free(dp);
+                return -1;
+            }
+            if (term1 < 0 && term2 < 0 && term1 < INT64_MIN - term2) {
+                free(dp);
+                return -1;
+            }
+
             dp[j] = term1 + term2;
         }
         dp[0] = 1;
     }
 
-    long long result = dp[m];
+    int64_t result = dp[m];
     free(dp);
     return result;
 }
@@ -54,17 +74,13 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    long long result = eulerian_number(n, m);
-    if (result == -1) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return EXIT_FAILURE;
-    }
-    if (result == -2) {
-        fprintf(stderr, "Integer overflow detected\n");
+    int64_t result = eulerian_number(n, m);
+    if (result < 0) {
+        fprintf(stderr, "Overflow or memory allocation failed\n");
         return EXIT_FAILURE;
     }
 
-    printf("A(%d, %d) = %lld\n", n, m, result);
+    printf("A(%d, %d) = %" PRId64 "\n", n, m, result);
     return EXIT_SUCCESS;
 }
 ```

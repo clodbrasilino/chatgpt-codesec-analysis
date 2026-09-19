@@ -43,7 +43,9 @@ void free_table(WordNode *table[]) {
     }
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'None', got (null)
+  *  test case 1 failed: expected 'None', got <no output>
+  *  test case 0 failed: expected 'ab', got <no output>
+  *  test case 2 failed: expected 'ca', got <no output>
   */
 
 char *find_first_repeated_word(const char *str) {

@@ -1,28 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 13, got <no output>
-  *  test case 1 failed: expected 7, got <no output>
-  *  test case 0 failed: expected 11, got <no output>
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 13, got 1
+  *  test case 0 failed: expected 11, got 1
   */
 
 int is_polite(unsigned int n) {
+    if (n == 0) return 0;
     return (n & (n - 1)) != 0;
 }
 
 unsigned int nth_polite(unsigned int n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     unsigned int count = 0;
-    unsigned int num = 1;
+    unsigned int num = 0;
     while (count < n) {
+        num++;
         if (is_polite(num)) {
             count++;
         }
-        num++;
     }
-    return num - 1;
+    return num;
 }
 
 int main(int argc, const char *argv[]) {

@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int min_operations(int num1, int num2) {
-    int steps = 0;
-    while (num2 > num1) {
-        if (num2 % 2 != 0) {
-            num2++;
-        } else {
-            num2 /= 2;
-        }
-        steps++;
+int min_operations(int a, int b) {
+    int diff = abs(a - b);
+    if (diff == 0) return 0;
+    
+    int k = 1;
+    long long sum = 1;
+    while (sum < diff || (sum - diff) % 2 != 0) {
+        k++;
+        sum += k;
     }
-    return steps + (num1 - num2);
+    return k;
 }
 
 int main(void) {
-    int num1, num2;
-    
-    if (scanf("%d %d", &num1, &num2) != 2) {
-        return EXIT_FAILURE;
+    int t;
+    if (scanf("%d", &t) == 1) {
+        while (t-- > 0) {
+            int a, b;
+            if (scanf("%d %d", &a, &b) == 2) {
+                printf("%d\n", min_operations(a, b));
+            }
+        }
     }
-    
-    printf("%d\n", min_operations(num1, num2));
-    
-    return EXIT_SUCCESS;
+    return 0;
 }

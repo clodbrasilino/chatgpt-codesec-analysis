@@ -8,15 +8,14 @@ size_t count_squares(int width, int height) {
         return 0;
     }
     size_t count = 0;
-    int min_side = width < height ? width : height;
-    for (int side = 1; side <= min_side; ++side) {
-        int w = (width - side + 1);
-        int h = (height - side + 1);
-        if ((w > INT_MAX / h) || (h > INT_MAX / w)) {
-            fprintf(stderr, "Overflow detected\n");
-            return 0;
+    for (int side = 1; side <= (width < height ? width : height); ++side) {
+        int w = width - side + 1;
+        int h = height - side + 1;
+        if ((long long)w * h <= SIZE_MAX) {
+            count += (size_t)w * (size_t)h;
+        } else {
+            break;
         }
-        count += (size_t)w * (size_t)h;
     }
     return count;
 }
@@ -29,10 +28,6 @@ int main() {
         return EXIT_FAILURE;
     }
     size_t result = count_squares(w, h);
-    if (result == 0 && (w > 0 && h > 0)) {
-        fprintf(stderr, "Unexpected error in calculation\n");
-        return EXIT_FAILURE;
-    }
     printf("Number of squares in the rectangle: %zu\n", result);
     return 0;
 }

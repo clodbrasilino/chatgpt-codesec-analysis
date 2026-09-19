@@ -11,15 +11,15 @@ long long multiplyListItems(struct Node* head) {
         return 0; 
     }
 
-    unsigned long long result = 1;
+    long long result = 1;
     struct Node* current = head;
 
     while (current != NULL) {
-        result *= (unsigned long long)(current->data);
+        result *= current->data;
         current = current->next;
     }
 
-    return (long long)result;
+    return result;
 }
 
 struct Node* createNode(int data) {
@@ -60,6 +60,7 @@ int main(void) {
     }
 
     long long product = multiplyListItems(head);
+
     printf("%lld\n", product);
 
     freeList(head);

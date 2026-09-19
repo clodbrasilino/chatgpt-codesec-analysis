@@ -13,6 +13,9 @@ int count_pairs_with_sum(int *arr, size_t size, int sum) {
 
     for (size_t i = 0; i < size; i++) {
         for (size_t j = i + 1; j < size; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 2074054201 + 816143815 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000011,time:34581,execs:20640,op:havoc,rep:2)
+             */
             if (arr[i] + arr[j] == sum) {
                 count++;
             }

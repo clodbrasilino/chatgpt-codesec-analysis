@@ -2,17 +2,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static long long mul_mod(long long a, long long b, long long mod)
+{
+    unsigned __int128 res;
+
+    res = (unsigned __int128)(unsigned long long)a * (unsigned long long)b;
+    return (long long)(res % (unsigned long long)mod);
+}
+
 static long long power_mod(long long base, long long exp, long long mod)
 {
     long long result = 1;
+
     base = base % mod;
     while (exp > 0)
     {
         if (exp & 1)
         {
-            result = (result * base) % mod;
+            result = mul_mod(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mul_mod(base, base, mod);
         exp >>= 1;
     }
     return result;
@@ -46,18 +55,16 @@ static long long ncr_small(long long n, long long r, long long p)
     denominator = 1;
     for (i = 0; i < r; i++)
     {
-        numerator = (numerator * ((n - i) % p)) % p;
-        denominator = (denominator * ((i + 1) % p)) % p;
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1) % p, p);
     }
 
-    return (numerator * mod_inverse(denominator, p)) % p;
+    return mul_mod(numerator, mod_inverse(denominator, p), p);
 }
 
 static long long ncr_mod_p(long long n, long long r, long long p)
 {
     long long result = 1;
-    long long ni;
-    long long ri;
 
     if (r > n)
     {
@@ -66,13 +73,14 @@ static long long ncr_mod_p(long long n, long long r, long long p)
 
     while (n > 0 || r > 0)
     {
-        ni = n % p;
-        ri = r % p;
+        long long ni = n % p;
+        long long ri = r % p;
+
         if (ri > ni)
         {
             return 0;
         }
-        result = (result * ncr_small(ni, ri, p)) % p;
+        result = mul_mod(result, ncr_small(ni, ri, p), p);
         n /= p;
         r /= p;
     }
@@ -107,4 +115,10 @@ int main(void)
 }
 ```
 
-The key weakness in the original code was that it computed C(n, r) mod p directly via modular factorials even when n ≥ p. In that case, factors of the numerator or denominator can be congruent to 0 mod p, making the modular inverse undefined (0 has no inverse mod p) and producing wrong results such as the reported "expected 11, got 10" failure. The fix applies Lucas' theorem: the binomial coefficient is decomposed into base-p digits of n and r, computing C(nᵢ, rᵢ) mod p for each digit pair where nᵢ, rᵢ < p, which guarantees the denominator is never divisible by p and Fermat's little theorem inverse remains valid.
+Key fixes applied:
+
+1. **Signed integer overflow (UBSan crashes):** All modular multiplications now go through `mul_mod`, which performs the multiplication in `unsigned __int128`. This eliminates every overflow site flagged by AFL/UBSan, including `result * base`, `base * base`, and `numerator * (n - i)` with large primes like `12000000011`.
+
+2. **Wrong result ("expected 11, got 10"):** The original algorithm breaks when `n >= p`, because factors divisible by `p` reduce to zero and `mod_inverse` is invoked on a denominator congruent to 0 mod p (Fermat's little theorem does not apply there). The rewrite implements **Lucas' theorem**: the problem is decomposed into base-`p` digits, and `ncr_small` is only ever called with `n, r < p`, guaranteeing the denominator is invertible.
+
+3. **Signal-6 crash on fuzzed input:** That abort was UBSan trapping the overflows above; with `__int128` arithmetic and the Lucas decomposition bounding all intermediate values below `p`, no undefined behavior remains for any valid `long long` input.

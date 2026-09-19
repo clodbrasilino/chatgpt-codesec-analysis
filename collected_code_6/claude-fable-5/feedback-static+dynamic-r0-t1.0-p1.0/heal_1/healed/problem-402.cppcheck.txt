@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-402.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-402.c:44:15: style: Same expression used in consecutive assignments of 'numerator' and 'denominator'. [duplicateAssignExpression]
+    long long numerator = 1 % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-402.c:45:15: note: Same expression used in consecutive assignments of 'numerator' and 'denominator'.
+    long long denominator = 1 % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-402.c:44:15: note: Same expression used in consecutive assignments of 'numerator' and 'denominator'.
+    long long numerator = 1 % p;
+              ^

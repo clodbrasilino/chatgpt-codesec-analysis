@@ -1,0 +1,5 @@
+problem-734-s3.c:24:25:medium:UBSan: signed integer overflow: -26785828366144848 * 533 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000025,time:30658,execs:24631,op:havoc,rep:2)
+problem-734-s3.c:24:25:medium:UBSan: signed integer overflow: -5128714474871285520 * 33 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000025,time:31240,execs:25049,op:havoc,rep:1)
+problem-734-s3.c:49:0:high:ASan: FPE (AFL crash: id:000005,sig:06,src:000039,time:48799,execs:37362,op:havoc,rep:4)
+problem-734-s3.c:49:45:medium:UBSan: division of -9223372036854775808 by -1 cannot be represented in type 'long long' (AFL crash: id:000005,sig:06,src:000039,time:48799,execs:37362,op:havoc,rep:4)
+problem-734-s3.c:73:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000011,time:24636,execs:20122,op:havoc,rep:2; likely memory-safety defect

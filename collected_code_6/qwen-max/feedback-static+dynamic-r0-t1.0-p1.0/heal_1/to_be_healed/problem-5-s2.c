@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 153, got <no output>
   *  test case 2 failed: expected 2131, got <no output>
   *  test case 0 failed: expected 3, got <no output>
+  *  test case 1 failed: expected 153, got <no output>
   */
 
 int countWays(int n) {
@@ -19,11 +19,14 @@ int countWays(int n) {
         b = c;
     }
     /* Possible weaknesses found:
-     *  Uninitialized variable: c [uninitvar]
      *  Uninitialized variable: c
+     *  Uninitialized variable: c [uninitvar]
      */
     return c;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:403,execs:196,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main() {
     int n;

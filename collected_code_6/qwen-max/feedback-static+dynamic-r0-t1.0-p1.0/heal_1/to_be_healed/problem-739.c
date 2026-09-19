@@ -11,6 +11,7 @@ int find_smallest_triangular_index(int n) {
     double root = (sqrt(1 + 8 * lower_bound) - 1) / 2;
     /* Possible weaknesses found:
      * UBSan: inf is outside the range of representable values of type 'int'
+     * UBSan: inf is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:8,execs:15,op:(null),pos:0)
      */
     return ceil(root);
 }

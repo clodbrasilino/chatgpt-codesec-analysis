@@ -7,6 +7,7 @@ long long sum_even_index_binomial_coefficients(int n) {
         exit(EXIT_FAILURE);
     }
     /* Possible weaknesses found:
+     * UBSan: shift exponent 1535817954 is too large for 64-bit type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:243,execs:136,op:havoc,rep:13)
      *  Shifting by a negative value is undefined behaviour [shiftNegative]
      */
     return 1LL << (n - 1);

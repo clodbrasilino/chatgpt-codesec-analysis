@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long get_lucid_number(long long n) {
     long long curr = 1;
@@ -18,6 +19,10 @@ long long get_lucid_number(long long n) {
     while (next <= n) {
         long long prev = curr;
         curr = next;
+        
+        if (LLONG_MAX - curr < prev) {
+            break;
+        }
         next = prev + curr;
     }
 

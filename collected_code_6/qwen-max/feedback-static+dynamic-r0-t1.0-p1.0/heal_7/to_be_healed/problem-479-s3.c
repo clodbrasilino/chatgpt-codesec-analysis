@@ -1,36 +1,31 @@
 #include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
 #include <limits.h>
- /* Possible weaknesses found:
-  *  test case 1 failed: expected 4, got 0
-  */
+#include <stdlib.h>
 
 int findFirstDigit(long num) {
-    if (num == 0) return 0;
     /* Possible weaknesses found:
-     * UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000006,time:2923,execs:1261,op:havoc,rep:3)
+     * UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000010,time:17259,execs:15342,op:havoc,rep:3)
      */
     if (num < 0) num = labs(num);
-    if (num > 0 && num < LONG_MAX) {
-        int digits = (int)(log10((double)num) + 0.5);
-        return (int)(num / pow(10, digits));
+    if (num == 0) return 0;
+    if (num == LONG_MAX) return 9;
+
+    int digits = 0;
+    long n = num;
+    while (n >= 10) {
+        n /= 10;
+        digits++;
     }
-    return -1;
+    long first_digit = num / powl(10.0L, digits);
+    return first_digit;
 }
 
 int main() {
     long number;
     printf("Enter a number: ");
-    if (scanf("%ld", &number) != 1) {
-        printf("Invalid input\n");
-        return 1;
-    }
+    scanf("%ld", &number);
     int firstDigit = findFirstDigit(number);
-    if (firstDigit != -1) {
-        printf("The first digit is %d\n", firstDigit);
-    } else {
-        printf("Invalid input\n");
-    }
+    printf("The first digit is %d\n", firstDigit);
     return 0;
 }

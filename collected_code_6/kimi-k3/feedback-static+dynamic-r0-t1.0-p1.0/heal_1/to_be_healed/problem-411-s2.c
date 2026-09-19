@@ -3,9 +3,9 @@
 #include <string.h>
 #include <regex.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'GooglePixel', got googlePixel
-  *  test case 2 failed: expected 'AppleWatch', got appleWatch
-  *  test case 0 failed: expected 'AndroidTv', got androidTv
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
   */
 
 char *snake_to_camel(const char *input)
@@ -50,8 +50,8 @@ char *snake_to_camel(const char *input)
         if (ret == 0 && matches[1].rm_so >= 0) {
             size_t prefix_len = (size_t)matches[0].rm_so;
             /* Possible weaknesses found:
-             *  Value stored to 'match_len' during its initialization is never read [deadcode.DeadStores]
              *  Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+             *  Value stored to 'match_len' during its initialization is never read [deadcode.DeadStores]
              */
             size_t match_len = (size_t)(matches[0].rm_eo - matches[0].rm_so);
             char upper_char;

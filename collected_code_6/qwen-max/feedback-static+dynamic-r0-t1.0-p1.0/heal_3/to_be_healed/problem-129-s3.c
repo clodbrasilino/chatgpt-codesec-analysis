@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 void initializeMagicSquare(int n, int square[][10]) {
     for (int i = 0; i < n; ++i) {
@@ -9,18 +10,21 @@ void initializeMagicSquare(int n, int square[][10]) {
     }
 }
 
-int isMagicSquare(int n, int square[][10]) {
-    long long sumDiag1 = 0, sumDiag2 = 0;
-    long long expectedSum = n * (n * n + 1) / 2;
+bool isMagicSquare(int n, int square[][10]) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -1927195307 * -1927195307 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:946,execs:986,op:havoc,rep:9)
+     */
+    int64_t expectedSum = (int64_t)n * (n * n + 1) / 2;
+    int sumDiag1 = 0, sumDiag2 = 0;
 
     for (int i = 0; i < n; ++i) {
-        long long rowSum = 0, colSum = 0;
+        int rowSum = 0, colSum = 0;
         for (int j = 0; j < n; ++j) {
             rowSum += square[i][j];
             colSum += square[j][i];
         }
         if (rowSum != expectedSum || colSum != expectedSum) {
-            return 0;
+            return false;
         }
         sumDiag1 += square[i][i];
         sumDiag2 += square[i][n - 1 - i];
@@ -32,8 +36,12 @@ int isMagicSquare(int n, int square[][10]) {
 void generateMagicSquare(int n, int square[][10]) {
     initializeMagicSquare(n, square);
     int i = n / 2, j = n - 1;
+
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -1927195307 * -1927195307 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:946,execs:986,op:havoc,rep:9)
+     */
     for (int num = 1; num <= n * n;) {
-        if (i == -1 && j == n) {
+        if (i == -1 && j == n) {   
             j = n - 2;
             i = 0;
         } else {
@@ -44,19 +52,24 @@ void generateMagicSquare(int n, int square[][10]) {
                 i = n - 1;
             }
         }
-        if (i >= n || j < 0 || square[i][j]) {
+
+        if (i < 0 || i >= n || j < 0 || j >= n) {
             j -= 2;
             i++;
             continue;
         }
+
+        if (square[i][j] != 0) {
+            j -= 2;
+            i++;
+            continue;
+        }
+
         square[i][j] = num++;
-        j++;
-        i--;
+        j++; 
+        i--; 
     }
 }
- /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:2270,execs:1026,op:havoc,rep:1; likely memory-safety defect
-  */
 
 int main() {
     int n;
@@ -64,7 +77,6 @@ int main() {
     scanf("%d", &n);
 
     int magicSquare[10][10];
-
     if (n % 2 == 0 || n > 10) {
         printf("Invalid input. Size must be an odd number and less than or equal to 10.\n");
         return 1;

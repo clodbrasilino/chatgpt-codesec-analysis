@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <limits.h>
+#include <stdint.h>
 
 long long sum_of_divisors(long long n)
 {
@@ -22,15 +23,33 @@ long long sum_of_divisors(long long n)
              *  pair is assigned 'n/i' here.
              */
             long long pair = n / i;
+            
+            /* Possible weaknesses found:
+             *  Assuming condition is false
+             */
+            if (sum > LLONG_MAX - i)
+            {
+                return -1;
+            }
             sum += i;
+            
             /* Possible weaknesses found:
              *  Condition 'pair!=i' is always true [knownConditionTrueFalse]
              *  Condition 'pair!=i' is always true
              */
             if (pair != i)
             {
+                if (sum > LLONG_MAX - pair)
+                {
+                    return -1;
+                }
                 sum += pair;
             }
+        }
+        
+        if (i == LLONG_MAX)
+        {
+            break;
         }
         i++;
     }
@@ -56,6 +75,13 @@ int main(void)
     }
 
     long long result = sum_of_divisors(num);
+    
+    if (result == -1)
+    {
+        fprintf(stderr, "Overflow occurred during calculation\n");
+        return 1;
+    }
+    
     printf("Sum of divisors of %lld is %lld\n", num, result);
 
     return 0;

@@ -8,9 +8,15 @@ long long findGCD(long long a, long long b) {
     long long temp;
     
     if (a < 0) {
+        /* Possible weaknesses found:
+         * UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000002,sig:06,src:000009,time:20371,execs:9737,op:havoc,rep:4)
+         */
         a = -a;
     }
     if (b < 0) {
+        /* Possible weaknesses found:
+         * UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000010,time:12700,execs:6172,op:havoc,rep:3)
+         */
         b = -b;
     }
     
@@ -22,6 +28,9 @@ long long findGCD(long long a, long long b) {
     
     return a;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000009,time:20335,execs:9720,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main(void) {
     long long num1, num2, gcd;

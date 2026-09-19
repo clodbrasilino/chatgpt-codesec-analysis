@@ -1,5 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
+  *  test case 0 failed: expected 31, got 53
+  */
 
 long long jacobsthal_lucas(int n) {
     if (n < 0) {
@@ -14,10 +21,11 @@ long long jacobsthal_lucas(int n) {
     long long result = 0;
     
     for (int i = 2; i <= n; i++) {
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 2 * 4611686018427387905 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:264,execs:144,op:havoc,rep:8)
-         */
-        result = b + 2 * a;
+        if (b > (LLONG_MAX - a) / 2) {
+            fprintf(stderr, "Error: integer overflow would occur\n");
+            exit(EXIT_FAILURE);
+        }
+        result = 2 * b + a;
         a = b;
         b = result;
     }

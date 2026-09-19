@@ -2,15 +2,19 @@
 #include <stdlib.h>
 
 int minOperations(int a, int b) {
+    if (a == b) {
+        return 0;
+    }
+    
     int diff = abs(a - b);
     int operations = 0;
-
+    
     operations += diff / 5;
     diff %= 5;
-
+    
     operations += diff / 2;
     diff %= 2;
-
+    
     operations += diff;
     
     return operations;
@@ -33,7 +37,7 @@ int main(void) {
     }
     
     int result = minOperations(num1, num2);
-    printf("%d\n", result);
+    printf("Minimum operations required: %d\n", result);
     
     return EXIT_SUCCESS;
 }

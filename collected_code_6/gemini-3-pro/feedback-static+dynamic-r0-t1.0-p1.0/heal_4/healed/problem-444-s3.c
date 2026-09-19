@@ -18,16 +18,20 @@ TupleList* trimTuples(const TupleList *list, size_t k) {
     TupleList *trimmedList = (TupleList *)malloc(sizeof(TupleList));
     if (!trimmedList) return NULL;
     
-    trimmedList->tuples = (Tuple *)malloc(list->count * sizeof(Tuple));
+    trimmedList->tuples = (Tuple *)malloc((list->count > 0 ? list->count : 1) * sizeof(Tuple));
     trimmedList->count = 0;
     
     for (size_t i = 0; i < list->count; ++i) {
         if (list->tuples[i].size != k) {
             Tuple *t = &trimmedList->tuples[trimmedList->count++];
             t->size = list->tuples[i].size;
-            t->elements = (int *)malloc(t->size * sizeof(int));
-            for (size_t j = 0; j < t->size; ++j) {
-                t->elements[j] = list->tuples[i].elements[j];
+            if (t->size > 0) {
+                t->elements = (int *)malloc(t->size * sizeof(int));
+                for (size_t j = 0; j < t->size; ++j) {
+                    t->elements[j] = list->tuples[i].elements[j];
+                }
+            } else {
+                t->elements = NULL;
             }
         }
     }
@@ -35,6 +39,7 @@ TupleList* trimTuples(const TupleList *list, size_t k) {
 }
 
 void printTupleList(const TupleList *list) {
+    if (!list) return;
     printf("[");
     for (size_t i = 0; i < list->count; ++i) {
         printf("(");
@@ -42,10 +47,9 @@ void printTupleList(const TupleList *list) {
             printf("%d", list->tuples[i].elements[j]);
             if (j < list->tuples[i].size - 1) {
                 printf(", ");
+            } else if (list->tuples[i].size == 1) {
+                printf(",");
             }
-        }
-        if (list->tuples[i].size == 1) {
-            printf(",");
         }
         printf(")");
         if (i < list->count - 1) printf(", ");
@@ -64,48 +68,66 @@ void freeTupleList(TupleList *list) {
 }
 
 int main(void) {
-    size_t buffer_size = 2000000;
-    char *buf = (char *)malloc(buffer_size);
-    if (!buf) return 1;
+    size_t buf_size = 1048576;
+    char *buffer = (char *)malloc(buf_size);
+    if (!buffer) return 0;
     
-    size_t len = fread(buf, 1, buffer_size - 1, stdin);
-    buf[len] = '\0';
+    size_t len = fread(buffer, 1, buf_size - 1, stdin);
+    if (len == 0) {
+        free(buffer);
+        return 0;
+    }
+    buffer[len] = '\0';
+
+    char *end = buffer + len - 1;
+    while (end > buffer && !isdigit((unsigned char)*end)) {
+        end--;
+    }
     
-    char *end = buf + len - 1;
-    while (end >= buf && !isdigit((unsigned char)*end)) end--;
-    while (end >= buf && isdigit((unsigned char)*end)) end--;
-    char *k_ptr = end + 1;
+    if (!isdigit((unsigned char)*end)) {
+        free(buffer);
+        return 0;
+    }
     
-    size_t k = strtoul(k_ptr, NULL, 10);
-    *k_ptr = '\0';
+    while (end > buffer && isdigit((unsigned char)*(end - 1))) {
+        end--;
+    }
+    
+    char *k_start = end;
+    size_t k = (size_t)strtoul(k_start, NULL, 10);
+    *k_start = '\0';
 
     TupleList list;
-    list.tuples = (Tuple *)malloc(10000 * sizeof(Tuple));
+    size_t max_tuples = 16;
+    list.tuples = (Tuple *)malloc(max_tuples * sizeof(Tuple));
     list.count = 0;
 
-    char *p = buf;
-    
+    char *p = buffer;
     while (*p) {
         if (*p == '(') {
             p++;
+            if (list.count >= max_tuples) {
+                max_tuples *= 2;
+                list.tuples = (Tuple *)realloc(list.tuples, max_tuples * sizeof(Tuple));
+            }
             Tuple *t = &list.tuples[list.count];
-            t->elements = (int *)malloc(1000 * sizeof(int));
+            size_t max_elems = 16;
+            t->elements = (int *)malloc(max_elems * sizeof(int));
             t->size = 0;
-            
             while (*p && *p != ')') {
-                if (isdigit((unsigned char)*p) || (*p == '-' && isdigit((unsigned char)p[1]))) {
+                if (isdigit((unsigned char)*p) || (*p == '-' && isdigit((unsigned char)*(p+1)))) {
+                    if (t->size >= max_elems) {
+                        max_elems *= 2;
+                        t->elements = (int *)realloc(t->elements, max_elems * sizeof(int));
+                    }
                     t->elements[t->size++] = strtol(p, &p, 10);
                 } else {
                     p++;
                 }
             }
-            if (*p == ')') {
-                p++;
-            }
             list.count++;
-        } else {
-            p++;
         }
+        if (*p) p++;
     }
 
     TupleList *trimmed = trimTuples(&list, k);
@@ -118,7 +140,7 @@ int main(void) {
         free(list.tuples[i].elements);
     }
     free(list.tuples);
-    free(buf);
-    
+    free(buffer);
+
     return 0;
 }

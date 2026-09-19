@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 8, got <no output>
-  *  test case 2 failed: expected 0, got <no output>
+  *  test case 0 failed: expected 8, got 4
+  *  test case 1 failed: expected 1, got 0
   */
 
 int count_rectangles(int r) {
@@ -17,8 +16,8 @@ int count_rectangles(int r) {
     for (long long x = 1; x < r; x++) {
         long long max_y_sq = r_sq - x * x;
         
-        long long low = 1;
-        long long high = r - 1;
+        long long low = 0;
+        long long high = r;
         long long y_bound = 0;
 
         while (low <= high) {

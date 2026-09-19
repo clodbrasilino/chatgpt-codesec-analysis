@@ -4,6 +4,11 @@
 typedef struct {
     int value;
 } Tuple;
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected [3, 4], got <no output>
+  *  test case 2 failed: expected [13, 14], got <no output>
+  *  test case 0 failed: expected [4, 5], got <no output>
+  */
 
 int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int* result_size) {
     /* Possible weaknesses found:

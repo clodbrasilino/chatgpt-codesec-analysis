@@ -3,13 +3,13 @@
 #include <limits.h>
 
 bool is_in_sequence(int n) {
-    long a = 0, b = 1;
+    unsigned long a = 0, b = 1;
     while (a <= n) {
         if (a == n) return true;
-        long c = a + b;
-        if (c < a || c < b) break; // Check for overflow
+        unsigned long next = a + b;
+        if (next < a || next > (unsigned long)INT_MAX) break;
         a = b;
-        b = c;
+        b = next;
     }
     return false;
 }

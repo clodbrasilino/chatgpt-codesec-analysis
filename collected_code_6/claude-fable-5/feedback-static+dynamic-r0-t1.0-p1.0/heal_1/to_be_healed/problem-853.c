@@ -42,6 +42,9 @@ long long sum_odd_factors(long long n)
 
     if (n > 1)
     {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 16923530597376 * 649658 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:262,execs:195,op:havoc,rep:2)
+         */
         res *= (1 + n);
     }
 

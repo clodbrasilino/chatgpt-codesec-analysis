@@ -1,1 +1,2 @@
-problem-491-s2.c:0:0: info: fuzzed - no sanitizer findings
+problem-491-s2.c:13:25:medium:UBSan: signed integer overflow: -1431801401 * 4 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000007,time:2983,execs:3100,op:quick,pos:2)
+problem-491-s2.c:31:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000004,time:1840,execs:1909,op:havoc,rep:1; likely memory-safety defect

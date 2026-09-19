@@ -21,16 +21,22 @@ long long ncrModP(int n, int r, int p) {
     if (r == 0 || r == n)
         return 1;
 
-    long long fac[n + 1];
+    long long* fac = (long long*)malloc((n + 1) * sizeof(long long));
+    if (fac == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+
     fac[0] = 1;
     for (int i = 1; i <= n; i++)
         fac[i] = (fac[i - 1] * i) % p;
 
-    long long numerator = fac[n];
-    long long denominator = (fac[r] * fac[n - r]) % p;
-    long long inverseDenominator = modInverse(denominator, p);
+    long long invFacR = modInverse(fac[r], p);
+    long long invFacNR = modInverse(fac[n - r], p);
 
-    return (numerator * inverseDenominator) % p;
+    long long result = (fac[n] * ((invFacR * invFacNR) % p)) % p;
+    free(fac);
+    return result;
 }
 
 int main() {
@@ -41,17 +47,25 @@ int main() {
         return 1;
     }
 
-    if (n < 0 || r < 0 || p <= 1) {
+    if (n < 0 || r < 0 || p <= 0) {
         printf("Invalid input\n");
         return 1;
     }
 
     if (r > n) {
-        printf("Invalid input: r should be less than or equal to n\n");
+        printf("r should be less than or equal to n\n");
         return 1;
     }
 
+    if (p == 1) {
+        printf("Value of C(%d, %d) %d is 0\n", n, r, p);
+        return 0;
+    }
+
     long long result = ncrModP(n, r, p);
+    if (result < 0)
+        result += p;
+
     printf("Value of C(%d, %d) %d is %lld\n", n, r, p, result);
 
     return 0;

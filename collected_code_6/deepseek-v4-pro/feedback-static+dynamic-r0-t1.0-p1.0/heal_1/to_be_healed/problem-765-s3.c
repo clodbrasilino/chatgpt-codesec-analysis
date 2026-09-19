@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 11, got 0
+  *  test case 1 failed: expected 7, got 1
+  *  test case 2 failed: expected 13, got 1
+  */
 
 int is_polite(unsigned int n) {
     return (n & (n + 1)) != 0;

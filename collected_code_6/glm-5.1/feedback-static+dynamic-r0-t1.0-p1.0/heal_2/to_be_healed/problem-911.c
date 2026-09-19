@@ -48,7 +48,10 @@ int pop_min(int *heap, int *size) {
     return min_val;
 }
 
-void push_max(int *heap, int *size, int value) {
+void push_max(int *heap, int *size, int capacity, int value) {
+    if (*size >= capacity) {
+        return;
+    }
     value = -value;
     heap[*size] = value;
     int i = *size;
@@ -89,9 +92,8 @@ int pop_max(int *heap, int *size) {
     return max_val;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 414375, got <no output>
-  *  test case 0 failed: expected 225700, got <no output>
-  *  test case 2 failed: expected 2520, got <no output>
+  *  test case 0 failed: expected 225700, got 1296
+  *  test case 1 failed: expected 414375, got 21875
   */
 
 int maximumProduct(const int *nums, int numsSize) {
@@ -99,13 +101,13 @@ int maximumProduct(const int *nums, int numsSize) {
         return 0;
     }
     
-    int *min_heap = (int *)malloc(3 * sizeof(int));
+    int *min_heap = (int *)malloc(4 * sizeof(int));
     if (!min_heap) {
         return 0;
     }
     int min_size = 0;
     
-    int *max_heap = (int *)malloc(2 * sizeof(int));
+    int *max_heap = (int *)malloc(3 * sizeof(int));
     if (!max_heap) {
         free(min_heap);
         return 0;
@@ -118,7 +120,7 @@ int maximumProduct(const int *nums, int numsSize) {
             pop_min(min_heap, &min_size);
         }
 
-        push_max(max_heap, &max_size, nums[i]);
+        push_max(max_heap, &max_size, 2, nums[i]);
         if (max_size > 2) {
             pop_max(max_heap, &max_size);
         }
@@ -134,21 +136,17 @@ int maximumProduct(const int *nums, int numsSize) {
     long long product1 = (long long)max1 * max2;
     long long product2 = (long long)min1 * min2;
 
-    int result;
+    long long result;
     if (product1 > product2) {
-        if (__builtin_mul_overflow(product1, min3, &result)) {
-            result = INT_MAX;
-        }
+        result = product1 * min3;
     } else {
-        if (__builtin_mul_overflow(product2, max1, &result)) {
-            result = INT_MAX;
-        }
+        result = product2 * max1;
     }
 
     free(min_heap);
     free(max_heap);
 
-    return result;
+    return (int)result;
 }
 
 int main() {

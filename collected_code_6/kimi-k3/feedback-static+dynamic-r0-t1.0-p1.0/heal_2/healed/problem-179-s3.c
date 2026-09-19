@@ -26,12 +26,11 @@ int isKeith(int num) {
     }
     
     int nextTerm = 0;
-    int i = count;
     
     while (nextTerm < num) {
         nextTerm = 0;
-        for (int j = 1; j <= count; j++) {
-            nextTerm += arr[i - j];
+        for (int j = 0; j < count; j++) {
+            nextTerm += arr[j];
         }
         
         if (nextTerm == num) {
@@ -43,24 +42,25 @@ int isKeith(int num) {
             arr[j] = arr[j + 1];
         }
         arr[count - 1] = nextTerm;
-        i++;
     }
     
     free(arr);
     return 0;
 }
 
-int main(int argc, const char *argv[]) {
-    if (argc < 2) {
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
         return 1;
     }
     
-    int num = atoi(argv[1]);
-    
     if (isKeith(num)) {
-        printf("True\n");
+        printf("%d is a Keith number\n", num);
     } else {
-        printf("False\n");
+        printf("%d is not a Keith number\n", num);
     }
     
     return 0;

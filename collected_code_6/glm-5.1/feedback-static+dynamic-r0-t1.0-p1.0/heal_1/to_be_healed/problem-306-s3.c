@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 71, got 45
+  *  test case 0 failed: expected 11, got 6
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]

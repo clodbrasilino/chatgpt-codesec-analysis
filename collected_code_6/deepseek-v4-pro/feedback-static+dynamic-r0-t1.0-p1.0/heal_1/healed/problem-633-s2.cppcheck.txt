@@ -1,19 +1,1 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:10:26: portability: Shifting signed 32-bit value by 31 bits is implementation-defined behaviour [shiftTooManyBitsSigned]
-        int32_t mask = 1 << i;
-                         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:8:19: note: Assuming that condition 'i<32' is not redundant
-    for (i = 0; i < 32; i++) {
-                  ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:10:26: note: Shift
-        int32_t mask = 1 << i;
-                         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:10:26: error: Signed integer overflow for expression '1<<i'. [integerOverflow]
-        int32_t mask = 1 << i;
-                         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:8:19: note: Assuming that condition 'i<32' is not redundant
-    for (i = 0; i < 32; i++) {
-                  ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-633-s2.c:10:26: note: Integer overflow
-        int32_t mask = 1 << i;
-                         ^

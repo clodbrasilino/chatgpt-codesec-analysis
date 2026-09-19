@@ -1,10 +1,5 @@
 #include <stdio.h>
 #include <math.h>
- /* Possible weaknesses found:
-  *  test case 0 failed: expected False, got <no output>
-  *  test case 1 failed: expected True, got <no output>
-  *  test case 2 failed: expected False, got <no output>
-  */
 
 int is_perfect_square(long long num) {
     if (num < 0) {
@@ -13,18 +8,18 @@ int is_perfect_square(long long num) {
     if (num == 0) {
         return 1;
     }
-    long long sqrt_floor = (long long)round(sqrt((double)num));
-    if (sqrt_floor * sqrt_floor == num) {
-        return 1;
+    long long sqrt_floor = (long long)sqrt((double)num);
+    while (sqrt_floor * sqrt_floor > num) {
+        sqrt_floor--;
     }
-    if ((sqrt_floor - 1) * (sqrt_floor - 1) == num) {
-        return 1;
+    while ((sqrt_floor + 1) * (sqrt_floor + 1) <= num) {
+        sqrt_floor++;
     }
-    if ((sqrt_floor + 1) * (sqrt_floor + 1) == num) {
-        return 1;
-    }
-    return 0;
+    return (sqrt_floor * sqrt_floor == num);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:302,execs:386,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main(void) {
     long long val;

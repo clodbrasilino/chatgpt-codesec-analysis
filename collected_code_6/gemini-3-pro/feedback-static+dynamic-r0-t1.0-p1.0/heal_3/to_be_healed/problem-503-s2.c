@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
-  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   */
 
 int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
@@ -32,12 +32,7 @@ int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     }
 
     for (size_t i = 0; i < *out_size; i++) {
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 2071699370 + 946735786 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000013,time:25599,execs:13263,op:havoc,rep:16)
-         * UBSan: signed integer overflow: -1674115755 + -1927195307 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000013,time:53224,execs:26961,op:havoc,rep:9)
-         * UBSan: signed integer overflow: 2062812956 + 122865436 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000002,time:29395,execs:15228,op:havoc,rep:5)
-         */
-        result[i] = arr[i] + arr[i + 1];
+        result[i] = (int)((unsigned int)arr[i] + (unsigned int)arr[i + 1]);
     }
 
     return result;
@@ -62,8 +57,6 @@ int main(void) {
                 input = temp;
             }
             input[size++] = val;
-        } else if (res == EOF) {
-            break;
         } else {
             int c = getchar();
             if (c == EOF) {
@@ -75,7 +68,7 @@ int main(void) {
     size_t out_size = 0;
     int* result = add_consecutive(input, size, &out_size);
     
-    if (result != NULL || size == 0) {
+    if (result != NULL || (size == 0 && input == NULL)) {
         printf("[");
         for (size_t i = 0; i < out_size; i++) {
             printf("%d", result[i]);

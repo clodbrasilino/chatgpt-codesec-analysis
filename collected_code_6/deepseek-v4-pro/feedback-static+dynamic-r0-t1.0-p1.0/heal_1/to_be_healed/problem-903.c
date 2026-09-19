@@ -1,8 +1,8 @@
 #include <stdio.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got <no output>
   *  test case 1 failed: expected 4, got <no output>
   *  test case 2 failed: expected 17, got <no output>
+  *  test case 0 failed: expected 1, got <no output>
   */
 
 unsigned long long count_total_unset_bits(unsigned long long n) {
@@ -19,6 +19,9 @@ unsigned long long count_total_unset_bits(unsigned long long n) {
     for (unsigned long long i = 0; i < total_bits; i++) {
         unsigned long long bit_mask = 1ULL << i;
         unsigned long long cycle_length = bit_mask << 1;
+        /* Possible weaknesses found:
+         * UBSan: division by zero (AFL crash: id:000000,sig:06,src:000000,time:150,execs:103,op:havoc,rep:3)
+         */
         unsigned long long full_cycles = (n + 1) / cycle_length;
         unsigned long long remainder = (n + 1) % cycle_length;
         

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 int is_perfect_square(long long num) {
     if (num < 0) {
@@ -7,21 +8,14 @@ int is_perfect_square(long long num) {
     if (num == 0) {
         return 1;
     }
-    long long low = 1;
-    long long high = num;
-    while (low <= high) {
-        long long mid = low + (high - low) / 2;
-        long long sq = mid * mid;
-        if (sq == num) {
-            return 1;
-        }
-        if (sq < num) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
+    long long sqrt_floor = (long long)sqrt((double)num);
+    while (sqrt_floor > 0 && sqrt_floor * sqrt_floor > num) {
+        sqrt_floor--;
     }
-    return 0;
+    while (sqrt_floor <= 3037000499LL && (sqrt_floor + 1) * (sqrt_floor + 1) <= num) {
+        sqrt_floor++;
+    }
+    return (sqrt_floor * sqrt_floor == num);
 }
 
 int main(void) {

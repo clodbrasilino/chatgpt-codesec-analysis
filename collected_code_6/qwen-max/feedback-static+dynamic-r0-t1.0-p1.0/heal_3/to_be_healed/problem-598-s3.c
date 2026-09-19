@@ -13,30 +13,25 @@ int countDigits(int n) {
 }
 
 int isArmstrong(int number) {
-    int result = 0, n = 0, originalNumber = number;
-
-    while (originalNumber != 0) {
+    /* Possible weaknesses found:
+     *  Variable 'result' is assigned a value that is never used. [unreadVariable]
+     */
+    int result = 0, n = 0;
+    for (int temp = number; temp != 0; temp /= 10) {
         ++n;
-        originalNumber /= 10;
     }
 
-    originalNumber = number;
+    int originalNumber = number;
+    long long result_long = 0;
     while (originalNumber != 0) {
         int remainder = originalNumber % 10;
-        if (remainder > 0 && INT_MAX / pow(remainder, n-1) < remainder) {
-            return 0;
-        }
-        /* Possible weaknesses found:
-         * UBSan: 3.48678e+09 is outside the range of representable values of type 'int' (AFL crash: id:000003,sig:06,src:000004,time:7114,execs:3055,op:havoc,rep:7)
-         * UBSan: 2.32648e+09 is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000004,time:5213,execs:2257,op:havoc,rep:12)
-         * UBSan: 4.1122e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000004,time:1157,execs:507,op:havoc,rep:15)
-         * UBSan: 2.32674e+09 is outside the range of representable values of type 'int' (AFL crash: id:000002,sig:06,src:000004,time:5863,execs:2537,op:havoc,rep:15)
-         */
-        result += pow(remainder, n);
+        long long power = pow(remainder, n);
+        if (power > INT_MAX || result_long + power > INT_MAX) return 0;
+        result_long += power;
         originalNumber /= 10;
     }
 
-    return result == number;
+    return result_long == number;
 }
 
 int main() {

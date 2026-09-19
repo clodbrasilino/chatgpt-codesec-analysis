@@ -8,8 +8,8 @@ typedef struct Node {
 } Node;
  /* Possible weaknesses found:
   *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
-  *  test case 0 failed: expected ['python', 'programming'], got ["python","�"
   *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
   */
 
 Node *string_to_list(const char *str) {
@@ -42,7 +42,7 @@ Node *string_to_list(const char *str) {
                     }
                     return NULL;
                 }
-                memcpy(word, str + start, word_len);
+                strncpy(word, str + start, word_len);
                 word[word_len] = '\0';
 
                 Node *new_node = (Node *)malloc(sizeof(Node));
@@ -88,21 +88,38 @@ void free_list(Node *head) {
 }
 
 void print_list(Node *head) {
+    if (head == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
     Node *current = head;
     while (current != NULL) {
-        printf("%s\n", current->data);
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
         current = current->next;
     }
+    printf("]\n");
 }
 
 int main(void) {
-    const char *test_str = "Hello world from C";
-    Node *list = string_to_list(test_str);
-
-    if (list != NULL) {
-        print_list(list);
-        free_list(list);
-    }
-
+    const char *test1 = "python programming";
+    const char *test2 = "lists tuples strings";
+    const char *test3 = "write a program";
+    
+    Node *list1 = string_to_list(test1);
+    print_list(list1);
+    free_list(list1);
+    
+    Node *list2 = string_to_list(test2);
+    print_list(list2);
+    free_list(list2);
+    
+    Node *list3 = string_to_list(test3);
+    print_list(list3);
+    free_list(list3);
+    
     return 0;
 }

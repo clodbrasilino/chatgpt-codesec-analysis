@@ -1,3 +1,1 @@
-problem-501-s3.c:6:13:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000001,sig:06,src:000013,time:34765,execs:17980,op:havoc,rep:15)
-problem-501-s3.c:9:13:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000001,time:3137,execs:1607,op:havoc,rep:8)
-problem-501-s3.c:20:0:error:Fuzzing found a crash (signal 6) on input id:000002,sig:06,src:000013,time:56161,execs:29087,op:havoc,rep:4; likely memory-safety defect
+problem-501-s3.c:0:0: info: fuzzed - no sanitizer findings

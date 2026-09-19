@@ -7,8 +7,15 @@ long long power(long long base, long long exp, long long mod) {
     base = base % mod;
     while (exp > 0) {
         if (exp % 2 == 1) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 7776 * -44863756222365292 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000002,time:6686,execs:2342,op:havoc,rep:3)
+             * UBSan: signed integer overflow: 13060694016 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000002,time:4959,execs:1741,op:havoc,rep:1)
+             */
             result = (result * base) % mod;
         }
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2821109907456 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000002,time:4959,execs:1741,op:havoc,rep:1)
+         */
         base = (base * base) % mod;
         exp = exp / 2;
     }
@@ -32,6 +39,9 @@ long long nCrModP(long long n, long long r, long long p) {
     
     long long numerator = 1;
     for (long long i = 0; i < r; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 7 * 9223372036854775806 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:2346,execs:857,op:havoc,rep:1)
+         */
         numerator = (numerator * (n - i)) % p;
     }
     
@@ -40,6 +50,9 @@ long long nCrModP(long long n, long long r, long long p) {
         denominator = (denominator * i) % p;
     }
     
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 990 * 69811868777125307 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000002,time:6686,execs:2342,op:havoc,rep:3)
+     */
     long long result = (numerator * modInverse(denominator, p)) % p;
     return result;
 }

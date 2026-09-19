@@ -9,6 +9,10 @@ char *snake_to_camel(const char *snake) {
     }
 
     size_t len = strlen(snake);
+    if (len == 0) {
+        return NULL;
+    }
+
     char *camel = malloc(len + 1);
     if (camel == NULL) {
         return NULL;
@@ -16,11 +20,11 @@ char *snake_to_camel(const char *snake) {
 
     size_t j = 0;
     int capitalize_next = 0;
-    int first_char = 1;
+    int has_content = 0;
 
     for (size_t i = 0; i < len; i++) {
         if (snake[i] == '_') {
-            if (!first_char) {
+            if (has_content) {
                 capitalize_next = 1;
             }
         } else {
@@ -30,7 +34,7 @@ char *snake_to_camel(const char *snake) {
             } else {
                 camel[j++] = snake[i];
             }
-            first_char = 0;
+            has_content = 1;
         }
     }
 

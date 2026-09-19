@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 0 failed: expected 13, got <no output>
   *  test case 1 failed: expected 21, got <no output>
   *  test case 2 failed: expected 34, got <no output>
-  *  test case 0 failed: expected 13, got <no output>
   */
 
 unsigned long long fibonacci(int n) {
@@ -21,6 +21,9 @@ unsigned long long fibonacci(int n) {
     
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000003,time:49425,execs:287,op:havoc,rep:5; likely memory-safety defect
+  */
 
 int main(void) {
     int n;

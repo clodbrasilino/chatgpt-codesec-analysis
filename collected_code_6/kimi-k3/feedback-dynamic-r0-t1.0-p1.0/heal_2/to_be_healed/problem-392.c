@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_sum(long long n, long long *memo, long long size) {
+    if (n == 0) {
+        return 0;
+    }
+    if (n < size && memo[n] != -1) {
+        return memo[n];
+    }
+    long long sum = max_sum(n / 2, memo, size) + max_sum(n / 3, memo, size) + max_sum(n / 4, memo, size) + max_sum(n / 5, memo, size);
+    long long result = (sum > n) ? sum : n;
+    if (n < size) {
+        memo[n] = result;
+    }
+    return result;
+}
+
+int main() {
+    long long n;
+    if (scanf("%lld", &n) != 1 || n < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:22021,execs:1689,op:havoc,rep:4)
+     */
+    long long size = n + 1;
+    if (size <= 0 || (size_t)size > SIZE_MAX / sizeof(long long)) {
+        fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+    long long *memo = malloc((size_t)size * sizeof(long long));
+    if (memo == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    for (long long i = 0; i < size; i++) {
+        memo[i] = -1;
+    }
+    printf("%lld\n", max_sum(n, memo, size));
+    free(memo);
+    return EXIT_SUCCESS;
+}

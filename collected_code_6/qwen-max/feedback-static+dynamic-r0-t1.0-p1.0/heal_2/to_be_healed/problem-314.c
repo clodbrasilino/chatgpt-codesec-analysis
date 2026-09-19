@@ -9,36 +9,44 @@ int maxSumNonAdjacent(int *grid, int n) {
 
     for (int i = 0; i < 2 * n; i++) {
         int newExclude = (include > exclude) ? include : exclude;
-        
         include = exclude + grid[i];
         exclude = newExclude;
     }
-    
+
     return (include > exclude) ? include : exclude;
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:33605,execs:1788,op:havoc,rep:1; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:2278,execs:2196,op:havoc,rep:6; likely memory-safety defect
   */
 
 int main() {
     int n;
     printf("Enter the size of the grid (2 x n): ");
     scanf("%d", &n);
-    
+
+    if (n <= 0) {
+        fprintf(stderr, "Invalid grid size\n");
+        exit(EXIT_FAILURE);
+    }
+
     int *grid = (int *)malloc(2 * n * sizeof(int));
     if (grid == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    
+
     printf("Enter the elements of the grid: ");
     for (int i = 0; i < 2 * n; i++) {
-        scanf("%d", &grid[i]);
+        if (scanf("%d", &grid[i]) != 1) {
+            fprintf(stderr, "Input error\n");
+            free(grid);
+            exit(EXIT_FAILURE);
+        }
     }
-    
+
     int result = maxSumNonAdjacent(grid, n);
     printf("Maximum sum such that no two chosen numbers are adjacent: %d\n", result);
-    
+
     free(grid);
     return 0;
 }

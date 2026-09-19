@@ -10,6 +10,9 @@ int countSwaps(const char *str1, const char *str2, int len) {
     }
     return mismatchCount / 2;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000013,time:36623,execs:16508,op:havoc,rep:45; likely memory-safety defect
+  */
 
 int main() {
     char str1[256], str2[256];

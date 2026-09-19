@@ -16,10 +16,11 @@ long long int sumOfXorPairs(const int* arr, size_t n) {
 
         for (size_t j = 0; j < n; j++) {
             /* Possible weaknesses found:
-             *  Shift
+             *  Signed integer overflow for expression '1<<i'. [integerOverflow]
+             * UBSan: left shift of 1 by 31 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:18,execs:13,op:havoc,rep:5)
              *  Integer overflow
              *  Shifting signed 32-bit value by 31 bits is implementation-defined behaviour [shiftTooManyBitsSigned]
-             *  Signed integer overflow for expression '1<<i'. [integerOverflow]
+             *  Shift
              */
             if (arr[j] & (1 << i)) {
                 oneCount++;
@@ -31,6 +32,9 @@ long long int sumOfXorPairs(const int* arr, size_t n) {
     }
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000000,time:26,execs:16,op:havoc,rep:3; likely memory-safety defect
+  */
 
 int main() {
     int* arr = NULL;

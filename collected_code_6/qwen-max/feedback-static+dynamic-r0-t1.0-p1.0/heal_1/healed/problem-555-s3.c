@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdint.h>
 
 long long sum_of_cubes(long n) {
-    return (n * (n + 1) / 2) * (n * (n + 1) / 2);
+    long long result = (n * (n + 1) / 2);
+    return result * result;
 }
 
 long long sum_of_numbers(long n) {
@@ -15,12 +17,7 @@ long long difference(long n) {
 int main() {
     long n;
     printf("Enter a natural number: ");
-    if (scanf("%ld", &n) != 1) {
-        printf("Invalid input. Please enter a valid natural number.\n");
-        return 1;
-    }
-
-    if (n < 1) {
+    if (scanf("%ld", &n) != 1 || n < 1) {
         printf("Please enter a valid natural number.\n");
         return 1;
     }

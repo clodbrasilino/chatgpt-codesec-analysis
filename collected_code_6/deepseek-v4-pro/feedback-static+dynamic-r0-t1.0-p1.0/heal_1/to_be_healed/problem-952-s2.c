@@ -6,8 +6,16 @@ long long power(long long x, long long y, long long p) {
     x = x % p;
     while (y > 0) {
         if (y & 1)
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 1625702400 * 11365760000 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000000,time:51464,execs:8119,op:havoc,rep:7)
+             * UBSan: signed integer overflow: 13060694016 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:34205,execs:6331,op:havoc,rep:9)
+             */
             res = (res * x) % p;
         y = y >> 1;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 4294967296 * 4294967296 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000000,time:51464,execs:8119,op:havoc,rep:7)
+         * UBSan: signed integer overflow: 2821109907456 * 2821109907456 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000000,time:34205,execs:6331,op:havoc,rep:9)
+         */
         x = (x * x) % p;
     }
     return res;
@@ -34,6 +42,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     
     fact[0] = 1;
     for (long long i = 1; i <= n; i++)
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2432902008176640000 * 21 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000000,time:52313,execs:8669,op:havoc,rep:9)
+         */
         fact[i] = (fact[i - 1] * i) % p;
     
     long long result = (fact[n] * mod_inverse(fact[r], p)) % p;
@@ -42,6 +53,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     free(fact);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:4372,execs:2939,op:havoc,rep:10; likely memory-safety defect
+  */
 
 int main(void) {
     long long n, r, p;

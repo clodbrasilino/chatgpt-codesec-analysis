@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 long long sum_even_index_binomial_coefficients(int n) {
     if (n < 0) {
@@ -7,9 +8,13 @@ long long sum_even_index_binomial_coefficients(int n) {
         exit(EXIT_FAILURE);
     }
     if (n == 0) {
-        return 1LL;
+        return 1;
     }
-    return 2LL << (n - 1);
+    if (n > 62) {
+        fprintf(stderr, "Error: n is too large, result would overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return 1LL << (n - 1);
 }
 
 int main(void) {
@@ -21,6 +26,10 @@ int main(void) {
     }
     if (n < 0) {
         fprintf(stderr, "Error: n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    if (n > 62) {
+        fprintf(stderr, "Error: n is too large, result would overflow\n");
         return EXIT_FAILURE;
     }
     printf("Sum of even index binomial coefficients for n = %d: %lld\n", n, sum_even_index_binomial_coefficients(n));

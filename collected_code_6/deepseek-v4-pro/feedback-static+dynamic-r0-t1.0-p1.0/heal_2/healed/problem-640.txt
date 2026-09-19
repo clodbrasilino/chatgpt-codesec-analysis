@@ -21,14 +21,15 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == '(') {
             depth++;
             i++;
-        } else if (str[i] == ')' && depth > 0) {
-            depth--;
-            i++;
-        } else if (depth == 0) {
-            if (str[i] != ')') {
+        } else if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            } else {
                 result[j++] = str[i];
             }
             i++;
+        } else if (depth == 0) {
+            result[j++] = str[i++];
         } else {
             i++;
         }

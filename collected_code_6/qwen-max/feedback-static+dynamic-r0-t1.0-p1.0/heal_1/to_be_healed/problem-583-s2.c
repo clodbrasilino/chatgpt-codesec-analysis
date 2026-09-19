@@ -20,6 +20,9 @@ unsigned long long catalan_number(int n) {
     if (n <= 1) return 1;
     return binomial_coefficient(2 * n, n) / (n + 1);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:284,execs:132,op:havoc,rep:3; likely memory-safety defect
+  */
 
 int main() {
     int n;

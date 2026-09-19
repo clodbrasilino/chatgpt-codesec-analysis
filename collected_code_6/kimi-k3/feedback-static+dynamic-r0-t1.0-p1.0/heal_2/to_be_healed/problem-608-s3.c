@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 15, got <no output>
   *  test case 1 failed: expected 5, got <no output>
   *  test case 0 failed: expected 2, got <no output>
+  *  test case 2 failed: expected 15, got <no output>
   */
 
 unsigned long long bell_number(int n)
@@ -30,6 +30,9 @@ unsigned long long bell_number(int n)
     free(bell);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000001,time:43953,execs:348,op:havoc,rep:9; likely memory-safety defect
+  */
 
 int main(void)
 {

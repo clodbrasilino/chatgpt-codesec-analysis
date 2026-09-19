@@ -4,15 +4,15 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-int64_t nth_jacobsthal_lucas(int n) {
+uint64_t nth_jacobsthal_lucas(uint32_t n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
 
-    int64_t a = 2, b = 1;
-    for (int i = 2; i <= n; i++) {
-        int64_t c = 2 * a + b;
-        if ((b > 0 && c < 0) || (b < 0 && c > 0)) {
-            fprintf(stderr, "Overflow detected.\n");
+    uint64_t a = 2, b = 1;
+    for (uint32_t i = 2; i <= n; i++) {
+        uint64_t c = a + 2 * b;
+        if (c < a || c < 2 * b) {
+            fprintf(stderr, "Integer overflow detected.\n");
             exit(EXIT_FAILURE);
         }
         a = b;
@@ -30,12 +30,12 @@ int main() {
     }
 
     if (n < 0) {
-        fprintf(stderr, "Input must be a non-negative integer.\n");
+        fprintf(stderr, "Negative input is not allowed.\n");
         return EXIT_FAILURE;
     }
 
-    int64_t result = nth_jacobsthal_lucas(n);
-    printf("The %dth Jacobsthal-Lucas number is: %" PRId64 "\n", n, result);
+    uint64_t result = nth_jacobsthal_lucas((uint32_t)n);
+    printf("The %" PRIu32 "th Jacobsthal-Lucas number is: %" PRIu64 "\n", (uint32_t)n, result);
 
     return EXIT_SUCCESS;
 }

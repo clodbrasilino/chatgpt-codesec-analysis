@@ -10,9 +10,7 @@ int gcd(int a, int b) {
     return a;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 0 failed: expected 2, got <no output>
-  *  test case 2 failed: expected 2, got <no output>
+  *  test case 0 failed: expected 2, got 1
   */
 
 int findMaxDivisor(int start, int end) {
@@ -30,13 +28,12 @@ int findMaxDivisor(int start, int end) {
             int current_gcd = gcd(i, j);
             if (current_gcd > 1 && current_gcd <= 1000) {
                 divisor_count[current_gcd]++;
-                if (divisor_count[current_gcd] >= divisor_count[max_divisor]) {
-                    /* Possible weaknesses found:
-                     *  Array index 'max_divisor' is used before limits check. [arrayIndexThenCheck]
-                     */
-                    if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
-                        continue;
-                    }
+                if (divisor_count[current_gcd] > divisor_count[max_divisor]) {
+                    max_divisor = current_gcd;
+                /* Possible weaknesses found:
+                 *  Array index 'max_divisor' is used before limits check. [arrayIndexThenCheck]
+                 */
+                } else if (divisor_count[current_gcd] == divisor_count[max_divisor] && current_gcd > max_divisor) {
                     max_divisor = current_gcd;
                 }
             }
@@ -49,12 +46,13 @@ int findMaxDivisor(int start, int end) {
 int main() {
     int start, end;
     printf("Enter the start and end of the interval: ");
-    if (scanf("%d %d", &start, &end) == 2) {
-        int result = findMaxDivisor(start, end);
-        printf("The maximum occurring divisor in the interval is: %d\n", result);
-    } else {
-        printf("Invalid input. Please enter two integers.\n");
+    if (scanf("%d %d", &start, &end) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
     }
+
+    int result = findMaxDivisor(start, end);
+    printf("The maximum occurring divisor in the interval is: %d\n", result);
 
     return 0;
 }

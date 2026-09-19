@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 unsigned long long modInverse(unsigned long long a, unsigned long long m) {
-    unsigned long long m0 = m;
+    unsigned long long m0 = m, t;
     unsigned long long x0 = 0, x1 = 1;
 
     if (m == 1)
@@ -11,7 +11,7 @@ unsigned long long modInverse(unsigned long long a, unsigned long long m) {
 
     while (a > 1) {
         unsigned long long q = a / m;
-        unsigned long long t = m;
+        t = m;
         m = a % m, a = t;
         t = x0;
         x0 = x1 - q * x0;
@@ -32,7 +32,7 @@ unsigned long long factorialMod(unsigned long long n, unsigned long long p) {
 }
 
 unsigned long long ncrModP(unsigned long long n, unsigned long long r, unsigned long long p) {
-    if (r > n)
+    if (r > n || p <= 1)
         return 0;
 
     unsigned long long numerator = factorialMod(n, p);

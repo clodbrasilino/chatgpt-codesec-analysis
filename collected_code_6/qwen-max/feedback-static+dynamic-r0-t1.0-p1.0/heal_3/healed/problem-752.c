@@ -1,17 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
+#include <stdbool.h>
 
-long long jacobsthal(int n) {
-    if (n == 0) return 0;
-    if (n == 1) return 1;
-    if (n == 2) return 1;
-    long long b = 1, c = 1;
-    for (int i = 3; i <= n; ++i) {
-        long long a = b;
-        b = c;
-        c = a + 2 * b;
+bool jacobsthal_uint128(uint64_t n, uint64_t *result_high, uint64_t *result_low) {
+    if (n == 0) {
+        *result_high = 0;
+        *result_low = 0;
+        return true;
     }
-    return c;
+    if (n == 1) {
+        *result_high = 0;
+        *result_low = 1;
+        return true;
+    }
+
+    uint64_t a_high = 0, a_low = 0;
+    uint64_t b_high = 0, b_low = 1;
+
+    for (uint64_t i = 2; i <= n; ++i) {
+        uint64_t temp_low = 2 * b_low;
+        uint64_t temp_high = 2 * b_high;
+
+        if (temp_low < b_low) {
+            temp_high += 1;
+        }
+
+        uint64_t c_low = a_low + temp_low;
+        uint64_t c_high = a_high + temp_high;
+
+        if (c_low < a_low) {
+            c_high += 1;
+        }
+
+        a_high = b_high;
+        a_low = b_low;
+        b_high = c_high;
+        b_low = c_low;
+    }
+
+    *result_high = b_high;
+    *result_low = b_low;
+    return true;
 }
 
 int main() {
@@ -21,6 +51,9 @@ int main() {
         fprintf(stderr, "Invalid input.\n");
         return EXIT_FAILURE;
     }
-    printf("The %dth Jacobsthal number is: %lld\n", n, jacobsthal(n));
+    uint64_t result_high, result_low;
+    if (jacobsthal_uint128(n, &result_high, &result_low)) {
+        printf("The %dth Jacobsthal number is: %" PRIu64 "%016" PRIx64 "\n", n, result_high, result_low);
+    }
     return EXIT_SUCCESS;
 }

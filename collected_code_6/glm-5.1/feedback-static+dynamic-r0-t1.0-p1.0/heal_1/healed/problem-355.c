@@ -12,8 +12,8 @@ int count_rectangles(int r) {
     for (long long x = 1; x < r; x++) {
         long long max_y_sq = r_sq - x * x;
         
-        long long low = 1;
-        long long high = r - 1;
+        long long low = 0;
+        long long high = r;
         long long y_bound = 0;
 
         while (low <= high) {

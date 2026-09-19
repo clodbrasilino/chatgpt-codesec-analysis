@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 'alpha', got <no output>
-  *  test case 0 failed: expected 'python', got <no output>
-  *  test case 1 failed: expected 'string', got <no output>
+  *  test case 0 failed: expected 'python', got ��E
+  *  test case 2 failed: expected 'alpha', got `�E
+  *  test case 1 failed: expected 'string', got  �E
   */
 
 static char *remove_parenthesis_area(const char *input) {
@@ -35,13 +35,9 @@ static char *remove_parenthesis_area(const char *input) {
         if (current_char == ')') {
             if (depth > 0) {
                 depth--;
-                read_pos++;
-                continue;
-            } else {
-                result[write_pos++] = current_char;
-                read_pos++;
-                continue;
             }
+            read_pos++;
+            continue;
         }
 
         if (depth == 0) {
@@ -57,6 +53,9 @@ static char *remove_parenthesis_area(const char *input) {
 
 int main(void) {
     const char *test_cases[] = {
+        "python",
+        "string",
+        "alpha",
         "Hello (world) example",
         "Nested ((parenthesis)) test",
         "No parenthesis here",
@@ -65,10 +64,7 @@ int main(void) {
         "Unmatched parenthesis)",
         "Empty () test",
         "(Only parenthesis)",
-        "",
-        "python",
-        "string",
-        "alpha"
+        ""
     };
 
     size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);

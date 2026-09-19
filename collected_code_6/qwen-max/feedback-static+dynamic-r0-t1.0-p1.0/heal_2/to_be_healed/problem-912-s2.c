@@ -12,7 +12,7 @@ long long ln_m_lobb(long n) {
     return c % 1000000007;
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:314,execs:139,op:havoc,rep:1; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:690,execs:722,op:havoc,rep:3; likely memory-safety defect
   */
 
 int main() {

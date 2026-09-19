@@ -28,9 +28,9 @@ Node* create_node(const char *data) {
     return new_node;
 }
  /* Possible weaknesses found:
-  *  test case 0 failed: expected ['python', 'programming'], got []
-  *  test case 2 failed: expected ['write', 'a', 'program'], got []
-  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got []
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
   */
 
 Node* string_to_list(const char *str, const char *delim) {

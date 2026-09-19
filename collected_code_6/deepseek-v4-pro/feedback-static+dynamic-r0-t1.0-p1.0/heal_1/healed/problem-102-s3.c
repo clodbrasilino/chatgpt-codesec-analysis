@@ -15,7 +15,7 @@ char *snake_to_camel(const char *snake) {
     }
 
     size_t i = 0, j = 0;
-    int capitalize_next = 1;
+    int capitalize_next = 0;
 
     if (snake[0] == '_') {
         camel[j++] = '_';

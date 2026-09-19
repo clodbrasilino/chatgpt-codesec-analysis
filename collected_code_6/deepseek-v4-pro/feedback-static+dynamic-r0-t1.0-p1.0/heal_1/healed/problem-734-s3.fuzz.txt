@@ -1,1 +1,4 @@
-problem-734-s3.c:0:0: info: fuzzed - no sanitizer findings
+problem-734-s3.c:23:21:medium:UBSan: signed integer overflow: 15785126832 * -598358244 cannot be represented in type 'long long' (AFL crash: id:000004,sig:06,src:000011,time:35144,execs:11248,op:havoc,rep:1)
+problem-734-s3.c:24:50:medium:UBSan: signed integer overflow: 9223372036854775807 - -16 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000008,time:7244,execs:2449,op:havoc,rep:1)
+problem-734-s3.c:25:50:medium:UBSan: signed integer overflow: -9223372036854775808 - 9001583301196748608 cannot be represented in type 'long long' (AFL crash: id:000004,sig:06,src:000011,time:35144,execs:11248,op:havoc,rep:1)
+problem-734-s3.c:38:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000008,time:6871,execs:2326,op:havoc,rep:2; likely memory-safety defect

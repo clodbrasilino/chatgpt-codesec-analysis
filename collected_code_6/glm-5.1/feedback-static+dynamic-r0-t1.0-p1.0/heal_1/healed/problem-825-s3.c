@@ -3,6 +3,9 @@
 
 int *access_elements(const int *list, size_t list_size, const size_t *indices, size_t indices_size, size_t *result_size) {
     if (list == NULL || indices == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
         return NULL;
     }
 
@@ -13,6 +16,7 @@ int *access_elements(const int *list, size_t list_size, const size_t *indices, s
 
     int *result = (int *)malloc(indices_size * sizeof(int));
     if (result == NULL) {
+        *result_size = 0;
         return NULL;
     }
 
@@ -58,7 +62,7 @@ int main(void) {
         printf("\n");
         free(result);
     } else {
-        if (result_size == 0 && indices_size > 0) {
+        if (result_size == 0 && indices_size == 0) {
             printf("No valid indices found.\n");
         } else {
             printf("Allocation failed or empty request.\n");

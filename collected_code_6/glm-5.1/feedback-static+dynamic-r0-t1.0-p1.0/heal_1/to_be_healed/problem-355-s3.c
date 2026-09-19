@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 8, got 4
+  *  test case 1 failed: expected 1, got 0
+  */
 
 long long count_rectangles(int r) {
     if (r < 0) {

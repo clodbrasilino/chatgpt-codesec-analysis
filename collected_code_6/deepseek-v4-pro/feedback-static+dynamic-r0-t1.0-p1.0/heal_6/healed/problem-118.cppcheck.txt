@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-118.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-118.c:115:43: style: Condition 'strlen(input)>0' is always true [knownConditionTrueFalse]
+        if (list == NULL && strlen(input) > 0) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-118.c:109:27: note: Assuming that condition 'strlen(input)==0' is not redundant
+        if (strlen(input) == 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-118.c:115:43: note: Condition 'strlen(input)>0' is always true
+        if (list == NULL && strlen(input) > 0) {
+                                          ^

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <limits.h>
 
 long long count_squares(int m, int n) {
     if (m <= 0 || n <= 0) {
@@ -7,7 +8,11 @@ long long count_squares(int m, int n) {
     long long total = 0;
     for (int i = 1; i <= m; i++) {
         for (int j = 1; j <= n; j++) {
-            total += (long long)(m - i + 1) * (n - j + 1);
+            long long term = (long long)(m - i + 1) * (n - j + 1);
+            if (total > LLONG_MAX - term) {
+                return -1;
+            }
+            total += term;
         }
     }
     return total;

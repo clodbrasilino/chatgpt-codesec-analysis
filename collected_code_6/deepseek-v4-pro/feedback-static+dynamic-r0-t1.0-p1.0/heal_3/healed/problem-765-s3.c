@@ -2,16 +2,15 @@
 #include <stdlib.h>
 
 int is_polite(unsigned int n) {
+    if (n == 0) return 0;
     return (n & (n - 1)) != 0;
 }
 
 unsigned int nth_polite(unsigned int n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     unsigned int count = 0;
     unsigned int num = 1;
-    while (count < n) {
+    while (1) {
         if (is_polite(num)) {
             count++;
             if (count == n) {
@@ -20,7 +19,6 @@ unsigned int nth_polite(unsigned int n) {
         }
         num++;
     }
-    return 0;
 }
 
 int main(int argc, const char *argv[]) {

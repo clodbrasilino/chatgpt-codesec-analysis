@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
  /* Possible weaknesses found:
   *  test case 0 failed: expected True, got 0
   */
@@ -9,15 +10,25 @@ bool is_woodall(unsigned long long n) {
         return false;
     }
 
-    for (unsigned long long k = 1; k < 64; k++) {
+    for (unsigned long long k = 1; k < sizeof(unsigned long long) * CHAR_BIT; k++) {
+        /* Possible weaknesses found:
+         *  Assignment 'power=1ULL<<k', assigned value is greater than 0
+         */
         unsigned long long power = 1ULL << k;
         unsigned long long term = k * (power - 1);
 
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
         if (term == n) {
             return true;
         }
 
-        if (term > n) {
+        /* Possible weaknesses found:
+         *  Condition 'power==0' is always false [knownConditionTrueFalse]
+         *  Condition 'power==0' is always false
+         */
+        if (term > n || power == 0) {
             return false;
         }
     }

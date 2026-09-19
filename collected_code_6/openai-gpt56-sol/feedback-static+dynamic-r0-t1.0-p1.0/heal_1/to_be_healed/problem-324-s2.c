@@ -22,8 +22,13 @@ static int sum_alternate_chains(const Tuple *head, long long *first_sum,
 
     while (head != NULL) {
         /* Possible weaknesses found:
-         *  Value stored to 'value' during its initialization is never read [deadcode.DeadStores]
          *  value is initialized
+         * UBSan: signed integer overflow: 9223372036854775807 + 9 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000011,time:9593,execs:5116,op:havoc,rep:1)
+         * UBSan: signed integer overflow: 7 + 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000004,sig:06,src:000020,time:39343,execs:20610,op:havoc,rep:3)
+         * UBSan: signed integer overflow: 6 + 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000011,time:9915,execs:5274,op:havoc,rep:2)
+         * UBSan: signed integer overflow: 9223372036854775807 + 6 cannot be represented in type 'long long' (AFL crash: id:000003,sig:06,src:000016,time:21032,execs:11009,op:havoc,rep:1)
+         *  Value stored to 'value' during its initialization is never read [deadcode.DeadStores]
+         * UBSan: signed integer overflow: 8 + 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000008,time:7103,execs:3864,op:havoc,rep:1)
          */
         long long value = head->first + head->second;
 
@@ -33,8 +38,8 @@ static int sum_alternate_chains(const Tuple *head, long long *first_sum,
         }
 
         /* Possible weaknesses found:
-         *  value is overwritten
          *  Redundant initialization for 'value'. The initialized value is overwritten before it is read. [redundantInitialization]
+         *  value is overwritten
          */
         value = head->first + head->second;
 

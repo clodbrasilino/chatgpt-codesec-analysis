@@ -15,6 +15,9 @@ int count_sequences(long long arr[], int n, int k, long long dp[51][51][201]) {
                                         count_sequences(arr + 1, n - 1, k, dp)) % 1000000007;
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:1248,execs:169,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main() {
     long long arr[] = {1, 2, 3};

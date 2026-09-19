@@ -1,12 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 long long sum_of_products_of_subarrays(const int *arr, int n) {
     long long total = 0;
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
+            if (product > LLONG_MAX / arr[j] || product < LLONG_MIN / arr[j]) {
+                if (arr[j] < 0) {
+                    if (product < 0 && product < LLONG_MIN / arr[j]) {
+                        product = LLONG_MIN;
+                        total = LLONG_MIN;
+                        return total;
+                    }
+                } else {
+                    product = LLONG_MAX;
+                    total = LLONG_MAX;
+                    return total;
+                }
+            }
             product *= arr[j];
+            if ((arr[j] > 0 && total > LLONG_MAX - product) ||
+                (arr[j] < 0 && total < LLONG_MIN - product)) {
+                if (product > 0) {
+                    total = LLONG_MAX;
+                } else {
+                    total = LLONG_MIN;
+                }
+                return total;
+            }
             total += product;
         }
     }

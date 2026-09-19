@@ -9,10 +9,10 @@ int min_operations(int a, int b) {
     if (a < 0 || b < 0) {
         return -1;
     }
-    return abs_val(a - b);
+    return abs_val(a ^ b);
 }
 
-int main(int argc, char * const argv[]) {
+int main(int argc, char *const argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <num1> <num2>\n", argv[0]);
         return EXIT_FAILURE;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <limits.h>
-#include <stdbool.h>
+#include <stdint.h>
 
 long long sum_of_divisors(long long n)
 {
@@ -18,18 +18,21 @@ long long sum_of_divisors(long long n)
         {
             long long pair = n / i;
             
-            if (sum > LLONG_MAX - i)
+            if (pair == i)
             {
-                return -1;
-            }
-            sum += i;
-            
-            if (pair != i)
-            {
-                if (sum > LLONG_MAX - pair)
+                if (sum > LLONG_MAX - i)
                 {
                     return -1;
                 }
+                sum += i;
+            }
+            else
+            {
+                if (sum > LLONG_MAX - i - pair)
+                {
+                    return -1;
+                }
+                sum += i;
                 sum += pair;
             }
         }

@@ -1,1 +1,1 @@
-problem-677.c:0:0: info: fuzzed - no sanitizer findings
+problem-677.c:8:11:medium:UBSan: signed integer overflow: 30 + 9223372036854775807 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:855,execs:871,op:havoc,rep:1)

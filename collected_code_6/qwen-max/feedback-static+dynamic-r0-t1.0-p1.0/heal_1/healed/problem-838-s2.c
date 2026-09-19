@@ -4,7 +4,7 @@
 
 int minSwapsToEqual(const char *a, const char *b) {
     int count01 = 0, count10 = 0;
-    for (int i = 0; a[i] != '\0'; i++) {
+    for (int i = 0; a[i] != '\0' && b[i] != '\0'; i++) {
         if (a[i] == '0' && b[i] == '1') {
             count01++;
         } else if (a[i] == '1' && b[i] == '0') {

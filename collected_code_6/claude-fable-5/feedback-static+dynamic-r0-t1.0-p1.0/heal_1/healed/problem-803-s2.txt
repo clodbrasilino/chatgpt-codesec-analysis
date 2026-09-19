@@ -16,10 +16,13 @@ static int is_perfect_square(long long num)
 
     low = 1;
     high = num / 2;
+    if (high > 3037000499LL) {
+        high = 3037000499LL;
+    }
 
     while (low <= high) {
-        long long mid = low + (high - low) / 2;
-        long long sq = mid * mid;
+        const long long mid = low + (high - low) / 2;
+        const long long sq = mid * mid;
         if (sq == num) {
             return 1;
         } else if (sq < num) {
@@ -55,7 +58,3 @@ int main(void)
     return EXIT_SUCCESS;
 }
 ```
-
-The key changes address the `[variableScope]` warnings: `mid` and `sq` were declared at function scope but only used inside the `while` loop body, so they've been moved into the loop where they're declared and initialized in a single statement. This improves readability, makes the variables' lifetimes explicit, and eliminates any risk of accidental use of stale values outside the loop.
-
-The rest of the code was already sound: the binary search avoids `(low + high) / 2` overflow by using `low + (high - low) / 2`, the `main` function guards against `mid * mid` overflow by rejecting inputs larger than `3037000499² ` (the largest perfect square fitting in a signed 64-bit integer), and the `scanf` return value is properly checked.

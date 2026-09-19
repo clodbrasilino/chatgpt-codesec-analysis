@@ -1,1 +1,1 @@
-problem-837-s2.c:11:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:243,execs:129,op:havoc,rep:2; likely memory-safety defect
+problem-837-s2.c:7:13:medium:UBSan: signed integer overflow: 9222615723651324400 + 796108265857241 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000002,time:428,execs:440,op:havoc,rep:1)

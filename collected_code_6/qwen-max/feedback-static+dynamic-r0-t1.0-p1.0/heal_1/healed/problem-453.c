@@ -3,13 +3,13 @@
 
 long long sumOfEvenFactors(long long n) {
     if (n % 2 != 0) return 0;
-
+    
     long long res = 1;
     while (n % 2 == 0) {
         n /= 2;
         res *= 2;
     }
-
+    
     for (long long f = 3; f <= sqrt(n); f += 2) {
         if (n % f == 0) {
             long long count = 0, curr_term = 1;
@@ -21,8 +21,9 @@ long long sumOfEvenFactors(long long n) {
             } while (n % f == 0);
         }
     }
-
-    if (n >= 2) res *= (n + 1);
+    
+    if (n >= 2 && n % 2 == 0) res *= 2 * (n + 1);
+    else if (n >= 2) res *= (n + 1);
     return res;
 }
 

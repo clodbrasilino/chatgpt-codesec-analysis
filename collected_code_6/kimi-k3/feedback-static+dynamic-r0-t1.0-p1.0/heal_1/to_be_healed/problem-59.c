@@ -18,6 +18,9 @@ int octagonal_number(int n, long long *result)
         return -1;
     }
 
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 1793725781 * 5381177341 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:5991,execs:2741,op:havoc,rep:6)
+     */
     long long value = (long long)n * (3LL * n - 2LL);
 
     /* Possible weaknesses found:

@@ -8,6 +8,14 @@ typedef struct {
 
 int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int* result_size) {
     if (list1 == NULL || list2 == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    if (size1 <= 0 || size2 <= 0) {
+        *result_size = 0;
         return NULL;
     }
 

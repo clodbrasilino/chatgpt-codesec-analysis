@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
 
 static long long gcd(long long a, long long b)
 {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    
     while (b != 0) {
         long long temp = b;
         b = a % b;
@@ -12,12 +16,22 @@ static long long gcd(long long a, long long b)
     return a;
 }
 
-static long long lcm(long long a, long long b)
+static bool lcm(long long a, long long b, long long *result)
 {
     if (a == 0 || b == 0) {
-        return 0;
+        *result = 0;
+        return true;
     }
-    return (a / gcd(a, b)) * b;
+    
+    long long g = gcd(a, b);
+    long long temp = a / g;
+    
+    if (temp > LLONG_MAX / b) {
+        return false;
+    }
+    
+    *result = temp * b;
+    return true;
 }
 
 long long smallest_multiple(int n)
@@ -31,8 +45,7 @@ long long smallest_multiple(int n)
 
     result = 1;
     for (i = 2; i <= n; i++) {
-        result = lcm(result, (long long)i);
-        if (result < 0) {
+        if (!lcm(result, (long long)i, &result)) {
             return -1;
         }
     }

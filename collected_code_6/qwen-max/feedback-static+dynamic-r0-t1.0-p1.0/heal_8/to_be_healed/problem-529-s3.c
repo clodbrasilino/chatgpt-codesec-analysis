@@ -1,17 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 31, got 53
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
+  */
 
-int64_t nth_jacobsthal_lucas(int n) {
+uint64_t nth_jacobsthal_lucas(uint32_t n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
 
-    int64_t a = 2, b = 1;
-    for (int i = 2; i <= n; i++) {
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: 2 * 4611686018427387905 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000001,time:1250,execs:505,op:havoc,rep:4)
-         */
-        int64_t c = 2 * a + b;
+    uint64_t a = 2, b = 1;
+    for (uint32_t i = 2; i <= n; i++) {
+        uint64_t c = a + 2 * b;
+        if (c < a || c < 2 * b) {
+            fprintf(stderr, "Integer overflow detected.\n");
+            exit(EXIT_FAILURE);
+        }
         a = b;
         b = c;
     }
@@ -27,15 +34,12 @@ int main() {
     }
 
     if (n < 0) {
-        fprintf(stderr, "Input must be a non-negative integer.\n");
+        fprintf(stderr, "Negative input is not allowed.\n");
         return EXIT_FAILURE;
     }
 
-    int64_t result = nth_jacobsthal_lucas(n);
-    /* Possible weaknesses found:
-     *  %lld in format string (no. 2) requires 'long long' but the argument type is 'signed long'. [invalidPrintfArgType_sint]
-     */
-    printf("The %dth Jacobsthal-Lucas number is: %lld\n", n, result);
+    uint64_t result = nth_jacobsthal_lucas((uint32_t)n);
+    printf("The %" PRId32 "th Jacobsthal-L Lucas number is: %" PRIu64 "\n", n, result);
 
     return EXIT_SUCCESS;
 }

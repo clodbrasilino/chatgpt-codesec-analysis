@@ -1,24 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 20, got 4
-  *  test case 1 failed: expected 2, got 4
-  *  test case 2 failed: expected 5, got 1
+  *  test case 2 failed: expected 5, got <no output>
+  *  test case 1 failed: expected 2, got <no output>
+  *  test case 0 failed: expected 20, got <no output>
   */
 
 int count_squares(int length, int width) {
-    if (length < 0 || width < 0) {
+    if (length <= 0 || width <= 0) {
         return -1;
     }
-    int min_side = (length < width ? length : width);
-    int max_side = (length > width ? length : width);
-    int full_squares = (max_side / min_side) * (max_side / min_side);
-    int partial_squares = (max_side % min_side == 0) ? 0 : (max_side / min_side) * 2 + 1;
-    return full_squares + partial_squares;
+    int min_side = length < width ? length : width;
+    int max_square_side = 1;
+    for (int i = 2; i * i <= min_side; ++i) {
+        if (length % i == 0 && width % i == 0) {
+            max_square_side = i;
+        }
+    }
+    while (length % max_square_side == 0 && width % max_square_side == 0) {
+        max_square_side *= max_square_side;
+    }
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 308025 * 308025 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000004,time:23425,execs:2106,op:havoc,rep:12)
+     * UBSan: signed integer overflow: 154012 * 154012 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000004,time:23425,execs:2106,op:havoc,rep:12)
+     */
+    while (max_square_side * max_square_side > length || max_square_side * max_square_side > width) {
+        max_square_side /= 2;
+    }
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 154012 * 154012 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000004,time:23425,execs:2106,op:havoc,rep:12)
+     */
+    while (max_square_side * max_square_side > length || max_square_side * max_square_side > width) {
+        max_square_side--;
+    }
+    return max_square_side;
 }
 
 int main() {
     int length, width;
+
     printf("Enter the length of the rectangle: ");
     if (scanf("%d", &length) != 1) {
         fprintf(stderr, "Invalid input for length.\n");
@@ -31,13 +51,14 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    int number_of_squares = count_squares(length, width);
-    if (number_of_squares == -1) {
-        fprintf(stderr, "Negative dimensions are not allowed.\n");
+    int max_square_side = count_squares(length, width);
+    if (max_square_side == -1) {
+        fprintf(stderr, "Non-positive dimensions are not allowed.\n");
         return EXIT_FAILURE;
     }
 
-    printf("The number of squares in the rectangle is: %d\n", number_of_squares);
+    long long number_of_squares = (long long)(length / max_square_side) * (long long)(width / max_square_side);
+    printf("The number of squares in the rectangle is: %lld\n", number_of_squares);
 
     return EXIT_SUCCESS;
 }

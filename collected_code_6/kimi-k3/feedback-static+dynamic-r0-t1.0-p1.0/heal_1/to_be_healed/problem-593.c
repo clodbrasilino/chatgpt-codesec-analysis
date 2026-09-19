@@ -33,6 +33,9 @@ void removeLeadingZeros(char *ipAddress) {
     strcpy(ipAddress, result);
     free(result);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:370,execs:201,op:havoc,rep:6; likely memory-safety defect
+  */
 
 int main() {
     char ipAddress[100];

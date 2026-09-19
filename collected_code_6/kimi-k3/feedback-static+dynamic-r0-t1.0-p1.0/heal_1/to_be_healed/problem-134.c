@@ -11,6 +11,11 @@ int isLastElementEvenAfterOperations(int arr[], int size, int p) {
     
     int last = arr[size - 1];
     for (int i = 0; i < p; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1610612736 * 2 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:2473,execs:889,op:havoc,rep:1)
+         * UBSan: signed integer overflow: -1674115755 * 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:2406,execs:869,op:havoc,rep:2)
+         * UBSan: signed integer overflow: 1342177280 * 2 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000006,time:4490,execs:1605,op:havoc,rep:10)
+         */
         last = last * 2;
     }
     

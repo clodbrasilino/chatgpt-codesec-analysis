@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
+  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
+  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  */
 
 char *snake_to_camel(const char *snake) {
     if (snake == NULL) {
@@ -15,7 +20,7 @@ char *snake_to_camel(const char *snake) {
     }
 
     size_t i = 0, j = 0;
-    int capitalize_next = 1;
+    int capitalize_next = 0;
 
     if (snake[0] == '_') {
         camel[j++] = '_';
@@ -105,8 +110,8 @@ int main(void) {
      */
     result = snake_to_camel(NULL);
     /* Possible weaknesses found:
-     *  Condition 'result!=NULL' is always false
      *  Condition 'result!=NULL' is always false [knownConditionTrueFalse]
+     *  Condition 'result!=NULL' is always false
      */
     if (result != NULL) {
         printf("NULL -> %s\n", result);

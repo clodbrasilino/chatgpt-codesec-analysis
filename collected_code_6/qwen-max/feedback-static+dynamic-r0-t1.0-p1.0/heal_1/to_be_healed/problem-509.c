@@ -13,6 +13,9 @@ double average_of_odds(int n) {
     }
     return (count == 0) ? 0.0 : (double)sum / count;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:38,execs:34,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     int n;

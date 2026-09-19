@@ -3,8 +3,8 @@
 #include <string.h>
  /* Possible weaknesses found:
   *  test case 2 failed: expected 'alpha', got 
-  *  test case 1 failed: expected 'string', got �Q<
-  *  test case 0 failed: expected 'python', got �Q<
+  *  test case 1 failed: expected 'string', got ��]
+  *  test case 0 failed: expected 'python', got ��]
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -91,8 +91,8 @@ int main(void) {
     }
 
     /* Possible weaknesses found:
-     *  Assignment 'result=remove_parenthesis_area(NULL)', assigned value is 0
      *  Calling function 'remove_parenthesis_area' returns 0
+     *  Assignment 'result=remove_parenthesis_area(NULL)', assigned value is 0
      */
     result = remove_parenthesis_area(NULL);
     /* Possible weaknesses found:

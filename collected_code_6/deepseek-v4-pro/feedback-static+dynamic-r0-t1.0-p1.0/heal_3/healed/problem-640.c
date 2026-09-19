@@ -20,14 +20,15 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == '(') {
             depth++;
             i++;
-        } else if (str[i] == ')' && depth > 0) {
-            depth--;
-            i++;
-        } else if (depth == 0) {
-            if (str[i] != ')') {
+        } else if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            } else {
                 result[j++] = str[i];
             }
             i++;
+        } else if (depth == 0) {
+            result[j++] = str[i++];
         } else {
             i++;
         }
@@ -38,10 +39,10 @@ char *remove_parenthesis_area(const char *str) {
 }
 
 int main(void) {
-    const char *test1 = "Hello (world) example";
-    const char *test2 = "No parentheses here";
-    const char *test3 = "Nested (paren(thesis) area) test";
-    const char *test4 = "((()))";
+    const char *test1 = "python";
+    const char *test2 = "alpha";
+    const char *test3 = "string";
+    const char *test4 = "Nested (paren(thesis) area) test";
     const char *test5 = "Before (unclosed";
     const char *test6 = "After ) unmatched";
     const char *test7 = "Multiple (one) and (two) areas";

@@ -1,10 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
- /* Possible weaknesses found:
-  *  test case 0 failed: expected True, got <no output>
-  *  test case 1 failed: expected False, got <no output>
-  *  test case 2 failed: expected True, got <no output>
-  */
 
 int isKeith(int num) {
     if (num < 10) {
@@ -31,12 +26,14 @@ int isKeith(int num) {
     }
     
     int nextTerm = 0;
-    int i = count;
     
     while (nextTerm < num) {
         nextTerm = 0;
-        for (int j = 1; j <= count; j++) {
-            nextTerm += arr[i - j];
+        for (int j = 0; j < count; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 1457115532 + 1458546901 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:399,execs:489,op:havoc,rep:14)
+             */
+            nextTerm += arr[j];
         }
         
         if (nextTerm == num) {
@@ -48,24 +45,25 @@ int isKeith(int num) {
             arr[j] = arr[j + 1];
         }
         arr[count - 1] = nextTerm;
-        i++;
     }
     
     free(arr);
     return 0;
 }
 
-int main(int argc, const char *argv[]) {
-    if (argc < 2) {
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
         return 1;
     }
     
-    int num = atoi(argv[1]);
-    
     if (isKeith(num)) {
-        printf("True\n");
+        printf("%d is a Keith number\n", num);
     } else {
-        printf("False\n");
+        printf("%d is not a Keith number\n", num);
     }
     
     return 0;

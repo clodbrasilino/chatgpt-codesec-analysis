@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got @��
-  *  test case 1 failed: expected 'string', got ���
-  *  test case 2 failed: expected 'alpha', got ���
+  *  test case 1 failed: expected 'string', got ��
+  *  test case 2 failed: expected 'alpha', got ��
+  *  test case 0 failed: expected 'python', got @�
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -57,8 +57,8 @@ int main(void) {
     char *r6 = remove_parenthesis_area(test6);
     char *r7 = remove_parenthesis_area(test7);
     /* Possible weaknesses found:
-     *  Assignment 'r8=remove_parenthesis_area(test8)', assigned value is 0
      *  Calling function 'remove_parenthesis_area' returns 0
+     *  Assignment 'r8=remove_parenthesis_area(test8)', assigned value is 0
      */
     char *r8 = remove_parenthesis_area(test8);
 
@@ -70,8 +70,8 @@ int main(void) {
     printf("Test 6: '%s' -> '%s'\n", test6, r6);
     printf("Test 7: '%s' -> '%s'\n", test7, r7);
     /* Possible weaknesses found:
-     *  Condition 'r8==NULL' is always true
      *  Condition 'r8==NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'r8==NULL' is always true
      */
     printf("Test 8: NULL -> '%s'\n", r8 == NULL ? "NULL" : r8);
 

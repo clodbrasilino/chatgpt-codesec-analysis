@@ -62,12 +62,5 @@ int main(void)
         i++;
     }
 
-    /* Possible weaknesses found:
-     *  Condition 'is_valid_parentheses(NULL)' is always false [knownConditionTrueFalse]
-     *  Calling function 'is_valid_parentheses' returns 0
-     *  Condition 'is_valid_parentheses(NULL)' is always false
-     */
-    printf("Input: NULL -> %s\n", is_valid_parentheses(NULL) ? "Valid" : "Invalid");
-
     return 0;
 }

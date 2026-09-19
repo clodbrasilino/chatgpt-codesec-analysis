@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int isKeith(int num) {
     if (num < 10) {
@@ -14,7 +15,7 @@ int isKeith(int num) {
         count++;
     }
     
-    int *arr = (int *)malloc(count * sizeof(int));
+    long long *arr = (long long *)malloc(count * sizeof(long long));
     if (arr == NULL) {
         return 0;
     }
@@ -25,13 +26,16 @@ int isKeith(int num) {
         temp /= 10;
     }
     
-    int nextTerm = 0;
-    int i = count;
+    long long nextTerm = 0;
     
     while (nextTerm < num) {
         nextTerm = 0;
-        for (int j = 1; j <= count; j++) {
-            nextTerm += arr[i - j];
+        for (int j = 0; j < count; j++) {
+            nextTerm += arr[j];
+            if (nextTerm > INT_MAX) {
+                free(arr);
+                return 0;
+            }
         }
         
         if (nextTerm == num) {
@@ -43,24 +47,25 @@ int isKeith(int num) {
             arr[j] = arr[j + 1];
         }
         arr[count - 1] = nextTerm;
-        i++;
     }
     
     free(arr);
     return 0;
 }
 
-int main(int argc, const char *argv[]) {
-    if (argc < 2) {
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
         return 1;
     }
     
-    int num = atoi(argv[1]);
-    
     if (isKeith(num)) {
-        printf("True\n");
+        printf("%d is a Keith number\n", num);
     } else {
-        printf("False\n");
+        printf("%d is not a Keith number\n", num);
     }
     
     return 0;

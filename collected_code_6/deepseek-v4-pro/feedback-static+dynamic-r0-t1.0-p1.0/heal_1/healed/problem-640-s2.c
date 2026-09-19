@@ -50,6 +50,9 @@ static char *remove_parenthesis_area(const char *input) {
 
 int main(void) {
     const char *test_cases[] = {
+        "(Hello) (world) (example)",
+        "(string)",
+        "(alpha)",
         "Hello (world) example",
         "Nested ((parenthesis)) test",
         "No parenthesis here",

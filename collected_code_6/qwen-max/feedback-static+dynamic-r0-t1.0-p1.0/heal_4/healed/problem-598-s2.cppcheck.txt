@@ -1,10 +1,1 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-598-s2.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-598-s2.c:24:15: style: Redundant initialization for 'temp'. The initialized value is overwritten before it is read. [redundantInitialization]
-    for (temp = num; temp; temp /= 10) {
-              ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-598-s2.c:20:14: note: temp is initialized
-    int temp = num;
-             ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-598-s2.c:24:15: note: temp is overwritten
-    for (temp = num; temp; temp /= 10) {
-              ^

@@ -10,6 +10,9 @@ long long sum_xor_pairs(int arr[], int n) {
     for (i = 0; i < 32; i++) {
         long long ones = 0;
         for (j = 0; j < n; j++) {
+            /* Possible weaknesses found:
+             * UBSan: left shift of 1 by 31 places cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:29,execs:29,op:havoc,rep:7)
+             */
             if (arr[j] & (1 << i)) {
                 ones++;
             }
@@ -19,6 +22,9 @@ long long sum_xor_pairs(int arr[], int n) {
     }
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000004,time:1567,execs:805,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main(void) {
     int n;

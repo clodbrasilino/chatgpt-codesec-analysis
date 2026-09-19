@@ -1,1 +1,2 @@
-problem-515-s3.c:38:22:medium:UBSan: index 101 out of bounds for type 'int[100]' (AFL crash: id:000000,sig:06,src:000000,time:326,execs:155,op:havoc,rep:4)
+problem-515-s3.c:10:0:high:ASan: stack-overflow (AFL crash: id:000001,sig:11,src:000000,time:12603,execs:10850,op:havoc,rep:6)
+problem-515-s3.c:35:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:665,execs:587,op:havoc,rep:10; likely memory-safety defect

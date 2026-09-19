@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-734.c:10:27: error: use of undeclared identifier 'LLONG_MAX'
+   10 |             if (product > LLONG_MAX / llabs(arr[j]) || 
+      |                           ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-734.c:11:28: error: use of undeclared identifier 'LLONG_MIN'
+   11 |                 (product < LLONG_MIN / llabs(arr[j]))) {
+      |                            ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-734.c:15:44: error: use of undeclared identifier 'LLONG_MAX'
+   15 |             if ((arr[j] > 0 && total_sum > LLONG_MAX - product) || 
+      |                                            ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-734.c:16:44: error: use of undeclared identifier 'LLONG_MIN'
+   16 |                 (arr[j] < 0 && total_sum < LLONG_MIN - product)) {
+      |                                            ^~~~~~~~~
+4 errors generated.

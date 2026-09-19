@@ -1,19 +1,24 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
 
 long long lucas_number(int n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
 
-    int128_t a = 2, b = 1;
+    long long a = 2, b = 1;
     for (int i = 2; i <= n; ++i) {
-        int128_t c = a + b;
+        if (b > LLONG_MAX - a) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        long long c = a + b;
         a = b;
         b = c;
     }
-    return (long long)b;
+    return b;
 }
 
 int main() {

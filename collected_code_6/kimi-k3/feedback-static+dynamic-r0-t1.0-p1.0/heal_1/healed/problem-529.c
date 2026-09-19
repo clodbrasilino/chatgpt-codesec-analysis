@@ -12,11 +12,16 @@ long long jacobsthal_lucas(int n) {
     long long current = 0;
     
     for (int i = 2; i <= n; i++) {
-        if (prev1 > LLONG_MAX - 2 * prev2) {
+        if (prev2 > LLONG_MAX / 2) {
             errno = ERANGE;
             return -1;
         }
-        current = prev1 + 2 * prev2;
+        long long doubled = 2 * prev2;
+        if (prev1 > LLONG_MAX - doubled) {
+            errno = ERANGE;
+            return -1;
+        }
+        current = prev1 + doubled;
         prev2 = prev1;
         prev1 = current;
     }

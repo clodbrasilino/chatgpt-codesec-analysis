@@ -67,9 +67,9 @@ int map_get(PairNode **map, int size, int a, int b) {
     return 0;
 }
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 1, got 5
-  *  test case 0 failed: expected 4, got 5
-  *  test case 1 failed: expected 11, got 132
+  *  test case 1 failed: expected 11, got <no output>
+  *  test case 2 failed: expected 1, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
   */
 
 int count_same_pairs(const int *list1, int size1, const int *list2, int size2) {
@@ -92,15 +92,14 @@ int count_same_pairs(const int *list1, int size1, const int *list2, int size2) {
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < size1 - 1; i++) {
+    for (int i = 0; i < size1; i++) {
         for (int j = i + 1; j < size1; j++) {
             map_insert(map, table_size, list1[i], list1[j], 1);
-            map_insert(map, table_size, list1[j], list1[i], 1);
         }
     }
 
     int total_count = 0;
-    for (int i = 0; i < size2 - 1; i++) {
+    for (int i = 0; i < size2; i++) {
         for (int j = i + 1; j < size2; j++) {
             total_count += map_get(map, table_size, list2[i], list2[j]);
         }

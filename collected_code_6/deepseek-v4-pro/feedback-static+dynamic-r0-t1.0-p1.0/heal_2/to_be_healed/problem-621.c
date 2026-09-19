@@ -3,10 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <errno.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected ['Dart', '368', 'is', '100', '181', 'Super', '18'], got <no output>
-  *  test case 2 failed: expected ['Flutter', '484', 'is', '77', '129', 'Magnificent', '45'], got <no output>
   *  test case 0 failed: expected ['MSM', '240', 'is', '104', '129', 'best', '10'], got <no output>
+  *  test case 2 failed: expected ['Flutter', '484', 'is', '77', '129', 'Magnificent', '45'], got <no output>
+  *  test case 1 failed: expected ['Dart', '368', 'is', '100', '181', 'Super', '18'], got <no output>
   */
 
 char* increment_numeric_values(const char* input, int k) {
@@ -15,7 +16,8 @@ char* increment_numeric_values(const char* input, int k) {
     }
 
     size_t len = strlen(input);
-    char* result = malloc(len * 2 + 1);
+    size_t result_size = len * 2 + 32;
+    char* result = malloc(result_size);
     if (result == NULL) {
         return NULL;
     }
@@ -38,10 +40,37 @@ char* increment_numeric_values(const char* input, int k) {
             memcpy(num_str, input + start, num_len);
             num_str[num_len] = '\0';
 
-            long long num = strtoll(num_str, NULL, 10);
-            long long new_num = num + k;
-            int written = snprintf(result + res_pos, len * 2 + 1 - res_pos, "%lld", new_num);
-            if (written < 0 || (size_t)written >= len * 2 + 1 - res_pos) {
+            char* endptr;
+            errno = 0;
+            long long num = strtoll(num_str, &endptr, 10);
+            if (errno == ERANGE || endptr == num_str) {
+                free(num_str);
+                free(result);
+                return NULL;
+            }
+
+            long long new_num;
+            if (k > 0 && num > LLONG_MAX - k) {
+                new_num = LLONG_MAX;
+            } else if (k < 0 && num < LLONG_MIN - k) {
+                new_num = LLONG_MIN;
+            } else {
+                new_num = num + k;
+            }
+
+            while (res_pos + 32 >= result_size) {
+                result_size *= 2;
+                char* tmp = realloc(result, result_size);
+                if (tmp == NULL) {
+                    free(num_str);
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
+
+            int written = snprintf(result + res_pos, result_size - res_pos, "%lld", new_num);
+            if (written < 0 || (size_t)written >= result_size - res_pos) {
                 free(num_str);
                 free(result);
                 return NULL;
@@ -49,6 +78,15 @@ char* increment_numeric_values(const char* input, int k) {
             res_pos += written;
             free(num_str);
         } else {
+            if (res_pos + 1 >= result_size) {
+                result_size *= 2;
+                char* tmp = realloc(result, result_size);
+                if (tmp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+            }
             result[res_pos++] = input[i];
             i++;
         }
@@ -58,24 +96,17 @@ char* increment_numeric_values(const char* input, int k) {
     return result;
 }
 
-/* Possible weaknesses found:
- *  Parameter 'argv' can be declared as const array [constParameter]
- */
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <string> <k>\n", argv[0]);
         return 1;
     }
 
     char* endptr;
+    errno = 0;
     long k_val = strtol(argv[2], &endptr, 10);
-    if (endptr == argv[2] || *endptr != '\0') {
+    if (endptr == argv[2] || *endptr != '\0' || errno == ERANGE) {
         fprintf(stderr, "Invalid integer for k\n");
-        return 1;
-    }
-
-    if (k_val > INT_MAX || k_val < INT_MIN) {
-        fprintf(stderr, "k out of range\n");
         return 1;
     }
 

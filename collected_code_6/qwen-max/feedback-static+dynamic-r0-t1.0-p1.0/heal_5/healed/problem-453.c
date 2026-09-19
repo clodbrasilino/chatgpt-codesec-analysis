@@ -17,20 +17,22 @@ long long sumOfEvenFactors(long long n) {
                 count++;
                 n /= f;
                 curr_term *= f;
-                if (count > 0 && (curr_term * 2) % 2 == 0) res *= (curr_term + 1);
+                if (count > 0 && n % 2 == 0) res *= (curr_term * 2);
             } while (n % f == 0);
         }
     }
 
     if (n >= 2) res *= (n + 1);
-
-    return res - 1;
+    return res;
 }
 
 int main() {
     long long n;
     printf("Enter a number: ");
-    scanf("%lld", &n);
+    if (scanf("%lld", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
     printf("Sum of even factors: %lld\n", sumOfEvenFactors(n));
     return 0;
 }

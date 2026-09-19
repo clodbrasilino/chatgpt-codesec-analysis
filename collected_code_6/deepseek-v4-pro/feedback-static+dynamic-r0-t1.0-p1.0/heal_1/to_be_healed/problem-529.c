@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 5, got 4
   *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
   *  test case 0 failed: expected 31, got 53
   */
 
@@ -19,6 +19,10 @@ long long jacobsthal_lucas(int n) {
     long long result = 0;
     
     for (int i = 2; i <= n; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 6072282894802703026 + 8898502541752731604 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:1818,execs:907,op:havoc,rep:3)
+         * UBSan: signed integer overflow: 2 * 8898502541752731604 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000004,time:1818,execs:907,op:havoc,rep:3)
+         */
         result = 2 * b + a;
         a = b;
         b = result;

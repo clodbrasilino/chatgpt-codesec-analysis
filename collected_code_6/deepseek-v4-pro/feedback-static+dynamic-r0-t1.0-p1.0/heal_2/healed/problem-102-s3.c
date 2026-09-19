@@ -19,7 +19,10 @@ char *snake_to_camel(const char *snake) {
 
     if (snake[0] == '_') {
         camel[j++] = '_';
-        i++;
+        while (snake[i] == '_' && i < len) {
+            i++;
+        }
+        capitalize_next = 1;
     }
 
     for (; i < len; i++) {

@@ -1,19 +1,43 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <inttypes.h>
 
-uint64_t sum_of_cubes(uint64_t n) {
-    uint64_t a = n * (n + 1) / 2;
-    return a * a;
+bool is_valid_input(const char *str) {
+    while (*str) {
+        if (*str < '0' || *str > '9') return false;
+        str++;
+    }
+    return true;
+}
+
+long long sum_of_cubes(long long n) {
+    if (n < 0) return 0;
+
+    if (n > 1000000) return 0;  // Prevent very large inputs causing overflow
+    long long temp = n * (n + 1) / 2;
+    if (temp > LLONG_MAX / (n * (n + 1) / 2)) return 0;
+    return temp * temp;
 }
 
 int main() {
-    int64_t n;
+    char input[20];
     printf("Enter a positive integer: ");
-    if (scanf("%lld", &n) != 1 || n < 1) {
+    if (fgets(input, sizeof(input), stdin) == NULL || !is_valid_input(input)) {
         printf("Invalid input. Please enter a positive integer.\n");
         return 1;
     }
-    uint64_t result = sum_of_cubes((uint64_t)n);
-    printf("The sum of the cubes of the first %lld natural numbers is: %llu\n", (int64_t)n, (uint64_t)result);
+    int64_t n = (int64_t)strtol(input, NULL, 10);
+    if (n < 1) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    long long result = sum_of_cubes(n);
+    if (result == 0) {
+        printf("Result is too large to be represented.\n");
+        return 1;
+    }
+    printf("The sum of the cubes of the first %" PRId64 " natural numbers is: %lld\n", n, result);
     return 0;
 }

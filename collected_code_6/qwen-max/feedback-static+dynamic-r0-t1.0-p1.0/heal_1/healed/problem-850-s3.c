@@ -9,6 +9,9 @@ bool canFormTriangle(int angle1, int angle2, int angle3) {
     if (angle1 > 180 || angle2 > 180 || angle3 > 180) {
         return false;
     }
+    if (angle1 + angle2 > INT_MAX - angle3 || angle1 + angle3 > INT_MAX - angle2 || angle2 + angle3 > INT_MAX - angle1) {
+        return false;
+    }
     if (angle1 + angle2 + angle3 != 180) {
         return false;
     }

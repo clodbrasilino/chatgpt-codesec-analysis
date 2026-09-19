@@ -15,6 +15,7 @@ bool is_woodall(unsigned long long n) {
     while (1) {
         /* Possible weaknesses found:
          *  Shift
+         * UBSan: shift exponent 64 is too large for 64-bit type 'unsigned long long' (AFL crash: id:000000,sig:06,src:000001,time:359,execs:179,op:havoc,rep:2)
          *  Shifting 64-bit value by 64 bits is undefined behaviour. See condition at line 17. [shiftTooManyBits]
          */
         unsigned long long w = i * ((1ULL << i) - 1);

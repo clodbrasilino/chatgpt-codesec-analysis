@@ -32,6 +32,10 @@ int sum_of_digits_power(int base, int exponent)
     for (i = 0; i < exponent; i++) {
         carry = 0;
         for (j = 0; j < num_digits; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 9 * 245730872 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000003,time:14762,execs:4047,op:havoc,rep:7)
+             * UBSan: signed integer overflow: 1965846976 + 197528304 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000003,time:14762,execs:4047,op:havoc,rep:7)
+             */
             product = digits[j] * base + carry;
             digits[j] = product % 10;
             carry = product / 10;
@@ -54,6 +58,9 @@ int sum_of_digits_power(int base, int exponent)
     free(digits);
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:12990,execs:3451,op:havoc,rep:6; likely memory-safety defect
+  */
 
 int main(void)
 {

@@ -37,11 +37,8 @@ int pop_min(int *heap, int *size) {
 }
 
 void push_max(int *heap, int *size, int value) {
-    if (value == INT_MIN) {
-        heap[*size] = INT_MIN;
-    } else {
-        heap[*size] = -value;
-    }
+    value = -value;
+    heap[*size] = value;
     int i = *size;
     (*size)++;
     while (i > 0 && heap[(i - 1) / 2] > heap[i]) {
@@ -51,7 +48,7 @@ void push_max(int *heap, int *size, int value) {
 }
 
 int pop_max(int *heap, int *size) {
-    int max_val = (heap[0] == INT_MIN) ? INT_MIN : -heap[0];
+    int max_val = -heap[0];
     heap[0] = heap[*size - 1];
     (*size)--;
     int i = 0;
@@ -68,40 +65,31 @@ int pop_max(int *heap, int *size) {
     return max_val;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 414375, got <no output>
-  *  test case 0 failed: expected 225700, got <no output>
-  *  test case 2 failed: expected 2520, got <no output>
+  *  test case 1 failed: expected 414375, got 0
+  *  test case 0 failed: expected 225700, got 0
+  *  test case 2 failed: expected 2520, got 0
   */
 
 int maximumProduct(const int *nums, int numsSize) {
     if (numsSize < 3) return 0;
     
-    int *max_heap = malloc(3 * sizeof(int));
+    int *max_heap = malloc((numsSize + 1) * sizeof(int));
     if (!max_heap) return 0;
     int max_size = 0;
 
-    int *min_heap = malloc(2 * sizeof(int));
+    int *min_heap = malloc((numsSize + 1) * sizeof(int));
     if (!min_heap) { free(max_heap); return 0; }
     int min_size = 0;
 
     for (int i = 0; i < numsSize; i++) {
-        if (max_size < 3) {
-            push_max(max_heap, &max_size, nums[i]);
-        } else {
-            int current_top = (max_heap[0] == INT_MIN) ? INT_MIN : -max_heap[0];
-            if (nums[i] > current_top) {
-                pop_max(max_heap, &max_size);
-                push_max(max_heap, &max_size, nums[i]);
-            }
+        push_min(min_heap, &min_size, nums[i]);
+        if (min_size > 2) {
+            pop_min(min_heap, &min_size);
         }
 
-        if (min_size < 2) {
-            push_min(min_heap, &min_size, nums[i]);
-        } else {
-            if (nums[i] < min_heap[0]) {
-                pop_min(min_heap, &min_size);
-                push_min(min_heap, &min_size, nums[i]);
-            }
+        push_max(max_heap, &max_size, nums[i]);
+        if (max_size > 3) {
+            pop_max(max_heap, &max_size);
         }
     }
 

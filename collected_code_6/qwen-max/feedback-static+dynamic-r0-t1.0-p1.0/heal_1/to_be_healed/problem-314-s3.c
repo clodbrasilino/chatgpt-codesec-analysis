@@ -24,6 +24,9 @@ int findMaxSum(int** grid, int n) {
 
     return max(incl, excl);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:4944,execs:180,op:havoc,rep:4; likely memory-safety defect
+  */
 
 int main() {
     int n;

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
 
 long long jacobsthal_lucas(int n) {
     if (n < 0) {
@@ -14,7 +16,11 @@ long long jacobsthal_lucas(int n) {
     long long result = 0;
     
     for (int i = 2; i <= n; i++) {
-        result = b + 2 * a;
+        if (b > (LLONG_MAX - a) / 2) {
+            fprintf(stderr, "Error: integer overflow would occur\n");
+            exit(EXIT_FAILURE);
+        }
+        result = 2 * b + a;
         a = b;
         b = result;
     }

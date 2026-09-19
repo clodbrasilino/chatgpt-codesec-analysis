@@ -26,6 +26,9 @@ long long find_lcm(long long *arr, size_t n) {
         if (arr[i] == 0) {
             return 0;
         }
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 15873015873015873 * 9223372036854775807 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:880,execs:558,op:havoc,rep:3)
+         */
         result = (result / gcd(result, arr[i])) * arr[i];
     }
     return result;

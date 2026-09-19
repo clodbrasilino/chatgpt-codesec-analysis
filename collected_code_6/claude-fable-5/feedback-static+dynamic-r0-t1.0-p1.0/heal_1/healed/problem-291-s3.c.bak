@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_ways(int n, int k)
+{
+    long long same;
+    long long diff;
+    long long total;
+    int i;
+
+    if (n <= 0 || k <= 0) {
+        return 0;
+    }
+
+    if (n == 1) {
+        return (long long)k;
+    }
+
+    same = (long long)k;
+    diff = (long long)k * (long long)(k - 1);
+    total = same + diff;
+
+    for (i = 3; i <= n; i++) {
+        long long prev_total = total;
+        same = diff;
+        diff = prev_total * (long long)(k - 1);
+        total = same + diff;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int n;
+    int k;
+    long long result;
+
+    printf("Enter number of posts: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input for number of posts\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter number of colors: ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Error: invalid input for number of colors\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0 || k <= 0) {
+        fprintf(stderr, "Error: posts and colors must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 60 || k > 100000) {
+        fprintf(stderr, "Error: input values too large, result may overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_ways(n, k);
+    printf("Number of ways: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}

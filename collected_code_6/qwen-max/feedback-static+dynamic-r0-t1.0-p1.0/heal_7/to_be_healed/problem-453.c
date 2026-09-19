@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <math.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 48, got 47
-  *  test case 0 failed: expected 26, got 79
-  *  test case 2 failed: expected 8, got 7
+  *  test case 1 failed: expected 48, got 12
+  *  test case 0 failed: expected 26, got 2
   */
 
 long long sumOfEvenFactors(long long n) {
@@ -22,25 +21,25 @@ long long sumOfEvenFactors(long long n) {
                 count++;
                 n /= f;
                 curr_term *= f;
-                if (count > 0 && (curr_term * 2) % 2 == 0) res *= (curr_term + 1);
+                if (count > 0 && n % 2 == 0) res *= (curr_term * 2);
             } while (n % f == 0);
         }
     }
 
     if (n >= 2) res *= (n + 1);
-
-    return res - 1;
+    return res;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:231,execs:234,op:havoc,rep:10; likely memory-safety defect
+  */
 
 int main() {
     long long n;
     printf("Enter a number: ");
-    scanf("%lld", &n);
-    long long result = sumOfEvenFactors(n);
-    if (result == 0) {
-        printf("No even factors\n");
-    } else {
-        printf("Sum of even factors: %lld\n", result);
+    if (scanf("%lld", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
     }
+    printf("Sum of even factors: %lld\n", sumOfEvenFactors(n));
     return 0;
 }

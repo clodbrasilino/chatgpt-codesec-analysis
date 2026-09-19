@@ -43,6 +43,9 @@ double find_max(double a, double b, double tol, int n, double *coeffs, int perio
     
     return (a + b) / 2.0;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:965,execs:641,op:havoc,rep:8; likely memory-safety defect
+  */
 
 int main(void) {
     int n, period;

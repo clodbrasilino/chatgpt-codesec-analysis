@@ -1,23 +1,30 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <math.h>
 
 static long long integer_sqrt(long long n)
 {
     if (n < 0) {
         return -1;
     }
-
-    long long root = (long long)sqrt((double)n);
-
-    while (root > 0 && root * root > n) {
-        root--;
-    }
-    while ((root + 1) * (root + 1) <= n) {
-        root++;
+    if (n < 2) {
+        return n;
     }
 
-    return root;
+    long long low = 1;
+    long long high = 3037000499LL;
+    long long result = 0;
+
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        if (mid <= n / mid) {
+            result = mid;
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return result;
 }
 
 static bool is_sum_of_two_squares(long long n)
@@ -26,7 +33,9 @@ static bool is_sum_of_two_squares(long long n)
         return false;
     }
 
-    for (long long a = 0; a * a <= n; a++) {
+    long long limit = integer_sqrt(n);
+
+    for (long long a = 0; a <= limit; a++) {
         long long remainder = n - a * a;
 
         if (remainder < 0) {

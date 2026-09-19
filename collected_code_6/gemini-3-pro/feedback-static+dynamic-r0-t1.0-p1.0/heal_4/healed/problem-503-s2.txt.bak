@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
+    if (out_size == NULL) {
+        return NULL;
+    }
+
+    if (arr == NULL || size < 2) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    *out_size = size - 1;
+    int* result = malloc(*out_size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *out_size; i++) {
+        result[i] = arr[i] + arr[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int* input = NULL;
+    size_t size = 0;
+    size_t capacity = 0;
+    int val;
+
+    while (1) {
+        int res = scanf("%d", &val);
+        if (res == 1) {
+            if (size >= capacity) {
+                capacity = (capacity == 0) ? 16 : capacity * 2;
+                int* temp = realloc(input, capacity * sizeof(int));
+                if (!temp) {
+                    free(input);
+                    return 1;
+                }
+                input = temp;
+            }
+            input[size++] = val;
+        } else if (res == EOF) {
+            break;
+        } else {
+            int c = getchar();
+            if (c == EOF || c == '\n' || c == ']') {
+                break;
+            }
+        }
+    }
+
+    size_t out_size = 0;
+    int* result = add_consecutive(input, size, &out_size);
+    
+    printf("[");
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d", result[i]);
+        if (i < out_size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free(result);
+    free(input);
+    return 0;
+}

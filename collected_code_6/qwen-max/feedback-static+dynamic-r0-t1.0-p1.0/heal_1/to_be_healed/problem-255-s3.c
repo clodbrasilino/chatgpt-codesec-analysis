@@ -15,6 +15,9 @@ void generateCombinations(int n, int *colors, int index, int k, int r) {
         generateCombinations(n, colors, index + 1, k, r);
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000000,time:4885,execs:1155,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main() {
     /* Possible weaknesses found:

@@ -3,23 +3,22 @@
 
 unsigned int set_leftmost_unset_bit(unsigned int n)
 {
-    unsigned int mask;
-    unsigned int temp;
-
     if (n == UINT_MAX)
     {
         return n;
     }
-
-    if (n == 0U)
+    
+    unsigned int temp = n;
+    unsigned int shift = 1;
+    while (shift < sizeof(unsigned int) * CHAR_BIT)
     {
-        return 1U;
+        temp |= temp >> shift;
+        shift <<= 1;
     }
-
-    temp = ~n;
-    mask = temp & (0U - temp);
-    n |= mask;
-
+    temp = ~temp;
+    temp &= (temp - 1);
+    n |= temp;
+    
     return n;
 }
 

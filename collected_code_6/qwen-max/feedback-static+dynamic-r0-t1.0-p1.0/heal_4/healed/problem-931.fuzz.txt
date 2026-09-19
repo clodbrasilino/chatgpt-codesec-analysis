@@ -1,1 +1,7 @@
-problem-931.c:0:0: info: fuzzed - no sanitizer findings
+problem-931.c:18:24:medium:UBSan: signed integer overflow: 60000000000000 * 60000000000001 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000007,time:747,execs:731,op:havoc,rep:1)
+problem-931.c:18:24:medium:UBSan: signed integer overflow: 9223372036854775807 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+problem-931.c:18:29:medium:UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+problem-931.c:19:31:medium:UBSan: signed integer overflow: 60000000000000 * 60000000000001 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000007,time:747,execs:731,op:havoc,rep:1)
+problem-931.c:19:31:medium:UBSan: signed integer overflow: 9223372036854775807 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+problem-931.c:19:36:medium:UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+problem-931.c:20:17:medium:UBSan: signed integer overflow: -4611686018427387904 * -4611686018427387904 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)

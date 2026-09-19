@@ -19,6 +19,9 @@ int maxSumNonAdjacent(int *grid, int n) {
     
     return (include > exclude) ? include : exclude;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:20752,execs:1336,op:havoc,rep:5; likely memory-safety defect
+  */
 
 int main() {
     int n;

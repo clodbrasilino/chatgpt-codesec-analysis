@@ -4,13 +4,15 @@
 
 long setLeftMostUnsetBit(long n) {
     long result = n;
-    for (int i = 0; i < sizeof(n) * CHAR_BIT - 1; ++i) {
-        if (!(n & (1L << i))) {
+    bool found = false;
+    for (int i = 63; i >= 0; --i) {
+        if (!(n & ((1L << i)))) {
             result |= (1L << i);
-            return result;
+            found = true;
+            break;
         }
     }
-    return -1;
+    return found ? result : -1;
 }
 
 int main() {

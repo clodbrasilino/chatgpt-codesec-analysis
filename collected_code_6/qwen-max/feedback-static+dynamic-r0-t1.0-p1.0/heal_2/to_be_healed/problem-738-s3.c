@@ -16,6 +16,9 @@ double geometric_sum(int n) {
     }
     return 1.0 / pow(2, n) + geometric_sum(n - 1);
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:11,src:000001,time:732,execs:273,op:havoc,rep:5; likely memory-safety defect
+  */
 
 int main() {
     int n;

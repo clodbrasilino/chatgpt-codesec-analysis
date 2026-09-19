@@ -32,6 +32,10 @@ int isArmstrong(int num) {
     originalNum = num;
     while (originalNum != 0) {
         remainder = originalNum % 10;
+        /* Possible weaknesses found:
+         * UBSan: 2.17789e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:2885,execs:1218,op:havoc,rep:2)
+         * UBSan: 3.48678e+09 is outside the range of representable values of type 'int' (AFL crash: id:000001,sig:06,src:000005,time:8334,execs:3525,op:havoc,rep:3)
+         */
         result += pow(remainder, n);
         originalNum /= 10;
     }

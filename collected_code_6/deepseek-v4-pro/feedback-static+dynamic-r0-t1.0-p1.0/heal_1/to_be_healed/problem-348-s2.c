@@ -2,6 +2,9 @@
 #include <stdlib.h>
 
 unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, const int *values, int num_values) {
+    /* Possible weaknesses found:
+     * UBSan: variable length array bound evaluates to non-positive value -1141922039
+     */
     int i, j, k;
     int min_val = values[0], max_val = values[0];
     unsigned long long *prev = NULL, *curr = NULL;
@@ -50,8 +53,8 @@ unsigned long long count_sequences_with_nonnegative_prefix_sums(int length, cons
          */
         if (shifted >= 0 && shifted < dp_size) {
             /* Possible weaknesses found:
-             *  Condition 'shifted>=0' is always true
              *  Condition 'shifted>=0' is always true [knownConditionTrueFalse]
+             *  Condition 'shifted>=0' is always true
              */
             if (values[i] >= 0 || shifted >= 0) {
                 prev[shifted] += 1;

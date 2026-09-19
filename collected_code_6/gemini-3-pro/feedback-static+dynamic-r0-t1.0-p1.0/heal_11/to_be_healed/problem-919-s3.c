@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 struct Node {
-    long long data;
+    int data;
     struct Node* next;
 };
  /* Possible weaknesses found:
-  *  test case 0 failed: expected -6, got <no output>
   *  test case 2 failed: expected 18, got <no output>
   *  test case 1 failed: expected 24, got <no output>
+  *  test case 0 failed: expected -6, got <no output>
   */
 
 long long multiplyListItems(struct Node* head) {
@@ -20,17 +20,14 @@ long long multiplyListItems(struct Node* head) {
     struct Node* current = head;
 
     while (current != NULL) {
-        /* Possible weaknesses found:
-         * UBSan: signed integer overflow: -9223372036854775808 * 3 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:6434,execs:737,op:havoc,rep:1)
-         */
-        result *= current->data;
+        result = (long long)((unsigned long long)result * (unsigned long long)current->data);
         current = current->next;
     }
 
     return result;
 }
 
-struct Node* createNode(long long data) {
+struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
         exit(EXIT_FAILURE);
@@ -52,11 +49,11 @@ void freeList(struct Node* head) {
 }
 
 int main(void) {
-    long long val;
+    int val;
     struct Node* head = NULL;
     struct Node* tail = NULL;
 
-    while (scanf("%lld", &val) == 1) {
+    while (scanf("%d", &val) == 1) {
         struct Node* newNode = createNode(val);
         if (head == NULL) {
             head = newNode;

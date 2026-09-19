@@ -29,8 +29,8 @@ Node* create_node(const char *data) {
 }
  /* Possible weaknesses found:
   *  test case 0 failed: expected ['python', 'programming'], got []
-  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got []
   *  test case 2 failed: expected ['write', 'a', 'program'], got []
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got []
   */
 
 Node* string_to_list(const char *str, const char *delim) {
@@ -86,29 +86,41 @@ void free_list(Node *head) {
 }
 
 void print_list(Node *head) {
+    printf("[");
     Node *current = head;
     while (current != NULL) {
-        printf("%s", current->data);
+        printf("'%s'", current->data);
         if (current->next != NULL) {
-            printf(" -> ");
+            printf(", ");
         }
         current = current->next;
     }
-    printf("\n");
+    printf("]\n");
 }
 
 int main(void) {
-    const char *input = "python,programming";
-    const char *delimiter = ",";
+    const char *test_cases[] = {
+        "python programming",
+        "lists,tuples,strings",
+        "write a program"
+    };
+    const char *delimiters[] = {
+        " ",
+        ",",
+        " "
+    };
+    int num_tests = 3;
     
-    Node *list = string_to_list(input, delimiter);
-    if (list == NULL) {
-        fprintf(stderr, "Failed to convert string to list\n");
-        return EXIT_FAILURE;
+    for (int i = 0; i < num_tests; i++) {
+        Node *list = string_to_list(test_cases[i], delimiters[i]);
+        if (list == NULL) {
+            fprintf(stderr, "Failed to convert string to list\n");
+            return EXIT_FAILURE;
+        }
+        
+        print_list(list);
+        free_list(list);
     }
-    
-    print_list(list);
-    free_list(list);
     
     return EXIT_SUCCESS;
 }

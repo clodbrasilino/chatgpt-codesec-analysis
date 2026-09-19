@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
   *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
   *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
-  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
   */
 
 int* find_dissimilar(const int tuple1[], int size1, const int tuple2[], int size2, int *result_size) {
@@ -60,6 +60,16 @@ int* find_dissimilar(const int tuple1[], int size1, const int tuple2[], int size
     }
     
     *result_size = count;
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+    
+    int *final_result = (int*)realloc(result, count * sizeof(int));
+    if (final_result != NULL) {
+        result = final_result;
+    }
+    
     return result;
 }
 
@@ -72,17 +82,16 @@ int main() {
     
     int *dissimilar = find_dissimilar(tuple1, size1, tuple2, size2, &result_size);
     
-    if (dissimilar == NULL) {
-        printf("Memory allocation failed\n");
-        return 1;
+    if (dissimilar != NULL) {
+        printf("Dissimilar elements: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", dissimilar[i]);
+        }
+        printf("\n");
+        free(dissimilar);
+    } else {
+        printf("No dissimilar elements found or memory allocation failed.\n");
     }
     
-    printf("Dissimilar elements: ");
-    for (int i = 0; i < result_size; i++) {
-        printf("%d ", dissimilar[i]);
-    }
-    printf("\n");
-    
-    free(dissimilar);
     return 0;
 }

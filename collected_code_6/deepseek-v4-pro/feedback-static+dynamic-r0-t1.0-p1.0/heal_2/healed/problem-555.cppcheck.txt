@@ -1,1 +1,19 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:45:27: style: Condition 'sum_cubes-sum_n<0' is always false [knownConditionTrueFalse]
+    if (sum_cubes - sum_n < 0 && sum_cubes >= sum_n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:41:19: note: Assuming that condition 'sum_cubes<sum_n' is not redundant
+    if (sum_cubes < sum_n) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:45:27: note: Condition 'sum_cubes-sum_n<0' is always false
+    if (sum_cubes - sum_n < 0 && sum_cubes >= sum_n) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:45:44: style: Condition 'sum_cubes>=sum_n' is always true [knownConditionTrueFalse]
+    if (sum_cubes - sum_n < 0 && sum_cubes >= sum_n) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:41:19: note: Assuming that condition 'sum_cubes<sum_n' is not redundant
+    if (sum_cubes < sum_n) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-555.c:45:44: note: Condition 'sum_cubes>=sum_n' is always true
+    if (sum_cubes - sum_n < 0 && sum_cubes >= sum_n) {
+                                           ^

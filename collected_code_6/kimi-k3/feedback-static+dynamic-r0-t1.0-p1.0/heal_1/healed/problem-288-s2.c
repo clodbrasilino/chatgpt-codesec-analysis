@@ -1,7 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <errno.h>
+#include <inttypes.h>
+
+static int64_t mod_mul(int64_t a, int64_t b, int64_t mod)
+{
+#if defined(__SIZEOF_INT128__)
+    return (int64_t)(((__int128)a * (__int128)b) % (__int128)mod);
+#else
+    int64_t result = 0;
+    a %= mod;
+    if (a < 0) {
+        a += mod;
+    }
+    b %= mod;
+    if (b < 0) {
+        b += mod;
+    }
+    while (b > 0) {
+        if (b & 1) {
+            result = (result + a) % mod;
+        }
+        a = (a * 2) % mod;
+        b >>= 1;
+    }
+    return result;
+#endif
+}
 
 static int64_t mod_pow(int64_t base, int64_t exp, int64_t mod)
 {
@@ -13,9 +38,9 @@ static int64_t mod_pow(int64_t base, int64_t exp, int64_t mod)
     
     while (exp > 0) {
         if (exp & 1) {
-            result = (result * base) % mod;
+            result = mod_mul(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mod_mul(base, base, mod);
         exp >>= 1;
     }
     return result;

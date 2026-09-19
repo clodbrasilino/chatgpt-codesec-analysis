@@ -151,8 +151,14 @@ static int maximum_product_of_three(const int *array, size_t length,
     }
 
     int64_t product_largest =
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 39006888432 * 298954296 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000021,time:47082,execs:20231,op:havoc,rep:2)
+         */
         (int64_t)largest[0] * largest[1] * largest[2];
     int64_t product_smallest =
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -5422825098 * -2072745086 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000009,time:52942,execs:22212,op:havoc,rep:5)
+         */
         (int64_t)largest[0] * smallest[0] * smallest[1];
 
     *result = product_largest > product_smallest

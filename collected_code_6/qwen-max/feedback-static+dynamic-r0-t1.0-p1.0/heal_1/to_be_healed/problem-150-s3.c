@@ -3,12 +3,15 @@
 
 bool is_in_sequence(int n) {
     /* Possible weaknesses found:
-     *  Variable 'c' is assigned a value that is never used. [unreadVariable]
      *  The scope of the variable 'c' can be reduced. [variableScope]
+     *  Variable 'c' is assigned a value that is never used. [unreadVariable]
      */
     int a = 0, b = 1, c = 0;
     while (a <= n) {
         if (a == n) return true;
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1134903170 + 1836311903 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:3376,execs:1273,op:havoc,rep:13)
+         */
         c = a + b;
         a = b;
         b = c;

@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 924, got <no output>
-  *  test case 1 failed: expected 2, got <no output>
-  *  test case 2 failed: expected 3, got <no output>
+  *  test case 1 failed: expected 2, got 1
+  *  test case 2 failed: expected 3, got 4
+  *  test case 0 failed: expected 924, got 8680820740569208054
   */
 
-long rencontres_number(int n, int k) {
-    long *D = (long *)malloc((n + 1) * (k + 1) * sizeof(long));
+int64_t rencontres_number(int n, int k) {
+    int64_t *D = (int64_t *)malloc((n + 1) * (k + 1) * sizeof(int64_t));
     if (!D) {
         return -1;
     }
@@ -23,18 +24,21 @@ long rencontres_number(int n, int k) {
 
     for (int i = 2; i <= n; ++i) {
         for (int j = 1; j <= k; ++j) {
-            if (j == 1) {
-                D[i * (k + 1) + j] = (i - 1) * D[(i - 1) * (k + 1)];
-            } else {
-                D[i * (k + 1) + j] = (i - 1) * (D[(i - 1) * (k + 1) + j] + D[(i - 1) * (k + 1) + j - 1]);
-            }
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 2 * -4702111234474983745 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:32260,execs:394,op:havoc,rep:15)
+             * UBSan: signed integer overflow: -4702111234474983746 + -4702111234474983746 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:32260,execs:394,op:havoc,rep:15)
+             */
+            D[i * (k + 1) + j] = (i - 1) * (D[(i - 1) * (k + 1) + j] + D[(i - 1) * (k + 1) + j - 1]);
         }
     }
     
-    long result = D[n * (k + 1) + k];
+    int64_t result = D[n * (k + 1) + k];
     free(D);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:285,execs:236,op:havoc,rep:8; likely memory-safety defect
+  */
 
 int main() {
     int n, k;
@@ -44,12 +48,12 @@ int main() {
         return 1;
     }
 
-    long result = rencontres_number(n, k);
+    int64_t result = rencontres_number(n, k);
     if (result == -1) {
         printf("Memory allocation failed\n");
         return 1;
     }
 
-    printf("The %d-th Rencontres Number is: %ld\n", n, result);
+    printf("The %d-th Rencontres Number is: %" PRId64 "\n", n, result);
     return 0;
 }

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-355-s3.c: In function 'count_rectangles':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-355-s3.c:14:38: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+   14 |         long long y_max = (long long)sqrt((double)y_max_sq);
+      |                                      ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-355-s3.c:3:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 

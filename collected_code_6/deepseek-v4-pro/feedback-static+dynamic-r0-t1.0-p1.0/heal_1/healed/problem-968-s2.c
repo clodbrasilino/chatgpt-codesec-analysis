@@ -43,7 +43,7 @@ double find_max(double a, double b, double tol, int n, const double *coeffs, int
 
 int main(void) {
     int n, period;
-    double *coeffs;
+    double *coeffs = NULL;
     double a, b, tol;
     
     printf("Enter number of harmonics (including fundamental): ");
@@ -52,7 +52,7 @@ int main(void) {
         return 1;
     }
     
-    coeffs = malloc(2 * n * sizeof(double));
+    coeffs = malloc(2 * (size_t)n * sizeof(double));
     if (coeffs == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;

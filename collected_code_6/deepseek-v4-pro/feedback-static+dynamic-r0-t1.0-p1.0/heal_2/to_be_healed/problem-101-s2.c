@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 36, got 25
-  *  test case 1 failed: expected 8, got 0
+  *  test case 2 failed: expected 36, got <no output>
+  *  test case 1 failed: expected 8, got <no output>
+  *  test case 0 failed: expected 3, got <no output>
   */
 
 int find_kth_element(const int *arr, int size, int k) {

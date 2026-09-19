@@ -46,17 +46,22 @@ int main(void) {
     int* result = add_consecutive_numbers(list, size, &result_size);
 
     if (result != NULL) {
+        printf("[");
         for (size_t i = 0; i < result_size; ++i) {
-            printf("%d ", result[i]);
+            printf("%d", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
         }
-        printf("\n");
+        printf("]\n");
         free(result);
     } else {
         /* Possible weaknesses found:
          *  Condition 'size>0' is always true [knownConditionTrueFalse]
          *  Condition 'size>0' is always true
+         *  Condition 'list==NULL' is always false [knownConditionTrueFalse]
          */
-        if (size > 0 || result_size == 0) {
+        if (size > 0 || list == NULL) {
             printf("Allocation failed\n");
         }
     }

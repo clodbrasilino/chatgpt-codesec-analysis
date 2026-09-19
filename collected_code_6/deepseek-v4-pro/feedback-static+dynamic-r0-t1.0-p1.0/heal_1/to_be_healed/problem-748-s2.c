@@ -23,6 +23,9 @@ char *add_spaces_before_capitals(const char *input) {
      *  Variable 'offset' is assigned a value that is never used. [unreadVariable]
      */
     size_t offset = 0;
+ /* Possible weaknesses found:
+  * ASan: stack-buffer-overflow
+  */
 
     while (regexec(&regex, cursor, 2, matches, 0) == 0) {
         if (matches[0].rm_so >= 0) {
@@ -53,8 +56,8 @@ char *add_spaces_before_capitals(const char *input) {
     size_t dst_pos = 0;
 
     /* Possible weaknesses found:
-     *  The comparison 'src_pos == 0' is always true.
      *  The comparison 'src_pos == 0' is always true. [knownConditionTrueFalse]
+     *  The comparison 'src_pos == 0' is always true.
      */
     if (input[0] != '\0' && input[0] >= 'A' && input[0] <= 'Z' && src_pos == 0) {
         result[dst_pos++] = input[src_pos++];

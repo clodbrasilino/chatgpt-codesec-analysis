@@ -1,19 +1,1 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:10:18: warning: Either the condition 'k+100<201' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][100][*], which is out of bounds. [arrayIndexOutOfBoundsCond]
-        return dp[n][k][offset];
-                 ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:9:33: note: Assuming that condition 'k+100<201' is not redundant
-    if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201 && dp[n][k][offset] != -1) {
-                                ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:10:18: note: Array index out of bounds
-        return dp[n][k][offset];
-                 ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:10:18: warning: Either the condition 'k+100>=0' is redundant or the array 'dp[51][51][201]' is accessed at index dp[*][-100][*], which is out of bounds. [negativeIndex]
-        return dp[n][k][offset];
-                 ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:9:17: note: Assuming that condition 'k+100>=0' is not redundant
-    if (k + 100 >= 0 && k + 100 < 201 && offset >= 0 && offset < 201 && dp[n][k][offset] != -1) {
-                ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-348-s2.c:10:18: note: Negative array index
-        return dp[n][k][offset];
-                 ^

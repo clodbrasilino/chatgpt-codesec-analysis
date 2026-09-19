@@ -21,7 +21,7 @@ unsigned long long jacobsthal_lucas(int n) {
     return b;
 }
 
-int main(int argc, char const * const argv[]) {
+int main(int argc, char * const argv[const]) {
     if (argc != 2) {
         return EXIT_FAILURE;
     }

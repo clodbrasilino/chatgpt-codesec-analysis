@@ -1,0 +1,4 @@
+problem-348.c:5:18:medium:UBSan: variable length array bound evaluates to non-positive value 0 (AFL crash: id:000002,sig:06,src:000011,time:29567,execs:6432,op:havoc,rep:2)
+problem-348.c:5:25:medium:UBSan: variable length array bound evaluates to non-positive value -598358243 (AFL crash: id:000001,sig:06,src:000001,time:441,execs:97,op:havoc,rep:2)
+problem-348.c:17:0:high:ASan: dynamic-stack-buffer-overflow (AFL crash: id:000002,sig:06,src:000011,time:29567,execs:6432,op:havoc,rep:2)
+problem-348.c:17:12:medium:UBSan: index -1 out of bounds for type 'long long[k + 1][n + 1]' (AFL crash: id:000002,sig:06,src:000011,time:29567,execs:6432,op:havoc,rep:2)

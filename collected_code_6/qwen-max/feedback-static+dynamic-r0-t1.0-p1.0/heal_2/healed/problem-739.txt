@@ -5,11 +5,12 @@
 #include <limits.h>
 
 int find_smallest_triangular_index(int n) {
-    if (n <= 0) return -1;
+    if (n > 16) return INT_MAX; // Prevent overflow and invalid results for large n
     double lower_bound = pow(10, (n-1));
-    if (lower_bound > (DBL_MAX - 1) / 8) return INT_MAX;
-    double root = (sqrt(1 + 8 * lower_bound) - 1) / 2;
-    if (root > INT_MAX) return INT_MAX;
+    double term = 1 + 8 * lower_bound;
+    if (term >= DBL_MAX) return INT_MAX; // Check for potential overflow before sqrt
+    double root = (sqrt(term) - 1) / 2;
+    if (root > INT_MAX) return INT_MAX; // Ensure the result is within the range of int
     return (int)ceil(root);
 }
 
@@ -22,7 +23,7 @@ int main() {
     }
     int index = find_smallest_triangular_index(n);
     if (index == INT_MAX) {
-        printf("The index is too large to be represented.\n");
+        printf("The index cannot be calculated for this number of digits.\n");
     } else {
         printf("The index of the smallest triangular number with %d digits is: %d\n", n, index);
     }

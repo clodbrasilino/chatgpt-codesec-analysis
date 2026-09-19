@@ -7,6 +7,10 @@
  */
 void multiplyTuples(int *tuple1, int *tuple2, int *result, size_t length) {
     for (size_t i = 0; i < length; ++i) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -999 * -99999999 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000012,time:57511,execs:5271,op:havoc,rep:1)
+         * UBSan: signed integer overflow: -1215752191 * -99 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000012,time:57908,execs:5429,op:havoc,rep:4)
+         */
         result[i] = tuple1[i] * tuple2[i];
     }
 }

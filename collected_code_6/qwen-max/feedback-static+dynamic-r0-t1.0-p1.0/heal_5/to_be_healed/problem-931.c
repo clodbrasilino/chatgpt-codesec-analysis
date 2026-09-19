@@ -1,26 +1,55 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include <limits.h>
 
-uint64_t sum_of_cubes(uint64_t n) {
-    uint64_t a = n * (n + 1) / 2;
-    return a * a;
+bool is_valid_input(const char *str) {
+    while (*str) {
+        if (*str < '0' || *str > '9') return false;
+        str++;
+    }
+    return true;
+}
+
+long long sum_of_cubes(long long n) {
+    if (n < 0) return 0;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775807 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+     * UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+     * UBSan: signed integer overflow: 60000000000000 * 60000000000001 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000007,time:747,execs:731,op:havoc,rep:1)
+     */
+    long long temp = n * (n + 1) / 2;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 9223372036854775807 * -9223372036854775808 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+     * UBSan: signed integer overflow: 9223372036854775807 + 1 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+     * UBSan: signed integer overflow: 60000000000000 * 60000000000001 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000007,time:747,execs:731,op:havoc,rep:1)
+     */
+    if (temp > LLONG_MAX / (n * (n + 1) / 2)) return 0;
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -4611686018427387904 * -4611686018427387904 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000007,time:40925,execs:30599,op:havoc,rep:29)
+     */
+    return temp * temp;
 }
 
 int main() {
-    int64_t n;
+    char input[20];
     printf("Enter a positive integer: ");
-    /* Possible weaknesses found:
-     *  %lld in format string (no. 1) requires 'long long *' but the argument type is 'signed long *'. [invalidScanfArgType_int]
-     */
-    if (scanf("%lld", &n) != 1 || n < 1) {
+    if (fgets(input, sizeof(input), stdin) == NULL || !is_valid_input(input)) {
         printf("Invalid input. Please enter a positive integer.\n");
         return 1;
     }
-    uint64_t result = sum_of_cubes((uint64_t)n);
-    /* Possible weaknesses found:
-     *  %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
-     *  %lld in format string (no. 1) requires 'long long' but the argument type is 'signed long'. [invalidPrintfArgType_sint]
-     */
-    printf("The sum of the cubes of the first %lld natural numbers is: %llu\n", n, result);
+    int64_t n = (int64_t)strtol(input, NULL, 10);
+    if (n < 1) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    long long result = sum_of_cubes(n);
+    if (result == 0) {
+        printf("Result is too large to be represented.\n");
+        return 1;
+    }
+    printf("The sum of the cubes of the first %" PRId64 " natural numbers is: %lld\n", n, result);
     return 0;
 }

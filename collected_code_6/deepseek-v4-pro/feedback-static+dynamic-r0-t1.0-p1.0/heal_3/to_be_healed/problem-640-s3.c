@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 'alpha', got 
-  *  test case 0 failed: expected 'python', got ���
-  *  test case 1 failed: expected 'string', got ���
+  *  test case 2 failed: expected 'alpha', got <no output>
+  *  test case 0 failed: expected 'python', got <no output>
+  *  test case 1 failed: expected 'string', got <no output>
   */
 
 char *remove_parenthesis_area(const char *str) {
@@ -31,6 +31,8 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
+            } else {
+                result[j++] = str[i];
             }
             i++;
             continue;
@@ -45,7 +47,7 @@ char *remove_parenthesis_area(const char *str) {
 
     char *final_result = realloc(result, j + 1);
     if (final_result != NULL) {
-        result = final_result;
+        return final_result;
     }
 
     return result;
@@ -91,8 +93,8 @@ int main(void) {
     }
 
     /* Possible weaknesses found:
-     *  Calling function 'remove_parenthesis_area' returns 0
      *  Assignment 'result=remove_parenthesis_area(NULL)', assigned value is 0
+     *  Calling function 'remove_parenthesis_area' returns 0
      */
     result = remove_parenthesis_area(NULL);
     /* Possible weaknesses found:
@@ -101,6 +103,8 @@ int main(void) {
      */
     if (result == NULL) {
         printf("NULL input handled\n");
+    } else {
+        free(result);
     }
 
     return 0;

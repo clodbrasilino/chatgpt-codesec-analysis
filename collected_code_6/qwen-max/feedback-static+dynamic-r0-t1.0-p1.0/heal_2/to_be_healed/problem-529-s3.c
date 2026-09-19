@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 5, got 4
-  *  test case 2 failed: expected 17, got 22
   *  test case 0 failed: expected 31, got 53
+  *  test case 2 failed: expected 17, got 22
+  *  test case 1 failed: expected 5, got 4
   */
 
 int nth_jacobsthal_lucas(int n) {
@@ -12,6 +13,10 @@ int nth_jacobsthal_lucas(int n) {
 
     int a = 2, b = 1;
     for (int i = 2; i <= n; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2 * -1896549735 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:19,execs:32,op:havoc,rep:8)
+         * UBSan: signed integer overflow: 411503397 + 1986914164 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:19,execs:32,op:havoc,rep:8)
+         */
         int c = a + 2 * b;
         a = b;
         b = c;
@@ -27,8 +32,8 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    int result = nth_jacobsthal_lucas(n);
-    printf("The %dth Jacobsthal-Lucas number is: %d\n", n, result);
+    int64_t result = (int64_t)nth_jacobsthal_lucas(n);
+    printf("The %dth Jacobsthal-Lucas number is: %ld\n", n, result);
 
     return EXIT_SUCCESS;
 }

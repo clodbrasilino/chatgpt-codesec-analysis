@@ -13,8 +13,8 @@ static bool is_sum_of_two_squares(uint64_t number)
     uint64_t right = 0;
 
     /* Possible weaknesses found:
-     *  Division by zero. [zerodiv]
      *  Division by zero
+     *  Division by zero. [zerodiv]
      */
     while (right <= number / right && right != 0) {
         ++right;
@@ -41,6 +41,9 @@ static bool is_sum_of_two_squares(uint64_t number)
 
     return false;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:237,execs:149,op:havoc,rep:6; likely memory-safety defect
+  */
 
 int main(void)
 {

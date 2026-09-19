@@ -19,9 +19,9 @@ static bool is_sum_of_two_squares(uint64_t number)
     }
 
     while (left <= right) {
-        const uint64_t left_square = left * left;
-        const uint64_t right_square = right * right;
-        const uint64_t remainder = number - right_square;
+        uint64_t left_square = left * left;
+        uint64_t right_square = right * right;
+        uint64_t remainder = number - right_square;
 
         if (left_square == remainder) {
             return true;
@@ -43,7 +43,7 @@ static bool is_sum_of_two_squares(uint64_t number)
 int main(void)
 {
     char input[128];
-    char *end = NULL;
+    char *end;
     uintmax_t value;
 
     if (fgets(input, sizeof input, stdin) == NULL) {
@@ -51,6 +51,7 @@ int main(void)
     }
 
     errno = 0;
+    end = NULL;
     value = strtoumax(input, &end, 10);
 
     if (errno == ERANGE || end == input) {

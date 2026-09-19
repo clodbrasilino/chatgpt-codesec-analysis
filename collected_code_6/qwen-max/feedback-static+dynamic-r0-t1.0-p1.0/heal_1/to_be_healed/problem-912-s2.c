@@ -13,11 +13,14 @@ long long ln_m_lobb(long n) {
         b = c;
     }
     /* Possible weaknesses found:
-     *  Uninitialized variable: c [uninitvar]
      *  Uninitialized variable: c
+     *  Uninitialized variable: c [uninitvar]
      */
     return c % 1000000007;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:1158,execs:542,op:havoc,rep:8; likely memory-safety defect
+  */
 
 int main() {
     long n;

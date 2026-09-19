@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'python', got �2�
-  *  test case 2 failed: expected 'alpha', got  3�
-  *  test case 1 failed: expected 'string', got �2�
+  *  test case 1 failed: expected 'string', got ���
+  *  test case 0 failed: expected 'python', got ���
+  *  test case 2 failed: expected 'alpha', got  ��
   */
 
 static char *remove_parenthesis_area(const char *input) {
@@ -24,7 +23,7 @@ static char *remove_parenthesis_area(const char *input) {
     int depth = 0;
 
     while (read_pos < len) {
-        unsigned char current_char = (unsigned char)input[read_pos];
+        char current_char = input[read_pos];
 
         if (current_char == '(') {
             depth++;
@@ -36,14 +35,14 @@ static char *remove_parenthesis_area(const char *input) {
             if (depth > 0) {
                 depth--;
             } else {
-                result[write_pos++] = (char)current_char;
+                result[write_pos++] = current_char;
             }
             read_pos++;
             continue;
         }
 
         if (depth == 0) {
-            result[write_pos++] = (char)current_char;
+            result[write_pos++] = current_char;
         }
 
         read_pos++;
@@ -55,6 +54,9 @@ static char *remove_parenthesis_area(const char *input) {
 
 int main(void) {
     const char *test_cases[] = {
+        "python",
+        "string",
+        "alpha",
         "Hello (world) example",
         "Nested ((parenthesis)) test",
         "No parenthesis here",
@@ -63,10 +65,7 @@ int main(void) {
         "Unmatched parenthesis)",
         "Empty () test",
         "(Only parenthesis)",
-        "",
-        "python",
-        "string",
-        "alpha"
+        ""
     };
 
     size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);

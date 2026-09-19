@@ -1,7 +1,16 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:8:15: style: The scope of the variable 'a' can be reduced. [variableScope]
-    long long a = 0, b = 1, c = 1;
-              ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:8:17: style: Variable 'a' is assigned a value that is never used. [unreadVariable]
-    long long a = 0, b = 1, c = 1;
-                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:22:22: style: The comparison 'temp_low < 2*b_low' is always false because 'temp_low' and '2*b_low' represent the same value. [knownConditionTrueFalse]
+        if (temp_low < 2 * b_low) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:19:31: note: 'temp_low' is assigned value '2*b_low' here.
+        uint64_t temp_low = 2 * b_low;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:22:22: note: The comparison 'temp_low < 2*b_low' is always false because 'temp_low' and '2*b_low' represent the same value.
+        if (temp_low < 2 * b_low) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:17:60: style: The scope of the variable 'c_high' can be reduced. [variableScope]
+    uint64_t a_high = 0, a_low = 0, b_high = 0, b_low = 1, c_high, c_low;
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-752.c:17:68: style: The scope of the variable 'c_low' can be reduced. [variableScope]
+    uint64_t a_high = 0, a_low = 0, b_high = 0, b_low = 1, c_high, c_low;
+                                                                   ^

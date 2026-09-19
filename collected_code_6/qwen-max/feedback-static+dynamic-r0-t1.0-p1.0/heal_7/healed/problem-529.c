@@ -1,30 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 long long jacobsthal_lucas(long n) {
     if (n == 0) return 2;
     if (n == 1) return 1;
-    if (n == 2) return 4;
 
-    long long a = 2, b = 1, c = 4;
-    for (long i = 3; i <= n; i++) {
-        long long next = a + 2 * b;
+    int64_t a = 2, b = 1;
+    for (long i = 2; i <= n; i++) {
+        if (b > LLONG_MAX / 2 || (LLONG_MAX - b) / 2 < a) {
+            fprintf(stderr, "Overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        int64_t c = 2 * a + b;
         a = b;
         b = c;
-        c = next;
     }
-    return c;
+    return b;
 }
 
 int main() {
     long n;
     printf("Enter the value of n: ");
-    if (scanf("%ld", &n) != 1 || n < 0) {
+    if (scanf("%ld", &n) != 1) {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
 
-    long long result = jacobsthal_lucas(n);
-    printf("The %ldth Jacobsthal-Lucas number is: %lld\n", n, result);
+    if (n < 0 || n > 61) {
+        fprintf(stderr, "n must be between 0 and 61\n");
+        return EXIT_FAILURE;
+    }
+
+    int64_t result = jacobsthal_lucas(n);
+    printf("The %ldth Jacobsthal-Lucas number is: %" PRId64 "\n", n, result);
     return EXIT_SUCCESS;
 }

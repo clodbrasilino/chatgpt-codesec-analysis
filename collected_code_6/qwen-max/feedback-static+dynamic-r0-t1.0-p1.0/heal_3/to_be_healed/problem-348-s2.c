@@ -5,43 +5,45 @@ int count_sequences(long long arr[], int n, int k, long long dp[51][51][201]) {
     if (n == 0) {
         return k == 0 ? 1 : 0;
     }
+    int index = 100 + arr[0];
     /* Possible weaknesses found:
-     * UBSan: index 444 out of bounds for type 'long long[51][201]' (AFL crash: id:000000,sig:06,src:000001,time:623,execs:262,op:havoc,rep:3)
+     * UBSan: index -1 out of bounds for type 'long long[51][201]' (AFL crash: id:000000,sig:06,src:000001,time:308,execs:76,op:havoc,rep:2)
      */
-    if (dp[n][k][100 + arr[0]] != -1) {
-        return dp[n][k][100 + arr[0]];
+    if (index >= 0 && index < 201 && dp[n][k][index] != -1) {
+        return dp[n][k][index];
     }
     if (arr[0] > k) {
-        return dp[n][k][100 + arr[0]] = count_sequences(arr + 1, n - 1, k, dp);
-    } else {
         /* Possible weaknesses found:
-         * UBSan: index 441 out of bounds for type 'long long[51][201]' (AFL crash: id:000000,sig:06,src:000001,time:623,execs:262,op:havoc,rep:3)
+         * UBSan: index -1 out of bounds for type 'long long[51][201]' (AFL crash: id:000000,sig:06,src:000001,time:308,execs:76,op:havoc,rep:2)
          */
-        return dp[n][k][100 + arr[0]] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) + 
-                                        count_sequences(arr + 1, n - 1, k, dp)) % 1000000007;
+        dp[n][k][index] = count_sequences(arr + 1, n - 1, k, dp);
+    } else {
+        dp[n][k][index] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) + 
+                          count_sequences(arr + 1, n - 1, k, dp)) % 1000000007;
     }
+    /* Possible weaknesses found:
+     * UBSan: index -1 out of bounds for type 'long long[51][201]' (AFL crash: id:000000,sig:06,src:000001,time:308,execs:76,op:havoc,rep:2)
+     */
+    return dp[n][k][index];
 }
 
 int main() {
     long long arr[] = {1, 2, 3};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int k_target;
-    printf("Enter the length of the sequence: ");
-    if (scanf("%d", &k_target) != 1 || k_target < 0) {
-        fprintf(stderr, "Invalid input\n");
-        return 1;
-    }
-
+    int k;
+    printf("Enter the value of k: ");
+    scanf("%d", &k);
+    
     long long dp[51][51][201];
     for (int i = 0; i < 51; ++i) {
         for (int j = 0; j < 51; ++j) {
-            for (int k = 0; k < 201; ++k) {
-                dp[i][j][k] = -1;
+            for (int m = 0; m < 201; ++m) {
+                dp[i][j][m] = -1;
             }
         }
     }
 
-    int result = count_sequences(arr, n, k_target, dp);
+    int result = count_sequences(arr, n, k, dp);
     printf("Total sequences: %d\n", result);
 
     return 0;

@@ -1,17 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static long long mul_mod(long long a, long long b, long long mod)
+{
+    unsigned __int128 res;
+
+    res = (unsigned __int128)(unsigned long long)a * (unsigned long long)b;
+    return (long long)(res % (unsigned long long)mod);
+}
+
 static long long power_mod(long long base, long long exp, long long mod)
 {
     long long result = 1;
+
     base = base % mod;
     while (exp > 0)
     {
         if (exp & 1)
         {
-            result = (result * base) % mod;
+            result = mul_mod(result, base, mod);
         }
-        base = (base * base) % mod;
+        base = mul_mod(base, base, mod);
         exp >>= 1;
     }
     return result;
@@ -45,18 +54,16 @@ static long long ncr_small(long long n, long long r, long long p)
     denominator = 1;
     for (i = 0; i < r; i++)
     {
-        numerator = (numerator * ((n - i) % p)) % p;
-        denominator = (denominator * ((i + 1) % p)) % p;
+        numerator = mul_mod(numerator, (n - i) % p, p);
+        denominator = mul_mod(denominator, (i + 1) % p, p);
     }
 
-    return (numerator * mod_inverse(denominator, p)) % p;
+    return mul_mod(numerator, mod_inverse(denominator, p), p);
 }
 
 static long long ncr_mod_p(long long n, long long r, long long p)
 {
     long long result = 1;
-    long long ni;
-    long long ri;
 
     if (r > n)
     {
@@ -65,13 +72,14 @@ static long long ncr_mod_p(long long n, long long r, long long p)
 
     while (n > 0 || r > 0)
     {
-        ni = n % p;
-        ri = r % p;
+        long long ni = n % p;
+        long long ri = r % p;
+
         if (ri > ni)
         {
             return 0;
         }
-        result = (result * ncr_small(ni, ri, p)) % p;
+        result = mul_mod(result, ncr_small(ni, ri, p), p);
         n /= p;
         r /= p;
     }

@@ -1,41 +1,44 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
+static unsigned long long absoluteDifference(long long a, long long b)
 {
-    long long width;
-    long long height;
+    if (a >= b)
+    {
+        return (unsigned long long)a - (unsigned long long)b;
+    }
+    return (unsigned long long)b - (unsigned long long)a;
+}
 
-    if (x2 > x1)
-    {
-        width = x2 - x1;
-    }
-    else
-    {
-        width = x1 - x2;
-    }
+int countIntegralPoints(long long x1, long long y1, long long x2, long long y2,
+                        unsigned long long *result)
+{
+    unsigned long long width;
+    unsigned long long height;
+    unsigned long long innerWidth;
+    unsigned long long innerHeight;
 
-    if (y2 > y1)
-    {
-        height = y2 - y1;
-    }
-    else
-    {
-        height = y1 - y2;
-    }
-
-    if (width == 0 && height == 0)
-    {
-        return 1;
-    }
+    width = absoluteDifference(x2, x1);
+    height = absoluteDifference(y2, y1);
 
     if (width < 2 || height < 2)
     {
+        *result = 0;
         return 0;
     }
 
-    return (width - 1) * (height - 1);
+    innerWidth = width - 1;
+    innerHeight = height - 1;
+
+    if (innerWidth > ULLONG_MAX / innerHeight)
+    {
+        return -1;
+    }
+
+    *result = innerWidth * innerHeight;
+    return 0;
 }
 
 int main(void)
@@ -44,7 +47,7 @@ int main(void)
     long long y1;
     long long x2;
     long long y2;
-    long long result;
+    unsigned long long result;
 
     printf("Enter bottom-left corner (x1 y1): ");
     if (scanf("%lld %lld", &x1, &y1) != 2)
@@ -60,11 +63,14 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    result = countIntegralPoints(x1, y1, x2, y2);
-    printf("Number of integral coordinates inside the square: %lld\n", result);
+    if (countIntegralPoints(x1, y1, x2, y2, &result) != 0)
+    {
+        fprintf(stderr, "Result too large to represent\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of integral coordinates inside the square: %llu\n", result);
 
     return EXIT_SUCCESS;
 }
 ```
-
-The key change addresses the failed test case: when both corners coincide (a degenerate square consisting of a single point), the function now returns 1, counting that point itself as an integral coordinate, whereas previously it returned 0 because both width and height were below the threshold check.

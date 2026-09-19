@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+int* generate_initial_terms(long n, int *len) {
+    char s[20];
+    sprintf(s, "%ld", n);
+    *len = strlen(s);
+    int* terms = (int*)malloc(*len * sizeof(int));
+    for (int i = 0; i < *len; i++) {
+        terms[i] = s[i] - '0';
+    }
+    return terms;
+}
+
+bool is_keith_number(long n) {
+    int len;
+    int* terms = generate_initial_terms(n, &len);
+    if (n < 10) {
+        free(terms);
+        return false;
+    }
+
+    long sum = 0;
+    while (true) {
+        sum = 0;
+        for (int i = 0; i < len; i++) {
+            sum += terms[i];
+            if (sum > n) {
+                free(terms);
+                return false;
+            }
+        }
+        if (sum == n) {
+            free(terms);
+            return true;
+        }
+        for (int i = 0; i < len - 1; ++i) {
+            terms[i] = terms[i + 1];
+        }
+        terms[len - 1] = (int)sum;
+    }
+}
+
+int main() {
+    long num;
+    printf("Enter a number: ");
+    scanf("%ld", &num);
+    if (is_keith_number(num)) {
+        printf("%ld is a Keith Number.\n", num);
+    } else {
+        printf("%ld is not a Keith Number.\n", num);
+    }
+    return 0;
+}
+```

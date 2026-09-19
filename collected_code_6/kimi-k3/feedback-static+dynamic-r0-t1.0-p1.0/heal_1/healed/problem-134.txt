@@ -7,12 +7,11 @@ int isLastElementEvenAfterOperations(const int arr[], int size, int p) {
         return -1;
     }
     
-    int last = arr[size - 1];
-    for (int i = 0; i < p; i++) {
-        last = last * 2;
+    if (p == 0) {
+        return (arr[size - 1] % 2 == 0) ? 1 : 0;
     }
     
-    return (last % 2 == 0) ? 1 : 0;
+    return 1;
 }
 
 int main(void) {

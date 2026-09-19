@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
 
 long long sumOfSubarrayProducts(const int *arr, int n) {
     if (arr == NULL || n <= 0) {
@@ -11,14 +13,24 @@ long long sumOfSubarrayProducts(const int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
-            /* Possible weaknesses found:
-             * UBSan: signed integer overflow: 146529686758 * 624973141 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:24327,execs:9027,op:havoc,rep:7)
-             */
-            product *= arr[j];
-            /* Possible weaknesses found:
-             * UBSan: signed integer overflow: 3192998379730536918 + 9068387560230580397 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:24327,execs:9027,op:havoc,rep:7)
-             */
-            totalSum += product;
+            if (arr[j] != 0 && product > LLONG_MAX / llabs((long long)arr[j])) {
+                product = LLONG_MAX;
+            } else if (arr[j] != 0 && product < LLONG_MIN / llabs((long long)arr[j])) {
+                product = LLONG_MIN;
+            } else {
+                /* Possible weaknesses found:
+                 * UBSan: signed integer overflow: -9223372036854775808 * -1 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000018,time:28354,execs:30543,op:havoc,rep:4)
+                 */
+                product *= arr[j];
+            }
+            
+            if (product > 0 && totalSum > LLONG_MAX - product) {
+                totalSum = LLONG_MAX;
+            } else if (product < 0 && totalSum < LLONG_MIN - product) {
+                totalSum = LLONG_MIN;
+            } else {
+                totalSum += product;
+            }
         }
     }
     
@@ -33,7 +45,12 @@ int main(void) {
         return EXIT_FAILURE;
     }
     
-    int *arr = malloc(n * sizeof(int));
+    if ((size_t)n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = malloc((size_t)n * sizeof(int));
     if (arr == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;

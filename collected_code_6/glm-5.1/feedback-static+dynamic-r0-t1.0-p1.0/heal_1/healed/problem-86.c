@@ -5,7 +5,7 @@ unsigned long long centered_hexagonal(int n) {
     if (n < 1) {
         return 0;
     }
-    return (unsigned long long)(3 * n - 1) * n - (unsigned long long)n + (unsigned long long)(n * n);
+    return (unsigned long long)(3 * n - 1) * n;
 }
 
 int main(int argc, char * const argv[]) {

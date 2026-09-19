@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 size_t count_squares(int width, int height) {
     if (width <= 0 || height <= 0) {
@@ -7,7 +8,13 @@ size_t count_squares(int width, int height) {
     }
     size_t count = 0;
     for (int side = 1; side <= (width < height ? width : height); ++side) {
-        count += (width - side + 1) * (height - side + 1);
+        int w = width - side + 1;
+        int h = height - side + 1;
+        if (w > 0 && h > 0 && (long long)w * h <= SIZE_MAX) {
+            count += (size_t)w * (size_t)h;
+        } else {
+            break;
+        }
     }
     return count;
 }
@@ -20,10 +27,6 @@ int main() {
         return EXIT_FAILURE;
     }
     size_t result = count_squares(w, h);
-    if (result == 0 && (w > 0 && h > 0)) {
-        fprintf(stderr, "Unexpected error in calculation\n");
-        return EXIT_FAILURE;
-    }
     printf("Number of squares in the rectangle: %zu\n", result);
     return 0;
 }

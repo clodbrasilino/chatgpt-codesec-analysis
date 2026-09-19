@@ -13,31 +13,22 @@ int countDigits(int n) {
 }
 
 int isArmstrong(int number) {
-    int result = 0, n = 0, originalNumber = number, remainder;
-
-    while (originalNumber != 0) {
+    int n = 0;
+    for (int temp = number; temp != 0; temp /= 10) {
         ++n;
-        originalNumber /= 10;
     }
 
-    originalNumber = number;
+    int originalNumber = number;
+    long long result_long = 0;
     while (originalNumber != 0) {
-        remainder = originalNumber % 10;
-        if (remainder > 0 && INT_MAX / pow(remainder, n-1) < remainder) {
-            return 0;
-        }
-        long long temp = 1;
-        for (int i = 0; i < n; ++i) {
-            if (temp > INT_MAX / remainder) {
-                return 0;
-            }
-            temp *= remainder;
-        }
-        result += temp;
+        int remainder = originalNumber % 10;
+        long long power = pow(remainder, n);
+        if (power > INT_MAX || result_long + power > INT_MAX) return 0;
+        result_long += power;
         originalNumber /= 10;
     }
 
-    return result == number;
+    return result_long == number;
 }
 
 int main() {

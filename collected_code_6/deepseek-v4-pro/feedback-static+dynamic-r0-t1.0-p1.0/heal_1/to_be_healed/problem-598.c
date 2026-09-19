@@ -23,6 +23,11 @@ int is_armstrong(int number) {
 
     while (original != 0) {
         remainder = original % 10;
+        /* Possible weaknesses found:
+         * UBSan: 3.48678e+09 is outside the range of representable values of type 'int' (AFL crash: id:000000,sig:06,src:000001,time:1475,execs:730,op:havoc,rep:1)
+         * UBSan: signed integer overflow: 1073741825 + 1073741824 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:1488,execs:736,op:havoc,rep:2)
+         * UBSan: signed integer overflow: -2137657950 + -2147483648 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000001,time:9718,execs:4734,op:havoc,rep:2)
+         */
         result += (int)pow(remainder, digits);
         original /= 10;
     }

@@ -24,6 +24,9 @@ bool is_woodall(unsigned long long n) {
         }
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000005,time:534,execs:341,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main(void) {
     unsigned long long num;

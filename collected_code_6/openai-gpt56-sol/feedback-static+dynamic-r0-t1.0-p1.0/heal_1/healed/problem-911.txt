@@ -3,19 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void swap_int(int *a, int *b)
-{
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
 static void min_heap_push(int *heap, size_t *size, int value)
 {
     size_t index = *size;
 
     heap[index] = value;
-    ++(*size);
+    ++*size;
 
     while (index > 0U) {
         size_t parent = (index - 1U) / 2U;
@@ -24,7 +17,9 @@ static void min_heap_push(int *heap, size_t *size, int value)
             break;
         }
 
-        swap_int(&heap[parent], &heap[index]);
+        int temp = heap[parent];
+        heap[parent] = heap[index];
+        heap[index] = temp;
         index = parent;
     }
 }
@@ -34,7 +29,7 @@ static void max_heap_push(int *heap, size_t *size, int value)
     size_t index = *size;
 
     heap[index] = value;
-    ++(*size);
+    ++*size;
 
     while (index > 0U) {
         size_t parent = (index - 1U) / 2U;
@@ -43,7 +38,9 @@ static void max_heap_push(int *heap, size_t *size, int value)
             break;
         }
 
-        swap_int(&heap[parent], &heap[index]);
+        int temp = heap[parent];
+        heap[parent] = heap[index];
+        heap[index] = temp;
         index = parent;
     }
 }
@@ -66,10 +63,12 @@ static void min_heapify_down(int *heap, size_t size)
         }
 
         if (smallest == index) {
-            break;
+            return;
         }
 
-        swap_int(&heap[index], &heap[smallest]);
+        int temp = heap[index];
+        heap[index] = heap[smallest];
+        heap[smallest] = temp;
         index = smallest;
     }
 }
@@ -92,10 +91,12 @@ static void max_heapify_down(int *heap, size_t size)
         }
 
         if (largest == index) {
-            break;
+            return;
         }
 
-        swap_int(&heap[index], &heap[largest]);
+        int temp = heap[index];
+        heap[index] = heap[largest];
+        heap[largest] = temp;
         index = largest;
     }
 }
@@ -120,6 +121,39 @@ static void retain_two_smallest(int heap[2], size_t *size, int value)
     }
 }
 
+static int multiply_three_ints(int a, int b, int c, int64_t *result)
+{
+#if defined(__SIZEOF_INT128__)
+    __int128 product = (__int128)a * (__int128)b * (__int128)c;
+
+    if (product > INT64_MAX || product < INT64_MIN) {
+        return 0;
+    }
+
+    *result = (int64_t)product;
+    return 1;
+#else
+    int64_t first = (int64_t)a * (int64_t)b;
+
+    if (c > 0) {
+        if (first > INT64_MAX / c || first < INT64_MIN / c) {
+            return 0;
+        }
+    } else if (c < 0) {
+        if (c == -1) {
+            if (first == INT64_MIN) {
+                return 0;
+            }
+        } else if (first > INT64_MIN / c || first < INT64_MAX / c) {
+            return 0;
+        }
+    }
+
+    *result = first * c;
+    return 1;
+#endif
+}
+
 static int maximum_product_of_three(const int *array, size_t length,
                                     int64_t *result)
 {
@@ -127,6 +161,8 @@ static int maximum_product_of_three(const int *array, size_t length,
     int smallest[2] = {0, 0};
     size_t largest_size = 0U;
     size_t smallest_size = 0U;
+    int64_t product_largest;
+    int64_t product_smallest;
 
     if (array == NULL || result == NULL || length < 3U) {
         return 0;
@@ -137,10 +173,12 @@ static int maximum_product_of_three(const int *array, size_t length,
         retain_two_smallest(smallest, &smallest_size, array[i]);
     }
 
-    int64_t product_largest =
-        (int64_t)largest[0] * (int64_t)largest[1] * (int64_t)largest[2];
-    int64_t product_smallest =
-        (int64_t)largest[0] * (int64_t)smallest[0] * (int64_t)smallest[1];
+    if (!multiply_three_ints(largest[0], largest[1], largest[2],
+                             &product_largest) ||
+        !multiply_three_ints(largest[0], smallest[0], smallest[1],
+                             &product_smallest)) {
+        return 0;
+    }
 
     *result = product_largest > product_smallest
                   ? product_largest
@@ -151,9 +189,9 @@ static int maximum_product_of_three(const int *array, size_t length,
 
 int main(void)
 {
-    size_t length = 0U;
-    int *array = NULL;
-    int64_t result = 0;
+    size_t length;
+    int *array;
+    int64_t result;
 
     if (scanf("%zu", &length) != 1 ||
         length < 3U ||

@@ -3,15 +3,22 @@
 #include <stdlib.h>
 
 int minOperations(int a, int b) {
+    if (a == b) {
+        return 0;
+    }
+    
     int diff = abs(a - b);
     int operations = 0;
-
+    
     operations += diff / 5;
     diff %= 5;
-
+    
+    operations += diff / 3;
+    diff %= 3;
+    
     operations += diff / 2;
     diff %= 2;
-
+    
     operations += diff;
     
     return operations;

@@ -16,14 +16,21 @@ int octagonal_number(int n, long long *result)
         return -1;
     }
 
-    long long multiplier = 3LL * n - 2LL;
-
-    if (n > LLONG_MAX / multiplier)
+    if (n > (LLONG_MAX - 2LL) / 3LL)
     {
         return -1;
     }
 
-    *result = (long long)n * multiplier;
+    long long factor = 3LL * n - 2LL;
+
+    if (n > LLONG_MAX / factor)
+    {
+        return -1;
+    }
+
+    long long value = (long long)n * factor;
+
+    *result = value;
     return 0;
 }
 

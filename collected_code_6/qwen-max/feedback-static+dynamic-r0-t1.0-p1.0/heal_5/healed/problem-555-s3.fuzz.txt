@@ -1,1 +1,6 @@
-problem-555-s3.c:9:91:medium:UBSan: signed integer overflow: 55555611111 * 55555611111 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000004,time:789,execs:339,op:quick,pos:6)
+problem-555-s3.c:7:20:medium:UBSan: signed integer overflow: 333323333333 * 333323333333 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:150,execs:163,op:havoc,rep:6)
+problem-555-s3.c:8:27:medium:UBSan: signed integer overflow: 333323333333 * 333323333334 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000001,time:150,execs:163,op:havoc,rep:6)
+problem-555-s3.c:9:16:medium:UBSan: signed integer overflow: -147505698538580473 * -147505698538580473 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:150,execs:163,op:havoc,rep:6)
+problem-555-s3.c:9:16:medium:UBSan: signed integer overflow: 55555611111 * 55555611111 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000004,time:552,execs:493,op:quick,pos:6)
+problem-555-s3.c:10:19:medium:UBSan: signed integer overflow: -147505698538580473 * -147505698538580473 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:150,execs:163,op:havoc,rep:6)
+problem-555-s3.c:10:19:medium:UBSan: signed integer overflow: 55555611111 * 55555611111 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000004,time:552,execs:493,op:quick,pos:6)

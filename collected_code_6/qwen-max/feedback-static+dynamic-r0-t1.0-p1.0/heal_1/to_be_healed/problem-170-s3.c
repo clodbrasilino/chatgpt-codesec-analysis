@@ -11,10 +11,16 @@ int sum_between_indices(int *numbers, int start_index, int end_index) {
 
     int sum = 0;
     for (int i = start_index; i <= end_index; ++i) {
+        /* Possible weaknesses found:
+         * ASan: stack-overflow (AFL crash: id:000001,sig:11,src:000009,time:14823,execs:4565,op:havoc,rep:6)
+         */
         sum += numbers[i];
     }
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:36,execs:26,op:havoc,rep:12; likely memory-safety defect
+  */
 
 int main() {
     int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

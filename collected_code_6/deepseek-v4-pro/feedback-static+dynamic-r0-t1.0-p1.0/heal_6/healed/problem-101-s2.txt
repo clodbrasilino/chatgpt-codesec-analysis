@@ -2,132 +2,57 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int partition(int *arr, int low, int high) {
-    int pivot = arr[high];
-    int i = low - 1;
-    
-    for (int j = low; j < high; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }
-    
-    int temp = arr[i + 1];
-    arr[i + 1] = arr[high];
-    arr[high] = temp;
-    
-    return i + 1;
-}
-
-int quickselect(int *arr, int low, int high, int k) {
-    if (low <= high) {
-        int pivot_index = partition(arr, low, high);
-        
-        if (pivot_index == k) {
-            return arr[pivot_index];
-        } else if (pivot_index < k) {
-            return quickselect(arr, pivot_index + 1, high, k);
-        } else {
-            return quickselect(arr, low, pivot_index - 1, k);
-        }
-    }
-    
-    return -1;
-}
-
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-int median_of_three(int *arr, int low, int high) {
-    int mid = low + (high - low) / 2;
-    
-    if (arr[mid] < arr[low])
-        swap(&arr[mid], &arr[low]);
-    if (arr[high] < arr[low])
-        swap(&arr[high], &arr[low]);
-    if (arr[high] < arr[mid])
-        swap(&arr[high], &arr[mid]);
-    
-    return mid;
-}
-
-int partition_improved(int *arr, int low, int high) {
-    int pivot_index = median_of_three(arr, low, high);
-    int pivot = arr[pivot_index];
-    
-    swap(&arr[pivot_index], &arr[high]);
-    
-    int i = low;
-    
-    for (int j = low; j < high; j++) {
-        if (arr[j] < pivot) {
-            swap(&arr[i], &arr[j]);
-            i++;
-        }
-    }
-    
-    swap(&arr[i], &arr[high]);
-    return i;
-}
-
-int quickselect_improved(int *arr, int low, int high, int k) {
-    while (low <= high) {
-        int pivot_index = partition_improved(arr, low, high);
-        
-        if (pivot_index == k) {
-            return arr[pivot_index];
-        } else if (pivot_index < k) {
-            low = pivot_index + 1;
-        } else {
-            high = pivot_index - 1;
-        }
-    }
-    
-    return -1;
-}
-
-int find_kth_element(const int *arr, int size, int k) {
+int find_kth_smallest(const int *arr, int size, int k) {
     if (arr == NULL || size <= 0 || k < 0 || k >= size) {
-        fprintf(stderr, "Invalid input parameters\n");
-        exit(EXIT_FAILURE);
+        return -1;
     }
     
-    int *temp_arr = (int *)malloc(size * sizeof(int));
-    if (temp_arr == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
     }
     
     for (int i = 0; i < size; i++) {
-        temp_arr[i] = arr[i];
+        temp[i] = arr[i];
     }
     
-    int result = quickselect_improved(temp_arr, 0, size - 1, k);
+    for (int i = 0; i < size - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < size; j++) {
+            if (temp[j] < temp[min_idx]) {
+                min_idx = j;
+            }
+        }
+        if (min_idx != i) {
+            int swap = temp[i];
+            temp[i] = temp[min_idx];
+            temp[min_idx] = swap;
+        }
+    }
     
-    free(temp_arr);
+    int result = temp[k];
+    free(temp);
     return result;
 }
 
 int main(void) {
-    int arr[] = {10, 20, 30, 40, 50};
-    int size = sizeof(arr) / sizeof(arr[0]);
-    int k = 2;
-    int result = find_kth_element(arr, size, k);
-    printf("Element at index %d: %d\n", k, result);
+    int test1[] = {40, 10, 30, 20, 50};
+    int size1 = sizeof(test1) / sizeof(test1[0]);
+    int k1 = 2;
+    int result1 = find_kth_smallest(test1, size1, k1);
+    printf("Test 1 - Element at index %d: %d\n", k1, result1);
     
-    int arr2[] = {3, 8, 36};
-    size = sizeof(arr2) / sizeof(arr2[0]);
+    int test2[] = {8, 1, 6, 3, 4, 9, 2, 7, 5};
+    int size2 = sizeof(test2) / sizeof(test2[0]);
+    int k2 = 4;
+    int result2 = find_kth_smallest(test2, size2, k2);
+    printf("Test 2 - Element at index %d: %d\n", k2, result2);
     
-    for (int i = 0; i < size; i++) {
-        result = find_kth_element(arr2, size, i);
-        printf("Element at index %d: %d\n", i, result);
-    }
+    int test3[] = {10, 20, 30, 40, 50};
+    int size3 = sizeof(test3) / sizeof(test3[0]);
+    int k3 = 2;
+    int result3 = find_kth_smallest(test3, size3, k3);
+    printf("Test 3 - Element at index %d: %d\n", k3, result3);
     
     return 0;
 }

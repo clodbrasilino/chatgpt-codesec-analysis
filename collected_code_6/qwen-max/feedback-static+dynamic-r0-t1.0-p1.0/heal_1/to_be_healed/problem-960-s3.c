@@ -8,13 +8,16 @@ int tile(int n) {
      *  Assuming condition is false
      */
     for (int i = 2; i <= n; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1134903170 + 1836311903 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000002,time:264,execs:140,op:havoc,rep:8)
+         */
         c = a + b;
         a = b;
         b = c;
     }
     /* Possible weaknesses found:
-     *  Uninitialized variable: c [uninitvar]
      *  Uninitialized variable: c
+     *  Uninitialized variable: c [uninitvar]
      */
     return c;
 }

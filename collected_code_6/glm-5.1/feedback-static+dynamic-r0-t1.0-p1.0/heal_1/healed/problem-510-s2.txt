@@ -7,9 +7,18 @@ unsigned long long count_subsequences(const int *arr, int n, unsigned long long 
     int left = 0;
 
     for (int right = 0; right < n; right++) {
+        if (arr[right] == 0 && k > 0) {
+            left = right + 1;
+            product = 1;
+            continue;
+        }
+        
         product *= arr[right];
 
         while (left <= right && product >= k) {
+            if (arr[left] == 0) {
+                break;
+            }
             product /= arr[left];
             left++;
         }

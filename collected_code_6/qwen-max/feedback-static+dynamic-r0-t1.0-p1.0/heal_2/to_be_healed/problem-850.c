@@ -4,8 +4,10 @@
 
 bool canFormTriangle(int a, int b, int c) {
     /* Possible weaknesses found:
-     * UBSan: signed integer overflow: 1073741824 + 1139355592 cannot be represented in type 'int'
+     * UBSan: signed integer overflow: 2147483647 - -407995279 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000001,time:132,execs:135,op:havoc,rep:5)
+     * UBSan: signed integer overflow: 2147483647 - -1 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:233,execs:222,op:havoc,rep:1)
      */
+    if (a > INT_MAX - b || a > INT_MAX - c || b > INT_MAX - c) return false;
     return (a + b + c == 180) && (a > 0) && (b > 0) && (c > 0);
 }
 

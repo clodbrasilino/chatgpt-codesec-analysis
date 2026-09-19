@@ -1,14 +1,17 @@
 ```c
 #include <stdio.h>
+#include <limits.h>
 
-int max_volume_cuboid(int sum) {
-    int maxVol = 0;
-    for (int i = 1; i < sum - 1; i++) {
-        for (int j = 1; j < sum - i - 1; j++) {
-            int k = sum - i - j;
-            int vol = i * j * k;
-            if (vol > maxVol) {
-                maxVol = vol;
+int max_volume_cuboid(long sum) {
+    long maxVol = 0;
+    for (long i = 1; i < sum - 2; i++) {
+        for (long j = 1; j < sum - i - 1; j++) {
+            long k = sum - i - j;
+            if (k > 0) {
+                long vol = i * j * k;
+                if (vol > maxVol) {
+                    maxVol = vol;
+                }
             }
         }
     }
@@ -18,12 +21,12 @@ int max_volume_cuboid(int sum) {
 int main() {
     int sum;
     printf("Enter the sum of the sides: ");
-    if (scanf("%d", &sum) != 1) {
+    if (scanf("%d", &sum) != 1 || sum < 3) {
         printf("Invalid input\n");
         return 1;
     }
-    int maxVol = max_volume_cuboid(sum);
-    printf("Maximum volume: %d\n", maxVol);
+    long maxVol = max_volume_cuboid(sum);
+    printf("Maximum volume: %ld\n", maxVol);
     return 0;
 }
 ```

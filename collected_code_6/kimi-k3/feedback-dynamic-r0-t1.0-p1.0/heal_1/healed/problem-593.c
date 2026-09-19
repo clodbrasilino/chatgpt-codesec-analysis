@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void removeLeadingZeros(char *ipAddress) {
+    if (ipAddress == NULL) {
+        return;
+    }
+
+    size_t len = strlen(ipAddress);
+    if (len == 0) {
+        return;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return;
+    }
+
+    char *ipCopy = malloc(len + 1);
+    if (ipCopy == NULL) {
+        free(result);
+        return;
+    }
+    strcpy(ipCopy, ipAddress);
+
+    size_t resultLen = 0;
+    result[0] = '\0';
+
+    char *saveptr;
+    char *token = strtok_r(ipCopy, ".", &saveptr);
+    int firstToken = 1;
+
+    while (token != NULL) {
+        char *temp = token;
+        while (*temp == '0') {
+            temp++;
+        }
+        if (*temp == '\0') {
+            temp = token + strlen(token) - 1;
+        }
+
+        size_t tempLen = strlen(temp);
+        if (resultLen + tempLen + (firstToken ? 0 : 1) >= len + 1) {
+            break;
+        }
+
+        if (!firstToken) {
+            result[resultLen++] = '.';
+        }
+        memcpy(result + resultLen, temp, tempLen);
+        resultLen += tempLen;
+        result[resultLen] = '\0';
+
+        firstToken = 0;
+        token = strtok_r(NULL, ".", &saveptr);
+    }
+
+    strcpy(ipAddress, result);
+    free(result);
+    free(ipCopy);
+}
+
+int main() {
+    char ipAddress[100];
+    printf("Enter an IP address: ");
+    if (fgets(ipAddress, sizeof(ipAddress), stdin) == NULL) {
+        return 1;
+    }
+    ipAddress[strcspn(ipAddress, "\n")] = '\0';
+
+    removeLeadingZeros(ipAddress);
+
+    printf("IP address without leading zeros: %s\n", ipAddress);
+
+    return 0;
+}

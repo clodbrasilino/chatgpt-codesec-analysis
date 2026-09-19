@@ -7,7 +7,7 @@ bool is_prime(long long n) {
     if (n <= 1) return false;
     if (n <= 3) return true;
     if (n % 2 == 0 || n % 3 == 0) return false;
-    for (long long i = 5; i * i <= n; i += 6) {
+    for (long long i = 5; i <= n / i; i += 6) {
         if (n % i == 0 || n % (i + 2) == 0) return false;
     }
     return true;
@@ -30,12 +30,12 @@ long long nth_nsw_prime(int n) {
     }
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:4315,execs:15,op:(null),pos:0; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:2094,execs:143,op:havoc,rep:1; likely memory-safety defect
   */
 
 int main() {
     int n;
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1) return 1;
     printf("%lld\n", nth_nsw_prime(n));
     return 0;
 }

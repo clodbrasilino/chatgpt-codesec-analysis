@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int partition(int *arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return i + 1;
+}
+
+int quickselect(int *arr, int low, int high, int k) {
+    if (low <= high) {
+        int pivot_index = partition(arr, low, high);
+        
+        if (pivot_index == k) {
+            return arr[pivot_index];
+        } else if (pivot_index < k) {
+            return quickselect(arr, pivot_index + 1, high, k);
+        } else {
+            return quickselect(arr, low, pivot_index - 1, k);
+        }
+    }
+    
+    return -1;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 3, got <no output>
+  *  test case 1 failed: expected 8, got <no output>
+  *  test case 2 failed: expected 36, got <no output>
+  */
+
+int find_kth_element(const int *arr, int size, int k) {
+    if (arr == NULL || size <= 0 || k < 0 || k >= size) {
+        fprintf(stderr, "Invalid input parameters\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    int *temp_arr = (int *)malloc(size * sizeof(int));
+    if (temp_arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i < size; i++) {
+        temp_arr[i] = arr[i];
+    }
+    
+    int result = quickselect(temp_arr, 0, size - 1, k);
+    
+    free(temp_arr);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {10, 20, 30, 40, 50};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    int result = find_kth_element(arr, size, k);
+    printf("Element at index %d: %d\n", k, result);
+    return 0;
+}

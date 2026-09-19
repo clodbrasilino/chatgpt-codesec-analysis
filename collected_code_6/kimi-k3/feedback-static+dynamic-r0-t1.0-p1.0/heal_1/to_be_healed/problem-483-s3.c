@@ -26,6 +26,9 @@ uint64_t find_first_natural_number(uint64_t x) {
         n++;
     }
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:438,execs:200,op:havoc,rep:2; likely memory-safety defect
+  */
 
 int main() {
     uint64_t x;
@@ -39,8 +42,8 @@ int main() {
     uint64_t result = find_first_natural_number(x);
     
     /* Possible weaknesses found:
-     *  %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
      *  %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+     *  %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
      */
     printf("The first natural number whose factorial is divisible by %llu is %llu.\n", x, result);
     

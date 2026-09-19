@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected [3, 6, 7, 10], got <no output>
+  *  test case 2 failed: expected [34, 36, 11, 25], got <no output>
+  *  test case 1 failed: expected [1, 4, 7, 9], got <no output>
+  */
 
 /* Possible weaknesses found:
- *  Parameter 't2' can be declared as pointer to const [constParameterPointer]
  *  Parameter 't1' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 't2' can be declared as pointer to const [constParameterPointer]
  */
 int* find_dissimilar(int *t1, int s1, int *t2, int s2, int *res_size) {
     int *res = (int*)malloc((s1 + s2) * sizeof(int));

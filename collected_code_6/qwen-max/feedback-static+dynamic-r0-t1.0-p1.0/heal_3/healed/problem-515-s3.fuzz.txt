@@ -1,2 +1,5 @@
-problem-515-s3.c:24:31:medium:UBSan: index -1 out of bounds for type 'bool[m]' (AFL crash: id:000002,sig:06,src:000000,time:628,execs:283,op:havoc,rep:2)
-problem-515-s3.c:30:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:31,execs:22,op:havoc,rep:1; likely memory-safety defect
+problem-515-s3.c:10:0:high:ASan: requested (AFL crash: id:000001,sig:06,src:000001,time:26400,execs:16842,op:havoc,rep:2)
+problem-515-s3.c:10:34:medium:UBSan: signed integer overflow: -957633962 * 137333333 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:2047,execs:1818,op:havoc,rep:7)
+problem-515-s3.c:10:34:medium:UBSan: signed integer overflow: 4 * 624973163 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000001,time:26400,execs:16842,op:havoc,rep:2)
+problem-515-s3.c:20:0:high:ASan: heap-buffer-overflow (AFL crash: id:000002,sig:06,src:000001,time:55743,execs:23701,op:havoc,rep:2)
+problem-515-s3.c:38:27:medium:UBSan: signed integer overflow: -957633963 * 137333333 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:2047,execs:1818,op:havoc,rep:7)

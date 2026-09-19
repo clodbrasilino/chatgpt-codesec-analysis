@@ -7,16 +7,20 @@
 
 static bool is_woodall(uint64_t number)
 {
+    if (number == 0) {
+        return false;
+    }
+
     uint64_t power_of_two = 2;
 
-    for (uint64_t n = 1; n <= number / power_of_two; ++n) {
+    for (uint64_t n = 1; n <= UINT64_MAX / power_of_two; ++n) {
         uint64_t product = n * power_of_two;
 
         if (product - 1 == number) {
             return true;
         }
 
-        if (power_of_two > UINT64_MAX / 2) {
+        if (product - 1 > number || power_of_two > UINT64_MAX / 2) {
             break;
         }
 
@@ -33,6 +37,11 @@ int main(int argc, char *const argv[])
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <nonnegative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argv[1][0] == '-') {
+        fprintf(stderr, "Invalid number\n");
         return EXIT_FAILURE;
     }
 

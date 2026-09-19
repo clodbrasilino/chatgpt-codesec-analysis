@@ -31,7 +31,7 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 
     long long *fact = (long long *)malloc(p * sizeof(long long));
     if (fact == NULL) {
-        exit(1);
+        return 0;
     }
 
     fact[0] = 1;
@@ -40,9 +40,10 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     }
 
     long long result = 1;
-    while (n > 0 || r > 0) {
-        long long ni = n % p;
-        long long ri = r % p;
+    long long tn = n, tr = r;
+    while (tn > 0 || tr > 0) {
+        long long ni = tn % p;
+        long long ri = tr % p;
         if (ri > ni) {
             free(fact);
             return 0;
@@ -50,8 +51,8 @@ long long ncr_mod_p(long long n, long long r, long long p) {
         result = (result * fact[ni]) % p;
         result = (result * mod_inverse(fact[ri], p)) % p;
         result = (result * mod_inverse(fact[ni - ri], p)) % p;
-        n /= p;
-        r /= p;
+        tn /= p;
+        tr /= p;
     }
 
     free(fact);
@@ -61,6 +62,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 int main(void) {
     long long n, r, p;
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        return 1;
+    }
+    if (p <= 1) {
         return 1;
     }
     printf("%lld\n", ncr_mod_p(n, r, p));

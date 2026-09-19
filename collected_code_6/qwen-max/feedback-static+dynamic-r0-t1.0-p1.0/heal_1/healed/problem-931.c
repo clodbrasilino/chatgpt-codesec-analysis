@@ -1,13 +1,29 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 
-long long sum_of_cubes(int n) {
-    return (n * (n + 1) / 2) * (n * (n + 1) / 2);
+bool is_valid_input(const char *str) {
+    while (*str) {
+        if (*str < '0' || *str > '9') return false;
+        str++;
+    }
+    return true;
+}
+
+long long sum_of_cubes(long long n) {
+    long long result = (n * (n + 1) / 2) * (n * (n + 1) / 2);
+    return result;
 }
 
 int main() {
-    int n;
+    char input[20];
     printf("Enter a positive integer: ");
-    if (scanf("%d", &n) != 1 || n < 1) {
+    if (fgets(input, sizeof(input), stdin) == NULL || !is_valid_input(input)) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    int n = strtol(input, NULL, 10);
+    if (n < 1) {
         printf("Invalid input. Please enter a positive integer.\n");
         return 1;
     }

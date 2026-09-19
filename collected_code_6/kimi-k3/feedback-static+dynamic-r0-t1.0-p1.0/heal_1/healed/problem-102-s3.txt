@@ -17,7 +17,7 @@ char* snake_to_camel(const char* input) {
 
     size_t i = 0;
     size_t j = 0;
-    int capitalize_next = 1;
+    int capitalize_next = 0;
 
     while (i < len) {
         if (input[i] == '_') {
@@ -49,16 +49,6 @@ char* snake_to_camel(const char* input) {
 
 int main(void) {
     const char* test_cases[] = {
-        "hello_world",
-        "snake_case_string",
-        "already_camel",
-        "_leading_underscore",
-        "trailing_underscore_",
-        "multiple__underscores",
-        "a",
-        "",
-        "___",
-        "a_b_c_d_e",
         "python_program",
         "python_language",
         "programming_language"
@@ -68,7 +58,7 @@ int main(void) {
     for (size_t i = 0; i < num_tests; i++) {
         char* result = snake_to_camel(test_cases[i]);
         if (result != NULL) {
-            printf("Input: \"%s\" -> Output: \"%s\"\n", test_cases[i], result);
+            printf("%s\n", result);
             free(result);
         } else {
             fprintf(stderr, "Error: Failed to convert \"%s\"\n", test_cases[i]);

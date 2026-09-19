@@ -3,13 +3,14 @@
 #include <math.h>
 
 double geometric_sum(int n) {
-    if (n == 0) {
-        return 1.0;
-    }
     if (n < 0) {
         return 0.0;
     }
-    return 1.0 / pow(2, n) + geometric_sum(n - 1);
+    double sum = 1.0;
+    for (int i = 1; i <= n; i++) {
+        sum += 1.0 / pow(2, i);
+    }
+    return sum;
 }
 
 int main() {
@@ -20,10 +21,6 @@ int main() {
         return EXIT_FAILURE;
     }
     double result = geometric_sum(n);
-    if (result == 0.0 && n < 0) {
-        printf("Geometric sum is not defined for negative integers.\n");
-    } else {
-        printf("Geometric sum of %d is: %.10f\n", n, result);
-    }
+    printf("Geometric sum of %d is: %.10f\n", n, result);
     return EXIT_SUCCESS;
 }

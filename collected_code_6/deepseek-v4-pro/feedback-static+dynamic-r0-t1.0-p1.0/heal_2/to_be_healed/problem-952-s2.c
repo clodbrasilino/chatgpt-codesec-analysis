@@ -1,25 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-long long power(long long x, long long y, long long p) {
-    long long res = 1;
-    x = x % p;
-    while (y > 0) {
-        if (y & 1)
-            res = (res * x) % p;
-        y = y >> 1;
-        x = (x * x) % p;
+typedef unsigned long long ull;
+
+ull mul_mod(ull a, ull b, ull p) {
+    ull res = 0;
+    a = a % p;
+    while (b > 0) {
+        if (b & 1)
+            res = (res + a) % p;
+        a = (a << 1) % p;
+        b = b >> 1;
     }
     return res;
 }
 
-long long mod_inverse(long long n, long long p) {
+ull power(ull x, ull y, ull p) {
+    ull res = 1;
+    x = x % p;
+    while (y > 0) {
+        if (y & 1)
+            res = mul_mod(res, x, p);
+        y = y >> 1;
+        x = mul_mod(x, x, p);
+    }
+    return res;
+}
+
+ull mod_inverse(ull n, ull p) {
     return power(n, p - 2, p);
 }
  /* Possible weaknesses found:
+  *  test case 0 failed: expected 6, got <no output>
   *  test case 1 failed: expected 11, got <no output>
   *  test case 2 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
   */
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -30,20 +45,24 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     if (n - r < r)
         r = n - r;
     
-    long long *fact = (long long *)malloc((n + 1) * sizeof(long long));
+    ull *fact = (ull *)malloc((n + 1) * sizeof(ull));
     if (fact == NULL)
         return -1;
     
     fact[0] = 1;
+    ull mod = (ull)p;
     for (long long i = 1; i <= n; i++)
-        fact[i] = (fact[i - 1] * i) % p;
+        fact[i] = mul_mod(fact[i - 1], (ull)i, mod);
     
-    long long result = (fact[n] * mod_inverse(fact[r], p)) % p;
-    result = (result * mod_inverse(fact[n - r], p)) % p;
+    ull result = mul_mod(fact[n], mod_inverse(fact[r], mod), mod);
+    result = mul_mod(result, mod_inverse(fact[n - r], mod), mod);
     
     free(fact);
-    return result;
+    return (long long)result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:1150,execs:554,op:havoc,rep:1; likely memory-safety defect
+  */
 
 int main(void) {
     long long n, r, p;

@@ -1,10 +1,11 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int binomial_coefficient(int n, int k) {
-    long long res = 1;
     if (k > n - k) k = n - k;
+    long long res = 1;
     for (int i = 0; i < k; ++i) {
         res *= (n - i);
         res /= (i + 1);
@@ -13,18 +14,22 @@ int binomial_coefficient(int n, int k) {
 }
 
 int bell_number(int n) {
-    int bell[n+1][n+1];
-    for (int i = 0; i <= n; ++i) {
-        bell[0][i] = 0;
-        bell[i][0] = 1;
-    }
+    long long bell[n+1][n+1];
+    bell[0][0] = 1;
 
     for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= i; j++)
-            bell[i][j] = bell[i-1][j-1] + bell[i-1][j];
+        bell[i][0] = bell[i-1][i-1];
+
+        for (int j = 1; j <= i; j++) {
+            if (bell[i-1][j-1] > LLONG_MAX - bell[i][j-1]) {
+                fprintf(stderr, "Integer overflow detected\n");
+                exit(EXIT_FAILURE);
+            }
+            bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
+        }
     }
 
-    return bell[n][0];
+    return (int)bell[n][0];
 }
 
 int main() {

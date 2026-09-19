@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 /* Possible weaknesses found:
- *  Parameter 'arr' can be declared as const array [constParameter]
  *  Parameter 'dep' can be declared as const array [constParameter]
+ *  Parameter 'arr' can be declared as const array [constParameter]
  */
 int findMinimumPlatforms(int arr[], int dep[], int n) {
     int i = 0, j = 0, platforms_needed = 0, max_platforms = 0;
@@ -25,6 +25,9 @@ int findMinimumPlatforms(int arr[], int dep[], int n) {
 }
 
 int compareIntegers(const void *a, const void *b) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: 800000100 - -1454759936 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000011,time:21749,execs:13515,op:havoc,rep:2)
+     */
     return (*(int *)a - *(int *)b);
 }
 

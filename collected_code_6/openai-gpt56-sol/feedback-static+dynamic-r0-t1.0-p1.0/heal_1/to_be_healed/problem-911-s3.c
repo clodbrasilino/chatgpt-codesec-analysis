@@ -140,11 +140,17 @@ static int maximum_product_of_three(const int array[], size_t length,
 
     if (largest[1] > largest[0]) {
         product_mixed =
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 28676505689766544 * 508 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000023,time:58096,execs:18750,op:havoc,rep:1)
+             */
             (int64_t)smallest[0] * smallest[1] * largest[1];
     }
 
     if (largest[2] > largest[0] && largest[2] > largest[1]) {
         product_mixed =
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 125873030607405056 * 688 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000023,time:58148,execs:18786,op:havoc,rep:2)
+             */
             (int64_t)smallest[0] * smallest[1] * largest[2];
     }
 

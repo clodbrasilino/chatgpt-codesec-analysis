@@ -13,15 +13,16 @@ int countDigits(int n) {
 }
 
 int isArmstrong(int number) {
-    int result = 0, n = 0;
-    
-    for (int originalNumber = number; originalNumber != 0; originalNumber /= 10) {
+    int result = 0, n = 0, remainder;
+    for (int temp = number; temp != 0; temp /= 10) {
         ++n;
     }
 
-    for (int originalNumber = number; originalNumber != 0; originalNumber /= 10) {
-        int remainder = originalNumber % 10;
+    int originalNumber = number;
+    while (originalNumber != 0) {
+        remainder = originalNumber % 10;
         result += pow(remainder, n);
+        originalNumber /= 10;
     }
 
     return result == number;

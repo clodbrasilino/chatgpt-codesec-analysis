@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 long long count_binary_sequences(int n) {
     if (n <= 0) {
@@ -14,13 +15,26 @@ long long count_binary_sequences(int n) {
     dp[0] = 1;
     for (int i = 1; i <= n; i++) {
         for (int j = i; j >= 1; j--) {
+            if (dp[j] > LLONG_MAX - dp[j - 1]) {
+                free(dp);
+                return -1;
+            }
             dp[j] += dp[j - 1];
         }
     }
     
     long long total = 0;
     for (int k = 0; k <= n; k++) {
-        total += dp[k] * dp[k];
+        if (dp[k] > LLONG_MAX / dp[k]) {
+            free(dp);
+            return -1;
+        }
+        long long square = dp[k] * dp[k];
+        if (total > LLONG_MAX - square) {
+            free(dp);
+            return -1;
+        }
+        total += square;
     }
     
     free(dp);
@@ -42,7 +56,7 @@ int main(void) {
     
     long long result = count_binary_sequences(n);
     if (result == -1) {
-        fprintf(stderr, "Memory allocation failed\n");
+        fprintf(stderr, "Overflow or memory allocation failed\n");
         return 1;
     }
     

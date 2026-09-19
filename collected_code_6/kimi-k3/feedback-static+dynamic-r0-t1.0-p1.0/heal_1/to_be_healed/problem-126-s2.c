@@ -43,6 +43,9 @@ long long sum_common_divisors(long long a, long long b)
     
     return sum;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:5849,execs:2022,op:havoc,rep:6; likely memory-safety defect
+  */
 
 int main(void)
 {

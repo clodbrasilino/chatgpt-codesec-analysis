@@ -21,6 +21,10 @@ int find_product_of_non_repeated_elements(int arr[], int n) {
             }
         }
         if (count == 1) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 34 * 355555553 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000017,time:47896,execs:20859,op:havoc,rep:2)
+             * UBSan: signed integer overflow: 1111111111 * 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:6426,execs:2948,op:havoc,rep:7)
+             */
             product *= arr[i];
             found = 1;
         }

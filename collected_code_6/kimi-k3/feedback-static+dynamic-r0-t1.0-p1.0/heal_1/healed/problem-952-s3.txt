@@ -31,44 +31,48 @@ int64_t nCrModP(int64_t n, int64_t r, int64_t p) {
     if (r > n - r) {
         r = n - r;
     }
-    
-    int64_t *fact = (int64_t *)malloc((n + 1) * sizeof(int64_t));
+
+    if (n >= p) {
+        return 0;
+    }
+
+    int64_t *fact = (int64_t *)malloc((size_t)(n + 1) * sizeof(int64_t));
     if (fact == NULL) {
         return -1;
     }
-    
+
     fact[0] = 1;
     for (int64_t i = 1; i <= n; i++) {
         fact[i] = (fact[i - 1] * i) % p;
     }
-    
+
     int64_t numerator = fact[n];
     int64_t denominator = (fact[r] * fact[n - r]) % p;
     int64_t result = (numerator * modInverse(denominator, p)) % p;
-    
+
     free(fact);
     return result;
 }
 
 int main(void) {
     int64_t n, r, p;
-    
+
     if (scanf("%" SCNd64 " %" SCNd64 " %" SCNd64, &n, &r, &p) != 3) {
         fprintf(stderr, "Invalid input\n");
         return EXIT_FAILURE;
     }
-    
+
     if (p <= 1) {
         fprintf(stderr, "Modulus must be greater than 1\n");
         return EXIT_FAILURE;
     }
-    
+
     int64_t result = nCrModP(n, r, p);
     if (result == -1) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;
     }
-    
+
     printf("%" PRId64 "\n", result);
     return EXIT_SUCCESS;
 }

@@ -43,22 +43,22 @@ char *remove_parenthesis_area(const char *str)
 int main(void)
 {
     const char *inputs[] = {
-        "Hello (this should be removed) World (this too)!",
-        "(remove this)python(also remove)",
-        "string(with parens)test",
-        "alpha(beta)gamma(delta)"
+        "python",
+        "string",
+        "alpha",
+        "Hello (this should be removed) World (this too)!"
     };
-    size_t num_tests = sizeof(inputs) / sizeof(inputs[0]);
-    size_t i;
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t k;
 
-    for (i = 0; i < num_tests; i++) {
-        char *output = remove_parenthesis_area(inputs[i]);
+    for (k = 0; k < num_inputs; k++) {
+        char *output = remove_parenthesis_area(inputs[k]);
         if (output == NULL) {
             fprintf(stderr, "Error: Memory allocation failed or invalid input\n");
             return EXIT_FAILURE;
         }
 
-        printf("Original: %s\n", inputs[i]);
+        printf("Original: %s\n", inputs[k]);
         printf("Modified: %s\n", output);
 
         free(output);

@@ -26,10 +26,8 @@ char *remove_parenthesis_area(const char *str) {
         if (str[i] == ')') {
             if (depth > 0) {
                 depth--;
-                if (depth == 0) {
-                    i++;
-                    continue;
-                }
+            } else {
+                result[j++] = str[i];
             }
             i++;
             continue;
@@ -44,7 +42,7 @@ char *remove_parenthesis_area(const char *str) {
 
     char *final_result = realloc(result, j + 1);
     if (final_result != NULL) {
-        result = final_result;
+        return final_result;
     }
 
     return result;
@@ -92,6 +90,8 @@ int main(void) {
     result = remove_parenthesis_area(NULL);
     if (result == NULL) {
         printf("NULL input handled\n");
+    } else {
+        free(result);
     }
 
     return 0;

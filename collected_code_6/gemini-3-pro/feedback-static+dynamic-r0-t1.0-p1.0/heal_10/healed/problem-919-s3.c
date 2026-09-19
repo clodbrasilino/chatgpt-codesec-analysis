@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 struct Node {
-    long long data;
+    int data;
     struct Node* next;
 };
 
@@ -15,14 +15,14 @@ long long multiplyListItems(struct Node* head) {
     struct Node* current = head;
 
     while (current != NULL) {
-        result *= current->data;
+        result = (long long)((unsigned long long)result * (unsigned long long)current->data);
         current = current->next;
     }
 
     return result;
 }
 
-struct Node* createNode(long long data) {
+struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
         exit(EXIT_FAILURE);
@@ -44,11 +44,11 @@ void freeList(struct Node* head) {
 }
 
 int main(void) {
-    long long val;
+    int val;
     struct Node* head = NULL;
     struct Node* tail = NULL;
 
-    while (scanf("%lld", &val) == 1) {
+    while (scanf("%d", &val) == 1) {
         struct Node* newNode = createNode(val);
         if (head == NULL) {
             head = newNode;

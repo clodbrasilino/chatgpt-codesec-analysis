@@ -2,8 +2,8 @@
 #include <stdlib.h>
  /* Possible weaknesses found:
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   */
 
 int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
@@ -32,6 +32,9 @@ int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     }
 
     for (size_t i = 0; i < *out_size; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -1305424328 + -1196716495 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000017,time:41908,execs:20475,op:havoc,rep:11)
+         */
         result[i] = arr[i] + arr[i + 1];
     }
 

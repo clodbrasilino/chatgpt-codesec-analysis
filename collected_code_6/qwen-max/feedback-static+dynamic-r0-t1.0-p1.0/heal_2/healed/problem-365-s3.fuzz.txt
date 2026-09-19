@@ -1,1 +1,1 @@
-problem-365-s3.c:6:24:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000009,time:3887,execs:1798,op:havoc,rep:5)
+problem-365-s3.c:7:24:medium:UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000009,time:10201,execs:8616,op:havoc,rep:2)

@@ -19,7 +19,10 @@ char *snake_to_camel(const char *snake) {
 
     if (snake[0] == '_') {
         camel[j++] = '_';
-        i++;
+        while (i < len && snake[i] == '_') {
+            i++;
+        }
+        capitalize_next = 1;
     }
 
     for (; i < len; i++) {
@@ -27,7 +30,7 @@ char *snake_to_camel(const char *snake) {
             capitalize_next = 1;
         } else {
             if (capitalize_next) {
-                camel[j++] = toupper((unsigned char)snake[i]);
+                camel[j++] = (char)toupper((unsigned char)snake[i]);
                 capitalize_next = 0;
             } else {
                 camel[j++] = snake[i];
@@ -40,72 +43,37 @@ char *snake_to_camel(const char *snake) {
 }
 
 int main(void) {
-    const char *test1 = "snake_case_string";
-    const char *test2 = "_leading_underscore";
-    const char *test3 = "trailing_underscore_";
-    const char *test4 = "multiple__underscores";
-    const char *test5 = "alreadyCamel";
-    const char *test6 = "";
-    const char *test7 = "a";
-    const char *test8 = "a_b_c_d_e_f";
+    const char *test_cases[] = {
+        "snake_case_string",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "multiple__underscores",
+        "alreadyCamel",
+        "",
+        "a",
+        "a_b_c_d_e_f",
+        NULL
+    };
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
 
-    char *result = NULL;
+    for (size_t t = 0; t < num_tests; t++) {
+        const char *input = test_cases[t];
+        char *result = snake_to_camel(input);
 
-    result = snake_to_camel(test1);
-    if (result != NULL) {
-        printf("%s -> %s\n", test1, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test2);
-    if (result != NULL) {
-        printf("%s -> %s\n", test2, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test3);
-    if (result != NULL) {
-        printf("%s -> %s\n", test3, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test4);
-    if (result != NULL) {
-        printf("%s -> %s\n", test4, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test5);
-    if (result != NULL) {
-        printf("%s -> %s\n", test5, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test6);
-    if (result != NULL) {
-        printf("\"%s\" -> \"%s\"\n", test6, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test7);
-    if (result != NULL) {
-        printf("%s -> %s\n", test7, result);
-        free(result);
-    }
-
-    result = snake_to_camel(test8);
-    if (result != NULL) {
-        printf("%s -> %s\n", test8, result);
-        free(result);
-    }
-
-    const char *null_test = NULL;
-    result = snake_to_camel(null_test);
-    if (result != NULL) {
-        printf("NULL -> %s\n", result);
-        free(result);
-    } else {
-        printf("NULL -> NULL\n");
+        if (input == NULL) {
+            printf("NULL -> NULL\n");
+        } else {
+            if (result != NULL) {
+                if (input[0] == '\0') {
+                    printf("\"%s\" -> \"%s\"\n", input, result);
+                } else {
+                    printf("%s -> %s\n", input, result);
+                }
+                free(result);
+            } else {
+                printf("%s -> (allocation failed)\n", input);
+            }
+        }
     }
 
     return 0;

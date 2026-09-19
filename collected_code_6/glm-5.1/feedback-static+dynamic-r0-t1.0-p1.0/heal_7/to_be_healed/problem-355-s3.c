@@ -1,30 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 1, got 0
-  *  test case 0 failed: expected 8, got 2
   */
 
 long long count_rectangles(int r) {
-    if (r <= 0) {
+    if (r < 1) {
         return 0;
     }
 
     long long count = 0;
     long long r_sq = (long long)r * r;
-    long long y = r;
+    
+    for (long long x = 0; x < r; x++) {
+        long long y_max_sq = r_sq - x * x;
+        long long y_max = (long long)sqrt((double)y_max_sq);
+        
+        while (y_max >= 0 && y_max * y_max >= y_max_sq) {
+            y_max--;
+        }
+        while ((y_max + 1) * (y_max + 1) < y_max_sq) {
+            y_max++;
+        }
 
-    for (long long x = 1; x <= r; x++) {
-        while (y >= 0 && x * x + y * y >= r_sq) {
-            y--;
+        if (y_max >= r) {
+            y_max = r - 1;
         }
-        if (y < 0) {
-            break;
-        }
-        count += y;
+        
+        count += y_max;
     }
 
-    return count * 2;
+    return count * 4;
 }
 
 int main(int argc, char const * const argv[]) {

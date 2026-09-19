@@ -3,8 +3,8 @@
 #include <limits.h>
  /* Possible weaknesses found:
   *  test case 1 failed: expected 7, got 0
-  *  test case 2 failed: expected 2, got 0
   *  test case 0 failed: expected 10, got 5
+  *  test case 2 failed: expected 2, got 0
   */
 
 int maxProfit(int k, const int *prices, int pricesSize) {
@@ -40,13 +40,15 @@ int maxProfit(int k, const int *prices, int pricesSize) {
         int prevSell = 0;
         for (int j = 1; j <= k; j++) {
             int oldBuy = buy[j];
+            int oldSell = sell[j];
+            
             int newBuy = prevSell - prices[i];
             buy[j] = buy[j] > newBuy ? buy[j] : newBuy;
-
+            
             int newSell = oldBuy + prices[i];
             sell[j] = sell[j] > newSell ? sell[j] : newSell;
-
-            prevSell = sell[j];
+            
+            prevSell = oldSell;
         }
     }
 

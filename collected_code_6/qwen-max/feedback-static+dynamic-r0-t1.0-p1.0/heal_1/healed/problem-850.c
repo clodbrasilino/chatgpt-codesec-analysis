@@ -3,6 +3,7 @@
 #include <limits.h>
 
 bool canFormTriangle(int a, int b, int c) {
+    if (a > INT_MAX - b || a > INT_MAX - c || b > INT_MAX - c) return false;
     return (a + b + c == 180) && (a > 0) && (b > 0) && (c > 0);
 }
 

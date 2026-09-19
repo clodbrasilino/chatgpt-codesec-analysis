@@ -30,7 +30,7 @@ int* add_consecutive_numbers(const int* list, size_t length, size_t* out_length)
     }
 
     for (size_t i = 0; i < *out_length; i++) {
-        result[i] = list[i] + list[i + 1];
+        result[i] = (int)((unsigned int)list[i] + (unsigned int)list[i + 1]);
     }
 
     return result;
@@ -47,7 +47,7 @@ int main(void) {
     }
 
     int num;
-    while (!feof(stdin)) {
+    while (1) {
         if (scanf("%d", &num) == 1) {
             if (length == capacity) {
                 capacity *= 2;
@@ -61,8 +61,7 @@ int main(void) {
             }
             list[length++] = num;
         } else {
-            int ch = getchar();
-            if (ch == EOF) {
+            if (getchar() == EOF) {
                 break;
             }
         }

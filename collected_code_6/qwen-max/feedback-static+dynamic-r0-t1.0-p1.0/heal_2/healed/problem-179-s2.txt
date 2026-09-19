@@ -5,9 +5,9 @@
 #include <string.h>
 #include <limits.h>
 
-int* generate_initial_terms(long n, int *len) {
+int* generate_initial_terms(int n, int *len) {
     char s[20];
-    sprintf(s, "%ld", n);
+    sprintf(s, "%d", n);
     *len = strlen(s);
     int* terms = (int*)malloc(*len * sizeof(int));
     for (int i = 0; i < *len; i++) {
@@ -16,7 +16,7 @@ int* generate_initial_terms(long n, int *len) {
     return terms;
 }
 
-bool is_keith_number(long n) {
+bool is_keith_number(int n) {
     int len;
     int* terms = generate_initial_terms(n, &len);
     if (n < 10) {
@@ -24,35 +24,37 @@ bool is_keith_number(long n) {
         return false;
     }
 
-    long sum = 0;
-    while (true) {
-        sum = 0;
+    while (1) {
+        int sum = 0;
         for (int i = 0; i < len; i++) {
-            sum += terms[i];
-            if (sum > n) {
+            if (sum > INT_MAX - terms[i]) {
                 free(terms);
                 return false;
             }
+            sum += terms[i];
         }
-        if (sum == n) {
+        if (sum > n) {
+            free(terms);
+            return false;
+        } else if (sum == n) {
             free(terms);
             return true;
         }
         for (int i = 0; i < len - 1; ++i) {
             terms[i] = terms[i + 1];
         }
-        terms[len - 1] = (int)sum;
+        terms[len - 1] = sum;
     }
 }
 
 int main() {
-    long num;
+    int num;
     printf("Enter a number: ");
-    scanf("%ld", &num);
+    scanf("%d", &num);
     if (is_keith_number(num)) {
-        printf("%ld is a Keith Number.\n", num);
+        printf("%d is a Keith Number.\n", num);
     } else {
-        printf("%ld is not a Keith Number.\n", num);
+        printf("%d is not a Keith Number.\n", num);
     }
     return 0;
 }

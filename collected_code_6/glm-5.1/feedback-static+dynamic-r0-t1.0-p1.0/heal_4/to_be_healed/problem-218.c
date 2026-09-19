@@ -1,22 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int abs_val(int x) {
     return x < 0 ? -x : x;
 }
  /* Possible weaknesses found:
   *  test case 0 failed: expected 1, got 2
-  *  test case 1 failed: expected 4, got 6
+  *  test case 2 failed: expected 3, got 2
+  *  test case 1 failed: expected 4, got 3
   */
 
 int min_operations(int a, int b) {
     if (a < 0 || b < 0) {
-        return -1;
+        return abs_val(a - b);
     }
-    return abs_val(a - b);
+    int diff = a ^ b;
+    int count = 0;
+    while (diff) {
+        count += diff & 1;
+        diff >>= 1;
+    }
+    return count;
 }
 
-int main(int argc, char const * const argv[]) {
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *const argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <num1> <num2>\n", argv[0]);
         return EXIT_FAILURE;
@@ -26,7 +37,7 @@ int main(int argc, char const * const argv[]) {
     long val1 = strtol(argv[1], &endptr1, 10);
     long val2 = strtol(argv[2], &endptr2, 10);
 
-    if (*endptr1 != '\0' || *endptr2 != '\0' || val1 < 0 || val2 < 0) {
+    if (*endptr1 != '\0' || *endptr2 != '\0' || val1 < 0 || val2 < 0 || val1 > INT_MAX || val2 > INT_MAX) {
         fprintf(stderr, "Error: Invalid input. Positive integers required.\n");
         return EXIT_FAILURE;
     }

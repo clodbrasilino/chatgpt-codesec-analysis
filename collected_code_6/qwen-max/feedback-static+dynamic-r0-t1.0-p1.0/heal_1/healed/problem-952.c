@@ -20,27 +20,32 @@ long long modInverse(long long n, long long p) {
 long long ncrModP(int n, int r, int p) {
     if (r == 0)
         return 1;
-
+    
     long long fac[n + 1];
     fac[0] = 1;
     for (int i = 1; i <= n; i++)
         fac[i] = (fac[i - 1] * i) % p;
-
-    return (fac[n] * modInverse(fac[r], p) % p * modInverse(fac[n - r], p)) % p;
+    
+    return (fac[n] * modInverse(fac[r], p) % p * modInverse(fac[n - r], p) % p) % p;
 }
 
 int main() {
     int n, r, p;
     printf("Enter the values of n, r, and p: ");
     scanf("%d %d %d", &n, &r, &p);
-
-    if (n < 0 || r < 0 || p <= 1) {
+    
+    if (n < 0 || r < 0 || p <= 0) {
         printf("Invalid input\n");
         return 1;
     }
-
+    
+    if (r > n) {
+        printf("r should be less than or equal to n\n");
+        return 1;
+    }
+    
     long long result = ncrModP(n, r, p);
     printf("Value of C(%d, %d) %d is %lld\n", n, r, p, result);
-
+    
     return 0;
 }

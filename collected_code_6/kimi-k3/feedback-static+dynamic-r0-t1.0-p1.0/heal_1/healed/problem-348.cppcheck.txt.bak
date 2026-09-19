@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:27:28: style: Condition 'num_values!=0' is always true [knownConditionTrueFalse]
+            if (num_values != 0 && result > 9000000000000000000LL / num_values) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:15:20: note: Assuming condition 'num_values==0' is false
+    if (num_values == 0) return 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:27:28: note: Condition 'num_values!=0' is always true
+            if (num_values != 0 && result > 9000000000000000000LL / num_values) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:39:21: style: Condition 'min_val<0' is always true [knownConditionTrueFalse]
+        if (min_val < 0) min_reach += min_val;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:24:17: note: Assuming that condition 'min_val>=0' is not redundant
+    if (min_val >= 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-348.c:39:21: note: Condition 'min_val<0' is always true
+        if (min_val < 0) min_reach += min_val;
+                    ^

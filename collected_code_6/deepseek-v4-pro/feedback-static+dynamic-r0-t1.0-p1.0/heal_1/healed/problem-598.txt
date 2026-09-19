@@ -12,17 +12,28 @@ int is_armstrong(int number) {
     }
 
     original = number;
-
     while (original != 0) {
         original /= 10;
         digits++;
     }
 
     original = number;
-
     while (original != 0) {
         int remainder = original % 10;
-        result += (int)pow(remainder, digits);
+        long long power = 1;
+        int i;
+        
+        for (i = 0; i < digits; i++) {
+            power *= remainder;
+            if (power > 2147483647LL) {
+                return 0;
+            }
+        }
+        
+        if (result > 2147483647 - (int)power) {
+            return 0;
+        }
+        result += (int)power;
         original /= 10;
     }
 

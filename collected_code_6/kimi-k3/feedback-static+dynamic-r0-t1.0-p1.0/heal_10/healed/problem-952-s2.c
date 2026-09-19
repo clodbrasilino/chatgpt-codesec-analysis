@@ -14,6 +14,39 @@ static uint64_t power(uint64_t base, uint64_t exp, uint64_t mod) {
     return res;
 }
 
+static uint64_t gcd(uint64_t a, uint64_t b) {
+    while (b != 0) {
+        uint64_t t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+static uint64_t extendedGcd(uint64_t a, uint64_t b, int64_t *x, int64_t *y) {
+    if (a == 0) {
+        *x = 0;
+        *y = 1;
+        return b;
+    }
+    int64_t x1, y1;
+    uint64_t g = extendedGcd(b % a, a, &x1, &y1);
+    __int128 t = (__int128)y1 - (__int128)(b / a) * (__int128)x1;
+    int64_t m = (int64_t)b;
+    *x = (int64_t)(t % m);
+    if (*x < 0) *x += m;
+    *y = x1;
+    return g;
+}
+
+static uint64_t modInverse(uint64_t n, uint64_t mod) {
+    if (mod == 1) return 0;
+    if (gcd(n, mod) != 1) return 0;
+    int64_t x, y;
+    extendedGcd(n, mod, &x, &y);
+    return (uint64_t)x;
+}
+
 static uint64_t nCrModP(uint64_t n, uint64_t r, uint64_t p) {
     if (p <= 1) return 0;
     if (r > n) return 0;
@@ -27,12 +60,16 @@ static uint64_t nCrModP(uint64_t n, uint64_t r, uint64_t p) {
 
         res = (uint64_t)((__uint128_t)res * num % p);
 
-        if (den == 0) {
+        if (den != 0) {
+            uint64_t inv = modInverse(den, p);
+            if (inv != 0) {
+                res = (uint64_t)((__uint128_t)res * inv % p);
+            } else {
+                return 0;
+            }
+        } else {
             return 0;
         }
-
-        uint64_t inv = power(den, p - 2, p);
-        res = (uint64_t)((__uint128_t)res * inv % p);
     }
 
     return res;

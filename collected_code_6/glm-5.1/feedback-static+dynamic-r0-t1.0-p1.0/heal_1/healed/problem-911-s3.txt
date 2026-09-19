@@ -80,19 +80,15 @@ int maximumProduct(const int *nums, int numsSize) {
         if (max_size < 3) {
             push_max(max_heap, &max_size, nums[i]);
         } else {
-            if (nums[i] > -max_heap[0]) {
-                pop_max(max_heap, &max_size);
-                push_max(max_heap, &max_size, nums[i]);
-            }
+            push_max(max_heap, &max_size, nums[i]);
+            pop_max(max_heap, &max_size);
         }
 
         if (min_size < 2) {
             push_min(min_heap, &min_size, nums[i]);
         } else {
-            if (nums[i] < min_heap[0]) {
-                pop_min(min_heap, &min_size);
-                push_min(min_heap, &min_size, nums[i]);
-            }
+            push_min(min_heap, &min_size, nums[i]);
+            pop_min(min_heap, &min_size);
         }
     }
 

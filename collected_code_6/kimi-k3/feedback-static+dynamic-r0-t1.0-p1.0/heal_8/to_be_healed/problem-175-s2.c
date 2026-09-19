@@ -62,13 +62,5 @@ int main(void)
         i++;
     }
 
-    const char *null_test = NULL;
-    /* Possible weaknesses found:
-     *  Condition 'is_valid_parentheses(null_test)' is always false [knownConditionTrueFalse]
-     *  Condition 'is_valid_parentheses(null_test)' is always false
-     *  Calling function 'is_valid_parentheses' returns 0
-     */
-    printf("Input: NULL -> %s\n", is_valid_parentheses(null_test) ? "Valid" : "Invalid");
-
     return 0;
 }

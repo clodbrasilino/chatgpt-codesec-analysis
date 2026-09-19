@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <stdint.h>
 
 typedef long long ll;
 
@@ -9,6 +11,36 @@ static ll *dp_new;
 static int *values;
 static int num_values;
 static ll min_val, max_val;
+
+static int checked_add_ll(ll a, ll b, ll *result) {
+    if (a > 0 && b > LLONG_MAX - a) return 0;
+    if (a < 0 && b < LLONG_MIN - a) return 0;
+    *result = a + b;
+    return 1;
+}
+
+static int checked_mul_ll(ll a, ll b, ll *result) {
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return 1;
+    }
+    if (a == LLONG_MIN || b == LLONG_MIN) return 0;
+    if (a > 0) {
+        if (b > 0) {
+            if (a > LLONG_MAX / b) return 0;
+        } else {
+            if (b < LLONG_MIN / a) return 0;
+        }
+    } else {
+        if (b > 0) {
+            if (a < LLONG_MIN / b) return 0;
+        } else {
+            if (a < LLONG_MAX / b) return 0;
+        }
+    }
+    *result = a * b;
+    return 1;
+}
 
 ll count_sequences(int length) {
     if (length <= 0) return 0;
@@ -24,10 +56,9 @@ ll count_sequences(int length) {
     if (min_val >= 0) {
         ll result = 1;
         for (int i = 0; i < length; i++) {
-            if (num_values != 0 && result > 9000000000000000000LL / num_values) {
+            if (!checked_mul_ll(result, (ll)num_values, &result)) {
                 return -1;
             }
-            result *= num_values;
         }
         return result;
     }
@@ -35,12 +66,31 @@ ll count_sequences(int length) {
     ll max_reach = 0;
     ll min_reach = 0;
     for (int i = 0; i < length; i++) {
-        if (max_val > 0) max_reach += max_val;
-        if (min_val < 0) min_reach += min_val;
+        if (max_val > 0) {
+            if (!checked_add_ll(max_reach, max_val, &max_reach)) {
+                return -1;
+            }
+        }
+        if (min_val < 0) {
+            if (!checked_add_ll(min_reach, min_val, &min_reach)) {
+                return -1;
+            }
+        }
     }
     
-    ll offset = -min_reach;
-    ll size = max_reach - min_reach + 1;
+    ll offset;
+    if (!checked_add_ll(-min_reach, 0, &offset)) {
+        return -1;
+    }
+    
+    ll size;
+    ll diff;
+    if (!checked_add_ll(max_reach, -min_reach, &diff)) {
+        return -1;
+    }
+    if (!checked_add_ll(diff, 1, &size)) {
+        return -1;
+    }
     
     if (size <= 0 || size > 100000000) return -1;
     
@@ -59,19 +109,34 @@ ll count_sequences(int length) {
     for (int pos = 0; pos < length; pos++) {
         memset(dp_new, 0, (size_t)size * sizeof(ll));
         
-        for (ll sum = min_reach; sum <= max_reach; sum++) {
-            ll idx = sum + offset;
+        for (ll sum = 0; sum <= max_reach; sum++) {
+            ll idx;
+            if (!checked_add_ll(sum, offset, &idx)) {
+                continue;
+            }
             if (idx < 0 || idx >= size) continue;
             if (dp[idx] == 0) continue;
             
             for (int v = 0; v < num_values; v++) {
-                ll new_sum = sum + values[v];
-                if (new_sum < min_reach) continue;
+                ll new_sum;
+                if (!checked_add_ll(sum, (ll)values[v], &new_sum)) {
+                    continue;
+                }
+                if (new_sum < 0) continue;
                 if (new_sum > max_reach) continue;
                 
-                ll new_idx = new_sum + offset;
+                ll new_idx;
+                if (!checked_add_ll(new_sum, offset, &new_idx)) {
+                    continue;
+                }
                 if (new_idx >= 0 && new_idx < size) {
-                    dp_new[new_idx] += dp[idx];
+                    if (!checked_add_ll(dp_new[new_idx], dp[idx], &dp_new[new_idx])) {
+                        free(dp);
+                        free(dp_new);
+                        dp = NULL;
+                        dp_new = NULL;
+                        return -1;
+                    }
                 }
             }
         }
@@ -82,10 +147,19 @@ ll count_sequences(int length) {
     }
     
     ll total = 0;
-    for (ll sum = min_reach; sum <= max_reach; sum++) {
-        ll idx = sum + offset;
+    for (ll sum = 0; sum <= max_reach; sum++) {
+        ll idx;
+        if (!checked_add_ll(sum, offset, &idx)) {
+            continue;
+        }
         if (idx >= 0 && idx < size) {
-            total += dp[idx];
+            if (!checked_add_ll(total, dp[idx], &total)) {
+                free(dp);
+                free(dp_new);
+                dp = NULL;
+                dp_new = NULL;
+                return -1;
+            }
         }
     }
     

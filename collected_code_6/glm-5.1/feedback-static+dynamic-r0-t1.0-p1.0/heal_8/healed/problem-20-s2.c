@@ -7,17 +7,31 @@ bool is_woodall(unsigned long long n) {
         return false;
     }
 
-    for (unsigned long long i = 1; i < 64; i++) {
-        if (i > n) {
-            break;
-        }
-        unsigned long long term = (1ULL << i) - 1;
+    unsigned long long power_of_two = 1;
+    unsigned long long i = 1;
+
+    while (1) {
+        unsigned long long term = power_of_two - 1;
+
         if (term > n / i) {
             break;
         }
-        if (i * term == n) {
+
+        unsigned long long w = i * term;
+        
+        if (w == n) {
             return true;
         }
+        
+        if (w > n) {
+            break;
+        }
+
+        i++;
+        if (power_of_two > UINT64_MAX / 2) {
+            break;
+        }
+        power_of_two <<= 1;
     }
 
     return false;
@@ -31,9 +45,9 @@ int main(void) {
     }
 
     if (is_woodall(num)) {
-        printf("True\n");
+        printf("Yes\n");
     } else {
-        printf("False\n");
+        printf("No\n");
     }
 
     return 0;

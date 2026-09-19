@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-int find_product_of_non_repeated_elements(const int arr[], int n) {
-    int product = 1;
+long long find_product_of_non_repeated_elements(const int arr[], int n) {
+    long long product = 1;
     int found = 0;
     int i, j;
     
@@ -18,6 +19,9 @@ int find_product_of_non_repeated_elements(const int arr[], int n) {
             }
         }
         if (count == 1) {
+            if (arr[i] != 0 && llabs(product) > LLONG_MAX / llabs((long long)arr[i])) {
+                return 0;
+            }
             product *= arr[i];
             found = 1;
         }
@@ -30,10 +34,10 @@ int find_product_of_non_repeated_elements(const int arr[], int n) {
     return product;
 }
 
-int main() {
+int main(void) {
     int n, i;
     int *arr;
-    int result;
+    long long result;
     
     printf("Enter the number of elements: ");
     if (scanf("%d", &n) != 1) {
@@ -46,7 +50,7 @@ int main() {
         return EXIT_FAILURE;
     }
     
-    arr = (int *)malloc(n * sizeof(int));
+    arr = (int *)malloc((size_t)n * sizeof(int));
     if (arr == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;
@@ -62,7 +66,7 @@ int main() {
     }
     
     result = find_product_of_non_repeated_elements(arr, n);
-    printf("Product of non-repeated elements: %d\n", result);
+    printf("Product of non-repeated elements: %lld\n", result);
     
     free(arr);
     

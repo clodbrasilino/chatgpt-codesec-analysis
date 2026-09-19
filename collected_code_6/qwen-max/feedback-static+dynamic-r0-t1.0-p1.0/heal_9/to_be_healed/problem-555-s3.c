@@ -4,45 +4,39 @@
 #include <limits.h>
 
 long long sum_of_cubes(long n) {
-    if (n > 0x1FFFFF || n < -0x1FFFFF) return 0;
     /* Possible weaknesses found:
-     *  Assuming that condition 'n>0' is not redundant
+     * UBSan: signed integer overflow: 22222222222222 * 22222222222222 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:150,execs:132,op:havoc,rep:4)
      */
-    if (n > 0 && LLONG_MAX / n < n * (n + 1)) return 0;
-    if (n < 0 && LLONG_MIN / n > n * (n + 1)) return 0;
+    if (n > 0 && (unsigned long long)n * n * n > ULLONG_MAX / (n * n)) return 0;
     /* Possible weaknesses found:
-     *  temp is assigned '(n*(n+1))/2' here.
+     *  Same expression in both branches of ternary operator. [duplicateExpressionTernary]
      */
-    int64_t temp = (n * (n + 1)) / 2;
-    int64_t temp_sq = temp * temp;
-    /* Possible weaknesses found:
-     *  Either the condition 'n>0' is redundant or there is division by zero at line 12. [zerodivcond]
-     *  Division by zero
-     */
-    if (temp_sq / temp != temp) return 0;
-    return temp_sq;
+    unsigned long long result = (unsigned long long)n * ((n + 1) % 2 ? (n + 1) / 2 : (n + 1) / 2);
+    if (result * result > ULLONG_MAX) return 0;
+    return (long long)(result * result);
 }
 
 long long sum_of_numbers(long n) {
-    if (n > 0x1FFFFF || n < -0x1FFFFF) return 0;
-    if (n > 0 && LLONG_MAX / n < 2) return 0;
-    if (n < 0 && LLONG_MIN / n > 2) return 0;
-    int64_t temp = n * (n + 1);
-    return temp / 2;
-}
-
-long long difference(long n) {
-    return sum_of_cubes(n) - sum_of_numbers(n);
+    if (n > 0 && (unsigned long long)n * (n + 1) > ULLONG_MAX / 2) return 0;
+    unsigned long long result = (unsigned long long)n * (n + 1) / 2;
+    return (long long)result;
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000004,time:1130,execs:488,op:quick,pos:6; likely memory-safety defect
+  *  test case 2 failed: expected 6, got 1
   */
+
+long long difference(long n) {
+    long long cubes = sum_of_cubes(n);
+    long long numbers = sum_of_numbers(n);
+    if (cubes < 0 || numbers < 0) return 0;
+    return cubes - numbers;
+}
 
 int main() {
     long n;
     printf("Enter a natural number: ");
     if (scanf("%ld", &n) != 1 || n < 1) {
-        printf("Invalid input. Please enter a valid natural number.\n");
+        printf("Please enter a valid natural number.\n");
         return 1;
     }
 

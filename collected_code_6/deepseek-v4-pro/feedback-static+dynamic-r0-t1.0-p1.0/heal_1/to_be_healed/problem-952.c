@@ -18,9 +18,9 @@ long long mod_inverse(long long a, long long mod) {
     return mod_pow(a, mod - 2, mod);
 }
  /* Possible weaknesses found:
+  *  test case 0 failed: expected 6, got <no output>
   *  test case 1 failed: expected 11, got <no output>
   *  test case 2 failed: expected 1, got <no output>
-  *  test case 0 failed: expected 6, got <no output>
   */
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -62,6 +62,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     free(fact);
     return result;
 }
+ /* Possible weaknesses found:
+  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:1336,execs:907,op:havoc,rep:10; likely memory-safety defect
+  */
 
 int main(void) {
     long long n, r, p;

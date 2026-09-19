@@ -32,9 +32,6 @@ WordNode *create_node(const char *word) {
 }
 
 void free_table(WordNode *table[]) {
-    if (table == NULL) {
-        return;
-    }
     for (int i = 0; i < HASH_SIZE; i++) {
         WordNode *current = table[i];
         while (current != NULL) {
@@ -124,6 +121,9 @@ char *find_first_repeated_word(const char *str) {
 
 int main() {
     const char *test_strings[] = {
+        "ab cd ab",
+        "ab",
+        "ca bc ca",
         "This is a test. This is only a test.",
         "Hello world, hello again.",
         "One two three four five.",
@@ -137,12 +137,11 @@ int main() {
     
     for (int i = 0; test_strings[i] != NULL; i++) {
         char *result = find_first_repeated_word(test_strings[i]);
-        printf("String: \"%s\"\n", test_strings[i]);
         if (result != NULL) {
-            printf("First repeated word: \"%s\"\n\n", result);
+            printf("%s\n", result);
             free(result);
         } else {
-            printf("No repeated word found.\n\n");
+            printf("None\n");
         }
     }
     

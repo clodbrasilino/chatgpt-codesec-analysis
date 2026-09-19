@@ -36,9 +36,9 @@ void free_list(WordNode *head) {
     }
 }
  /* Possible weaknesses found:
+  *  test case 2 failed: expected ['red', 'green', 'black', 'orange'], got <no output>
   *  test case 1 failed: expected ['red', 'green', 'blue', 'white'], got <no output>
   *  test case 0 failed: expected ['red', 'green', 'blue', 'black'], got <no output>
-  *  test case 2 failed: expected ['red', 'green', 'black', 'orange'], got <no output>
   */
 
 WordNode *remove_words(WordNode *head, const char *word_to_remove) {

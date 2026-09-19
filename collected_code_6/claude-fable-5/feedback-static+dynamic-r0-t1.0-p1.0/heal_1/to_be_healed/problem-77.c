@@ -13,6 +13,9 @@ int digit_sum_difference(long long number)
     int digit;
 
     if (number < 0) {
+        /* Possible weaknesses found:
+         * UBSan: negation of -9223372036854775808 cannot be represented in type 'long long'; cast to an unsigned type to negate this value to itself (AFL crash: id:000000,sig:06,src:000013,time:22498,execs:13469,op:havoc,rep:2)
+         */
         number = -number;
     }
 

@@ -1,6 +1,1 @@
-problem-952-s3.c:12:30:medium:UBSan: signed integer overflow: 2092278988800 * 921833811563734 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:10067,execs:1058,op:havoc,rep:2)
-problem-952-s3.c:12:30:medium:UBSan: signed integer overflow: -473757321698767304 * 746804357905423880 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000002,sig:06,src:000003,time:20207,execs:2304,op:havoc,rep:2)
-problem-952-s3.c:14:22:medium:UBSan: signed integer overflow: 2092278988800 * 2092278988800 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:10067,execs:1058,op:havoc,rep:2)
-problem-952-s3.c:47:33:medium:UBSan: signed integer overflow: 846818150172445 * -117810392366831 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000003,time:10067,execs:1058,op:havoc,rep:2)
-problem-952-s3.c:47:33:medium:UBSan: signed integer overflow: 6402373705728000 * -1642026773015922312 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000002,sig:06,src:000003,time:20207,execs:2304,op:havoc,rep:2)
-problem-952-s3.c:52:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000003,time:998,execs:336,op:havoc,rep:2; likely memory-safety defect
+problem-952-s3.c:0:0: info: fuzzed - no sanitizer findings

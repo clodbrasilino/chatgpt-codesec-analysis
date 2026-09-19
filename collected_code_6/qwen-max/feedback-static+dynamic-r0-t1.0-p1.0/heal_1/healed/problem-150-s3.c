@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
 bool is_in_sequence(int n) {
     int a = 0, b = 1;
     while (a <= n) {
         if (a == n) return true;
-        int c = a + b;
+        int next = a + b;
+        if (next < 0 || next > INT_MAX) break;
         a = b;
-        b = c;
+        b = next;
     }
     return false;
 }

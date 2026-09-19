@@ -77,6 +77,11 @@ int map_get(PairNode **map, int size, int a, int b) {
     }
     return 0;
 }
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 1, got 5
+  *  test case 0 failed: expected 4, got 5
+  *  test case 1 failed: expected 11, got 132
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'list1' can be declared as pointer to const [constParameterPointer]

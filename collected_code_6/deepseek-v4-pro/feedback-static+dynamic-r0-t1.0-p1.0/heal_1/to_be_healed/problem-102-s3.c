@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
-  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
-  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
   */
 
 char *snake_to_camel(const char *snake) {
@@ -105,13 +105,13 @@ int main(void) {
     }
 
     /* Possible weaknesses found:
-     *  Assignment 'result=snake_to_camel(NULL)', assigned value is 0
      *  Calling function 'snake_to_camel' returns 0
+     *  Assignment 'result=snake_to_camel(NULL)', assigned value is 0
      */
     result = snake_to_camel(NULL);
     /* Possible weaknesses found:
-     *  Condition 'result!=NULL' is always false
      *  Condition 'result!=NULL' is always false [knownConditionTrueFalse]
+     *  Condition 'result!=NULL' is always false
      */
     if (result != NULL) {
         printf("NULL -> %s\n", result);

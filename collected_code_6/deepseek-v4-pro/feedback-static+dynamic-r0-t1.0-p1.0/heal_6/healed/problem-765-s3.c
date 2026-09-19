@@ -2,13 +2,12 @@
 #include <stdlib.h>
 
 int is_polite(unsigned int n) {
-    return (n & (n - 1)) != 0 && n != 0;
+    if (n == 0) return 0;
+    return (n & (n - 1)) != 0;
 }
 
 unsigned int nth_polite(unsigned int n) {
-    if (n == 0) {
-        return 0;
-    }
+    if (n == 0) return 0;
     unsigned int count = 0;
     unsigned int num = 1;
     while (1) {

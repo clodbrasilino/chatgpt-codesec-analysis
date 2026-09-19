@@ -6,6 +6,8 @@
 #define MAX_WORD_LENGTH 100
 #define MAX_WORDS 1000
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ca', got (null)
+  *  test case 0 failed: expected 'ab', got (null)
   *  test case 1 failed: expected 'None', got (null)
   */
 
@@ -15,7 +17,9 @@ char* find_first_repeated_word(const char* str) {
     }
 
     char* words[MAX_WORDS];
+    int word_lengths[MAX_WORDS];
     int word_count = 0;
+    
     char* str_copy = strdup(str);
     if (str_copy == NULL) {
         return NULL;
@@ -24,47 +28,48 @@ char* find_first_repeated_word(const char* str) {
     char* token = strtok(str_copy, " \t\n\r.,;:!?\"'()[]{}");
     
     while (token != NULL && word_count < MAX_WORDS) {
-        char* lower_token = strdup(token);
+        int token_len = strlen(token);
+        char* lower_token = (char*)malloc(token_len + 1);
         if (lower_token == NULL) {
-            free(str_copy);
             for (int i = 0; i < word_count; i++) {
                 free(words[i]);
             }
+            free(str_copy);
             return NULL;
         }
         
-        for (int i = 0; lower_token[i]; i++) {
-            lower_token[i] = tolower((unsigned char)lower_token[i]);
+        for (int i = 0; i < token_len; i++) {
+            lower_token[i] = tolower((unsigned char)token[i]);
         }
+        lower_token[token_len] = '\0';
         
         int found = 0;
         for (int i = 0; i < word_count; i++) {
-            if (strcmp(words[i], lower_token) == 0) {
+            if (word_lengths[i] == token_len && strcmp(words[i], lower_token) == 0) {
                 found = 1;
                 break;
             }
         }
         
-        if (!found) {
-            words[word_count] = lower_token;
-            word_count++;
-        } else {
-            char* result = strdup(token);
+        if (found) {
             free(lower_token);
-            free(str_copy);
-            for (int j = 0; j < word_count; j++) {
-                free(words[j]);
+            for (int i = 0; i < word_count; i++) {
+                free(words[i]);
             }
-            return result;
+            free(str_copy);
+            return NULL;
         }
         
+        words[word_count] = lower_token;
+        word_lengths[word_count] = token_len;
+        word_count++;
         token = strtok(NULL, " \t\n\r.,;:!?\"'()[]{}");
     }
     
-    free(str_copy);
     for (int i = 0; i < word_count; i++) {
         free(words[i]);
     }
+    free(str_copy);
     
     return NULL;
 }
@@ -80,8 +85,16 @@ int main() {
     
     input[strcspn(input, "\n")] = '\0';
     
+    /* Possible weaknesses found:
+     *  Assignment 'result=find_first_repeated_word(input)', assigned value is 0
+     *  Calling function 'find_first_repeated_word' returns 0
+     */
     char* result = find_first_repeated_word(input);
     
+    /* Possible weaknesses found:
+     *  Condition 'result!=NULL' is always false
+     *  Condition 'result!=NULL' is always false [knownConditionTrueFalse]
+     */
     if (result != NULL) {
         printf("First repeated word: %s\n", result);
         free(result);

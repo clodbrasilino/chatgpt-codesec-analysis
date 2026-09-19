@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 int **allocate_magic_square(int n) {
     int **square = NULL;
     int i;
     
-    if (n <= 0 || n % 2 == 0) {
+    if (n <= 0 || n % 2 == 0 || n > 1000) {
         return NULL;
     }
     
@@ -48,7 +49,7 @@ int generate_magic_square(int **square, int n) {
     int i, j;
     int num;
     
-    if (square == NULL || n <= 0 || n % 2 == 0) {
+    if (square == NULL || n <= 0 || n % 2 == 0 || n > 1000) {
         return -1;
     }
     
@@ -56,8 +57,7 @@ int generate_magic_square(int **square, int n) {
     j = n / 2;
     
     for (num = 1; num <= n * n; num++) {
-        int row;
-        int col;
+        int row, col;
         
         square[i][j] = num;
         
@@ -103,8 +103,8 @@ int main(void) {
         return EXIT_FAILURE;
     }
     
-    if (n <= 0 || n % 2 == 0) {
-        fprintf(stderr, "Error: Size must be a positive odd integer\n");
+    if (n <= 0 || n % 2 == 0 || n > 1000) {
+        fprintf(stderr, "Error: Size must be a positive odd integer (max 1000)\n");
         return EXIT_FAILURE;
     }
     

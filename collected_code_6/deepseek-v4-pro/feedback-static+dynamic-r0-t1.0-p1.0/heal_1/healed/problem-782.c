@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int sumOddLengthSubarrays(const int* arr, int n) {
-    int total = 0;
+    long long total = 0;
     for (int i = 0; i < n; i++) {
         int left = i + 1;
         int right = n - i;
@@ -10,9 +11,9 @@ int sumOddLengthSubarrays(const int* arr, int n) {
         int rightOdd = (right + 1) / 2;
         int leftEven = left / 2;
         int rightEven = right / 2;
-        total += arr[i] * (leftOdd * rightOdd + leftEven * rightEven);
+        total += (long long)arr[i] * ((long long)leftOdd * rightOdd + (long long)leftEven * rightEven);
     }
-    return total;
+    return (int)total;
 }
 
 int main(void) {

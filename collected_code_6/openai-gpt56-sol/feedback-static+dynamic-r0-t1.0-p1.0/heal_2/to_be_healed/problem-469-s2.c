@@ -18,6 +18,9 @@ static int64_t max_profit(const int64_t *prices, size_t count, size_t k)
 
         for (size_t i = 1U; i < count; ++i) {
             if (prices[i] > prices[i - 1U]) {
+                /* Possible weaknesses found:
+                 * UBSan: signed integer overflow: 455555555551 + 9223372036854775802 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000007,time:23990,execs:15285,op:havoc,rep:4)
+                 */
                 profit += prices[i] - prices[i - 1U];
             }
         }

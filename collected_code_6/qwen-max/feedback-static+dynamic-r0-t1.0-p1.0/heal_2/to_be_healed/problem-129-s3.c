@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 void initializeMagicSquare(int n, int square[][10]) {
     for (int i = 0; i < n; ++i) {
@@ -8,7 +10,11 @@ void initializeMagicSquare(int n, int square[][10]) {
     }
 }
 
-int isMagicSquare(int n, int square[][10]) {
+bool isMagicSquare(int n, int square[][10]) {
+    /* Possible weaknesses found:
+     * UBSan: signed integer overflow: -1674115755 * -1674115755 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:933,execs:891,op:havoc,rep:4)
+     */
+    int64_t expectedSum = (int64_t)n * (n * n + 1) / 2;
     int sumDiag1 = 0, sumDiag2 = 0;
 
     for (int i = 0; i < n; ++i) {
@@ -17,25 +23,21 @@ int isMagicSquare(int n, int square[][10]) {
             rowSum += square[i][j];
             colSum += square[j][i];
         }
-        if (rowSum != n * (n * n + 1) / 2 || colSum != n * (n * n + 1) / 2) {
-            return 0;
+        if (rowSum != expectedSum || colSum != expectedSum) {
+            return false;
         }
         sumDiag1 += square[i][i];
         sumDiag2 += square[i][n - 1 - i];
     }
 
-    /* Possible weaknesses found:
-     * UBSan: signed integer overflow: -1000737679 * -403072542 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000004,time:7590,execs:3457,op:havoc,rep:12)
-     * UBSan: signed integer overflow: -1000737679 * -1000737679 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000004,time:7590,execs:3457,op:havoc,rep:12)
-     */
-    return (sumDiag1 == n * (n * n + 1) / 2 && sumDiag2 == n * (n * n + 1) / 2);
+    return (sumDiag1 == expectedSum && sumDiag2 == expectedSum);
 }
 
 void generateMagicSquare(int n, int square[][10]) {
     initializeMagicSquare(n, square);
     int i = n / 2, j = n - 1;
     /* Possible weaknesses found:
-     * UBSan: signed integer overflow: -1000737679 * -1000737679 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000004,time:7590,execs:3457,op:havoc,rep:12)
+     * UBSan: signed integer overflow: -1674115755 * -1674115755 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:933,execs:891,op:havoc,rep:4)
      */
     for (int num = 1; num <= n * n;) {
         if (i == -1 && j == n) {   
@@ -50,15 +52,17 @@ void generateMagicSquare(int n, int square[][10]) {
             }
         }
         /* Possible weaknesses found:
-         * UBSan: index -4 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000008,time:8550,execs:3853,op:havoc,rep:3)
+         * UBSan: index -10 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000006,time:3938,execs:3681,op:havoc,rep:4)
+         * UBSan: index -4 out of bounds for type 'int[10]' (AFL crash: id:000003,sig:06,src:000007,time:10039,execs:8950,op:havoc,rep:2)
          */
-        if (square[i][j]) {
+        if (square[i][j] != 0) {
             j -= 2;
             i++;
             continue;
         } else {
             /* Possible weaknesses found:
-             * UBSan: index -28 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000008,time:8550,execs:3853,op:havoc,rep:3)
+             * UBSan: index -12 out of bounds for type 'int[10]' (AFL crash: id:000002,sig:06,src:000006,time:3938,execs:3681,op:havoc,rep:4)
+             * UBSan: index -28 out of bounds for type 'int[10]' (AFL crash: id:000003,sig:06,src:000007,time:10039,execs:8950,op:havoc,rep:2)
              */
             square[i][j] = num++;
         }
@@ -67,7 +71,7 @@ void generateMagicSquare(int n, int square[][10]) {
     }
 }
  /* Possible weaknesses found:
-  * Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000008,time:7195,execs:3298,op:havoc,rep:1; likely memory-safety defect
+  * Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000000,time:1654,execs:1544,op:havoc,rep:11; likely memory-safety defect
   */
 
 int main() {
@@ -76,7 +80,6 @@ int main() {
     scanf("%d", &n);
 
     int magicSquare[10][10];
-
     if (n % 2 == 0 || n > 10) {
         printf("Invalid input. Size must be an odd number and less than or equal to 10.\n");
         return 1;

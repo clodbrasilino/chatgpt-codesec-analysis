@@ -3,9 +3,9 @@
 #include <string.h>
 #include <regex.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'google_assistant', got <no output>
-  *  test case 2 failed: expected 'quad_core', got <no output>
-  *  test case 1 failed: expected 'chrome_cast', got <no output>
+  *  test case 1 failed: expected 'chrome_cast', got C_h_r_o_m_e_Cast
+  *  test case 0 failed: expected 'google_assistant', got G_o_o_g_l_e_Assistant
+  *  test case 2 failed: expected 'quad_core', got Q_u_a_d_Core
   */
 
 char *camel_to_snake(const char *input) {

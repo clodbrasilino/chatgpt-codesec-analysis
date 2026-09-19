@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
+  *  test case 2 failed: expected 5, got <no output>
   *  test case 1 failed: expected 2, got <no output>
   *  test case 0 failed: expected 20, got <no output>
-  *  test case 2 failed: expected 5, got <no output>
   */
 
 size_t count_squares(int width, int height) {
@@ -12,6 +12,9 @@ size_t count_squares(int width, int height) {
     }
     size_t count = 0;
     for (int side = 1; side <= (width < height ? width : height); ++side) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 1724130190 * 2 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000003,time:1338,execs:596,op:havoc,rep:1)
+         */
         count += (width - side + 1) * (height - side + 1);
     }
     return count;

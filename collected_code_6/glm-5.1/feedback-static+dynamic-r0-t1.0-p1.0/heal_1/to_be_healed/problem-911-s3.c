@@ -64,6 +64,11 @@ int pop_max(int *heap, int *size) {
     }
     return max_val;
 }
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 414375, got 0
+  *  test case 0 failed: expected 225700, got 0
+  *  test case 2 failed: expected 2520, got 0
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'nums' can be declared as pointer to const [constParameterPointer]

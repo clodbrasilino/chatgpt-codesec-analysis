@@ -1,1 +1,16 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c:124:36: style: Condition 'pair_first==first' is always false [knownConditionTrueFalse]
+                    if (pair_first == first && pair_second == second) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c:122:36: note: pair_first is assigned 'seen[k]<other?seen[k]:other' here.
+                    int pair_first = seen[k] < other ? seen[k] : other;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c:120:29: note: Assuming that condition 'seen[k]==first' is not redundant
+                if (seen[k] == first) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c:124:36: note: Condition 'pair_first==first' is always false
+                    if (pair_first == first && pair_second == second) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-723-s2.c:121:66: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+                    int other = (seen[k] == list2[k]) ? list2[k] : list2[k];
+                                                                 ^

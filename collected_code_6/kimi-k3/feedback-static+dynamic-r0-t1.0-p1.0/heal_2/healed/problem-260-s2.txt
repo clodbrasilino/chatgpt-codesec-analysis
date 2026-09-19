@@ -37,9 +37,7 @@ long long nth_nsw_prime(int n) {
 
 int main() {
     int n;
-    if (scanf("%d", &n) != 1) {
-        return 1;
-    }
+    if (scanf("%d", &n) != 1) return 1;
     printf("%lld\n", nth_nsw_prime(n));
     return 0;
 }

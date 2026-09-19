@@ -33,14 +33,19 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    magic = (int **)malloc(n * sizeof(int *));
+    if (n > 1000) {
+        fprintf(stderr, "Size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    magic = (int **)malloc((size_t)n * sizeof(int *));
     if (magic == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;
     }
 
     for (i = 0; i < n; i++) {
-        magic[i] = (int *)calloc(n, sizeof(int));
+        magic[i] = (int *)calloc((size_t)n, sizeof(int));
         if (magic[i] == NULL) {
             fprintf(stderr, "Memory allocation failed\n");
             for (j = 0; j < i; j++) {

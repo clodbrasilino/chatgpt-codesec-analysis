@@ -2,20 +2,16 @@
 #include <stdlib.h>
 
 long long findGCD(long long a, long long b) {
-    if (a < 0) {
-        a = -a;
-    }
-    if (b < 0) {
-        b = -b;
+    unsigned long long ua = a < 0 ? -(unsigned long long)a : (unsigned long long)a;
+    unsigned long long ub = b < 0 ? -(unsigned long long)b : (unsigned long long)b;
+    
+    while (ub != 0) {
+        unsigned long long temp = ub;
+        ub = ua % ub;
+        ua = temp;
     }
     
-    while (b != 0) {
-        long long temp = b;
-        b = a % b;
-        a = temp;
-    }
-    
-    return a;
+    return (long long)ua;
 }
 
 int main(void) {

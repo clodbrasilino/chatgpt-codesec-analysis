@@ -19,6 +19,9 @@ static long long first_factorial_divisible_by(long long x)
 
     remainder = 1LL;
     for (n = 1LL; n <= x; n++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 2432902008176640000 * 21 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000000,time:552,execs:342,op:havoc,rep:15)
+         */
         remainder = (remainder * (n % x)) % x;
         if (remainder == 0LL) {
             return n;

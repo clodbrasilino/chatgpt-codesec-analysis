@@ -4,6 +4,7 @@
 long long mod_pow(long long base, long long exp, long long mod) {
     long long result = 1;
     base %= mod;
+    if (base < 0) base += mod;
     while (exp > 0) {
         if (exp & 1) {
             result = (result * base) % mod;
@@ -15,7 +16,23 @@ long long mod_pow(long long base, long long exp, long long mod) {
 }
 
 long long mod_inverse(long long a, long long mod) {
-    return mod_pow(a, mod - 2, mod);
+    long long m0 = mod, y = 0, x = 1;
+    if (mod <= 1) return 0;
+    a %= mod;
+    if (a < 0) a += mod;
+    if (a == 0) return 0;
+    while (a > 1) {
+        long long q = a / mod;
+        long long t = mod;
+        mod = a % mod;
+        a = t;
+        t = y;
+        y = x - q * y;
+        x = t;
+        if (mod == 0) return 0;
+    }
+    if (x < 0) x += m0;
+    return x;
 }
 
 long long ncr_mod_p(long long n, long long r, long long p) {
@@ -29,9 +46,13 @@ long long ncr_mod_p(long long n, long long r, long long p) {
         r = n - r;
     }
 
+    if (p <= 1) {
+        return 0;
+    }
+
     long long *fact = (long long *)malloc(p * sizeof(long long));
     if (fact == NULL) {
-        exit(1);
+        return 0;
     }
 
     fact[0] = 1;
@@ -40,19 +61,34 @@ long long ncr_mod_p(long long n, long long r, long long p) {
     }
 
     long long result = 1;
-
-    while (n > 0 || r > 0) {
-        long long ni = n % p;
-        long long ri = r % p;
+    long long tn = n, tr = r;
+    while (tn > 0 || tr > 0) {
+        long long ni = tn % p;
+        long long ri = tr % p;
         if (ri > ni) {
             free(fact);
             return 0;
         }
+        if (ri == 0 || ri == ni) {
+            tn /= p;
+            tr /= p;
+            continue;
+        }
+        long long inv1 = mod_inverse(fact[ri], p);
+        long long inv2 = mod_inverse(fact[ni - ri], p);
+        if (inv1 == 0 && fact[ri] != 0 && p > 1) {
+            free(fact);
+            return 0;
+        }
+        if (inv2 == 0 && fact[ni - ri] != 0 && p > 1) {
+            free(fact);
+            return 0;
+        }
         result = (result * fact[ni]) % p;
-        result = (result * mod_inverse(fact[ri], p)) % p;
-        result = (result * mod_inverse(fact[ni - ri], p)) % p;
-        n /= p;
-        r /= p;
+        result = (result * inv1) % p;
+        result = (result * inv2) % p;
+        tn /= p;
+        tr /= p;
     }
 
     free(fact);
@@ -62,6 +98,9 @@ long long ncr_mod_p(long long n, long long r, long long p) {
 int main(void) {
     long long n, r, p;
     if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        return 1;
+    }
+    if (p <= 1) {
         return 1;
     }
     printf("%lld\n", ncr_mod_p(n, r, p));

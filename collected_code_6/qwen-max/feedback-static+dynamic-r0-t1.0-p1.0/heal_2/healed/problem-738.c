@@ -3,7 +3,7 @@
 
 double geometric_sum(int n) {
     if (n < 0) {
-        return 0;
+        return 0.0;
     }
     if (n == 0) {
         return 1.0;
@@ -15,7 +15,10 @@ double geometric_sum(int n) {
 int main() {
     int n;
     printf("Enter an integer: ");
-    scanf("%d", &n);
-    printf("Geometric sum of %d is: %.15lf\n", n, geometric_sum(n));
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    printf("Geometric sum of %d is: %lf\n", n, geometric_sum(n));
     return 0;
 }

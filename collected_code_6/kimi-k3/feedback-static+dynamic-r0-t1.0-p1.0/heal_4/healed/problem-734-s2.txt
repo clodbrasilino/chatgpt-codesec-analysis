@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
 
 long long sumOfSubarrayProducts(const int *arr, int n) {
     if (arr == NULL || n <= 0) {
@@ -13,17 +14,31 @@ long long sumOfSubarrayProducts(const int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
-            if (arr[j] != 0 && llabs(product) > LLONG_MAX / llabs((long long)arr[j])) {
-                return LLONG_MAX;
+            long long val = (long long)arr[j];
+            
+            if (val != 0) {
+                if (val == -1 && product == LLONG_MIN) {
+                    product = LLONG_MAX;
+                } else if (product > 0 && val > 0 && product > LLONG_MAX / val) {
+                    product = LLONG_MAX;
+                } else if (product > 0 && val < 0 && product > LLONG_MIN / val) {
+                    product = LLONG_MIN;
+                } else if (product < 0 && val > 0 && product < LLONG_MIN / val) {
+                    product = LLONG_MIN;
+                } else if (product < 0 && val < 0 && product < LLONG_MAX / val) {
+                    product = LLONG_MAX;
+                } else {
+                    product *= val;
+                }
             }
-            product *= arr[j];
+            
             if (product > 0 && totalSum > LLONG_MAX - product) {
-                return LLONG_MAX;
+                totalSum = LLONG_MAX;
+            } else if (product < 0 && totalSum < LLONG_MIN - product) {
+                totalSum = LLONG_MIN;
+            } else {
+                totalSum += product;
             }
-            if (product < 0 && totalSum < LLONG_MIN - product) {
-                return LLONG_MIN;
-            }
-            totalSum += product;
         }
     }
     
@@ -38,7 +53,12 @@ int main(void) {
         return EXIT_FAILURE;
     }
     
-    int *arr = malloc(n * sizeof(int));
+    if ((size_t)n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = malloc((size_t)n * sizeof(int));
     if (arr == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return EXIT_FAILURE;

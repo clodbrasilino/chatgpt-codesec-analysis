@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+double sumOfGP(int a, int n, int r) {
+    double sum = 0;
+    if (r == 1) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -558038585 * 5 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000004,time:3841,execs:1476,op:havoc,rep:1)
+         */
+        sum = a * n;
+    } else if (r != -1 || n % 2 == 0) {
+        sum = a * (1 - pow(r, n)) / (1 - r);
+    }
+    return sum;
+}
+
+int main() {
+    int a, n, r;
+    printf("Enter the first term, number of terms, and common ratio: ");
+    if (scanf("%d %d %d", &a, &n, &r) != 3) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    double result = sumOfGP(a, n, r);
+    if (result != 0.0) {
+        printf("Sum of the geometric progression is: %.2f\n", result);
+    } else {
+        printf("Error in calculation.\n");
+    }
+    return 0;
+}

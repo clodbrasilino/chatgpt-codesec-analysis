@@ -4,17 +4,15 @@
 unsigned long long countTotalSetBits(unsigned long long n) {
     unsigned long long count = 0;
     unsigned long long i = 0;
-    unsigned long long total_bits = 0;
-    unsigned long long temp = n;
     
-    while (temp > 0) {
-        total_bits++;
-        temp >>= 1;
-    }
-    
-    for (i = 0; i < total_bits; i++) {
+    for (i = 0; (1ULL << i) <= n; i++) {
         unsigned long long bit_mask = 1ULL << i;
         unsigned long long period = bit_mask << 1;
+        
+        if (period == 0) {
+            break;
+        }
+        
         unsigned long long full_cycles = (n + 1) / period;
         unsigned long long remainder = (n + 1) % period;
         
@@ -26,13 +24,20 @@ unsigned long long countTotalSetBits(unsigned long long n) {
     
     return count;
 }
+
+unsigned long long countTotalSetBitsFrom1(unsigned long long n) {
+    if (n == 0) return 0;
+    return countTotalSetBits(n);
+}
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 1, got <no output>
-  *  test case 1 failed: expected 4, got <no output>
-  *  test case 2 failed: expected 17, got <no output>
+  *  test case 0 failed: expected 1, got 2
+  *  test case 1 failed: expected 4, got 8
+  *  test case 2 failed: expected 17, got 28
   */
 
 unsigned long long countTotalUnsetBits(unsigned long long n) {
+    if (n == 0) return 0;
+    
     unsigned long long total_bits = 0;
     unsigned long long temp = n;
     
@@ -41,8 +46,8 @@ unsigned long long countTotalUnsetBits(unsigned long long n) {
         temp >>= 1;
     }
     
-    unsigned long long total_positions = total_bits * (n + 1) - n;
-    unsigned long long set_bits = countTotalSetBits(n);
+    unsigned long long total_positions = total_bits * n;
+    unsigned long long set_bits = countTotalSetBitsFrom1(n);
     
     return total_positions - set_bits;
 }

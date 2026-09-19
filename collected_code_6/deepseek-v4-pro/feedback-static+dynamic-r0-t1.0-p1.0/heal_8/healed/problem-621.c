@@ -4,7 +4,26 @@
 #include <ctype.h>
 #include <limits.h>
 #include <errno.h>
-#include <stdint.h>
+
+static int count_digits(long long num) {
+    int count = 0;
+    if (num == 0) return 1;
+    while (num != 0) {
+        num /= 10;
+        count++;
+    }
+    return count;
+}
+
+static char* safe_strtoll(const char* str, long long* out) {
+    char* endptr;
+    errno = 0;
+    *out = strtoll(str, &endptr, 10);
+    if (errno == ERANGE) return NULL;
+    if (endptr == str) return NULL;
+    if (*endptr != '\0') return NULL;
+    return endptr;
+}
 
 char* increment_numeric_values(const char* input, int k) {
     if (input == NULL) {
@@ -12,8 +31,8 @@ char* increment_numeric_values(const char* input, int k) {
     }
 
     size_t len = strlen(input);
-    size_t result_capacity = len + 1;
-    char* result = malloc(result_capacity);
+    size_t result_size = len * 2 + 32;
+    char* result = malloc(result_size);
     if (result == NULL) {
         return NULL;
     }
@@ -22,74 +41,283 @@ char* increment_numeric_values(const char* input, int k) {
     size_t i = 0;
 
     while (i < len) {
-        if (isdigit((unsigned char)input[i])) {
+        if (isdigit((unsigned char)input[i]) || 
+            (input[i] == '-' && i + 1 < len && isdigit((unsigned char)input[i + 1]))) {
+            
+            int is_negative = 0;
             size_t start = i;
+            
+            if (input[i] == '-') {
+                is_negative = 1;
+                i++;
+                start = i;
+            }
+            
+            size_t num_start = i;
             while (i < len && isdigit((unsigned char)input[i])) {
                 i++;
             }
-            size_t num_len = i - start;
-            char* num_str = malloc(num_len + 1);
+            size_t num_end = i;
+            size_t num_len = num_end - num_start;
+            
+            int leading_zeros = 0;
+            for (size_t j = num_start; j < num_end; j++) {
+                if (input[j] == '0') {
+                    leading_zeros++;
+                } else {
+                    break;
+                }
+            }
+            
+            size_t total_len = num_len;
+            if (is_negative) {
+                total_len++;
+            }
+            
+            char* num_str = malloc(total_len + 1);
             if (num_str == NULL) {
                 free(result);
                 return NULL;
             }
-            memcpy(num_str, input + start, num_len);
-            num_str[num_len] = '\0';
-
-            errno = 0;
-            char* endptr;
-            long long num = strtoll(num_str, &endptr, 10);
-            if (errno == ERANGE || endptr == num_str || *endptr != '\0') {
-                free(num_str);
-                free(result);
-                return NULL;
+            
+            if (is_negative) {
+                num_str[0] = '-';
+                memcpy(num_str + 1, input + num_start, num_len);
+            } else {
+                memcpy(num_str, input + num_start, num_len);
             }
-
-            long long new_num;
-            if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+            num_str[total_len] = '\0';
+            
+            long long num;
+            if (safe_strtoll(num_str, &num) == NULL) {
                 free(num_str);
-                free(result);
-                return NULL;
-            }
-            new_num = num + k;
-
-            int needed = snprintf(NULL, 0, "%lld", new_num);
-            if (needed < 0) {
-                free(num_str);
-                free(result);
-                return NULL;
-            }
-
-            if ((size_t)needed >= result_capacity - res_pos) {
-                size_t new_capacity = result_capacity * 2 + needed + 1;
-                char* new_result = realloc(result, new_capacity);
-                if (new_result == NULL) {
-                    free(num_str);
-                    free(result);
-                    return NULL;
+                i = start + (is_negative ? 1 : 0);
+                while (i < len && isdigit((unsigned char)input[i])) i++;
+                size_t copy_len = i - start;
+                
+                if (res_pos + copy_len + 1 >= result_size) {
+                    result_size = res_pos + copy_len + 1;
+                    char* tmp = realloc(result, result_size);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
                 }
-                result = new_result;
-                result_capacity = new_capacity;
-            }
-
-            int written = snprintf(result + res_pos, result_capacity - res_pos, "%lld", new_num);
-            if (written < 0) {
+                
+                memcpy(result + res_pos, input + start, copy_len);
+                res_pos += copy_len;
                 free(num_str);
-                free(result);
-                return NULL;
+                continue;
             }
-            res_pos += written;
             free(num_str);
-        } else {
-            if (res_pos >= result_capacity - 1) {
-                size_t new_capacity = result_capacity * 2;
-                char* new_result = realloc(result, new_capacity);
-                if (new_result == NULL) {
+            
+            long long new_num;
+            int overflow = 0;
+            if (k > 0 && num > LLONG_MAX - k) {
+                new_num = LLONG_MAX;
+                overflow = 1;
+            } else if (k < 0 && num < LLONG_MIN - k) {
+                new_num = LLONG_MIN;
+                overflow = 1;
+            } else {
+                new_num = num + k;
+            }
+            
+            int actual_num_len = (int)num_len;
+            int preserve_original_length = (leading_zeros > 0 && num == 0);
+            
+            if (new_num >= 0 && !is_negative) {
+                int new_digits = count_digits(new_num);
+                if (new_num == 0) {
+                    new_digits = 1;
+                }
+                
+                size_t output_len;
+                if (preserve_original_length) {
+                    output_len = actual_num_len;
+                } else {
+                    output_len = new_digits > actual_num_len ? new_digits : actual_num_len;
+                }
+                
+                if (res_pos + output_len + 1 >= result_size) {
+                    while (result_size < res_pos + output_len + 1) {
+                        result_size *= 2;
+                    }
+                    char* tmp = realloc(result, result_size);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                
+                if (overflow || preserve_original_length) {
+                    int zeros_to_pad = (int)output_len - new_digits;
+                    if (zeros_to_pad < 0) zeros_to_pad = 0;
+                    
+                    for (int z = 0; z < zeros_to_pad; z++) {
+                        result[res_pos + z] = '0';
+                    }
+                    
+                    int printed = snprintf(result + res_pos + zeros_to_pad,
+                                           result_size - res_pos - zeros_to_pad,
+                                           "%lld", new_num);
+                    if (printed < 0) {
+                        free(result);
+                        return NULL;
+                    }
+                    res_pos += zeros_to_pad + printed;
+                } else {
+                    int printed = snprintf(result + res_pos,
+                                           result_size - res_pos,
+                                           "%lld", new_num);
+                    if (printed < 0) {
+                        free(result);
+                        return NULL;
+                    }
+                    res_pos += printed;
+                }
+            } else if (new_num < 0 && is_negative) {
+                long long abs_val = -new_num;
+                int new_digits = count_digits(abs_val);
+                
+                size_t output_len;
+                if (preserve_original_length) {
+                    output_len = total_len;
+                } else {
+                    int required_digits = new_digits + 1;
+                    output_len = required_digits > (int)total_len ? required_digits : total_len;
+                }
+                
+                if (res_pos + output_len + 1 >= result_size) {
+                    while (result_size < res_pos + output_len + 1) {
+                        result_size *= 2;
+                    }
+                    char* tmp = realloc(result, result_size);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                
+                if (overflow || preserve_original_length) {
+                    result[res_pos] = '-';
+                    int zeros_to_pad = (int)output_len - 1 - new_digits;
+                    if (zeros_to_pad < 0) zeros_to_pad = 0;
+                    
+                    for (int z = 0; z < zeros_to_pad; z++) {
+                        result[res_pos + 1 + z] = '0';
+                    }
+                    
+                    int printed = snprintf(result + res_pos + 1 + zeros_to_pad,
+                                           result_size - res_pos - 1 - zeros_to_pad,
+                                           "%lld", abs_val);
+                    if (printed < 0) {
+                        free(result);
+                        return NULL;
+                    }
+                    res_pos += 1 + zeros_to_pad + printed;
+                } else {
+                    int printed = snprintf(result + res_pos,
+                                           result_size - res_pos,
+                                           "%lld", new_num);
+                    if (printed < 0) {
+                        free(result);
+                        return NULL;
+                    }
+                    res_pos += printed;
+                }
+            } else if (new_num >= 0 && is_negative) {
+                long long abs_val = new_num;
+                int new_digits = count_digits(abs_val);
+                if (abs_val == 0) new_digits = 1;
+                
+                size_t output_len;
+                if (preserve_original_length) {
+                    output_len = actual_num_len;
+                } else {
+                    output_len = new_digits > actual_num_len ? new_digits : actual_num_len;
+                }
+                
+                if (res_pos + output_len + 1 >= result_size) {
+                    while (result_size < res_pos + output_len + 1) {
+                        result_size *= 2;
+                    }
+                    char* tmp = realloc(result, result_size);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                
+                int zeros_to_pad = (int)output_len - new_digits;
+                if (zeros_to_pad < 0) zeros_to_pad = 0;
+                
+                for (int z = 0; z < zeros_to_pad; z++) {
+                    result[res_pos + z] = '0';
+                }
+                
+                int printed = snprintf(result + res_pos + zeros_to_pad,
+                                       result_size - res_pos - zeros_to_pad,
+                                       "%lld", abs_val);
+                if (printed < 0) {
                     free(result);
                     return NULL;
                 }
-                result = new_result;
-                result_capacity = new_capacity;
+                res_pos += zeros_to_pad + printed;
+            } else {
+                result[res_pos] = '-';
+                long long abs_val = -new_num;
+                int new_digits = count_digits(abs_val);
+                
+                size_t output_len;
+                if (preserve_original_length) {
+                    output_len = total_len;
+                } else {
+                    int required_digits = new_digits + 1;
+                    output_len = required_digits > (int)total_len ? required_digits : total_len;
+                }
+                
+                if (res_pos + output_len + 1 >= result_size) {
+                    while (result_size < res_pos + output_len + 1) {
+                        result_size *= 2;
+                    }
+                    char* tmp = realloc(result, result_size);
+                    if (tmp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = tmp;
+                }
+                
+                int zeros_to_pad = (int)output_len - 1 - new_digits;
+                if (zeros_to_pad < 0) zeros_to_pad = 0;
+                
+                for (int z = 0; z < zeros_to_pad; z++) {
+                    result[res_pos + 1 + z] = '0';
+                }
+                
+                int printed = snprintf(result + res_pos + 1 + zeros_to_pad,
+                                       result_size - res_pos - 1 - zeros_to_pad,
+                                       "%lld", abs_val);
+                if (printed < 0) {
+                    free(result);
+                    return NULL;
+                }
+                res_pos += 1 + zeros_to_pad + printed;
+            }
+        } else {
+            if (res_pos + 2 >= result_size) {
+                result_size *= 2;
+                char* tmp = realloc(result, result_size);
+                if (tmp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
             }
             result[res_pos++] = input[i];
             i++;
@@ -100,7 +328,7 @@ char* increment_numeric_values(const char* input, int k) {
     return result;
 }
 
-int main(int argc, char* const argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <string> <k>\n", argv[0]);
         return 1;
@@ -109,19 +337,14 @@ int main(int argc, char* const argv[]) {
     char* endptr;
     errno = 0;
     long k_val = strtol(argv[2], &endptr, 10);
-    if (errno == ERANGE || endptr == argv[2] || *endptr != '\0') {
+    if (endptr == argv[2] || *endptr != '\0' || errno == ERANGE) {
         fprintf(stderr, "Invalid integer for k\n");
-        return 1;
-    }
-
-    if (k_val > INT_MAX || k_val < INT_MIN) {
-        fprintf(stderr, "k out of range\n");
         return 1;
     }
 
     char* result = increment_numeric_values(argv[1], (int)k_val);
     if (result == NULL) {
-        fprintf(stderr, "Error processing input\n");
+        fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
 

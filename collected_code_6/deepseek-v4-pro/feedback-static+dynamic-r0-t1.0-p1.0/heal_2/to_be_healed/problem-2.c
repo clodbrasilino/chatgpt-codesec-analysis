@@ -5,13 +5,21 @@ typedef struct {
     int value;
 } Tuple;
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [4, 5], got <no output>
   *  test case 1 failed: expected [3, 4], got <no output>
   *  test case 2 failed: expected [13, 14], got <no output>
+  *  test case 0 failed: expected [4, 5], got <no output>
   */
 
 int* find_similar_elements(Tuple* list1, int size1, Tuple* list2, int size2, int* result_size) {
     if (list1 == NULL || list2 == NULL || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    if (size1 <= 0 || size2 <= 0) {
+        *result_size = 0;
         return NULL;
     }
 

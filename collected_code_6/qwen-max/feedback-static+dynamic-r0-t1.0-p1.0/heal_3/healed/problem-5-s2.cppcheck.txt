@@ -1,1 +1,13 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-5-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-5-s2.c:25:5: warning: %lld in format string (no. 2) requires 'long long' but the argument type is 'signed long'. [invalidPrintfArgType_sint]
+    printf("Number of ways to fill 3 x %d board with 2 x 1 dominoes: %lld\n", n, result);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-5-s2.c:14:12: warning: Uninitialized variable: c [uninitvar]
+    return c;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-5-s2.c:8:23: note: Assuming condition is false
+    for (int i = 2; i <= n; ++i) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-5-s2.c:14:12: note: Uninitialized variable: c
+    return c;
+           ^

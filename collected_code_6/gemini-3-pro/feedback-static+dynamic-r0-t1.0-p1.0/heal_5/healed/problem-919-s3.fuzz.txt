@@ -1,1 +1,1 @@
-problem-919-s3.c:0:0: info: fuzzed - no sanitizer findings
+problem-919-s3.c:18:16:medium:UBSan: signed integer overflow: -3968274378253947840 * 3 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:1300,execs:612,op:havoc,rep:2)

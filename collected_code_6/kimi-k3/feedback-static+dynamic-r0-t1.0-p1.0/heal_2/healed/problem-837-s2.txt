@@ -1,21 +1,34 @@
 ```c
 #include <stdio.h>
+#include <limits.h>
 
 long long cubeSumOdd(int n) {
     long long sum = 0;
-    for (int i = 1; i <= n; i++) {
-        long long odd = 2LL * i - 1;
-        sum += odd * odd * odd;
+    for (int i = 0; i < n; i++) {
+        long long odd = 2LL * i + 1;
+        if (odd > 0 && odd <= 2097151LL) {
+            long long cube = odd * odd * odd;
+            if (sum > LLONG_MAX - cube) {
+                return -1;
+            }
+            sum += cube;
+        } else {
+            return -1;
+        }
     }
     return sum;
 }
 
 int main(void) {
     int n;
-    if (scanf("%d", &n) != 1) {
+    if (scanf("%d", &n) != 1 || n < 0) {
         return 1;
     }
-    printf("%lld\n", cubeSumOdd(n));
+    long long result = cubeSumOdd(n);
+    if (result == -1) {
+        return 1;
+    }
+    printf("%lld\n", result);
     return 0;
 }
 ```

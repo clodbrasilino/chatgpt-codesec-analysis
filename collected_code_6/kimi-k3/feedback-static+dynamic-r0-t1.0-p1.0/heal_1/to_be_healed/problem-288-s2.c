@@ -13,8 +13,17 @@ static int64_t mod_pow(int64_t base, int64_t exp, int64_t mod)
     
     while (exp > 0) {
         if (exp & 1) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 2985984 * 4258895054904 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000000,time:16466,execs:6941,op:havoc,rep:2)
+             * UBSan: signed integer overflow: 1220703125 * 152587890625 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000006,time:37308,execs:15210,op:havoc,rep:2)
+             */
             result = (result * base) % mod;
         }
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: 4294967296 * 4294967296 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000006,time:37308,execs:15210,op:havoc,rep:2)
+         * UBSan: signed integer overflow: 152587890625 * 152587890625 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000002,sig:06,src:000006,time:59774,execs:23944,op:havoc,rep:4)
+         * UBSan: signed integer overflow: 4258895054904 * 4258895054904 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000000,sig:06,src:000000,time:16466,execs:6941,op:havoc,rep:2)
+         */
         base = (base * base) % mod;
         exp >>= 1;
     }

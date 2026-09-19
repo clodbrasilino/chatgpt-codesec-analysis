@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <limits.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 10, got <no output>
-  *  test case 2 failed: expected 2, got <no output>
-  *  test case 1 failed: expected 7, got <no output>
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 2, got 0
+  *  test case 0 failed: expected 10, got 5
   */
 
 int max_profit(int k, const int prices[], int n) {

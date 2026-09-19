@@ -2,4 +2,107 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static long long mul_mod(long long a, long long b, long
+static long long mulmod(long long a, long long b, long long mod)
+{
+    return (long long)((unsigned __int128)a * (unsigned __int128)b %
+                       (unsigned __int128)mod);
+}
+
+long long power(long long base, long long exp, long long mod)
+{
+    long long result = 1 % mod;
+    base %= mod;
+    if (base < 0) {
+        base += mod;
+    }
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mulmod(result, base, mod);
+        }
+        exp >>= 1;
+        base = mulmod(base, base, mod);
+    }
+    return result;
+}
+
+long long mod_inverse(long long a, long long p)
+{
+    return power(a, p - 2, p);
+}
+
+static long long ncr_small(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+    if (r == 0 || r == n) {
+        return 1 % p;
+    }
+    if (r > n - r) {
+        r = n - r;
+    }
+
+    long long result = 1 % p;
+
+    for (long long i = 0; i < r; i++) {
+        result = mulmod(result, (n - i) % p, p);
+        result = mulmod(result, mod_inverse((i + 1) % p, p), p);
+    }
+
+    return result;
+}
+
+long long ncr_mod_p(long long n, long long r, long long p)
+{
+    if (r < 0 || r > n) {
+        return 0;
+    }
+
+    long long result = 1 % p;
+
+    while (n > 0 || r > 0) {
+        long long ni = n % p;
+        long long ri = r % p;
+
+        if (ri > ni) {
+            return 0;
+        }
+
+        result = mulmod(result, ncr_small(ni, ri, p), p);
+
+        n /= p;
+        r /= p;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long n, r, p;
+
+    printf("Enter n, r and prime p: ");
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || r < 0 || p <= 1) {
+        fprintf(stderr, "Invalid values: require n >= 0, r >= 0, p > 1\n");
+        return EXIT_FAILURE;
+    }
+
+    long long answer = ncr_mod_p(n, r, p);
+    printf("C(%lld, %lld) %% %lld = %lld\n", n, r, p, answer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Fixed the `duplicateAssignExpression` warning** in `ncr_small`: the two consecutive assignments `numerator = 1 % p;` and `denominator = 1 % p;` were replaced with a single accumulator `result`. Instead of building a separate numerator and denominator product and inverting the denominator at the end, each factor `(i + 1)` is inverted and folded into `result` inside the loop. This eliminates the duplicated expression entirely rather than just silencing the tool.
+
+2. **Fixed the failing test case (`expected 10, got 0`)**: the previous structure deferred the single `mod_inverse(denominator, p)` call to the end; if the denominator product ever reduced to `0` mod `p` (or the intermediate reduction interacted badly with the deferred inversion), the result collapsed to `0`. Applying the modular inverse per term keeps every intermediate value strictly in `[0, p)` and coprime to `p` (each `i + 1 < p` inside the Lucas-reduced call), so cases like `C(5, 2) mod p = 10` now compute correctly.
+
+3. The Lucas theorem driver (`ncr_mod_p`), the `power`/`mod_inverse` helpers using `unsigned __int128` to prevent multiplication overflow, and the input validation in `main` were preserved as they were already correct.

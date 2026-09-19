@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 3, got <no output>
-  *  test case 0 failed: expected 1, got <no output>
-  *  test case 1 failed: expected 4, got <no output>
+  *  test case 1 failed: expected 4, got 2
+  *  test case 2 failed: expected 3, got 2
   */
 
 int minOperations(int a, int b) {
@@ -11,7 +11,7 @@ int minOperations(int a, int b) {
         return 0;
     }
     
-    int diff = abs(a - b);
+    long long diff = llabs((long long)a - (long long)b);
     int operations = 0;
     
     operations += diff / 5;
@@ -21,7 +21,10 @@ int minOperations(int a, int b) {
     diff %= 2;
     
     if (diff == 1) {
-        operations += 1;
+        operations += 2;
+        if (operations > 1) {
+            operations--;
+        }
     }
     
     return operations;

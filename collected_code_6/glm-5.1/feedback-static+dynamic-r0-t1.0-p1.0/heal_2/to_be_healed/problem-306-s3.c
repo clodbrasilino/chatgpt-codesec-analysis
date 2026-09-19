@@ -7,7 +7,7 @@
   */
 
 int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
-    if (arr == NULL || n <= 0 || i < 0 || k >= n || i >= k) {
+    if (arr == NULL || n <= 0 || i < 0 || k < 0 || i >= k || k >= n) {
         return 0;
     }
 
@@ -20,7 +20,7 @@ int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
         dp[j] = arr[j];
     }
 
-    for (int j = 1; j <= i; j++) {
+    for (int j = 1; j < n; j++) {
         for (int l = 0; l < j; l++) {
             if (arr[j] > arr[l]) {
                 if (dp[l] + arr[j] > dp[j]) {
@@ -35,7 +35,7 @@ int max_sum_increasing_subsequence(const int *arr, int n, int i, int k) {
         return 0;
     }
 
-    int sum = dp[i] + arr[k];
+    int sum = (i > 0 ? dp[i] : 0) + arr[k];
 
     free(dp);
     return sum;

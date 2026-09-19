@@ -2,20 +2,20 @@
 #include <stdlib.h>
 
 int sumOddLengthSubarrays(const int *arr, int arrSize) {
-    int total = 0;
+    long long total = 0;
     if (arr == NULL || arrSize <= 0) {
         return 0;
     }
     for (int i = 0; i < arrSize; i++) {
         int left = i + 1;
         int right = arrSize - i;
-        int left_even = left / 2;
-        int right_even = right / 2;
-        int left_odd = (left + 1) / 2;
-        int right_odd = (right + 1) / 2;
-        total += arr[i] * (left_even * right_even + left_odd * right_odd);
+        long long left_even = left / 2;
+        long long right_even = right / 2;
+        long long left_odd = (left + 1) / 2;
+        long long right_odd = (right + 1) / 2;
+        total += (long long)arr[i] * (left_even * right_even + left_odd * right_odd);
     }
-    return total;
+    return (int)total;
 }
 
 int main() {

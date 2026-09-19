@@ -1,5 +1,4 @@
-problem-926.c:5:38:medium:UBSan: signed integer overflow: -1674115754 * 2 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000003,time:24745,execs:1013,op:havoc,rep:1)
-problem-926.c:22:46:medium:UBSan: signed integer overflow: 21 * 2432902008176640000 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:425,execs:183,op:havoc,rep:2)
-problem-926.c:24:46:medium:UBSan: signed integer overflow: 20 * 2432902008176640000 cannot be represented in type 'long' (AFL crash: id:000000,sig:06,src:000003,time:425,execs:183,op:havoc,rep:2)
-problem-926.c:29:23:medium:UBSan: signed integer overflow: -1674115755 * 2 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000003,time:24745,execs:1013,op:havoc,rep:1)
-problem-926.c:33:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000003,time:16639,execs:756,op:havoc,rep:2; likely memory-safety defect
+problem-926.c:23:33:medium:UBSan: signed integer overflow: 2 * -4702111234474983746 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:6368,execs:362,op:havoc,rep:3)
+problem-926.c:31:29:medium:UBSan: signed integer overflow: -4702111234474983746 + -4702111234474983746 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:6368,execs:362,op:havoc,rep:3)
+problem-926.c:37:59:medium:UBSan: signed integer overflow: -4702111234474983746 + -4702111234474983746 cannot be represented in type 'int64_t' (aka 'long long') (AFL crash: id:000001,sig:06,src:000002,time:6368,execs:362,op:havoc,rep:3)
+problem-926.c:50:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000002,time:512,execs:261,op:havoc,rep:6; likely memory-safety defect

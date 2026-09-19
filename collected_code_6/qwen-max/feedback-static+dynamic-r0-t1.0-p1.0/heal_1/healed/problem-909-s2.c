@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
-bool is_palindrome(int n) {
-    int reversed = 0, original = n;
+bool is_palindrome(long long n) {
+    long long reversed = 0, original = n;
     while (n != 0) {
         int remainder = n % 10;
         reversed = reversed * 10 + remainder;
+        if (reversed > LLONG_MAX / 10 || (reversed == LLONG_MAX / 10 && remainder > 7)) {
+            return false;
+        }
         n /= 10;
     }
     return original == reversed;
 }
 
-int previous_palindrome(int n) {
+long long previous_palindrome(long long n) {
     do {
         n--;
     } while (!is_palindrome(n));
@@ -19,14 +23,14 @@ int previous_palindrome(int n) {
 }
 
 int main() {
-    int number;
+    long long number;
     printf("Enter a number: ");
-    if (scanf("%d", &number) != 1) {
+    if (scanf("%lld", &number) != 1) {
         return 1;
     }
 
-    int prev_palindrome = previous_palindrome(number);
-    printf("The previous palindrome is: %d\n", prev_palindrome);
+    long long prev_palindrome = previous_palindrome(number);
+    printf("The previous palindrome is: %lld\n", prev_palindrome);
 
     return 0;
 }

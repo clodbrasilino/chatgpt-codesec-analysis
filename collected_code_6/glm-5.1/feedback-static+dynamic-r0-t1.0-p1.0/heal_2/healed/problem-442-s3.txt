@@ -15,7 +15,7 @@ double find_ratio(const int *array, size_t size) {
     if (size == 0) {
         return 0.0;
     }
-    return positive_count(array, size) / (double)size;
+    return (double)positive_count(array, size) / (double)size;
 }
 
 int main(void) {

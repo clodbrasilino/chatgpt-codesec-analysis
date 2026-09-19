@@ -1,2 +1,1 @@
-problem-598-s2.c:28:28:medium:UBSan: division by zero (AFL crash: id:000001,sig:06,src:000001,time:162,execs:78,op:arith8,pos:1,val:-5)
-problem-598-s2.c:41:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:7,execs:15,op:(null),pos:0; likely memory-safety defect
+problem-598-s2.c:32:16:medium:UBSan: signed integer overflow: 1937102445 + 387420489 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:1454,execs:1407,op:havoc,rep:6)

@@ -1,36 +1,4 @@
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected expression
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected ';' after expression
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-      |                                                           ;
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected '}'
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:94:96: note: to match this '{'
-   94 |                 if (isdigit((unsigned char)*p) || (*p == '-' && isdigit((unsigned char)p[1]))) {
-      |                                                                                                ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected '}'
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:93:37: note: to match this '{'
-   93 |             while (*p && *p != ')') {
-      |                                     ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected '}'
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:88:24: note: to match this '{'
-   88 |         if (*p == '(') {
-      |                        ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected '}'
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:87:16: note: to match this '{'
-   87 |     while (*p) {
-      |                ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:95:59: error: expected '}'
-   95 |                     t->elements[t->size++] = strtol(p, &p,
-      |                                                           ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:66:16: note: to match this '{'
-   66 | int main(void) {
-      |                ^
-7 errors generated.
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-444-s3.c:86:11: warning: Value stored to 'k_end' during its initialization is never read [deadcode.DeadStores]
+   86 |     char *k_end = end + 1;
+      |           ^~~~~   ~~~~~~~
+1 warning generated.

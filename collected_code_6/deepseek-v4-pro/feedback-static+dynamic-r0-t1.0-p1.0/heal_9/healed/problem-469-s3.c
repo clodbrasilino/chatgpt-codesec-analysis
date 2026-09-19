@@ -17,7 +17,7 @@ int max_profit(int k, const int prices[], int n) {
         return profit;
     }
 
-    int *dp = (int *)calloc(n * (k + 1), sizeof(int));
+    int *dp = (int *)calloc((k + 1) * n, sizeof(int));
     if (dp == NULL) {
         return -1;
     }
@@ -26,20 +26,16 @@ int max_profit(int k, const int prices[], int n) {
         int max_diff = -prices[0];
         for (int d = 1; d < n; d++) {
             int idx = t * n + d;
-            int prev_t_idx = (t - 1) * n + d;
+            int prev_day_idx = t * n + (d - 1);
 
-            int val1 = dp[idx - 1];
-
-            int candidate = dp[prev_t_idx - 1] - prices[d - 1];
-            if (candidate > max_diff) {
-                max_diff = candidate;
-            }
-
+            int val1 = dp[prev_day_idx];
             int val2 = prices[d] + max_diff;
             dp[idx] = (val1 > val2) ? val1 : val2;
 
-            if (dp[prev_t_idx] - prices[d] > max_diff) {
-                max_diff = dp[prev_t_idx] - prices[d];
+            int prev_txn_idx = (t - 1) * n + d;
+            int candidate = dp[prev_txn_idx] - prices[d];
+            if (candidate > max_diff) {
+                max_diff = candidate;
             }
         }
     }

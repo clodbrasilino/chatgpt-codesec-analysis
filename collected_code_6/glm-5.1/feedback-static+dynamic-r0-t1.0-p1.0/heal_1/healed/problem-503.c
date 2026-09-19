@@ -26,17 +26,21 @@ int *add_consecutive(const int *list, size_t size, size_t *result_size) {
 }
 
 int main(void) {
-    int list[] = {1, 2, 3, 4, 5};
+    int list[] = {2, 4, 7, 8, 9, 11, 13};
     size_t size = sizeof(list) / sizeof(list[0]);
     size_t result_size = 0;
 
     int *result = add_consecutive(list, size, &result_size);
 
     if (result != NULL) {
+        printf("[");
         for (size_t i = 0; i < result_size; i++) {
-            printf("%d ", result[i]);
+            printf("%d", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
         }
-        printf("\n");
+        printf("]\n");
         free(result);
     } else {
         if (size < 2) {
@@ -44,42 +48,6 @@ int main(void) {
         } else {
             printf("Memory allocation failed.\n");
         }
-    }
-
-    if (size < 2) {
-        printf("List size is less than 2.\n");
-        return 0;
-    }
-
-    result_size = 0;
-    result = add_consecutive(list, size, &result_size);
-    
-    if (result == NULL) {
-        printf("Memory allocation failed.\n");
-    } else {
-        for (size_t i = 0; i < result_size; i++) {
-            printf("%d ", result[i]);
-        }
-        printf("\n");
-        free(result);
-    }
-
-    size = 1;
-    result_size = 0;
-    result = add_consecutive(list, size, &result_size);
-    
-    if (result == NULL) {
-        if (size < 2) {
-            printf("List size is less than 2.\n");
-        } else {
-            printf("Memory allocation failed.\n");
-        }
-    } else {
-        for (size_t i = 0; i < result_size; i++) {
-            printf("%d ", result[i]);
-        }
-        printf("\n");
-        free(result);
     }
 
     return 0;

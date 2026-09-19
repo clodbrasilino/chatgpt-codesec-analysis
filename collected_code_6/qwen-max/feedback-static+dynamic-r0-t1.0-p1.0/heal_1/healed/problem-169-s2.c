@@ -18,7 +18,10 @@ long long int calculate_pell_number(long n) {
 int main() {
     long n;
     printf("Enter the value of n: ");
-    scanf("%ld", &n);
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
 
     long long int result = calculate_pell_number(n);
     printf("The %ldth Pell number is: %lld\n", n, result);

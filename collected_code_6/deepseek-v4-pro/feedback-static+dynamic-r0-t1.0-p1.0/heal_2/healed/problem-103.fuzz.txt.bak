@@ -1,0 +1,3 @@
+problem-103.c:20:29:medium:UBSan: signed integer overflow: 8 * 1300365805079109480 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:206,execs:168,op:havoc,rep:1)
+problem-103.c:20:41:medium:UBSan: signed integer overflow: 6795622177941569380 + 4663059128687439720 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:206,execs:168,op:havoc,rep:1)
+problem-103.c:20:51:medium:UBSan: signed integer overflow: 14 * 1300365805079109480 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:206,execs:168,op:havoc,rep:1)

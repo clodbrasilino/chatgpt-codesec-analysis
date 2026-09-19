@@ -6,13 +6,13 @@
 bool isDifferenceOfSquares(long n) {
     if (n < 0) return false;
     long x = 0, y = 1;
-    long max_val = (long)sqrt((double)LONG_MAX);
-    while (x <= y && y <= max_val) {
+    while (x <= y) {
         long diff = y * y - x * x;
         if (diff == n) {
             return true;
         } else if (diff < n) {
-            y++;
+            if (y < LONG_MAX / 2) y++;
+            else break;
         } else {
             x++;
         }
@@ -21,9 +21,9 @@ bool isDifferenceOfSquares(long n) {
 }
 
 int main() {
-    int num;
+    long num;
     printf("Enter a number: ");
-    scanf("%d", &num);
+    scanf("%ld", &num);
     if (isDifferenceOfSquares(num)) {
         printf("Can be represented as difference of two squares.\n");
     } else {

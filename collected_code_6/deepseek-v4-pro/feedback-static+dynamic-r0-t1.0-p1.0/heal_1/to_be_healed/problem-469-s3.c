@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <limits.h>
  /* Possible weaknesses found:
+  *  test case 1 failed: expected 7, got 2
+  *  test case 0 failed: expected 10, got 4
   *  test case 2 failed: expected 2, got 0
-  *  test case 0 failed: expected 10, got 5
-  *  test case 1 failed: expected 7, got 0
   */
 
 /* Possible weaknesses found:

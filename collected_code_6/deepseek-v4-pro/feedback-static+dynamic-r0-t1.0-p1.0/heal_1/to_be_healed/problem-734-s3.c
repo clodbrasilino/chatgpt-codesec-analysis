@@ -9,7 +9,13 @@ long long sum_of_products_of_subarrays(int *arr, int n) {
     for (int i = 0; i < n; i++) {
         long long product = 1;
         for (int j = i; j < n; j++) {
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 616101502505651580 * 422 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000012,time:8943,execs:5275,op:havoc,rep:5)
+             */
             product *= arr[j];
+            /* Possible weaknesses found:
+             * UBSan: signed integer overflow: 2085695714463565584 + 8342585325407348736 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000009,time:11548,execs:6759,op:havoc,rep:4)
+             */
             total += product;
         }
     }

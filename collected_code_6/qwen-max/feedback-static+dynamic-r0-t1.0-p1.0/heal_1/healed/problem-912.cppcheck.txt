@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-912.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-912.c:9:29: warning: Shifting 64-bit value by 64 bits is undefined behaviour. See condition at line 6. [shiftTooManyBits]
+    uint64_t result = (1ULL << (2 * n)) - 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-912.c:6:11: note: Assuming that condition 'n>32' is not redundant
+    if (n > 32) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-912.c:9:29: note: Shift
+    uint64_t result = (1ULL << (2 * n)) - 1;
+                            ^

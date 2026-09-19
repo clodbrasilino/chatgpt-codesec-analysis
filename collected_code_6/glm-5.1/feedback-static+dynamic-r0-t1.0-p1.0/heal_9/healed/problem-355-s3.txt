@@ -1,20 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 long long count_rectangles(int r) {
-    if (r <= 0) {
+    if (r < 1) {
         return 0;
     }
 
     long long count = 0;
     long long r_sq = (long long)r * r;
-    long long y = r - 1;
-
-    for (long long x = 1; x <= r; x++) {
-        while (y >= 0 && x * x + (y + 1) * (y + 1) < r_sq) {
-            y++;
+    
+    for (long long x = 1; x < r; x++) {
+        long long y_max_sq = r_sq - x * x;
+        long long y_max = (long long)sqrt((double)y_max_sq);
+        
+        while (y_max >= 0 && y_max * y_max > y_max_sq) {
+            y_max--;
         }
-        count += y;
+        while ((y_max + 1) * (y_max + 1) <= y_max_sq) {
+            y_max++;
+        }
+
+        if (y_max >= 1) {
+            count += (y_max - 1);
+        }
     }
 
     return count * 4;

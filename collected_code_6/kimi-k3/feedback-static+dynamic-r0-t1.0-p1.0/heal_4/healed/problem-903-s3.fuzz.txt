@@ -1,1 +1,2 @@
-problem-903-s3.c:36:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000000,time:605,execs:272,op:havoc,rep:15; likely memory-safety defect
+problem-903-s3.c:12:44:medium:UBSan: division by zero (AFL crash: id:000000,sig:06,src:000000,time:236,execs:245,op:havoc,rep:4)
+problem-903-s3.c:40:0:high:ASan: FPE (AFL crash: id:000000,sig:06,src:000000,time:236,execs:245,op:havoc,rep:4)

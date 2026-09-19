@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
-  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
   *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
   */
 
 int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
@@ -19,10 +19,16 @@ int* add_consecutive(const int* arr, size_t size, size_t* out_size) {
     *out_size = size - 1;
     int* result = malloc(*out_size * sizeof(int));
     if (result == NULL) {
+        *out_size = 0;
         return NULL;
     }
 
     for (size_t i = 0; i < *out_size; i++) {
+        /* Possible weaknesses found:
+         * UBSan: signed integer overflow: -1923267926 + -2052810070 cannot be represented in type 'int' (AFL crash: id:000002,sig:06,src:000013,time:42307,execs:13506,op:havoc,rep:8)
+         * UBSan: signed integer overflow: 444444444 + 2062812956 cannot be represented in type 'int' (AFL crash: id:000001,sig:06,src:000000,time:21570,execs:7072,op:havoc,rep:5)
+         * UBSan: signed integer overflow: 2062812956 + 444444444 cannot be represented in type 'int' (AFL crash: id:000000,sig:06,src:000000,time:11548,execs:3972,op:havoc,rep:7)
+         */
         result[i] = arr[i] + arr[i + 1];
     }
 
@@ -39,20 +45,20 @@ int main(void) {
         int res = scanf("%d", &val);
         if (res == 1) {
             if (size >= capacity) {
-                capacity = (capacity == 0) ? 16 : capacity * 2;
-                int* temp = realloc(input, capacity * sizeof(int));
+                size_t new_capacity = (capacity == 0) ? 16 : capacity * 2;
+                int* temp = realloc(input, new_capacity * sizeof(int));
                 if (!temp) {
                     free(input);
                     return 1;
                 }
                 input = temp;
+                capacity = new_capacity;
             }
             input[size++] = val;
         } else if (res == EOF) {
             break;
         } else {
-            int c = getchar();
-            if (c == EOF || c == '\n' || c == ']') {
+            if (getchar() == EOF) {
                 break;
             }
         }

@@ -21,10 +21,15 @@ int findMinimumPlatforms(const int arr[], const int dep[], int n) {
 }
 
 int compareIntegers(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
 }
 
-int main(void) {
+int main() {
     int n;
     int *arr = NULL;
     int *dep = NULL;

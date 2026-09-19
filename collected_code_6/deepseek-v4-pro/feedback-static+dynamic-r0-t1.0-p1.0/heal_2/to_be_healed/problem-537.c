@@ -5,6 +5,9 @@
 
 #define MAX_WORD_LENGTH 100
 #define MAX_WORDS 1000
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got (null)
+  */
 
 char* find_first_repeated_word(const char* str) {
     if (str == NULL || *str == '\0') {
@@ -58,8 +61,8 @@ char* find_first_repeated_word(const char* str) {
         }
         
         /* Possible weaknesses found:
-         *  Condition '!found' is always true [knownConditionTrueFalse]
          *  Condition '!found' is always true
+         *  Condition '!found' is always true [knownConditionTrueFalse]
          */
         if (!found) {
             words[word_count] = lower_token;

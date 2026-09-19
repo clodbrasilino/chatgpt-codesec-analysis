@@ -19,6 +19,8 @@ import os
 import re
 from typing import Iterable
 
+from . import flawfinder_norm
+
 from tqdm import tqdm
 
 STATIC_SUFFIXES = [".gcc.txt", ".clang.txt", ".cppcheck.txt", ".flawfinder.txt"]
@@ -97,7 +99,18 @@ def get_problems_weaknesses(
             path = os.path.join(input_dir, basename + suffix)
             if os.path.isfile(path):
                 with open(path) as f:
-                    for msg in extract_standard_messages(f.read()):
+                    content = f.read()
+                    msgs: list[dict] = []
+                    if suffix == ".flawfinder.txt":
+                        # Flawfinder reports exist in two formats: the raw
+                        # tool output (pre-2026-09-19) and the normalized
+                        # standard format. Parse BOTH; only one matches a
+                        # given file, so there is no double counting.
+                        msgs = (extract_standard_messages(content)
+                                + flawfinder_norm.extract_flawfinder_raw(content))
+                    else:
+                        msgs = extract_standard_messages(content)
+                    for msg in msgs:
                         if msg["line"] <= 0:
                             continue  # info/error lines are never comment targets
                         errors.setdefault(msg["line"], []).append(msg["message"])

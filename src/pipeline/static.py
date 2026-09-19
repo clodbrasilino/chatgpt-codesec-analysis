@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import yaml
@@ -73,6 +74,14 @@ def _run_one(src: str, tool: str, cfg: dict) -> str | None:
             subprocess.run(
                 cmd, stdout=f, stderr=subprocess.STDOUT, timeout=120, check=False
             )
+        if tool == "flawfinder":
+            # Normalize the raw flawfinder report to the standard
+            # file:line:col:severity:message format (fix 2026-09-19:
+            # raw hits were silently dropped by the standard parser).
+            from . import flawfinder_norm
+            raw = Path(out).read_text(errors="replace")
+            Path(out).write_text(
+                flawfinder_norm.normalize_report(raw, Path(src).stem))
         return tool
     except subprocess.TimeoutExpired:
         with open(out, "w") as f:

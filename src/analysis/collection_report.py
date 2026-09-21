@@ -23,6 +23,8 @@ from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
 
+from src.config import max_healing_rounds
+
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -222,7 +224,7 @@ def analyze_cell(cell: dict) -> dict:
 
     # ---- funnel ----
     rounds = []
-    max_round = 10
+    max_round = max_healing_rounds()  # reporting cap from experiment config
     for n in range(1, max_round + 2):
         tbe = root / f"heal_{n}" / "to_be_healed"
         if not tbe.is_dir():
@@ -513,7 +515,7 @@ A = dynamic sanitizer (ASan/UBSan) · T = test-case failures. Fuzz channel (AFL+
                  '*For dynamic-only cells, non-compilability is read from the static sibling cell '
                  '(shared round-0 code). This table shows what happened to each sample that was '
                  'non-compilable at heal_0: <b>healed</b> = the LLM fixed the compile errors within '
-                 '10 rounds (outcome “clean”); never cleaned = compile errors (or other findings) persisted. '
+                 f'{max_healing_rounds()} rounds (outcome “clean”); never cleaned = compile errors (or other findings) persisted. '
                  '“Gate-blind” = the sample was never flagged by that cell\'s feedback gate — for '
                  'dynamic-only cells compile errors are invisible to the dynamic oracle (they are a '
                  'static-channel finding), so non-compilable samples there count as clean-at-start '
@@ -690,7 +692,7 @@ A = dynamic sanitizer (ASan/UBSan) · T = test-case failures. Fuzz channel (AFL+
     parts.append('<p class="note">Detection sets are computed on the <b>s+d cell\'s shared round-0</b> (static + dynamic '
                  'reports on identical code). Arms: <b>static</b> = full-sweep static-feedback manifest restricted to the '
                  '200 problems · <b>dynamic</b> = dynamic-only cell · <b>s+d</b> = s+d baseline cell. '
-                 '“Healed on each round” = RTC histogram. Remainders = not_cleaned after 10 rounds.</p>')
+                 f'“Healed on each round” = RTC histogram. Remainders = not_cleaned after {max_healing_rounds()} rounds.</p>')
     for model in ["deepseek-v4-pro", "qwen-max", "glm-5.1", "kimi-k3",
                   "openai-gpt56-sol", "gemini-3-pro"]:
         sd = next((x for x in by_model.get(model, [])

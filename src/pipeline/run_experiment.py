@@ -29,6 +29,7 @@ from pathlib import Path
 import yaml
 from tqdm import tqdm
 
+from src.config import max_healing_rounds
 from src.llm.registry import load_registry
 from src.pipeline import comment_inject as ci
 from src.pipeline import generate as gen
@@ -45,7 +46,8 @@ class ExperimentCell:
     tasks: list[int] = field(default_factory=lambda: list(range(1, 975)))
     temp: float = 1.0
     top_p: float = 1.0
-    max_rounds: int = 10
+    # Healing-round budget comes from config/experiment.yaml -> experiment.max_rounds.
+    max_rounds: int = field(default_factory=max_healing_rounds)
     samples: int = 1
     fuzz: bool = False  # AFL++ channel (stdin/argv consumers only; costly)
     root: str = "collected_code_6"
@@ -305,7 +307,9 @@ if __name__ == "__main__":
     parser.add_argument("--temp", type=float, default=1.0)
     parser.add_argument("--top-p", type=float, default=1.0)
     parser.add_argument("--samples", type=int, default=1)
-    parser.add_argument("--max-rounds", type=int, default=10)
+    parser.add_argument("--max-rounds", type=int, default=None,
+                        help="healing-round budget; default: experiment.max_rounds "
+                             "from config/experiment.yaml")
     parser.add_argument("--fuzz", action="store_true",
                         help="enable AFL++ fuzzing channel (stdin/argv consumers only)")
     parser.add_argument("--gen-source", default=None, metavar="CELL_SLUG",
@@ -329,7 +333,8 @@ if __name__ == "__main__":
         temp=args.temp,
         top_p=args.top_p,
         samples=args.samples,
-        max_rounds=args.max_rounds,
+        max_rounds=(args.max_rounds if args.max_rounds is not None
+                    else max_healing_rounds()),
         fuzz=args.fuzz,
         gen_source=args.gen_source,
         gen_source_reports=args.gen_source_reports,

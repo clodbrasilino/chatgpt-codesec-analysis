@@ -32,6 +32,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as sps
 
+from src.config import max_healing_rounds, not_cleaned_penalty
 from src.pipeline.comment_inject import (
     DYNAMIC_SUFFIXES,
     STATIC_SUFFIXES,
@@ -134,8 +135,9 @@ def analyze(model: str = "qwen-max") -> Path:
     rq1 = load_manifest("feedback-static-r0-t1.0-p1.0", model)
     rq2 = load_manifest("feedback-static+dynamic-r0-t1.0-p1.0", model)
     pids = set(rq2["data"]["cell"]["tasks"])
-    max_rounds = int(rq2["data"]["cell"]["max_rounds"])
-    penalty = max_rounds + 1.0
+    cell_max_rounds = int(rq2["data"]["cell"]["max_rounds"])
+    max_rounds = max_healing_rounds(cell_max_rounds)
+    penalty = not_cleaned_penalty(cell_max_rounds)
 
     per1 = _per_problem(rq1["data"]["outcomes"], pids, penalty)
     per2 = _per_problem(rq2["data"]["outcomes"], pids, penalty)

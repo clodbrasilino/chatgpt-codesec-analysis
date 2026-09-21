@@ -26,6 +26,7 @@ sys.path.insert(0, str(REPO))
 
 from src.pipeline.flawfinder_norm import extract_flawfinder_raw  # noqa: E402
 from src.pipeline.comment_inject import extract_standard_messages  # noqa: E402
+from src.config import discover_rounds  # noqa: E402
 
 ROOT = REPO / "collected_code_6"
 LEGACY_MARKER = "legacy"
@@ -87,8 +88,9 @@ def stage2_quarantine_cell(cell: Path) -> tuple[int, int, int]:
         if has_hits(ff):
             affected[base] = 1
             r0_hits.add(base)
-    max_round = 10
-    for r in range(1, max_round + 1):
+    # Scan the rounds that actually exist on disk: artifacts collected under an
+    # earlier, larger budget must stay visible to the quarantine logic.
+    for r in discover_rounds(cell):
         healed = cell / f"heal_{r}" / "healed"
         if not healed.is_dir():
             continue

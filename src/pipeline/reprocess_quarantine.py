@@ -42,14 +42,20 @@ HEALED_SUFFIXES = [
 ]
 
 
-def quarantine_model(model: str, max_round: int = 10) -> tuple[int, int]:
+def quarantine_model(model: str, max_round: int | None = None) -> tuple[int, int]:
+    """Quarantine gap artifacts for one model.
+
+    ``max_round`` defaults to ``None`` = every healing round that exists on
+    disk, so artifacts collected under an earlier, larger budget remain
+    visible. Pass an explicit int to restrict the scan.
+    """
     cell = REPO / "collected_code_6" / model / SLUG
     rounds = sorted(
         int(d.name.split("_")[1])
         for d in cell.glob("heal_*")
         if d.name != "heal_0" and (d / "to_be_healed").is_dir()
     )
-    rounds = [r for r in rounds if 1 <= r <= max_round]
+    rounds = [r for r in rounds if r >= 1 and (max_round is None or r <= max_round)]
 
     affected: dict[str, int] = {}
     for r in rounds:

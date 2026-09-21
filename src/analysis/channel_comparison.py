@@ -35,6 +35,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
 from src.pipeline.comment_inject import _PROBLEM_RE  # noqa: E402
+from src.config import max_healing_rounds  # noqa: E402
 
 SLUG = "feedback-static+dynamic-r0-t1.0-p1.0"
 MODELS = [
@@ -173,7 +174,8 @@ def main() -> None:
         ("r0", "Scope R0 — initial generations only (heal_0)",
          "Programs flagged on the code as first generated, before any repair."),
         ("any", "Scope ANY — anywhere in the healing chain (heal_0 + heal_N/healed)",
-         "Programs ever flagged by a channel at any point of the 10-round chain."),
+         f"Programs ever flagged by a channel at any point of the "
+         f"{max_healing_rounds()}-round chain."),
     ):
         lines.append(f"## {title}")
         lines.append("")

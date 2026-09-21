@@ -1,10 +1,11 @@
 """Audit whether every cell has complete trajectory data through round 5.
 
-Motivation: the healing budget is being restrained from 10 rounds to 5, so
-every program must have usable data for rounds 0..5 (or must have reached a
-terminal state before round 5). This audit reports, per cell, how many
-programs are complete through round 5 and enumerates every program that is
-not, with the reason.
+Motivation: the healing-round budget is defined by experiment configuration
+(``config/experiment.yaml -> experiment.max_rounds``), so every program must
+have usable data through that many rounds (or must have reached a terminal
+state before then). This audit reports, per cell, how many programs are
+complete through the configured round cap and enumerates every program that
+is not, with the reason.
 """
 from __future__ import annotations
 
@@ -12,10 +13,13 @@ import json
 import os
 from pathlib import Path
 
+from src.config import max_healing_rounds
+
 REPO = Path(__file__).resolve().parents[2]
 COLL = REPO / "collected_code_6"
 RES = REPO / "results"
-CAP = 5
+# Reporting cap: how many healing rounds the experiment configuration allows.
+CAP = max_healing_rounds()
 
 STATIC_SUFFIXES = [".gcc.txt", ".clang.txt", ".cppcheck.txt", ".flawfinder.txt"]
 # .test.txt and .fuzz.txt are written for every analyzed program (they also
@@ -139,7 +143,7 @@ def main() -> None:
                 continue
             cells.append(audit_cell(model_dir.name, slug_dir.name))
 
-    lines = ["# Round-5 Data-Completeness Audit", "",
+    lines = [f"# Round-{CAP} Data-Completeness Audit", "",
              f"Scope: every non-legacy cell in `collected_code_6`; a program is",
              f"**complete** if it has full analysis artifacts through round {CAP}",
              "(or reached its terminal state earlier).", ""]

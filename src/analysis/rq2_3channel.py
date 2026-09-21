@@ -13,7 +13,8 @@ What IS exactly comparable:
     static-only / dynamic-only / both / neither. For deepseek the s+d
     baseline also shares the same round-0.
   - Healing effectiveness per arm: among initially-flagged samples, how
-    many reach own-channel cleanliness within 10 rounds, and how fast.
+    many reach own-channel cleanliness within the configured healing budget
+    (experiment.max_rounds), and how fast.
   - Per-problem paired tests between arms (all-samples aggregation).
 
 Usage:
@@ -34,6 +35,7 @@ from .grid_paired import (
     _KEY_RE,
     _paired_tests,
 )
+from src.config import not_cleaned_penalty
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RESULTS = REPO_ROOT / "results"
@@ -77,7 +79,8 @@ def analyze(model: str = "qwen-max") -> Path | None:
         manifests[arm] = data
 
     pids = set(int(t) for t in manifests["dynamic"]["cell"]["tasks"])
-    penalty = 11.0  # max_rounds 10 + 1, uniform across arms
+    # max_rounds + 1, uniform across arms; both read from experiment config.
+    penalty = not_cleaned_penalty()
 
     rows = {arm: _sample_outcomes(m, pids) for arm, m in manifests.items()}
     lines = [

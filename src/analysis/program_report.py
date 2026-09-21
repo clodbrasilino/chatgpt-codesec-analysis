@@ -22,6 +22,8 @@ from pathlib import Path
 
 import csv
 
+from src.config import max_healing_rounds
+
 REPO = Path(__file__).resolve().parents[2]
 RESULTS = REPO / "results"
 OUT = RESULTS / "program_report.html"
@@ -138,7 +140,7 @@ def main() -> None:
 <div class="meta">Snapshot {now} · Manifests + per-call usage ledgers ·
 dataset = 974 BCT tasks (the “973” in requests is 974) · gates: static = 4 analyzers
 (gcc -fanalyzer, clang+z3, cppcheck premium, flawfinder); dynamic = ASan/UBSan oracle;
-tests = MBPP test cases (bonus signal inside the dynamic channel) · max_rounds = 10.</div>
+tests = MBPP test cases (bonus signal inside the dynamic channel) · max_rounds = {max_healing_rounds()}.</div>
 """]
 
     # ============================================================= P1 main

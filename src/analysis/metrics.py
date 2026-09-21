@@ -25,6 +25,7 @@ from pathlib import Path
 import pandas as pd
 
 from ..pipeline.comment_inject import STATIC_SUFFIXES, DYNAMIC_SUFFIXES
+from ..config import max_healing_rounds
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CODE_ROOT = REPO_ROOT / "collected_code_6"
@@ -146,7 +147,9 @@ def cell_metrics(model: str, slug: str, root: Path | None = None) -> dict | None
     max_rounds = None
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text())
-        max_rounds = manifest["cell"].get("max_rounds")
+        # Effective reporting cap: never beyond what the cell actually ran,
+        # never beyond what the experiment configuration allows.
+        max_rounds = max_healing_rounds(manifest["cell"].get("max_rounds"))
         for base, out in manifest["outcomes"].items():
             if out["outcome"] == "clean_at_start":
                 n_clean_at_start += 1

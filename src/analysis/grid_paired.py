@@ -33,6 +33,8 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as sps
 
+from src.config import not_cleaned_penalty
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RESULTS = REPO_ROOT / "results"
 CLEAN_OUTCOMES = {"clean_at_start", "clean"}
@@ -171,7 +173,9 @@ def analyze(model: str = "qwen-max", feedback: str = "static") -> Path | None:
     pids_union: set[int] = set()
     for data in loaded.values():
         pids_union.update(int(t) for t in data["cell"]["tasks"])
-    penalty = float(max(int(data["cell"]["max_rounds"]) for data in loaded.values()) + 1)
+    penalty = not_cleaned_penalty(
+        max(int(data["cell"]["max_rounds"]) for data in loaded.values())
+    )
 
     base_s1 = _sample1_per_problem(baseline["outcomes"], pids_union, penalty)
     base_all = _all_samples_per_problem(baseline["outcomes"], pids_union, penalty)

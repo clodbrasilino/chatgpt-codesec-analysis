@@ -28,6 +28,7 @@ from pathlib import Path
 
 import numpy as np
 
+from src.config import not_cleaned_penalty
 from src.analysis.grid_paired import (
     _all_samples_per_problem,
     _load,
@@ -74,7 +75,7 @@ def analyze() -> Path | None:
         return None
 
     pids = set(int(t) for t in thinking["cell"]["tasks"])
-    penalty = float(thinking["cell"]["max_rounds"]) + 1
+    penalty = not_cleaned_penalty(int(thinking["cell"]["max_rounds"]))
 
     base_s1 = _sample1_per_problem(baseline["outcomes"], pids, penalty)
     base_all = _all_samples_per_problem(baseline["outcomes"], pids, penalty)

@@ -1,7 +1,12 @@
 # Experiment defaults (overridable per run).
 experiment:
   root: collected_code_6            # new data root
-  max_rounds: 10                    # raised from 7 (user decision 2026-09-01); cost cap
+  # Healing-round budget. Single source of truth: every pipeline and analysis
+  # entry point reads this via src/config.py — no round count is hard-coded.
+  # History: 7 -> 10 (user decision 2026-09-01) -> 5 (budget cap, 2026-09-21).
+  # Cells already collected at 10 are truncated to this cap at report time
+  # (the recorded trajectories are a superset, so nothing is re-measured).
+  max_rounds: 5
   subset_size: 200                  # vulnerable-prone subset (user decision)
   main_samples: 3                   # samples per task, 7-model sweep (user decision)
   ablation_samples: 1

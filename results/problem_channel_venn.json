@@ -1,0 +1,41 @@
+{
+ "N": 974,
+ "venn1": {
+  "Static": 583,
+  "Tests": 2,
+  "Static+Tests": 153,
+  "Dynamic": 1,
+  "Static+Dynamic": 132,
+  "Tests+Dynamic": 0,
+  "Static+Tests+Dynamic": 93,
+  "none": 10
+ },
+ "venn2": {
+  "gcc": 0,
+  "clang": 0,
+  "gcc+clang": 2,
+  "cppcheck": 151,
+  "gcc+cppcheck": 0,
+  "clang+cppcheck": 12,
+  "gcc+clang+cppcheck": 82,
+  "flawfinder": 6,
+  "gcc+flawfinder": 0,
+  "clang+flawfinder": 0,
+  "gcc+clang+flawfinder": 2,
+  "cppcheck+flawfinder": 197,
+  "gcc+cppcheck+flawfinder": 8,
+  "clang+cppcheck+flawfinder": 56,
+  "gcc+clang+cppcheck+flawfinder": 445,
+  "none": 13
+ },
+ "venn3": {
+  "ASan": 5,
+  "UBSan": 8,
+  "ASan+UBSan": 1,
+  "AFL++": 198,
+  "ASan+AFL++": 1,
+  "UBSan+AFL++": 13,
+  "ASan+UBSan+AFL++": 0,
+  "none": 748
+ }
+}

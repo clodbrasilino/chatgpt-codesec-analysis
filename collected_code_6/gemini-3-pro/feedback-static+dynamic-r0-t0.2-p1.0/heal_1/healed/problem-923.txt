@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 10000
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int shortestSuperSequenceLength(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t m = strnlen(str1, MAX_STR_LEN);
+    size_t n = strnlen(str2, MAX_STR_LEN);
+
+    int **dp = (int **)malloc((m + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i <= m; i++) {
+        dp[i] = (int *)malloc((n + 1) * sizeof(int));
+        if (dp[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (size_t i = 0; i <= m; i++) {
+        for (size_t j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = 0;
+            } else if (str1[i - 1] == str2[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+
+    int lcs = dp[m][n];
+
+    for (size_t i = 0; i <= m; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return (int)(m + n - lcs);
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+
+    int result = shortestSuperSequenceLength(str1, str2);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Error calculating shortest supersequence length.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

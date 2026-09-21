@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-10.c: In function 'get_n_smallest':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-10.c:30:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   30 |     if (memcpy_s(temp, data_len * sizeof(int), dataset, data_len * sizeof(int)) != 0) {
+      |         ^~~~~~~~
+      |         memcpy

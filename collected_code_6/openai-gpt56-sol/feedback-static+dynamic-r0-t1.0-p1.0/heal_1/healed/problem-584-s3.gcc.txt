@@ -1,0 +1,18 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:49:28: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   49 |         size_t remaining = strlen(sentence + offset);
+      |                            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:8:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    7 | #include <sys/types.h>
+  +++ |+#include <string.h>
+    8 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:77:34: error: 'SIZE_MAX' undeclared (first use in this function)
+   77 |             if (relative_start > SIZE_MAX - offset ||
+      |                                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:8:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    7 | #include <sys/types.h>
+  +++ |+#include <stdint.h>
+    8 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:77:34: note: each undeclared identifier is reported only once for each function it appears in
+   77 |             if (relative_start > SIZE_MAX - offset ||
+      |                                  ^~~~~~~~

@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_INPUT 1024
+
+int find_first_max_even_word(const char *str, size_t str_max, char *result, size_t result_size)
+{
+    size_t i = 0;
+    size_t len = 0;
+    size_t max_len = 0;
+    size_t best_start = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_max);
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t word_len = 0;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            word_len = i - start;
+
+            if ((word_len % 2u) == 0u && word_len > max_len) {
+                max_len = word_len;
+                best_start = start;
+                found = 1;
+            }
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    if (max_len >= result_size) {
+        return -1;
+    }
+
+    if (best_start > len || max_len > len - best_start) {
+        return -1;
+    }
+
+    memcpy(result, &str[best_start], max_len);
+    result[max_len] = '\0';
+
+    return (int)max_len;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    char result[MAX_INPUT];
+    int ret = 0;
+
+    memset(input, 0, sizeof(input));
+    memset(result, 0, sizeof(result));
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+    input[strcspn(input, "\n")] = '\0';
+
+    ret = find_first_max_even_word(input, sizeof(input), result, sizeof(result));
+
+    if (ret < 0) {
+        printf("No even length word found\n");
+    } else {
+        printf("First maximum even length word: %s (length %d)\n", result, ret);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is safe:**
+
+1. **`memcpy` (CWE-120)** — The Flawfinder warning is a false positive here. Before the `memcpy`, the code explicitly verifies `max_len >= result_size` and returns `-1` if the copy plus null terminator would not fit. It also validates that `best_start` and `max_len` stay within the source string bounds (`best_start > len || max_len > len - best_start`). The destination write `result[max_len] = '\0'` is guaranteed in-bounds because `max_len < result_size`.
+
+2. **Statically-sized arrays (CWE-119/CWE-120)** — Both `input` and `result` are fixed-size buffers, but all accesses are bounds-checked:
+   - Input is read with `fgets(input, sizeof(input), stdin)`, which limits the read length and null-terminates.
+   - A defensive `input[sizeof(input) - 1] = '\0'` guarantees termination.
+   - `strnlen(str, str_max)` is used instead of `strlen`, so the scan never runs past the buffer even if the string were unterminated.
+   - The result buffer size is passed explicitly and enforced inside the function.
+
+3. **Additional robustness already present** — `isspace` receives an `unsigned char` cast (avoiding UB for negative `char` values), NULL pointers are rejected, and the trailing newline is stripped safely with `strcspn`.
+
+The original code was already written defensively; the warnings are informational risk-level-2 findings that are mitigated by the existing checks, so the rewrite preserves that structure with the comments removed.

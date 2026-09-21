@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+void count_digits_letters(const char *str, size_t *digits, size_t *letters) {
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+    
+    *digits = 0;
+    *letters = 0;
+    
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t chars_read;
+    size_t digit_count = 0;
+    size_t letter_count = 0;
+    
+    printf("Enter a string: ");
+    
+    chars_read = getline(&buffer, &buffer_size, stdin);
+    
+    if (chars_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+    
+    if (chars_read > 0 && buffer[chars_read - 1] == '\n') {
+        buffer[chars_read - 1] = '\0';
+    }
+    
+    count_digits_letters(buffer, &digit_count, &letter_count);
+    
+    printf("Digits: %zu\n", digit_count);
+    printf("Letters: %zu\n", letter_count);
+    
+    free(buffer);
+    
+    return 0;
+}

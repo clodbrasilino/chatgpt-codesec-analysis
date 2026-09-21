@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void remove_leading_zeroes(char *ip) {
+    char temp[16];
+    char *part = strtok(ip, ".");
+    int index = 0;
+
+    while (part != NULL) {
+        size_t len = strlen(part);
+        if (len > 1 && part[0] == '0') {
+            int i;
+            for (i = 0; i < len - 1 && part[i] == '0'; i++);
+            size_t copy_len = len - i;
+            if (index + copy_len < sizeof(temp) - 1) {
+                memcpy(temp + index, part + i, copy_len);
+                index += copy_len;
+            }
+        } else {
+            if (index + len < sizeof(temp) - 1) {
+                memcpy(temp + index, part, len);
+                index += len;
+            }
+        }
+        part = strtok(NULL, ".");
+        if (part != NULL && index + 1 < sizeof(temp) - 1) {
+            temp[index++] = '.';
+        }
+    }
+    temp[index] = '\0';
+    if (strlen(temp) < sizeof(ip)) {
+        strcpy(ip, temp);
+    } else {
+        ip[0] = '\0';
+    }
+}
+
+int main() {
+    char ip[] = "192.168.001.001";
+    remove_leading_zeroes(ip);
+    printf("%s\n", ip);
+    return 0;
+}
+```

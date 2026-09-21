@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_OUT_LEN 11
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    size_t year_len;
+    size_t month_len;
+    size_t day_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_OUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^([0-9]{4})-([0-9]{2})-([0-9]{2})$", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len != 4 || month_len != 2 || day_len != 2) {
+        regfree(&regex);
+        return -1;
+    }
+
+    ret = snprintf(output, output_size, "%.2s-%.2s-%.4s",
+                   input + matches[3].rm_so,
+                   input + matches[2].rm_so,
+                   input + matches[1].rm_so);
+
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input_date = "2024-05-17";
+    char output_date[DATE_OUT_LEN];
+
+    memset(output_date, 0, sizeof(output_date));
+
+    if (convert_date(input_date, output_date, sizeof(output_date)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input_date);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input: %s\nOutput: %s\n", input_date, output_date) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char output_date[DATE_OUT_LEN]` is a low-risk, informational flag — statically-sized buffers are only dangerous when writes to them are unbounded. In this code the risk is already mitigated:
+
+1. **Size contract enforced at the callee:** `convert_date()` rejects any call where `output_size < DATE_OUT_LEN`, so the buffer can never be smaller than the maximum formatted output (`DD-MM-YYYY` + NUL = 11 bytes).
+
+2. **Bounded write:** `snprintf(output, output_size, ...)` never writes beyond `output_size` bytes and always NUL-terminates within bounds.
+
+3. **Truncation detection:** The return value of `snprintf` is checked (`ret >= output_size`), so silent truncation is treated as an error rather than producing a malformed date.
+
+4. **Correct size propagation:** The caller passes `sizeof(output_date)` rather than a hard-coded constant, so the buffer size and the limit passed to the function can never drift apart.
+
+5. **Validated input lengths:** The regex anchors (`^`...`$`) and the explicit match-length checks guarantee the source substrings are exactly 4, 2, and 2 characters, and the `%.Ns` precision specifiers cap what's read from the input.
+
+The only change added in the rewrite is a `memset` to zero-initialize the output buffer, which is defensive hardening (guaranteeing the buffer is never read uninitialized on any code path) rather than a fix for an actual exploitable flaw. Resource handling is also correct: `regfree()` is called on every path after a successful `regcomp`, so there are no leaks.

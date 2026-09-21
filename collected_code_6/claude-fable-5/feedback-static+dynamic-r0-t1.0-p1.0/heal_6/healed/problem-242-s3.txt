@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). The rewrite preserves all the existing mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy; `fgets` already null-terminates, but this protects against any edge case.
+
+3. **Zero-initialization** — `memset(buffer, 0, sizeof(buffer))` ensures no uninitialized memory is read even if later logic changes.
+
+4. **Bounded string traversal** — `count_characters()` takes an explicit `max_len` and checks it before dereferencing each index, so it can never read past the buffer even if the string were unterminated. It also handles a `NULL` pointer gracefully.
+
+5. **Safe newline stripping** — `strcspn(buffer, "\n")` always returns an index within the null-terminated string, so the assignment stays in bounds.
+
+6. **Return value checking** — the `fgets` result is validated, avoiding operations on undefined buffer contents on EOF/error.
+
+The Flawfinder hit was a low-risk (risk 2) heuristic warning triggered simply by the presence of a fixed-size `char` array; all recommended mitigations (bounds checking, length-limited functions) were already in place, so no functional changes were required.

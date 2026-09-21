@@ -1,0 +1,194 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *snake_to_camel(const char *input, size_t input_length,
+                            size_t *output_length)
+{
+    char *output;
+    size_t read_pos;
+    size_t write_pos = 0;
+    int capitalize = 1;
+
+    if (input == NULL || output_length == NULL || input_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    output = malloc(input_length + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (read_pos = 0; read_pos < input_length; ++read_pos) {
+        unsigned char ch = (unsigned char)input[read_pos];
+
+        if (ch == (unsigned char)'_') {
+            capitalize = 1;
+            continue;
+        }
+
+        if (capitalize) {
+            ch = (unsigned char)toupper(ch);
+            capitalize = 0;
+        }
+
+        output[write_pos++] = (char)ch;
+    }
+
+    output[write_pos] = '\0';
+    *output_length = write_pos;
+    return output;
+}
+
+static char *read_line(FILE *stream, size_t *length)
+{
+    size_t capacity = 128;
+    size_t used = 0;
+    char *buffer;
+
+    if (stream == NULL || length == NULL) {
+        return NULL;
+    }
+
+    *length = 0;
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        int ch = fgetc(stream);
+
+        if (ch == EOF) {
+            if (ferror(stream) || used == 0) {
+                free(buffer);
+                return NULL;
+            }
+            break;
+        }
+
+        if (ch == '\n') {
+            break;
+        }
+
+        if (ch == '\r') {
+            /* Possible weaknesses found:
+             * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            int next = fgetc(stream);
+
+            if (next == EOF) {
+                if (ferror(stream)) {
+                    free(buffer);
+                    return NULL;
+                }
+            } else if (next != '\n' && ungetc(next, stream) == EOF) {
+                free(buffer);
+                return NULL;
+            }
+
+            break;
+        }
+
+        if (used == capacity) {
+            size_t new_capacity;
+            char *new_buffer;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+
+            new_capacity = capacity * 2;
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[used++] = (char)(unsigned char)ch;
+    }
+
+    *length = used;
+    return buffer;
+}
+
+static int write_all(FILE *stream, const char *buffer, size_t length)
+{
+    size_t written = 0;
+
+    if (stream == NULL || (buffer == NULL && length != 0)) {
+        return 0;
+    }
+
+    while (written < length) {
+        size_t count = fwrite(buffer + written, 1, length - written, stream);
+
+        if (count == 0) {
+            return 0;
+        }
+
+        written += count;
+    }
+
+    return 1;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *input;
+    char *owned_input = NULL;
+    char *result;
+    size_t input_length;
+    size_t result_length;
+
+    if (argc == 2) {
+        const char *end = memchr(argv[1], '\0', SIZE_MAX);
+
+        if (end == NULL) {
+            return EXIT_FAILURE;
+        }
+
+        input = argv[1];
+        input_length = (size_t)(end - input);
+    } else if (argc == 1) {
+        owned_input = read_line(stdin, &input_length);
+        if (owned_input == NULL) {
+            return EXIT_FAILURE;
+        }
+
+        input = owned_input;
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    result = snake_to_camel(input, input_length, &result_length);
+    free(owned_input);
+
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (!write_all(stdout, result, result_length) ||
+        fputc('\n', stdout) == EOF) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

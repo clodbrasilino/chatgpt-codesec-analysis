@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:53:19: style: Condition 'copy_size<sentence_len+1' is always false [knownConditionTrueFalse]
+    if (copy_size < sentence_len + 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:47:22: note: copy_size is assigned 'sentence_len+1' here.
+    size_t copy_size = sentence_len + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:49:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:53:19: note: Condition 'copy_size<sentence_len+1' is always false
+    if (copy_size < sentence_len + 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:116:28: style: Condition 'word_allocated<word_len+1' is always false [knownConditionTrueFalse]
+        if (word_allocated < word_len + 1) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:105:31: note: word_allocated is assigned 'word_len+1' here.
+        size_t word_allocated = word_len + 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:107:29: note: Assuming condition is false
+        if (adverbs[n].word == NULL) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-440-s3.c:116:28: note: Condition 'word_allocated<word_len+1' is always false
+        if (word_allocated < word_len + 1) {
+                           ^

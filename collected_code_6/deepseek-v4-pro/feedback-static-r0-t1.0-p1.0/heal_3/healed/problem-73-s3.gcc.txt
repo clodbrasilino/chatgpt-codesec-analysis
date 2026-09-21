@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c: In function 'split_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:47:13: error: unknown type name 'ptrdiff_t'
+   47 |             ptrdiff_t offset = current - input;
+      |             ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:5:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    4 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:48:27: error: 'ptrdiff_t' undeclared (first use in this function)
+   48 |             if (offset < (ptrdiff_t)input_len) {
+      |                           ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:48:27: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:48:27: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s3.c:48:37: error: expected ')' before 'input_len'
+   48 |             if (offset < (ptrdiff_t)input_len) {
+      |                ~                    ^~~~~~~~~
+      |                                     )

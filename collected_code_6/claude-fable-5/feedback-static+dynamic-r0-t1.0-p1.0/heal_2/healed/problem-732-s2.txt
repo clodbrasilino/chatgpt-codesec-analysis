@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+void replace_chars(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void)
+{
+    const char source[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+
+    len = strnlen(source, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Source string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+    buffer = (char *)malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len >= size) {
+        fprintf(stderr, "Destination buffer too small\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replace_chars(buffer, size);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already largely safe. The flawfinder warning on `memcpy` (CWE-120) is a heuristic alert — flawfinder cannot verify that the destination buffer is large enough, so it flags every `memcpy` call. In this program:
+
+1. **Allocation is correctly sized**: `buffer` is allocated with `size = len + 1` bytes, which guarantees room for `len` bytes plus the null terminator.
+2. **Bounded length measurement**: `strnlen(source, MAX_STR_LEN)` prevents reading past an unterminated string, and the `len >= MAX_STR_LEN` check rejects overly long input.
+3. **Explicit null termination**: `buffer[len] = '\0'` ensures the string is terminated regardless of the copy.
+
+To formally address the warning, I added an explicit guard (`if (len >= size)`) immediately before the `memcpy`, making the invariant "destination can always hold the source data" locally provable at the call site rather than relying on reasoning about the allocation logic above. This is defensive programming: if the allocation logic is later modified, the check catches the mismatch before any overflow can occur.
+
+Other good practices already present and preserved: `NULL` check in `replace_chars`, checking `malloc` and `printf` return values, freeing `buffer` on all exit paths, and nulling the pointer after `free` to avoid dangling-pointer misuse.

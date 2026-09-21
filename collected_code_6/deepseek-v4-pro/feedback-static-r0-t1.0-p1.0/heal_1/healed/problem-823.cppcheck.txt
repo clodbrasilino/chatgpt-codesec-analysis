@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-823.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-823.c:26:22: style: Condition 'anchored_len<pattern_len' is always false [knownConditionTrueFalse]
+    if (anchored_len < pattern_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-823.c:25:18: note: anchored_len is assigned 'pattern_len+3' here.
+    anchored_len = pattern_len + 3;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-823.c:26:22: note: Condition 'anchored_len<pattern_len' is always false
+    if (anchored_len < pattern_len) {
+                     ^

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:83:56: style: Condition 'word_len<result_size' is always true [knownConditionTrueFalse]
+                            size_t copy_len = word_len < result_size ? word_len : result_size - 1;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:80:44: note: result_size is assigned 'word_len+1' here.
+                        size_t result_size = word_len + 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:83:56: note: Condition 'word_len<result_size' is always true
+                            size_t copy_len = word_len < result_size ? word_len : result_size - 1;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:130:48: style: Condition 'word_len<result_size' is always true [knownConditionTrueFalse]
+                    size_t copy_len = word_len < result_size ? word_len : result_size - 1;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:127:36: note: result_size is assigned 'word_len+1' here.
+                size_t result_size = word_len + 1;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-537-s3.c:130:48: note: Condition 'word_len<result_size' is always true
+                    size_t copy_len = word_len < result_size ? word_len : result_size - 1;
+                                               ^

@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+static int bounded_length(const char *s, size_t *len_out)
+{
+    size_t len;
+
+    len = 0;
+    while (len < MAX_STRING_LENGTH) {
+        if (s[len] == '\0') {
+            *len_out = len;
+            return 1;
+        }
+        len++;
+    }
+    return 0;
+}
+
+static int is_reverse(const char *str1, const char *str2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    if (!bounded_length(str1, &len1) || !bounded_length(str2, &len2)) {
+        return 0;
+    }
+
+    if (len1 != len2) {
+        return 0;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if (str1[i] != str2[len1 - 1 - i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int count_reverse_pairs(const char *list[], size_t count)
+{
+    int pairs;
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return 0;
+    }
+
+    pairs = 0;
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        for (j = i + 1; j < count; j++) {
+            if (list[j] == NULL) {
+                continue;
+            }
+            if (is_reverse(list[i], list[j])) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void)
+{
+    const char *words[] = {"code", "edoc", "abc", "cba", "hello", "olleh", "test"};
+    size_t count;
+    int result;
+
+    count = sizeof(words) / sizeof(words[0]);
+    result = count_reverse_pairs(words, count);
+
+    printf("Number of reverse string pairs: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the CWE-126 (buffer over-read) weaknesses:**
+
+1. **Replaced `strlen()` with a bounded length function** — `bounded_length()` scans at most `MAX_STRING_LENGTH` bytes, so a non-`\0`-terminated string can no longer cause an unbounded over-read. This is also fully portable (unlike `strnlen()`, which is POSIX-only and unavailable on some platforms such as MSVC).
+
+2. **Termination validation** — If a string is not terminated within the bound, `bounded_length()` returns 0, and `is_reverse()` safely rejects the pair instead of operating on an untrusted length.
+
+3. **Preserved existing behavior** — NULL checks for `list`, `list[i]`, `list[j]`, `str1`, and `str2` are retained, and the program output remains correct (`Number of reverse string pairs: 3` for the given test data).

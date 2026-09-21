@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_lowercase(const char *input, char *output, size_t output_size);
+
+int remove_lowercase(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t out_len = 0;
+    int rc;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    output[0] = '\0';
+
+    rc = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    while (*cursor != '\0') {
+        rc = regexec(&regex, cursor, 1, &match, 0);
+        if (rc == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, output_size);
+            if (out_len >= output_size || remaining >= output_size - out_len) {
+                regfree(&regex);
+                output[0] = '\0';
+                return -1;
+            }
+            memcpy(output + out_len, cursor, remaining);
+            out_len += remaining;
+            break;
+        }
+        if (rc != 0) {
+            regfree(&regex);
+            output[0] = '\0';
+            return -1;
+        }
+        if (match.rm_so > 0) {
+            size_t prefix_len = (size_t)match.rm_so;
+            if (out_len >= output_size || prefix_len >= output_size - out_len) {
+                regfree(&regex);
+                output[0] = '\0';
+                return -1;
+            }
+            memcpy(output + out_len, cursor, prefix_len);
+            out_len += prefix_len;
+        }
+        if (match.rm_eo <= 0) {
+            regfree(&regex);
+            output[0] = '\0';
+            return -1;
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (out_len >= output_size) {
+        regfree(&regex);
+        output[0] = '\0';
+        return -1;
+    }
+
+    output[out_len] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    static const char *const test_strings[] = {
+        "HelloWORLDfooBAR",
+        "abcDEFghiJKL",
+        "ALLUPPERCASE",
+        "alllowercase",
+        "Mix123edCaseWith456numbers"
+    };
+    const size_t max_input_len = 4096;
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        size_t input_len = strnlen(test_strings[i], max_input_len);
+        size_t buf_size;
+        char *result;
+
+        if (input_len >= max_input_len) {
+            fprintf(stderr, "Input string too long\n");
+            return EXIT_FAILURE;
+        }
+
+        buf_size = input_len + 1;
+        result = malloc(buf_size);
+        if (result == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+
+        if (remove_lowercase(test_strings[i], result, buf_size) == 0) {
+            printf("Input:  \"%s\"\n", test_strings[i]);
+            printf("Output: \"%s\"\n\n", result);
+        } else {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` and an explicit maximum bound (`output_size` inside the function, `max_input_len` in `main`), so a non-terminated string can never cause an unbounded read.
+
+2. **CWE-120 (`memcpy` overflow):** Rewrote the bounds checks to avoid integer-overflow pitfalls — instead of `out_len + len >= output_size` (which could wrap on overflow), the checks now use subtraction form (`len >= output_size - out_len`) after verifying `out_len < output_size`, guaranteeing the destination can always hold the copied data.
+
+3. **Defensive hardening:**
+   - `output[0] = '\0'` is set immediately and on every error path, so the caller never receives an unterminated or stale buffer.
+   - Added a guard against `match.rm_eo <= 0`, preventing a potential infinite loop on a zero-length match.
+   - Final bounds check before writing the terminating NUL byte.
+   - `test_strings` made `static const` to keep the data in read-only storage.

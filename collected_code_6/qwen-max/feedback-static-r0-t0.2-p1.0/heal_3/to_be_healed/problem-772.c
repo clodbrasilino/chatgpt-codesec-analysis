@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    char *result = NULL;
+    size_t result_len = 0;
+    const char *p = str;
+    while (*p) {
+        if (*p == ' ') {
+            p++;
+            continue;
+        }
+        const char *start = p;
+        while (*p && *p != ' ') p++;
+        size_t token_len = p - start;
+        if (token_len != k) {
+            size_t new_result_len = result_len + token_len + 1;
+            char *new_result = realloc(result, new_result_len);
+            if (!new_result) {
+                free(result);
+                return NULL;
+            }
+            result = new_result;
+            if (result_len > 0) {
+                result[result_len - 1] = ' ';
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + result_len, start, token_len);
+                result_len = new_result_len - 1;
+            } else {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result, start, token_len);
+                result_len = new_result_len - 1;
+            }
+            result[result_len] = '\0';
+        }
+    }
+    return result ? result : strdup("");
+}
+
+int main() {
+    const char str[] = "This is a test string with some words of length five";
+    int k = 5;
+    char *new_str = remove_k_length_words(str, k);
+    printf("%s\n", new_str);
+    free(new_str);
+    return 0;
+}

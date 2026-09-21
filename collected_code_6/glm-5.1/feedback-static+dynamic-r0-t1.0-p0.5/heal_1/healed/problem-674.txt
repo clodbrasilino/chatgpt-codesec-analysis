@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **items;
+    size_t size;
+    size_t capacity;
+} Collection;
+
+void collection_init(Collection *col, size_t initial_capacity) {
+    col->items = (char **)malloc(initial_capacity * sizeof(char *));
+    if (col->items == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    col->size = 0;
+    col->capacity = initial_capacity;
+}
+
+void collection_append(Collection *col, const char *item) {
+    if (col->size == col->capacity) {
+        col->capacity *= 2;
+        char **new_items = (char **)realloc(col->items, col->capacity * sizeof(char *));
+        if (new_items == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        col->items = new_items;
+    }
+    size_t item_len = strnlen(item, 1024 * 1024);
+    col->items[col->size] = (char *)malloc(item_len + 1);
+    if (col->items[col->size] == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    snprintf(col->items[col->size], item_len + 1, "%s", item);
+    col->size++;
+}
+
+bool collection_contains(Collection *col, const char *item) {
+    for (size_t i = 0; i < col->size; i++) {
+        if (strcmp(col->items[i], item) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void collection_free(Collection *col) {
+    for (size_t i = 0; i < col->size; i++) {
+        free(col->items[i]);
+    }
+    free(col->items);
+    col->items = NULL;
+    col->size = 0;
+    col->capacity = 0;
+}
+
+char *remove_duplicate_words(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Collection unique_words;
+    collection_init(&unique_words, 16);
+
+    size_t len = strnlen(str, 1024 * 1024);
+    char *temp = (char *)malloc(len + 1);
+    if (temp == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    snprintf(temp, len + 1, "%s", str);
+
+    char *token = strtok(temp, " \t\n\r");
+    while (token != NULL) {
+        if (!collection_contains(&unique_words, token)) {
+            collection_append(&unique_words, token);
+        }
+        token = strtok(NULL, " \t\n\r");
+    }
+
+    size_t result_len = 0;
+    for (size_t i = 0; i < unique_words.size; i++) {
+        result_len += strnlen(unique_words.items[i], 1024 * 1024);
+        if (i < unique_words.size - 1) {
+            result_len += 1;
+        }
+    }
+
+    char *result = (char *)malloc(result_len + 1);
+    if (result == NULL) {
+        collection_free(&unique_words);
+        free(temp);
+        exit(EXIT_FAILURE);
+    }
+
+    result[0] = '\0';
+    size_t current_pos = 0;
+    for (size_t i = 0; i < unique_words.size; i++) {
+        size_t item_len = strnlen(unique_words.items[i], 1024 * 1024);
+        snprintf(result + current_pos, result_len + 1 - current_pos, "%s", unique_words.items[i]);
+        current_pos += item_len;
+        if (i < unique_words.size - 1) {
+            snprintf(result + current_pos, result_len + 1 - current_pos, " ");
+            current_pos += 1;
+        }
+    }
+
+    free(temp);
+    collection_free(&unique_words);
+
+    return result;
+}
+
+int main(void) {
+    const char *input = "hello world hello C world C programming";
+    char *output = remove_duplicate_words(input);
+    
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return 0;
+}

@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings flagged in the original code are **false positives** — the code already implements the necessary mitigations, so the rewrite preserves the same logic:
+
+1. **CWE-120 / CWE-20 (buffer boundary checks in loops):** All array accesses are bounded. `strnlen(str, max_len)` guarantees `len < max_len`, so the loop index `read` never exceeds the valid buffer range, and `write <= read` always holds, making `str[write]` safe — including the final NUL write at `str[write]`, since `write <= len < max_len`.
+
+2. **NULL and zero-length guards:** `str == NULL` and `max_len == 0` are rejected up front, preventing dereference of invalid pointers.
+
+3. **Unterminated-string protection:** The `len >= max_len` check rejects inputs that are not properly NUL-terminated within the declared buffer size, avoiding out-of-bounds reads.
+
+4. **`isalnum` UB avoidance:** The cast to `(unsigned char)` before passing to `isalnum()` prevents undefined behavior for negative `char` values (required by the C standard for `<ctype.h>` functions).
+
+5. **In-place compaction:** Since `write` never outpaces `read`, the two-index compaction is safe within a single buffer with no risk of overlap corruption.
+
+6. **Checked I/O in `main`:** Return values of `printf`/`fprintf` are verified, and `sizeof(input)` correctly conveys the full buffer size (including the NUL terminator) to the callee.
+
+No functional changes were required — the original code was already defensively written; the warnings stem from Flawfinder's pattern-based heuristics rather than actual exploitable flaws.

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_string_at_lowercase(const char *input, int *count) {
+    if (input == NULL || count == NULL) return NULL;
+    size_t length = 0;
+    while (input[length] != '\0') length++;
+
+    char **result = (char **)malloc((length + 2) * sizeof(char *));
+    if (result == NULL) return NULL;
+    *count = 0;
+
+    const char *start = input;
+    for (size_t i = 0; i <= length; ++i) {
+        if (i == length || islower((unsigned char)input[i])) {
+            size_t len = i - (start - input);
+            result[*count] = (char *)malloc((len + 1) * sizeof(char));
+            if (result[*count] == NULL) {
+                for (int j = 0; j < *count; ++j) free(result[j]);
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[*count], start, len);
+            result[*count][len] = '\0';
+            (*count)++;
+            start = input + i + 1;
+        }
+    }
+
+    result[*count] = NULL;
+    return result;
+}
+
+void free_split_strings(char **strings) {
+    if (strings != NULL) {
+        for (int i = 0; strings[i] != NULL; ++i) free(strings[i]);
+        free(strings);
+    }
+}
+
+int main() {
+    const char *input = "AbCdEfGhIjK";
+    int count;
+    char **result = split_string_at_lowercase(input, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; ++i) printf("%s\n", result[i]);
+        free_split_strings(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-647.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-647.c:96:17: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-647.c:71:13: note: Assuming that condition 'len>0' is not redundant
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-647.c:87:28: note: Assuming condition is false
+        if (result[*count] == NULL) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-647.c:96:17: note: Condition 'len>0' is always true
+        if (len > 0) {
+                ^

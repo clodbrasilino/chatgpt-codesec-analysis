@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 1024
+
+bool isValidDecimalWithPrecision2(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+
+    int len = 0;
+    int dotCount = 0;
+    int dotIndex = -1;
+    int signCount = 0;
+
+    while (str[len] != '\0') {
+        if (len >= MAX_INPUT_LEN) {
+            return false;
+        }
+        
+        if (str[len] == '-' || str[len] == '+') {
+            if (len != 0) {
+                return false;
+            }
+            signCount++;
+        } else if (str[len] == '.') {
+            dotCount++;
+            dotIndex = len;
+            if (dotCount > 1) {
+                return false;
+            }
+        } else if (str[len] < '0' || str[len] > '9') {
+            return false;
+        }
+        
+        len++;
+    }
+
+    if (len == signCount || (dotCount == 1 && len - signCount == 1)) {
+        return false;
+    }
+
+    if (dotCount == 1) {
+        int fractionalDigits = len - 1 - dotIndex;
+        if (fractionalDigits != 2) {
+            return false;
+        }
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *testCases[] = {
+        "123.45",
+        "-12.34",
+        "0.00",
+        ".50",
+        "123",
+        "123.4",
+        "123.456",
+        "abc",
+        "",
+        "+1.23"
+    };
+    
+    size_t numTests = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (size_t i = 0; i < numTests; i++) {
+        bool result = isValidDecimalWithPrecision2(testCases[i]);
+        printf("\"%s\": %s\n", testCases[i], result ? "true" : "false");
+    }
+
+    return 0;
+}

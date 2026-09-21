@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+#define DISCARD_GUARD_LIMIT 1048576U
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static bool discard_remaining_input(FILE *stream)
+{
+    int ch;
+    bool truncated = false;
+    size_t guard = 0U;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    do {
+        ch = fgetc(stream);
+        if (ch != '\n' && ch != EOF) {
+            truncated = true;
+        }
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < DISCARD_GUARD_LIMIT);
+
+    return truncated;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == (sizeof(buffer) - 1U)) {
+        if (discard_remaining_input(stdin)) {
+            fprintf(stderr, "Input too long: maximum %zu characters allowed\n",
+                    sizeof(buffer) - 1U);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **Flawfinder `fgetc` warning (CWE-120, CWE-20)** — The original loop already bounded iterations with a `guard` counter, but the limit `(size_t)-1` was effectively unbounded (`SIZE_MAX`). I replaced it with a concrete constant `DISCARD_GUARD_LIMIT` (1 MiB of discarded characters), which provides a genuine defense against pathological or adversarial input streams that never yield `'\n'` or `EOF`. Since `fgetc` reads a single character at a time into an `int`, no buffer overflow is possible; the real risk was the loop bound, which is now properly restricted.
+
+2. **Flawfinder `char` array warning (CWE-119/CWE-120)** — The statically-sized `buffer` is safely handled throughout:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow.
+   - Explicit NUL termination at `buffer[sizeof(buffer) - 1U]` guarantees termination even in edge cases.
+   - `strnlen` with `sizeof(buffer)` is used instead of `strlen`, bounding all length computations.
+   - The truncation check (`len == sizeof(buffer) - 1U`) combined with `discard_remaining_input` correctly detects and rejects oversized input rather than silently truncating it.
+
+The code is portable C11 (`strnlen` requires POSIX or C23's `<string.h>` extension — compile with `-D_POSIX_C_SOURCE=200809L` if needed), handles all error paths from stdio functions, and contains no undefined behavior.

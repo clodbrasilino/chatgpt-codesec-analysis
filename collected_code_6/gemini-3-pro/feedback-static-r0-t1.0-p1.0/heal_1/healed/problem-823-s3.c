@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_PATTERN_LEN 4096
+
+int starts_with_regex(const char *string, const char *pattern) {
+    if (string == NULL || pattern == NULL) {
+        return 0;
+    }
+
+    size_t pattern_len = strnlen(pattern, MAX_PATTERN_LEN);
+    if (pattern_len == MAX_PATTERN_LEN) {
+        return 0; 
+    }
+
+    char *anchored_pattern = malloc(pattern_len + 2);
+    if (anchored_pattern == NULL) {
+        return 0;
+    }
+
+    snprintf(anchored_pattern, pattern_len + 2, "^%s", pattern);
+
+    regex_t regex;
+    int reti = regcomp(&regex, anchored_pattern, REG_EXTENDED);
+    free(anchored_pattern);
+
+    if (reti != 0) {
+        return 0;
+    }
+
+    reti = regexec(&regex, string, 0, NULL, 0);
+    regfree(&regex);
+
+    if (reti == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *target_string = "Hello, World!";
+    const char *substring = "Hello";
+
+    int result = starts_with_regex(target_string, substring);
+
+    if (result) {
+        printf("The string starts with the substring.\n");
+    } else {
+        printf("The string does not start with the substring.\n");
+    }
+
+    return 0;
+}

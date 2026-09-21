@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the identified weakness and its mitigations:
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `buffer[BUFFER_SIZE]` because fixed-size arrays are a common source of buffer overflows when paired with unbounded input functions like `gets()` or `strcpy()`. In this code, the risk is already properly mitigated:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most `BUFFER_SIZE - 1` characters plus the null terminator, preventing overflow at the input stage. Using `sizeof(buffer)` rather than a hardcoded constant keeps the bound correct even if `BUFFER_SIZE` changes.
+
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure ensuring the buffer is always null-terminated (though `fgets` already guarantees this on success).
+
+3. **Newline stripping**: `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline without risk of out-of-bounds access, since `strcspn` returns the string length if no newline is found.
+
+4. **Bounded string measurement**: `strnlen(str, max_len)` in `count_matching_positions` bounds the length calculation, so even if a non-terminated buffer were passed, the loop cannot read past `max_len` bytes. The `NULL` check adds further robustness.
+
+5. **Return value checking**: The `fgets` result is checked for `NULL`, correctly handling EOF and read errors instead of processing indeterminate buffer contents.
+
+The warning is a low-risk (risk 2) static-analysis heuristic; the existing mitigations render it a false positive, so the code stands as-is with the comments removed.

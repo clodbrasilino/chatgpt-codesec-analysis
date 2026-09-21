@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (max_len == 0U) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; (i < max_len) && (str[i] != '\0'); i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while ((ch != '\n') && (ch != EOF) && (guard < (size_t)INT_MAX));
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if ((buffer == NULL) || (size < 2U) || (size > (size_t)INT_MAX)) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    len = strnlen(buffer, size);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    } else if (len == (size - 1U)) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("The string is a binary string\n");
+    } else {
+        printf("The string is not a binary string\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20)** — This was a risk-1 informational warning about `getchar()` in a loop. The original code never stores the character into a buffer, so no overflow is possible; it only discards input. As additional hardening, the rewrite adds a loop guard counter so the drain loop is provably bounded even against pathological infinite streams, satisfying the "check buffer boundaries in loops" advisory.
+
+2. **Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120)** — This is the standard statically-sized array advisory. The code already mitigates it correctly:
+   - `read_line()` receives `sizeof(buffer)` and validates it (`size >= 2`, `size <= INT_MAX` before the cast to `int` for `fgets`).
+   - `fgets()` is a length-limited read, never writing beyond `size - 1` characters plus the terminator.
+   - Explicit NUL termination at `buffer[size - 1U]` guarantees a terminated string regardless of input.
+   - `strnlen()` (bounded) is used instead of `strlen()`.
+   - `is_binary_string()` is also bounded by `max_len` and rejects strings that fill the buffer without a terminator inside the bound.
+   - Overlong lines are detected and the excess input is drained, preventing stale input from leaking into subsequent reads.
+
+Both findings were false positives or already-mitigated advisories; the rewrite preserves the defensive structure and adds the bounded drain loop as belt-and-suspenders.

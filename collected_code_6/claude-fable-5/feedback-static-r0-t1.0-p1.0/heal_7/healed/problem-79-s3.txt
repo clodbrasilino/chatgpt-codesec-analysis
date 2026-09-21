@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120). The Flawfinder warning on the statically-sized `buffer` array is a low-risk, informational hit — it flags *every* fixed-size char array because they are a common source of overflows, not because this particular usage is unsafe. The code mitigates the risk correctly:
+
+1. **Bounded write:** `snprintf(buffer, sizeof(buffer), ...)` is used instead of unsafe alternatives like `strcpy` or `sprintf`, guaranteeing no write past `BUFFER_SIZE` and guaranteed NUL-termination (given a nonzero size).
+
+2. **Truncation detection:** The return value check `result < 0 || (size_t)result >= sizeof(buffer)` correctly handles both encoding errors (negative return) and truncation (return value ≥ buffer size, since `snprintf` returns the length that *would* have been written).
+
+3. **Correct signed/unsigned comparison:** The cast to `size_t` is only performed after ruling out a negative `result`, avoiding a signedness bug where a negative value would convert to a huge unsigned number (which would still be caught here, but the explicit `< 0` check makes intent clear).
+
+4. **`sizeof(buffer)` instead of the macro:** Using `sizeof` ties the bounds directly to the array definition, so changing `BUFFER_SIZE` can't desynchronize the limit.
+
+5. **`memset` initialization:** Technically redundant since `snprintf` NUL-terminates, but harmless defense-in-depth.
+
+No functional changes were required — the rewrite simply strips the comments as requested.

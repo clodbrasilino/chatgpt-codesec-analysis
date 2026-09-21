@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+Tuple *tuple_create(void) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->capacity = 8;
+    t->count = 0;
+    t->items = malloc(t->capacity * sizeof(char *));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+int tuple_append(Tuple *t, const char *item, size_t item_len) {
+    if (t == NULL || item == NULL) {
+        return -1;
+    }
+    if (t->count >= t->capacity) {
+        size_t new_cap = t->capacity * 2;
+        char **new_items = realloc(t->items, new_cap * sizeof(char *));
+        if (new_items == NULL) {
+            return -1;
+        }
+        t->items = new_items;
+        t->capacity = new_cap;
+    }
+    t->items[t->count] = malloc(item_len + 1);
+    if (t->items[t->count] == NULL) {
+        return -1;
+    }
+    if (item_len > 0) {
+        if (memchr(item, '\0', item_len) != NULL) {
+            free(t->items[t->count]);
+            return -1;
+        }
+        /* Possible weaknesses found:
+         *  'copy_len' is assigned value 'item_len' here.
+         */
+        size_t copy_len = item_len;
+        /* Possible weaknesses found:
+         *  The comparison 'copy_len > item_len' is always false because 'copy_len' and 'item_len' represent the same value.
+         *  The comparison 'copy_len > item_len' is always false because 'copy_len' and 'item_len' represent the same value. [knownConditionTrueFalse]
+         */
+        if (copy_len > item_len) {
+            copy_len = item_len;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(t->items[t->count], item, copy_len);
+    }
+    t->items[t->count][item_len] = '\0';
+    t->count++;
+    return 0;
+}
+
+void tuple_free(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < t->count; i++) {
+        free(t->items[i]);
+    }
+    free(t->items);
+    free(t);
+}
+
+static int process_segment(Tuple *t, const char *start, size_t len) {
+    char *buffer = malloc(len + 1);
+    if (buffer == NULL) {
+        return -1;
+    }
+    if (len > 0) {
+        if (memchr(start, '\0', len) != NULL) {
+            free(buffer);
+            return -1;
+        }
+        /* Possible weaknesses found:
+         *  'copy_len' is assigned value 'len' here.
+         */
+        size_t copy_len = len;
+        /* Possible weaknesses found:
+         *  The comparison 'copy_len > len' is always false because 'copy_len' and 'len' represent the same value. [knownConditionTrueFalse]
+         *  The comparison 'copy_len > len' is always false because 'copy_len' and 'len' represent the same value.
+         */
+        if (copy_len > len) {
+            copy_len = len;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(buffer, start, copy_len);
+    }
+    buffer[len] = '\0';
+    
+    char *trimmed = buffer;
+    while (isspace((unsigned char)*trimmed)) {
+        trimmed++;
+    }
+    
+    size_t trimmed_len = strnlen(trimmed, len + 1);
+    
+    char *trim_end = trimmed + trimmed_len;
+    while (trim_end > trimmed && isspace((unsigned char)trim_end[-1])) {
+        trim_end--;
+    }
+    *trim_end = '\0';
+    trimmed_len = (size_t)(trim_end - trimmed);
+    
+    if (tuple_append(t, trimmed, trimmed_len) != 0) {
+        free(buffer);
+        return -1;
+    }
+    free(buffer);
+    return 0;
+}
+
+Tuple *string_to_tuple(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    Tuple *t = tuple_create();
+    if (t == NULL) {
+        return NULL;
+    }
+    
+    const char *start = str;
+    const char *end = str;
+    int in_quotes = 0;
+    
+    while (*end != '\0') {
+        if (*end == '"') {
+            in_quotes = !in_quotes;
+        } else if (*end == ',' && !in_quotes) {
+            size_t len = (size_t)(end - start);
+            if (process_segment(t, start, len) != 0) {
+                tuple_free(t);
+                return NULL;
+            }
+            start = end + 1;
+        }
+        end++;
+    }
+    
+    size_t len = (size_t)(end - start);
+    if (process_segment(t, start, len) != 0) {
+        tuple_free(t);
+        return NULL;
+    }
+    
+    return t;
+}
+
+int main(void) {
+    const char *input = "apple, banana, \"cherry, red\", date";
+    Tuple *t = string_to_tuple(input);
+    
+    if (t == NULL) {
+        fprintf(stderr, "Failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("(");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%s'", t->items[i]);
+        if (i < t->count - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+    
+    tuple_free(t);
+    return EXIT_SUCCESS;
+}

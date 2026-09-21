@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-756-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-756-s2.c:16:81: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   16 |         printf("Testing '%s': %s\n", test_strings[i], match_ab(test_strings[i], strlen(test_strings[i])) ? "Match" : "No Match");
+      |                                                                                 ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-756-s2.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <stdbool.h>
+  +++ |+#include <string.h>
+    3 | 

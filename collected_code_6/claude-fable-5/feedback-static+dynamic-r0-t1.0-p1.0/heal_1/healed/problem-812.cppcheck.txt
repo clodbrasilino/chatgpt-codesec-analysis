@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-812.c:20:40: warning: Either the condition 'len>=4096U' is redundant or the array 'input[40]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-812.c:24:13: note: Assuming that condition 'len>=4096U' is not redundant
+    if (len >= MAX_INPUT_LEN) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-812.c:20:40: note: Array index out of bounds
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+                                       ^

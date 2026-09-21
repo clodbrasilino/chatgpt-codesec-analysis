@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write >= max_len - 1) {
+                return NULL;
+            }
+            str[write] = str[read];
+            write++;
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings in the original code are all risk-level 1 (informational) hits on the `read` identifier and array indexing, flagged because `read` is a common name associated with buffer operations. Reviewing the code, the identified weaknesses (CWE-120 buffer overflow, CWE-20 improper input validation) are already mitigated:
+
+1. **NULL/zero-length guard** — `str == NULL || max_len == 0` is rejected up front, preventing dereference of invalid pointers.
+2. **Bounded length computation** — `strnlen(str, max_len)` is used instead of `strlen`, so an unterminated buffer cannot cause an over-read; `len >= max_len` rejects strings that fill or exceed the buffer without a terminator.
+3. **Loop bounds** — the read loop is doubly bounded (`read < len && read < max_len`), guaranteeing no out-of-bounds reads.
+4. **Write bounds** — `write >= max_len - 1` is checked before every write, reserving space for the null terminator and preventing overflow.
+5. **Safe termination** — the final `write >= max_len` check (defensively redundant given the in-loop check) guarantees the `'\0'` write stays in bounds.
+6. **Caller-side validation** — `main` verifies `sizeof(input) <= MAX_INPUT_LEN`, passes the true buffer size to the function, checks the return value for `NULL`, and checks the return codes of `printf`/`fprintf`.
+7. **`isalnum` correctness** — the argument is cast to `unsigned char`, avoiding undefined behavior for negative `char` values.
+
+Since `write` never exceeds `read`, the in-place compaction cannot overrun the source data. The code is safe as written; the rewrite above simply removes the annotation comments, as no functional fixes were required.

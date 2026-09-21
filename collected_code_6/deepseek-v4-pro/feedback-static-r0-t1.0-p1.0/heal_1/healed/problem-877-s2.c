@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare_chars(const void *a, const void *b) {
+    return (*(const char *)a - *(const char *)b);
+}
+
+void sort_string(char *str, size_t max_len) {
+    size_t len = strnlen(str, max_len);
+    if (len > 0) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+}
+
+int main(void) {
+    char str[1024] = {0};
+    
+    if (fgets(str, sizeof(str) - 1, stdin) == NULL) {
+        return 1;
+    }
+    
+    str[sizeof(str) - 1] = '\0';
+    
+    char *newline = strchr(str, '\n');
+    if (newline) {
+        *newline = '\0';
+    }
+    
+    sort_string(str, sizeof(str));
+    
+    printf("%s\n", str);
+    
+    return 0;
+}

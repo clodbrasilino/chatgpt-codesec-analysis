@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int find_kth_element(const int *arr, size_t n, size_t k, int *result)
+{
+    int *copy;
+    size_t bytes;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || k == 0 || k > n) {
+        return -1;
+    }
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(int);
+
+    copy = malloc(bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, arr, bytes);
+    qsort(copy, n, sizeof(int), compare_ints);
+
+    *result = copy[k - 1];
+    free(copy);
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 7, 10, 4, 3, 20, 15 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+    int result = 0;
+
+    if (find_kth_element(arr, n, k, &result) != 0) {
+        fprintf(stderr, "Error: could not find the %zu-th element\n", k);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The %zu-th smallest element is %d\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+- **`memcpy` (CWE-120, Flawfinder risk 2):** This was already a false positive in practice — the destination `copy` is allocated with exactly `n * sizeof(int)` bytes, which is precisely the amount copied. The rewrite makes this explicit by computing `bytes` once and using the same variable for both `malloc` and `memcpy`, so the destination size and copy size cannot silently diverge if the code is later modified.
+- **Missing include (actual bug):** The original code used `SIZE_MAX` without including `<stdint.h>`, which would fail to compile (or worse, rely on transitive includes). This is now fixed.
+- **Overflow guard:** The `n > SIZE_MAX / sizeof(int)` check correctly prevents integer overflow in the allocation size computation before it is used.
+- **Other defensive measures already present and preserved:** NULL-pointer checks on `arr` and `result`, bounds validation of `k` against `n`, `malloc` failure handling, `free` on the single exit path after use, and checked `printf` return in `main`.

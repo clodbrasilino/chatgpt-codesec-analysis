@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-771.c: In function 'isBalanced':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-771.c:6:27: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    6 |     char *stack = (char *)malloc(len * sizeof(char));
+      |                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-771.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-771.c:13:17: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   13 |                 free(stack);
+      |                 ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-771.c:13:17: note: include '<stdlib.h>' or provide a declaration of 'free'

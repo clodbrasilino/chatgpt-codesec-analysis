@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write >= max_len - 1) {
+                return NULL;
+            }
+            str[write] = str[read];
+            write++;
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings (CWE-120 buffer overflow, CWE-20 improper input validation) flagged in the original code were already mitigated by the existing defensive measures, which I've preserved and slightly strengthened:
+
+1. **NULL and zero-length guards** — `str == NULL || max_len == 0` prevents dereferencing invalid pointers.
+2. **Bounded length computation** — `strnlen(str, max_len)` instead of `strlen` guarantees the scan never runs past the caller-declared buffer size, and rejecting `len >= max_len` ensures the string is properly NUL-terminated within bounds.
+3. **Write-index bound check** — `write >= max_len - 1` before each store guarantees room remains for the terminating NUL, eliminating any overflow on `str[write]`.
+4. **Loop read bound** — the added `read < max_len` condition makes the read-side bound explicit for static analyzers, even though `len < max_len` already implies it.
+5. **Safe character classification** — casting to `unsigned char` before `isalnum` avoids undefined behavior for negative `char` values.
+6. **Compile-time size validation in `main`** — `sizeof(input)` is passed as the true buffer capacity, so the function's bounds checks operate on accurate information, and I/O return values are checked throughout.
+
+The remaining Flawfinder hits are false positives inherent to any indexed buffer access; the invariants (`read < len < max_len` and `write < max_len - 1`) make out-of-bounds access impossible.

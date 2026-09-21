@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverseWords(char *str) {
+    size_t len = strlen(str);
+    char *temp = (char *)malloc(len + 1);
+    if (temp == NULL) return;
+    strcpy(temp, str);
+
+    char *word = strtok(temp, " ");
+    if (word == NULL) {
+        free(temp);
+        return;
+    }
+
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        free(temp);
+        return;
+    }
+    result[0] = '\0';
+
+    while (word != NULL) {
+        size_t word_len = strlen(word);
+        size_t result_len = strlen(result);
+        if (result_len > 0) {
+            strncat(result, " ", len - result_len);
+        }
+        strncat(result, word, len - result_len - 1);
+        word = strtok(NULL, " ");
+    }
+
+    size_t result_len = strlen(result);
+    for (size_t i = 0; i < result_len; i++) {
+        for (size_t j = i + 1; j < result_len; j++) {
+            if (result[j] == ' ') {
+                int start = i, end = j - 1;
+                while (start < end) {
+                    char t = result[start];
+                    result[start] = result[end];
+                    result[end] = t;
+                    start++;
+                    end--;
+                }
+                i = j;
+                break;
+            }
+        }
+    }
+
+    int start = i, end = result_len - 1;
+    while (start < end) {
+        char t = result[start];
+        result[start] = result[end];
+        result[end] = t;
+        start++;
+        end--;
+    }
+
+    strcpy(str, result);
+    free(temp);
+    free(result);
+}
+
+int main() {
+    char str[] = "Hello World This is C";
+    reverseWords(str);
+    printf("%s\n", str);
+    return 0;
+}

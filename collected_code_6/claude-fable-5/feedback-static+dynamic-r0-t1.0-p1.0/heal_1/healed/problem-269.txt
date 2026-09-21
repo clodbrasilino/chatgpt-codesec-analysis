@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20):** This is a low-risk, largely informational finding. The original code already mitigated the main concerns by storing the result in an `int` (not a `char`, which would make `EOF` detection unreliable) and checking for `EOF` before use. Since `getchar()` is not called in a loop accumulating data into a buffer, there is no buffer-overflow risk (CWE-120).
+
+2. **Input validation (CWE-20):** The rewrite adds validation via `isprint()` so that non-printable input (control characters, etc.) is never echoed raw back to the terminal. This prevents potential terminal escape-sequence injection when reflecting untrusted input.
+
+3. **`fflush(stdout)`:** Added after the prompt to guarantee the prompt is visible before blocking on input, since `stdout` may be fully buffered when not attached to a terminal.
+
+4. **Safe cast retained:** The `(unsigned char)` cast in `get_ascii_value` correctly avoids implementation-defined behavior for negative `char` values on platforms where `char` is signed.

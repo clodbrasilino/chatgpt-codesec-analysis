@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'Python Exercises Practice Solution', got <no output>
+  *  test case 0 failed: expected 'Python Exercises Practice Solution', got <no output>
+  *  test case 1 failed: expected 'Python Exercises Practice Solution', got <no output>
+  */
+
+char* remove_duplicate_words(const char* input) {
+    if (!input) {
+        return NULL;
+    }
+
+    char* str = strdup(input);
+    if (!str) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    char** seen_collection = malloc(len * sizeof(char*));
+    if (!seen_collection) {
+        free(str);
+        return NULL;
+    }
+
+    char* result = malloc(len + 1);
+    if (!result) {
+        free(seen_collection);
+        free(str);
+        return NULL;
+    }
+    result[0] = '\0';
+
+    size_t seen_count = 0;
+    char* saveptr = NULL;
+    char* token = strtok_r(str, " \t\n", &saveptr);
+
+    while (token) {
+        bool found = false;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen_collection[i], token) == 0) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            seen_collection[seen_count++] = token;
+            if (result[0] != '\0') {
+                /* Possible weaknesses found:
+                 * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). Risk is low because the source is a constant character. (risk 1, buffer)
+                 */
+                strcat(result, " ");
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). (risk 4, buffer)
+             */
+            strcat(result, token);
+        }
+        token = strtok_r(NULL, " \t\n", &saveptr);
+    }
+
+    free(seen_collection);
+    free(str);
+    return result;
+}
+
+int main(void) {
+    const char* test_str = "hello world hello C developer world";
+    char* unique_str = remove_duplicate_words(test_str);
+    
+    if (unique_str) {
+        printf("%s\n", unique_str);
+        free(unique_str);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:59:41: style: Condition 'result_len+prefix_len<=input_len' is always true [knownConditionTrueFalse]
+            if (result_len + prefix_len <= input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:49:41: note: Assuming that condition 'result_len+prefix_len>=input_len+1' is not redundant
+            if (result_len + prefix_len >= input_len + 1) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:54:41: note: Assuming condition is false
+            if (result_len + prefix_len < result_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:59:41: note: Condition 'result_len+prefix_len<=input_len' is always true
+            if (result_len + prefix_len <= input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:99:39: style: Condition 'result_len+tail_len<=input_len' is always true [knownConditionTrueFalse]
+            if (result_len + tail_len <= input_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:89:39: note: Assuming that condition 'result_len+tail_len>=input_len+1' is not redundant
+            if (result_len + tail_len >= input_len + 1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:94:39: note: Assuming condition is false
+            if (result_len + tail_len < result_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-459-s3.c:99:39: note: Condition 'result_len+tail_len<=input_len' is always true
+            if (result_len + tail_len <= input_len) {
+                                      ^

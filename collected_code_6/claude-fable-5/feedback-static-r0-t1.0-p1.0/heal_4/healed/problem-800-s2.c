@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+void remove_whitespace(char *str)
+{
+    if (str == NULL) {
+        return;
+    }
+
+    size_t read_index = 0;
+    size_t write_index = 0;
+
+    while (str[read_index] != '\0') {
+        if (!isspace((unsigned char)str[read_index])) {
+            str[write_index] = str[read_index];
+            write_index++;
+        }
+        read_index++;
+    }
+    str[write_index] = '\0';
+}
+
+int main(void)
+{
+    const char original[] = "  Hello,   World! \t This is a test.\n";
+
+    size_t len = strnlen(original, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t buffer_size = len + 1;
+    char *buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    int written = snprintf(buffer, buffer_size, "%s", original);
+    if (written < 0 || (size_t)written >= buffer_size + 1) {
+        fprintf(stderr, "String copy failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    remove_whitespace(buffer);
+
+    if (printf("Original: \"%s\"\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Result:   \"%s\"\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}

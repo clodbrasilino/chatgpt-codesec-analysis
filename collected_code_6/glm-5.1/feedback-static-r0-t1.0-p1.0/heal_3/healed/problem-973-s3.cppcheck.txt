@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c:33:19: style: Condition 'part2_len>0' is always true [knownConditionTrueFalse]
+    if (part2_len > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c:18:15: note: Assuming that condition 'shift==0' is not redundant
+    if (shift == 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c:23:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c:32:22: note: part2_len is assigned 'shift' here.
+    size_t part2_len = shift;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-973-s3.c:33:19: note: Condition 'part2_len>0' is always true
+    if (part2_len > 0) {
+                  ^

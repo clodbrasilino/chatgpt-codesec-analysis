@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was actually already fairly safe, but the flagged weaknesses have been hardened as follows:
+
+1. **CWE-126 (`strlen` over-read):** Both calls to `strlen` were replaced with `strnlen`, which takes a maximum length bound. Even if a string were somehow not null-terminated, the read is now capped at the buffer size. The `count_position_matches` function signature was extended to accept a `max_len` parameter so it never trusts the caller to provide a terminated string.
+
+2. **CWE-119/CWE-120 (statically-sized array):** The buffer size is now defined via a named constant (`BUFFER_SIZE`), the buffer is zero-initialized with `memset` before use, and an explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination regardless of what `fgets` did. `fgets` itself already bounds the read to `sizeof(buffer)`, preventing overflow.
+
+3. **Defensive improvements:** The `NULL` check on the input pointer is retained, the return value of `fgets` is still validated, and the loop condition was simplified to `i < len && i < 26`, eliminating the `break` while keeping identical behavior.
+
+The program's functionality is unchanged: it reads a line, strips the trailing newline, and counts how many characters match their alphabetical position (e.g., 'a'/'A' at index 0, 'b'/'B' at index 1, etc.).

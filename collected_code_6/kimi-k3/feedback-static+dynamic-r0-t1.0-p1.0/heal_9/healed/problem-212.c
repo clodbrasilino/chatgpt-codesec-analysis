@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long sum_of_fourth_powers(int n)
+{
+    long long sum = 0;
+    int i;
+
+    if (n < 0)
+    {
+        return -1;
+    }
+
+    for (i = 1; i <= n; i++)
+    {
+        long long term = (long long)i * i * i * i;
+        if (term / i != (long long)i * i * i)
+        {
+            return -1;
+        }
+        if (LLONG_MAX - sum < term)
+        {
+            return -1;
+        }
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t line_length;
+    char *endptr;
+    long value;
+    int n;
+    long long result;
+
+    line_length = getline(&input, &input_size, stdin);
+    if (line_length == -1)
+    {
+        fprintf(stderr, "Error: Failed to read input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(input, &endptr, 10);
+
+    if (errno == ERANGE || value > INT_MAX || value < 0)
+    {
+        fprintf(stderr, "Error: Invalid input range\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == input || (*endptr != '\n' && *endptr != '\0'))
+    {
+        fprintf(stderr, "Error: Invalid input format\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    n = (int)value;
+    result = sum_of_fourth_powers(n);
+
+    if (result < 0)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    free(input);
+    return EXIT_SUCCESS;
+}

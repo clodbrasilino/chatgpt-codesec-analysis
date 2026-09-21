@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits(const char *input) {
+    if (input == NULL) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
+    if (result == NULL) return NULL;
+    char *ptr = result;
+    for (const char *p = input; *p; p++) {
+        if (!isdigit((unsigned char)*p)) {
+            *ptr++ = *p;
+        }
+    }
+    *ptr = '\0';
+    return result;
+}
+
+void free_strings(char **strings, int count) {
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *inputs[] = {"123abc", "456def789", "ghi101112"};
+    int count = sizeof(inputs) / sizeof(inputs[0]);
+    char **results = malloc(count * sizeof(char *));
+    if (results == NULL) return 1;
+
+    for (int i = 0; i < count; i++) {
+        results[i] = remove_digits(inputs[i]);
+        if (results[i] == NULL) {
+            free_strings(results, i);
+            return 1;
+        }
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", results[i]);
+    }
+
+    free_strings(results, count);
+    return 0;
+}

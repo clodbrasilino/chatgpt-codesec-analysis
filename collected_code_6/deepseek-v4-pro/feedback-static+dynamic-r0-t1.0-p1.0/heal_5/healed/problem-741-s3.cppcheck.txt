@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:13:15: error: Array 'str[1]' accessed at index 1, which is out of bounds. [arrayIndexOutOfBounds]
+    while (str[i] != '\0') {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:11:16: note: Assignment 'i=1', assigned value is 1
+    size_t i = 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:13:15: note: Array index out of bounds
+    while (str[i] != '\0') {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:34:15: style: Condition 'test4!=NULL' is always true [knownConditionTrueFalse]
+    if (test4 != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:27:25: note: Assignment 'test4=""', assigned value is ""
+    const char *test4 = "";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:34:15: note: Condition 'test4!=NULL' is always true
+    if (test4 != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:40:15: style: Condition 'test5!=NULL' is always false [knownConditionTrueFalse]
+    if (test5 != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:28:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-741-s3.c:40:15: note: Condition 'test5!=NULL' is always false
+    if (test5 != NULL) {
+              ^

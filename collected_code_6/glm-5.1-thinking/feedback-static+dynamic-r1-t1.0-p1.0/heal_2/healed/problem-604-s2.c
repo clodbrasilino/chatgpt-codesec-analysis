@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void reverse_range(char *str, size_t start, size_t end) {
+    if (str == NULL || start >= end) {
+        return;
+    }
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void reverse_words(char *str, size_t maxlen) {
+    if (str == NULL || maxlen == 0) {
+        return;
+    }
+    size_t len = strnlen(str, maxlen);
+    if (len == 0) {
+        return;
+    }
+    reverse_range(str, 0, len - 1);
+
+    size_t start = 0;
+    while (start < len) {
+        while (start < len && isspace((unsigned char)str[start])) {
+            start++;
+        }
+        if (start >= len) {
+            break;
+        }
+        size_t end = start;
+        while (end < len && !isspace((unsigned char)str[end])) {
+            end++;
+        }
+        reverse_range(str, start, end - 1);
+        start = end;
+    }
+}
+
+int main(void) {
+    char str1[] = "Hello World";
+    printf("Original: \"%s\"\n", str1);
+    reverse_words(str1, sizeof(str1));
+    printf("Reversed: \"%s\"\n", str1);
+
+    char str2[] = "  C   Programming  Language  ";
+    printf("Original: \"%s\"\n", str2);
+    reverse_words(str2, sizeof(str2));
+    printf("Reversed: \"%s\"\n", str2);
+
+    char str3[] = "Tabs\tand\nNewlines";
+    printf("Original: \"%s\"\n", str3);
+    reverse_words(str3, sizeof(str3));
+    printf("Reversed: \"%s\"\n", str3);
+
+    char str4[] = "";
+    reverse_words(str4, sizeof(str4));
+
+    reverse_words(NULL, 0);
+
+    return 0;
+}

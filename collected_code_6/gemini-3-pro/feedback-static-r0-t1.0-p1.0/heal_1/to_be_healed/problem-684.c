@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+long long count_occurrences(const char *s, long long n, char c) {
+    if (s == NULL || n <= 0) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(s);
+    if (len == 0) {
+        return 0;
+    }
+
+    long long count_in_single = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (s[i] == c) {
+            count_in_single++;
+        }
+    }
+
+    long long full_repeats = n / len;
+    long long remainder = n % len;
+
+    long long total_count = full_repeats * count_in_single;
+
+    for (size_t i = 0; i < (size_t)remainder; i++) {
+        if (s[i] == c) {
+            total_count++;
+        }
+    }
+
+    return total_count;
+}
+
+int main(void) {
+    const char *str = "abcac";
+    long long n = 10;
+    char target = 'a';
+
+    long long result = count_occurrences(str, n, target);
+    printf("%lld\n", result);
+
+    return 0;
+}

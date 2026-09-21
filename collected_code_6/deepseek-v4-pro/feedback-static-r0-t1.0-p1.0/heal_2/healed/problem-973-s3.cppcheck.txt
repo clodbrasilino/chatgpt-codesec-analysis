@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:37:13: style: Condition 'len>=n_size' is always true [knownConditionTrueFalse]
+    if (len >= n_size) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:27:16: note: Assuming that condition 'n_size>len' is not redundant
+    if (n_size > len) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:37:13: note: Condition 'len>=n_size' is always true
+    if (len >= n_size) {
+            ^

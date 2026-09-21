@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:29:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:20:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || len >= 4095) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:25:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:29:13: note: Condition 'len>0' is always true
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:100:23: style: Condition 'token_len>0' is always true [knownConditionTrueFalse]
+        if (token_len > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:56:23: note: Assuming that condition 'token_len==0' is not redundant
+        if (token_len == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:89:21: note: Assuming condition is false
+        if (element == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-310-s2.c:100:23: note: Condition 'token_len>0' is always true
+        if (token_len > 0) {
+                      ^

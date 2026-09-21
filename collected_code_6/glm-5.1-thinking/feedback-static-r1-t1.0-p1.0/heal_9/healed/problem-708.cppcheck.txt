@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-708.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-708.c:59:31: style: Condition 'len<token_size' is always true [knownConditionTrueFalse]
+        size_t copy_len = len < token_size ? len : token_size - 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-708.c:51:27: note: token_size is assigned 'len+1' here.
+        size_t token_size = len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-708.c:54:19: note: Assuming condition is false
+        if (token == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-708.c:59:31: note: Condition 'len<token_size' is always true
+        size_t copy_len = len < token_size ? len : token_size - 1;
+                              ^

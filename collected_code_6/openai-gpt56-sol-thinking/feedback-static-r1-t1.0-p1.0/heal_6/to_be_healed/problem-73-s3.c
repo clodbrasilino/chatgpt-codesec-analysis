@@ -1,0 +1,364 @@
+#include <regex.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ERROR_BUFFER_SIZE 256U
+#define MAX_ARGUMENT_LENGTH 1048576U
+
+static void set_error(char *buffer, size_t buffer_size, const char *message)
+{
+    if (buffer != NULL && buffer_size > 0U && message != NULL) {
+        (void)snprintf(buffer, buffer_size, "%s", message);
+    }
+}
+
+static int bounded_string_length(const char *string, size_t maximum,
+                                 size_t *length_out)
+{
+    size_t length;
+
+    if (string == NULL || length_out == NULL || maximum == SIZE_MAX) {
+        return -1;
+    }
+
+    for (length = 0U; length <= maximum; ++length) {
+        if (string[length] == '\0') {
+            *length_out = length;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+static char *duplicate_bytes(const char *source, size_t length)
+{
+    char *copy;
+    size_t i;
+
+    if (source == NULL || length == SIZE_MAX) {
+        return NULL;
+    }
+
+    copy = malloc(length + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < length; ++i) {
+        copy[i] = source[i];
+    }
+
+    copy[length] = '\0';
+    return copy;
+}
+
+void free_split_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        free(tokens[i]);
+    }
+
+    free(tokens);
+}
+
+static int append_token(char ***tokens, size_t *count, size_t *capacity,
+                        const char *start, size_t length)
+{
+    size_t needed;
+    size_t maximum_items;
+    char *token;
+
+    if (tokens == NULL || count == NULL || capacity == NULL ||
+        start == NULL || length == SIZE_MAX ||
+        *count > SIZE_MAX - 2U) {
+        return -1;
+    }
+
+    needed = *count + 2U;
+    maximum_items = SIZE_MAX / sizeof(char *);
+
+    if (needed > maximum_items) {
+        return -1;
+    }
+
+    if (*capacity < needed) {
+        size_t new_capacity;
+        char **resized_tokens;
+
+        new_capacity = (*capacity == 0U) ? 8U : *capacity;
+
+        if (new_capacity > maximum_items) {
+            new_capacity = maximum_items;
+        }
+
+        while (new_capacity < needed) {
+            if (new_capacity > maximum_items / 2U) {
+                new_capacity = maximum_items;
+            } else {
+                new_capacity *= 2U;
+            }
+        }
+
+        resized_tokens = realloc(*tokens,
+                                 new_capacity * sizeof(char *));
+        if (resized_tokens == NULL) {
+            return -1;
+        }
+
+        *tokens = resized_tokens;
+        *capacity = new_capacity;
+    }
+
+    token = duplicate_bytes(start, length);
+    if (token == NULL) {
+        return -1;
+    }
+
+    (*tokens)[*count] = token;
+    ++(*count);
+    (*tokens)[*count] = NULL;
+
+    return 0;
+}
+
+int split_regex(const char *input, size_t input_length,
+                const char *delimiter_pattern, size_t delimiter_length,
+                char ***tokens_out, size_t *count_out,
+                char *error_buffer, size_t error_buffer_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *input_copy = NULL;
+    char *pattern_copy = NULL;
+    char **tokens = NULL;
+    size_t count = 0U;
+    size_t capacity = 0U;
+    size_t offset = 0U;
+    int result;
+    int regex_compiled = 0;
+
+    if (error_buffer != NULL && error_buffer_size > 0U) {
+        error_buffer[0] = '\0';
+    }
+
+    if (tokens_out == NULL || count_out == NULL) {
+        set_error(error_buffer, error_buffer_size,
+                  "Invalid output argument");
+        return -1;
+    }
+
+    *tokens_out = NULL;
+    *count_out = 0U;
+
+    if (input == NULL || delimiter_pattern == NULL ||
+        input_length == SIZE_MAX || delimiter_length == SIZE_MAX) {
+        set_error(error_buffer, error_buffer_size,
+                  "Invalid input argument");
+        return -1;
+    }
+
+    if (input_length > MAX_ARGUMENT_LENGTH) {
+        set_error(error_buffer, error_buffer_size,
+                  "Input string is too long");
+        return -1;
+    }
+
+    if (delimiter_length > MAX_ARGUMENT_LENGTH) {
+        set_error(error_buffer, error_buffer_size,
+                  "Delimiter regex is too long");
+        return -1;
+    }
+
+    if (memchr(input, '\0', input_length) != NULL ||
+        memchr(delimiter_pattern, '\0', delimiter_length) != NULL) {
+        set_error(error_buffer, error_buffer_size,
+                  "Embedded null character is not supported");
+        return -1;
+    }
+
+    input_copy = duplicate_bytes(input, input_length);
+    if (input_copy == NULL) {
+        set_error(error_buffer, error_buffer_size,
+                  "Memory allocation failed");
+        goto failure;
+    }
+
+    pattern_copy = duplicate_bytes(delimiter_pattern, delimiter_length);
+    if (pattern_copy == NULL) {
+        set_error(error_buffer, error_buffer_size,
+                  "Memory allocation failed");
+        goto failure;
+    }
+
+    result = regcomp(&regex, pattern_copy, REG_EXTENDED);
+    if (result != 0) {
+        if (error_buffer != NULL && error_buffer_size > 0U) {
+            (void)regerror(result, &regex, error_buffer,
+                           error_buffer_size);
+        }
+        goto failure;
+    }
+
+    regex_compiled = 1;
+
+    result = regexec(&regex, "", 1U, &match, 0);
+    if (result == 0) {
+        set_error(error_buffer, error_buffer_size,
+                  "Delimiter regex must not match an empty string");
+        goto failure;
+    }
+
+    if (result != REG_NOMATCH) {
+        if (error_buffer != NULL && error_buffer_size > 0U) {
+            (void)regerror(result, &regex, error_buffer,
+                           error_buffer_size);
+        }
+        goto failure;
+    }
+
+    while (offset <= input_length) {
+        size_t remaining = input_length - offset;
+        int flags = (offset == 0U) ? 0 : REG_NOTBOL;
+
+        result = regexec(&regex, input_copy + offset, 1U, &match, flags);
+
+        if (result == REG_NOMATCH) {
+            if (append_token(&tokens, &count, &capacity,
+                             input_copy + offset, remaining) != 0) {
+                set_error(error_buffer, error_buffer_size,
+                          "Memory allocation failed");
+                goto failure;
+            }
+            break;
+        }
+
+        if (result != 0) {
+            if (error_buffer != NULL && error_buffer_size > 0U) {
+                (void)regerror(result, &regex, error_buffer,
+                               error_buffer_size);
+            }
+            goto failure;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            set_error(error_buffer, error_buffer_size,
+                      "Delimiter regex produced an invalid or empty match");
+            goto failure;
+        }
+
+        {
+            size_t match_start = (size_t)match.rm_so;
+            size_t match_end = (size_t)match.rm_eo;
+
+            if (match_start > remaining ||
+                match_end > remaining ||
+                match_start > match_end) {
+                set_error(error_buffer, error_buffer_size,
+                          "Delimiter regex produced an out-of-range match");
+                goto failure;
+            }
+
+            if (append_token(&tokens, &count, &capacity,
+                             input_copy + offset, match_start) != 0) {
+                set_error(error_buffer, error_buffer_size,
+                          "Memory allocation failed");
+                goto failure;
+            }
+
+            offset += match_end;
+        }
+    }
+
+    regfree(&regex);
+    free(input_copy);
+    free(pattern_copy);
+
+    *tokens_out = tokens;
+    *count_out = count;
+    return 0;
+
+failure:
+    free_split_tokens(tokens, count);
+
+    if (regex_compiled != 0) {
+        regfree(&regex);
+    }
+
+    free(input_copy);
+    free(pattern_copy);
+    return -1;
+}
+
+int main(int argc, char *argv[])
+{
+    char **tokens = NULL;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char error_buffer[ERROR_BUFFER_SIZE];
+    size_t count = 0U;
+    size_t input_length;
+    size_t delimiter_length;
+    size_t i;
+    const char *program_name =
+        (argc > 0 && argv != NULL && argv[0] != NULL)
+            ? argv[0]
+            : "split_regex";
+
+    if (argc != 3 || argv == NULL) {
+        (void)fprintf(stderr,
+                      "Usage: %s <string> <delimiter-regex>\n",
+                      program_name);
+        return EXIT_FAILURE;
+    }
+
+    if (bounded_string_length(argv[1], MAX_ARGUMENT_LENGTH,
+                              &input_length) != 0) {
+        (void)fprintf(stderr, "Error: Input string is too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (bounded_string_length(argv[2], MAX_ARGUMENT_LENGTH,
+                              &delimiter_length) != 0) {
+        (void)fprintf(stderr, "Error: Delimiter regex is too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (split_regex(argv[1], input_length,
+                    argv[2], delimiter_length,
+                    &tokens, &count,
+                    error_buffer, sizeof(error_buffer)) != 0) {
+        const char *message =
+            error_buffer[0] != '\0' ? error_buffer : "Unknown error";
+
+        (void)fprintf(stderr, "Error: %s\n", message);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        if (fputs(tokens[i], stdout) == EOF ||
+            fputc('\n', stdout) == EOF) {
+            (void)fprintf(stderr, "Error: Failed to write output\n");
+            free_split_tokens(tokens, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_split_tokens(tokens, count);
+
+    if (fflush(stdout) == EOF) {
+        (void)fprintf(stderr, "Error: Failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

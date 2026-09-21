@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-570-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-570-s3.c:101:37: style: Condition 'result[res_idx]!=NULL' is always false [knownConditionTrueFalse]
+                if (result[res_idx] != NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-570-s3.c:86:33: note: Assuming that condition 'result[res_idx]!=NULL' is not redundant
+            if (result[res_idx] != NULL || remove_start != list[i]) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-570-s3.c:101:37: note: Condition 'result[res_idx]!=NULL' is always false
+                if (result[res_idx] != NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-570-s3.c:40:19: style: Variable 'remove_start' can be declared as pointer to const [constVariablePointer]
+            char *remove_start = match;
+                  ^

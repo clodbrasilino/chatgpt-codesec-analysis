@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-391-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-391-s3.c:42:18: style: Condition 'buf_size<key_len' is always false [knownConditionTrueFalse]
+    if (buf_size < key_len) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-391-s3.c:41:21: note: buf_size is assigned 'key_len+1' here.
+    size_t buf_size = key_len + 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-391-s3.c:42:18: note: Condition 'buf_size<key_len' is always false
+    if (buf_size < key_len) {
+                 ^

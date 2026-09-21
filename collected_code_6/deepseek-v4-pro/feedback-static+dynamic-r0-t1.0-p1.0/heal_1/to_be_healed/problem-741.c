@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected False, got <no output>
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 1 failed: expected True, got <no output>
+  */
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    
+    char first = str[0];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    for (size_t i = 1; i < strlen(str); i++) {
+        if (str[i] != first) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "aaaa";
+    const char *test2 = "abca";
+    const char *test3 = "";
+    const char *test4 = "b";
+    const char *test5 = NULL;
+    
+    printf("Test 1 (\"%s\"): %s\n", test1, all_characters_same(test1) ? "true" : "false");
+    printf("Test 2 (\"%s\"): %s\n", test2, all_characters_same(test2) ? "true" : "false");
+    printf("Test 3 (\"%s\"): %s\n", test3, all_characters_same(test3) ? "true" : "false");
+    printf("Test 4 (\"%s\"): %s\n", test4, all_characters_same(test4) ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Calling function 'all_characters_same' returns 0
+     *  Condition 'all_characters_same(test5)' is always false
+     *  Condition 'all_characters_same(test5)' is always false [knownConditionTrueFalse]
+     */
+    printf("Test 5 (NULL): %s\n", all_characters_same(test5) ? "true" : "false");
+    
+    return 0;
+}

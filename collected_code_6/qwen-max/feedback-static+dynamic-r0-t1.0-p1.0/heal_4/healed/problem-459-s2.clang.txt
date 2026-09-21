@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459-s2.c:17:44: error: member reference base type 'regoff_t' (aka 'long long') is not a structure or union
+   17 |             size_t match_start = ovector[0].rm_so;
+      |                                  ~~~~~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459-s2.c:18:42: error: member reference base type 'regoff_t' (aka 'long long') is not a structure or union
+   18 |             size_t match_end = ovector[0].rm_eo;
+      |                                ~~~~~~~~~~^~~~~~
+2 errors generated.

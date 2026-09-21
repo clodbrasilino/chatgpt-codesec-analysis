@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str, size_t str_size, const char *find, const char *replace)
+{
+    size_t find_len = strlen(find);
+    size_t replace_len = strlen(replace);
+    char *pos = str;
+
+    while (*pos != '\0') {
+        if (strncmp(pos, find, find_len) == 0) {
+            size_t remaining_len = strlen(pos + find_len);
+
+            if (pos + replace_len + remaining_len >= str + str_size) {
+                break;
+            }
+
+            memmove(pos + replace_len, pos + find_len, remaining_len + 1);
+            memcpy(pos, replace, replace_len);
+            pos += replace_len;
+        } else {
+            pos++;
+        }
+    }
+}
+
+int main(void)
+{
+    char text[100] = "hello world, hello universe";
+
+    replace_chars(text, sizeof(text), "hello", "hi");
+    printf("%s\n", text);
+
+    replace_chars(text, sizeof(text), "hi", "goodbye");
+    printf("%s\n", text);
+
+    replace_chars(text, sizeof(text), " ", "_");
+    printf("%s\n", text);
+
+    return 0;
+}

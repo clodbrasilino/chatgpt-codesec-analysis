@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSwaps(const char *str1, const char *str2, int len) {
+    int mismatchCount = 0;
+    for (int i = 0; i < len; i++) {
+        if (str1[i] != str2[i]) {
+            mismatchCount++;
+        }
+    }
+    return mismatchCount / 2;
+}
+
+int main() {
+    char str1[257], str2[257];
+
+    printf("Enter the first binary string: ");
+    if (!fgets(str1, sizeof(str1), stdin)) {
+        printf("Error reading input\n");
+        return 1;
+    }
+    str1[strcspn(str1, "\n")] = '\0';
+
+    printf("Enter the second binary string: ");
+    if (!fgets(str2, sizeof(str2), stdin)) {
+        printf("Error reading input\n");
+        return 1;
+    }
+    str2[strcspn(str2, "\n")] = '\0';
+
+    size_t len1 = strnlen(str1, sizeof(str1));
+    size_t len2 = strnlen(str2, sizeof(str2));
+
+    if (len1 != len2) {
+        printf("Strings must be of the same length\n");
+        return 1;
+    }
+
+    if (len1 >= sizeof(str1) - 1 || len2 >= sizeof(str2) - 1) {
+        printf("Input too long\n");
+        return 1;
+    }
+
+    int swaps = countSwaps(str1, str2, (int)len1);
+    printf("Minimum number of swaps required: %d\n", swaps);
+
+    return 0;
+}

@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407.c:46:5: error: use of undeclared identifier 'errno'
+   46 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407.c:50:9: error: use of undeclared identifier 'errno'
+   50 |     if (errno == ERANGE || result == LONG_MAX || result == LONG_MIN || *endptr != '\0') {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-407.c:50:18: error: use of undeclared identifier 'ERANGE'
+   50 |     if (errno == ERANGE || result == LONG_MAX || result == LONG_MIN || *endptr != '\0') {
+      |                  ^~~~~~
+3 errors generated.

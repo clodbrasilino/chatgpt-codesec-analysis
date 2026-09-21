@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-956-s2.c:49:28: error: call to undeclared function 'malloc_usable_size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   49 |             if (len + 1 <= malloc_usable_size(result[idx])) {
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-956-s2.c:79:28: error: call to undeclared function 'malloc_usable_size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   79 |             if (len + 1 <= malloc_usable_size(result[idx])) {
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-956-s2.c:111:24: error: call to undeclared function 'malloc_usable_size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  111 |         if (len + 1 <= malloc_usable_size(result[idx])) {
+      |                        ^
+3 errors generated.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-430.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-430.c:83:9: warning: Uninitialized variable: c [uninitvar]
+    if (c != '\n' && c != EOF) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-430.c:74:14: note: Assuming condition is false
+    while (i < size - 1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-430.c:83:9: note: Uninitialized variable: c
+    if (c != '\n' && c != EOF) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-430.c:65:12: style: Unused variable: len [unusedVariable]
+    size_t len;
+           ^

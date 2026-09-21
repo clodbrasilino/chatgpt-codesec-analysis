@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *abbreviate_road(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i < len) {
+        if ((len - i) >= 4 && strncmp(&input[i], "road", 4) == 0) {
+            result[j] = 'r';
+            result[j + 1] = 'd';
+            result[j + 2] = '.';
+            j += 3;
+            i += 4;
+        } else {
+            result[j] = input[i];
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Take the main road until the road ends.";
+    char *abbreviated;
+
+    abbreviated = abbreviate_road(text);
+    if (abbreviated == NULL) {
+        fprintf(stderr, "Failed to abbreviate string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Abbreviated: %s\n", abbreviated) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    free(abbreviated);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warning concerned `strlen` (CWE-126), which performs an over-read if the input string is not NUL-terminated. The fix replaces `strlen` with `strnlen`, which bounds the scan to `MAX_INPUT_LEN` bytes. If the returned length equals the bound, the string was either too long or not properly terminated within the limit, so the function safely rejects it by returning `NULL`.
+
+**Other observations worth noting:**
+
+- The original buffer sizing logic remains correct: since `"road"` (4 chars) is replaced by `"rd."` (3 chars), the output can never exceed the input length, so `malloc(len + 1)` is sufficient and no overflow of `result` is possible.
+- The `strncmp` call is properly guarded by the `(len - i) >= 4` check, preventing any read past the end of the input buffer.
+- Memory management in `main` is sound — `abbreviated` is freed on every exit path after successful allocation, so there are no leaks.
+- Return values of `printf` are checked, which is unusual but defensively correct.
+
+The only substantive weakness flagged was the unbounded `strlen`, and the rewrite addresses it directly with a bounded alternative and explicit length validation.

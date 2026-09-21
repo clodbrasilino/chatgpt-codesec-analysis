@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+    const size_t guard_limit = (size_t)MAX_INPUT_SIZE * 1024U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < guard_limit);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original source was already well-hardened, and the Flawfinder hits were largely informational rather than actual vulnerabilities:
+
+1. **`char buffer[MAX_INPUT_SIZE]` (CWE-119/CWE-120):** The statically-sized array is safely used. Input is read via `fgets(buffer, sizeof(buffer), stdin)`, which enforces the buffer boundary, and the buffer is explicitly NUL-terminated afterward (`buffer[sizeof(buffer) - 1] = '\0'`) as a defensive measure. `memset` initialization prevents reads of uninitialized memory. No overflow is possible here.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** `getchar()` returns an `int` and doesn't write into any buffer, so no overflow can occur. The original guard of `(size_t)-1` was effectively unbounded; I tightened it to a finite, sane limit while still draining the remainder of an oversized input line. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed streams.
+
+3. **`count_substrings`:** Uses `strnlen` with an explicit bound (no unbounded `strlen`), checks for `NULL`, and performs the `n*(n+1)/2` computation in `unsigned long long`, which cannot overflow for lengths ≤ 1024.
+
+4. **`memchr` for newline stripping:** Bounded search over the full buffer — safe.
+
+The rewritten code preserves all these safeguards, with the only substantive change being the bounded guard in `flush_stdin`.

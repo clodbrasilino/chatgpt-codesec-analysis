@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 32
+#define ROMAN_TABLE_SIZE 13
+#define ROMAN_MAX_SYMBOL_LEN 2
+
+struct roman_entry {
+    int value;
+    const char *symbol;
+    size_t length;
+};
+
+static const struct roman_entry roman_table[ROMAN_TABLE_SIZE] = {
+    { 1000, "M",  1 }, { 900, "CM", 2 }, { 500, "D",  1 }, { 400, "CD", 2 },
+    {  100, "C",  1 }, {  90, "XC", 2 }, {  50, "L",  1 }, {  40, "XL", 2 },
+    {   10, "X",  1 }, {   9, "IX", 2 }, {   5, "V",  1 }, {   4, "IV", 2 },
+    {    1, "I",  1 }
+};
+
+int int_to_roman(int number, char *buffer, size_t buffer_size)
+{
+    size_t used = 0;
+    size_t i;
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    buffer[0] = '\0';
+
+    if (number < 1 || number > 3999) {
+        return -1;
+    }
+
+    for (i = 0; i < ROMAN_TABLE_SIZE; i++) {
+        const char *symbol = roman_table[i].symbol;
+        int value = roman_table[i].value;
+        size_t sym_len = roman_table[i].length;
+
+        if (symbol == NULL || sym_len > ROMAN_MAX_SYMBOL_LEN ||
+            sym_len != strlen(symbol)) {
+            buffer[0] = '\0';
+            return -1;
+        }
+
+        while (number >= value) {
+            size_t j;
+
+            if (used >= buffer_size - 1 ||
+                sym_len > (buffer_size - 1) - used) {
+                buffer[0] = '\0';
+                return -1;
+            }
+
+            for (j = 0; j < sym_len; j++) {
+                buffer[used + j] = symbol[j];
+            }
+
+            used += sym_len;
+            buffer[used] = '\0';
+            number -= value;
+        }
+    }
+
+    buffer[used] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char roman[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    memset(roman, 0, sizeof(roman));
+
+    for (i = 0; i < count; i++) {
+        if (int_to_roman(test_values[i], roman, sizeof(roman)) == 0) {
+            if (printf("%d -> %s\n", test_values[i], roman) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Conversion failed for %d\n",
+                        test_values[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (int_to_roman(0, roman, sizeof(roman)) != 0) {
+        if (printf("0 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (int_to_roman(4000, roman, sizeof(roman)) != 0) {
+        if (printf("4000 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes and why the flagged weaknesses are mitigated:**
+
+1. **`const char symbol[ROMAN_MAX_SYMBOL_LEN + 1]` (CWE-119/CWE-120):** The fixed-size array inside the struct was replaced with a `const char *` pointing to string literals. This eliminates the statically-sized array Flawfinder flagged, and the literals live in read-only storage. A runtime consistency check (`sym_len != strlen(symbol)` and `symbol == NULL`) validates that the stored length matches the actual symbol, so no copy can ever exceed the declared length.
+
+2. **`char roman[ROMAN_BUFFER_SIZE]` in `main` (CWE-119/CWE-120):** This buffer is safe because every write into it goes through `int_to_roman`, which receives the buffer size explicitly (`sizeof(roman)`) and performs strict bounds checking before each write: `used >= buffer_size - 1` and `sym_len > (buffer_size - 1) - used` guarantee that neither the symbol bytes nor the NUL terminator can overflow. The buffer is also zero-initialized with `memset` before use.
+
+3. **Existing defensive measures retained:** NULL/zero-size parameter validation, range checking (1–3999), guaranteed NUL termination on every exit path (including error paths), and checked return values on all `printf`/`fprintf` calls.
+
+The remaining Flawfinder hits are risk-2 informational warnings about the mere existence of fixed-size buffers; with explicit size propagation and per-write bounds checks, no overflow is possible.

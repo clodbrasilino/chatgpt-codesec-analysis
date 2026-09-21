@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *input, size_t *count)
+{
+    char **result = NULL;
+    char **temp = NULL;
+    size_t capacity = 8;
+    size_t num_tokens = 0;
+    size_t i = 0;
+    size_t start = 0;
+    size_t len;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    while (i <= len) {
+        if (i == len || islower((unsigned char)input[i])) {
+            if (i > start) {
+                size_t token_len = i - start;
+                char *token = malloc(token_len + 1);
+                if (token == NULL) {
+                    for (size_t j = 0; j < num_tokens; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(token, &input[start], token_len);
+                token[token_len] = '\0';
+
+                if (num_tokens == capacity) {
+                    capacity *= 2;
+                    temp = realloc(result, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        free(token);
+                        for (size_t j = 0; j < num_tokens; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        return NULL;
+                    }
+                    result = temp;
+                }
+                result[num_tokens] = token;
+                num_tokens++;
+            }
+            start = i + 1;
+        }
+        i++;
+    }
+
+    *count = num_tokens;
+    return result;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *test = "HELLOworldFOObarBAZ123";
+    size_t count = 0;
+    char **tokens = split_at_lowercase(test, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", test);
+    printf("Tokens: %zu\n", count);
+    for (size_t i = 0; i < count; i++) {
+        printf("  [%zu]: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}

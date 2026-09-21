@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_LEN 32
+#define TUPLE_COUNT 5
+
+typedef struct {
+    char name[NAME_LEN];
+    int id;
+    float value;
+} Tuple;
+
+static int set_tuple_name(Tuple *t, const char *name)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+    len = strnlen(name, sizeof(t->name));
+    if (len >= sizeof(t->name)) {
+        return -1;
+    }
+    memcpy(t->name, name, len);
+    t->name[len] = '\0';
+    return 0;
+}
+
+static int init_tuple(Tuple *t, const char *name, int id, float value)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    if (set_tuple_name(t, name) != 0) {
+        return -1;
+    }
+    t->id = id;
+    t->value = value;
+    return 0;
+}
+
+static int compare_by_float(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_by_float);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("(%.*s, %d, %.2f)\n",
+                     NAME_LEN - 1,
+                     tuples[i].name,
+                     tuples[i].id,
+                     (double)tuples[i].value);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[TUPLE_COUNT];
+    size_t i;
+    static const char *const names[TUPLE_COUNT] = {
+        "alpha", "beta", "gamma", "delta", "epsilon"
+    };
+    static const int ids[TUPLE_COUNT] = { 1, 2, 3, 4, 5 };
+    static const float values[TUPLE_COUNT] = {
+        3.14f, 1.41f, 2.72f, 0.58f, 1.62f
+    };
+
+    for (i = 0U; i < TUPLE_COUNT; i++) {
+        if (init_tuple(&tuples[i], names[i], ids[i], values[i]) != 0) {
+            (void)fprintf(stderr, "Error: failed to initialize tuple %zu\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    (void)printf("Before sorting:\n");
+    print_tuples(tuples, TUPLE_COUNT);
+
+    if (sort_tuples(tuples, TUPLE_COUNT) != 0) {
+        (void)fprintf(stderr, "Error: failed to sort tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("After sorting:\n");
+    print_tuples(tuples, TUPLE_COUNT);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flagged weaknesses were already mitigated in the original code, so the rewrite mostly consolidates and cleans up the existing defenses:
+
+1. **`char name[NAME_LEN]` (CWE-119/CWE-120)** — The statically-sized buffer is safe because every write path goes through `set_tuple_name()`, which validates length with `strnlen()` before copying. I simplified the redundant double check (`len >= NAME_LEN` and `len >= sizeof(t->name)` were the same test) into a single bounds check against `sizeof(t->name)`, which is the more robust form since it stays correct even if the struct definition changes.
+
+2. **`memcpy` (CWE-120)** — Safe as written: the copy length is strictly less than `sizeof(t->name)`, leaving room for the explicit NUL terminator. The bounds check immediately precedes the copy, so no fix was required.
+
+3. **`names[]` array in `main`** — A false positive; it's a fixed-size array of string literal pointers, never written to, and iterated with a matching `TUPLE_COUNT` bound.
+
+Other defensive measures already present and preserved: NULL-pointer guards in all functions, `%.*s` with a width limit in `printf` to prevent over-reads even if a name were somehow unterminated, and float comparison via explicit `<`/`>` (avoiding the classic subtraction-overflow bug in qsort comparators).

@@ -1,0 +1,176 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+#define ERRBUF_SIZE 256
+
+char **split_string(const char *input, const char *pattern, size_t *count);
+void free_tokens(char **tokens, size_t count);
+
+char **split_string(const char *input, const char *pattern, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    char **temp = NULL;
+    size_t n = 0;
+    const char *cursor = input;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_SIZE];
+        memset(errbuf, 0, sizeof(errbuf));
+        regerror(ret, &regex, errbuf, sizeof(errbuf) - 1);
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    while (remaining > 0 && *cursor != '\0') {
+        size_t len;
+
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == 0 && match.rm_so != match.rm_eo) {
+            if (match.rm_so < 0 || (size_t)match.rm_so > remaining) {
+                break;
+            }
+            len = (size_t)match.rm_so;
+        } else if (ret == 0 && match.rm_so == match.rm_eo) {
+            break;
+        } else {
+            len = remaining;
+        }
+
+        if (len > remaining) {
+            regfree(&regex);
+            free_tokens(tokens, n);
+            return NULL;
+        }
+
+        if (len > 0) {
+            char *token;
+
+            if (len >= SIZE_MAX) {
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            token = malloc(len + 1);
+            if (token == NULL) {
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            memcpy(token, cursor, len);
+            token[len] = '\0';
+
+            if (n >= SIZE_MAX / sizeof(char *) - 1) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            temp = realloc(tokens, (n + 1) * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+            tokens = temp;
+            tokens[n] = token;
+            n++;
+        }
+
+        if (ret == 0) {
+            if (match.rm_eo <= 0 || (size_t)match.rm_eo > remaining) {
+                break;
+            }
+            cursor += match.rm_eo;
+            remaining -= (size_t)match.rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    *count = n;
+    return tokens;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "apple,banana;cherry  orange|grape";
+    const char *pattern = "[,;| ]+";
+    size_t count = 0;
+    size_t i;
+    char **tokens;
+
+    tokens = split_string(text, pattern, &count);
+    if (tokens == NULL || count == 0) {
+        fprintf(stderr, "split_string failed or returned no tokens\n");
+        free_tokens(tokens, count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Token %zu: %s\n", i + 1, tokens[i]) < 0) {
+            free_tokens(tokens, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**Flawfinder warning 1 — `char errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120):** This is a false positive that is already mitigated. The buffer is zero-initialized with `memset`, `regerror` is called with `sizeof(errbuf) - 1` so it can never write past the end, and the final byte is explicitly null-terminated. No overflow is possible.
+
+**Flawfinder warning 2 — `memcpy` (CWE-120):** Also mitigated. The destination `token` is allocated with `malloc(len + 1)`, and exactly `len` bytes are copied followed by explicit null termination. Before the copy, `len` is validated against `remaining` (which itself is bounded by `MAX_INPUT_LEN` via `strnlen`), and the regex match offsets are range-checked before being converted to `size_t`. The destination is therefore always large enough for the source data.
+
+Additional defensive measures already present that are worth noting:
+
+- **Input length bounding:** `strnlen` with `MAX_INPUT_LEN` prevents unbounded reads on non-terminated input.
+- **Integer overflow guards:** the `n >= SIZE_MAX / sizeof(char *) - 1` check prevents overflow in the `realloc` size computation, and `len >= SIZE_MAX` guards `len + 1`.
+- **Safe `realloc` pattern:** the result is assigned to `temp` first, so the original `tokens` pointer is not lost on allocation failure.
+- **Consistent cleanup:** every error path calls `regfree` and `free_tokens`, avoiding leaks of the regex object and token array.
+- **Signed-to-unsigned safety:** `rm_so`/`rm_eo` (which are signed `regoff_t`) are checked for negative values before casting to `size_t`.
+- **Zero-length match handling:** the `match.rm_so == match.rm_eo` break prevents an infinite loop on patterns that can match the empty string.
+
+The code compiles cleanly and behaves correctly; both flawfinder hits are properly addressed, so the rewrite retains the existing logic with the advisory comments removed.

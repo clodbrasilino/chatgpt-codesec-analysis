@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330.c: In function 'find_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330.c:32:59: error: '__OBJC_NOPE__' undeclared (first use in this function)
+   32 |             if (length + 1 <= (size_t)-1 && length + 1 <= __OBJC_NOPE__ || length + 1 <= sizeof(word)) {}
+      |                                                           ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330.c:32:59: note: each undeclared identifier is reported only once for each function it appears in

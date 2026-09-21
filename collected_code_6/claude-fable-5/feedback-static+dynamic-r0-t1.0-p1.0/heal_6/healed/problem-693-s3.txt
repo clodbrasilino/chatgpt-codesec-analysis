@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_multiple_spaces(const char *input);
+
+char *remove_multiple_spaces(const char *input)
+{
+    size_t input_len;
+    size_t i;
+    size_t pos;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = 0;
+    while (input_len < MAX_INPUT_LEN && input[input_len] != '\0') {
+        input_len++;
+    }
+
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    i = 0;
+
+    while (i < input_len) {
+        if (isspace((unsigned char)input[i])) {
+            while (i < input_len && isspace((unsigned char)input[i])) {
+                i++;
+            }
+            if (pos >= input_len) {
+                free(result);
+                return NULL;
+            }
+            result[pos] = ' ';
+            pos++;
+        } else {
+            if (pos >= input_len) {
+                free(result);
+                return NULL;
+            }
+            result[pos] = input[i];
+            pos++;
+            i++;
+        }
+    }
+
+    result[pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Google    Assistant",
+        "Quad \t Core",
+        "ChromeCast   Built-in",
+        "Hello    world,   this  is    a     test."
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        char *cleaned = remove_multiple_spaces(tests[i]);
+        if (cleaned == NULL) {
+            fprintf(stderr, "Failed to process string\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fixes applied:**
+
+1. **Test failures with `<no output>`:** The test harness expected the cleaned string alone (e.g., `Google Assistant`), but the original `main` printed decorated lines (`Original: ...` and `Cleaned:  ...`). Since no line matched the expected output exactly, every test failed. The fix is to print only the cleaned string followed by a newline.
+
+2. **Single-whitespace preservation bug:** The original logic kept a lone whitespace character verbatim (`result[pos] = input[start]` when the run length was 1). That means a single tab (`\t`) would remain a tab rather than becoming a space, which contradicts the expected output `Quad Core`. The rewritten version collapses *any* whitespace run — including a run of length one — into a single space character, guaranteeing consistent output.
+
+3. **Everything else retained:** The `NULL` input check, bounded length scan against `MAX_INPUT_LEN`, `malloc` failure handling, defensive `pos` bounds checks, proper `free` on all exit paths, and `unsigned char` cast for `isspace` (avoiding UB on negative `char` values) were all correct and remain in place.

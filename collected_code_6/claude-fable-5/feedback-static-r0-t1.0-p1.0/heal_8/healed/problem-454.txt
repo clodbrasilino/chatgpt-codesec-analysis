@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+        {
+            size_t start = i;
+            int has_z = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    has_z = 1;
+                }
+                i++;
+            }
+            if (has_z) {
+                size_t len = i - start;
+
+                if (len >= result_size) {
+                    result[0] = '\0';
+                    return 0;
+                }
+                memcpy(result, &text[start], len);
+                result[len] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The lazy dog jumped over the fence";
+    char result[256];
+
+    memset(result, 0, sizeof(result));
+
+    if (match_word_with_z(text, result, sizeof(result))) {
+        if (printf("Found word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No word containing 'z' found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **`memcpy` (CWE-120, risk 2):** This warning is a false positive in practice. The code explicitly validates `len >= result_size` before the copy and returns early if the destination cannot hold the source plus the null terminator. The bounds check guarantees `len < result_size`, so both `memcpy(result, ..., len)` and the write to `result[len]` are within bounds. No change was required — the fix is already in place.
+
+2. **`char result[256]` (CWE-119/CWE-120, risk 2):** This is a generic warning about statically-sized buffers. It is mitigated because the buffer size is always passed via `sizeof(result)` rather than hard-coded, all writes are bounds-checked inside `match_word_with_z`, and the buffer is zero-initialized with `memset`. The `result_size == 0` guard also prevents a zero-length buffer from being written to.
+
+Additional defensive measures already present and preserved: `NULL` pointer checks, `(unsigned char)` casts before `isalpha`/`tolower` (avoiding UB for negative `char` values), checking the return value of `printf`, and ensuring `result` is always null-terminated on every return path.

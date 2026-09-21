@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <sys/types.h>
+
+int countOddRotations(const char *str, size_t len) {
+    size_t i;
+    int count = 0;
+    char *concatenated;
+    size_t start;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return -1;
+        }
+    }
+
+    if (len > (SIZE_MAX - 1) / 2) {
+        return -1;
+    }
+
+    concatenated = (char *)malloc(2 * len + 1);
+    if (concatenated == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(concatenated, str, len);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(concatenated + len, str, len);
+    concatenated[2 * len] = '\0';
+
+    for (start = 0; start < len; start++) {
+        if (concatenated[start + len - 1] == '1') {
+            count++;
+        }
+    }
+
+    free(concatenated);
+    concatenated = NULL;
+
+    return count;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    
+    if (read_len != -1) {
+        size_t len = (size_t)read_len;
+        
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+            len--;
+        }
+
+        int result = countOddRotations(buffer, len);
+        
+        if (result >= 0) {
+            printf("%d\n", result);
+        } else {
+            fprintf(stderr, "Invalid input\n");
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+        
+        free(buffer);
+    } else {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

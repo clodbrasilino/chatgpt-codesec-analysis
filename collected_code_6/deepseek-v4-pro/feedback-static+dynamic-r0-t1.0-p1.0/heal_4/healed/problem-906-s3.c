@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+
+int extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})";
+    int ret;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -2;
+    }
+
+    ret = regexec(&regex, url, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -3;
+    }
+
+    size_t year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    size_t month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    size_t day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len == 0 || year_len > 4 || month_len == 0 || month_len > 2 || day_len == 0 || day_len > 2) {
+        regfree(&regex);
+        return -4;
+    }
+
+    char year_str[5] = {0};
+    char month_str[3] = {0};
+    char day_str[3] = {0};
+
+    if (year_len < sizeof(year_str)) {
+        memcpy(year_str, url + matches[1].rm_so, year_len);
+        year_str[year_len] = '\0';
+    } else {
+        regfree(&regex);
+        return -4;
+    }
+
+    if (month_len < sizeof(month_str)) {
+        memcpy(month_str, url + matches[2].rm_so, month_len);
+        month_str[month_len] = '\0';
+    } else {
+        regfree(&regex);
+        return -4;
+    }
+
+    if (day_len < sizeof(day_str)) {
+        memcpy(day_str, url + matches[3].rm_so, day_len);
+        day_str[day_len] = '\0';
+    } else {
+        regfree(&regex);
+        return -4;
+    }
+
+    char *endptr;
+    long year_val, month_val, day_val;
+
+    errno = 0;
+    year_val = strtol(year_str, &endptr, 10);
+    if (errno != 0 || endptr == year_str || *endptr != '\0' || year_val < 1 || year_val > 9999) {
+        regfree(&regex);
+        return -5;
+    }
+
+    errno = 0;
+    month_val = strtol(month_str, &endptr, 10);
+    if (errno != 0 || endptr == month_str || *endptr != '\0' || month_val < 1 || month_val > 12) {
+        regfree(&regex);
+        return -5;
+    }
+
+    errno = 0;
+    day_val = strtol(day_str, &endptr, 10);
+    if (errno != 0 || endptr == day_str || *endptr != '\0' || day_val < 1 || day_val > 31) {
+        regfree(&regex);
+        return -5;
+    }
+
+    if (month_val == 2) {
+        int is_leap = (year_val % 4 == 0 && year_val % 100 != 0) || (year_val % 400 == 0);
+        int max_day = is_leap ? 29 : 28;
+        if (day_val > max_day) {
+            regfree(&regex);
+            return -6;
+        }
+    } else if (month_val == 4 || month_val == 6 || month_val == 9 || month_val == 11) {
+        if (day_val > 30) {
+            regfree(&regex);
+            return -6;
+        }
+    }
+
+    *year = (int)year_val;
+    *month = (int)month_val;
+    *day = (int)day_val;
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *test_urls[] = {
+        "https://example.com/2024/03/15/article",
+        "http://test.org/2023/12/01/post",
+        "https://site.com/2022/7/5/news",
+        "https://invalid.com/no/date/here",
+        NULL
+    };
+
+    int year, month, day;
+
+    for (int i = 0; test_urls[i] != NULL; i++) {
+        printf("URL: %s\n", test_urls[i]);
+        int result = extract_date_from_url(test_urls[i], &year, &month, &day);
+        if (result == 0) {
+            printf("Extracted date: %04d-%02d-%02d\n", year, month, day);
+        } else {
+            printf("Failed to extract date (error code: %d)\n", result);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

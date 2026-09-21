@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Record {
+    int id;
+    char *name;
+    struct Record *nested;
+} Record;
+
+typedef struct Tuple {
+    Record *record;
+} Tuple;
+
+Record* create_record(int id, const char *name) {
+    Record *rec = (Record*)malloc(sizeof(Record));
+    if (!rec) return NULL;
+    rec->id = id;
+    
+    size_t name_len = strnlen(name, 256);
+    if (name_len > 255) {
+        name_len = 255;
+    }
+    
+    rec->name = (char*)malloc(name_len + 1);
+    if (!rec->name) {
+        free(rec);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  dest_size is assigned 'name_len+1' here.
+     *  'dest_size' is assigned value 'name_len+1' here.
+     */
+    size_t dest_size = name_len + 1;
+    /* Possible weaknesses found:
+     *  The comparison 'dest_size < name_len+1' is always false because 'dest_size' and 'name_len+1' represent the same value. [knownConditionTrueFalse]
+     *  The comparison 'dest_size < name_len+1' is always false because 'dest_size' and 'name_len+1' represent the same value.
+     */
+    if (dest_size < name_len + 1) {
+        free(rec->name);
+        free(rec);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Condition 'name_len>=dest_size' is always false [knownConditionTrueFalse]
+     *  Condition 'name_len>=dest_size' is always false
+     */
+    if (name_len >= dest_size) {
+        free(rec->name);
+        free(rec);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(rec->name, name, name_len);
+    rec->name[name_len] = '\0';
+    rec->nested = NULL;
+    return rec;
+}
+
+void free_record(Record *rec) {
+    if (!rec) return;
+    free(rec->name);
+    if (rec->nested) {
+        free_record(rec->nested);
+    }
+    free(rec);
+}
+
+Record* remove_nested_record(Tuple *tuple) {
+    if (!tuple || !tuple->record) return NULL;
+    Record *nested = tuple->record->nested;
+    tuple->record->nested = NULL;
+    return nested;
+}
+
+int main(void) {
+    Tuple tuple;
+    tuple.record = create_record(1, "Outer");
+    if (!tuple.record) {
+        return EXIT_FAILURE;
+    }
+
+    tuple.record->nested = create_record(2, "Inner");
+    if (!tuple.record->nested) {
+        free_record(tuple.record);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s -> %s\n", tuple.record->name, tuple.record->nested->name);
+
+    Record *removed = remove_nested_record(&tuple);
+    if (removed) {
+        printf("Removed nested: %s\n", removed->name);
+        free_record(removed);
+    }
+
+    printf("After: %s (nested: %s)\n", tuple.record->name, 
+           tuple.record->nested ? tuple.record->nested->name : "none");
+
+    free_record(tuple.record);
+    return EXIT_SUCCESS;
+}

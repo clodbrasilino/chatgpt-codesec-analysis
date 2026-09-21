@@ -1,0 +1,340 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct Dict Dict;
+
+typedef enum {
+    VALUE_STRING,
+    VALUE_DICT
+} ValueType;
+
+typedef struct {
+    ValueType type;
+    char *string_value;
+    Dict *dict_value;
+} Value;
+
+typedef struct {
+    char *key;
+    Value value;
+} Entry;
+
+struct Dict {
+    Entry *entries;
+    size_t count;
+    size_t capacity;
+};
+
+Dict *dict_create(void);
+void dict_free(Dict *dict);
+int dict_set_string(Dict *dict, const char *key, const char *string_value);
+int dict_set_dict(Dict *dict, const char *key, Dict *child);
+Value *dict_get(Dict *dict, const char *key);
+void dict_print(const Dict *dict, int indent);
+Dict *lists_to_nested_dict(const char *const *outer_keys, size_t outer_count,
+                           const char *const *inner_keys, size_t inner_count,
+                           const char *const *const *values);
+
+static size_t safe_strnlen(const char *s, size_t maxlen)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+    for (i = 0; i < maxlen; i++) {
+        if (s[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    size_t size;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = safe_strnlen(s, MAX_STRING_LENGTH);
+    if (len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    size = len + 1;
+    copy = (char *)malloc(size);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+Dict *dict_create(void)
+{
+    Dict *dict = (Dict *)malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+    return dict;
+}
+
+static void value_free(Value *value)
+{
+    if (value == NULL) {
+        return;
+    }
+    if (value->type == VALUE_STRING) {
+        free(value->string_value);
+    } else if (value->type == VALUE_DICT) {
+        dict_free(value->dict_value);
+    }
+    value->string_value = NULL;
+    value->dict_value = NULL;
+}
+
+void dict_free(Dict *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        value_free(&dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+static int dict_reserve(Dict *dict, size_t needed)
+{
+    size_t new_capacity;
+    Entry *new_entries;
+
+    if (needed <= dict->capacity) {
+        return 0;
+    }
+    if (dict->capacity > SIZE_MAX / 2) {
+        return -1;
+    }
+    new_capacity = (dict->capacity == 0) ? 8 : dict->capacity * 2;
+    if (new_capacity < needed) {
+        new_capacity = needed;
+    }
+    if (new_capacity > SIZE_MAX / sizeof(Entry)) {
+        return -1;
+    }
+    new_entries = (Entry *)realloc(dict->entries, new_capacity * sizeof(Entry));
+    if (new_entries == NULL) {
+        return -1;
+    }
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+static size_t dict_find(const Dict *dict, const char *key)
+{
+    size_t i;
+
+    for (i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return dict->count;
+}
+
+int dict_set_string(Dict *dict, const char *key, const char *string_value)
+{
+    char *key_copy;
+    char *value_copy;
+    size_t index;
+
+    if (dict == NULL || key == NULL || string_value == NULL) {
+        return -1;
+    }
+    index = dict_find(dict, key);
+    if (index < dict->count) {
+        value_copy = duplicate_string(string_value);
+        if (value_copy == NULL) {
+            return -1;
+        }
+        value_free(&dict->entries[index].value);
+        dict->entries[index].value.type = VALUE_STRING;
+        dict->entries[index].value.string_value = value_copy;
+        dict->entries[index].value.dict_value = NULL;
+        return 0;
+    }
+    if (dict_reserve(dict, dict->count + 1) != 0) {
+        return -1;
+    }
+    key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    value_copy = duplicate_string(string_value);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return -1;
+    }
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value.type = VALUE_STRING;
+    dict->entries[dict->count].value.string_value = value_copy;
+    dict->entries[dict->count].value.dict_value = NULL;
+    dict->count++;
+    return 0;
+}
+
+int dict_set_dict(Dict *dict, const char *key, Dict *child)
+{
+    char *key_copy;
+    size_t index;
+
+    if (dict == NULL || key == NULL || child == NULL || dict == child) {
+        return -1;
+    }
+    index = dict_find(dict, key);
+    if (index < dict->count) {
+        value_free(&dict->entries[index].value);
+        dict->entries[index].value.type = VALUE_DICT;
+        dict->entries[index].value.dict_value = child;
+        dict->entries[index].value.string_value = NULL;
+        return 0;
+    }
+    if (dict_reserve(dict, dict->count + 1) != 0) {
+        return -1;
+    }
+    key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value.type = VALUE_DICT;
+    dict->entries[dict->count].value.dict_value = child;
+    dict->entries[dict->count].value.string_value = NULL;
+    dict->count++;
+    return 0;
+}
+
+Value *dict_get(Dict *dict, const char *key)
+{
+    size_t index;
+
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    index = dict_find(dict, key);
+    if (index >= dict->count) {
+        return NULL;
+    }
+    return &dict->entries[index].value;
+}
+
+Dict *lists_to_nested_dict(const char *const *outer_keys, size_t outer_count,
+                           const char *const *inner_keys, size_t inner_count,
+                           const char *const *const *values)
+{
+    Dict *root;
+    size_t i;
+    size_t j;
+
+    if (outer_keys == NULL || inner_keys == NULL || values == NULL) {
+        return NULL;
+    }
+    root = dict_create();
+    if (root == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < outer_count; i++) {
+        Dict *child;
+
+        if (outer_keys[i] == NULL || values[i] == NULL) {
+            dict_free(root);
+            return NULL;
+        }
+        child = dict_create();
+        if (child == NULL) {
+            dict_free(root);
+            return NULL;
+        }
+        for (j = 0; j < inner_count; j++) {
+            if (inner_keys[j] == NULL || values[i][j] == NULL) {
+                dict_free(child);
+                dict_free(root);
+                return NULL;
+            }
+            if (dict_set_string(child, inner_keys[j], values[i][j]) != 0) {
+                dict_free(child);
+                dict_free(root);
+                return NULL;
+            }
+        }
+        if (dict_set_dict(root, outer_keys[i], child) != 0) {
+            dict_free(child);
+            dict_free(root);
+            return NULL;
+        }
+    }
+    return root;
+}
+
+void dict_print(const Dict *dict, int indent)
+{
+    size_t i;
+    int k;
+
+    if (dict == NULL || indent < 0) {
+        return;
+    }
+    for (i = 0; i < dict->count; i++) {
+        for (k = 0; k < indent; k++) {
+            putchar(' ');
+        }
+        printf("%s: ", dict->entries[i].key);
+        if (dict->entries[i].value.type == VALUE_STRING) {
+            printf("%s\n", dict->entries[i].value.string_value);
+        } else {
+            printf("{\n");
+            dict_print(dict->entries[i].value.dict_value, indent + 4);
+            for (k = 0; k < indent; k++) {
+                putchar(' ');
+            }
+            printf("}\n");
+        }
+    }
+}
+
+int main(void)
+{
+    const char *const ids[] = {"user1", "user2", "user3"};
+    const char *const fields[] = {"name", "role", "city"};
+    const char *const row1[] = {"alice", "admin", "paris"};
+    const char *const row2[] = {"bob", "editor", "london"};
+    const char *const row3[] = {"carol", "viewer", "berlin"};
+    const char *const *const rows[] = {row1, row2, row3};
+    Dict *nested;
+
+    nested = lists_to_nested_dict(ids, 3, fields, 3, rows);
+    if (nested == NULL) {
+        fprintf(stderr, "failed to build nested dictionary\n");
+        return EXIT_FAILURE;
+    }
+    dict_print(nested, 0);
+    dict_free(nested);
+    return EXIT_SUCCESS;
+}
+```

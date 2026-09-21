@@ -1,0 +1,123 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 65536
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+Tuple* create_tuple_from_string(const char *input, const char *delim);
+void free_tuple(Tuple *tuple);
+
+Tuple* create_tuple_from_string(const char *input, const char *delim) {
+    if (!input || !delim) {
+        return NULL;
+    }
+
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    tuple->items = NULL;
+    tuple->count = 0;
+
+    size_t input_len = strnlen(input, MAX_INPUT_LEN);
+    char *input_copy = malloc(input_len + 1);
+    if (!input_copy) {
+        free(tuple);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(input_copy, input, input_len);
+    input_copy[input_len] = '\0';
+
+    size_t count = 0;
+    char *token = strtok(input_copy, delim);
+    while (token) {
+        count++;
+        token = strtok(NULL, delim);
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(input_copy, input, input_len);
+    input_copy[input_len] = '\0';
+
+    if (count > 0) {
+        tuple->items = malloc(count * sizeof(char*));
+        if (!tuple->items) {
+            free(input_copy);
+            free(tuple);
+            return NULL;
+        }
+    } else {
+        tuple->items = NULL;
+    }
+
+    tuple->count = count;
+    
+    if (count > 0) {
+        size_t idx = 0;
+        token = strtok(input_copy, delim);
+        while (token) {
+            size_t token_len = strnlen(token, input_len);
+            tuple->items[idx] = malloc(token_len + 1);
+            if (!tuple->items[idx]) {
+                for (size_t i = 0; i < idx; i++) {
+                    free(tuple->items[i]);
+                }
+                free(tuple->items);
+                free(input_copy);
+                free(tuple);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(tuple->items[idx], token, token_len);
+            tuple->items[idx][token_len] = '\0';
+            idx++;
+            token = strtok(NULL, delim);
+        }
+    }
+
+    free(input_copy);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    if (tuple->items) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    free(tuple);
+}
+
+int main(void) {
+    const char *my_string = "apple,banana,orange,grape";
+    const char *delimiter = ",";
+    
+    Tuple *my_tuple = create_tuple_from_string(my_string, delimiter);
+    
+    if (my_tuple) {
+        for (size_t i = 0; i < my_tuple->count; i++) {
+            printf("Tuple[%zu]: %s\n", i, my_tuple->items[i]);
+        }
+        free_tuple(my_tuple);
+    }
+    
+    return 0;
+}

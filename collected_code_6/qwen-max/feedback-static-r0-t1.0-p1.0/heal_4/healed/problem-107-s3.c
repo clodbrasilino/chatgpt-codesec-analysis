@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+#include <limits.h>
+
+int count_hex_numbers(int from, int to) {
+    if (from > to) return 0;
+    int count = 0;
+    for (int i = from; i <= to; i++) {
+        char buf[INT_MAX_STRLEN];
+        snprintf(buf, sizeof(buf), "%x", i);
+        size_t len = strnlen(buf, sizeof(buf) - 1);
+        if (strspn(buf, "0123456789abcdef") == len) count++;
+    }
+    return count;
+}
+
+int main() {
+    int from, to;
+    printf("Enter the range (from to): ");
+    if (scanf("%d %d", &from, &to) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    int result = count_hex_numbers(from, to);
+    printf("Count: %d\n", result);
+    return 0;
+}

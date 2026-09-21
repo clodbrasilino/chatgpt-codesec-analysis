@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+typedef struct {
+    char **elements;
+    size_t size;
+} Tuple;
+
+Tuple* convert_to_tuple(const char *const *string_list, size_t size) {
+    if (string_list == NULL && size > 0) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->size = size;
+    if (size == 0) {
+        tuple->elements = NULL;
+        return tuple;
+    }
+
+    tuple->elements = (char **)malloc(size * sizeof(char *));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (string_list[i] == NULL) {
+            tuple->elements[i] = NULL;
+        } else {
+            size_t len = 0;
+            while (len < MAX_STR_LEN && string_list[i][len] != '\0') {
+                len++;
+            }
+
+            tuple->elements[i] = (char *)malloc((len + 1) * sizeof(char));
+            if (tuple->elements[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->elements[j]);
+                }
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(tuple->elements[i], string_list[i], len);
+            tuple->elements[i][len] = '\0';
+        }
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->elements != NULL) {
+            for (size_t i = 0; i < tuple->size; i++) {
+                free(tuple->elements[i]);
+            }
+            free(tuple->elements);
+        }
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *string_list[] = {"apple", "banana", "cherry"};
+    size_t size = sizeof(string_list) / sizeof(string_list[0]);
+
+    Tuple *my_tuple = convert_to_tuple(string_list, size);
+
+    if (my_tuple != NULL) {
+        for (size_t i = 0; i < my_tuple->size; ++i) {
+            printf("[%zu] %s\n", i, my_tuple->elements[i] != NULL ? my_tuple->elements[i] : "NULL");
+        }
+        free_tuple(my_tuple);
+    } else {
+        fprintf(stderr, "Failed to create tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

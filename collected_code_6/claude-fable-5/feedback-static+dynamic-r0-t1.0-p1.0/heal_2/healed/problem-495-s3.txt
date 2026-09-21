@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+#define RESULT_BUF_SIZE 256
+
+static int append_segment(char *output, size_t output_size, size_t *out_len,
+                          const char *src, size_t seg_len)
+{
+    if (output == NULL || out_len == NULL || src == NULL) {
+        return -1;
+    }
+    if (*out_len >= output_size) {
+        return -1;
+    }
+    if (seg_len >= output_size - *out_len) {
+        return -1;
+    }
+    memcpy(output + *out_len, src, seg_len);
+    *out_len += seg_len;
+    return 0;
+}
+
+int remove_lowercase(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t out_len = 0;
+    size_t input_len;
+    const char *cursor;
+    const char *end;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    end = input + input_len;
+
+    while (cursor < end && *cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = (size_t)(end - cursor);
+            if (append_segment(output, output_size, &out_len,
+                               cursor, remaining) != 0) {
+                regfree(&regex);
+                return -1;
+            }
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so ||
+            (size_t)match.rm_eo > (size_t)(end - cursor)) {
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so > 0) {
+            if (append_segment(output, output_size, &out_len,
+                               cursor, (size_t)match.rm_so) != 0) {
+                regfree(&regex);
+                return -1;
+            }
+        }
+        cursor += match.rm_eo;
+    }
+
+    if (out_len >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+    output[out_len] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "HelloWorldFooBAR",
+        "abcDEFghiJKL",
+        "ALLUPPERCASE",
+        "alllowercase",
+        "Mix3d C4s3 Str1ng"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char result[RESULT_BUF_SIZE];
+        memset(result, 0, sizeof(result));
+        if (remove_lowercase(test_strings[i], result, sizeof(result)) == 0) {
+            printf("Input:  %s\n", test_strings[i]);
+            printf("Output: %s\n\n", result);
+        } else {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+1. **`memcpy` warning (CWE-120) in `append_segment`:** The original code already guarded the copy with `if (seg_len >= output_size - *out_len)`, which is correct *as long as* `*out_len` never exceeds `output_size` — otherwise the unsigned subtraction wraps around and the check passes when it shouldn't. In the rewrite I added an explicit `*out_len >= output_size` check before the subtraction, plus NULL-pointer checks, eliminating any possibility of unsigned underflow making the bounds check ineffective.
+
+2. **Statically-sized array warning (CWE-119/CWE-120) for `char result[256]`:** This is a low-risk advisory. The buffer is always passed together with its size via `sizeof(result)`, and `remove_lowercase` performs bounds checking on every write, including the final NUL terminator. I replaced the magic number with a named constant (`RESULT_BUF_SIZE`) so the size is defined in one place, reducing the chance of a future mismatch between declaration and usage.
+
+3. **Other defensive properties preserved:** input length is capped via `strnlen` against `MAX_INPUT_LEN`, `regexec` match offsets are validated against the remaining input span before use, `regfree` is called on every exit path after successful `regcomp`, and the output is always NUL-terminated only after verifying `out_len < output_size`.

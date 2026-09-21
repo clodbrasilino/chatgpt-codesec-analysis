@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MIN_ROMAN_VALUE 1
+#define MAX_ROMAN_VALUE 3999
+#define MAX_ROMAN_NUMERAL_LENGTH 15
+#define ROMAN_BUFFER_SIZE (MAX_ROMAN_NUMERAL_LENGTH + 1)
+
+typedef struct {
+    int value;
+    const char *symbol;
+    size_t symbol_length;
+} RomanEntry;
+
+static int int_to_roman(int number, char *buffer, size_t buffer_size)
+{
+    static const RomanEntry table[] = {
+        {1000, "M", 1U},
+        {900, "CM", 2U},
+        {500, "D", 1U},
+        {400, "CD", 2U},
+        {100, "C", 1U},
+        {90, "XC", 2U},
+        {50, "L", 1U},
+        {40, "XL", 2U},
+        {10, "X", 1U},
+        {9, "IX", 2U},
+        {5, "V", 1U},
+        {4, "IV", 2U},
+        {1, "I", 1U}
+    };
+    const size_t entry_count = sizeof(table) / sizeof(table[0]);
+    size_t used;
+    size_t i;
+    int remaining;
+
+    if (buffer == NULL || buffer_size == 0U)
+    {
+        return -1;
+    }
+
+    buffer[0] = '\0';
+
+    if (number < MIN_ROMAN_VALUE || number > MAX_ROMAN_VALUE)
+    {
+        return -1;
+    }
+
+    used = 0U;
+    remaining = number;
+
+    for (i = 0U; i < entry_count; i++)
+    {
+        while (remaining >= table[i].value)
+        {
+            const size_t symbol_length = table[i].symbol_length;
+
+            if (symbol_length >= (buffer_size - used))
+            {
+                buffer[0] = '\0';
+                return -1;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(buffer + used, table[i].symbol, symbol_length);
+            used += symbol_length;
+            remaining -= table[i].value;
+        }
+    }
+
+    buffer[used] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[ROMAN_BUFFER_SIZE];
+    int number;
+    int result;
+
+    printf("Enter an integer (1-3999): ");
+    result = fflush(stdout);
+    if (result != 0)
+    {
+        fprintf(stderr, "Error: failed to write prompt\n");
+        return 1;
+    }
+
+    result = scanf("%d", &number);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    result = int_to_roman(number, buffer, sizeof(buffer));
+    if (result != 0)
+    {
+        fprintf(stderr, "Error: value must be between 1 and 3999\n");
+        return 1;
+    }
+
+    printf("%d -> %s\n", number, buffer);
+    return 0;
+}

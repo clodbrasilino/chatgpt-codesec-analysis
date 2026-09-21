@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+
+char *remove_whitespaces(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = 0;
+    while (input[input_len] != '\0') {
+        if (input_len >= (size_t)-1) {
+            return NULL;
+        }
+        input_len++;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+
+    while (src_pos < input_len) {
+        if (!isspace((unsigned char)input[src_pos])) {
+            result[dst_pos++] = input[src_pos];
+        }
+        src_pos++;
+    }
+
+    result[dst_pos] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_string1 = "GoogleFlutter";
+    char *cleaned1 = remove_whitespaces(test_string1);
+    if (cleaned1 != NULL) {
+        printf("%s\n", cleaned1);
+        free(cleaned1);
+    }
+
+    const char *test_string2 = "GoogleDart";
+    char *cleaned2 = remove_whitespaces(test_string2);
+    if (cleaned2 != NULL) {
+        printf("%s\n", cleaned2);
+        free(cleaned2);
+    }
+
+    const char *test_string3 = "iOSSwift";
+    char *cleaned3 = remove_whitespaces(test_string3);
+    if (cleaned3 != NULL) {
+        printf("%s\n", cleaned3);
+        free(cleaned3);
+    }
+
+    return EXIT_SUCCESS;
+}

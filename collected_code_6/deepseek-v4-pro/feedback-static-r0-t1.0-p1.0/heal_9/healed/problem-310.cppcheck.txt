@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:70:32: style: Condition 'alloc_size==0' is always false [knownConditionTrueFalse]
+                if (alloc_size == 0 || alloc_size < elem_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:69:46: note: Assignment 'alloc_size=elem_len+1', assigned value is greater than 0
+                size_t alloc_size = elem_len + 1;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:70:32: note: Condition 'alloc_size==0' is always false
+                if (alloc_size == 0 || alloc_size < elem_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:70:51: style: Condition 'alloc_size<elem_len' is always false [knownConditionTrueFalse]
+                if (alloc_size == 0 || alloc_size < elem_len) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:69:35: note: alloc_size is assigned 'elem_len+1' here.
+                size_t alloc_size = elem_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-310.c:70:51: note: Condition 'alloc_size<elem_len' is always false
+                if (alloc_size == 0 || alloc_size < elem_len) {
+                                                  ^

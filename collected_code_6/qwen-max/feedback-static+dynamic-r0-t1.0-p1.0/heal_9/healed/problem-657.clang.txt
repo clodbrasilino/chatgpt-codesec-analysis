@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-657.c:30:24: error: call to undeclared library function 'strtoull' with type 'unsigned long long (const char *, char **, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   30 |         uint64_t num = strtoull(input, &endptr, 10);
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-657.c:30:24: note: include the header <stdlib.h> or explicitly provide a declaration for 'strtoull'
+1 error generated.

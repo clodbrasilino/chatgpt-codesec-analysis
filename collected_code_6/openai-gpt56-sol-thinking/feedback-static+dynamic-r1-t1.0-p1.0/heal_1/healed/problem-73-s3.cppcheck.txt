@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:191:29: style: Condition 'match_start>match_end' is always true [knownConditionTrueFalse]
+                match_start > match_end) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:177:44: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:186:32: note: match_start is assigned '(unsigned long)match.rm_so' here.
+            size_t match_start = (size_t)match.rm_so;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:187:32: note: Assignment 'match_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=match_start
+            size_t match_end = (size_t)match.rm_eo;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:191:29: note: Condition 'match_start>match_end' is always true
+                match_start > match_end) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-73-s3.c:219:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^

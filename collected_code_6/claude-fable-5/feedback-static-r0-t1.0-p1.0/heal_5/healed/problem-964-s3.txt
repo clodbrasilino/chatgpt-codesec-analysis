@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    if (len == max_len) {
+        return false;
+    }
+
+    return (len % 2U) == 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    bool newline_found;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    newline_found = (len > 0U && buffer[len - 1U] == '\n');
+
+    if (newline_found) {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flagged weaknesses were already properly mitigated in the original code, so no functional changes were required — only the comments were removed as requested:
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — This is a false positive. `getchar()` returns an `int` and the value is never written into a buffer; it's simply used to drain `stdin` until a newline or `EOF`. No buffer boundary can be violated. Correctly checking against `EOF` (using `int`, not `char`) prevents an infinite loop on stream closure.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — Already defended properly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` bounds the read to the buffer size.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1U]` is defensive (technically redundant, since `fgets` always null-terminates on success, but harmless).
+   - `strnlen()` with an explicit bound is used instead of `strlen()`, avoiding over-reads on non-terminated data.
+   - The truncation case (`len == sizeof(buffer) - 1U` with no newline) is handled by draining the remaining input, preventing stale data from leaking into subsequent reads.
+
+The code follows solid defensive practices: `NULL` checks, unsigned literal suffixes for consistency, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and error reporting to `stderr`. It is safe as written.

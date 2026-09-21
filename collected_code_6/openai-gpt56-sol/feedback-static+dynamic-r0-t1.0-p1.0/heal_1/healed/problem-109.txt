@@ -1,0 +1,65 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+static int count_odd_rotations(const char *binary, size_t length)
+{
+    size_t count = 0;
+
+    if (binary == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+
+        if (binary[i] == '1') {
+            if (count == (size_t)INT_MAX) {
+                return -1;
+            }
+            ++count;
+        }
+    }
+
+    return (int)count;
+}
+
+int main(void)
+{
+    char *binary = NULL;
+    size_t capacity = 0;
+    ssize_t input_length;
+    size_t length;
+    int result;
+
+    input_length = getline(&binary, &capacity, stdin);
+    if (input_length < 0) {
+        free(binary);
+        return EXIT_FAILURE;
+    }
+
+    length = (size_t)input_length;
+
+    while (length > 0 &&
+           (binary[length - 1] == '\n' || binary[length - 1] == '\r')) {
+        --length;
+    }
+
+    result = count_odd_rotations(binary, length);
+    free(binary);
+
+    if (result < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

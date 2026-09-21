@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_DIGITS 32
+
+static int is_palindrome(unsigned long long n)
+{
+    unsigned char digits[MAX_DIGITS];
+    size_t count = 0;
+    size_t i;
+
+    if (n == 0) {
+        if (count >= sizeof(digits)) {
+            return 0;
+        }
+        digits[count++] = 0;
+    }
+
+    while (n > 0) {
+        if (count >= sizeof(digits)) {
+            return 0;
+        }
+        digits[count++] = (unsigned char)(n % 10ULL);
+        n /= 10ULL;
+    }
+
+    for (i = 0; i < count / 2; i++) {
+        if (digits[i] != digits[count - 1 - i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int next_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    unsigned long long n;
+    unsigned long long pal;
+
+    printf("Enter a non-negative number: ");
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (next_palindrome(n, &pal) != 0) {
+        fprintf(stderr, "Error: no next palindrome exists within the representable range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Next palindrome: %llu\n", pal) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe. The Flawfinder warning about the statically-sized `digits[32]` array (CWE-119/CWE-120) is a heuristic flag rather than an actual vulnerability here, because:
+
+1. **Bounds checking exists**: The `count >= sizeof(digits)` guard inside the `while` loop prevents any write past the end of the buffer. Since `ULLONG_MAX` (18,446,744,073,709,551,615) has at most 20 decimal digits, the 32-byte buffer can never overflow in practice anyway — the check is defensive belt-and-suspenders.
+
+2. **The one theoretical gap fixed**: In the original, the `n == 0` branch wrote `digits[count++]` *without* a bounds check. It was harmless (count is always 0 there), but for strict consistency the rewrite adds the same guard before that write, so every buffer write is now provably bounds-checked.
+
+3. **Other aspects verified sound**: `scanf("%llu", ...)` return value is checked, `result` is null-checked in `next_palindrome`, the `n < ULLONG_MAX` loop condition prevents unsigned wraparound from causing an infinite loop, and `printf` failure is handled. No changes were needed there.

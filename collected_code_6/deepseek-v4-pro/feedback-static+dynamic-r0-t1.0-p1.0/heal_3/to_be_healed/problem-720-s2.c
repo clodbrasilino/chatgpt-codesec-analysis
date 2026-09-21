@@ -1,0 +1,219 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct DictEntry {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry *entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+typedef struct Tuple {
+    void **items;
+    int count;
+} Tuple;
+
+static char *safe_strdup(const char *str) {
+    if (str == NULL) return NULL;
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *copy = (char *)malloc(len + 1);
+    if (copy == NULL) return NULL;
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, str, len + 1);
+    return copy;
+}
+
+Dictionary *dict_create(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    
+    dict->entries = (DictEntry *)malloc(sizeof(DictEntry) * 10);
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = 0;
+    dict->capacity = 10;
+    return dict;
+}
+
+bool dict_set(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) return false;
+
+    for (int i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            char *new_value = safe_strdup(value);
+            if (new_value == NULL) return false;
+            free(dict->entries[i].value);
+            dict->entries[i].value = new_value;
+            return true;
+        }
+    }
+
+    if (dict->count >= dict->capacity) {
+        int new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = (DictEntry *)realloc(dict->entries, sizeof(DictEntry) * new_capacity);
+        if (new_entries == NULL) return false;
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    char *new_key = safe_strdup(key);
+    if (new_key == NULL) return false;
+    
+    char *new_value = safe_strdup(value);
+    if (new_value == NULL) {
+        free(new_key);
+        return false;
+    }
+
+    dict->entries[dict->count].key = new_key;
+    dict->entries[dict->count].value = new_value;
+    dict->count++;
+    return true;
+}
+
+char *dict_get(Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) return NULL;
+
+    for (int i = 0; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return dict->entries[i].value;
+        }
+    }
+    return NULL;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) return;
+
+    for (int i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Dictionary *dict_clone(Dictionary *src) {
+    if (src == NULL) return NULL;
+
+    Dictionary *new_dict = dict_create();
+    if (new_dict == NULL) return NULL;
+
+    for (int i = 0; i < src->count; i++) {
+        if (!dict_set(new_dict, src->entries[i].key, src->entries[i].value)) {
+            dict_free(new_dict);
+            return NULL;
+        }
+    }
+    return new_dict;
+}
+
+Tuple *tuple_create(void) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    
+    tuple->items = NULL;
+    tuple->count = 0;
+    return tuple;
+}
+
+bool tuple_append(Tuple *tuple, void *item) {
+    if (tuple == NULL || item == NULL) return false;
+
+    void **new_items = (void **)realloc(tuple->items, sizeof(void *) * (tuple->count + 1));
+    if (new_items == NULL) return false;
+
+    tuple->items = new_items;
+    tuple->items[tuple->count] = item;
+    tuple->count++;
+    return true;
+}
+
+void tuple_free(Tuple *tuple) {
+    if (tuple == NULL) return;
+
+    for (int i = 0; i < tuple->count; i++) {
+        free(tuple->items[i]);
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+Tuple *tuple_add_dictionary(Tuple *tuple, Dictionary *dict) {
+    if (tuple == NULL || dict == NULL) return NULL;
+
+    Dictionary *dict_copy = dict_clone(dict);
+    if (dict_copy == NULL) return NULL;
+
+    if (!tuple_append(tuple, dict_copy)) {
+        dict_free(dict_copy);
+        return NULL;
+    }
+
+    return tuple;
+}
+
+int main(void) {
+    Dictionary *dict = dict_create();
+    if (dict == NULL) return 1;
+
+    dict_set(dict, "name", "John");
+    dict_set(dict, "age", "30");
+    dict_set(dict, "city", "New York");
+
+    Tuple *tuple = tuple_create();
+    if (tuple == NULL) {
+        dict_free(dict);
+        return 1;
+    }
+
+    char *str1 = safe_strdup("Hello");
+    if (str1 == NULL) {
+        dict_free(dict);
+        tuple_free(tuple);
+        return 1;
+    }
+
+    if (!tuple_append(tuple, str1)) {
+        free(str1);
+        dict_free(dict);
+        tuple_free(tuple);
+        return 1;
+    }
+
+    Tuple *result = tuple_add_dictionary(tuple, dict);
+    if (result == NULL) {
+        dict_free(dict);
+        tuple_free(tuple);
+        return 1;
+    }
+
+    printf("Tuple count: %d\n", result->count);
+    printf("First item: %s\n", (char *)result->items[0]);
+
+    Dictionary *added_dict = (Dictionary *)result->items[1];
+    printf("Dictionary values: %s, %s, %s\n",
+           dict_get(added_dict, "name"),
+           dict_get(added_dict, "age"),
+           dict_get(added_dict, "city"));
+
+    dict_free(dict);
+    tuple_free(tuple);
+    return 0;
+}

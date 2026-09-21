@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, head_bytes);
+    memmove(arr, arr + k, tail_bytes);
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already functionally safe — the flawfinder warnings on `memcpy` are heuristic (risk level 2) and flag every use of the function regardless of context. In this case:
+
+1. **First `memcpy(temp, arr, k * sizeof(int))`**: `temp` is allocated with exactly `k * sizeof(int)` bytes, and `k < n` is guaranteed after the modulo operation, so the source `arr` always contains at least `k` elements. No overflow possible.
+
+2. **Second `memcpy(arr + (n - k), temp, k * sizeof(int))`**: The destination region `arr + (n - k)` has exactly `k` elements of space remaining, matching the copy size exactly.
+
+The one genuine latent defect I hardened against is **integer overflow in the size computation**: on platforms where `n * sizeof(int)` could exceed `SIZE_MAX` (e.g., a caller passing a huge `n`), `k * sizeof(int)` could wrap, causing `malloc` to allocate a smaller buffer than `memcpy` writes — a real CWE-190 → CWE-120 chain. The `n > SIZE_MAX / sizeof(int)` guard eliminates that path and makes the size arithmetic provably safe, which should also satisfy static analyzers that track tainted size values.

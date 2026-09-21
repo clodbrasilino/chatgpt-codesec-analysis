@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_ENTRIES 10
+#define MAX_KEY_LEN 32
+#define MAX_VAL_LEN 32
+
+typedef struct {
+    char key[MAX_KEY_LEN];
+    char value[MAX_VAL_LEN];
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[MAX_ENTRIES];
+    size_t count;
+} Dictionary;
+
+bool dict_add(Dictionary *dict, const char *key, const char *value)
+{
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->count >= MAX_ENTRIES) {
+        return false;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LEN);
+    size_t val_len = strnlen(value, MAX_VAL_LEN);
+
+    if (key_len >= MAX_KEY_LEN || val_len >= MAX_VAL_LEN) {
+        return false;
+    }
+
+    DictEntry *entry = &dict->entries[dict->count];
+
+    if (key_len >= sizeof(entry->key) || val_len >= sizeof(entry->value)) {
+        return false;
+    }
+
+    memcpy(entry->key, key, key_len);
+    entry->key[key_len] = '\0';
+
+    memcpy(entry->value, value, val_len);
+    entry->value[val_len] = '\0';
+
+    dict->count++;
+    return true;
+}
+
+bool dict_contains_key(const Dictionary *dict, const char *key)
+{
+    if (dict == NULL || key == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strncmp(dict->entries[i].key, key, MAX_KEY_LEN) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    Dictionary dict = { .count = 0 };
+
+    if (!dict_add(&dict, "apple", "fruit")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+    if (!dict_add(&dict, "carrot", "vegetable")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+    if (!dict_add(&dict, "salmon", "fish")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return 1;
+    }
+
+    const char *keys_to_check[] = { "apple", "banana", "salmon" };
+    size_t num_keys = sizeof(keys_to_check) / sizeof(keys_to_check[0]);
+
+    for (size_t i = 0; i < num_keys; i++) {
+        if (dict_contains_key(&dict, keys_to_check[i])) {
+            printf("Key '%s' is present in the dictionary.\n", keys_to_check[i]);
+        } else {
+            printf("Key '%s' is NOT present in the dictionary.\n", keys_to_check[i]);
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:** The original code was already well-defended against the Flawfinder warnings, which are largely false positives in this case:
+
+1. **Statically-sized arrays (CWE-119/CWE-120):** Both `key` and `value` buffers are guarded by `strnlen()` with a bounded maximum, and the code rejects inputs where `key_len >= MAX_KEY_LEN` or `val_len >= MAX_VAL_LEN`, guaranteeing room for the NUL terminator.
+
+2. **`memcpy` warnings (CWE-120):** Each `memcpy` is preceded by an explicit bounds check against `sizeof(entry->key)` / `sizeof(entry->value)`, and manual NUL termination follows the copy. In the rewrite I consolidated both size checks before either copy occurs, which avoids a subtle issue in the original: a partial write (key copied, then value rejected) would leave a half-initialized entry below `count` — harmless there since `count` wasn't incremented, but the consolidated check is cleaner and guarantees atomicity of the add operation.
+
+3. **Additional defensive measures retained:** NULL-pointer checks on all public entry points, capacity check against `MAX_ENTRIES`, and bounded comparison via `strncmp` in the lookup.

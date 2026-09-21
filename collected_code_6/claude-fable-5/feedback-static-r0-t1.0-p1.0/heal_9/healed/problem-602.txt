@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why this code is already safe:
+
+**Flawfinder warning (CWE-119/CWE-120) on `char buffer[BUFFER_SIZE]`:** This is a heuristic warning triggered by any statically-sized array. The original code already mitigates the risk correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters plus a null terminator, so no overflow can occur. Using `sizeof(buffer)` rather than a hardcoded constant keeps the bound tied to the actual array size if it ever changes.
+
+2. **Return-value check:** The `NULL` check on `fgets` handles EOF and read errors, avoiding operations on indeterminate buffer contents.
+
+3. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is redundant with `fgets` (which always null-terminates on success) but harmless as defense-in-depth.
+
+4. **Safe newline stripping:** `strcspn(buffer, "\n")` never returns an index past the null terminator, so the assignment is always in bounds — safer than the common `buffer[strlen(buffer) - 1]` idiom, which underflows on an empty string.
+
+5. **`first_repeated_char` safety:** The cast to `unsigned char` before indexing `seen[256]` prevents negative-index access on platforms where `char` is signed (e.g., input bytes ≥ 0x80), and the `NULL` guard prevents dereferencing a null pointer.
+
+No functional changes were required; the warning is a false positive given the existing bounds-checked I/O.

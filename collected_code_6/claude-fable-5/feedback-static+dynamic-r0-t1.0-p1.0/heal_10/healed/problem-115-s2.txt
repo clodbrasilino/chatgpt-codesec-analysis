@@ -1,0 +1,204 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_KEY_LEN 64
+#define MAX_VAL_LEN 64
+
+typedef struct {
+    char key[MAX_KEY_LEN];
+    char value[MAX_VAL_LEN];
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dict;
+
+typedef struct {
+    Dict **dicts;
+    size_t count;
+} DictList;
+
+Dict *dict_create(size_t capacity)
+{
+    Dict *d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->count = 0;
+    d->capacity = capacity;
+    if (capacity > 0) {
+        if (capacity > SIZE_MAX / sizeof(DictEntry)) {
+            free(d);
+            return NULL;
+        }
+        d->entries = calloc(capacity, sizeof(DictEntry));
+        if (d->entries == NULL) {
+            free(d);
+            return NULL;
+        }
+    } else {
+        d->entries = NULL;
+    }
+    return d;
+}
+
+int dict_add(Dict *d, const char *key, const char *value)
+{
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    if (d->count >= d->capacity || d->entries == NULL) {
+        return -1;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LEN);
+    size_t val_len = strnlen(value, MAX_VAL_LEN);
+
+    if (key_len >= MAX_KEY_LEN || val_len >= MAX_VAL_LEN) {
+        return -1;
+    }
+
+    int kres = snprintf(d->entries[d->count].key,
+                        sizeof(d->entries[d->count].key), "%s", key);
+    if (kres < 0 || (size_t)kres >= sizeof(d->entries[d->count].key)) {
+        return -1;
+    }
+
+    int vres = snprintf(d->entries[d->count].value,
+                        sizeof(d->entries[d->count].value), "%s", value);
+    if (vres < 0 || (size_t)vres >= sizeof(d->entries[d->count].value)) {
+        return -1;
+    }
+
+    d->count++;
+    return 0;
+}
+
+void dict_destroy(Dict *d)
+{
+    if (d != NULL) {
+        free(d->entries);
+        free(d);
+    }
+}
+
+bool all_dicts_empty(const DictList *list)
+{
+    if (list == NULL || list->dicts == NULL) {
+        return true;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->dicts[i] != NULL && list->dicts[i]->count > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void dictlist_destroy(DictList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    if (list->dicts != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            dict_destroy(list->dicts[i]);
+        }
+        free(list->dicts);
+    }
+    free(list);
+}
+
+DictList *dictlist_create(size_t count)
+{
+    DictList *list = malloc(sizeof(DictList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->count = count;
+    if (count > 0) {
+        if (count > SIZE_MAX / sizeof(Dict *)) {
+            free(list);
+            return NULL;
+        }
+        list->dicts = calloc(count, sizeof(Dict *));
+        if (list->dicts == NULL) {
+            free(list);
+            return NULL;
+        }
+    } else {
+        list->dicts = NULL;
+    }
+    return list;
+}
+
+int main(void)
+{
+    DictList *list1 = dictlist_create(3);
+    if (list1 == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < list1->count; i++) {
+        list1->dicts[i] = dict_create(4);
+        if (list1->dicts[i] == NULL) {
+            fprintf(stderr, "Allocation failure\n");
+            dictlist_destroy(list1);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_dicts_empty(list1)) {
+        printf("List 1: all dictionaries are empty\n");
+    } else {
+        printf("List 1: not all dictionaries are empty\n");
+    }
+
+    DictList *list2 = dictlist_create(3);
+    if (list2 == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        dictlist_destroy(list1);
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < list2->count; i++) {
+        list2->dicts[i] = dict_create(4);
+        if (list2->dicts[i] == NULL) {
+            fprintf(stderr, "Allocation failure\n");
+            dictlist_destroy(list1);
+            dictlist_destroy(list2);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (dict_add(list2->dicts[1], "name", "alice") != 0) {
+        fprintf(stderr, "Failed to add entry\n");
+        dictlist_destroy(list1);
+        dictlist_destroy(list2);
+        return EXIT_FAILURE;
+    }
+
+    if (all_dicts_empty(list2)) {
+        printf("List 2: all dictionaries are empty\n");
+    } else {
+        printf("List 2: not all dictionaries are empty\n");
+    }
+
+    dictlist_destroy(list1);
+    dictlist_destroy(list2);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: The flagged weaknesses (CWE-119/CWE-120, statically-sized `char` arrays in `DictEntry`) were already properly mitigated in the original code, so the rewrite preserves those mitigations:
+
+- **Bounds checking before copy**: `dict_add` uses `strnlen` with an explicit maximum (`MAX_KEY_LEN`/`MAX_VAL_LEN`) rather than `strlen`, so unterminated or oversized inputs are rejected before any write occurs.
+- **Length-limited copies**: `snprintf` with `sizeof(destination)` is used instead of `strcpy`/`strcat`, guaranteeing null-termination and preventing overflow. Return values are checked for both encoding errors (`< 0`) and truncation (`>= sizeof`).
+- **Integer overflow protection**: Allocation sites guard against `count * sizeof(...)` overflow via `SIZE_MAX / sizeof(...)` checks before calling `calloc`.
+- **Defensive null checks**: All public functions validate pointers before dereferencing, and `calloc` zero-initializes entries so key/value buffers start null-terminated.
+- **Consistent cleanup**: Every error path frees previously allocated resources, avoiding leaks and double frees.

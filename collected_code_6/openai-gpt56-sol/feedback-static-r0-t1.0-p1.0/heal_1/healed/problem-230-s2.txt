@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_spaces(const char *input, size_t input_size, char replacement)
+{
+    const char *terminator;
+    char *result;
+    size_t length;
+    size_t i;
+
+    if (input == NULL || input_size == 0U) {
+        return NULL;
+    }
+
+    terminator = memchr(input, '\0', input_size);
+    if (terminator == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(terminator - input);
+
+    result = malloc(length + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < length; ++i) {
+        result[i] = input[i] == ' ' ? replacement : input[i];
+    }
+
+    result[length] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char input[] = "Replace blank spaces safely";
+    char *result = replace_spaces(input, sizeof input, '_');
+
+    if (result == NULL) {
+        fputs("Failed to replace spaces.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

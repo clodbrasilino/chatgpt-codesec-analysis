@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool string_starts_with_number(const char *str, int number)
+{
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%d", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    if (strnlen(str, prefix_len) < prefix_len) {
+        return false;
+    }
+
+    return strncmp(str, prefix, prefix_len) == 0;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100 percent";
+    int result_status = EXIT_SUCCESS;
+
+    if (string_starts_with_number(test1, 42)) {
+        if (printf("\"%s\" starts with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, 7)) {
+        if (printf("\"%s\" starts with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, 100)) {
+        if (printf("\"%s\" starts with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    return result_status;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 buffer weakness correctly:
+
+1. **`snprintf` with `sizeof(prefix)`** — bounds the write into the statically-sized `prefix[32]` buffer, preventing overflow. An `int` formatted as decimal needs at most 12 bytes (including sign and NUL), so 32 bytes is more than sufficient.
+
+2. **Return-value validation** — `written < 0` catches encoding errors, and `(size_t)written >= sizeof(prefix)` detects truncation, ensuring `prefix` is never used in a truncated or invalid state.
+
+3. **`strnlen(str, prefix_len)`** — bounds the length scan of the input string to `prefix_len`, avoiding reads past short strings and rejecting inputs shorter than the prefix before comparison.
+
+4. **`strncmp` with an explicit length** — the comparison never reads beyond `prefix_len` bytes of either string.
+
+5. **NULL check** on `str` guards against dereferencing a null pointer.
+
+No functional changes were required; the rewrite simply removes the comments while preserving the existing hardening.

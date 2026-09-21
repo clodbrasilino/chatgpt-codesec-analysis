@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool canRearrange(const char *str, size_t len)
+{
+    int freq[UCHAR_MAX + 1] = {0};
+    size_t i;
+    int maxFreq = 0;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (freq[i] > maxFreq) {
+            maxFreq = freq[i];
+        }
+    }
+
+    return maxFreq <= (int)((len + 1) / 2);
+}
+
+int main(void)
+{
+    char input[1024];
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        len = strcspn(input, "\n");
+        input[len] = '\0';
+
+        if (canRearrange(input, len)) {
+            printf("true\n");
+        } else {
+            printf("false\n");
+        }
+    }
+
+    return 0;
+}

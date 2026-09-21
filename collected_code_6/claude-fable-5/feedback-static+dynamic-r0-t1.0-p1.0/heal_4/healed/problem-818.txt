@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the flagged weakness (CWE-119/CWE-120) correctly, so the rewrite preserves the existing mitigations rather than changing behavior:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing the classic `gets()`-style overflow the Flawfinder warning targets.
+
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this ensures termination even if assumptions change.
+
+3. **Length validation with `strnlen`**: Using `strnlen` instead of `strlen` bounds the scan to `BUFFER_SIZE`, avoiding an out-of-bounds read if the buffer were somehow unterminated.
+
+4. **Safe newline stripping**: `memchr` with an explicit length is used rather than `strchr`, keeping the search bounded.
+
+5. **Safe character classification**: The cast to `(unsigned char)` before `islower()` avoids undefined behavior when `char` is signed and holds negative values.
+
+6. **NULL guard** in `count_lowercase` protects against invalid pointer dereference.
+
+The Flawfinder hit on the fixed-size `char buffer[BUFFER_SIZE]` is a low-risk informational finding; all accesses are bounds-checked, so no functional changes were required.

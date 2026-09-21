@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+char max_occurring_char(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    unsigned long count[UCHAR_MAX + 1] = {0};
+    const unsigned char *s = (const unsigned char *)str;
+    size_t max_count = 0;
+    char max_char = '\0';
+
+    while (*s != '\0') {
+        unsigned char uc = *s;
+        count[uc]++;
+
+        if (count[uc] > max_count) {
+            max_count = count[uc];
+            max_char = (char)uc;
+        }
+
+        s++;
+    }
+
+    return max_char;
+}
+
+static char *read_line(void) {
+    size_t size = 64;
+    size_t len = 0;
+    char *buffer = malloc(size);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int c;
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (len + 2 >= size) {
+            if (size > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            size *= 2;
+            char *new_buffer = realloc(buffer, size);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+        }
+        buffer[len++] = (char)c;
+    }
+
+    if (c == EOF && len == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[len] = '\0';
+    return buffer;
+}
+
+int main(void) {
+    char *input = read_line();
+    if (input == NULL) {
+        return 1;
+    }
+
+    char result = max_occurring_char(input);
+
+    if (result != '\0') {
+        printf("%c\n", result);
+    } else {
+        printf("No character found\n");
+    }
+
+    free(input);
+    return 0;
+}

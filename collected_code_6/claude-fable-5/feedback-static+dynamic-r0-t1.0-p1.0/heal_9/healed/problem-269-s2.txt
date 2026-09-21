@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    do {
+        c = getchar();
+        count++;
+        if (count >= ULONG_MAX) {
+            break;
+        }
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The two Flawfinder hits are both on `getchar()` calls, flagged as CWE-120 (buffer overflow) and CWE-20 (improper input validation) at risk level 1 — the lowest severity. These are essentially informational: `getchar()` itself cannot overflow a buffer since it returns a single `int` and no destination buffer is involved. The warnings exist because `getchar()` in loops is *often* used to fill fixed-size buffers unsafely.
+
+This code already mitigates both concerns:
+
+1. **No buffer involved** — input is stored in a single `int`, so CWE-120 does not apply. There is no `char buf[N]` being filled without bounds checking.
+
+2. **Loop termination guaranteed** — `flush_input()` correctly loops until `\n` **or** `EOF` (checking `EOF` prevents an infinite loop on closed/redirected stdin), and additionally bounds the iteration count with `ULONG_MAX` as a defensive belt-and-suspenders limit.
+
+3. **Input validation (CWE-20)** — the code checks `getchar()` against `EOF` before use, and validates printability via `isprint()` with the correct `(unsigned char)` cast, avoiding undefined behavior for negative `char` values.
+
+4. **Correct `int` handling** — `input` is declared `int`, not `char`, so the `EOF` comparison is reliable on all platforms.
+
+Since the flagged risks are already properly addressed, the rewritten code is functionally identical with the analysis comments removed — no actual fixes were required.

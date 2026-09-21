@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *newline;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer[256]`:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — this is the correct fix over unsafe alternatives like `gets()` or unbounded `scanf("%s", ...)`.
+2. **Defensive null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant (fgets always null-terminates on success) but harmless as defense-in-depth.
+3. **Bounded string operations**: `strnlen(str, max_len)` is used instead of `strlen()`, ensuring the helper never reads past `max_len` even if handed a non-terminated buffer.
+4. **Correct `ctype` usage**: casting to `unsigned char` before `isspace()`/`toupper()` avoids undefined behavior with negative `char` values.
+5. **NULL checks**: both the `fgets` return value and the `str`/`max_len` parameters are validated.
+
+Since the flagged weakness is already properly addressed, the rewritten code is functionally identical with the comments removed. No further hardening is required for this input path.

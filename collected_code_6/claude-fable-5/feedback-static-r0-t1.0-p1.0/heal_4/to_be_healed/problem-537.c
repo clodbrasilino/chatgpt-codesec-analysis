@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LEN 256
+
+static int extract_word(const char *str, size_t *pos, char *word, size_t word_size, size_t *word_len)
+{
+    size_t i;
+    size_t w = 0;
+
+    if (str == NULL || pos == NULL || word == NULL || word_size == 0 || word_len == NULL) {
+        return 0;
+    }
+
+    i = *pos;
+
+    while (str[i] != '\0' && !isalnum((unsigned char)str[i])) {
+        i++;
+    }
+
+    if (str[i] == '\0') {
+        *pos = i;
+        return 0;
+    }
+
+    while (str[i] != '\0' && isalnum((unsigned char)str[i])) {
+        if (w + 1 < word_size) {
+            word[w] = str[i];
+            w++;
+        }
+        i++;
+    }
+
+    word[w] = '\0';
+    *word_len = w;
+    *pos = i;
+    return 1;
+}
+
+char *first_repeated_word(const char *str)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char (*words)[MAX_WORD_LEN];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char current[MAX_WORD_LEN];
+    size_t pos = 0;
+    size_t count = 0;
+    size_t current_len = 0;
+    size_t i;
+    char *result = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    words = calloc(MAX_WORDS, sizeof(*words));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    memset(current, 0, sizeof(current));
+
+    while (extract_word(str, &pos, current, sizeof(current), &current_len) == 1) {
+        if (current_len >= sizeof(current)) {
+            current_len = sizeof(current) - 1;
+            current[current_len] = '\0';
+        }
+
+        for (i = 0; i < count; i++) {
+            if (strncmp(words[i], current, MAX_WORD_LEN) == 0) {
+                result = malloc(current_len + 1);
+                if (result != NULL) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result, current, current_len);
+                    result[current_len] = '\0';
+                }
+                free(words);
+                return result;
+            }
+        }
+
+        if (count < MAX_WORDS) {
+            if (current_len < MAX_WORD_LEN) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(words[count], current, current_len);
+                words[count][current_len] = '\0';
+                count++;
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    free(words);
+    return NULL;
+}
+
+static int report_result(char *repeated)
+{
+    if (repeated != NULL) {
+        if (printf("First repeated word: %s\n", repeated) < 0) {
+            free(repeated);
+            return -1;
+        }
+        free(repeated);
+    } else {
+        if (printf("No repeated word found\n") < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *test1 = "the quick brown fox jumps over the lazy dog";
+    const char *test2 = "hello world foo bar";
+    const char *test3 = "one two two three";
+
+    if (report_result(first_repeated_word(test1)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_result(first_repeated_word(test2)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_result(first_repeated_word(test3)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

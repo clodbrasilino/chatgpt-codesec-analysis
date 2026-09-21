@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-127.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-127.c:95:18: style: Condition 'capacity==0u' is always false [knownConditionTrueFalse]
+    if (capacity == 0u || capacity > MAX_LINE_LENGTH) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-127.c:82:23: note: Assignment 'capacity=64u', assigned value is 64
+    size_t capacity = 64u;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-127.c:89:24: note: Assuming condition is false
+    if (stream == NULL || out == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_10/healed/problem-127.c:95:18: note: Condition 'capacity==0u' is always false
+    if (capacity == 0u || capacity > MAX_LINE_LENGTH) {
+                 ^

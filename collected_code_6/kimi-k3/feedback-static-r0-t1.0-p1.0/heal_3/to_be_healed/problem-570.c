@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int remove_words_containing(char **list, int size, const char *substring) {
+    int i, j;
+    
+    if (list == NULL || substring == NULL || size < 0) {
+        return -1;
+    }
+    
+    for (i = 0, j = 0; i < size; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        if (strstr(list[i], substring) != NULL) {
+            free(list[i]);
+            list[i] = NULL;
+        } else {
+            list[j] = list[i];
+            if (i != j) {
+                list[i] = NULL;
+            }
+            j++;
+        }
+    }
+    
+    return j;
+}
+
+int main(void) {
+    char **words;
+    int size = 6;
+    int new_size;
+    int i;
+    const char *word_list[] = {"apple", "banana", "cherry", "date", "elderberry", "fig"};
+    
+    words = malloc(size * sizeof(char *));
+    if (words == NULL) {
+        return 1;
+    }
+    
+    for (i = 0; i < size; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        words[i] = malloc(strlen(word_list[i]) + 1);
+        if (words[i] == NULL) {
+            int k;
+            for (k = 0; k < i; k++) {
+                free(words[k]);
+            }
+            free(words);
+            return 1;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        snprintf(words[i], strlen(word_list[i]) + 1, "%s", word_list[i]);
+    }
+    
+    printf("Original list:\n");
+    for (i = 0; i < size; i++) {
+        printf("%s\n", words[i]);
+    }
+    
+    new_size = remove_words_containing(words, size, "an");
+    
+    if (new_size < 0) {
+        for (i = 0; i < size; i++) {
+            free(words[i]);
+        }
+        free(words);
+        return 1;
+    }
+    
+    printf("\nList after removing words containing 'an':\n");
+    for (i = 0; i < new_size; i++) {
+        printf("%s\n", words[i]);
+    }
+    
+    for (i = 0; i < size; i++) {
+        free(words[i]);
+    }
+    free(words);
+    
+    return 0;
+}

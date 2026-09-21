@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-310.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-310.c:37:40: error: Null pointer dereference [nullPointer]
+    memcpy(tuple->items ? NULL : NULL, NULL, 0);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-310.c:37:32: style: Same value in both branches of ternary operator. [duplicateValueTernary]
+    memcpy(tuple->items ? NULL : NULL, NULL, 0);
+                               ^

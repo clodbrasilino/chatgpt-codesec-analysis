@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:39:19: style: Condition '(len-d)>len' is always false [knownConditionTrueFalse]
+    if ((len - d) > len || d > len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:30:30: note: Assuming condition '(len-d)>len' is false
+    if (d > len || (len - d) > len || len + 1 > str_size) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:35:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:39:19: note: Condition '(len-d)>len' is always false
+    if ((len - d) > len || d > len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:39:30: style: Condition 'd>len' is always false [knownConditionTrueFalse]
+    if ((len - d) > len || d > len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:30:11: note: Assuming condition 'd>len' is false
+    if (d > len || (len - d) > len || len + 1 > str_size) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:35:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:39:30: note: Condition 'd>len' is always false
+    if ((len - d) > len || d > len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:48:17: style: Condition 'len+1>str_size' is always false [knownConditionTrueFalse]
+    if (len + 1 > str_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:30:47: note: Assuming condition 'len+1>str_size' is false
+    if (d > len || (len - d) > len || len + 1 > str_size) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:35:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:48:17: note: Condition 'len+1>str_size' is always false
+    if (len + 1 > str_size) {
+                ^

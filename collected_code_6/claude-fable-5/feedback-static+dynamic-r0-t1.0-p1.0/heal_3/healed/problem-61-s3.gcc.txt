@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:1: error: type defaults to 'int' in declaration of 'n' [-Wimplicit-int]
+    1 | n = strnlen(s, max_len);
+      | ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:5: error: implicit declaration of function 'strnlen' [-Wimplicit-function-declaration]
+    1 | n = strnlen(s, max_len);
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:13: error: 's' undeclared here (not in a function)
+    1 | n = strnlen(s, max_len);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:16: error: 'max_len' undeclared here (not in a function)
+    1 | n = strnlen(s, max_len);
+      |                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:2:1: error: expected identifier or '(' before 'if'
+    2 | if (n >= max_len) {
+      | ^~

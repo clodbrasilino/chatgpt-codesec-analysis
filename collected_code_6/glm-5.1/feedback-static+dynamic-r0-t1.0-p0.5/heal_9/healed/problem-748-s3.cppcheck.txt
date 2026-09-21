@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748-s3.c:136:17: style: Condition 'result5==NULL' is always true [knownConditionTrueFalse]
+    if (result5 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748-s3.c:135:31: note: Calling function 'add_spaces' returns 0
+    char *result5 = add_spaces(NULL);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748-s3.c:135:31: note: Assignment 'result5=add_spaces(NULL)', assigned value is 0
+    char *result5 = add_spaces(NULL);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-748-s3.c:136:17: note: Condition 'result5==NULL' is always true
+    if (result5 == NULL) {
+                ^

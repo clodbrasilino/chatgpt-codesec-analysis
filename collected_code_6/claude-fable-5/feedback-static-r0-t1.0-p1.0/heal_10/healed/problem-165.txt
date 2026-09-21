@@ -1,0 +1,94 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+        if (ch == EOF) {
+            return -1;
+        }
+    } while (ch != '\n');
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        if (discard_remaining_input() != 0 && ferror(stdin)) {
+            fprintf(stderr, "Error reading input\n");
+            return 1;
+        }
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120):** The statically-sized array is properly protected. Input is read exclusively via `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits the read to at most `BUFFER_SIZE - 1` characters plus the null terminator. As defense-in-depth, `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination, and all subsequent length operations use the bounded `strnlen()` rather than `strlen()`. No overflow is possible.
+
+**2. Flawfinder `getchar` warning (CWE-120/CWE-20):** The `getchar()` call in `discard_remaining_input()` never stores characters into any buffer — it only consumes and discards them until a newline or `EOF`. The loop terminates deterministically on `'\n'` or `EOF`, with `EOF` explicitly returning `-1` so the caller can distinguish stream errors (checked via `ferror(stdin)`) from end-of-input. There is no buffer to overflow, so the warning is a false positive.
+
+**Additional robustness already present:**
+- `count_position_matches()` validates `str != NULL` and `max_len != 0`, bounds iteration by both string length and the 26-letter alphabet, and uses explicit `(char)` casts to avoid signedness/promotion surprises in comparisons.
+- Truncated-line detection (`len == sizeof(buffer) - 1` without a trailing newline) correctly drains stdin, preventing leftover input from affecting any later reads.
+- All return values (`fflush`, `fgets`, drain result) are checked, and errors go to `stderr` with a nonzero exit status.
+
+The code as written already mitigates both flagged CWEs; the rewrite simply removes the annotation comments.

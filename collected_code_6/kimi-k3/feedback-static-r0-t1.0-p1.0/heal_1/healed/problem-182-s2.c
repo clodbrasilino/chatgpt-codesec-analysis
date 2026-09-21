@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+
+#define MAX_INPUT 1024
+#define NUM_PATTERNS 4
+#define ERROR_BUF_SIZE 256
+
+typedef struct {
+    const char *name;
+    const char *pattern;
+    regex_t regex;
+    int compiled;
+} PatternInfo;
+
+static int compile_pattern(PatternInfo *info) {
+    if (info == NULL || info->pattern == NULL) {
+        return 0;
+    }
+    
+    int ret = regcomp(&info->regex, info->pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char *error_buf = malloc(ERROR_BUF_SIZE);
+        if (error_buf == NULL) {
+            fprintf(stderr, "Failed to compile %s pattern: out of memory\n", info->name);
+            info->compiled = 0;
+            return 0;
+        }
+        regerror(ret, &info->regex, error_buf, ERROR_BUF_SIZE);
+        fprintf(stderr, "Failed to compile %s pattern: %s\n", info->name, error_buf);
+        free(error_buf);
+        info->compiled = 0;
+        return 0;
+    }
+    info->compiled = 1;
+    return 1;
+}
+
+static void cleanup_patterns(PatternInfo *patterns, size_t count) {
+    if (patterns == NULL) {
+        return;
+    }
+    
+    size_t i;
+    for (i = 0; i < count; i++) {
+        if (patterns[i].compiled) {
+            regfree(&patterns[i].regex);
+            patterns[i].compiled = 0;
+        }
+    }
+}
+
+static int check_string(const char *input, PatternInfo *patterns, size_t count, int *results) {
+    size_t i;
+    regmatch_t match;
+    
+    if (input == NULL || patterns == NULL || results == NULL) {
+        return 0;
+    }
+    
+    for (i = 0; i < count; i++) {
+        if (!patterns[i].compiled) {
+            results[i] = 0;
+            continue;
+        }
+        
+        int ret = regexec(&patterns[i].regex, input, 1, &match, 0);
+        if (ret == 0) {
+            results[i] = 1;
+        } else if (ret == REG_NOMATCH) {
+            results[i] = 0;
+        } else {
+            char *error_buf = malloc(ERROR_BUF_SIZE);
+            if (error_buf == NULL) {
+                fprintf(stderr, "Regex execution failed for %s: out of memory\n", patterns[i].name);
+                results[i] = 0;
+                continue;
+            }
+            regerror(ret, &patterns[i].regex, error_buf, ERROR_BUF_SIZE);
+            fprintf(stderr, "Regex execution failed for %s: %s\n", patterns[i].name, error_buf);
+            free(error_buf);
+            results[i] = 0;
+        }
+    }
+    
+    return 1;
+}
+
+static int safe_strlen(const char *str, size_t max_len, size_t *out_len) {
+    if (str == NULL || out_len == NULL) {
+        return 0;
+    }
+    
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    
+    *out_len = len;
+    return 1;
+}
+
+int main(void) {
+    char *input = malloc(MAX_INPUT);
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    int results[NUM_PATTERNS] = {0};
+    size_t i;
+    
+    PatternInfo patterns[NUM_PATTERNS] = {
+        {"Uppercase", "[A-Z]", {0}, 0},
+        {"Lowercase", "[a-z]", {0}, 0},
+        {"Numeric", "[0-9]", {0}, 0},
+        {"Special", "[^A-Za-z0-9[:space:]]", {0}, 0}
+    };
+    
+    printf("Enter a string to analyze: ");
+    
+    if (fgets(input, MAX_INPUT, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = 0;
+    if (!safe_strlen(input, MAX_INPUT, &len)) {
+        fprintf(stderr, "String length calculation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len == 0) {
+        printf("Empty string provided\n");
+        free(input);
+        return EXIT_SUCCESS;
+    }
+    
+    for (i = 0; i < NUM_PATTERNS; i++) {
+        if (!compile_pattern(&patterns[i])) {
+            cleanup_patterns(patterns, NUM_PATTERNS);
+            free(input);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (!check_string(input, patterns, NUM_PATTERNS, results)) {
+        cleanup_patterns(patterns, NUM_PATTERNS);
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nAnalysis results for: \"%s\"\n", input);
+    printf("%-15s: %s\n", "Category", "Found");
+    printf("%-15s: %s\n", "--------", "-----");
+    
+    for (i = 0; i < NUM_PATTERNS; i++) {
+        printf("%-15s: %s\n", patterns[i].name, results[i] ? "Yes" : "No");
+    }
+    
+    cleanup_patterns(patterns, NUM_PATTERNS);
+    free(input);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  */
+
+char* snake_to_camel(const char *str) {
+    if (str == NULL) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *result = (char *)malloc((len + 1) * sizeof(char));
+    if (result == NULL) return NULL;
+
+    int j = 0;
+    int uppercase_next = 1;
+    for (size_t i = 0; i < len; ++i) {
+        if (str[i] == '_') {
+            uppercase_next = 1;
+        } else if (isalpha((unsigned char) str[i])) {
+            result[j++] = uppercase_next ? toupper((unsigned char) str[i]) : tolower((unsigned char) str[i]);
+            uppercase_next = 0;
+        }
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    const char *inputs[] = {
+        "python_program",
+        "python_language",
+        "programming_language"
+    };
+    const char *expected[] = {
+        "PythonProgram",
+        "PythonLanguage",
+        "ProgrammingLanguage"
+    };
+
+    for (size_t k = 0; k < sizeof(inputs) / sizeof(inputs[0]); ++k) {
+        char *output = snake_to_camel(inputs[k]);
+        if (output != NULL) {
+            printf("Camel case: %s\n", output);
+            if (strcmp(output, expected[k]) != 0) {
+                printf("Test case %zu failed: expected '%s', got '%s'\n", k, expected[k], output);
+            }
+            free(output);
+        } else {
+            printf("Memory allocation failed.\n");
+        }
+    }
+
+    return 0;
+}

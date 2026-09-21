@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+bool is_undulating(const char *num) {
+    size_t len = 0;
+    
+    while (num[len] != '\0') {
+        if (len >= 255) return false;
+        len++;
+    }
+    
+    if (len < 3) return false;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)num[i])) return false;
+    }
+    
+    if (num[0] == num[1]) return false;
+    
+    for (size_t i = 1; i < len - 1; i++) {
+        if (num[i] == num[i-1] || num[i] == num[i+1]) {
+            return false;
+        }
+        if (num[i-1] != num[i+1]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    char input[257];
+    
+    printf("Enter a number: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    input[sizeof(input) - 1] = '\0';
+    
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len == 0) {
+        printf("Empty input\n");
+        return 1;
+    }
+    
+    if (is_undulating(input)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    
+    return 0;
+}

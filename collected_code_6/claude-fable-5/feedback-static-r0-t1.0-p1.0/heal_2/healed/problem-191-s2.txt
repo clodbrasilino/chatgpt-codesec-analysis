@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static bool normalize_month(const char *month, char *out, size_t out_size)
+{
+    size_t len;
+    size_t i;
+
+    if (month == NULL || out == NULL || out_size == 0) {
+        return false;
+    }
+
+    len = strnlen(month, out_size);
+    if (len == 0 || len >= out_size) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        out[i] = (char)tolower((unsigned char)month[i]);
+    }
+    out[len] = '\0';
+
+    return true;
+}
+
+static bool has_thirty_days(const char *month)
+{
+    static const char *thirty_day_months[] = {
+        "april", "june", "september", "november"
+    };
+    char normalized[MAX_INPUT_LEN];
+    size_t i;
+
+    if (!normalize_month(month, normalized, sizeof(normalized))) {
+        return false;
+    }
+
+    for (i = 0; i < sizeof(thirty_day_months) / sizeof(thirty_day_months[0]); i++) {
+        if (strcmp(normalized, thirty_day_months[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool is_valid_month(const char *month)
+{
+    static const char *all_months[] = {
+        "january", "february", "march", "april", "may", "june",
+        "july", "august", "september", "october", "november", "december"
+    };
+    char normalized[MAX_INPUT_LEN];
+    size_t i;
+
+    if (!normalize_month(month, normalized, sizeof(normalized))) {
+        return false;
+    }
+
+    for (i = 0; i < sizeof(all_months) / sizeof(all_months[0]); i++) {
+        if (strcmp(normalized, all_months[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (!is_valid_month(input)) {
+        fprintf(stderr, "Invalid month name: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (has_thirty_days(input)) {
+        printf("%s has 30 days.\n", input);
+    } else {
+        printf("%s does not have 30 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder hits are essentially false positives:
+
+1. **`char` array warnings (CWE-119/CWE-120):** All three fixed-size buffers (`normalized` in both helper functions, `input` in `main`) are used safely. `normalize_month()` uses `strnlen()` bounded by `out_size` and rejects any string that would not fit (`len >= out_size`), guaranteeing the null terminator write at `out[len]` stays in bounds. `fgets()` in `main` is called with `sizeof(input)`, so it cannot overflow.
+
+2. **`getchar()` warning (CWE-120/CWE-20):** The loop only drains leftover characters from `stdin` after a truncated line; nothing is stored, so no buffer boundary is involved. This is the standard, safe idiom for flushing an input line.
+
+3. **Defensive measures already present:** NULL-pointer checks, explicit `(unsigned char)` cast before `tolower()` (avoiding UB with negative `char` values), forced null termination after `fgets()`, and proper `EOF` handling.
+
+The only substantive change made was checking the return value of `fflush(stdout)` for completeness. No genuine buffer overflow, off-by-one, or unvalidated-input vulnerabilities exist in this program.

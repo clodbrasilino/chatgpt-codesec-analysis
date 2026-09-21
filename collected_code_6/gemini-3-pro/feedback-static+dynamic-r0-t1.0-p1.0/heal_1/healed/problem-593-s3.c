@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* remove_leading_zeroes(const char* ip) {
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(16);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int val = 0;
+    int octets = 0;
+    int digits = 0;
+    char* res_ptr = result;
+    size_t space_left = 16;
+
+    for (size_t i = 0; i < 16; i++) {
+        char c = ip[i];
+        
+        if (c == '\0') {
+            if (digits == 0 || octets != 3) {
+                free(result);
+                return NULL;
+            }
+            if (val > 255) {
+                free(result);
+                return NULL;
+            }
+            snprintf(res_ptr, space_left, "%d", val);
+            return result;
+        } else if (c == '.') {
+            if (digits == 0 || octets >= 3) {
+                free(result);
+                return NULL;
+            }
+            if (val > 255) {
+                free(result);
+                return NULL;
+            }
+            int written = snprintf(res_ptr, space_left, "%d.", val);
+            if (written < 0 || (size_t)written >= space_left) {
+                free(result);
+                return NULL;
+            }
+            res_ptr += written;
+            space_left -= written;
+            val = 0;
+            digits = 0;
+            octets++;
+        } else if (c >= '0' && c <= '9') {
+            if (digits >= 3) {
+                free(result);
+                return NULL;
+            }
+            val = val * 10 + (c - '0');
+            digits++;
+        } else {
+            free(result);
+            return NULL;
+        }
+    }
+
+    free(result);
+    return NULL;
+}
+
+int main(void) {
+    const char* ip1 = "192.168.001.001";
+    char* clean_ip1 = remove_leading_zeroes(ip1);
+    if (clean_ip1 != NULL) {
+        printf("%s\n", clean_ip1);
+        free(clean_ip1);
+    }
+
+    const char* ip2 = "010.000.025.105";
+    char* clean_ip2 = remove_leading_zeroes(ip2);
+    if (clean_ip2 != NULL) {
+        printf("%s\n", clean_ip2);
+        free(clean_ip2);
+    }
+
+    return 0;
+}

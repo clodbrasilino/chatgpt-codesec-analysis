@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-920.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-920.c:46:23: style: The comparison 'copy_size > dest_size' is always false because 'copy_size' and 'dest_size' represent the same value. [knownConditionTrueFalse]
+        if (copy_size > dest_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-920.c:44:40: note: 'copy_size' is assigned value 'sizeof(int)*(unsigned long)size' here.
+        size_t copy_size = sizeof(int) * (size_t)size;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-920.c:45:40: note: 'dest_size' is assigned value 'sizeof(int)*(unsigned long)size' here.
+        size_t dest_size = sizeof(int) * (size_t)size;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-920.c:46:23: note: The comparison 'copy_size > dest_size' is always false because 'copy_size' and 'dest_size' represent the same value.
+        if (copy_size > dest_size) {
+                      ^

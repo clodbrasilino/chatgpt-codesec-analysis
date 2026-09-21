@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            return;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL)
+    {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+        }
+    }
+
+    strip_newline(buffer);
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already fairly robust — the Flawfinder warning about the statically-sized buffer (CWE-119/CWE-120) is largely mitigated because:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** is used instead of unsafe functions like `gets()` or unbounded `scanf("%s", ...)`. It limits input to the buffer size, preventing overflow.
+2. **`sizeof(buffer)`** is used rather than a hardcoded magic number, so the bound stays correct if the buffer size changes.
+3. **Explicit null termination** (`buffer[sizeof(buffer) - 1] = '\0'`) is defensive, though technically redundant since `fgets` always null-terminates on success.
+4. **NULL checks** in both helper functions guard against invalid pointers.
+5. **The return value of `fgets` is checked**, handling EOF/read errors gracefully.
+
+**Improvement added in the rewrite:** if the input line exceeds the buffer size, no newline will be present in the buffer, and the excess characters remain in `stdin`. The rewritten version detects this condition (via `strchr`) and drains the remaining input, preventing leftover data from corrupting any subsequent reads — a common source of subtle input-handling bugs. A named constant (`BUFFER_SIZE`) also replaces the bare literal for maintainability.

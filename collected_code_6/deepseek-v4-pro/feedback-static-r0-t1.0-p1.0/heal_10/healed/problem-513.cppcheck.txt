@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:59:23: style: Condition 'entry_len<token_len' is always false [knownConditionTrueFalse]
+        if (entry_len < token_len || entry_len < suffix_len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:58:51: note: Assignment 'entry_len=token_len+suffix_len+1', assigned value is greater than 0
+        size_t entry_len = token_len + suffix_len + 1;
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:53:20: note: Assuming that condition 'end>token' is not redundant
+        while (end > token && *(end - 1) == ' ') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:56:28: note: Assignment 'token_len=(unsigned long)(end-token)', assigned value is less than 1
+        size_t token_len = (size_t)(end - token);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:59:23: note: Condition 'entry_len<token_len' is always false
+        if (entry_len < token_len || entry_len < suffix_len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:121:38: style: Condition 'new_capacity<=capacity' is always true [knownConditionTrueFalse]
+                    if (new_capacity <= capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:117:39: note: Assuming that condition 'length+token_len>capacity' is not redundant
+            while (length + token_len > capacity) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:120:34: note: new_capacity is assigned 'length+token_len' here.
+                    new_capacity = length + token_len;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:121:38: note: Condition 'new_capacity<=capacity' is always true
+                    if (new_capacity <= capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:158:38: style: Condition 'new_capacity<=capacity' is always true [knownConditionTrueFalse]
+                    if (new_capacity <= capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:154:40: note: Assuming that condition 'length+suffix_len>capacity' is not redundant
+            while (length + suffix_len > capacity) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:157:34: note: new_capacity is assigned 'length+suffix_len' here.
+                    new_capacity = length + suffix_len;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-513.c:158:38: note: Condition 'new_capacity<=capacity' is always true
+                    if (new_capacity <= capacity) {
+                                     ^

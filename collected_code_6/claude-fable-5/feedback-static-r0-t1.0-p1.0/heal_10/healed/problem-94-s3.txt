@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_LEN 64
+
+typedef struct {
+    char name[NAME_LEN];
+    int value;
+} Record;
+
+int index_minimum(const Record *records, size_t count, char *out, size_t out_size)
+{
+    size_t i;
+    size_t min_idx = 0;
+    size_t name_len;
+
+    if (records == NULL || out == NULL || count == 0U || out_size == 0U) {
+        return -1;
+    }
+
+    for (i = 1U; i < count; i++) {
+        if (records[i].value < records[min_idx].value) {
+            min_idx = i;
+        }
+    }
+
+    name_len = strnlen(records[min_idx].name, NAME_LEN);
+
+    if (name_len >= NAME_LEN || name_len >= out_size) {
+        return -1;
+    }
+
+    memcpy(out, records[min_idx].name, name_len);
+    out[name_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {"Rash", 143},
+        {"Manjeet", 200},
+        {"Varsha", 100}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char result[NAME_LEN];
+
+    if (index_minimum(records, count, result, sizeof(result)) != 0) {
+        (void)fprintf(stderr, "Error: could not extract minimum record\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Record with minimum value: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is already safe:**
+
+1. **`char name[NAME_LEN]` and `char result[NAME_LEN]` (CWE-119/CWE-120):** Flawfinder flags any statically-sized `char` array as a *potential* risk. These are false positives here because every access is bounds-checked. The struct member is only ever read via `strnlen` capped at `NAME_LEN`, and `result` is passed together with `sizeof(result)` so the callee knows its true capacity.
+
+2. **`memcpy` (CWE-120):** Also a false positive. Before the copy, the code verifies `name_len < NAME_LEN` (source is properly terminated within bounds) and `name_len < out_size` (destination can hold `name_len` bytes *plus* the null terminator, since the check is strict `<`). The explicit `out[name_len] = '\0'` guarantees termination.
+
+Additional defensive measures already present that I preserved:
+
+- **NULL and zero-size guards** at function entry prevent dereferencing invalid pointers or writing to a zero-length buffer.
+- **`strnlen` instead of `strlen`** protects against an unterminated `name` field.
+- **Checked return values** for both `index_minimum` and `printf`, with distinct exit codes.
+- **`size_t` for indices and sizes**, avoiding signed/unsigned conversion issues.
+
+No functional changes were required — the original author had already mitigated every issue Flawfinder reported; the tool's warnings are heuristic pattern matches, not confirmed vulnerabilities.

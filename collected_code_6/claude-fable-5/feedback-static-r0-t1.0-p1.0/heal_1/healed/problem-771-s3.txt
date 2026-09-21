@@ -1,0 +1,163 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT 1024
+
+typedef struct {
+    char *data;
+    size_t top;
+    size_t capacity;
+} Stack;
+
+static Stack *stack_create(size_t capacity)
+{
+    Stack *s;
+
+    if (capacity == 0) {
+        return NULL;
+    }
+
+    s = malloc(sizeof(Stack));
+    if (s == NULL) {
+        return NULL;
+    }
+
+    s->data = malloc(capacity);
+    if (s->data == NULL) {
+        free(s);
+        return NULL;
+    }
+
+    s->top = 0;
+    s->capacity = capacity;
+    return s;
+}
+
+static void stack_destroy(Stack *s)
+{
+    if (s != NULL) {
+        free(s->data);
+        free(s);
+    }
+}
+
+static bool stack_push(Stack *s, char c)
+{
+    if (s == NULL || s->top >= s->capacity) {
+        return false;
+    }
+    s->data[s->top] = c;
+    s->top++;
+    return true;
+}
+
+static bool stack_pop(Stack *s, char *out)
+{
+    if (s == NULL || out == NULL || s->top == 0) {
+        return false;
+    }
+    s->top--;
+    *out = s->data[s->top];
+    return true;
+}
+
+static bool stack_is_empty(const Stack *s)
+{
+    return (s == NULL) || (s->top == 0);
+}
+
+static bool is_matching_pair(char open, char close)
+{
+    return (open == '(' && close == ')') ||
+           (open == '[' && close == ']') ||
+           (open == '{' && close == '}');
+}
+
+static bool is_balanced(const char *expr, size_t max_len)
+{
+    Stack *s;
+    size_t len;
+    size_t i;
+    char popped;
+    bool result;
+
+    if (expr == NULL) {
+        return false;
+    }
+
+    len = strnlen(expr, max_len);
+    if (len == 0) {
+        return true;
+    }
+
+    s = stack_create(len);
+    if (s == NULL) {
+        return false;
+    }
+
+    result = true;
+    for (i = 0; i < len; i++) {
+        char c = expr[i];
+        if (c == '(' || c == '[' || c == '{') {
+            if (!stack_push(s, c)) {
+                result = false;
+                break;
+            }
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (!stack_pop(s, &popped) || !is_matching_pair(popped, c)) {
+                result = false;
+                break;
+            }
+        }
+    }
+
+    if (result && !stack_is_empty(s)) {
+        result = false;
+    }
+
+    stack_destroy(s);
+    return result;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter an expression: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (is_balanced(input, sizeof(input))) {
+        printf("The expression is balanced\n");
+    } else {
+        printf("The expression is not balanced\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes addressing the flagged weaknesses:
+
+1. **CWE-126 (`strlen` over-read)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length bound. The `is_balanced` function now receives a `max_len` parameter so it can never read past the caller's buffer, even if a non-terminated string were passed.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The `input` buffer is now zero-initialized with `memset` before use, and explicit null termination (`input[sizeof(input) - 1] = '\0'`) is enforced after `fgets` as defense-in-depth. All reads are bounded by `sizeof(input)`.
+
+3. **CWE-362 (race condition on open)**: This was a false positive — the flagged token was the parameter name `open` in `is_matching_pair`, not a file-open call. No file operations exist in this program, so no fix is required; the code is left functionally unchanged there.
+
+The original code was already quite defensive (checked `malloc` returns, bounds-checked stack operations, handled `NULL` inputs), so the fixes are primarily hardening measures around string length handling.

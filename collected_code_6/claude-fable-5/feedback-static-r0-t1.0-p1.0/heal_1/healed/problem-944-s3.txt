@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+void print_numbers_with_positions(const char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+    size_t start;
+
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL string passed\n");
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            printf("Number: %.*s, Position: %zu\n",
+                   (int)(i - start), &str[start], start);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void)
+{
+    const char test[] = "abc123def45gh6789xyz0";
+
+    print_numbers_with_positions(test, sizeof(test));
+
+    return 0;
+}
+```
+
+Key changes made:
+
+1. **Replaced `strlen` with `strnlen`**: This directly addresses the Flawfinder CWE-126 warning. `strnlen` takes a maximum length parameter and will never read beyond that bound, so even if the string is not null-terminated, no over-read past the specified limit can occur.
+
+2. **Added a `max_len` parameter to the function**: The caller now communicates the size of the buffer, which is the idiomatic way in C to make string-handling functions safe against unterminated input. The function no longer has to blindly trust that a `\0` exists.
+
+3. **Defined `MAX_INPUT_LEN` as a fallback bound**: Available if the function needs to be called with strings whose buffer size is unknown, providing a sane upper limit rather than unbounded scanning.
+
+4. **Changed `test` from a pointer to an array**: This allows `sizeof(test)` to yield the actual buffer size (including the terminator) at the call site, giving `strnlen` an exact, correct bound.
+
+The rest of the logic was already sound: the `(unsigned char)` casts before `isdigit` correctly avoid undefined behavior with negative `char` values, the NULL check guards the entry point, and the `%.*s` / `%zu` format specifiers are used correctly with proper casts.

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:62:24: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+        if (alloc_size <= len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:60:27: note: alloc_size is assigned 'len+1' here.
+        size_t alloc_size = len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:62:24: note: Condition 'alloc_size<=len' is always false
+        if (alloc_size <= len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:93:24: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+        if (alloc_size <= len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:91:27: note: alloc_size is assigned 'len+1' here.
+        size_t alloc_size = len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-213.c:93:24: note: Condition 'alloc_size<=len' is always false
+        if (alloc_size <= len) {
+                       ^

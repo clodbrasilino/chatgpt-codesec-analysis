@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL || max_len == 0)
+    {
+        return;
+    }
+
+    while (i < max_len && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer, sizeof(buffer));
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120), and the rewrite preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow. The return value is checked for `NULL` to handle EOF/read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure. While `fgets` always null-terminates on success, this guarantees termination even if the buffer were populated by other means later in maintenance.
+
+3. **Bounds-checked string traversal** — `strip_newline()` takes an explicit `max_len` parameter and checks `i < max_len` before dereferencing, so it can never read past the buffer even if the terminator were missing.
+
+4. **NULL-pointer guards** — both helper functions validate `str` before use, avoiding undefined behavior on `NULL` input.
+
+5. **Correct types and format specifiers** — `size_t` is used for lengths and printed with `%zu`, avoiding signed/unsigned truncation issues.
+
+The statically-sized array flagged by Flawfinder remains, but it is used safely: every access is bounded by `sizeof(buffer)`, so the risk-2 warning is a false positive in this context.

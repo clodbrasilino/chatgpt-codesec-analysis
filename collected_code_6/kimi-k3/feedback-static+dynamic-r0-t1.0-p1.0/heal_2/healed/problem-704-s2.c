@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+double harmonic_sum(int n)
+{
+    double sum = 0.0;
+    int i;
+
+    if (n <= 0) {
+        return 0.0;
+    }
+
+    for (i = n; i >= 1; i--) {
+        sum += 1.0 / i;
+    }
+
+    return sum;
+}
+
+int main(int argc, const char *argv[])
+{
+    long n;
+    double result;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    n = strtol(argv[1], &endptr, 10);
+
+    if (errno == ERANGE || n > INT_MAX || n <= 0 || *endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: n must be a positive integer within valid range.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = harmonic_sum((int)n);
+    printf("%.17g\n", result);
+
+    return EXIT_SUCCESS;
+}

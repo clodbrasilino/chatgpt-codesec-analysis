@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NUM_COLOURS 3
+
+static const char *colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (indices[i] < 0 || indices[i] >= NUM_COLOURS) {
+            continue;
+        }
+        printf("%s", colours[indices[i]]);
+        if (i + 1 < count) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+static void generate_combinations(int *indices, size_t depth, size_t count, int start)
+{
+    int i;
+
+    if (depth == count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    for (i = start; i < NUM_COLOURS; i++) {
+        indices[depth] = i;
+        generate_combinations(indices, depth + 1, count, i);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if (count == 0 || count > SIZE_MAX / sizeof(*indices)) {
+        return -1;
+    }
+
+    indices = malloc(count * sizeof(*indices));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    memset(indices, 0, count * sizeof(*indices));
+
+    generate_combinations(indices, 0, count, 0);
+    free(indices);
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2;
+
+    printf("Combinations with repetition choosing %zu colours from %d:\n",
+           count, NUM_COLOURS);
+
+    if (choose_colours(count) != 0) {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weakness (CWE-119/CWE-120):
+
+1. **Bounds checking in `print_combination`**: Before indexing into the statically-sized `colours` array, each index is validated to be within `[0, NUM_COLOURS)`, preventing any out-of-bounds read even if an invalid index were ever stored.
+
+2. **Integer overflow check in `choose_colours`**: The allocation size `count * sizeof(*indices)` could overflow for very large `count` values, resulting in an undersized buffer and subsequent heap overflow. The check `count > SIZE_MAX / sizeof(*indices)` guards against this.
+
+3. **Zero-initialization of the allocated buffer**: `memset` ensures the `indices` buffer never contains indeterminate values, so even in edge cases the bounds check in `print_combination` operates on defined data.
+
+The existing safe patterns were preserved: `malloc` return value is checked, `count == 0` is rejected, recursion depth is strictly bounded by `count`, and the loop in `generate_combinations` never writes an index outside `[0, NUM_COLOURS)`.

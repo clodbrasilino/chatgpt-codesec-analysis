@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool matches_word_at_end(const char *str, const char *word)
+{
+    size_t str_len;
+    size_t word_len;
+    size_t end;
+
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    str_len = strnlen(str, MAX_INPUT_LEN);
+    if (str_len == MAX_INPUT_LEN) {
+        return false;
+    }
+
+    word_len = strnlen(word, MAX_INPUT_LEN);
+    if (word_len == MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (word_len == 0 || str_len < word_len) {
+        return false;
+    }
+
+    end = str_len;
+    while (end > 0 && ispunct((unsigned char)str[end - 1])) {
+        end--;
+    }
+
+    if (end < word_len) {
+        return false;
+    }
+
+    if (strncmp(&str[end - word_len], word, word_len) != 0) {
+        return false;
+    }
+
+    if (end > word_len) {
+        unsigned char before = (unsigned char)str[end - word_len - 1];
+        if (isalnum(before) || before == '_') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *sentences[] = {
+        "The quick brown fox jumps over the lazy dog.",
+        "Hello, world!!!",
+        "No punctuation here world",
+        "This does not end with the word",
+        "worldly matters...",
+        ""
+    };
+    const char *word = "world";
+    size_t i;
+    size_t count = sizeof(sentences) / sizeof(sentences[0]);
+
+    for (i = 0; i < count; i++) {
+        bool result = matches_word_at_end(sentences[i], word);
+        if (printf("\"%s\" ends with \"%s\": %s\n",
+                   sentences[i], word,
+                   result ? "yes" : "no") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (matches_word_at_end(sentences[0], "dog")) {
+        if (printf("First sentence ends with \"dog\"\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

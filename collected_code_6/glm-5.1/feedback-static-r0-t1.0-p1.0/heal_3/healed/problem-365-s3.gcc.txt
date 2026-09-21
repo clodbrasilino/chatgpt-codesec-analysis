@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-365-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-365-s3.c:35:9: error: 'errno' undeclared (first use in this function)
+   35 |         errno = 0;
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-365-s3.c:4:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    3 | #include <limits.h>
+  +++ |+#include <errno.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-365-s3.c:35:9: note: each undeclared identifier is reported only once for each function it appears in
+   35 |         errno = 0;
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-365-s3.c:37:22: error: 'ERANGE' undeclared (first use in this function)
+   37 |         if (errno == ERANGE) {
+      |                      ^~~~~~

@@ -1,0 +1,46 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:20: style: Condition 'num_tuples>0' is always true [knownConditionTrueFalse]
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:29:38: note: Assuming condition 'num_tuples<=0' is false
+    if (tuples == NULL || num_tuples <= 0 || unique_count == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:37:23: note: Assuming condition is false
+    if (sorted_tuples == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:20: note: Condition 'num_tuples>0' is always true
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:34: style: Condition 'tuples!=NULL' is always true [knownConditionTrueFalse]
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:29:16: note: Assuming condition 'tuples==NULL' is false
+    if (tuples == NULL || num_tuples <= 0 || unique_count == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:37:23: note: Assuming condition is false
+    if (sorted_tuples == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:34: note: Condition 'tuples!=NULL' is always true
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:59: style: Condition 'sorted_tuples!=NULL' is always true [knownConditionTrueFalse]
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:37:23: note: Assuming condition 'sorted_tuples==NULL' is false
+    if (sorted_tuples == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:42:59: note: Condition 'sorted_tuples!=NULL' is always true
+    if (num_tuples > 0 && tuples != NULL && sorted_tuples != NULL) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:45:22: style: The comparison 'src_size <= copy_size' is always true because 'src_size' and 'copy_size' represent the same value. [knownConditionTrueFalse]
+        if (src_size <= copy_size) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:44:38: note: 'src_size' is assigned value 'num_tuples*sizeof(struct Tuple)' here.
+        size_t src_size = num_tuples * sizeof(Tuple);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:43:39: note: 'copy_size' is assigned value 'num_tuples*sizeof(struct Tuple)' here.
+        size_t copy_size = num_tuples * sizeof(Tuple);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-400.c:45:22: note: The comparison 'src_size <= copy_size' is always true because 'src_size' and 'copy_size' represent the same value.
+        if (src_size <= copy_size) {
+                     ^

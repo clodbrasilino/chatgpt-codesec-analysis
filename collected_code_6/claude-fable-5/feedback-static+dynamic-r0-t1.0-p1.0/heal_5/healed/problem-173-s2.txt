@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warnings, which are low-risk (risk 1) heuristic hits on any indexed buffer access. Here is why each flagged point is safe:
+
+1. **Loop bounds (CWE-120/CWE-20):** The read loop is bounded by both `read < max_len` and the NUL terminator check. In my rewrite, I cache the result of `strnlen()` into `len` and bound the loop by it, which avoids re-checking `str[read] != '\0'` on every iteration and makes the bound explicit and provably `< max_len`.
+
+2. **NULL/zero-length guard:** `str == NULL || max_len == 0` is checked before any dereference, preventing NULL pointer dereference and the `max_len - 1` unsigned underflow (which would wrap to `SIZE_MAX` if `max_len` were 0).
+
+3. **Unterminated string guard:** `strnlen(str, max_len) >= max_len` rejects strings that are not NUL-terminated within the buffer, so `str[read]` never reads past the caller-declared buffer size.
+
+4. **Write bounds:** `write < max_len - 1` guarantees the compaction never writes at or past the last valid index, always leaving room for the terminating `'\0'`. Since `write <= read < len < max_len`, the final `str[write] = '\0'` is in bounds by construction.
+
+5. **`isalnum` safety:** The cast to `(unsigned char)` is retained — passing a plain `char` that is negative would be undefined behavior per the C standard for `<ctype.h>` functions.
+
+6. **Caller side:** `main` correctly passes `sizeof(input)` (the full array size including the NUL) for a stack array whose size is known at compile time, and checks both the function's return value and the return of `printf`.
+
+The code compiles cleanly with `-Wall -Wextra -Wpedantic` and behaves in-place with no dynamic allocation, so there are no leak or free-related concerns.

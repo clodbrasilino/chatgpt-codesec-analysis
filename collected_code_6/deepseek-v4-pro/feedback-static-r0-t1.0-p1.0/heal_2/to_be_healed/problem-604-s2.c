@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverse_words(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t input_len = strnlen(str, 4096);
+    if (input_len == 0) {
+        str[0] = '\0';
+        return;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return;
+    }
+
+    int word_start = (int)input_len;
+    int word_end = (int)input_len;
+    int result_index = 0;
+
+    for (int i = (int)input_len - 1; i >= 0; i--) {
+        if (str[i] == ' ') {
+            if (word_start > i + 1) {
+                if (result_index > 0) {
+                    if ((size_t)result_index < input_len) {
+                        result[result_index++] = ' ';
+                    }
+                }
+                for (int j = i + 1; j < word_start; j++) {
+                    if ((size_t)result_index < input_len) {
+                        result[result_index++] = str[j];
+                    }
+                }
+            }
+            word_start = i;
+            word_end = i;
+        } else {
+            if (word_end == (int)input_len) {
+                word_start = i;
+                word_end = i + 1;
+            } else {
+                word_start = i;
+            }
+        }
+    }
+
+    if (word_start < word_end) {
+        if (result_index > 0) {
+            if ((size_t)result_index < input_len) {
+                result[result_index++] = ' ';
+            }
+        }
+        for (int j = word_start; j < word_end; j++) {
+            if ((size_t)result_index < input_len) {
+                result[result_index++] = str[j];
+            }
+        }
+    }
+
+    result[result_index] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t result_len = strlen(result);
+    if (result_len <= input_len) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(str, result, result_len + 1);
+    } else {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(str, result, input_len);
+        str[input_len] = '\0';
+    }
+
+    free(result);
+}
+
+int main(void) {
+    char str1[] = "Hello World";
+    reverse_words(str1);
+    printf("%s\n", str1);
+
+    char str2[] = "This is a test";
+    reverse_words(str2);
+    printf("%s\n", str2);
+
+    char str3[] = "Single";
+    reverse_words(str3);
+    printf("%s\n", str3);
+
+    char str4[] = "";
+    reverse_words(str4);
+    printf("%s\n", str4);
+
+    char str5[] = "   Multiple   spaces   ";
+    reverse_words(str5);
+    printf("%s\n", str5);
+
+    return 0;
+}

@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static char *remove_uppercase_substrings(const char *input, size_t input_len)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *result;
+    size_t result_len;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    if (input_len > (size_t)-1 - 1U) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    result = (char *)malloc(input_len + 1U);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    result_len = 0U;
+    remaining = input_len;
+
+    while (remaining > 0U) {
+        ret = regexec(&regex, cursor, 1U, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if ((size_t)match.rm_eo > remaining) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match.rm_so > 0) {
+            if (result_len + (size_t)match.rm_so > input_len) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_len, cursor, (size_t)match.rm_so);
+            result_len += (size_t)match.rm_so;
+        }
+
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+    }
+
+    if (remaining > 0U) {
+        if (result_len + remaining > input_len) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + result_len, cursor, remaining);
+        result_len += remaining;
+    }
+    result[result_len] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     *  Assignment 'input="HelloWORLDThisISAtestSTRINGok"', assigned value is "HelloWORLDThisISAtestSTRINGok"
+     */
+    const char *input = "HelloWORLDThisISAtestSTRINGok";
+    size_t input_len = 0U;
+    char *output;
+
+    /* Possible weaknesses found:
+     *  Condition 'input!=NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'input!=NULL' is always true
+     */
+    if (input != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        input_len = strlen(input);
+    }
+
+    output = remove_uppercase_substrings(input, input_len);
+
+    if (output == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+    free(output);
+    return EXIT_SUCCESS;
+}

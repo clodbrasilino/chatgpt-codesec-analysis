@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-756-s2.c:31:53: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   31 |         size_t len = test_cases[i][0] == '\0' ? 0 : strlen(test_cases[i]);
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-756-s2.c:31:53: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+1 error generated.

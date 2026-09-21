@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef struct {
+    int year;
+    int month;
+    int day;
+} Date;
+
+static int parse_subint(const char *str, size_t len, int *out) {
+    if (len == 0 || len >= 32) return -1;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buf[32];
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(buf, str, len);
+    buf[len] = '\0';
+    char *endptr;
+    errno = 0;
+    long val = strtol(buf, &endptr, 10);
+    if (errno != 0 || endptr != buf + len || val < 0 || val > INT_MAX) return -1;
+    *out = (int)val;
+    return 0;
+}
+
+int extract_date_from_url(const char *url, Date *date) {
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret = regcomp(&regex, "([0-9]{4})[/\\-]([0-9]{1,2})[/\\-]([0-9]{1,2})", REG_EXTENDED);
+    if (ret != 0) return -1;
+    
+    ret = regexec(&regex, url, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    if (matches[1].rm_so == -1 || matches[2].rm_so == -1 || matches[3].rm_so == -1) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    if (parse_subint(url + matches[1].rm_so, matches[1].rm_eo - matches[1].rm_so, &date->year) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    if (parse_subint(url + matches[2].rm_so, matches[2].rm_eo - matches[2].rm_so, &date->month) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    if (parse_subint(url + matches[3].rm_so, matches[3].rm_eo - matches[3].rm_so, &date->day) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *url = "https://example.com/archive/2023/10/25/article.html";
+    Date date;
+    
+    if (extract_date_from_url(url, &date) == 0) {
+        printf("Year: %d, Month: %d, Day: %d\n", date.year, date.month, date.day);
+    } else {
+        printf("Date extraction failed\n");
+    }
+    
+    return 0;
+}

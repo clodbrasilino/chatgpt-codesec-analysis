@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int* find_sum_first_even_odd(const int* list, size_t size) {
+    int* result = (int*)malloc(2 * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = -1;
+    result[1] = -1;
+
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 == 0 && result[0] == -1) {
+            result[0] = list[i];
+        } else if (list[i] % 2 != 0 && result[1] == -1) {
+            result[1] = list[i];
+        }
+        
+        if (result[0] != -1 && result[1] != -1) {
+            break;
+        }
+    }
+
+    return result;
+}
+
+int main(int argc, char* const argv[]) {
+    if (argc < 2) {
+        return EXIT_FAILURE;
+    }
+
+    size_t size = argc - 1;
+    int* list = (int*)malloc(size * sizeof(int));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        char* endptr;
+        long val = strtol(argv[i + 1], &endptr, 10);
+        if (endptr == argv[i + 1] || *endptr != '\0' || errno == ERANGE || val < INT_MIN || val > INT_MAX) {
+            free(list);
+            return EXIT_FAILURE;
+        }
+        list[i] = (int)val;
+    }
+
+    int* result = find_sum_first_even_odd(list, size);
+    if (result == NULL) {
+        free(list);
+        return EXIT_FAILURE;
+    }
+
+    if (result[0] != -1) {
+        printf("%d\n", result[0]);
+    }
+    if (result[1] != -1) {
+        printf("%d\n", result[1]);
+    }
+
+    free(result);
+    free(list);
+
+    return EXIT_SUCCESS;
+}

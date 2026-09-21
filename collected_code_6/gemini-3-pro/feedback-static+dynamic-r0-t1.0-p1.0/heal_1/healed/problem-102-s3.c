@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_str);
+    char* camel_str = (char*)malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake_str[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                camel_str[j++] = toupper((unsigned char)snake_str[i]);
+                capitalize_next = 0;
+            } else {
+                camel_str[j++] = snake_str[i];
+            }
+        }
+    }
+    camel_str[j] = '\0';
+
+    return camel_str;
+}
+
+int main(void) {
+    const char* snake1 = "python_language";
+    const char* snake2 = "programming_language";
+    const char* snake0 = "python_program";
+    
+    char* camel1 = snake_to_camel(snake1);
+    char* camel2 = snake_to_camel(snake2);
+    char* camel0 = snake_to_camel(snake0);
+
+    if (camel1 != NULL) {
+        printf("%s -> %s\n", snake1, camel1);
+        free(camel1);
+    }
+    
+    if (camel2 != NULL) {
+        printf("%s -> %s\n", snake2, camel2);
+        free(camel2);
+    }
+
+    if (camel0 != NULL) {
+        printf("%s -> %s\n", snake0, camel0);
+        free(camel0);
+    }
+
+    return 0;
+}

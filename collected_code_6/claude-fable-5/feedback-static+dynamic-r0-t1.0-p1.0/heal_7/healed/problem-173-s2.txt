@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The Flawfinder warnings in the original source were all risk-level 1 (informational) hits on array indexing inside loops — CWE-120 (buffer overflow) and CWE-20 (improper input validation). On review, the original code already mitigated every one of them. The rewrite preserves those mitigations and simplifies one redundancy:
+
+1. **NULL / zero-length guard** — `str == NULL || max_len == 0` is checked before any access, preventing dereference of invalid pointers and underflow of `max_len - 1`.
+
+2. **Bounded length measurement** — `strnlen(str, max_len)` is used instead of `strlen`, so an unterminated buffer can never be scanned past `max_len`. The `len >= max_len` check rejects strings lacking a terminator within the buffer.
+
+3. **Read-side bounds** — since `len < max_len` is guaranteed after the check above, the original condition `read < len && read < max_len` was redundant; `read < len` alone is provably safe, so the second clause was removed.
+
+4. **Write-side bounds** — `write < max_len - 1` guarantees `str[write]` stays in bounds and reserves the final byte for the NUL terminator. The `write >= max_len` check before `str[write] = '\0'` is technically unreachable (defense in depth) but harmless to keep.
+
+5. **`isalnum` cast** — the `(unsigned char)` cast is retained; passing a plain `char` that is negative would be undefined behavior per the C standard.
+
+6. **Caller correctness** — `sizeof(input)` on a stack array gives the true buffer size including the NUL, so the contract with `max_len` is honored, and `printf`'s return value is checked.
+
+No exploitable weaknesses remain; the Flawfinder hits were false positives given the existing bounds checks.

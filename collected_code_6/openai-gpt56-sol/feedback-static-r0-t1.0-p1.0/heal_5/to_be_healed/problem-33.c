@@ -1,0 +1,99 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int decimal_to_binary(unsigned long long value, char *buffer, size_t size)
+{
+    size_t bits = 1;
+    unsigned long long remaining = value;
+
+    while (remaining > 1) {
+        remaining >>= 1;
+        ++bits;
+    }
+
+    if (buffer == NULL || bits >= size) {
+        return 0;
+    }
+
+    buffer[bits] = '\0';
+
+    do {
+        buffer[--bits] = (char)('0' + (value & 1ULL));
+        value >>= 1;
+    } while (value != 0);
+
+    return 1;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary[sizeof(unsigned long long) * CHAR_BIT + 1];
+    char *start;
+    char *end;
+    unsigned long long value;
+    ssize_t length;
+
+    length = getline(&input, &capacity, stdin);
+    if (length < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (length > 0 && input[length - 1] == '\n') {
+        input[--length] = '\0';
+    }
+
+    if (length > 0 && input[length - 1] == '\r') {
+        input[--length] = '\0';
+    }
+
+    start = input;
+    while (*start != '\0' && isspace((unsigned char)*start)) {
+        ++start;
+    }
+
+    if (*start == '-' || *start == '\0') {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtoull(start, &end, 10);
+
+    if (errno == ERANGE || end == start) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (!decimal_to_binary(value, binary, sizeof binary)) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+
+    if (printf("%s\n", binary) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

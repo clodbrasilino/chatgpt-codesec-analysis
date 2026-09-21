@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:36:13: style: Condition 'len!=expected_len' is always true [knownConditionTrueFalse]
+    if (len != expected_len) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:26:40: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+    if (match.rm_so < 0 || match.rm_eo <= match.rm_so ||
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:32:11: note: start is assigned '(unsigned long)match.rm_so' here.
+    start = (size_t)match.rm_so;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:33:11: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+    end = (size_t)match.rm_eo;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:34:15: note: Assignment 'len=end-start', assigned value is less than 0
+    len = end - start;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:36:13: note: Condition 'len!=expected_len' is always true
+    if (len != expected_len) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:45:18: style: Condition 'capacity<=expected_len' is always false [knownConditionTrueFalse]
+    if (capacity <= expected_len) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:44:14: note: capacity is assigned 'expected_len+1' here.
+    capacity = expected_len + 1;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-906.c:45:18: note: Condition 'capacity<=expected_len' is always false
+    if (capacity <= expected_len) {
+                 ^

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256U
+
+char *remove_even_chars(const char *input, size_t max_len);
+
+char *remove_even_chars(const char *input, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) != 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *output;
+    size_t len;
+
+    buffer = calloc(MAX_INPUT_LEN, sizeof(char));
+    if (buffer == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)MAX_INPUT_LEN, stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[MAX_INPUT_LEN - 1U] = '\0';
+
+    len = strnlen(buffer, MAX_INPUT_LEN);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    output = remove_even_chars(buffer, MAX_INPUT_LEN);
+    if (output == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    free(buffer);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,135 @@
+As an experienced C developer, my analysis of this code:
+
+**Strengths:** The code is already defensively written. `bounded_strlen` prevents unbounded reads, `fgets` is used with a proper size limit, the buffer is explicitly null-terminated, leftover stdin input is drained to prevent it leaking into subsequent reads, and `remove_first_last` validates its pointer and length arguments before touching memory.
+
+**Flawfinder findings:** All three flagged items are low-risk, informational hits:
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/120):** Mitigated — `fgets(buffer, sizeof(buffer), stdin)` bounds the write, and the forced null terminator guarantees termination.
+2. **`getchar()` in a loop (CWE-120/20):** Mitigated — the result is stored in an `int` (correctly handling `EOF`), never written into a buffer, and the loop terminates on `\n` or `EOF`.
+3. **`getchar()` for the character read:** Mitigated — `EOF` is checked before the cast to `char`.
+
+One subtle correctness note: in `remove_first_last`, the `memmove` sizes (`len - last_idx` and `len - first_idx`) correctly include the null terminator since indices are strictly less than `len` — no off-by-one.
+
+Here is the rewritten source:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    size_t i;
+    size_t first_idx;
+    size_t last_idx;
+    int found_first;
+    int found_last;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+    if (len == 0U) {
+        return;
+    }
+
+    found_first = 0;
+    found_last = 0;
+    first_idx = 0U;
+    last_idx = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == ch) {
+            if (found_first == 0) {
+                first_idx = i;
+                found_first = 1;
+            }
+            last_idx = i;
+            found_last = 1;
+        }
+    }
+
+    if (found_first == 0) {
+        return;
+    }
+
+    if (found_last == 1 && last_idx != first_idx) {
+        memmove(&str[last_idx], &str[last_idx + 1U], len - last_idx);
+        len--;
+    }
+
+    memmove(&str[first_idx], &str[first_idx + 1U], len - first_idx);
+}
+
+static int discard_remaining_input(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+
+    return c;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        (void)discard_remaining_input();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    if (c != '\n') {
+        (void)discard_remaining_input();
+    }
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The logic is unchanged because every flagged weakness was already properly mitigated: bounded reads via `fgets`, guaranteed null termination, `int`-typed `getchar()` returns with `EOF` checks, terminating drain loops, and fully bounds-checked string manipulation. Only the comments were removed as requested.

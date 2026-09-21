@@ -1,0 +1,101 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+#define MAX_DISCARD 1048576
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < MAX_DISCARD);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        discard_remaining_input();
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — The original code already mitigates this correctly. The `discard_remaining_input()` function never stores the read characters into a buffer, so no overflow is possible. Additionally, the `guard < MAX_DISCARD` counter prevents an unbounded loop against a malicious infinite input stream, and both `'\n'` and `EOF` are checked as termination conditions. This is a false positive from Flawfinder; the pattern is safe as written.
+
+2. **Statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — The buffer is used safely throughout:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, guaranteeing no overflow and NUL-termination on success.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+   - `strnlen()` is used instead of `strlen()`, bounding the scan to the buffer size.
+   - When the input line exceeds the buffer (`len == sizeof(buffer) - 1` with no trailing newline), leftover input is safely discarded so it cannot pollute subsequent reads.
+   - `sort_string()` validates its arguments (`NULL` check, `max_len == 0` check) and rejects unterminated strings (`len >= max_len`).
+
+The only functional change made is the addition of `#define _POSIX_C_SOURCE 200809L`, since `strnlen()` is a POSIX.1-2008 function and is not guaranteed to be declared by `<string.h>` under strict ISO C compilation; without this, the code may fail to compile or trigger implicit-declaration warnings on some platforms. All existing bounds checks, input validation, and loop guards were preserved as they already correctly address the identified weaknesses.

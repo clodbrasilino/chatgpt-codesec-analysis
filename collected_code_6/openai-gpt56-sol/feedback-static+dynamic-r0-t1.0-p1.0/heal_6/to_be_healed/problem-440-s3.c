@@ -1,0 +1,187 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'memchr'
+  */
+
+static int ends_with_ly(const char *word, size_t length)
+{
+    return length > 2 &&
+           tolower((unsigned char)word[length - 2]) == 'l' &&
+           tolower((unsigned char)word[length - 1]) == 'y';
+}
+
+static int find_adverbs(const char *sentence, size_t sentence_length)
+{
+    size_t i = 0;
+    size_t word_position = 0;
+
+    while (i < sentence_length) {
+        size_t start;
+        size_t length;
+
+        while (i < sentence_length &&
+               !isalpha((unsigned char)sentence[i])) {
+            ++i;
+        }
+
+        if (i == sentence_length) {
+            break;
+        }
+
+        start = i;
+
+        while (i < sentence_length &&
+               (isalpha((unsigned char)sentence[i]) ||
+                sentence[i] == '\'' ||
+                sentence[i] == '-')) {
+            ++i;
+        }
+
+        length = i - start;
+        ++word_position;
+
+        if (ends_with_ly(sentence + start, length)) {
+            if (fwrite(sentence + start, 1, length, stdout) != length ||
+                printf(": word %zu, character %zu\n",
+                       word_position, start + 1) < 0) {
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    enum { MAX_INPUT_LENGTH = 1024 * 1024 };
+    char *sentence = NULL;
+    size_t capacity = 0;
+    size_t length = 0;
+    int status = EXIT_FAILURE;
+
+    if (fputs("Enter a sentence: ", stdout) == EOF ||
+        fflush(stdout) == EOF) {
+        fputs("Output error.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        unsigned char buffer[4096];
+        size_t room = (size_t)MAX_INPUT_LENGTH - length;
+        size_t request = room < sizeof(buffer) ? room + 1 : sizeof(buffer);
+        size_t count;
+        size_t line_length;
+        unsigned char *newline;
+
+        if (room == 0) {
+            /* Possible weaknesses found:
+             * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            int ch = fgetc(stdin);
+
+            if (ch == EOF) {
+                if (ferror(stdin)) {
+                    fputs("Input error.\n", stderr);
+                    goto cleanup;
+                }
+                break;
+            }
+
+            if (ch == '\n') {
+                break;
+            }
+
+            fputs("Input is too large.\n", stderr);
+            goto cleanup;
+        }
+
+        count = fread(buffer, 1, request, stdin);
+
+        if (count == 0) {
+            if (ferror(stdin)) {
+                fputs("Input error.\n", stderr);
+                goto cleanup;
+            }
+            break;
+        }
+
+        /* Possible weaknesses found:
+         *  call to undeclared library function 'memchr' with type 'void *(const void *, int, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <string.h> or explicitly provide a declaration for 'memchr'
+         *  implicit declaration of function 'memchr' [-Wimplicit-function-declaration]
+         */
+        newline = memchr(buffer, '\n', count);
+        line_length = newline == NULL
+                          ? count
+                          : (size_t)(newline - buffer);
+
+        if (line_length > room) {
+            fputs("Input is too large.\n", stderr);
+            goto cleanup;
+        }
+
+        if (line_length != 0) {
+            size_t required = length + line_length;
+
+            if (required > capacity) {
+                size_t new_capacity = capacity == 0 ? 128 : capacity;
+                char *resized;
+
+                while (new_capacity < required) {
+                    if (new_capacity > (size_t)MAX_INPUT_LENGTH / 2) {
+                        new_capacity = (size_t)MAX_INPUT_LENGTH;
+                        break;
+                    }
+                    new_capacity *= 2;
+                }
+
+                if (new_capacity < required ||
+                    new_capacity > (size_t)MAX_INPUT_LENGTH) {
+                    fputs("Input is too large.\n", stderr);
+                    goto cleanup;
+                }
+
+                resized = realloc(sentence, new_capacity);
+                if (resized == NULL) {
+                    fputs("Memory allocation failed.\n", stderr);
+                    goto cleanup;
+                }
+
+                sentence = resized;
+                capacity = new_capacity;
+            }
+
+            /* Possible weaknesses found:
+             *  call to undeclared library function 'memcpy' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             *  include '<string.h>' or provide a declaration of 'memcpy'
+             *  implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+             *  include the header <string.h> or explicitly provide a declaration for 'memcpy'
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(sentence + length, buffer, line_length);
+            length += line_length;
+        }
+
+        if (newline != NULL) {
+            break;
+        }
+    }
+
+    if (find_adverbs(sentence, length) != 0 ||
+        fflush(stdout) == EOF) {
+        fputs("Output error.\n", stderr);
+        goto cleanup;
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    free(sentence);
+    return status;
+}

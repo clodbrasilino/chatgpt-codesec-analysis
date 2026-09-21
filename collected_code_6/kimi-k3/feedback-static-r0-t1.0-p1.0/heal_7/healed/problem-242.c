@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+    return strnlen(str, max_len);
+}
+
+int main(void)
+{
+    char buffer[1024];
+    
+    printf("Enter a string: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    size_t newline_pos = strcspn(buffer, "\n");
+    if (newline_pos < sizeof(buffer))
+    {
+        buffer[newline_pos] = '\0';
+    }
+    
+    printf("Total characters: %zu\n", count_characters(buffer, sizeof(buffer)));
+    
+    return 0;
+}

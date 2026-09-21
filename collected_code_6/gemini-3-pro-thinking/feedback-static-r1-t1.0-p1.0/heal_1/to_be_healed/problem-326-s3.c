@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *word;
+    size_t count;
+} WordFrequency;
+
+char *get_most_frequent_word(const char * const *strings, size_t num_strings) {
+    if (!strings || num_strings == 0) {
+        return NULL;
+    }
+
+    WordFrequency *frequencies = calloc(num_strings, sizeof(WordFrequency));
+    if (!frequencies) {
+        return NULL;
+    }
+
+    size_t unique_words = 0;
+    size_t max_count = 0;
+    const char *most_frequent = NULL;
+
+    for (size_t i = 0; i < num_strings; i++) {
+        const char *current_word = strings[i];
+        if (!current_word) {
+            continue;
+        }
+
+        bool found = false;
+        for (size_t j = 0; j < unique_words; j++) {
+            if (strcmp(frequencies[j].word, current_word) == 0) {
+                frequencies[j].count++;
+                if (frequencies[j].count > max_count) {
+                    max_count = frequencies[j].count;
+                    most_frequent = frequencies[j].word;
+                }
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            frequencies[unique_words].word = current_word;
+            frequencies[unique_words].count = 1;
+            if (1 > max_count) {
+                max_count = 1;
+                most_frequent = current_word;
+            }
+            unique_words++;
+        }
+    }
+
+    free(frequencies);
+
+    if (!most_frequent) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char *result = malloc(strlen(most_frequent) + 1);
+    if (result) {
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(result, most_frequent);
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char * const word_list[] = {
+        "apple", "banana", "apple", "orange", 
+        "banana", "apple", "grape"
+    };
+    
+    size_t num_words = sizeof(word_list) / sizeof(word_list[0]);
+    
+    char *most_frequent = get_most_frequent_word(word_list, num_words);
+    if (most_frequent) {
+        printf("%s\n", most_frequent);
+        free(most_frequent);
+    }
+
+    return 0;
+}

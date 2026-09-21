@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+char *remove_non_alphanumeric(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, SIZE_MAX);
+    if (input_len == 0) {
+        regfree(&regex);
+        char *empty_result = (char *)malloc(1);
+        if (empty_result != NULL) {
+            empty_result[0] = '\0';
+        }
+        return empty_result;
+    }
+
+    /* Possible weaknesses found:
+     *  alloc_size is assigned 'input_len+1' here.
+     */
+    size_t alloc_size = input_len + 1;
+    /* Possible weaknesses found:
+     *  Condition 'alloc_size<input_len' is always false
+     *  Condition 'alloc_size<input_len' is always false [knownConditionTrueFalse]
+     */
+    if (alloc_size < input_len) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    char *result = (char *)malloc(alloc_size);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    regmatch_t match;
+    const char *cursor = input;
+    size_t cursor_offset = 0;
+    int exec_result;
+
+    while ((exec_result = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_so > match.rm_eo) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        size_t match_start = (size_t)match.rm_so;
+        size_t match_end = (size_t)match.rm_eo;
+
+        if (match_start > 0) {
+            size_t copy_len = match_start;
+            if (copy_len > input_len - result_index) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_index, cursor, copy_len);
+            result_index += copy_len;
+        }
+
+        size_t advance = (size_t)match_end;
+        if (advance > input_len - cursor_offset) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        cursor += advance;
+        cursor_offset += advance;
+
+        if (cursor_offset >= input_len) {
+            break;
+        }
+    }
+
+    if (exec_result == REG_NOMATCH) {
+        size_t remaining_len = input_len - cursor_offset;
+        if (remaining_len > 0) {
+            if (remaining_len > input_len - result_index) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_index, cursor, remaining_len);
+            result_index += remaining_len;
+        }
+    }
+
+    result[result_index] = '\0';
+
+    if (result_index >= alloc_size) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    char *final_result = (char *)realloc(result, result_index + 1);
+    if (final_result == NULL) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+    
+    regfree(&regex);
+    return final_result;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World! 123...";
+    char *cleaned = remove_non_alphanumeric(test_string);
+    
+    if (cleaned != NULL) {
+        printf("%s\n", cleaned);
+        free(cleaned);
+    }
+
+    return 0;
+}

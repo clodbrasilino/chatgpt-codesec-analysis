@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-432-s3.c: In function 'read_positive_double':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-432-s3.c:41:9: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+   41 |     if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-432-s3.c:7:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    6 | #include <ctype.h>
+  +++ |+#include <string.h>
+    7 | 

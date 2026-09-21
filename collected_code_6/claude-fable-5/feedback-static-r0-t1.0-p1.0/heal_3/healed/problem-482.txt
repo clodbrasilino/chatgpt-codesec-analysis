@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCH_LEN 256
+#define ERRBUF_LEN 128
+
+static int find_sequences(const char *input);
+static void report_regex_error(int code, const regex_t *regex, const char *context);
+
+static void report_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_LEN];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "Error: %s: %s\n", context, errbuf);
+}
+
+static int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    char buffer[MAX_MATCH_LEN];
+    int ret;
+    int found;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "failed to compile regex");
+        return -1;
+    }
+
+    found = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            fprintf(stderr, "Error: invalid match offsets\n");
+            return -1;
+        }
+
+        {
+            size_t length = (size_t)(match.rm_eo - match.rm_so);
+            size_t max_len = sizeof(buffer) - 1;
+
+            if (length > max_len) {
+                length = max_len;
+            }
+            memcpy(buffer, cursor + match.rm_so, length);
+            buffer[length] = '\0';
+        }
+
+        printf("Found match: %s\n", buffer);
+        found++;
+
+        if (match.rm_eo == 0) {
+            cursor++;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+
+    if (found == 0) {
+        printf("No matches found.\n");
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *test_string = "HelloWorld this Is a TestString with Mixed caseWords";
+    int result;
+
+    printf("Input: %s\n", test_string);
+
+    result = find_sequences(test_string);
+    if (result < 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total matches: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings in the original code were all *informational* rather than actual defects — the code already contained the mitigations Flawfinder asks for:
+
+1. **`errbuf` (CWE-119/CWE-120):** The buffer is zeroed with `memset`, `regerror` is called with `sizeof(errbuf) - 1` to limit the write, and explicit NUL-termination is applied. No overflow is possible.
+
+2. **`buffer` (CWE-119/CWE-120):** All writes into it are bounds-checked before the copy.
+
+3. **`memcpy` (CWE-120):** The copy length is clamped to `sizeof(buffer) - 1` before the call, and the terminator is written within bounds. The destination can always hold the source data.
+
+Additional robustness already present and preserved:
+
+- **NULL input check** before use.
+- **Negative/inverted match offset validation** (`rm_so < 0`, `rm_eo < rm_so`) guarding the pointer arithmetic and the length cast.
+- **Zero-length match guard** (`rm_eo == 0` advances the cursor by one) preventing an infinite loop.
+- **`regfree` on every exit path** after successful `regcomp`, avoiding resource leaks.
+- **Proper error propagation** with distinct handling for `REG_NOMATCH` versus real regex failures.
+
+The rewritten code is therefore functionally identical, with the static-analysis findings resolved by the existing explicit bounds checks — no behavioral changes were required.

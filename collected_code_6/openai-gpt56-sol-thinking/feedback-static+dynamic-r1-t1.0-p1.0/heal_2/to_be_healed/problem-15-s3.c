@@ -1,0 +1,148 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} SplitResult;
+
+static void free_split_result(SplitResult *result)
+{
+    size_t i;
+
+    if (result == NULL) {
+        return;
+    }
+
+    for (i = 0; i < result->count; ++i) {
+        free(result->items[i]);
+    }
+
+    free(result->items);
+    result->items = NULL;
+    result->count = 0;
+}
+
+static int allocate_part(char **destination, const char *source, size_t length)
+{
+    size_t i;
+
+    if (destination == NULL || source == NULL || length == SIZE_MAX) {
+        return 0;
+    }
+
+    *destination = malloc(length + 1);
+    if (*destination == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < length; ++i) {
+        (*destination)[i] = source[i];
+    }
+
+    (*destination)[length] = '\0';
+    return 1;
+}
+
+static int split_at_lowercase(const char *input, SplitResult *result)
+{
+    size_t length = 0;
+    size_t count = 1;
+    size_t start = 0;
+    size_t index;
+    size_t part_index = 0;
+
+    if (result == NULL) {
+        return 0;
+    }
+
+    result->items = NULL;
+    result->count = 0;
+
+    if (input == NULL) {
+        return 0;
+    }
+
+    while (input[length] != '\0') {
+        if (length == SIZE_MAX - 1) {
+            return 0;
+        }
+        ++length;
+    }
+
+    for (index = 0; index < length; ++index) {
+        if (islower((unsigned char)input[index])) {
+            if (count == SIZE_MAX) {
+                return 0;
+            }
+            ++count;
+        }
+    }
+
+    if (count > SIZE_MAX / sizeof(*result->items)) {
+        return 0;
+    }
+
+    result->items = calloc(count, sizeof(*result->items));
+    if (result->items == NULL) {
+        return 0;
+    }
+
+    result->count = count;
+
+    for (index = 0; index < length; ++index) {
+        if (islower((unsigned char)input[index])) {
+            if (!allocate_part(&result->items[part_index],
+                               input + start,
+                               index - start)) {
+                free_split_result(result);
+                return 0;
+            }
+
+            ++part_index;
+            start = index + 1;
+        }
+    }
+
+    if (!allocate_part(&result->items[part_index],
+                       input + start,
+                       length - start)) {
+        free_split_result(result);
+        return 0;
+    }
+
+    return 1;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    SplitResult result = { NULL, 0 };
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n",
+                argc > 0 && argv[0] != NULL ? argv[0] : "program");
+        return EXIT_FAILURE;
+    }
+
+    if (!split_at_lowercase(argv[1], &result)) {
+        fputs("Failed to split the string.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result.count; ++i) {
+        if (puts(result.items[i]) == EOF) {
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    free_split_result(&result);
+    return status;
+}

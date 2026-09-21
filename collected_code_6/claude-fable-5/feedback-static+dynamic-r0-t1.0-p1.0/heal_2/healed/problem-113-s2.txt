@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int is_integer(const char *str)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    (void)value;
+    return 1;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+        ;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strcspn(buffer, "\n");
+
+    if (buffer[len] == '\0' && len == sizeof(buffer) - 1) {
+        fprintf(stderr, "Input too long: maximum %zu characters allowed\n",
+                sizeof(buffer) - 2);
+        flush_stdin();
+        return EXIT_FAILURE;
+    }
+
+    buffer[len] = '\0';
+
+    if (is_integer(buffer)) {
+        printf("\"%s\" is a valid integer\n", buffer);
+    } else {
+        printf("\"%s\" is not a valid integer\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Notes on the rewrite:**
+
+The reported syntax errors (`stray '\342'`, `unexpected character <U+2014>`, `stray '`' in program`) were not defects in the C logic itself — they were caused by non-ASCII characters (em-dashes, curly quotes, backticks) from the analysis prose leaking into the source file. Removing all comments and keeping the file strictly ASCII eliminates every one of those parser errors.
+
+The remaining Flawfinder hits are heuristic, not actual vulnerabilities:
+
+- **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120):** safe because `fgets(buffer, sizeof(buffer), stdin)` enforces the bound, truncation is detected explicitly (`len == sizeof(buffer) - 1` with no newline), and oversized input is rejected rather than silently validated.
+- **`getchar` in a loop (CWE-120/CWE-20):** safe because the loop discards characters without storing them, so no buffer is involved.
+
+The `is_integer` validator remains correct: it handles `NULL`, surrounding whitespace, `ERANGE` overflow via `errno`, no-conversion (`endptr == str`), and trailing garbage.

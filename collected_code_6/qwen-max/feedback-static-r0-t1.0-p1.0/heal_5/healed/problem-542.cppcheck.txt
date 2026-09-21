@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-542.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-542.c:32:5: error: Memory pointed to by 'buffer' is freed twice. [doubleFree]
+    free(buffer);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-542.c:30:9: note: Memory pointed to by 'buffer' is freed twice.
+        free(buffer);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-542.c:32:5: note: Memory pointed to by 'buffer' is freed twice.
+    free(buffer);
+    ^

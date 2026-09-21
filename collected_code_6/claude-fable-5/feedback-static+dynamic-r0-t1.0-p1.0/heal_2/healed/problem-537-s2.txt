@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORDS 1024
+#define MAX_INPUT_LEN 65536
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *dup;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    dup = malloc(len + 1);
+    if (dup == NULL) {
+        return NULL;
+    }
+
+    memcpy(dup, src, len);
+    dup[len] = '\0';
+    return dup;
+}
+
+char *find_first_repeated_word(const char *input)
+{
+    char *copy;
+    char *token;
+    char *result;
+    char *saveptr;
+    const char *delims = " \t\r\n.,;:!?\"'()";
+    char *seen[MAX_WORDS];
+    size_t count;
+    size_t i;
+
+    if (input == NULL) {
+        return duplicate_string("None");
+    }
+
+    copy = duplicate_string(input);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    result = NULL;
+    count = 0;
+    saveptr = NULL;
+
+    token = strtok_r(copy, delims, &saveptr);
+    while (token != NULL && count < MAX_WORDS) {
+        for (i = 0; i < count; i++) {
+            if (strcmp(seen[i], token) == 0) {
+                result = duplicate_string(token);
+                goto cleanup;
+            }
+        }
+        seen[count] = duplicate_string(token);
+        if (seen[count] == NULL) {
+            goto cleanup;
+        }
+        count++;
+        token = strtok_r(NULL, delims, &saveptr);
+    }
+
+    result = duplicate_string("None");
+
+cleanup:
+    for (i = 0; i < count; i++) {
+        free(seen[i]);
+    }
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    char *input;
+    char *repeated;
+
+    input = malloc(MAX_INPUT_LEN);
+    if (input == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, MAX_INPUT_LEN, stdin) == NULL) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    repeated = find_first_repeated_word(input);
+    free(input);
+
+    if (repeated == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", repeated) < 0) {
+        free(repeated);
+        return EXIT_FAILURE;
+    }
+
+    free(repeated);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made based on the identified weaknesses:
+
+1. **Test case failures (`expected 'ab', got <no output>` etc.)**: The original `main` used a hardcoded string and printed decorated output (`"First repeated word: %s"`, `"No repeated word found"`). The test harness clearly feeds input via stdin and expects the bare word (or `None`) as output. The rewritten `main` reads from stdin and prints only the result, so `None` is printed literally rather than being translated to a different message.
+
+2. **Flawfinder `memcpy` (CWE-120)**: Retained but confirmed safe — the destination is allocated with `malloc(len + 1)` where `len` is bounded by `strnlen(src, MAX_INPUT_LEN)`, so the destination always holds the source data plus the null terminator.
+
+3. **Flawfinder `char seen[MAX_WORDS]` (CWE-119/CWE-120)**: The array of pointers is bounds-checked by the `count < MAX_WORDS` loop condition before every write to `seen[count]`, so no overflow is possible; the logic is preserved as-is.
+
+4. **Input handling**: The stdin buffer is heap-allocated at `MAX_INPUT_LEN` and read with `fgets`, which enforces the length limit and null-terminates, keeping it consistent with the `strnlen` bound inside `duplicate_string`. All allocations are checked and freed on every exit path.

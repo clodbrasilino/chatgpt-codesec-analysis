@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120 regarding statically-sized buffers). Here's why the code is safe:
+
+1. **Bounded input reading**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the string is always terminated, even though `fgets` already guarantees this on success.
+
+3. **Bounded string length**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, so length computation can never run past the buffer even if termination were somehow lost.
+
+4. **Safe helper function**: `count_position_matches()` validates for `NULL` and zero length, uses `strnlen` with an explicit maximum, and its loop is doubly bounded (`i < len && i < 26`), preventing any out-of-bounds read.
+
+5. **Initialization**: `memset(buffer, 0, sizeof(buffer))` zeroes the buffer before use, avoiding reads of uninitialized memory.
+
+The only functional addition in the rewrite is `fflush(stdout)` after the prompt, ensuring the prompt is displayed before blocking on `stdin` (important when stdout is line- or fully-buffered, e.g., when piped). The Flawfinder hit is a low-risk informational finding inherent to any fixed-size array; all recommended mitigations (bounds checking, length-limited functions) are already in place.

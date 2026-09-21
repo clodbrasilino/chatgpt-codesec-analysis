@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-15-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-15-s3.c:48:26: style: The comparison 'safe_len > token_len' is always false because 'safe_len' and 'token_len' represent the same value. [knownConditionTrueFalse]
+            if (safe_len > token_len) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-15-s3.c:47:31: note: 'safe_len' is assigned value 'token_len' here.
+            size_t safe_len = token_len;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-15-s3.c:48:26: note: The comparison 'safe_len > token_len' is always false because 'safe_len' and 'token_len' represent the same value.
+            if (safe_len > token_len) {
+                         ^

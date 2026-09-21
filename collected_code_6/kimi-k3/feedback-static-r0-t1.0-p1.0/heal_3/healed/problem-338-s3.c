@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstrings(const char *str) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    size_t n = strnlen(str, 1000);
+    
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = i; j < n; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char str[1001];
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) != NULL) {
+        size_t len = strcspn(str, "\n");
+        str[len] = '\0';
+        
+        if (len == 0) {
+            printf("Number of substrings with same first and last characters: 0\n");
+        } else {
+            int result = countSubstrings(str);
+            printf("Number of substrings with same first and last characters: %d\n", result);
+        }
+    } else {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    return 0;
+}

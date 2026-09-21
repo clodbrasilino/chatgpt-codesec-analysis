@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-344.c:78:9: error: call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   78 |     if (strchr(line, '\n') == NULL) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-344.c:78:9: note: include the header <string.h> or explicitly provide a declaration for 'strchr'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-344.c:86:12: error: call to undeclared library function 'isspace' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   86 |     while (isspace((unsigned char)*cursor)) {
+      |            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-344.c:86:12: note: include the header <ctype.h> or explicitly provide a declaration for 'isspace'
+2 errors generated.

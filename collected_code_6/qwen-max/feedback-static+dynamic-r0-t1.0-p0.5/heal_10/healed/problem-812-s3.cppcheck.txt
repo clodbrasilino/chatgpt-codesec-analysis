@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812-s3.c:14:39: style: Condition 'remaining_len>=3' is always true [knownConditionTrueFalse]
+                    if (remaining_len >= 3) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812-s3.c:13:67: note: Assignment 'remaining_len=len2-(pos-str)-4+3', assigned value is greater than 2
+                    size_t remaining_len = len2 - (pos - str) - 4 + 3;
+                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-812-s3.c:14:39: note: Condition 'remaining_len>=3' is always true
+                    if (remaining_len >= 3) {
+                                      ^

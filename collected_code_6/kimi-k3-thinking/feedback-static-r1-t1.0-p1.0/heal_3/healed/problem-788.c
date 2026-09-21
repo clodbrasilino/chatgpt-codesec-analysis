@@ -1,0 +1,125 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    char *str;
+    int *list;
+    size_t list_size;
+} Tuple;
+
+Tuple *create_tuple(const char *str, const int *list, size_t list_size)
+{
+    Tuple *t;
+    size_t str_len;
+    size_t str_capacity;
+    int written;
+
+    if (str == NULL || (list == NULL && list_size > 0)) {
+        return NULL;
+    }
+
+    str_len = strnlen(str, MAX_STRING_LENGTH);
+    if (str_len == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    str_capacity = str_len + 1;
+
+    t = malloc(sizeof(*t));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->str = malloc(str_capacity);
+    if (t->str == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    written = snprintf(t->str, str_capacity, "%s", str);
+    if (written < 0 || (size_t)written >= str_capacity) {
+        free(t->str);
+        free(t);
+        return NULL;
+    }
+
+    t->list = NULL;
+    t->list_size = list_size;
+
+    if (list_size > 0) {
+        size_t list_capacity;
+        size_t i;
+
+        if (list_size > SIZE_MAX / sizeof(int)) {
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+
+        list_capacity = list_size * sizeof(int);
+
+        t->list = malloc(list_capacity);
+        if (t->list == NULL) {
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+
+        for (i = 0; i < list_size; i++) {
+            t->list[i] = list[i];
+        }
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->str);
+        free(t->list);
+        free(t);
+    }
+}
+
+void print_tuple(const Tuple *t)
+{
+    if (t == NULL || t->str == NULL) {
+        printf("(null)\n");
+        return;
+    }
+
+    printf("(\"%s\", [", t->str);
+    if (t->list != NULL) {
+        for (size_t i = 0; i < t->list_size; i++) {
+            printf("%d", t->list[i]);
+            if (i + 1 < t->list_size) {
+                printf(", ");
+            }
+        }
+    }
+    printf("])\n");
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    Tuple *t = create_tuple("example", numbers, size);
+
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t);
+    free_tuple(t);
+
+    return EXIT_SUCCESS;
+}

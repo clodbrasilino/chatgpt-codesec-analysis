@@ -1,0 +1,82 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    size_t len;
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness and its mitigations:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[MAX_INPUT_SIZE]` as a potential overflow risk. The code already contains all the appropriate defenses, which I preserved in the rewrite:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive measure ensuring the buffer is always a valid C string, even in edge cases.
+
+3. **Length-limited string operations** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, preventing reads past the buffer boundary if termination were ever missing.
+
+4. **Bounded processing** — `countSubstrings()` takes an explicit `max_len` parameter and uses `strnlen` internally, plus a `NULL` check, so it never reads beyond the caller-specified limit.
+
+5. **Safe indexing** — the cast `(unsigned char)str[i]` prevents negative array indices into `counts[256]` on platforms where `char` is signed, avoiding out-of-bounds writes.
+
+6. **Initialization** — `memset(buffer, 0, sizeof(buffer))` guarantees no uninitialized memory is ever read.
+
+The Flawfinder finding is a static-analysis heuristic (risk level 2) that triggers on any fixed-size buffer; since every operation on `buffer` is bounds-checked, the code is not actually vulnerable and no functional changes were required.

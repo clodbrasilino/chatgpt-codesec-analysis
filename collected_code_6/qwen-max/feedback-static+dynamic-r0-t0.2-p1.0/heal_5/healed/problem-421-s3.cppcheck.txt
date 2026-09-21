@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-421-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-421-s3.c:13:42: style: Redundant condition: If 'tuple[i][len] != '\0'', the comparison 'tuple[i][len] != 0' is always true. [redundantCondition]
+            while (tuple[i][len] != '\0' && tuple[i][len] != 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-421-s3.c:29:42: style: Redundant condition: If 'tuple[i][len] != '\0'', the comparison 'tuple[i][len] != 0' is always true. [redundantCondition]
+            while (tuple[i][len] != '\0' && tuple[i][len] != 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-421-s3.c:35:43: style: Redundant condition: If 'delimiter[len] != '\0'', the comparison 'delimiter[len] != 0' is always true. [redundantCondition]
+            while (delimiter[len] != '\0' && delimiter[len] != 0) {
+                                          ^

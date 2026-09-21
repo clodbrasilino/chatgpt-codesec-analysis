@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <errno.h>
+
+bool is_prime(int num) {
+    if (num <= 1) {
+        return false;
+    }
+    if (num == 2) {
+        return true;
+    }
+    if (num % 2 == 0) {
+        return false;
+    }
+    
+    for (int i = 3; i <= num / i; i += 2) {
+        if (num % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int num;
+    char buffer[256];
+    char *endptr;
+    long val;
+    
+    printf("Enter an integer: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input format\n");
+        return 1;
+    }
+    
+    if (val < INT_MIN || val > INT_MAX) {
+        fprintf(stderr, "Input out of range\n");
+        return 1;
+    }
+    
+    num = (int)val;
+    
+    if (is_prime(num)) {
+        printf("%d is a prime number.\n", num);
+    } else {
+        printf("%d is not a prime number.\n", num);
+    }
+    
+    return 0;
+}

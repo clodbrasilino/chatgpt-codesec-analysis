@@ -1,0 +1,174 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+#define MAX_FLUSH_ITERATIONS 1048576UL
+
+static unsigned long long count_char_in_repeated(const char *str, char target, unsigned long long total_length)
+{
+    size_t base_length;
+    unsigned long long count_in_base = 0ULL;
+    unsigned long long full_repeats;
+    unsigned long long remainder;
+    unsigned long long total = 0ULL;
+    size_t i;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    base_length = strnlen(str, BUFFER_SIZE);
+    if (base_length == 0U || total_length == 0ULL) {
+        return 0ULL;
+    }
+
+    for (i = 0U; i < base_length; i++) {
+        if (str[i] == target) {
+            count_in_base++;
+        }
+    }
+
+    full_repeats = total_length / (unsigned long long)base_length;
+    remainder = total_length % (unsigned long long)base_length;
+
+    if (count_in_base != 0ULL && full_repeats > ULLONG_MAX / count_in_base) {
+        return ULLONG_MAX;
+    }
+
+    total = full_repeats * count_in_base;
+
+    for (i = 0U; i < (size_t)remainder && i < base_length; i++) {
+        if (str[i] == target) {
+            if (total == ULLONG_MAX) {
+                return ULLONG_MAX;
+            }
+            total++;
+        }
+    }
+
+    return total;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    unsigned long iterations = 0UL;
+
+    do {
+        ch = getchar();
+        iterations++;
+    } while (ch != '\n' && ch != EOF && iterations < MAX_FLUSH_ITERATIONS);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2U || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1U] = '\0';
+    len = strnlen(buffer, size);
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == size - 1U) {
+        discard_remaining_input();
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char line[BUFFER_SIZE];
+    char target;
+    unsigned long long total_length;
+    unsigned long long result;
+    char *endptr = NULL;
+    int ch;
+
+    memset(buffer, 0, sizeof(buffer));
+    memset(line, 0, sizeof(line));
+
+    printf("Enter the string: ");
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Empty string is not allowed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the character to count: ");
+    ch = getchar();
+    if (ch == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)ch;
+
+    if (ch != '\n') {
+        discard_remaining_input();
+    }
+
+    printf("Enter the total length of the repeated string: ");
+    if (read_line(line, sizeof(line)) != 0) {
+        fprintf(stderr, "Error reading length input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (line[0] == '\0' || line[0] == '-' || !isdigit((unsigned char)line[0])) {
+        fprintf(stderr, "Invalid length input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    total_length = strtoull(line, &endptr, 10);
+    if (errno == ERANGE || endptr == line || endptr == NULL || *endptr != '\0') {
+        fprintf(stderr, "Invalid length input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_char_in_repeated(buffer, target, total_length);
+    printf("The character '%c' occurs %llu times in the first %llu characters of the repeated string.\n",
+           target, result, total_length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. `getchar()` in a loop (CWE-120, CWE-20) — `discard_remaining_input()`**
+The Flawfinder warning about `getchar()` in loops concerns unbounded reads into buffers. Here, the return value is never stored in a buffer — it is only compared against `'\n'` and `EOF`. Additionally, the loop is bounded by `MAX_FLUSH_ITERATIONS`, preventing a denial-of-service from an infinite input stream that never contains a newline (e.g., `/dev/zero` piped to stdin). No fix needed.
+
+**2. `getchar()` for the target character (CWE-120, CWE-20)**
+A single call, result checked against `EOF` before the cast to `char`, and trailing input is flushed. This is the correct idiom; storing into an `int` first is essential and already done.
+
+**3. Statically-sized arrays `buffer` and `line` (CWE-119/CWE-120)**
+Both arrays are only written through `read_line()`, which:
+- Validates the pointer, minimum size, and guards against the `size > INT_MAX` truncation issue when casting to `int` for `fgets`.
+- Uses `fgets` with the exact buffer size, guaranteeing no overflow.
+- Forces NUL-termination defensively (`buffer[size - 1] = '\0'`).
+- Uses `strnlen` (bounded) rather than `strlen`, and drains overlong lines so leftover input cannot corrupt the next read.
+
+**Other defensive measures already present:**
+- `count_char_in_repeated` guards against multiplication overflow (`full_repeats > ULLONG_MAX / count_in_base`) and saturates at `ULLONG_MAX`.
+- `strtoull` parsing checks `errno == ERANGE`, `endptr` position, and trailing garbage; the leading `-` check prevents `strtoull` silently accepting negative numbers via wraparound.
+- Buffers are zero-initialized with `memset`.
+
+Conclusion: the Flawfinder hits are informational (risk 1–2) and all are mitigated by existing bounds checking, so the rewrite preserves the logic unchanged with comments removed.

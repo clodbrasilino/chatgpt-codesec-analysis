@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120):** Flawfinder flags any statically-sized array, but this is a false positive here. The buffer is only ever written to by `fgets()`, which receives the correct bound via `sizeof(buffer)`, so no overflow is possible. The explicit `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy — `fgets()` already null-terminates — but it does no harm.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** Also a false positive. The loop in `flush_stdin()` discards characters without storing them anywhere, so there is no buffer to overflow. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop if the stream closes.
+
+**Other correctness points worth noting:**
+
+- `tolower()` is called with the argument cast to `unsigned char`, which correctly avoids undefined behavior for negative `char` values (e.g., extended ASCII on platforms with signed `char`).
+- The `strchr(buffer, '\n') == NULL && !feof(stdin)` check correctly detects truncated input before flushing, so leftover characters don't pollute a subsequent read.
+- `strcspn(buffer, "\n")` safely strips the trailing newline whether or not one is present.
+- Return values of `fgets()` are checked, and standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are used.
+
+The original code was already written defensively; the Flawfinder hits are informational (low-risk pattern matches) rather than actual vulnerabilities, so no functional changes were required.

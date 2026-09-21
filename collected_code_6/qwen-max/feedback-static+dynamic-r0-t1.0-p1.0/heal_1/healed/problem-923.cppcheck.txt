@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-923.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-923.c:4:39: style: Parameter 'str1' can be declared as pointer to const [constParameterPointer]
+int shortestCommonSupersequence(char* str1, char* str2, size_t len1, size_t len2) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-923.c:4:51: style: Parameter 'str2' can be declared as pointer to const [constParameterPointer]
+int shortestCommonSupersequence(char* str1, char* str2, size_t len1, size_t len2) {
+                                                  ^

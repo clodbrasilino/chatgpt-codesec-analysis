@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:92:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:70:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || len > MAX_STRING_LENGTH) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:88:15: note: Assuming condition is false
+    if (token == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:92:13: note: Condition 'len>0' is always true
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-73.c:64:12: style: The scope of the variable 'new_capacity' can be reduced. [variableScope]
+    size_t new_capacity;
+           ^

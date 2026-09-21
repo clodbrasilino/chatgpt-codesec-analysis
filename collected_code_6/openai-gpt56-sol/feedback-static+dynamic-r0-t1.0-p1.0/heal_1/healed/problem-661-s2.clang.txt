@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:82:5: error: use of undeclared identifier 'errno'
+   82 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:86:26: error: use of undeclared identifier 'errno'
+   86 |     if (end == buffer || errno == ERANGE || parsed > SIZE_MAX) {
+      |                          ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:86:35: error: use of undeclared identifier 'ERANGE'
+   86 |     if (end == buffer || errno == ERANGE || parsed > SIZE_MAX) {
+      |                                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:112:5: error: use of undeclared identifier 'errno'
+  112 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:116:26: error: use of undeclared identifier 'errno'
+  116 |     if (end == buffer || errno == ERANGE ||
+      |                          ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-661-s2.c:116:35: error: use of undeclared identifier 'ERANGE'
+  116 |     if (end == buffer || errno == ERANGE ||
+      |                                   ^~~~~~
+6 errors generated.

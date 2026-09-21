@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+static bool is_word_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_odd(buffer)) {
+        printf("The word length is odd\n");
+    } else {
+        printf("The word length is even\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely safe against the flagged CWE-119/CWE-120 weakness, since it used `fgets()` with a bounded size and `strnlen()` instead of unbounded functions like `gets()` or `strlen()`. The rewrite hardens it further:
+
+1. **Explicit NUL termination** — `buffer[sizeof(buffer) - 1U] = '\0';` guarantees termination regardless of what `fgets()` returned, providing defense-in-depth.
+
+2. **Overlong input handling** — if the user enters more than 255 characters, `fgets()` leaves the remainder in `stdin`. The new `discard_remaining_input()` drains the leftover bytes, preventing stale input from affecting subsequent reads and making truncation behavior deterministic.
+
+3. **`static` linkage** for internal helper functions, limiting symbol visibility to the translation unit.
+
+4. All bounds-checked idioms retained: `fgets()` with `sizeof(buffer)`, `strnlen()` with an explicit cap, unsigned-safe length arithmetic, and NULL-pointer guarding in `is_word_length_odd()`.

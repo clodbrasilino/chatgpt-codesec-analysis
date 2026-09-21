@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+**Analysis of the original code and changes made:**
+
+The original code was actually already quite defensive — the Flawfinder hit on the `char buffer[BUFFER_SIZE]` declaration is a *heuristic* warning (CWE-119/CWE-120), not a confirmed vulnerability. Flawfinder flags every statically-sized array because they are a common source of overflows, but it cannot verify whether bounds checking is performed.
+
+The original code already mitigated the risk correctly:
+
+1. **`snprintf` with `sizeof(buffer)`** — a length-limited function is used instead of unsafe alternatives like `strcpy` or `sprintf`, guaranteeing no write past the end of the buffer.
+2. **Return value validation** — it checks both for encoding errors (`result < 0`) and for truncation (`result >= sizeof(buffer)`), which most code neglects.
+
+Improvements in the rewritten version:
+
+- **Moved the buffer from static/global scope to local scope in `main`.** This reduces the attack surface: a global writable buffer at a fixed address in `.bss` is easier to target in certain exploit scenarios and pollutes the global namespace. Stack placement also benefits from stack canaries on most modern toolchains.
+- **Zero-initialized the buffer with `memset`** before use, ensuring the buffer never holds indeterminate contents even if later code paths change.
+- **Added `<string.h>`** for the `memset` declaration.
+
+The `sizeof(buffer)` idiom still works correctly because the buffer is a true array in the same scope (not a decayed pointer), so the size is computed at compile time and stays synchronized if `BUFFER_SIZE` ever changes.

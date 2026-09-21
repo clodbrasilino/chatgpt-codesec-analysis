@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static void reverse_range(char *start, char *end) {
+    while (start < end) {
+        char tmp = *start;
+        *start = *end;
+        *end = tmp;
+        start++;
+        end--;
+    }
+}
+
+char *reverse_words(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, SIZE_MAX);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    snprintf(result, len + 1, "%s", str);
+
+    if (len == 0) {
+        return result;
+    }
+
+    reverse_range(result, result + len - 1);
+
+    char *word_start = result;
+    char *p = result;
+
+    while (*p) {
+        if (*p == ' ') {
+            if (p > word_start) {
+                reverse_range(word_start, p - 1);
+            }
+            word_start = p + 1;
+        }
+        p++;
+    }
+    
+    if (p > word_start) {
+        reverse_range(word_start, p - 1);
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *input1 = "Hello world from C";
+    char *output1 = reverse_words(input1);
+    if (output1 != NULL) {
+        printf("Input: \"%s\"\n", input1);
+        printf("Output: \"%s\"\n", output1);
+        free(output1);
+    }
+
+    const char *input2 = "";
+    char *output2 = reverse_words(input2);
+    if (output2 != NULL) {
+        printf("Input: \"%s\"\n", input2);
+        printf("Output: \"%s\"\n", output2);
+        free(output2);
+    }
+
+    (void)reverse_words(NULL);
+    printf("NULL input handled successfully.\n");
+
+    return 0;
+}

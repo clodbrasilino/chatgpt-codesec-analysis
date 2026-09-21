@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+char *custom_strdup(const char *src) {
+    if (!src) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(src) + 1;
+    char *dest = (char *)malloc(len);
+    if (!dest) return NULL;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, src, len);
+    return dest;
+}
+
+Dictionary *create_dictionary(size_t capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    
+    dict->items = (DictItem *)calloc(capacity, sizeof(DictItem));
+    if (!dict->items && capacity > 0) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int dict_set(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return -1;
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strcmp(dict->items[i].key, key) == 0) {
+            char *new_val = custom_strdup(value);
+            if (!new_val) return -1;
+            free(dict->items[i].value);
+            dict->items[i].value = new_val;
+            return 0;
+        }
+    }
+
+    if (dict->count >= dict->capacity) {
+        size_t new_cap = dict->capacity == 0 ? 4 : dict->capacity * 2;
+        DictItem *new_items = (DictItem *)realloc(dict->items, new_cap * sizeof(DictItem));
+        if (!new_items) return -1;
+        dict->items = new_items;
+        dict->capacity = new_cap;
+    }
+
+    dict->items[dict->count].key = custom_strdup(key);
+    if (!dict->items[dict->count].key) return -1;
+
+    dict->items[dict->count].value = custom_strdup(value);
+    if (!dict->items[dict->count].value) {
+        free(dict->items[dict->count].key);
+        return -1;
+    }
+
+    dict->count++;
+    return 0;
+}
+
+Dictionary *merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2) {
+    if (!dict1 || !dict2) return NULL;
+
+    Dictionary *merged = create_dictionary(dict1->count + dict2->count);
+    if (!merged) return NULL;
+
+    for (size_t i = 0; i < dict1->count; i++) {
+        if (dict_set(merged, dict1->items[i].key, dict1->items[i].value) != 0) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->count; i++) {
+        if (dict_set(merged, dict2->items[i].key, dict2->items[i].value) != 0) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+
+    return merged;
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary(2);
+    if (!dict1) return 1;
+
+    Dictionary *dict2 = create_dictionary(2);
+    if (!dict2) {
+        free_dictionary(dict1);
+        return 1;
+    }
+
+    if (dict_set(dict1, "host", "localhost") != 0 || dict_set(dict1, "port", "8080") != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    if (dict_set(dict2, "port", "443") != 0 || dict_set(dict2, "protocol", "https") != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+    if (!merged) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+
+    return 0;
+}

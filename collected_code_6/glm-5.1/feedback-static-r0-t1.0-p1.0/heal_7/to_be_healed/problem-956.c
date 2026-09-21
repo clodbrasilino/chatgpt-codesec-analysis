@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_at_uppercase(const char *str, size_t *count) {
+    regex_t regex;
+    regmatch_t match;
+    size_t capacity = 10;
+    size_t idx = 0;
+    char **result = malloc(capacity * sizeof(char *));
+    const char *cursor = str;
+
+    if (!result) {
+        *count = 0;
+        return NULL;
+    }
+
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        free(result);
+        *count = 0;
+        return NULL;
+    }
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        if (idx + 1 >= capacity) {
+            capacity *= 2;
+            char **temp = realloc(result, capacity * sizeof(char *));
+            if (!temp) {
+                for (size_t i = 0; i < idx; i++) free(result[i]);
+                free(result);
+                regfree(&regex);
+                *count = 0;
+                return NULL;
+            }
+            result = temp;
+        }
+
+        size_t len = match.rm_so;
+        if (len > 0) {
+            result[idx] = malloc(len + 1);
+            if (!result[idx]) {
+                for (size_t i = 0; i < idx; i++) free(result[i]);
+                free(result);
+                regfree(&regex);
+                *count = 0;
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             *  implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+             *  did you mean 'memcpy'?
+             */
+            memcpy_s(result[idx], len + 1, cursor, len);
+            result[idx][len] = '\0';
+            idx++;
+        }
+
+        cursor += match.rm_so;
+        len = match.rm_eo - match.rm_so;
+        result[idx] = malloc(len + 1);
+        if (!result[idx]) {
+            for (size_t i = 0; i < idx; i++) free(result[i]);
+            free(result);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         */
+        memcpy_s(result[idx], len + 1, cursor, len);
+        result[idx][len] = '\0';
+        idx++;
+
+        cursor += len;
+    }
+
+    if (*cursor != '\0') {
+        if (idx >= capacity) {
+            capacity += 1;
+            char **temp = realloc(result, capacity * sizeof(char *));
+            if (!temp) {
+                for (size_t i = 0; i < idx; i++) free(result[i]);
+                free(result);
+                /* Possible weaknesses found:
+                 *  'memcpy' declared here
+                 */
+                regfree(&regex);
+                *count = 0;
+                return NULL;
+            }
+            result = temp;
+        }
+
+        size_t len = strnlen(cursor, SIZE_MAX);
+        result[idx] = malloc(len + 1);
+        if (!result[idx]) {
+            for (size_t i = 0; i < idx; i++) free(result[i]);
+            free(result);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         */
+        memcpy_s(result[idx], len + 1, cursor, len + 1);
+        idx++;
+    }
+
+    regfree(&regex);
+
+    char **final_result = realloc(result, (idx + 1) * sizeof(char *));
+    if (!final_result) {
+        for (size_t i = 0; i < idx; i++) free(result[i]);
+        free(result);
+        *count = 0;
+        return NULL;
+    }
+    result = final_result;
+    result[idx] = NULL;
+
+    *count = idx;
+    return result;
+}
+
+void free_split_result(char **result) {
+    if (!result) return;
+    for (size_t i = 0; result[i] != NULL; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *input = "SplitThisStringAtUppercaseLetters";
+    size_t count = 0;
+    char **parts = split_at_uppercase(input, &count);
+
+    if (parts) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", parts[i]);
+        }
+        free_split_result(parts);
+    }
+
+    return 0;
+}

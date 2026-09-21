@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static bool is_vowel(char c)
+{
+    char lower = (char)tolower((unsigned char)c);
+    return (lower == 'a' || lower == 'e' || lower == 'i' ||
+            lower == 'o' || lower == 'u');
+}
+
+int count_vowel_neighbors(const char *str)
+{
+    size_t len;
+    size_t i;
+    int count = 0;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len < 2U) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        bool has_vowel_neighbor = false;
+
+        if (i > 0U && is_vowel(str[i - 1U])) {
+            has_vowel_neighbor = true;
+        }
+        if (i < (len - 1U) && is_vowel(str[i + 1U])) {
+            has_vowel_neighbor = true;
+        }
+
+        if (has_vowel_neighbor) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "bestinstareels",
+        "partofthejourneyistheend",
+        "amazonprime",
+        ""
+    };
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        int result = count_vowel_neighbors(test_strings[i]);
+
+        if (result < 0) {
+            if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+                return 1;
+            }
+        } else {
+            if (printf("String: \"%s\" -> Count: %d\n",
+                       test_strings[i], result) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-written: it checks for `NULL`, uses `tolower((unsigned char)c)` to avoid undefined behavior with negative `char` values, uses `size_t` for indices, guards boundary accesses with `i > 0U` and `i < (len - 1U)`, and checks return values of `printf`/`fprintf`.
+
+The only flagged weakness was the Flawfinder warning on `strlen` (CWE-126): if the function were ever passed a buffer that is not NUL-terminated, `strlen` would over-read past the buffer. The fix replaces `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. If no terminator is found within that bound, the input is treated as invalid and the function returns `-1`, preventing an unbounded over-read while preserving the original behavior for all valid, terminated strings (including the empty-string test case).
+
+Note: `strnlen` is POSIX.1-2008 / C11 Annex K (`strnlen_s`); on strictly conforming C90/C99 toolchains you may need `-D_POSIX_C_SOURCE=200809L` or a small local fallback implementation.

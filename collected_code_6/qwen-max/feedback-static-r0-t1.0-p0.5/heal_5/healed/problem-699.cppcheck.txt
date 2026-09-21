@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_5/healed/problem-699.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_5/healed/problem-699.c:21:20: style: Condition 'strlen(s2)!=len' is always false [knownConditionTrueFalse]
+    if (strlen(s2) != len) return -1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_5/healed/problem-699.c:20:24: note: Assignment 'len=strlen(s1)', assigned value is 4
+    size_t len = strlen(s1);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_5/healed/problem-699.c:21:20: note: Condition 'strlen(s2)!=len' is always false
+    if (strlen(s2) != len) return -1;
+                   ^

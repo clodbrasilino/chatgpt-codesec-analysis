@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725-s2.c:94:45: style: Condition 'cursor_offset+start+len<=input_len' is always true [knownConditionTrueFalse]
+            if (cursor_offset + start + len <= input_len) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725-s2.c:74:41: note: Assuming that condition 'cursor_offset+start+len>input_len' is not redundant
+        if (cursor_offset + start + len > input_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725-s2.c:84:29: note: Assuming condition is false
+        if (results[*count] == NULL) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-725-s2.c:94:45: note: Condition 'cursor_offset+start+len<=input_len' is always true
+            if (cursor_offset + start + len <= input_len) {
+                                            ^

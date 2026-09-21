@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c:41:31: style: Condition 'match_len>0' is always true [knownConditionTrueFalse]
+                if (match_len > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c:30:27: note: Assuming that condition 'p-start>1' is not redundant
+            if (p - start > 1 && valid && start[0] != '_' && p[-1] != '_') {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c:33:27: note: Assuming condition is false
+                if (match == NULL) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c:31:34: note: match_len is assigned 'p-start' here.
+                size_t match_len = p - start;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-16-s3.c:41:31: note: Condition 'match_len>0' is always true
+                if (match_len > 0) {
+                              ^

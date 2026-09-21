@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-128.c: In function 'filter_long_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-128.c:13:39: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+   13 |             result[*filtered_count] = strdup(words[i]);
+      |                                       ^~~~~~

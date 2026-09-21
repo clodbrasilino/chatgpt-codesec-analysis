@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-206.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-206.c:49:49: error: passing argument 1 of 'concatenate_adjacent_tuples' from incompatible pointer type [-Wincompatible-pointer-types]
+   49 |     char** result = concatenate_adjacent_tuples(tuples, sizes, count, &result_count);
+      |                                                 ^~~~~~
+      |                                                 |
+      |                                                 const char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-206.c:5:49: note: expected 'char * const*' but argument is of type 'const char **'
+    5 | char** concatenate_adjacent_tuples(char* const* tuples, const size_t* sizes, size_t count, size_t* result_count) {
+      |                                    ~~~~~~~~~~~~~^~~~~~

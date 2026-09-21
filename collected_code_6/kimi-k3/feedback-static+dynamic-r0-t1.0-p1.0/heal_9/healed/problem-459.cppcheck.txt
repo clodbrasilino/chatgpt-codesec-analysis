@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:59:44: style: Condition 'result_len+remaining>result_capacity' is always false [knownConditionTrueFalse]
+                if (result_len + remaining > result_capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:49:44: note: Assuming that condition 'result_len+remaining>=result_capacity' is not redundant
+                if (result_len + remaining >= result_capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:54:44: note: Assuming condition is false
+                if (result_len + remaining > result_capacity - 1) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:59:44: note: Condition 'result_len+remaining>result_capacity' is always false
+                if (result_len + remaining > result_capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:101:41: style: Condition 'result_len+prefix_len>result_capacity' is always false [knownConditionTrueFalse]
+            if (result_len + prefix_len > result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:91:41: note: Assuming that condition 'result_len+prefix_len>=result_capacity' is not redundant
+            if (result_len + prefix_len >= result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:96:41: note: Assuming condition is false
+            if (result_len + prefix_len > result_capacity - 1) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-459.c:101:41: note: Condition 'result_len+prefix_len>result_capacity' is always false
+            if (result_len + prefix_len > result_capacity) {
+                                        ^

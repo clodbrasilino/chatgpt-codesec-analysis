@@ -1,0 +1,37 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:13:43: error: use of undeclared identifier 'pmatch'
+   13 |     while (regexec(&space_regex, str, 1, &pmatch, 0) == 0 && pmatch.rm_eo <= len) {
+      |                                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:13:62: error: use of undeclared identifier 'pmatch'
+   13 |     while (regexec(&space_regex, str, 1, &pmatch, 0) == 0 && pmatch.rm_eo <= len) {
+      |                                                              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:14:27: error: use of undeclared identifier 'pmatch'
+   14 |         size_t copy_len = pmatch.rm_so + 1 + (len - pmatch.rm_eo) + 1;
+      |                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:14:53: error: use of undeclared identifier 'pmatch'
+   14 |         size_t copy_len = pmatch.rm_so + 1 + (len - pmatch.rm_eo) + 1;
+      |                                                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:15:53: error: use of undeclared identifier 'pmatch'
+   15 |         snprintf(tmp, sizeof(tmp), "%.*s%s%s", (int)pmatch.rm_so, str, "_", str + pmatch.rm_eo);
+      |                                                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:15:83: error: use of undeclared identifier 'pmatch'
+   15 |         snprintf(tmp, sizeof(tmp), "%.*s%s%s", (int)pmatch.rm_so, str, "_", str + pmatch.rm_eo);
+      |                                                                                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:23:48: error: use of undeclared identifier 'pmatch'
+   23 |     while (regexec(&underscore_regex, str, 1, &pmatch, 0) == 0 && pmatch.rm_eo <= len) {
+      |                                                ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:23:67: error: use of undeclared identifier 'pmatch'
+   23 |     while (regexec(&underscore_regex, str, 1, &pmatch, 0) == 0 && pmatch.rm_eo <= len) {
+      |                                                                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:24:27: error: use of undeclared identifier 'pmatch'
+   24 |         size_t copy_len = pmatch.rm_so + 1 + (len - pmatch.rm_eo) + 1;
+      |                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:24:53: error: use of undeclared identifier 'pmatch'
+   24 |         size_t copy_len = pmatch.rm_so + 1 + (len - pmatch.rm_eo) + 1;
+      |                                                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:25:53: error: use of undeclared identifier 'pmatch'
+   25 |         snprintf(tmp, sizeof(tmp), "%.*s%s%s", (int)pmatch.rm_so, str, " ", str + pmatch.rm_eo);
+      |                                                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-631-s2.c:25:83: error: use of undeclared identifier 'pmatch'
+   25 |         snprintf(tmp, sizeof(tmp), "%.*s%s%s", (int)pmatch.rm_so, str, " ", str + pmatch.rm_eo);
+      |                                                                                   ^~~~~~
+12 errors generated.

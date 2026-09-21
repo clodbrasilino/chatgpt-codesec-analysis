@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and why it stands as-is:**
+
+The Flawfinder warning about `buffer[MAX_INPUT_SIZE]` (CWE-119/CWE-120) is a low-risk, pattern-based hit rather than an actual vulnerability. The code already implements every mitigation the warning recommends:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size and always null-terminates within bounds. Unlike `gets()` or unbounded `scanf("%s")`, it cannot overflow.
+
+2. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after `fgets`, but it's harmless belt-and-suspenders hardening.
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` returns an index that is always within the string (at worst the position of the terminating NUL), so the assignment cannot write out of bounds.
+
+4. **Bounded string handling:** `toggle_case` uses `strnlen(str, max_len)` instead of `strlen`, guaranteeing it never scans past the buffer even if the string were somehow unterminated. It also validates against `NULL` and zero-length.
+
+5. **Correct `ctype` usage:** Casting to `unsigned char` before calling `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+6. **Error checking:** Both `fgets` and `printf` return values are checked, with appropriate exit statuses.
+
+One portability note: `strnlen` is POSIX (and C23), so on strictly conforming pre-C23 non-POSIX toolchains you may need `#define _POSIX_C_SOURCE 200809L` before the includes, or substitute a manual bounded loop.

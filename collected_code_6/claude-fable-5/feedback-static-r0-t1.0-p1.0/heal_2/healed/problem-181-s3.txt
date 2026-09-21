@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    size_t prefix_len;
+    size_t i;
+    char *result;
+
+    if (strs == NULL || count == 0 || strs[0] == NULL) {
+        return NULL;
+    }
+
+    prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+
+    for (i = 1; i < count; i++) {
+        size_t j = 0;
+
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+
+        if (prefix_len == 0) {
+            break;
+        }
+    }
+
+    if (prefix_len >= SIZE_MAX || prefix_len > MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    result = malloc(prefix_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0) {
+        if (strnlen(strs[0], MAX_STRING_LEN) < prefix_len) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result, strs[0], prefix_len);
+    }
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *strings[] = { "flower", "flow", "flight" };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *prefix;
+
+    prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the original code and the fix applied:**
+
+The flawfinder warning about `memcpy` (CWE-120) was a low-risk finding, since the original code already allocated `prefix_len + 1` bytes and copied exactly `prefix_len` bytes — the destination was always large enough. However, the rewritten version hardens this further:
+
+1. **Explicit upper bound check**: `prefix_len > MAX_STRING_LEN` guarantees the copy length can never exceed the bounded length established by `strnlen`, making the invariant locally verifiable rather than relying on distant logic.
+
+2. **Source re-validation before `memcpy`**: verifying `strnlen(strs[0], MAX_STRING_LEN) >= prefix_len` ensures the source buffer actually contains at least `prefix_len` readable bytes at the point of the copy, protecting against any future refactoring that could break the invariant.
+
+3. **Guarded zero-length copy**: skipping `memcpy` entirely when `prefix_len == 0` avoids any edge-case concerns with zero-byte copies.
+
+The rest of the code was already defensively written — it checks for `NULL` inputs, `NULL` array elements, `malloc` failure, and I/O errors from `printf`/`fprintf`, and it frees the allocated buffer on all exit paths, so no memory leaks or undefined behavior remain.

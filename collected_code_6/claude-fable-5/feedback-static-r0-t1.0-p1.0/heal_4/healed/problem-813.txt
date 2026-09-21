@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = string_length(buffer);
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+        length--;
+        printf("You entered: %s\n", buffer);
+    } else if (length == sizeof(buffer) - 1) {
+        flush_stdin();
+        printf("You entered (truncated): %s\n", buffer);
+    } else {
+        printf("You entered: %s\n", buffer);
+    }
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Both Flawfinder findings are effectively false positives in this code, and the existing defenses already mitigate them:
+
+1. **`char buffer[MAX_INPUT]` (CWE-119/CWE-120, risk 2):** The statically-sized array is safe here because:
+   - Input is read exclusively via `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the buffer boundary and always NUL-terminates within the given size.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination even in pathological cases.
+   - `string_length` guards against `NULL` and only scans up to the terminator, which is guaranteed to exist.
+   - The truncation case (`length == sizeof(buffer) - 1` with no trailing newline) is explicitly detected, and leftover input is drained with `flush_stdin()` so it cannot pollute subsequent reads.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** This is a generic heuristic warning. Here `getchar()` returns an `int` (correctly, so `EOF` is distinguishable from valid bytes), nothing is stored into any buffer, and the loop terminates on newline or `EOF`. There is no buffer to overflow, so no fix is required.
+
+Since the code already implements the correct mitigations (bounded read, guaranteed NUL termination, truncation detection, stream flushing, `size_t` for lengths, `%zu` format specifier, and checked `fgets` return value), the rewritten version is functionally identical with the advisory comments removed.

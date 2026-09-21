@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer, risk 2):** The original code already mitigated this correctly — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, and `sizeof(buffer)` is used rather than a hardcoded constant, so the read cannot overflow. This mitigation is preserved.
+
+2. **CWE-126 (`strlen` over-read on non-terminated strings, risk 1):** In practice `fgets` always null-terminates on success, and the explicit `buffer[sizeof(buffer) - 1] = '\0';` provides defense in depth. To fully silence the finding and add a hard bound, `strlen` has been replaced with `strnlen(buffer, sizeof(buffer))`, which guarantees the scan can never read past the buffer even if termination were somehow missing.
+
+3. **Other good practices already present and retained:**
+   - `isdigit` is called with the argument cast to `unsigned char`, avoiding undefined behavior for negative `char` values.
+   - `count_numeric` checks for `NULL` input.
+   - The return value of `fgets` is checked, handling EOF/read errors.
+   - The trailing newline is stripped safely with a length check (`len > 0`) before indexing `buffer[len - 1]`.
+
+The code is now robust against buffer overflow, over-read, and unterminated-string issues flagged by the static analysis.

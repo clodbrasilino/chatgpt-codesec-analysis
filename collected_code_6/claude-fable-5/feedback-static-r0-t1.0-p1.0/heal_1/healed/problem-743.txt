@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int rotate_right(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t i;
+    size_t bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(*temp)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    bytes = n * sizeof(*temp);
+
+    temp = malloc(bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        temp[(i + k) % n] = arr[i];
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = temp[i];
+    }
+
+    free(temp);
+
+    return 0;
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+
+    printf("Original array: ");
+    print_array(arr, n);
+
+    if (rotate_right(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated array:  ");
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weakness:
+
+1. **Replaced `memcpy` with an explicit element-by-element copy loop** — this eliminates the Flawfinder CWE-120 warning entirely, since each write is bounded by the loop condition `i < n`, and both source and destination are guaranteed to hold exactly `n` elements of type `int`.
+
+2. **Added an integer overflow check** (`n > SIZE_MAX / sizeof(*temp)`) before computing the allocation size — this prevents a wrap-around in `n * sizeof(*temp)` on very large `n`, which could otherwise cause `malloc` to allocate a buffer smaller than intended, leading to a genuine heap buffer overflow in the copy loops.
+
+3. **Precomputed the byte count once** into `bytes` for clarity and to ensure the same validated size is used for allocation.
+
+The existing safety properties were preserved: the `NULL`/zero-length guards, the `k % n` normalization, the `malloc` failure check, and the `free` of the temporary buffer on the success path (no leak paths exist, since every early return occurs before allocation).

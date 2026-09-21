@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t in_len = 0;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+    size_t i = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    while (in_len < MAX_INPUT_LEN && input[in_len] != '\0') {
+        in_len++;
+    }
+
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = (char *)malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < in_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c) != 0) {
+            if (i > 0U && (out_len + 1U) < out_cap) {
+                output[out_len] = '_';
+                out_len++;
+            }
+            if ((out_len + 1U) < out_cap) {
+                output[out_len] = (char)tolower((int)c);
+                out_len++;
+            }
+        } else {
+            if ((out_len + 1U) < out_cap) {
+                output[out_len] = (char)c;
+                out_len++;
+            }
+        }
+    }
+
+    output[out_len] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+    int status = EXIT_SUCCESS;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            status = EXIT_FAILURE;
+            break;
+        }
+        (void)printf("%s -> %s\n", tests[i], result);
+        (void)fflush(stdout);
+        free(result);
+        result = NULL;
+    }
+
+    return status;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`<no output>` failures** — The most likely cause of the test harness seeing no output is unflushed stdout when the process terminates abnormally or when output is piped (fully buffered mode). I added `fflush(stdout)` after each `printf` so results are guaranteed to reach the test harness immediately.
+
+2. **Off-by-one risk in capacity checks** — The original `out_len < (out_cap - 1U)` performs unsigned subtraction; if `out_cap` were ever `0`, this would underflow to `SIZE_MAX` and permit a buffer overflow. Rewritten as `(out_len + 1U) < out_cap`, which is safe for all unsigned values and always reserves room for the terminating `'\0'`.
+
+3. **`tolower` argument** — Explicitly cast through `int` to avoid implementation-defined behavior with the ctype functions.
+
+4. **Early `return EXIT_FAILURE` replaced with `break` + status variable** — a single exit path avoids losing buffered output and makes the failure mode cleaner.
+
+5. **Explicit `isupper(c) != 0` comparison and `(void)` casts** — MISRA-style hygiene; return values of `printf`/`fprintf` are consciously discarded rather than silently ignored.
+
+The core conversion logic (underscore insertion before non-leading uppercase letters, lowercasing) was already correct, so behavior for all eight test strings, including the empty string and `already_snake`, is preserved.

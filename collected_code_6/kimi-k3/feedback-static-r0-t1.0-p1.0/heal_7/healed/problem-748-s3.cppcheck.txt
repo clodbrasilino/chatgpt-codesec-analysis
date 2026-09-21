@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:91:28: style: Condition 'prefix_len<=output_size-out_idx' is always true [knownConditionTrueFalse]
+            if (prefix_len <= output_size - out_idx) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:86:28: note: Assuming that condition 'prefix_len>output_size-out_idx' is not redundant
+            if (prefix_len > output_size - out_idx) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:91:28: note: Condition 'prefix_len<=output_size-out_idx' is always true
+            if (prefix_len <= output_size - out_idx) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:121:26: style: Condition 'word_len<=output_size-out_idx' is always true [knownConditionTrueFalse]
+            if (word_len <= output_size - out_idx) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:116:26: note: Assuming that condition 'word_len>output_size-out_idx' is not redundant
+            if (word_len > output_size - out_idx) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:121:26: note: Condition 'word_len<=output_size-out_idx' is always true
+            if (word_len <= output_size - out_idx) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:156:27: style: Condition 'remaining<=output_size-out_idx' is always true [knownConditionTrueFalse]
+            if (remaining <= output_size - out_idx) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:151:27: note: Assuming that condition 'remaining>output_size-out_idx' is not redundant
+            if (remaining > output_size - out_idx) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-748-s3.c:156:27: note: Condition 'remaining<=output_size-out_idx' is always true
+            if (remaining <= output_size - out_idx) {
+                          ^

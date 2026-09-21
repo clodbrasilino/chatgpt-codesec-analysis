@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-9.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-9.c:56:24: style: Condition 'test5' is always false [knownConditionTrueFalse]
+    printf("%s: %d\n", test5 ? test5 : "NULL", find_min_rotations(test5));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-9.c:50:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-9.c:56:24: note: Condition 'test5' is always false
+    printf("%s: %d\n", test5 ? test5 : "NULL", find_min_rotations(test5));
+                       ^

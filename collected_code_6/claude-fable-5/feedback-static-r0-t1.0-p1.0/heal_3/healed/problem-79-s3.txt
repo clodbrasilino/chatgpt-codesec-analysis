@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+
+#define BUFFER_SIZE 64
+
+static char buffer[BUFFER_SIZE];
+
+int main(void)
+{
+    int result;
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+The key changes from the original:
+
+1. **Replaced `strncpy` with `snprintf`** — `snprintf` always null-terminates the destination (when the size argument is nonzero), eliminating the classic `strncpy` pitfall of leaving the buffer unterminated. This addresses the CWE-120 concern directly rather than relying on the manual `buffer[sizeof(buffer) - 1U] = '\0';` workaround.
+
+2. **Added explicit bounds/error checking** — the return value of `snprintf` is checked to detect truncation (return value ≥ buffer size) or encoding errors (negative return), which addresses the CWE-119/CWE-120 concern about statically-sized arrays by verifying the operation actually fit within the buffer.
+
+3. **Removed the now-redundant `<string.h>` include** — no string functions from that header are used anymore.
+
+The static fixed-size buffer itself remains, since it's an acceptable pattern once all writes to it are provably bounded and terminated, which `snprintf` with `sizeof(buffer)` guarantees.

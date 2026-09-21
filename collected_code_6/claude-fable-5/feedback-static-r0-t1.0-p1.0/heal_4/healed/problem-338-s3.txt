@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[UCHAR_MAX + 1] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("%lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the identified weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char buffer[MAX_INPUT_LEN]` declaration. This is a low-severity, largely informational finding — Flawfinder flags *all* fixed-size character arrays because they are a common source of overflows when paired with unbounded functions like `gets()`, `strcpy()`, or `sprintf()`.
+
+In this case, the code already mitigates the risk correctly, so no functional changes were required:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, and its return value is checked for failure. This is the correct replacement for the unsafe `gets()`.
+
+2. **Guaranteed null termination** — `fgets` already null-terminates, but the explicit `buffer[sizeof(buffer) - 1] = '\0';` acts as defense-in-depth. The prior `memset` zero-initializes the entire buffer as well.
+
+3. **Bounded length calculation** — `countSubstrings` uses `strnlen(str, max_len)` rather than `strlen()`, so even a non-terminated string cannot cause an out-of-bounds read. Note that `strnlen` is POSIX, not strict C89/C99; on non-POSIX platforms you may need `_GNU_SOURCE` or a fallback implementation.
+
+4. **Safe indexing** — the cast to `(unsigned char)` before indexing `counts[]` prevents negative-index undefined behavior when `char` is signed and the input contains bytes ≥ 0x80.
+
+5. **Newline stripping via `strcspn`** — safe even if no newline is present (it indexes the terminating null in that case).
+
+6. **Checked I/O** — both `fgets` and `printf` return values are verified.
+
+One minor caveat worth noting: with counts up to 1023 occurrences of a character, `counts[i] * (counts[i] + 1) / 2` maxes out around 523,776 per character — nowhere near `long long` overflow, so the arithmetic is safe for this buffer size.

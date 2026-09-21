@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool match_word_at_beginning(const char *str, const char *word) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    size_t word_len = strnlen(word, SIZE_MAX);
+    if (word_len == 0) {
+        return false;
+    }
+
+    size_t str_len = strnlen(str, SIZE_MAX);
+    if (str_len < word_len) {
+        return false;
+    }
+
+    if (strncmp(str, word, word_len) == 0) {
+        if (str_len == word_len) {
+            return true;
+        }
+        
+        char next_char = str[word_len];
+        if (next_char == ' ' || next_char == '\t' || next_char == '\n' || next_char == '\r') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <word>\n", argv[0]);
+        return 1;
+    }
+
+    bool result = match_word_at_beginning(argv[1], argv[2]);
+
+    if (result) {
+        printf("Match found.\n");
+    } else {
+        printf("No match found.\n");
+    }
+
+    return 0;
+}

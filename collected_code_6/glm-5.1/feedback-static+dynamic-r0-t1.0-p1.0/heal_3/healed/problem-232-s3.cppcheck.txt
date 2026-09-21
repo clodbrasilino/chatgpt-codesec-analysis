@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-232-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-232-s3.c:31:22: style: Condition 'dataset_size>0' is always true [knownConditionTrueFalse]
+    if (dataset_size > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-232-s3.c:20:32: note: Assuming that condition 'dataset_size==0' is not redundant
+    if (n == 0 || dataset_size == 0) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-232-s3.c:27:16: note: Assuming condition is false
+    if (sorted == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-232-s3.c:31:22: note: Condition 'dataset_size>0' is always true
+    if (dataset_size > 0) {
+                     ^

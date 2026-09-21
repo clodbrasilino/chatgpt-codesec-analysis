@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    if (capacity == 0) {
+        return NULL;
+    }
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity * sizeof(char));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        t->items[t->count] = str[i];
+        t->count++;
+    }
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        Tuple *t = string_to_tuple(inputs[i]);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", inputs[i]);
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+        tuple_destroy(t);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+The failing test cases revealed two problems with the original code:
+
+1. **Output format mismatch** — The tests expected Python-list style output such as `['i', 't', 'e', 'm', '1']`, but the original `tuple_print` produced parenthesized output `('i', 't', 'e', 'm', '1')`, and `main` prefixed every result with extra lines (`Input string: ...`, `Tuple: ...`). The rewrite prints only the bracketed list, exactly matching the expected format.
+
+2. **"Got \<no output\>" symptom** — The most likely culprit is `strnlen`, which is a POSIX/C11-optional function. On strictly conforming C environments (or without `_POSIX_C_SOURCE` defined) the code may fail to compile or link, producing no output at all. Since every input is a proper NUL-terminated string literal, plain `strlen` is sufficient and fully portable, so `strnlen` and the now-unneeded `<limits.h>` / `INT_MAX` were removed.
+
+Minor cleanup: the post-loop `if (t->count == 0)` check in `string_to_tuple` was dead code (the loop guarantees `count == len > 0`), so it was dropped. Memory management (paired `malloc`/`free`, NULL checks, cleanup on partial allocation failure) was already correct and is preserved.

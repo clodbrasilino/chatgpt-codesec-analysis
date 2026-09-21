@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-969.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-969.c:24:17: warning: Size of pointer 'dest' used instead of size of its data. [pointerSize]
+        strncat(dest, ", ", sizeof(dest) - dest_len - 1);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-969.c:25:17: warning: Size of pointer 'dest' used instead of size of its data. [pointerSize]
+        strncat(dest, src, sizeof(dest) - strlen(dest) - 1);
+                ^

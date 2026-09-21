@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t pos;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^[:alnum:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    pos = 0;
+    cursor = input;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, len - (size_t)(cursor - input));
+            if (pos + remaining > len) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            memcpy(result + pos, cursor, remaining);
+            pos += remaining;
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (pos + (size_t)match.rm_so > len) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        memcpy(result + pos, cursor, (size_t)match.rm_so);
+        pos += (size_t)match.rm_so;
+        cursor += match.rm_eo;
+    }
+
+    result[pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "Hello, World! 123 @#$ abc_def";
+    char *cleaned;
+
+    cleaned = remove_non_alnum(test);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+    if (printf("Cleaned:  %s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read):** Replaced both `strlen` calls with `strnlen`, bounded by `MAX_INPUT_LEN` for the initial measurement and by the remaining known buffer length for the cursor. If the input is not null-terminated within the limit, the function fails safely instead of over-reading.
+
+2. **CWE-120 (memcpy overflow):** Added explicit bounds checks (`pos + n > len`) before each `memcpy` to guarantee the destination buffer can hold the copied data. While the original logic was actually safe by construction (output can never exceed input length), these checks make the invariant explicit and defend against future logic changes or unexpected regex offsets.
+
+3. **Defensive validation:** Added a sanity check on `match.rm_so`/`match.rm_eo` to guard against negative or inconsistent offsets from `regexec`, preventing any possibility of a negative-to-`size_t` conversion producing a huge copy length.

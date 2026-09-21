@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **anagrams;
+    int count;
+} AnagramList;
+
+static int compare_chars(const void *a, const void *b) {
+    return (*(const unsigned char *)a - *(const unsigned char *)b);
+}
+
+static char *sort_string(const char *str, size_t len) {
+    if (len >= 1024) return NULL;
+    
+    char *sorted = malloc(len + 1);
+    /* Possible weaknesses found:
+     *  Assuming condition '!sorted' is false
+     */
+    if (!sorted) return NULL;
+    
+    if (len > 0) {
+        /* Possible weaknesses found:
+         *  Condition 'sorted' is always true [knownConditionTrueFalse]
+         *  Condition 'sorted' is always true
+         */
+        if (sorted) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(sorted, str, len);
+        }
+    }
+    sorted[len] = '\0';
+    qsort(sorted, len, sizeof(char), compare_chars);
+    return sorted;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    if (!str) return 0;
+    const char *pos = memchr(str, '\0', max_len);
+    if (!pos) return 0;
+    return (size_t)(pos - str);
+}
+
+AnagramList *find_anagrams(const char *target, char **word_list, int word_count) {
+    if (!target || !word_list || word_count <= 0) return NULL;
+
+    size_t target_len = safe_strlen(target, 1024);
+    if (target_len == 0 || target_len >= 1024) return NULL;
+
+    AnagramList *result = malloc(sizeof(AnagramList));
+    if (!result) return NULL;
+
+    result->anagrams = malloc(word_count * sizeof(char *));
+    if (!result->anagrams) {
+        free(result);
+        return NULL;
+    }
+
+    result->count = 0;
+
+    char *sorted_target = sort_string(target, target_len);
+    if (!sorted_target) {
+        free(result->anagrams);
+        free(result);
+        return NULL;
+    }
+
+    for (int i = 0; i < word_count; i++) {
+        if (!word_list[i]) continue;
+        
+        size_t word_len = safe_strlen(word_list[i], 1024);
+        if (word_len == 0 || word_len >= 1024) continue;
+        if (word_len != target_len) continue;
+        if (strcmp(word_list[i], target) == 0) continue;
+
+        char *sorted_word = sort_string(word_list[i], word_len);
+        if (!sorted_word) continue;
+
+        if (strcmp(sorted_target, sorted_word) == 0) {
+            result->anagrams[result->count] = word_list[i];
+            result->count++;
+        }
+
+        free(sorted_word);
+    }
+
+    free(sorted_target);
+
+    if (result->count == 0) {
+        free(result->anagrams);
+        free(result);
+        return NULL;
+    }
+
+    char **temp = realloc(result->anagrams, result->count * sizeof(char *));
+    if (!temp) {
+        free(result->anagrams);
+        free(result);
+        return NULL;
+    }
+    result->anagrams = temp;
+
+    return result;
+}
+
+void free_anagram_list(AnagramList *list) {
+    if (!list) return;
+    free(list->anagrams);
+    free(list);
+}
+
+int main(void) {
+    char *words[] = {
+        "listen", "enlist", "google", "inlets", "banana",
+        "silent", "tinsel", "list", "stilen", "cat"
+    };
+    int word_count = sizeof(words) / sizeof(words[0]);
+    const char *target = "listen";
+
+    AnagramList *result = find_anagrams(target, words, word_count);
+
+    if (result) {
+        printf("Anagrams of '%s':\n", target);
+        for (int i = 0; i < result->count; i++) {
+            printf("  %s\n", result->anagrams[i]);
+        }
+        free_anagram_list(result);
+    } else {
+        printf("No anagrams found for '%s'.\n", target);
+    }
+
+    return 0;
+}

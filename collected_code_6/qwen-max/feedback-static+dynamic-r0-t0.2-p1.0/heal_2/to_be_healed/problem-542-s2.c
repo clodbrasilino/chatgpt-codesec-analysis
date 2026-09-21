@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    regex_t regex;
+    regmatch_t match[1];
+    char *ptr = str;
+    int reti;
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    /* Possible weaknesses found:
+     *  Although the value stored to 'reti' is used in the enclosing expression, the value is never actually read from 'reti' [deadcode.DeadStores]
+     */
+    while ((reti = regexec(&regex, ptr, 1, match, 0)) == 0) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        memmove(ptr + 1, ptr + match[0].rm_eo, strlen(ptr + match[0].rm_eo) + 1);
+        *ptr = ':';
+        ptr += 2;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_chars(str);
+    printf("%s\n", str);
+    return 0;
+}

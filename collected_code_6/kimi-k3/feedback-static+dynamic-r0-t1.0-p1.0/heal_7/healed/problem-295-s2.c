@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+
+unsigned long long sum_of_divisors(unsigned long long n) {
+    unsigned long long sum = 0;
+    unsigned long long i;
+    
+    if (n == 0) {
+        return 0;
+    }
+    
+    for (i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            unsigned long long complement = n / i;
+            if (i > ULLONG_MAX - sum) {
+                return ULLONG_MAX;
+            }
+            sum += i;
+            if (complement != i) {
+                if (complement > ULLONG_MAX - sum) {
+                    return ULLONG_MAX;
+                }
+                sum += complement;
+            }
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t bytes_read;
+    char *endptr;
+    unsigned long long number;
+    unsigned long long result;
+    size_t len;
+    
+    bytes_read = getline(&input, &input_size, stdin);
+    
+    if (bytes_read == -1) {
+        free(input);
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    len = (size_t)bytes_read;
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    errno = 0;
+    number = strtoull(input, &endptr, 10);
+    
+    if (errno == ERANGE || endptr == input || *endptr != '\0') {
+        free(input);
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    free(input);
+    
+    result = sum_of_divisors(number);
+    
+    if (printf("%llu\n", result) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

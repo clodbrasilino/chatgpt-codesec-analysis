@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-973-s3.c:26:23: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |         errno_t err = memcpy_s(temp, len + 1, str + shift, len - shift);
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-973-s3.c:26:23: note: did you mean 'memcpy'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:78:3: note: 'memcpy' declared here
+   78 |                 memcpy(void *_LIBC_SIZE(__n) __dst, const void *_LIBC_SIZE(__n) __src,
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-973-s3.c:34:23: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |         errno_t err = memcpy_s(temp + len - shift, shift + 1, str, shift);
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-973-s3.c:43:19: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   43 |     errno_t err = memcpy_s(str, len + 1, temp, len);
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-973-s3.c:69:19: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   69 |     errno_t err = memcpy_s(input, input_len + 1, argv[1], input_len + 1);
+      |                   ^
+4 errors generated.

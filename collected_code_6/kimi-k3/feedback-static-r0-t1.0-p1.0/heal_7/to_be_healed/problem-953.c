@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int min_subsets_distinct(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+    
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    
+    size_t copy_size = n * sizeof(int);
+    if (copy_size / sizeof(int) != n) {
+        return -1;
+    }
+    
+    int *sorted = malloc(copy_size);
+    if (sorted == NULL) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    if (memcpy(sorted, arr, copy_size) == NULL) {
+        free(sorted);
+        return -1;
+    }
+    
+    qsort(sorted, n, sizeof(int), compare_ints);
+    
+    int max_freq = 1;
+    int current_freq = 1;
+    
+    for (size_t i = 1; i < n; i++) {
+        if (sorted[i] == sorted[i - 1]) {
+            current_freq++;
+            if (current_freq > max_freq) {
+                max_freq = current_freq;
+            }
+        } else {
+            current_freq = 1;
+        }
+    }
+    
+    free(sorted);
+    return max_freq;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 2, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = min_subsets_distinct(arr, n);
+    if (result >= 0) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Error processing array\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

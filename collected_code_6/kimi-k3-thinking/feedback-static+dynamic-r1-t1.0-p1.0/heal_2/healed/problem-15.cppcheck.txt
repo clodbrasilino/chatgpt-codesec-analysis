@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15.c:65:36: style: Condition 'start>=len' is always true [knownConditionTrueFalse]
+        if (part_len == 0 || start >= len || part_len > len - start)
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15.c:53:15: note: Assuming that condition 'i>=len' is not redundant
+        if (i >= len)
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15.c:58:15: note: start is assigned 'i' here.
+        start = i;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-15.c:65:36: note: Condition 'start>=len' is always true
+        if (part_len == 0 || start >= len || part_len > len - start)
+                                   ^

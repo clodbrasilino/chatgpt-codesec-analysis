@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool has_letter_and_digit(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE] = {0};
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (has_letter_and_digit(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already in good shape regarding the Flawfinder findings — both were low-risk, informational warnings rather than actual vulnerabilities:
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The original `flush_stdin` was safe since it never wrote to a buffer. In the rewrite, the loop structure was kept bounded by `EOF`, so there is no unbounded consumption risk. Additionally, I made the call to `flush_stdin` conditional on the buffer actually being full (`len == sizeof(buffer) - 1`), so we only drain `stdin` when input was genuinely truncated, avoiding an unnecessary blocking read when the user's line simply lacked a trailing newline (e.g., EOF-terminated input).
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** All accesses were already bounds-checked:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1]` guards against edge cases.
+   - `strnlen` with a size cap is used instead of `strlen`.
+   
+   In the rewrite, I additionally zero-initialized the buffer (`= {0}`) as defense-in-depth against any use of uninitialized memory.
+
+3. **Minor hardening added:** The return value of `fflush(stdout)` is now checked, following the principle of validating all I/O return values.
+
+The code correctly casts to `unsigned char` before calling `isalpha`/`isdigit`, avoiding undefined behavior on platforms where `char` is signed — a subtle but important detail that was already handled properly.

@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+char sum_of_chars(const char *str, size_t max_len)
+{
+    unsigned long sum = 0UL;
+    size_t i;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    for (i = 0U; i < max_len && str[i] != '\0'; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    if (sum == 0UL) {
+        return '\0';
+    }
+
+    return (char)(((sum - (unsigned long)'a') % 26UL) + (unsigned long)'a');
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Empty input\n");
+        return 1;
+    }
+
+    result = sum_of_chars(buffer, sizeof(buffer) - 1U);
+
+    if (result == '\0') {
+        fprintf(stderr, "Invalid string\n");
+        return 1;
+    }
+
+    if (printf("Resulting character: %c\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the Flawfinder-reported weakness (CWE-119/CWE-120) correctly, so the rewrite preserves those defenses rather than changing logic:
+
+1. **Bounded input read** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null-termination** — `buffer[sizeof(buffer) - 1U] = '\0';` is defensive redundancy; `fgets` already null-terminates, but this protects against any edge case.
+
+3. **Safe newline stripping** — `strcspn` combined with the `len < sizeof(buffer)` bounds check avoids out-of-bounds writes when trimming the trailing newline.
+
+4. **Bounded iteration in `sum_of_chars`** — the loop condition `i < max_len && str[i] != '\0'` ensures no read past the buffer even if the string were not terminated, and the caller passes `sizeof(buffer) - 1U`.
+
+5. **NULL and empty-input guards** — `str == NULL` check, `buffer[0] == '\0'` check, and the `sum == 0UL` guard prevent undefined behavior on degenerate inputs.
+
+6. **Checked I/O return values** — both `fgets` and `printf` results are validated, with distinct error exits.
+
+One subtle correctness note: casting through `(unsigned char)` before summing avoids sign-extension issues on platforms where plain `char` is signed, which the original already handles properly.

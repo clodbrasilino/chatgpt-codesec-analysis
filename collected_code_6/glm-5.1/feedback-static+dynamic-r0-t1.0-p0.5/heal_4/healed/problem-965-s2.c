@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *camel) {
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(camel);
+    if (len == 0) {
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    size_t upper_count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)camel[i])) {
+            upper_count++;
+        }
+    }
+
+    char *snake = malloc(len + upper_count + 1);
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)camel[i])) {
+            if (i > 0 && camel[i - 1] != '_') {
+                snake[j++] = '_';
+            }
+            snake[j++] = tolower((unsigned char)camel[i]);
+        } else {
+            snake[j++] = camel[i];
+        }
+    }
+    snake[j] = '\0';
+
+    return snake;
+}
+
+int main(void) {
+    const char *inputs[] = {
+        "camelCaseString",
+        "thisIsATest",
+        "PythonProgram",
+        "CProgrammingLanguage",
+        "already_snake",
+        "simple",
+        "",
+        NULL
+    };
+
+    for (size_t i = 0; inputs[i] != NULL; i++) {
+        char *result = camel_to_snake(inputs[i]);
+        if (result != NULL) {
+            printf("%s -> %s\n", inputs[i], result);
+            free(result);
+        } else {
+            printf("Failed to convert string.\n");
+        }
+    }
+
+    const char *null_test = camel_to_snake(NULL);
+    if (null_test == NULL) {
+        printf("Successfully handled NULL input.\n");
+    } else {
+        free((void *)null_test);
+    }
+
+    return 0;
+}

@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t out_size;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    out_size = (len * 2U) + 1U;
+
+    output = malloc(out_size);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if (i > 0U) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "convertThisToSnakeCase",
+        "PascalCaseExample",
+        "already_snake",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for input: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness:
+
+1. **`strlen` → `strnlen`**: The flagged CWE-126 (buffer over-read) risk from `strlen` on a potentially non-terminated string is mitigated by using `strnlen` with an explicit upper bound (`MAX_INPUT_LEN`). If the input reaches that bound without a terminator, the function safely rejects it by returning `NULL` instead of reading out of bounds.
+
+2. **Overflow guard on `out_size`**: Added a check against `SIZE_MAX` before computing `(len * 2U) + 1U`, preventing a potential integer overflow that could lead to an undersized allocation and subsequent heap overflow. (With the length cap in place this is defensive, but it makes the arithmetic provably safe.)
+
+3. **Added `<limits.h>`**: Included for completeness with the bounds-checking constants (`SIZE_MAX` is in `<stdint.h>` on some toolchains; if your compiler complains, add `#include <stdint.h>`).
+
+The rest of the logic was already sound: `unsigned char` casts before `isupper`/`tolower` avoid undefined behavior with negative `char` values, allocation failures are checked, and `main` frees every allocation on all paths.

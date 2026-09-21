@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define URL_PATTERN "^(https?|ftp)://([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z][a-zA-Z]+(:[0-9]{1,5})?(/[a-zA-Z0-9._~:/?#@!$&'()*+,;=%-]*)?$"
+
+static void report_regex_error(int status, const regex_t *regex)
+{
+    size_t needed;
+    char *error_buffer;
+
+    needed = regerror(status, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex error: unknown error\n");
+        return;
+    }
+
+    error_buffer = calloc(needed, sizeof(char));
+    if (error_buffer == NULL) {
+        fprintf(stderr, "Regex error: unable to allocate error buffer\n");
+        return;
+    }
+
+    regerror(status, regex, error_buffer, needed);
+    error_buffer[needed - 1] = '\0';
+    fprintf(stderr, "Regex error: %s\n", error_buffer);
+    free(error_buffer);
+}
+
+int is_valid_url(const char *url)
+{
+    regex_t regex;
+    int result;
+    int compile_status;
+
+    if (url == NULL || url[0] == '\0') {
+        return 0;
+    }
+
+    compile_status = regcomp(&regex, URL_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (compile_status != 0) {
+        report_regex_error(compile_status, &regex);
+        return -1;
+    }
+
+    result = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        return 1;
+    }
+
+    if (result != REG_NOMATCH) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int validate_and_print(const char *url)
+{
+    int status = is_valid_url(url);
+
+    if (status < 0) {
+        fprintf(stderr, "Error validating URL: %s\n", url);
+        return -1;
+    }
+
+    if (status == 1) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+
+int main(int argc, const char *const argv[])
+{
+    char *line = NULL;
+    size_t line_capacity = 0;
+    ssize_t line_length;
+
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            if (validate_and_print(argv[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+        return EXIT_SUCCESS;
+    }
+
+    while ((line_length = getline(&line, &line_capacity, stdin)) != -1) {
+        while (line_length > 0 &&
+               (line[line_length - 1] == '\n' || line[line_length - 1] == '\r')) {
+            line[--line_length] = '\0';
+        }
+        if (validate_and_print(line) < 0) {
+            free(line);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(line);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change addressing the identified weakness (CWE-119/CWE-120):**
+
+The original code used a fixed-size stack buffer (`char buffer[4096]`) with `fgets()`. While `fgets()` itself is bounds-safe, the fixed size meant lines longer than 4095 characters would be silently split into multiple fragments, each validated separately — producing incorrect results and constituting an improper restriction of operations within the bounds of a memory buffer as flagged by Flawfinder.
+
+The rewrite replaces the statically-sized array with POSIX `getline()`, which:
+
+1. **Eliminates the fixed-size buffer entirely** — the buffer is heap-allocated and grown automatically to fit any input line length, so no truncation or line-splitting can occur.
+2. **Removes the manual sentinel write** (`buffer[sizeof(buffer) - 1] = '\0'`), which was redundant with `fgets()` anyway.
+3. **Handles trailing `\r`/`\n` stripping** using the returned length rather than `strcspn`, avoiding a second scan of the string.
+4. **Frees the buffer on all exit paths**, preventing leaks on both success and failure.
+
+The regex handling, error reporting via `regerror()` with a dynamically-sized buffer, and NULL/empty-string guards were already sound and are preserved unchanged.

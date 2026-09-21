@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_pattern(const char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+    
+    size_t len = strnlen(str, max_len);
+    if (len < 2 || len == max_len) {
+        return false;
+    }
+    
+    return (str[0] == 'a' && str[len - 1] == 'b');
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "ab",
+        "acb",
+        "a123b",
+        "axyzb",
+        "bca",
+        "abc",
+        "a",
+        "b",
+        "",
+        NULL
+    };
+    
+    for (size_t i = 0; test_strings[i] != NULL; i++) {
+        size_t len = strlen(test_strings[i]);
+        if (match_pattern(test_strings[i], len + 1)) {
+            printf("Match: %s\n", test_strings[i]);
+        } else {
+            printf("No match: %s\n", test_strings[i]);
+        }
+    }
+    
+    return 0;
+}

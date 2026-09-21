@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool areIsomorphic(const char *s1, const char *s2) {
+    int map_s1[128] = {0};
+    int map_s2[128] = {0};
+
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+    if (len1 != len2) return false;
+
+    for (size_t i = 0; i < len1; i++) {
+        if (map_s1[(unsigned char)s1[i]] != map_s2[(unsigned char)s2[i]]) return false;
+        map_s1[(unsigned char)s1[i]] = i + 1;
+        map_s2[(unsigned char)s2[i]] = i + 1;
+    }
+
+    return true;
+}
+
+int main() {
+    const char str1[] = "egg";
+    const char str2[] = "add";
+    if (areIsomorphic(str1, str2))
+        printf("Yes\n");
+    else
+        printf("No\n");
+
+    const char str3[] = "foo";
+    const char str4[] = "bar";
+    if (areIsomorphic(str3, str4))
+        printf("Yes\n");
+    else
+        printf("No\n");
+
+    return 0;
+}

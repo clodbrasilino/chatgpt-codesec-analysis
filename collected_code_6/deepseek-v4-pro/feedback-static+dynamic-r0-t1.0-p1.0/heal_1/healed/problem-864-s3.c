@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_palindrome(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(str, 1024);
+    if (len == 0 || len >= 1024) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+char **find_palindromes(char **strings, int count, int *result_count) {
+    if (strings == NULL || result_count == NULL || count <= 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    char **results = (char **)malloc((size_t)count * sizeof(char *));
+    if (results == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    int found = 0;
+    for (int i = 0; i < count; i++) {
+        if (strings[i] != NULL && is_palindrome(strings[i])) {
+            size_t str_len = strnlen(strings[i], 1024);
+            if (str_len >= 1024) {
+                continue;
+            }
+            
+            results[found] = (char *)malloc((str_len + 1) * sizeof(char));
+            if (results[found] == NULL) {
+                for (int j = 0; j < found; j++) {
+                    free(results[j]);
+                }
+                free(results);
+                *result_count = 0;
+                return NULL;
+            }
+            
+            snprintf(results[found], str_len + 1, "%s", strings[i]);
+            found++;
+        }
+    }
+
+    if (found == 0) {
+        free(results);
+        *result_count = 0;
+        return NULL;
+    }
+
+    char **final_results = (char **)realloc(results, (size_t)found * sizeof(char *));
+    if (final_results == NULL) {
+        for (int j = 0; j < found; j++) {
+            free(results[j]);
+        }
+        free(results);
+        *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = found;
+    return final_results;
+}
+
+int main(void) {
+    char *strings[] = {
+        "racecar",
+        "hello",
+        "madam",
+        "world",
+        "level",
+        "notapalindrome",
+        "a",
+        ""
+    };
+    int count = sizeof(strings) / sizeof(strings[0]);
+    int palindrome_count = 0;
+
+    char **palindromes = find_palindromes(strings, count, &palindrome_count);
+
+    if (palindromes != NULL) {
+        printf("Found %d palindromes:\n", palindrome_count);
+        for (int i = 0; i < palindrome_count; i++) {
+            printf("%s\n", palindromes[i]);
+            free(palindromes[i]);
+        }
+        free(palindromes);
+    } else {
+        printf("No palindromes found or error occurred.\n");
+    }
+
+    return 0;
+}

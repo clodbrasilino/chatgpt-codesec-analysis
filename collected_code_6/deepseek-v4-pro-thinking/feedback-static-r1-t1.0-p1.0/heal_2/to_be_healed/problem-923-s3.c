@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int shortest_common_supersequence_length(const char *str1, size_t len1, const char *str2, size_t len2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    if (len1 > INT_MAX || len2 > INT_MAX) {
+        return -1;
+    }
+
+    size_t cols = len2 + 1;
+    int *dp = (int *)malloc(cols * sizeof(*dp));
+
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t j = 0; j <= len2; ++j) {
+        dp[j] = 0;
+    }
+
+    for (size_t i = 1; i <= len1; ++i) {
+        int prev = 0;
+        for (size_t j = 1; j <= len2; ++j) {
+            int temp = dp[j];
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[j] = prev + 1;
+            } else if (dp[j - 1] > dp[j]) {
+                dp[j] = dp[j - 1];
+            }
+            prev = temp;
+        }
+    }
+
+    int lcs = dp[len2];
+    free(dp);
+
+    size_t result = len1 + len2 - (size_t)lcs;
+    if (result > INT_MAX) {
+        return -1;
+    }
+
+    return (int)result;
+}
+
+int main(void) {
+    const char *str1 = "AGGTAB";
+    const char *str2 = "GXTXAYB";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len1 = strlen(str1);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len2 = strlen(str2);
+    printf("%d\n", shortest_common_supersequence_length(str1, len1, str2, len2));
+    return 0;
+}

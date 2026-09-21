@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int insert_spaces(char *str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *modified_str = malloc(len * 2 + 1);
+    if (modified_str == NULL) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(modified_str, str, len + 1);
+    int offset = 0;
+
+    if (regcomp(&regex, "([A-Z][^A-Z]*)", REG_EXTENDED) != 0) {
+        free(modified_str);
+        return -1;
+    }
+
+    while (regexec(&regex, modified_str + offset, 2, matches, 0) == 0) {
+        if (matches[0].rm_so > 0 && modified_str[offset + matches[0].rm_so - 1] != ' ') {
+            memmove(modified_str + offset + matches[0].rm_so + 1, modified_str + offset + matches[0].rm_so, len - (offset + matches[0].rm_so) + 1);
+            modified_str[offset + matches[0].rm_so] = ' ';
+            offset += 1;
+        }
+        offset += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy(str, modified_str, len * 2 + 1);
+    free(modified_str);
+    return 0;
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    if (insert_spaces(str) == 0) {
+        printf("%s\n", str);
+    } else {
+        printf("Error occurred.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_whitespaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr != '\0') {
+        if (*read_ptr != ' ' && *read_ptr != '\t' && *read_ptr != '\n' && *read_ptr != '\r') {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+int main(void) {
+    char test_string[] = "  Hello \t World \n This is a test. \r  ";
+    
+    printf("Original: '%s'\n", test_string);
+    remove_whitespaces(test_string);
+    printf("Modified: '%s'\n", test_string);
+
+    return 0;
+}
+```

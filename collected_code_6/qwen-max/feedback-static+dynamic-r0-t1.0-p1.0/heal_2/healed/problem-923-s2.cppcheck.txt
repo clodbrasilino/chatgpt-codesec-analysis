@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:25:25: style: Condition 'str1!=NULL' is always true [knownConditionTrueFalse]
+    size_t len1 = (str1 != NULL) ? strlen(str1) : 0;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:23:24: note: Assignment 'str1="ABCD"', assigned value is "ABCD"
+    const char* str1 = "ABCD";
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:25:25: note: Condition 'str1!=NULL' is always true
+    size_t len1 = (str1 != NULL) ? strlen(str1) : 0;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:26:25: style: Condition 'str2!=NULL' is always true [knownConditionTrueFalse]
+    size_t len2 = (str2 != NULL) ? strlen(str2) : 0;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:24:24: note: Assignment 'str2="ACDF"', assigned value is "ACDF"
+    const char* str2 = "ACDF";
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-923-s2.c:26:25: note: Condition 'str2!=NULL' is always true
+    size_t len2 = (str2 != NULL) ? strlen(str2) : 0;
+                        ^

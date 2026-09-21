@@ -1,0 +1,72 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120), and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — the classic fix for the statically-sized array warning.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy (fgets already null-terminates), which is harmless and satisfies static analyzers.
+
+3. **Bounded length check:** `strnlen(str, max_len)` never scans past the buffer, and rejecting `len == max_len` catches unterminated strings. I added `#define _POSIX_C_SOURCE 200809L` since `strnlen` is POSIX, ensuring the prototype is visible and avoiding implicit-declaration issues under strict `-std=c99`/`-std=c11` compilation.
+
+4. **Safe character conversion:** The cast to `unsigned char` before `toupper()` avoids undefined behavior for negative `char` values (e.g., extended characters on platforms where `char` is signed).
+
+5. **Newline stripping via `strcspn`** is bounds-safe since the string is guaranteed null-terminated at that point.
+
+No functional changes were required — the identified weakness was already properly mitigated; the only substantive addition is the feature-test macro for portability.

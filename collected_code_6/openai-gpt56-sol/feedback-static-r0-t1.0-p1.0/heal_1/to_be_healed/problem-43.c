@@ -1,0 +1,73 @@
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int find_sequences(const char *text)
+{
+    const char *pattern = "(^|[^a-z_])([a-z]+(_[a-z]+)+)([^a-z_]|$)";
+    regex_t regex;
+    regmatch_t matches[5];
+    const char *cursor = text;
+    int status;
+    int count = 0;
+
+    status = regcomp(&regex, pattern, REG_EXTENDED);
+    if (status != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char message[256];
+        regerror(status, &regex, message, sizeof(message));
+        fprintf(stderr, "regcomp failed: %s\n", message);
+        return -1;
+    }
+
+    while ((status = regexec(&regex, cursor, 5, matches, 0)) == 0) {
+        regoff_t start = matches[2].rm_so;
+        regoff_t end = matches[2].rm_eo;
+
+        if (start < 0 || end <= start) {
+            fprintf(stderr, "Invalid regex match\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        printf("%.*s\n", (int)(end - start), cursor + start);
+        ++count;
+        cursor += end;
+    }
+
+    if (status != REG_NOMATCH) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char message[256];
+        regerror(status, &regex, message, sizeof(message));
+        fprintf(stderr, "regexec failed: %s\n", message);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    int result;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <text>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    result = find_sequences(argv[1]);
+    if (result < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

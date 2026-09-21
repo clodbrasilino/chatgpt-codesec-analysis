@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-486-s2.c: In function 'binomial_probability':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-486-s2.c:46:42: error: 'LDBL_EPSILON' undeclared (first use in this function)
+   46 |         if (probability <= 1.0L + 8.0L * LDBL_EPSILON) {
+      |                                          ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-486-s2.c:46:42: note: each undeclared identifier is reported only once for each function it appears in

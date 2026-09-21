@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate(const char *a, const char *b) {
+    size_t len_a = a ? strnlen(a, 1024) : 0;
+    size_t len_b = b ? strnlen(b, 1024) : 0;
+    char *result = (char *)malloc(len_a + len_b + 1);
+    if (result == NULL) return NULL;
+    if (len_a > 0) memcpy(result, a, len_a);
+    if (len_b > 0) memcpy(result + len_a, b, len_b);
+    result[len_a + len_b] = '\0';
+    return result;
+}
+
+void process_tuples(const char **tuples, int n, char ***output, int *output_size) {
+    *output_size = n - 1;
+    *output = (char **)malloc((*output_size) * sizeof(char *));
+    if (*output == NULL) return;
+    for (int i = 0; i < *output_size; ++i) {
+        (*output)[i] = concatenate(tuples[i], tuples[i + 1]);
+        if ((*output)[i] == NULL) {
+            for (int j = 0; j < i; ++j) free((*output)[j]);
+            free(*output);
+            *output = NULL;
+            *output_size = 0;
+            return;
+        }
+    }
+}
+
+int main() {
+    const char *tuples[] = {"hello", "world", "foo", "bar"};
+    int n = 4;
+    char **output;
+    int output_size;
+
+    process_tuples(tuples, n, &output, &output_size);
+
+    for (int i = 0; i < output_size; ++i) {
+        printf("%s\n", output[i]);
+        free(output[i]);
+    }
+    free(output);
+
+    return 0;
+}

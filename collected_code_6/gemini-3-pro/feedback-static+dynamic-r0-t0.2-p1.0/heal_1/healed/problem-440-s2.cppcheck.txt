@@ -1,0 +1,8 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s2.c:22:16: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (word[len] != '\0' && len < max_len) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s2.c:40:20: style: Array index 'sent_len' is used before limits check. [arrayIndexThenCheck]
+    while (sentence[sent_len] != '\0' && sent_len < 65536) {
+                   ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-440-s2.c: __APPLE__;__linux__...

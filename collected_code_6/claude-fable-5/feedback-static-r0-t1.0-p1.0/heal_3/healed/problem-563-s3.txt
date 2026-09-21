@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        if (length >= buffer_size) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely safe — the Flawfinder warning on `memcpy` (CWE-120) is a heuristic flag rather than a genuine vulnerability, since the destination buffer is allocated with `length + 1` bytes and exactly `length` bytes are copied, leaving room for the null terminator.
+
+Key points about the rewritten version:
+
+1. **Explicit bounds guard before `memcpy`**: An explicit check (`length >= buffer_size`) was added before the copy. While logically unreachable given the allocation of `length + 1`, it makes the invariant machine-checkable and silences static analyzers by proving the destination can hold the source data.
+
+2. **Preserved defensive checks**: The `NULL` input check, missing-quote handling, the `SIZE_MAX` overflow guard on `length + 1`, and the `malloc` failure check are all retained.
+
+3. **No memory leaks**: Every failure path after allocation frees `result`, and `main` frees the returned buffer on both success and `printf` failure paths.
+
+4. **Correct null termination**: `result[length] = '\0'` guarantees the returned string is always properly terminated, even for empty quoted strings (`""`).
+
+The program correctly extracts `hello world` from the sample input and returns appropriate exit codes on all paths.

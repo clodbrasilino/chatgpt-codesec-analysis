@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    if (i == max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in `flush_stdin()` (CWE-120, CWE-20):** Flawfinder flags any `getchar()` in a loop as a potential risk, but here the return value is stored in an `int` (not a `char`), which correctly handles `EOF`. Nothing is written to a buffer, so no overflow is possible. This is a false positive — the pattern is the canonical, safe way to drain `stdin`.
+
+2. **Statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120):** The array itself isn't the vulnerability; unbounded writes to it would be. This code mitigates that correctly:
+   - Input is read with `fgets(buffer, sizeof(buffer), stdin)`, which is length-bounded.
+   - The return value of `fgets` is checked for failure/EOF.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination.
+   - `strnlen` (bounded) is used instead of `strlen`.
+   - Trailing newline is stripped safely with a `len > 0` guard, and overlong input lines are drained via `flush_stdin()` to prevent stale data from leaking into subsequent reads.
+
+3. **`is_binary_string()`** is defensively written: it checks for `NULL`, rejects empty strings, bounds iteration by `max_len`, and rejects strings that were not terminated within the bound.
+
+Both Flawfinder hits are informational (risk levels 1–2) and are properly mitigated; no functional changes were required, only the removal of comments as requested.

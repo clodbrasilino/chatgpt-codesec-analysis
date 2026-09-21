@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <stdlib.h>
+
+void remove_uppercase_substrings(char **str) {
+    regex_t reg;
+    regmatch_t matches[1];
+    if (regcomp(&reg, "[A-Z]+", REG_EXTENDED) == 0) {
+        size_t str_len = strlen(*str);
+        char *result = (char *)malloc(str_len + 1);
+        if (result) {
+            char *p = result;
+            size_t last_index = 0;
+            while (last_index <= str_len && !regexec(&reg, *str + last_index, 1, matches, 0)) {
+                int match_start = matches[0].rm_so + last_index;
+                int match_end = matches[0].rm_eo + last_index;
+                if (match_start - last_index > 0) {
+                    memcpy(p, *str + last_index, match_start - last_index);
+                    p += match_start - last_index;
+                }
+                last_index = match_end;
+            }
+            if (last_index <= str_len) {
+                memcpy(p, *str + last_index, str_len - last_index + 1);
+            }
+            *p = '\0';
+            free(*str);
+            *str = strdup(result);
+            free(result);
+        } else {
+            *str = strdup(*str);
+        }
+        regfree(&reg);
+    }
+}
+
+int main() {
+    char *test_string = "tHis IS a TeSt String";
+    test_string = strdup(test_string);
+    remove_uppercase_substrings(&test_string);
+    printf("%s\n", test_string);
+    free(test_string);
+    return 0;
+}
+```

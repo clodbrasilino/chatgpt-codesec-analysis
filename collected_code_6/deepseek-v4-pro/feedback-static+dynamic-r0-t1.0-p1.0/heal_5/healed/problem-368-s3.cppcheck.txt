@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-368-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-368-s3.c:52:28: warning: Invalid test for overflow 'dst+src_size<dst'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always false. [invalidTestForOverflow]
+            dst + src_size < dst) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-368-s3.c:98:25: warning: Invalid test for overflow 'dst+copy_size<dst'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always false. [invalidTestForOverflow]
+    if (dst + copy_size < dst || src + copy_size < src) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-368-s3.c:98:50: warning: Invalid test for overflow 'src+copy_size<src'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always false. [invalidTestForOverflow]
+    if (dst + copy_size < dst || src + copy_size < src) {
+                                                 ^

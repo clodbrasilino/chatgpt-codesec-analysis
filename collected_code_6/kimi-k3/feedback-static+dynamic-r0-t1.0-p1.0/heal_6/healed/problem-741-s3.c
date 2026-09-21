@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool all_chars_same(const char *str, size_t len)
+{
+    if (str == NULL || len == 0)
+    {
+        return false;
+    }
+
+    char first = str[0];
+
+    for (size_t i = 1; i < len; i++)
+    {
+        if (str[i] != first)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    size_t capacity = 256;
+    size_t len = 0;
+    char *buffer = malloc(capacity);
+    
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    
+    int c;
+    while ((c = getchar()) != EOF && c != '\n')
+    {
+        if (len + 1 >= capacity)
+        {
+            size_t new_capacity = capacity * 2;
+            if (new_capacity < capacity)
+            {
+                fprintf(stderr, "Input too large.\n");
+                free(buffer);
+                return 1;
+            }
+            char *new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL)
+            {
+                fprintf(stderr, "Memory allocation failed.\n");
+                free(buffer);
+                return 1;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+        buffer[len++] = (char)c;
+    }
+    
+    buffer[len] = '\0';
+
+    if (all_chars_same(buffer, len))
+    {
+        printf("All characters are the same.\n");
+    }
+    else
+    {
+        printf("Not all characters are the same.\n");
+    }
+
+    free(buffer);
+    return 0;
+}

@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int count;
+    char value;
+} RLEPair;
+
+RLEPair* run_length_encode(const char* input, size_t len, int* out_size) {
+    if (input == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (len == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    RLEPair* result = malloc(len * sizeof(RLEPair));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int size = 0;
+    char current = input[0];
+    int count = 1;
+
+    for (size_t i = 1; i <= len; i++) {
+        if (i < len && input[i] == current) {
+            count++;
+        } else {
+            result[size].count = count;
+            result[size].value = current;
+            size++;
+            if (i < len) {
+                current = input[i];
+                count = 1;
+            }
+        }
+    }
+
+    if ((size_t)size < len) {
+        RLEPair* temp = realloc(result, size * sizeof(RLEPair));
+        if (temp != NULL) {
+            result = temp;
+        }
+    }
+
+    *out_size = size;
+    return result;
+}
+
+int main(void) {
+    const char* str = "AAABBBCCDAA";
+    int size = 0;
+    size_t len = strlen(str);
+    RLEPair* encoded = run_length_encode(str, len, &size);
+
+    if (encoded != NULL) {
+        for (int i = 0; i < size; i++) {
+            printf("%d%c", encoded[i].count, encoded[i].value);
+        }
+        printf("\n");
+        free(encoded);
+    }
+
+    return 0;
+}

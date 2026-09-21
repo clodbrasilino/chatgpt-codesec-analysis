@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:76:38: style: The if condition is the same as the previous if condition [duplicateCondition]
+        if (output_len - current_len < copy_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:70:22: note: First condition
+        if (copy_len > output_len - current_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:76:38: note: Second condition
+        if (output_len - current_len < copy_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:127:34: style: Condition 'output_len-current_len<remaining' is always false [knownConditionTrueFalse]
+    if (output_len - current_len < remaining) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:122:23: note: Assuming that condition 'remaining+1>output_len-current_len' is not redundant
+    if (remaining + 1 > output_len - current_len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:127:34: note: Condition 'output_len-current_len<remaining' is always false
+    if (output_len - current_len < remaining) {
+                                 ^

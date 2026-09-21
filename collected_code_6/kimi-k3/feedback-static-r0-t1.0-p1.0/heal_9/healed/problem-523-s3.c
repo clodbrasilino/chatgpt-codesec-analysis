@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int check_password_strength(const char *str, size_t max_len, size_t min_length) {
+    int has_upper = 0;
+    int has_lower = 0;
+    int has_digit = 0;
+    size_t length = 0;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    while (length < max_len && str[length] != '\0') {
+        length++;
+    }
+
+    if (length < min_length || length >= max_len) {
+        return 0;
+    }
+
+    for (i = 0; i < length; i++) {
+        if (isupper((unsigned char)str[i])) {
+            has_upper = 1;
+        } else if (islower((unsigned char)str[i])) {
+            has_lower = 1;
+        } else if (isdigit((unsigned char)str[i])) {
+            has_digit = 1;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void) {
+    char *password = NULL;
+    size_t buffer_size = 0;
+    ssize_t len;
+    size_t min_len = 8;
+    size_t actual_len;
+
+    printf("Enter password: ");
+    
+    len = getline(&password, &buffer_size, stdin);
+    
+    if (len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(password);
+        return 1;
+    }
+
+    if (len > 0 && password[len - 1] == '\n') {
+        password[len - 1] = '\0';
+        len--;
+    }
+
+    actual_len = (size_t)len;
+
+    if (actual_len == 0) {
+        fprintf(stderr, "Empty password\n");
+        free(password);
+        return 1;
+    }
+
+    if (actual_len > 256) {
+        fprintf(stderr, "Password too long\n");
+        free(password);
+        return 1;
+    }
+
+    if (check_password_strength(password, 257, min_len)) {
+        printf("Password meets requirements\n");
+    } else {
+        printf("Password does not meet requirements\n");
+    }
+
+    free(password);
+    return 0;
+}

@@ -1,0 +1,67 @@
+#include <limits.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool are_isomorphic(const char *first, const char *second)
+{
+    if (first == NULL || second == NULL) {
+        return false;
+    }
+
+    bool mapped[UCHAR_MAX + 1] = { false };
+    bool used[UCHAR_MAX + 1] = { false };
+    unsigned char mapping[UCHAR_MAX + 1] = { 0 };
+
+    const unsigned char *left = (const unsigned char *)first;
+    const unsigned char *right = (const unsigned char *)second;
+
+    for (;;) {
+        const unsigned char left_char = *left;
+        const unsigned char right_char = *right;
+
+        if (left_char == '\0' || right_char == '\0') {
+            return left_char == right_char;
+        }
+
+        if (mapped[left_char]) {
+            if (mapping[left_char] != right_char) {
+                return false;
+            }
+        } else {
+            if (used[right_char]) {
+                return false;
+            }
+
+            mapping[left_char] = right_char;
+            mapped[left_char] = true;
+            used[right_char] = true;
+        }
+
+        ++left;
+        ++right;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    const char *program_name = "program";
+
+    if (argc > 0 && argv != NULL && argv[0] != NULL) {
+        program_name = argv[0];
+    }
+
+    if (argc != 3 || argv == NULL || argv[1] == NULL || argv[2] == NULL) {
+        fprintf(stderr, "Usage: %s <string1> <string2>\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    if (are_isomorphic(argv[1], argv[2])) {
+        puts("The strings are isomorphic.");
+    } else {
+        puts("The strings are not isomorphic.");
+    }
+
+    return EXIT_SUCCESS;
+}

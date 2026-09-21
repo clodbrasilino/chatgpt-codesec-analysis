@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:50:36: style: Condition 'dst_pos+copy_len<=len' is always true [knownConditionTrueFalse]
+            if (dst_pos + copy_len <= len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:45:36: note: Assuming that condition 'dst_pos+copy_len>len' is not redundant
+            if (dst_pos + copy_len > len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:50:36: note: Condition 'dst_pos+copy_len<=len' is always true
+            if (dst_pos + copy_len <= len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:79:33: style: Condition 'dst_pos+remaining<=len' is always true [knownConditionTrueFalse]
+        if (dst_pos + remaining <= len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:74:33: note: Assuming that condition 'dst_pos+remaining>len' is not redundant
+        if (dst_pos + remaining > len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:79:33: note: Condition 'dst_pos+remaining<=len' is always true
+        if (dst_pos + remaining <= len) {
+                                ^

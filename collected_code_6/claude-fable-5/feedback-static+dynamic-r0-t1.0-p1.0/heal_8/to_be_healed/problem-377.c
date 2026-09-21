@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ch) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static void flush_stdin(void)
+{
+    int discard;
+
+    do {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        discard = getchar();
+    } while (discard != '\n' && discard != EOF);
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter the character to remove: ");
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input;
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

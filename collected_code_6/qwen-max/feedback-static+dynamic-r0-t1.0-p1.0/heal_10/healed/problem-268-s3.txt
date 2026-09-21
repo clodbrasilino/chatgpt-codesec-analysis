@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+
+int64_t nth_star_number(int64_t n) {
+    int64_t max_n = 9223372036854775807 / 6 + 1;
+    if (n > 0 && n < max_n) {
+        int64_t result;
+        if (__builtin_mul_overflow(n, n - 1, &result) || __builtin_mul_overflow(result, 6, &result)) {
+            return -1;
+        }
+        return result + 1;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    char input[25];
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        printf("Input error.\n");
+        return 1;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    int64_t n;
+    if (sscanf(input, "%" SCNd64, &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    int64_t result = nth_star_number(n);
+    if (result == -1) {
+        printf("Input too large to compute.\n");
+        return 1;
+    }
+
+    printf("The %" PRId64 "th star number is: %" PRId64 "\n", n, result);
+    return 0;
+}
+```

@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_MATCH_LEN 256
+#define MAX_TEXT_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t maxlen)
+{
+    size_t n = 0;
+
+    while (n < maxlen && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+static int find_upper_lower_sequences(const char *text)
+{
+    size_t i;
+    size_t len;
+    int found;
+    char match[MAX_MATCH_LEN];
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(text, MAX_TEXT_LEN);
+    found = 0;
+    i = 0;
+
+    while (i < len) {
+        if (isupper((unsigned char)text[i]) &&
+            (i + 1U) < len &&
+            islower((unsigned char)text[i + 1U])) {
+            size_t start = i;
+            size_t j = i + 1U;
+
+            while (j < len && islower((unsigned char)text[j])) {
+                j++;
+            }
+
+            {
+                size_t match_len = j - start;
+
+                if (match_len > 0U && match_len < sizeof(match)) {
+                    memcpy(match, &text[start], match_len);
+                    match[match_len] = '\0';
+                    if (printf("Found: %s\n", match) < 0) {
+                        return -1;
+                    }
+                    found++;
+                }
+            }
+            i = j;
+        } else {
+            i++;
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *samples[] = {
+        "Hello World this is a Test of Sequences",
+        "ABC noUpper Xy z Qwerty",
+        "nothing here",
+        "Single"
+    };
+    size_t count;
+    size_t k;
+
+    count = sizeof(samples) / sizeof(samples[0]);
+
+    for (k = 0; k < count; k++) {
+        int result;
+
+        if (printf("Input: %s\n", samples[k]) < 0) {
+            return EXIT_FAILURE;
+        }
+
+        result = find_upper_lower_sequences(samples[k]);
+
+        if (result < 0) {
+            if (fprintf(stderr, "Error processing input\n") < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+
+        if (result == 0) {
+            if (printf("No matches found\n") < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+
+        if (printf("\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses:
+
+**1. Flawfinder `char match[MAX_MATch_LEN]` (CWE-119/CWE-120, statically-sized array):** This is a heuristic warning triggered by the mere presence of a fixed-size buffer. The code already mitigates this properly — every write into `match` is guarded by the check `match_len < sizeof(match)`, which reserves one byte for the null terminator (`match[match_len] = '\0'` writes at most to index `MAX_MATCH_LEN - 1`). No fix is required beyond what is already present.
+
+**2. Flawfinder `memcpy` (CWE-120, unchecked copy):** Also a false positive in context. The copy length `match_len` is validated against `sizeof(match)` immediately before the `memcpy`, and the source range `[start, j)` is guaranteed to lie within the input string because `j` never exceeds `len`, which itself is bounded by `bounded_strlen(text, MAX_TEXT_LEN)`. The destination can always hold the source data plus terminator.
+
+Additional defensive properties already in place that make this code safe:
+
+- `bounded_strlen` prevents reading past `MAX_TEXT_LEN` even if the input lacks a null terminator within that range.
+- All `ctype.h` calls cast to `unsigned char`, avoiding undefined behavior for negative `char` values.
+- `NULL` input is rejected explicitly.
+- Return values of `printf`/`fprintf` are checked, and errors propagate correctly to `EXIT_FAILURE`.
+
+The code is therefore reproduced as-is (minus comments), since both Flawfinder findings are already correctly mitigated and any "fix" would be redundant.

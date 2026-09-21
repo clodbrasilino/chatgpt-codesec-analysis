@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_STR_LEN 4096U
+
+static int is_reverse_pair(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    size_t i;
+
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+
+    len_a = strnlen(a, MAX_STR_LEN);
+    len_b = strnlen(b, MAX_STR_LEN);
+
+    if (len_a >= MAX_STR_LEN || len_b >= MAX_STR_LEN) {
+        return 0;
+    }
+
+    if (len_a != len_b) {
+        return 0;
+    }
+
+    for (i = 0; i < len_a; i++) {
+        if (a[i] != b[len_a - 1U - i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static long count_reverse_pairs(const char *const *list, size_t count)
+{
+    long pairs = 0;
+    size_t i;
+    size_t j;
+
+    if (list == NULL || count < 2U) {
+        return 0;
+    }
+
+    for (i = 0; i < count - 1U; i++) {
+        for (j = i + 1U; j < count; j++) {
+            if (is_reverse_pair(list[i], list[j]) != 0) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "abc",
+        "cba",
+        "hello",
+        "olleh",
+        "world",
+        "abc",
+        "cba"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    long result;
+
+    result = count_reverse_pairs(strings, count);
+
+    if (printf("Number of reverse string pairs: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This addresses the CWE-126 (buffer over-read) weakness flagged by Flawfinder. `strnlen` bounds the scan to `MAX_STR_LEN` bytes, so a string missing its `\0` terminator cannot cause an unbounded over-read.
+
+2. **Added a length-cap check** — If `strnlen` returns `MAX_STR_LEN`, the string may be unterminated (or simply too long), so the function safely rejects it by returning `0` rather than proceeding with potentially invalid data.
+
+3. **Preserved existing defensive measures** — The `NULL` pointer checks, the `count < 2U` guard preventing unsigned underflow in `count - 1U`, and the use of unsigned-safe index arithmetic (`len_a - 1U - i` only executed when `len_a > 0` since the loop body requires `i < len_a`) all remain intact.
+
+The program's observable behavior is unchanged for the given input (output: `Number of reverse string pairs: 5` — pairs (0,1), (0,6), (1,5), (2,3), (5,6)), while the string-length handling is now robust against unterminated buffers.

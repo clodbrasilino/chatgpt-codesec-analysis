@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-779-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-779-s2.c:98:44: style: Condition 'total_size-i<safe_size' is always false [knownConditionTrueFalse]
+            size_t chunk = (total_size - i < safe_size) ? (total_size - i) : safe_size;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-779-s2.c:97:18: note: Assuming that condition 'i<total_size' is not redundant
+        while (i < total_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-779-s2.c:95:48: note: Assignment 'safe_size=(total_size<1024)?total_size:1024', assigned value is less than 1
+        size_t safe_size = (total_size < 1024) ? total_size : 1024;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-779-s2.c:98:44: note: Condition 'total_size-i<safe_size' is always false
+            size_t chunk = (total_size - i < safe_size) ? (total_size - i) : safe_size;
+                                           ^

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+        continue;
+    }
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint(input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already in reasonably good shape — the flagged Flawfinder finding on `getchar()` (CWE-120/CWE-20) is largely a false positive here, since `getchar()` reads a single character into an `int` and cannot overflow a buffer on its own. That said, the rewrite hardens the program in several ways:
+
+1. **Input validation (CWE-20):** The input is now validated with `isprint()` before being echoed back, ensuring only printable characters are processed. This addresses the "improper input validation" concern directly.
+
+2. **Stdin draining:** `flush_input()` consumes any trailing characters left on the line (e.g., if the user types multiple characters plus Enter). This prevents leftover input from causing unexpected behavior in loops or subsequent reads — the exact scenario the CWE-120 note warns about when `getchar()` is used repeatedly.
+
+3. **`fflush` return check:** The return value of `fflush(stdout)` is now checked, following the general principle of not ignoring return values of I/O functions.
+
+4. **Preserved correct practices:** The `EOF` check on `getchar()` (which correctly uses `int`, not `char`, for the return value) and the `(unsigned char)` cast in `get_ascii_value()` — which avoids implementation-defined behavior for negative `char` values — were both correct in the original and retained.

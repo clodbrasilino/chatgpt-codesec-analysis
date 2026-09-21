@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-456.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-456.c:71:22: style: Condition 'buf_size>0' is always true [knownConditionTrueFalse]
+        if (buf_size > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-456.c:57:31: note: Assignment 'buf_size=len+1', assigned value is greater than 0
+        size_t buf_size = len + 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-456.c:60:21: note: Assuming condition is false
+        if (list[i] == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-456.c:71:22: note: Condition 'buf_size>0' is always true
+        if (buf_size > 0) {
+                     ^

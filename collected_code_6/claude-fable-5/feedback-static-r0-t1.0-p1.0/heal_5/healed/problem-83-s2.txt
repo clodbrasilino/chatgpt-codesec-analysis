@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+static int get_added_char(const char *str, size_t max_len, char *result)
+{
+    unsigned long sum;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == 0U || len == max_len) {
+        return -1;
+    }
+
+    sum = 0UL;
+    for (i = 0U; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    *result = (char)((sum % 26UL) + (unsigned long)'a');
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (get_added_char(buffer, sizeof(buffer), &result) != 0) {
+        fprintf(stderr, "Invalid or empty input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Resulting character: %c\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1U] = '\0';` is defensive (redundant with `fgets`, but harmless).
+3. **Bounded length calculation:** `bounded_strlen()` never reads past `max_len`, avoiding out-of-bounds reads on non-terminated data.
+4. **Defensive API contract:** `get_added_char()` validates `NULL` pointers, zero `max_len`, empty strings, and the unterminated case (`len == max_len`).
+5. **No signedness pitfalls:** the cast chain `(unsigned long)(unsigned char)str[i]` avoids sign-extension issues on platforms where `char` is signed.
+6. **Return-value checking:** both `fgets` and `get_added_char` results are checked, with error paths returning `EXIT_FAILURE`.
+
+The Flawfinder hit is a low-risk (risk 2) heuristic triggered merely by the presence of a fixed-size `char` array; all necessary bounds checks are in place, so no functional changes were required — only the comments were removed as requested.

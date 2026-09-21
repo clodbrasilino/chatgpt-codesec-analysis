@@ -1,0 +1,146 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdint.h>
+
+typedef struct {
+    char *text;
+    size_t length;
+} WordEntry;
+
+static int is_word_char(int c)
+{
+    return isalnum((unsigned char)c) || c == '_';
+}
+
+static char *copy_word(const char *start, size_t length)
+{
+    char *word;
+
+    if (start == NULL || length > (size_t)INT_MAX) {
+        return NULL;
+    }
+
+    word = malloc(length + 1);
+    if (word == NULL) {
+        return NULL;
+    }
+
+    snprintf(word, length + 1, "%.*s", (int)length, start);
+
+    return word;
+}
+
+char *find_first_repeated_word(const char *str)
+{
+    WordEntry *seen_words = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    const char *p;
+    char *result = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    p = str;
+
+    while (*p != '\0') {
+        const char *start;
+        size_t length;
+        size_t i;
+        int found = 0;
+
+        while (*p != '\0' && !is_word_char((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+        while (*p != '\0' && is_word_char((unsigned char)*p)) {
+            p++;
+        }
+        length = (size_t)(p - start);
+
+        for (i = 0; i < count; i++) {
+            if (seen_words[i].length == length &&
+                memcmp(seen_words[i].text, start, length) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            result = copy_word(start, length);
+            break;
+        }
+
+        if (count == capacity) {
+            size_t new_capacity = (capacity == 0) ? 8 : capacity * 2;
+            WordEntry *new_array;
+
+            if (new_capacity > SIZE_MAX / sizeof(*new_array)) {
+                break;
+            }
+
+            new_array = realloc(seen_words,
+                                new_capacity * sizeof(*new_array));
+            if (new_array == NULL) {
+                break;
+            }
+            seen_words = new_array;
+            capacity = new_capacity;
+        }
+
+        seen_words[count].text = copy_word(start, length);
+        if (seen_words[count].text == NULL) {
+            break;
+        }
+        seen_words[count].length = length;
+        count++;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        free(seen_words[i].text);
+    }
+    free(seen_words);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the quick brown fox jumps over the lazy dog",
+        "hello world, hello everyone",
+        "no repeated words here",
+        ""
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t t;
+
+    for (t = 0; t < num_tests; t++) {
+        char *word = find_first_repeated_word(tests[t]);
+        printf("Input: \"%s\"\n", tests[t]);
+        if (word != NULL) {
+            printf("First repeated word: \"%s\"\n\n", word);
+            free(word);
+        } else {
+            printf("No repeated word found.\n\n");
+        }
+    }
+
+    return 0;
+}
+```
+
+Key fixes applied:
+
+- **CWE-120 (`memcpy`)**: Replaced the unbounded `memcpy` with a bounded `snprintf(word, length + 1, "%.*s", ...)` call that can never write past the allocated `length + 1` bytes. Also added validation of `start` and a guard against `length` exceeding `INT_MAX` (required for the `%.*s` precision argument).
+- **CWE-126 (`strlen`)**: Eliminated the `strlen` call entirely by storing each word's length alongside its pointer in a `WordEntry` struct. Comparisons now use the stored length plus `memcmp`, so no reliance on NUL-termination at comparison time.
+- **Hardening bonus**: Added an overflow check on `new_capacity * sizeof(*new_array)` before `realloc` to prevent an allocation-size integer overflow.

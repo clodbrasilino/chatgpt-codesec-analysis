@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-871.c: In function 'areRotations':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-871.c:23:26: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   23 |     char *temp = (char *)malloc((len1 * 2 + 1) * sizeof(char));
+      |                          ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-871.c:6:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    5 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-871.c:29:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   29 |     free(temp);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-871.c:29:5: note: include '<stdlib.h>' or provide a declaration of 'free'

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long centered_hexagonal(int n) {
+    if (n < 1) {
+        return -1;
+    }
+    return 3LL * n * (n - 1) + 1;
+}
+
+int main(int argc, const char *argv[]) {
+    int n;
+    long val;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <integer>\n", argv[0]);
+        return 1;
+    }
+
+    errno = 0;
+    val = strtol(argv[1], &endptr, 10);
+
+    if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
+        || (errno != 0 && val == 0)) {
+        fprintf(stderr, "Input out of range\n");
+        return 1;
+    }
+
+    if (endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: not an integer\n");
+        return 1;
+    }
+
+    if (val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Input out of int range\n");
+        return 1;
+    }
+
+    n = (int)val;
+
+    long long result = centered_hexagonal(n);
+
+    if (result < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    printf("%lld\n", result);
+    return 0;
+}

@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define MAX_UNIQUE_WORDS 1000
+#define MAX_TEXT_LEN 1000000
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+void free_words(WordCount *words, int count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(words[i].word);
+    }
+    free(words);
+}
+
+void find_most_common_words(const char *text) {
+    if (text == NULL) {
+        printf("Invalid input text.\n");
+        return;
+    }
+
+    size_t text_len = strnlen(text, MAX_TEXT_LEN);
+    if (text_len == 0 || text_len >= MAX_TEXT_LEN) {
+        printf("Invalid input text.\n");
+        return;
+    }
+
+    WordCount *words = calloc(MAX_UNIQUE_WORDS, sizeof(WordCount));
+    if (words == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    int unique_count = 0;
+    char *buffer = malloc(MAX_WORD_LEN);
+    if (buffer == NULL) {
+        printf("Memory allocation failed.\n");
+        free(words);
+        return;
+    }
+    
+    size_t buf_index = 0;
+
+    for (size_t i = 0; i <= text_len; i++) {
+        char c = text[i];
+        if (isalnum((unsigned char)c)) {
+            if (buf_index < MAX_WORD_LEN - 1) {
+                buffer[buf_index++] = (char)tolower((unsigned char)c);
+            }
+        } else if (buf_index > 0) {
+            buffer[buf_index] = '\0';
+            int found = 0;
+            for (int j = 0; j < unique_count; j++) {
+                if (strcmp(words[j].word, buffer) == 0) {
+                    words[j].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found && unique_count < MAX_UNIQUE_WORDS) {
+                words[unique_count].word = malloc(buf_index + 1);
+                if (words[unique_count].word == NULL) {
+                    printf("Memory allocation failed.\n");
+                    free(buffer);
+                    free_words(words, unique_count);
+                    return;
+                }
+                strcpy(words[unique_count].word, buffer);
+                words[unique_count].count = 1;
+                unique_count++;
+            }
+            buf_index = 0;
+        }
+    }
+
+    free(buffer);
+
+    if (unique_count == 0) {
+        printf("No words found in text.\n");
+        free_words(words, 0);
+        return;
+    }
+
+    int max_count = 0;
+    for (int i = 0; i < unique_count; i++) {
+        if (words[i].count > max_count) {
+            max_count = words[i].count;
+        }
+    }
+
+    printf("Most common word(s) with count %d:\n", max_count);
+    for (int i = 0; i < unique_count; i++) {
+        if (words[i].count == max_count) {
+            printf("%s: %d\n", words[i].word, words[i].count);
+        }
+    }
+
+    free_words(words, unique_count);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog was not amused by the fox.";
+    find_most_common_words(text);
+    return 0;
+}

@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 9
+#define BUFFER_SIZE 64
+
+static int find_demlo(const char *input, size_t input_max, char *output, size_t output_size);
+
+static int find_demlo(const char *input, size_t input_max, char *output, size_t output_size)
+{
+    size_t len;
+    size_t pos;
+    size_t i;
+
+    if (input == NULL || output == NULL || output_size == 0U)
+    {
+        return -1;
+    }
+
+    len = strnlen(input, input_max);
+
+    if (len == 0U || len >= input_max || len > (size_t)MAX_INPUT_LEN)
+    {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++)
+    {
+        if (input[i] != '1')
+        {
+            return -1;
+        }
+    }
+
+    if (output_size < (2U * len))
+    {
+        return -1;
+    }
+
+    pos = 0U;
+
+    for (i = 1U; i <= len; i++)
+    {
+        if (pos >= (output_size - 1U))
+        {
+            return -1;
+        }
+        output[pos] = (char)('0' + (char)i);
+        pos++;
+    }
+
+    i = len - 1U;
+
+    while (i >= 1U)
+    {
+        if (pos >= (output_size - 1U))
+        {
+            return -1;
+        }
+        output[pos] = (char)('0' + (char)i);
+        pos++;
+        i--;
+    }
+
+    output[pos] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[BUFFER_SIZE];
+    char result[BUFFER_SIZE];
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+    memset(result, 0, sizeof(result));
+
+    printf("Enter a repunit number (only 1s, max %d digits): ", MAX_INPUT_LEN);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+
+    if (len > 0U && input[len - 1U] == '\n')
+    {
+        input[len - 1U] = '\0';
+    }
+    else
+    {
+        int c;
+
+        do
+        {
+            c = getchar();
+        } while (c != '\n' && c != EOF);
+    }
+
+    if (find_demlo(input, sizeof(input), result, sizeof(result)) != 0)
+    {
+        fprintf(stderr, "Error: invalid input, expected 1 to %d ones\n", MAX_INPUT_LEN);
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder hits are low-risk, largely informational findings. Here is why each identified weakness is already mitigated:
+
+1. **`char input[BUFFER_SIZE]` / `char result[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** These statically-sized buffers are safe because:
+   - `fgets(input, (int)sizeof(input), stdin)` limits the read to the buffer size, guaranteeing no overflow on input.
+   - Explicit null-termination via `input[sizeof(input) - 1U] = '\0'` provides defense in depth.
+   - `strnlen` is used instead of `strlen`, bounding all length computations to the buffer size.
+   - `find_demlo` receives both buffer sizes as parameters and performs bounds checks (`pos >= output_size - 1U`) before every single write, plus an up-front capacity check (`output_size < 2U * len`).
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** This is a false positive in context — the loop only *discards* excess characters to drain stdin after a truncated line; nothing read is ever stored, so no buffer boundary can be violated.
+
+Additional robustness already present that I preserved: `NULL`/zero-size parameter validation, rejection of non-repunit input, the `len >= input_max` truncation check, and safe `size_t` loop handling (the `while (i >= 1U)` descending loop correctly avoids the classic unsigned underflow bug by never decrementing below zero within the loop body’s condition check). No functional or security changes were required — the rewrite simply strips the annotation comments.

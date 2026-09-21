@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+int rearrange_tuples(Tuple *tuples, size_t tuples_capacity, size_t num_tuples, const int *order, size_t order_size) {
+    if (tuples == NULL || order == NULL) {
+        return -1;
+    }
+    if (num_tuples != order_size) {
+        return -1;
+    }
+    if (num_tuples == 0) {
+        return 0;
+    }
+    if (num_tuples > tuples_capacity) {
+        return -1;
+    }
+    if (num_tuples > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    Tuple *temp = malloc(num_tuples * sizeof(Tuple));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    int *used = calloc(num_tuples, sizeof(int));
+    if (used == NULL) {
+        free(temp);
+        return -1;
+    }
+
+    for (size_t i = 0; i < order_size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < num_tuples; ++j) {
+            if (tuples[j].key == order[i] && used[j] == 0) {
+                temp[i] = tuples[j];
+                used[j] = 1;
+                found = 1;
+                break;
+            }
+        }
+        if (found == 0) {
+            free(temp);
+            free(used);
+            return -1;
+        }
+    }
+
+    size_t copy_size = num_tuples * sizeof(Tuple);
+    size_t dest_capacity_bytes = tuples_capacity * sizeof(Tuple);
+    if (copy_size > dest_capacity_bytes) {
+        free(temp);
+        free(used);
+        return -1;
+    }
+
+    memcpy(tuples, temp, copy_size);
+    free(temp);
+    free(used);
+
+    return 0;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 100},
+        {2, 200},
+        {3, 300}
+    };
+    int order[] = {3, 1, 2};
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    size_t order_size = sizeof(order) / sizeof(order[0]);
+    size_t tuples_capacity = num_tuples;
+
+    if (rearrange_tuples(tuples, tuples_capacity, num_tuples, order, order_size) == 0) {
+        for (size_t i = 0; i < num_tuples; ++i) {
+            printf("(%d, %d)\n", tuples[i].key, tuples[i].value);
+        }
+    } else {
+        printf("Rearrangement failed.\n");
+    }
+
+    return 0;
+}

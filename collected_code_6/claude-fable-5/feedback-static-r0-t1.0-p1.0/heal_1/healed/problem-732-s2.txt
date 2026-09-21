@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 1024
+
+void replace_chars(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void)
+{
+    const char source[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+
+    len = strnlen(source, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Source string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+    buffer = (char *)malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replace_chars(buffer, size);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced both `strlen` calls with `strnlen` bounded by a defined maximum (`MAX_STR_LEN`). Even if a string were somehow unterminated, the read is now capped. The source is also declared as a fixed array initialized from a string literal, which guarantees termination at compile time.
+
+2. **CWE-120 (unchecked `memcpy`)**: The destination buffer is allocated to exactly `len + 1` bytes, the copy is bounded to `len` bytes (a value validated against `MAX_STR_LEN` before allocation), and the null terminator is written explicitly. This makes the destination size provably sufficient for the copied data.
+
+3. **Defensive propagation**: `replace_chars` now takes an explicit buffer size parameter so it never scans beyond the caller-owned allocation, removing its implicit trust in null termination.
+
+The original error handling (malloc failure check, `printf` return checks, freeing and nulling the pointer) was already sound and has been preserved.

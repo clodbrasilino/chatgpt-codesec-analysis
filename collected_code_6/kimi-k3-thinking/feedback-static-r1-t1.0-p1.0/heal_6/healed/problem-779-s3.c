@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+static int lists_equal(const IntList *a, const IntList *b)
+{
+    size_t i;
+
+    if (a->length != b->length) {
+        return 0;
+    }
+    if (a->length == 0) {
+        return 1;
+    }
+    if (a->data == NULL || b->data == NULL) {
+        return 0;
+    }
+    for (i = 0; i < a->length; i++) {
+        if (a->data[i] != b->data[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static size_t count_unique_lists(const IntList *lists, size_t list_count)
+{
+    size_t unique_count = 0;
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || list_count == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        int is_unique = 1;
+        for (j = 0; j < i; j++) {
+            if (lists_equal(&lists[i], &lists[j])) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            unique_count++;
+        }
+    }
+
+    return unique_count;
+}
+
+static int copy_int_list(IntList *dest, const int *src, size_t src_length,
+                         size_t src_capacity, size_t dest_capacity)
+{
+    size_t copy_size;
+    size_t dest_size;
+
+    if (dest == NULL || src == NULL) {
+        return 0;
+    }
+    if (src_length > src_capacity) {
+        return 0;
+    }
+    if (src_length > dest_capacity) {
+        return 0;
+    }
+    if (src_length > 0 && src_length > SIZE_MAX / sizeof(*dest->data)) {
+        return 0;
+    }
+    if (dest_capacity > 0 && dest_capacity > SIZE_MAX / sizeof(*dest->data)) {
+        return 0;
+    }
+
+    copy_size = src_length * sizeof(*dest->data);
+    dest_size = dest_capacity * sizeof(*dest->data);
+
+    if (copy_size > dest_size) {
+        return 0;
+    }
+
+    if (copy_size > 0) {
+        if (dest->data == NULL) {
+            return 0;
+        }
+        if (src_length > dest_capacity || copy_size > dest_size) {
+            return 0;
+        }
+        memmove(dest->data, src, copy_size);
+    }
+    dest->length = src_length;
+
+    return 1;
+}
+
+int main(void)
+{
+    const size_t list_count = 5;
+    const int values[5][3] = {
+        {1, 2, 3},
+        {4, 5, 0},
+        {1, 2, 3},
+        {6, 0, 0},
+        {4, 5, 0}
+    };
+    const size_t values_capacity = sizeof(values[0]) / sizeof(values[0][0]);
+    const size_t lengths[5] = {3, 2, 3, 1, 2};
+    IntList *lists = NULL;
+    size_t i;
+    size_t result;
+
+    if (list_count > 0 && list_count > SIZE_MAX / sizeof(*lists)) {
+        fprintf(stderr, "Size overflow for lists array\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(list_count * sizeof(*lists));
+    if (lists == NULL) {
+        fprintf(stderr, "Failed to allocate memory for lists\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        lists[i].data = NULL;
+        lists[i].length = 0;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        size_t alloc_size;
+
+        if (lengths[i] > values_capacity) {
+            fprintf(stderr, "Length for list %zu exceeds source data capacity\n", i);
+            while (i > 0) {
+                i--;
+                free(lists[i].data);
+                lists[i].data = NULL;
+            }
+            free(lists);
+            lists = NULL;
+            return EXIT_FAILURE;
+        }
+
+        if (lengths[i] > 0 && lengths[i] > SIZE_MAX / sizeof(*lists[i].data)) {
+            fprintf(stderr, "Size overflow for list %zu\n", i);
+            while (i > 0) {
+                i--;
+                free(lists[i].data);
+                lists[i].data = NULL;
+            }
+            free(lists);
+            lists = NULL;
+            return EXIT_FAILURE;
+        }
+
+        alloc_size = lengths[i] * sizeof(*lists[i].data);
+
+        lists[i].data = malloc(alloc_size == 0 ? 1 : alloc_size);
+        if (lists[i].data == NULL) {
+            fprintf(stderr, "Failed to allocate memory for list %zu\n", i);
+            while (i > 0) {
+                i--;
+                free(lists[i].data);
+                lists[i].data = NULL;
+            }
+            free(lists);
+            lists = NULL;
+            return EXIT_FAILURE;
+        }
+
+        if (!copy_int_list(&lists[i], values[i], lengths[i], values_capacity,
+                           lengths[i])) {
+            fprintf(stderr, "Destination buffer for list %zu cannot hold the source data\n", i);
+            free(lists[i].data);
+            lists[i].data = NULL;
+            while (i > 0) {
+                i--;
+                free(lists[i].data);
+                lists[i].data = NULL;
+            }
+            free(lists);
+            lists = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = count_unique_lists(lists, list_count);
+    printf("Number of unique lists: %zu\n", result);
+
+    for (i = 0; i < list_count; i++) {
+        free(lists[i].data);
+        lists[i].data = NULL;
+    }
+    free(lists);
+    lists = NULL;
+
+    return EXIT_SUCCESS;
+}

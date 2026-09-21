@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-537.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-537.c:51:22: style: Condition 'word_len>0' is always true [knownConditionTrueFalse]
+        if (word_len > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-537.c:47:18: note: Assuming that condition 'word_len==0' is not redundant
+    if (word_len == 0) return NULL;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-537.c:48:18: note: Assuming condition is false
+    if (word_len > MAX_WORD_LEN) return NULL;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-537.c:51:22: note: Condition 'word_len>0' is always true
+        if (word_len > 0) {
+                     ^

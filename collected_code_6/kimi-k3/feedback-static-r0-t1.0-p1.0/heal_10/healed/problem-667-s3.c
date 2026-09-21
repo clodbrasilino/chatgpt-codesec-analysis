@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+int count_vowels(const char *str) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        char c = tolower((unsigned char)*str);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    char buffer[256];
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1 && !feof(stdin)) {
+        int ch;
+        bool overflow = false;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+            overflow = true;
+        }
+        if (overflow || ch == '\n') {
+            fprintf(stderr, "Input too long\n");
+            return 1;
+        }
+    }
+    int result = count_vowels(buffer);
+    printf("Number of vowels: %d\n", result);
+    return 0;
+}

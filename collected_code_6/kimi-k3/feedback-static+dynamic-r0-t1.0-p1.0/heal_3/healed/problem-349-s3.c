@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_binary_string(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read;
+
+    read = getline(&buffer, &buffer_size, stdin);
+    if (read == -1) {
+        free(buffer);
+        return 0;
+    }
+
+    if (read > 0 && buffer[read - 1] == '\n') {
+        buffer[read - 1] = '\0';
+        read--;
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    free(buffer);
+    return 0;
+}

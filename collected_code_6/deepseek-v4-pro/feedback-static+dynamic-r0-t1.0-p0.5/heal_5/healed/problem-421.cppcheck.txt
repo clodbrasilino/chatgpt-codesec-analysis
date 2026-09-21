@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421.c:33:11: warning: Identical condition 'n>dest_capacity', second condition is always false [identicalConditionAfterEarlyExit]
+    if (n > dest_capacity) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421.c:24:11: note: If condition 'n>dest_capacity' is true, the function will return/exit
+    if (n > dest_capacity) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421.c:33:11: note: Testing identical condition 'n>dest_capacity'
+    if (n > dest_capacity) {
+          ^

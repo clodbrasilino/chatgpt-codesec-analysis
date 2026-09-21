@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (islower((unsigned char)str[i])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_lowercase(buffer);
+
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder tool flagged `char buffer[256]` as a potential CWE-119/CWE-120 (buffer overflow) risk. However, examining the code shows the weakness is already properly mitigated:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. Using `sizeof(buffer)` rather than a hardcoded literal ensures consistency if the buffer size changes.
+
+2. **Return value checking**: The `fgets` return value is checked against `NULL`, handling EOF and read errors gracefully.
+
+3. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive (technically redundant, since `fgets` always null-terminates) safeguard.
+
+4. **Safe newline stripping**: `buffer[strcspn(buffer, "\n")] = '\0'` safely removes the trailing newline without risk of out-of-bounds access, unlike the common unsafe idiom `buffer[strlen(buffer) - 1] = '\0'` which fails on empty input.
+
+5. **Correct `ctype.h` usage**: The cast `(unsigned char)str[i]` in `islower()` avoids undefined behavior when `char` is signed and holds negative values.
+
+6. **NULL guard**: `count_lowercase` defensively handles a `NULL` pointer.
+
+The Flawfinder hit is a low-risk (level 2) informational warning inherent to any statically-sized array; no code changes were required beyond confirming the existing bounds checking is correct.

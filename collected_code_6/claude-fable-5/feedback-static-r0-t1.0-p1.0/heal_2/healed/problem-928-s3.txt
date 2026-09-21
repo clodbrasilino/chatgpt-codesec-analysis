@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define DATE_INPUT_LEN 10U
+#define OUTPUT_MIN_SIZE 11U
+#define INPUT_BUF_SIZE 32U
+#define OUTPUT_BUF_SIZE 16U
+
+static int days_in_month(unsigned int year, unsigned int month)
+{
+    static const unsigned int days[12] = {
+        31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+    };
+    unsigned int result;
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    result = days[month - 1U];
+
+    if (month == 2U) {
+        if ((year % 4U == 0U && year % 100U != 0U) || (year % 400U == 0U)) {
+            result = 29U;
+        }
+    }
+
+    return (int)result;
+}
+
+int convert_date(const char *input, size_t input_size, char *output, size_t output_size)
+{
+    unsigned int year;
+    unsigned int month;
+    unsigned int day;
+    size_t i;
+    size_t len;
+    int written;
+    int max_day;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    if (output_size < OUTPUT_MIN_SIZE) {
+        return -1;
+    }
+
+    if (memchr(input, '\0', input_size) == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, input_size);
+    if (len != DATE_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0U; i < DATE_INPUT_LEN; i++) {
+        if (i == 4U || i == 7U) {
+            if (input[i] != '-') {
+                return -1;
+            }
+        } else {
+            if (!isdigit((unsigned char)input[i])) {
+                return -1;
+            }
+        }
+    }
+
+    if (sscanf(input, "%4u-%2u-%2u", &year, &month, &day) != 3) {
+        return -1;
+    }
+
+    if (year < 1U || year > 9999U) {
+        return -1;
+    }
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    max_day = days_in_month(year, month);
+    if (max_day < 0) {
+        return -1;
+    }
+
+    if (day < 1U || day > (unsigned int)max_day) {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%02u-%02u-%04u", day, month, year);
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE];
+    char output[OUTPUT_BUF_SIZE];
+
+    printf("Enter date (yyyy-mm-dd): ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (convert_date(input, sizeof(input), output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**Flawfinder CWE-119/CWE-120 on `input[INPUT_BUF_SIZE]`:** This is a false positive. The buffer is only written to via `fgets(input, (int)sizeof(input), stdin)`, which strictly limits the number of bytes read to the buffer size including the null terminator. The subsequent `strcspn` write is bounded because `fgets` guarantees null termination, so `strcspn` returns an index within the buffer. No overflow is possible.
+
+**Flawfinder CWE-119/CWE-120 on `output[OUTPUT_BUF_SIZE]`:** Also a false positive. The buffer is only written by `snprintf(output, output_size, ...)` inside `convert_date`, which receives the true size via `sizeof(output)`. The function additionally validates `output_size >= OUTPUT_MIN_SIZE` and checks the `snprintf` return value for truncation.
+
+Further defensive measures already present that make this code robust:
+
+- `memchr` check ensures the input is null-terminated within its declared size before any string function touches it.
+- `strnlen` (bounded) is used instead of `strlen`.
+- Strict character-by-character format validation before `sscanf`, with `isdigit` correctly receiving an `unsigned char` cast to avoid UB on negative `char` values.
+- `sscanf` field widths (`%4u`, `%2u`) bound the conversions, and its return value is checked.
+- Full semantic validation: year/month ranges, leap-year-aware day-of-month check.
+- `snprintf` return value checked for both error (`< 0`) and truncation (`>= output_size`).
+- All pointer parameters are NULL-checked.
+
+Since the flagged issues are static-analysis heuristics rather than real defects, the correct "fix" is confirming the existing bounds checking; no functional changes are required.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-450-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-450-s2.c:86:40: error: Using pointer to local variable 'default_strings' that is out of scope. [invalidLifetime]
+    char** extracted = extract_strings(input_strings, list_size, target_length, &extracted_count);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-450-s2.c:80:54: note: Array decayed to pointer here.
+        list_size = sizeof(default_strings) / sizeof(default_strings[0]);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-450-s2.c:72:15: note: Variable created here.
+        char* default_strings[] = {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-450-s2.c:86:40: note: Using pointer to local variable 'default_strings' that is out of scope.
+    char** extracted = extract_strings(input_strings, list_size, target_length, &extracted_count);
+                                       ^

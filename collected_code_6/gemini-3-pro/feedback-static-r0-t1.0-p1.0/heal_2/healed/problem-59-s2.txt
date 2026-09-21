@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long get_nth_octagonal_number(int n) {
+    unsigned long long un;
+    
+    if (n <= 0) {
+        return 0;
+    }
+    
+    un = (unsigned long long)n;
+    return un * ((3ULL * un) - 2ULL);
+}
+
+int main(int argc, const char * const argv[]) {
+    int n;
+    long val;
+    char *endptr;
+    unsigned long long result;
+
+    if (argc < 2) {
+        return 1;
+    }
+
+    errno = 0;
+    val = strtol(argv[1], &endptr, 10);
+
+    if (errno == ERANGE || val <= 0 || val > INT_MAX || endptr == argv[1] || *endptr != '\0') {
+        return 1;
+    }
+
+    n = (int)val;
+
+    result = get_nth_octagonal_number(n);
+    printf("%llu\n", result);
+
+    return 0;
+}
+```

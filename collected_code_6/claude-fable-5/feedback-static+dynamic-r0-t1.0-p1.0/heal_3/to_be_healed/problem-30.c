@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    long long result;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

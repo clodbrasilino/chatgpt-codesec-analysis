@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_PATTERN_LEN 1024U
+#define MAX_TEXT_LEN 65536U
+#define ALPHABET_SIZE 26U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    size_t plen = strnlen(pattern, MAX_PATTERN_LEN + 1U);
+    if (plen == 0U || plen > MAX_PATTERN_LEN) {
+        return false;
+    }
+
+    size_t tlen = strnlen(text, MAX_TEXT_LEN + 1U);
+    if (tlen > MAX_TEXT_LEN) {
+        return false;
+    }
+
+    size_t copy_size = tlen + 1U;
+    char *copy = malloc(copy_size);
+    if (copy == NULL) {
+        return false;
+    }
+
+    if (tlen > 0U && tlen < copy_size) {
+        memcpy(copy, text, tlen);
+    }
+    copy[tlen] = '\0';
+
+    const char *map[ALPHABET_SIZE] = { NULL };
+    bool result = true;
+    size_t i = 0U;
+    char *saveptr = NULL;
+
+    char *word = strtok_r(copy, " ", &saveptr);
+    while ((word != NULL) && (i < plen)) {
+        char c = pattern[i];
+        if ((c < 'a') || (c > 'z')) {
+            result = false;
+            break;
+        }
+        size_t idx = (size_t)(c - 'a');
+        if (idx >= ALPHABET_SIZE) {
+            result = false;
+            break;
+        }
+        if (map[idx] == NULL) {
+            for (size_t j = 0U; j < ALPHABET_SIZE; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], word) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[idx] = word;
+        } else {
+            if (strcmp(map[idx], word) != 0) {
+                result = false;
+                break;
+            }
+        }
+        i++;
+        word = strtok_r(NULL, " ", &saveptr);
+    }
+
+    if (result && ((word != NULL) || (i != plen))) {
+        result = false;
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+
+    for (size_t i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        int printed = printf("Pattern \"%s\" with \"%s\": %s\n",
+                             patterns[i], texts[i], ok ? "true" : "false");
+        if (printed < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`memcpy` (CWE-120):** The original code was already safe since `copy` is allocated with `tlen + 1` bytes and exactly `tlen` bytes are copied. The rewrite makes this explicit by tracking `copy_size` and guarding the copy with `tlen > 0U && tlen < copy_size`, so the destination is provably large enough at the point of the call.
+
+2. **Statically-sized array `map[26]` (CWE-119/CWE-120):** The array size is now expressed via the `ALPHABET_SIZE` constant used consistently for both declaration and iteration bounds. An explicit defensive check `idx >= ALPHABET_SIZE` was added before indexing, even though the `'a'..'z'` range check already guarantees `idx` is in `[0, 25]` — this satisfies the bounds-checking recommendation and protects against future modifications to the range check.
+
+The remaining logic (bijective word↔character mapping check, input length limits via `strnlen`, NULL checks, and proper `free` on all paths) was already sound and is preserved unchanged.

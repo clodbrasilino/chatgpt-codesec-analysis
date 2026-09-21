@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int tetrahedral_number(uint32_t n, uint64_t *result)
+{
+    uint64_t term1;
+    uint64_t term2;
+    uint64_t term3;
+    uint64_t temp;
+    
+    if (result == NULL)
+    {
+        return -1;
+    }
+    
+    if (n > 1811332U)
+    {
+        return -1;
+    }
+    
+    term1 = (uint64_t)n;
+    term2 = (uint64_t)(n + 1U);
+    term3 = (uint64_t)(n + 2U);
+    
+    if (term1 % 6U == 0U)
+    {
+        term1 = term1 / 6U;
+    }
+    else if (term2 % 6U == 0U)
+    {
+        term2 = term2 / 6U;
+    }
+    else
+    {
+        term3 = term3 / 6U;
+    }
+    
+    temp = term1 * term2;
+    *result = temp * term3;
+    
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    char *endptr;
+    unsigned long value;
+    uint32_t n;
+    uint64_t result;
+    int status;
+    size_t len;
+    
+    printf("Enter a non-negative integer n: ");
+    
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    len = strnlen(buffer, BUFFER_SIZE);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+    else if (len == BUFFER_SIZE - 1 && !feof(stdin))
+    {
+        fprintf(stderr, "Error: Input too long\n");
+        return 1;
+    }
+    
+    errno = 0;
+    value = strtoul(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || value > UINT32_MAX)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r')
+    {
+        endptr++;
+    }
+    
+    if (*endptr != '\0')
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    n = (uint32_t)value;
+    
+    status = tetrahedral_number(n, &result);
+    
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: Input too large or invalid\n");
+        return 1;
+    }
+    
+    printf("Tetrahedral number T(%" PRIu32 ") = %" PRIu64 "\n", n, result);
+    
+    return 0;
+}

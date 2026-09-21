@@ -1,0 +1,145 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUF_SIZE 11
+#define YEAR_LEN 4
+#define MONTH_LEN 2
+#define DAY_LEN 2
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    char year[YEAR_LEN + 1] = {0};
+    char month[MONTH_LEN + 1] = {0};
+    char day[DAY_LEN + 1] = {0};
+    size_t year_len;
+    size_t month_len;
+    size_t day_len;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUF_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUF_SIZE);
+    if (input_len != DATE_BUF_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_so < 0 || matches[2].rm_so < 0 || matches[3].rm_so < 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_eo < matches[1].rm_so ||
+        matches[2].rm_eo < matches[2].rm_so ||
+        matches[3].rm_eo < matches[3].rm_so) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if ((size_t)matches[1].rm_eo > input_len ||
+        (size_t)matches[2].rm_eo > input_len ||
+        (size_t)matches[3].rm_eo > input_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len != YEAR_LEN || month_len != MONTH_LEN || day_len != DAY_LEN) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (year_len >= sizeof(year) || month_len >= sizeof(month) ||
+        day_len >= sizeof(day)) {
+        regfree(&regex);
+        return -1;
+    }
+
+    memcpy(year, input + matches[1].rm_so, year_len);
+    year[year_len] = '\0';
+
+    memcpy(month, input + matches[2].rm_so, month_len);
+    month[month_len] = '\0';
+
+    memcpy(day, input + matches[3].rm_so, day_len);
+    day[day_len] = '\0';
+
+    ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUF_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Statically-sized arrays (`year`, `month`, `day`, `output`) — CWE-119/CWE-120:**
+These are flagged generically by Flawfinder for any fixed-size buffer. The code mitigates them properly:
+- `year`, `month`, and `day` are sized exactly for their content plus a NUL terminator (`LEN + 1`) and zero-initialized.
+- Before every copy, the lengths are validated twice: once against the expected constants (`year_len != YEAR_LEN`, etc.) and once against the destination sizes (`year_len >= sizeof(year)`), making overflow impossible.
+- `output` in `main` is sized via `DATE_BUF_SIZE` and its size is passed explicitly to `convert_date`, which rejects any buffer smaller than required.
+
+**2. `memcpy` calls — CWE-120:**
+Each `memcpy` is preceded by:
+- Regex match guarantees (pattern enforces exact digit counts).
+- Non-negative offset checks (`rm_so < 0`), ordering checks (`rm_eo < rm_so`), and bounds checks against `input_len`.
+- Explicit length-vs-destination-size checks.
+Explicit NUL termination follows every copy. These copies cannot overflow.
+
+**3. Input handling:**
+`strnlen` with a bounded maximum prevents reading past unterminated input, and the exact-length requirement (`DATE_BUF_SIZE - 1`) rejects malformed strings before regex processing.
+
+**4. Output formatting:**
+`snprintf` is used with the caller-supplied size, and both negative return and truncation (`ret >= output_size`) are treated as errors.
+
+**5. Resource management:**
+`regfree` is called on every exit path after successful `regcomp`, preventing memory leaks.
+
+The Flawfinder hits are false positives here — the code already implements the recommended mitigations (bounds checking, length-limited functions, guaranteed NUL termination), so the rewrite preserves the logic with the audit comments removed.

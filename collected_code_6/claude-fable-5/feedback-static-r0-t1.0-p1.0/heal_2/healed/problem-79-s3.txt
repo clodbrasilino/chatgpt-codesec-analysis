@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+static char buffer[BUFFER_SIZE];
+
+int main(void)
+{
+    strncpy(buffer, "Hello, world!", sizeof(buffer) - 1U);
+    buffer[sizeof(buffer) - 1U] = '\0';
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+The key fixes applied to the original fragment:
+
+1. **Declared `buffer` explicitly** — The original code used `buffer` without any declaration, causing the "undeclared identifier" error and the compiler falling back to an implicit `int` type (invalid since C99).
+
+2. **Gave it an explicit type (`char[]`)** — This resolves both the `-Wimplicit-int` warnings. A `char` array is the correct type for a null-terminated string, and `sizeof(buffer)` now yields the true array size (64) rather than `sizeof(int)`.
+
+3. **Moved executable code into a function** — The statement `buffer[...] = '\0';` was at file scope, where only declarations are allowed. It now lives inside `main`.
+
+4. **Added proper includes** — `<stdio.h>` for `printf` and `<string.h>` for `strncpy`.
+
+5. **Kept the defensive null-termination idiom** — `strncpy` does not guarantee null-termination when the source fills the destination, so writing `'\0'` at `sizeof(buffer) - 1U` guards against buffer over-read (CWE-170 / CWE-126).

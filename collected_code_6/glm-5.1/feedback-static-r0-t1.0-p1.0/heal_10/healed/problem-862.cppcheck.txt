@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862.c:32:18: style: Condition 'copy_len>0' is always false [knownConditionTrueFalse]
+    if (copy_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862.c:31:46: note: Assignment 'copy_len=len<256-1?len:(unsigned long)(256-1)', assigned value is less than 1
+    size_t copy_len = len < MAX_WORD_LEN - 1 ? len : (size_t)(MAX_WORD_LEN - 1);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862.c:32:18: note: Condition 'copy_len>0' is always false
+    if (copy_len > 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862.c:111:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_SEQUENCES 100
+#define MAX_SEQUENCE_LENGTH 64
+
+int find_sequences(const char *str, char sequences[][MAX_SEQUENCE_LENGTH], int max_sequences) {
+    if (str == NULL || sequences == NULL || max_sequences <= 0) {
+        return -1;
+    }
+    
+    int count = 0;
+    size_t len = strnlen(str, MAX_SEQUENCE_LENGTH * (size_t)max_sequences);
+    size_t i = 0;
+    
+    while (i < len && count < max_sequences) {
+        if (isupper((unsigned char)str[i])) {
+            size_t start = i;
+            i++;
+            
+            if (i < len && islower((unsigned char)str[i])) {
+                while (i < len && islower((unsigned char)str[i])) {
+                    i++;
+                }
+                
+                size_t seq_len = i - start;
+                if (seq_len >= MAX_SEQUENCE_LENGTH) {
+                    seq_len = MAX_SEQUENCE_LENGTH - 1;
+                }
+                
+                if (seq_len > 0 && seq_len < MAX_SEQUENCE_LENGTH) {
+                    if (seq_len > (size_t)(MAX_SEQUENCE_LENGTH - 1)) {
+                        seq_len = MAX_SEQUENCE_LENGTH - 1;
+                    }
+                    if (seq_len <= (size_t)(MAX_SEQUENCE_LENGTH - 1)) {
+                        memcpy(sequences[count], &str[start], seq_len);
+                        sequences[count][seq_len] = '\0';
+                        count++;
+                    }
+                }
+            }
+        } else {
+            i++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *text = "Hello World This is a Test String with Many Uppercase Words Like Python and JavaScript";
+    char sequences[MAX_SEQUENCES][MAX_SEQUENCE_LENGTH];
+    
+    memset(sequences, 0, sizeof(sequences));
+    
+    int found = find_sequences(text, sequences, MAX_SEQUENCES);
+    
+    if (found < 0) {
+        printf("Error: invalid parameters\n");
+        return 1;
+    }
+    
+    if (found > MAX_SEQUENCES) {
+        found = MAX_SEQUENCES;
+    }
+    
+    printf("Found %d sequences:\n", found);
+    for (int i = 0; i < found && i < MAX_SEQUENCES; i++) {
+        printf("%s\n", sequences[i]);
+    }
+    
+    return 0;
+}
+```

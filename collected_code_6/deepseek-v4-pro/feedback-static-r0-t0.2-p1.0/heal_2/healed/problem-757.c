@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int is_reverse(const char *s1, const char *s2) {
+    if (s1 == NULL || s2 == NULL) return 0;
+    
+    size_t len1 = strnlen(s1, 1024);
+    size_t len2 = strnlen(s2, 1024);
+    
+    if (len1 != len2 || len1 == 1024 || len2 == 1024) return 0;
+    
+    for (size_t i = 0; i < len1; i++) {
+        if (s1[i] != s2[len1 - 1 - i]) return 0;
+    }
+    return 1;
+}
+
+int count_reverse_pairs(char **strs, int n) {
+    if (strs == NULL || n <= 0) return 0;
+    
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (strs[i] == NULL) continue;
+        for (int j = i + 1; j < n; j++) {
+            if (strs[j] == NULL) continue;
+            if (is_reverse(strs[i], strs[j])) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    char *strs[] = {"abc", "cba", "def", "fed", "xyz", "abc"};
+    int n = sizeof(strs) / sizeof(strs[0]);
+    int result = count_reverse_pairs(strs, n);
+    printf("%d\n", result);
+    return 0;
+}

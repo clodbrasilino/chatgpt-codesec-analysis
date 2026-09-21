@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-186.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-186.c:135:20: style: Variable 'regex_compiled' is reassigned a value before the old one has been used. [redundantAssignment]
+    regex_compiled = 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-186.c:89:20: note: regex_compiled is assigned
+    regex_compiled = 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-186.c:135:20: note: regex_compiled is overwritten
+    regex_compiled = 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-186.c:135:20: style: Variable 'regex_compiled' is assigned a value that is never used. [unreadVariable]
+    regex_compiled = 0;
+                   ^

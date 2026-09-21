@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+const char* get_chinese_zodiac(int year) {
+    static const char* const zodiac_signs[] = {
+        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
+    };
+    static const size_t zodiac_count = sizeof(zodiac_signs) / sizeof(zodiac_signs[0]);
+    
+    if (year < 1900) {
+        return "Invalid year (must be >= 1900)";
+    }
+    
+    return zodiac_signs[(size_t)(year - 1900) % zodiac_count];
+}
+
+int main(void) {
+    int year;
+    long year_long;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[100];
+    char* endptr;
+    
+    printf("Enter a year (>= 1900): ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    
+    errno = 0;
+    year_long = strtol(buffer, &endptr, 10);
+    
+    if (errno == ERANGE || year_long > INT_MAX || year_long < INT_MIN) {
+        fprintf(stderr, "Invalid input: number out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == buffer || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: not a valid number\n");
+        return EXIT_FAILURE;
+    }
+    
+    year = (int)year_long;
+    
+    printf("Chinese Zodiac: %s\n", get_chinese_zodiac(year));
+    
+    return EXIT_SUCCESS;
+}

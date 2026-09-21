@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+char **split_string(const char *input, const char *pattern, size_t *count);
+void free_tokens(char **tokens, size_t count);
+
+char **split_string(const char *input, const char *pattern, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    char **temp = NULL;
+    size_t n = 0;
+    const char *cursor;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    cursor = input;
+    remaining = strlen(input);
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[256];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    while (remaining > 0) {
+        size_t len;
+
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == 0 && match.rm_so != match.rm_eo) {
+            if (match.rm_so < 0 || (size_t)match.rm_so > remaining) {
+                break;
+            }
+            len = (size_t)match.rm_so;
+        } else if (ret == 0 && match.rm_so == match.rm_eo) {
+            break;
+        } else {
+            len = remaining;
+        }
+
+        if (len > 0) {
+            char *token;
+
+            if (len >= SIZE_MAX) {
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            token = malloc(len + 1);
+            if (token == NULL) {
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+            memcpy(token, cursor, len);
+            token[len] = '\0';
+
+            if (n >= SIZE_MAX / sizeof(char *) - 1) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            temp = realloc(tokens, (n + 1) * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+            tokens = temp;
+            tokens[n] = token;
+            n++;
+        }
+
+        if (ret == 0) {
+            if ((size_t)match.rm_eo > remaining || match.rm_eo <= 0) {
+                break;
+            }
+            cursor += match.rm_eo;
+            remaining -= (size_t)match.rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    *count = n;
+    return tokens;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "apple,banana;cherry  orange|grape";
+    const char *pattern = "[,;| ]+";
+    size_t count = 0;
+    size_t i;
+    char **tokens;
+
+    tokens = split_string(text, pattern, &count);
+    if (tokens == NULL && count == 0) {
+        fprintf(stderr, "split_string failed or returned no tokens\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Token %zu: %s\n", i + 1, tokens[i]) < 0) {
+            free_tokens(tokens, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of hardening changes:**
+
+1. **CWE-119/CWE-120 (`errbuf`)** — The buffer is still statically sized (required by `regerror`'s API), but it is now explicitly initialized and force-terminated after the call, guaranteeing it is always a valid C string before being passed to `fprintf`.
+
+2. **CWE-126 (`strlen` over-read)** — The input length is computed exactly once at entry, and a `remaining` counter is maintained throughout the loop. No repeated `strlen` calls occur on advancing pointers, and every offset returned by `regexec` (`rm_so`, `rm_eo`) is bounds-checked against `remaining` before use, preventing pointer arithmetic past the end of the buffer even if the regex engine returned inconsistent offsets.
+
+3. **CWE-120 (`memcpy`)** — The destination is allocated as `len + 1` immediately before the copy, so the destination always holds the source; an explicit `SIZE_MAX` guard prevents the `len + 1` allocation size from wrapping around.
+
+4. **Additional fix (integer overflow in `realloc`)** — The `(n + 1) * sizeof(char *)` computation is now guarded against `size_t` overflow, which would otherwise cause an undersized allocation and heap corruption on pathological inputs.

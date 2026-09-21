@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c:38:9: style: Condition 'expected_false' is always false [knownConditionTrueFalse]
+    if (expected_false) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c:37:44: note: Calling function 'check_odd_indices' returns 0
+    bool expected_false = check_odd_indices(list3, size3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c:37:44: note: Assignment 'expected_false=check_odd_indices(list3,size3)', assigned value is 0
+    bool expected_false = check_odd_indices(list3, size3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c:38:9: note: Condition 'expected_false' is always false
+    if (expected_false) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-775-s2.c:35:10: style: Variable 'list3' can be declared as pointer to const [constVariablePointer]
+    int *list3 = NULL;
+         ^

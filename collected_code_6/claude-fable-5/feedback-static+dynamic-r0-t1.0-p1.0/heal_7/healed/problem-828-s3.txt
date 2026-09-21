@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+struct char_counts {
+    size_t alphabets;
+    size_t digits;
+    size_t specials;
+};
+
+static void count_characters(const char *str, size_t max_len, struct char_counts *counts)
+{
+    size_t i;
+
+    if (counts == NULL) {
+        return;
+    }
+
+    counts->alphabets = 0;
+    counts->digits = 0;
+    counts->specials = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isalpha(c)) {
+            counts->alphabets++;
+        } else if (isdigit(c)) {
+            counts->digits++;
+        } else if (!isspace(c)) {
+            counts->specials++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    struct char_counts counts;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    count_characters(buffer, len, &counts);
+
+    printf("Alphabets: %zu\n", counts.alphabets);
+    printf("Digits: %zu\n", counts.digits);
+    printf("Special characters: %zu\n", counts.specials);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array is already fully mitigated in this code — it's a false positive from static analysis pattern matching. Here's why the code is safe:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, preventing buffer overflow at the input stage.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant after `fgets`, but serves as defense-in-depth.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` guarantees the length never exceeds the buffer size, even if termination somehow failed.
+
+4. **Safe iteration:** `count_characters` takes an explicit `max_len` parameter and checks both the bound and the null terminator (`i < max_len && str[i] != '\0'`), and defensively handles `NULL` pointers for both arguments.
+
+5. **Correct `ctype.h` usage:** Casting to `unsigned char` before passing to `isalpha`/`isdigit`/`isspace` avoids undefined behavior with negative `char` values on platforms where `char` is signed.
+
+6. **Newline stripping** is done with a proper length check (`len > 0`) to avoid an out-of-bounds read on empty input.
+
+No code changes were required beyond removing the comments — the implementation already follows bounds-checking best practices.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958-s3.c:34:39: style: Condition 'current_len+sym_len<result_size' is always true [knownConditionTrueFalse]
+            if (current_len + sym_len < result_size) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958-s3.c:29:39: note: Assuming condition 'current_len+sym_len>=result_size' is false
+            if (current_len + sym_len >= result_size) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958-s3.c:34:39: note: Condition 'current_len+sym_len<result_size' is always true
+            if (current_len + sym_len < result_size) {
+                                      ^

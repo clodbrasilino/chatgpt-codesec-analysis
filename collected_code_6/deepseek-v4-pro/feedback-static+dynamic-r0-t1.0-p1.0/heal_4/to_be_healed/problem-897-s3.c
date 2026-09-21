@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+int is_word_present(const char *sentence, const char *word) {
+    if (sentence == NULL || word == NULL || *sentence == '\0' || *word == '\0') {
+        return 0;
+    }
+
+    size_t word_len = 0;
+    while (word[word_len] != '\0') {
+        word_len++;
+        if (word_len > 256) {
+            return 0;
+        }
+    }
+
+    const char *pos = sentence;
+    while (*pos != '\0') {
+        while (*pos != '\0' && !isalpha((unsigned char)*pos)) {
+            pos++;
+        }
+
+        if (*pos == '\0') {
+            break;
+        }
+
+        const char *start = pos;
+        while (*pos != '\0' && isalpha((unsigned char)*pos)) {
+            pos++;
+        }
+
+        size_t token_len = (size_t)(pos - start);
+
+        if (token_len == word_len) {
+            int match = 1;
+            for (size_t i = 0; i < word_len; i++) {
+                if (tolower((unsigned char)start[i]) != tolower((unsigned char)word[i])) {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char *sentence = NULL;
+    char *word = NULL;
+    size_t sentence_size = 0;
+    size_t word_size = 0;
+
+    printf("Enter a sentence: ");
+    if (getline(&sentence, &sentence_size, stdin) == -1) {
+        printf("Error reading input.\n");
+        free(sentence);
+        return 1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t sentence_len = strlen(sentence);
+    if (sentence_len > 0 && sentence[sentence_len - 1] == '\n') {
+        sentence[sentence_len - 1] = '\0';
+        /* Possible weaknesses found:
+         *  Variable 'sentence_len' is assigned a value that is never used. [unreadVariable]
+         */
+        sentence_len--;
+    }
+
+    printf("Enter a word to search: ");
+    if (getline(&word, &word_size, stdin) == -1) {
+        printf("Error reading input.\n");
+        free(sentence);
+        free(word);
+        return 1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t word_len = strlen(word);
+    if (word_len > 0 && word[word_len - 1] == '\n') {
+        word[word_len - 1] = '\0';
+        word_len--;
+    }
+
+    if (word_len == 0) {
+        printf("The word \"\" is not present in the sentence.\n");
+        free(sentence);
+        free(word);
+        return 0;
+    }
+
+    if (is_word_present(sentence, word)) {
+        printf("The word \"%s\" is present in the sentence.\n", word);
+    } else {
+        printf("The word \"%s\" is not present in the sentence.\n", word);
+    }
+
+    free(sentence);
+    free(word);
+    return 0;
+}

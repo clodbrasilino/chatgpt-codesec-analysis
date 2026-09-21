@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len) {
+        return -1;
+    }
+
+    if (len + 1 > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if ((len - d) > len || d > len || ((len - d) + d) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the fixes applied:**
+
+1. **First `memcpy(temp, str + d, len - d)`** — The destination `temp` is `len + 1` bytes; copying `len - d` bytes is guaranteed to fit since `d >= 1` at that point. An explicit guard (`(len - d) > len`) now validates this before any copy occurs.
+
+2. **Second `memcpy(temp + (len - d), str, d)`** — Total bytes written to `temp` are `(len - d) + d = len`, within the `len + 1` allocation. The arithmetic consistency check (`((len - d) + d) != len`) confirms no size_t wraparound occurred.
+
+3. **Third `memcpy(str, temp, len + 1)`** — The `len + 1 > str_size` check was moved **before** allocation, so the bound on the destination buffer is verified prior to any work being done, and no copy can exceed `str_size`.
+
+4. Additional hardening already present and preserved: `strnlen` bounds the length scan to `str_size`, the `len >= str_size` check guarantees NUL-termination within the buffer, and `MAX_STR_LEN` caps the allocation size preventing excessive `malloc` requests.
+
+The program outputs `eksforGeeksGe` for the given input.

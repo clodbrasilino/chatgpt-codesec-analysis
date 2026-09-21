@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len || (len + 1) > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Analysis notes
+
+The original code was already essentially safe — the Flawfinder hits on `memcpy` are heuristic (risk level 2) rather than actual vulnerabilities. Here is why each one was already sound, and what the rewrite adds:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` is allocated with `len + 1` bytes, and since `d < len` (guaranteed by the modulo and early return), `len - d` is at most `len`. No overflow possible.
+
+2. **`memcpy(temp + (len - d), str, d)`** — writes `d` bytes starting at offset `len - d`, ending exactly at offset `len`, which fits within the `len + 1` allocation.
+
+3. **`memcpy(str, temp, len + 1)`** — the guard `len >= str_size → return -1` after `strnlen` guarantees `len + 1 <= str_size`, so the copy back into the caller's buffer cannot overflow, and it also guarantees the string was NUL-terminated within the buffer.
+
+The rewrite adds an explicit defensive bounds check before the copies (`d > len`, `len - d > len`, `len + 1 > str_size`) to make the invariants machine-checkable and silence static analyzers, without changing behavior. Other correctness properties already present and preserved: `NULL`/zero-size rejection, `malloc` failure handling, no memory leak (`free` on the single exit path after allocation), no integer underflow (`d % len` with `len > 0`), and correct NUL termination of both `temp` and the result.

@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int is_odd_rotation(const char *str, int len, int rotation) {
+    int ones = 0;
+    for (int i = 0; i < len; i++) {
+        if (str[(rotation + i) % len] == '1') {
+            ones++;
+        }
+    }
+    return ones % 2;
+}
+
+int count_odd_rotations(const char *str, int len) {
+    if (len == 0) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < len; i++) {
+        if (is_odd_rotation(str, len, i)) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t input_len;
+    int valid;
+    
+    printf("Enter a binary string: ");
+    input_len = getline(&input, &buffer_size, stdin);
+    if (input_len == -1) {
+        free(input);
+        return 1;
+    }
+    
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    if (input_len == 0) {
+        printf("Error: Empty input\n");
+        free(input);
+        return 1;
+    }
+    
+    if ((size_t)input_len > MAX_INPUT_SIZE) {
+        printf("Error: Input too long\n");
+        free(input);
+        return 1;
+    }
+    
+    valid = 1;
+    for (ssize_t i = 0; i < input_len; i++) {
+        if (input[i] != '0' && input[i] != '1') {
+            valid = 0;
+            break;
+        }
+    }
+    
+    if (!valid) {
+        printf("Error: Invalid binary string\n");
+        free(input);
+        return 1;
+    }
+    
+    int result = count_odd_rotations(input, (int)input_len);
+    printf("Count of odd rotations: %d\n", result);
+    
+    free(input);
+    return 0;
+}
+```

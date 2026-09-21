@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+unsigned long long jacobsthal(int n)
+{
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+
+    unsigned long long prev2 = 0;
+    unsigned long long prev1 = 1;
+    unsigned long long current = 0;
+
+    for (int i = 2; i <= n; i++) {
+        if (prev1 > (ULLONG_MAX - prev2) / 2) {
+            return 0;
+        }
+        current = prev1 + 2 * prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return current;
+}
+
+int main(void)
+{
+    int n;
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read;
+    char *endptr;
+    long val;
+
+    read = getline(&buffer, &buffer_size, stdin);
+    if (read == -1) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || val < 0 || val > INT_MAX) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0' && *endptr != '\n') {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    n = (int)val;
+
+    if (n > 63) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", jacobsthal(n));
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```

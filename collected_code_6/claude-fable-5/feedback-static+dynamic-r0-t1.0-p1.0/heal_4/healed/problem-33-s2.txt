@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal == 0) {
+        buffer[index++] = '0';
+        buffer[index] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0) {
+        if (index >= buffer_size - 1) {
+            buffer[0] = '\0';
+            return -1;
+        }
+        buffer[index++] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    char binary[BINARY_BUFFER_SIZE];
+    int result;
+
+    printf("Enter a non-negative decimal number: ");
+
+    result = scanf("%u", &number);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on the `char binary[BINARY_BUFFER_SIZE]` declaration is a **false positive** in this code, and no structural changes were required. Here's why the code is already safe:
+
+1. **Buffer sizing is provably correct**: `BINARY_BUFFER_SIZE` is computed as `sizeof(unsigned int) * CHAR_BIT + 1`, which guarantees room for every bit of the largest possible `unsigned int` plus the null terminator. It is not a hardcoded magic number, so it adapts to any platform's integer width.
+
+2. **Bounds checking is enforced at the write site**: Inside the conversion loop, `if (index >= buffer_size - 1)` prevents any write beyond `buffer_size - 1`, always reserving space for the terminator. On failure, the buffer is safely null-terminated and an error is returned.
+
+3. **Size is passed explicitly, not assumed**: The caller passes `sizeof(binary)`, so the function never relies on an implicit length. Defensive checks for `NULL` and undersized buffers (`buffer_size < 2`) guard against misuse.
+
+4. **Input handling is safe**: `scanf("%u", &number)` writes a fixed-size scalar (no string format specifier, so no unbounded read), and the return value is validated before use.
+
+5. **No signed/unsigned pitfalls**: The `decimal == 0` early return ensures `index >= 1` before the reversal loop, so `index - 1` cannot underflow.
+
+The code follows the correct mitigation pattern Flawfinder recommends (bounds checking plus size guaranteed larger than the maximum possible output), so it stands as-is with only the advisory comment removed.

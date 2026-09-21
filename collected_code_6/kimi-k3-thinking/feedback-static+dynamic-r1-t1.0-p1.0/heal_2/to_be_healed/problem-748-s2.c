@@ -1,0 +1,187 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 65536
+
+char *insert_spaces_before_capitals(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[1];
+    char *result;
+    char *safe_input;
+    size_t input_len;
+    size_t capital_count;
+    size_t read_pos;
+    size_t write_pos;
+    size_t offset;
+    size_t alloc_size;
+
+    if (input == NULL)
+        return NULL;
+
+    input_len = strnlen(input, MAX_INPUT_LENGTH);
+
+    safe_input = malloc(input_len + 1);
+    if (safe_input == NULL)
+        return NULL;
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(safe_input, input, input_len);
+    safe_input[input_len] = '\0';
+
+    if (regcomp(&regex, "[[:upper:]]", REG_EXTENDED) != 0) {
+        free(safe_input);
+        return NULL;
+    }
+
+    capital_count = 0;
+    offset = 0;
+
+    while (offset < input_len &&
+           regexec(&regex, safe_input + offset, 1, match, 0) == 0) {
+        size_t cap_pos = offset + (size_t)match[0].rm_so;
+        if (cap_pos >= input_len)
+            break;
+        if (cap_pos > 0 && safe_input[cap_pos - 1] != ' ')
+            capital_count++;
+        offset = cap_pos + 1;
+    }
+
+    if (input_len > SIZE_MAX - capital_count - 1) {
+        regfree(&regex);
+        free(safe_input);
+        return NULL;
+    }
+    alloc_size = input_len + capital_count + 1;
+
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        regfree(&regex);
+        free(safe_input);
+        return NULL;
+    }
+
+    read_pos = 0;
+    write_pos = 0;
+    offset = 0;
+
+    while (offset < input_len &&
+           regexec(&regex, safe_input + offset, 1, match, 0) == 0) {
+        size_t cap_pos = offset + (size_t)match[0].rm_so;
+        size_t chunk;
+
+        if (cap_pos >= input_len)
+            break;
+
+        /* Possible weaknesses found:
+         *  Assignment 'chunk=cap_pos-read_pos', assigned value is less than 1
+         */
+        chunk = cap_pos - read_pos;
+
+        /* Possible weaknesses found:
+         *  Condition 'chunk>alloc_size-write_pos-1' is always false [knownConditionTrueFalse]
+         *  Condition 'chunk>alloc_size-write_pos-1' is always false
+         */
+        if (write_pos >= alloc_size || chunk > alloc_size - write_pos - 1) {
+            free(result);
+            regfree(&regex);
+            free(safe_input);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + write_pos, safe_input + read_pos, chunk);
+        write_pos += chunk;
+
+        /* Possible weaknesses found:
+         *  Assuming that condition 'cap_pos>0' is not redundant
+         */
+        if (cap_pos > 0 && safe_input[cap_pos - 1] != ' ') {
+            if (write_pos >= alloc_size - 1) {
+                free(result);
+                regfree(&regex);
+                free(safe_input);
+                return NULL;
+            }
+            result[write_pos++] = ' ';
+        }
+
+        if (write_pos >= alloc_size - 1) {
+            free(result);
+            regfree(&regex);
+            free(safe_input);
+            return NULL;
+        }
+        result[write_pos++] = safe_input[cap_pos];
+        read_pos = cap_pos + 1;
+        offset = cap_pos + 1;
+    }
+
+    if (read_pos < input_len) {
+        size_t remaining = input_len - read_pos;
+        if (write_pos >= alloc_size || remaining > alloc_size - write_pos - 1) {
+            free(result);
+            regfree(&regex);
+            free(safe_input);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + write_pos, safe_input + read_pos, remaining);
+        write_pos += remaining;
+    }
+
+    result[write_pos] = '\0';
+
+    regfree(&regex);
+    free(safe_input);
+    return result;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    char *result;
+
+    printf("Enter a string: ");
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    if (read_len < 0) {
+        fprintf(stderr, "Failed to read input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if ((size_t)read_len > MAX_INPUT_LENGTH) {
+        fprintf(stderr, "Input too long\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = insert_spaces_before_capitals(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %s\n", result);
+
+    free(result);
+    free(buffer);
+    return EXIT_SUCCESS;
+}

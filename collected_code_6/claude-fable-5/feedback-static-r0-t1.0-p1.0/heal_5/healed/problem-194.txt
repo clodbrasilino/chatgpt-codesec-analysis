@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define INPUT_SIZE 64
+
+int octal_to_decimal(const char *octal, size_t max_len, long *result)
+{
+    size_t len;
+    size_t i;
+    long value = 0;
+
+    if (octal == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(octal, max_len);
+    if (len == 0 || len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        char c = octal[i];
+        if (c < '0' || c > '7') {
+            return -1;
+        }
+        if (value > (LONG_MAX - (c - '0')) / 8) {
+            return -1;
+        }
+        value = value * 8 + (c - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+
+    return (ch == EOF) ? -1 : 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    long decimal = 0;
+    size_t len;
+
+    printf("Enter an octal number: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        discard_remaining_input();
+        fprintf(stderr, "Error: input too long.\n");
+        return 1;
+    }
+
+    if (octal_to_decimal(input, sizeof(input), &decimal) != 0) {
+        fprintf(stderr, "Error: invalid octal number or value out of range.\n");
+        return 1;
+    }
+
+    printf("Decimal value: %ld\n", decimal);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20)** — This is a false positive in this context. The `getchar()` call in `discard_remaining_input()` reads into a single `int` and never writes to a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed streams. No change needed.
+
+2. **Flawfinder `char` array warning (CWE-119/CWE-120)** — Also mitigated. The fixed-size buffer `input[INPUT_SIZE]` is only ever written by `fgets(input, sizeof(input), stdin)`, which enforces bounds. Defense-in-depth is already present:
+   - Explicit null termination at `input[sizeof(input) - 1]`.
+   - `strnlen` with a bounded maximum instead of `strlen`.
+   - Detection of truncated (too-long) input, with the rest of the line drained before rejecting it — preventing leftover input from affecting later reads.
+
+3. **Additional robustness already in place:**
+   - `octal_to_decimal` validates all pointers, rejects empty and unterminated strings, validates each digit, and performs an overflow check (`value > (LONG_MAX - digit) / 8`) *before* multiplying — the correct way to avoid signed overflow UB.
+   - `fflush(stdout)` return value is checked.
+   - `fgets` failure is handled.
+
+The code as written is already sound; the rewrite above preserves all mitigations with the comments removed.

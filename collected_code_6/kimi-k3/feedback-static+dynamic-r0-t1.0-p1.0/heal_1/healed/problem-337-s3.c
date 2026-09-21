@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool match_word_at_end(const char *str, size_t str_size, const char *word, size_t word_size) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    size_t str_len = strnlen(str, str_size);
+    size_t word_len = strnlen(word, word_size);
+
+    if (word_len == 0 || str_len < word_len) {
+        return false;
+    }
+
+    size_t end = str_len;
+    while (end > 0 && ispunct((unsigned char)str[end - 1])) {
+        end--;
+    }
+
+    if (end < word_len) {
+        return false;
+    }
+
+    if (strncmp(str + end - word_len, word, word_len) != 0) {
+        return false;
+    }
+
+    if (end > word_len && !isspace((unsigned char)str[end - word_len - 1])) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_string = "Hello, world!";
+    const char *test_word = "world";
+
+    if (match_word_at_end(test_string, sizeof("Hello, world!"), test_word, sizeof("world"))) {
+        printf("Match found\n");
+    } else {
+        printf("No match\n");
+    }
+
+    return 0;
+}

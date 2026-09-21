@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119!/CWE-120 (statically-sized buffer):** The original code was already reasonably safe here — `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size, and the explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination (technically redundant since `fgets` always null-terminates on success, but it's defensive and harmless). I kept both, and introduced a named constant `BUFFER_SIZE` to make the size intent explicit and maintainable.
+
+2. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen(buffer, sizeof(buffer))`, which bounds the scan to the buffer's size. Combined with the guaranteed null-termination above, this eliminates any possibility of reading past the end of `buffer` even if the termination guarantee were ever broken by future refactoring.
+
+3. **Pre-existing good practices preserved:** the `NULL` check in `count_lowercase`, the cast to `unsigned char` before `islower()` (avoiding undefined behavior for negative `char` values), the `fgets` return-value check, and the `%zu` format specifier for `size_t`.

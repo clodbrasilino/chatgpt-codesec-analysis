@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+#define MAX_ERR_LEN 256
+#define MAX_SENTENCE_LEN 4096
+
+static int is_word_boundary(const char *sentence, size_t len, size_t end)
+{
+    if (end >= len) {
+        return 1;
+    }
+    return !isalpha((unsigned char)sentence[end]);
+}
+
+static void report_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char errbuf[MAX_ERR_LEN];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", context, errbuf);
+}
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    int ret;
+    size_t offset = 0;
+    size_t len;
+    int count = 0;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Error: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t start = offset + (size_t)match.rm_so;
+        size_t end = offset + (size_t)match.rm_eo;
+
+        if (start > len || end > len || end < start) {
+            fprintf(stderr, "Error: match offsets out of bounds\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t word_len = end - start;
+
+        if (word_len > 0 && word_len <= len - start &&
+            is_word_boundary(sentence, len, end)) {
+            char *word = calloc(word_len + 1, sizeof(char));
+            if (word == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                regfree(&regex);
+                return -1;
+            }
+
+            memcpy(word, sentence + start, word_len);
+            word[word_len] = '\0';
+
+            printf("Adverb: %-15s Position: %zu-%zu\n", word, start, end - 1);
+            count++;
+
+            free(word);
+        }
+
+        if (match.rm_eo == match.rm_so) {
+            if (offset >= len - 1) {
+                break;
+            }
+            offset += 1;
+        } else {
+            offset = end;
+        }
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought some milk, then happily walked home.";
+    int result;
+
+    printf("Sentence: %s\n\n", sentence);
+
+    result = find_adverbs(sentence);
+    if (result < 0) {
+        fprintf(stderr, "Failed to search for adverbs\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("\nTotal adverbs found: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Flawfinder `char errbuf` warning (CWE-119/CWE-120):** The error buffer handling was consolidated into a single `report_regex_error()` helper. The buffer is explicitly zeroed with `memset`, `regerror` is called with `sizeof(errbuf) - 1` to guarantee room for the terminator, and the final byte is forcibly null-terminated. This removes duplicated, error-prone buffer code paths and guarantees the buffer can never overflow or be read unterminated.
+
+2. **Flawfinder `memcpy` warning (CWE-120):** The original code performed the bounds check (`start + word_len <= len`) *after* allocation, and separately from the copy guard. The rewrite strengthens the precondition on the enclosing `if` to `word_len <= len - start`, which mathematically guarantees `sentence + start` has at least `word_len` readable bytes before `calloc` and `memcpy` execute. The destination is allocated as `word_len + 1`, so it can always hold the source data plus terminator. Note `len - start` cannot underflow since `start > len` was already rejected earlier.
+
+3. **Additional hardening:** The zero-length-match advancement branch now checks `offset >= len - 1` before incrementing, preventing any possibility of the offset stepping past the buffer end in a pathological regex scenario.
+
+The remaining logic (NULL check, `strnlen` bounded length validation, match offset sanity checks, `regfree` on every exit path) was already sound and is preserved. The program is leak-free, all error paths release the compiled regex, and no unchecked copy into a fixed-size buffer remains.

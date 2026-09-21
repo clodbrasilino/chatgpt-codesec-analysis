@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+int is_divisor_count_odd(unsigned long long n)
+{
+    if (n == 0)
+    {
+        return -1;
+    }
+    unsigned long long i = 1;
+    while (i <= n / i)
+    {
+        i++;
+    }
+    return ((i - 1) * (i - 1) == n) ? 1 : 0;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t len;
+    char *endptr;
+    unsigned long long value;
+    int result;
+
+    len = getline(&buffer, &buffer_size, stdin);
+    if (len == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0)
+    {
+        fprintf(stderr, "Invalid input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtoull(buffer, &endptr, 10);
+
+    if (errno == ERANGE)
+    {
+        fprintf(stderr, "Input out of range\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer || *endptr != '\0')
+    {
+        fprintf(stderr, "Invalid input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (value == 0)
+    {
+        fprintf(stderr, "Zero has infinitely many divisors\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    result = is_divisor_count_odd(value);
+
+    free(buffer);
+
+    if (result < 0)
+    {
+        fprintf(stderr, "Computation error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result ? "Odd" : "Even");
+
+    return EXIT_SUCCESS;
+}

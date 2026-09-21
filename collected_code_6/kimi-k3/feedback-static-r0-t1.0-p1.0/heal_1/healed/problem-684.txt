@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+size_t count_char_in_repeated_string(const char *str, char target, size_t repeat_count) {
+    if (str == NULL || repeat_count == 0) {
+        return 0;
+    }
+    
+    size_t len = 0;
+    size_t count = 0;
+    
+    while (str[len] != '\0') {
+        if (str[len] == target) {
+            count++;
+        }
+        len++;
+    }
+    
+    if (len == 0) {
+        return 0;
+    }
+    
+    if (count > SIZE_MAX / repeat_count) {
+        return 0;
+    }
+    
+    return count * repeat_count;
+}
+
+int main(void) {
+    const char *test_string = "abc";
+    char target = 'a';
+    size_t repeat_count = 3;
+    
+    size_t result = count_char_in_repeated_string(test_string, target, repeat_count);
+    printf("Character '%c' appears %zu times\n", target, result);
+    
+    return 0;
+}
+```

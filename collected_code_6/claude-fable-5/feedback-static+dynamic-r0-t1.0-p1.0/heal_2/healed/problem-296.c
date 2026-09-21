@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static long long merge(int *arr, int *temp, size_t n, size_t left, size_t mid, size_t right)
+{
+    size_t i = left;
+    size_t j = mid;
+    size_t k = left;
+    long long inv_count = 0;
+    size_t span;
+
+    if (arr == NULL || temp == NULL || right >= n || left > mid || mid > right || mid == 0) {
+        return -1;
+    }
+
+    while (i <= mid - 1 && j <= right) {
+        if (arr[i] <= arr[j]) {
+            temp[k] = arr[i];
+            k++;
+            i++;
+        } else {
+            temp[k] = arr[j];
+            k++;
+            j++;
+            inv_count += (long long)(mid - i);
+        }
+    }
+
+    while (i <= mid - 1) {
+        temp[k] = arr[i];
+        k++;
+        i++;
+    }
+
+    while (j <= right) {
+        temp[k] = arr[j];
+        k++;
+        j++;
+    }
+
+    span = right - left + 1;
+    if (span > n - left || span > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    memcpy(&arr[left], &temp[left], span * sizeof(int));
+
+    return inv_count;
+}
+
+static long long merge_sort(int *arr, int *temp, size_t n, size_t left, size_t right)
+{
+    long long inv_count = 0;
+
+    if (right > left) {
+        size_t mid = left + (right - left) / 2;
+        long long partial;
+
+        partial = merge_sort(arr, temp, n, left, mid);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+
+        partial = merge_sort(arr, temp, n, mid + 1, right);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+
+        partial = merge(arr, temp, n, left, mid + 1, right);
+        if (partial < 0) {
+            return -1;
+        }
+        inv_count += partial;
+    }
+
+    return inv_count;
+}
+
+long long count_inversions(const int *arr, size_t n)
+{
+    int *copy = NULL;
+    int *temp = NULL;
+    long long result;
+    size_t bytes;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(int);
+
+    copy = malloc(bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    temp = malloc(bytes);
+    if (temp == NULL) {
+        free(copy);
+        return -1;
+    }
+
+    memcpy(copy, arr, bytes);
+
+    result = merge_sort(copy, temp, n, 0, n - 1);
+
+    free(copy);
+    free(temp);
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = { 8, 4, 2, 1 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long inversions;
+
+    inversions = count_inversions(arr, n);
+    if (inversions < 0) {
+        if (fprintf(stderr, "Error: memory allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of inversions: %lld\n", inversions) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

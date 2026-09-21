@@ -1,0 +1,88 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *safe_strdup(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+    return strndup(str, 8192);
+}
+
+void free_list(char **list, size_t size) {
+    if (!list) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+char **convert_tuple_to_list(const char *const *tuple, size_t tuple_size, const char *add_str, size_t *list_size) {
+    char **list;
+    size_t new_size;
+
+    if (!tuple || !add_str || !list_size) {
+        return NULL;
+    }
+
+    if (tuple_size > SIZE_MAX / 2) {
+        return NULL;
+    }
+
+    new_size = tuple_size * 2;
+    *list_size = new_size;
+
+    if (new_size == 0 || new_size > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    list = malloc(new_size * sizeof(char *));
+    if (!list) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tuple_size; i++) {
+        list[i * 2] = safe_strdup(tuple[i]);
+        if (!list[i * 2]) {
+            free_list(list, i * 2);
+            return NULL;
+        }
+
+        list[i * 2 + 1] = safe_strdup(add_str);
+        if (!list[i * 2 + 1]) {
+            free_list(list, i * 2 + 1);
+            return NULL;
+        }
+    }
+
+    return list;
+}
+
+int main(void) {
+    const char *tuple[] = {"element1", "element2", "element3"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char *add_str = "inserted_string";
+    
+    size_t list_size = 0;
+    char **list = convert_tuple_to_list(tuple, tuple_size, add_str, &list_size);
+
+    if (!list) {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list_size; i++) {
+        printf("%s\n", list[i]);
+    }
+
+    free_list(list, list_size);
+
+    return EXIT_SUCCESS;
+}
+```

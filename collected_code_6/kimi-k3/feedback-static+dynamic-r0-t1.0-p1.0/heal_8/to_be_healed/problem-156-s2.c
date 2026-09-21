@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+#define TUPLE_SIZE 3
+#define MAX_STRING_LENGTH 32
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char values[TUPLE_SIZE][MAX_STRING_LENGTH];
+} StringTuple;
+
+typedef struct {
+    int values[TUPLE_SIZE];
+} IntTuple;
+
+int convert_string_tuple_to_int_tuple(const StringTuple *input, IntTuple *output) {
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < TUPLE_SIZE; i++) {
+        if (strnlen(input->values[i], MAX_STRING_LENGTH) == 0) {
+            return -1;
+        }
+
+        char *endptr = NULL;
+        errno = 0;
+        
+        long val = strtol(input->values[i], &endptr, 10);
+        
+        if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+            return -1;
+        }
+        
+        if (endptr == input->values[i] || *endptr != '\0') {
+            return -1;
+        }
+        
+        output->values[i] = (int)val;
+    }
+    
+    return 0;
+}
+
+int init_string_tuple(StringTuple *tuple, const char *s1, const char *s2, const char *s3) {
+    if (tuple == NULL || s1 == NULL || s2 == NULL || s3 == NULL) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    const char *sources[TUPLE_SIZE] = {s1, s2, s3};
+    
+    for (size_t i = 0; i < TUPLE_SIZE; i++) {
+        size_t len = strnlen(sources[i], MAX_STRING_LENGTH - 1);
+        if (len >= MAX_STRING_LENGTH - 1 && sources[i][len] != '\0') {
+            return -1;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+         */
+        strncpy(tuple->values[i], sources[i], MAX_STRING_LENGTH - 1);
+        tuple->values[i][MAX_STRING_LENGTH - 1] = '\0';
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    StringTuple str_tuple;
+    
+    if (init_string_tuple(&str_tuple, "123", "456", "789") != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    IntTuple int_tuple = {0};
+    
+    if (convert_string_tuple_to_int_tuple(&str_tuple, &int_tuple) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("(%d, %d, %d)\n", 
+           int_tuple.values[0], 
+           int_tuple.values[1], 
+           int_tuple.values[2]);
+    
+    return EXIT_SUCCESS;
+}

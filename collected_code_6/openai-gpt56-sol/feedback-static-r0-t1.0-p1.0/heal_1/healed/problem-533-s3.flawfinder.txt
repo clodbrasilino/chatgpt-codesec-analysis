@@ -1,0 +1,2 @@
+problem-533-s3.c:146:0:high:Flawfinder printf: If format strings can be influenced by an attacker, they can be exploited (CWE-134). Use a constant for the format specification. (risk 4, format)
+problem-533-s3.c:53:0:medium:Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)

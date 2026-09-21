@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_ENTRIES 16
+#define MAX_KEY_LEN 64
+#define MAX_VALUE_LEN 128
+#define NUM_DICTS 3
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[MAX_ENTRIES];
+    size_t size;
+} Dict;
+
+void dict_init(Dict *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    dict->size = 0;
+    memset(dict->entries, 0, sizeof(dict->entries));
+}
+
+bool dict_insert(Dict *dict, const char *key, const char *value)
+{
+    size_t key_len;
+    size_t value_len;
+    char *key_copy;
+    char *value_copy;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->size >= MAX_ENTRIES) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    key_len = strlen(key);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    value_len = strlen(value);
+
+    if (key_len >= MAX_KEY_LEN || value_len >= MAX_VALUE_LEN) {
+        return false;
+    }
+
+    key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return false;
+    }
+
+    value_copy = malloc(value_len + 1);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(key_copy, key, key_len + 1);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(value_copy, value, value_len + 1);
+
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value_copy;
+    dict->size++;
+
+    return true;
+}
+
+void dict_free(Dict *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+        dict->entries[i].key = NULL;
+        dict->entries[i].value = NULL;
+    }
+    dict->size = 0;
+}
+
+bool dict_is_empty(const Dict *dict)
+{
+    if (dict == NULL) {
+        return false;
+    }
+    return dict->size == 0;
+}
+
+bool all_dicts_empty(const Dict *dicts, size_t count)
+{
+    size_t i;
+
+    if (count == 0) {
+        return true;
+    }
+    if (dicts == NULL) {
+        return false;
+    }
+    for (i = 0; i < count; i++) {
+        if (!dict_is_empty(&dicts[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    Dict dicts[NUM_DICTS];
+    size_t i;
+
+    for (i = 0; i < NUM_DICTS; i++) {
+        dict_init(&dicts[i]);
+    }
+
+    if (all_dicts_empty(dicts, NUM_DICTS)) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+
+    if (!dict_insert(&dicts[1], "name", "example")) {
+        fprintf(stderr, "Error: failed to insert entry.\n");
+        for (i = 0; i < NUM_DICTS; i++) {
+            dict_free(&dicts[i]);
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (all_dicts_empty(dicts, NUM_DICTS)) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+
+    for (i = 0; i < NUM_DICTS; i++) {
+        dict_free(&dicts[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

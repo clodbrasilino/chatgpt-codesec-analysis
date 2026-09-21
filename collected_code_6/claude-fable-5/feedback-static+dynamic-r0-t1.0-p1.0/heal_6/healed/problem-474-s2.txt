@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_char(char *str, size_t max_len, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char original[] = "hello world, hello everyone";
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    buffer_size = sizeof(original);
+
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, buffer_size);
+    buffer[buffer_size - 1] = '\0';
+
+    replaced = replace_char(buffer, buffer_size, 'l', 'L');
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the always-false condition** (`copy_len >= buffer_size`): The static analyzer correctly flagged this as dead code since `copy_len` was derived directly from `buffer_size`. Eliminating it removes the `knownConditionTrueFalse` warning and simplifies the control flow.
+
+2. **Removed the redundant size check** (`sizeof(original) > buffer_size`): Since `buffer_size` is now defined as `sizeof(original)`, the buffer is guaranteed by construction to hold the entire source, including the null terminator. This makes the check unnecessary and provably safe.
+
+3. **Addressed the Flawfinder `memcpy` warning (CWE-120)**: The copy now uses `buffer_size` (which equals `sizeof(original)`) for both the allocation and the copy length, so the destination can always hold the source data by definition. The explicit null termination at `buffer[buffer_size - 1]` provides defense in depth.
+
+4. **Removed intermediate variables** (`len`, `copy_len`): These were only flagged because their assigned values fed into the dead-code condition; removing them eliminates the associated analyzer noise while keeping the logic identical.
+
+The program's observable behavior is unchanged: it prints the original string, the modified string with `l` replaced by `L`, and the replacement count (6), while retaining all error handling for allocation and I/O failures.

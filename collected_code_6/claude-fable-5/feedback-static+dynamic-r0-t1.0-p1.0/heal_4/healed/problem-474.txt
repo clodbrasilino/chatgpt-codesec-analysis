@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_SOURCE_LEN 1024
+
+size_t replace_chars(char *str, char old_char, char new_char);
+
+size_t replace_chars(char *str, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (old_char == '\0' || new_char == '\0') {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *source = "hello world, hello everyone";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    len = strnlen(source, MAX_SOURCE_LEN);
+    if (len >= MAX_SOURCE_LEN) {
+        fprintf(stderr, "Source string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        fprintf(stderr, "Length overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > buffer_size - 1) {
+        fprintf(stderr, "Buffer too small for source data\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    printf("Original: %s\n", buffer);
+
+    replaced = replace_chars(buffer, 'l', 'L');
+
+    printf("Modified: %s\n", buffer);
+    printf("Replacements made: %zu\n", replaced);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes made:**
+
+1. **Missing include fixed:** The original code used `SIZE_MAX` without including `<stdint.h>`, which would cause a compilation error on conforming implementations. That header is now included.
+
+2. **CWE-120 (memcpy buffer overflow) mitigation:** The Flawfinder warning concerns `memcpy` copying into `buffer` without a verifiable guarantee that the destination can hold the data. The rewrite adds an explicit guard (`len > buffer_size - 1`) immediately before the `memcpy`, making the invariant locally provable rather than relying on distant allocation logic. The copy length is now expressed directly as `len` (the validated source length) rather than `buffer_size - 1`, which ties the copy size to the measured data rather than the allocation arithmetic.
+
+3. **Resource handling:** The new failure path frees `buffer` before returning, avoiding a memory leak on the error branch.
+
+4. **Existing safe practices preserved:** `strnlen` bounds the length scan, the null terminator is written explicitly, the `replace_chars` function validates its inputs, and the pointer is nulled after `free` to prevent accidental use-after-free.

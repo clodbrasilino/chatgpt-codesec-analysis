@@ -1,0 +1,102 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 1024
+
+static void reverse_string(char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len < 2) {
+        return;
+    }
+
+    for (i = 0; i < len / 2; i++) {
+        char temp;
+
+        temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+static int reverse_strings(char **strings, size_t count, size_t max_len)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            return -1;
+        }
+        reverse_string(strings[i], max_len);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input[] = {"hello", "world", "programming", "reverse"};
+    size_t count = sizeof(input) / sizeof(input[0]);
+    char **strings;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    strings = calloc(count, sizeof(*strings));
+    if (strings == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len = strnlen(input[i], MAX_STRING_LEN);
+
+        strings[i] = malloc(len + 1);
+        if (strings[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            while (i > 0) {
+                i--;
+                free(strings[i]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+        memcpy(strings[i], input[i], len);
+        strings[i][len] = '\0';
+    }
+
+    if (reverse_strings(strings, count, MAX_STRING_LEN + 1) != 0) {
+        fprintf(stderr, "Failed to reverse strings\n");
+        status = EXIT_FAILURE;
+    } else {
+        for (i = 0; i < count; i++) {
+            if (printf("%s\n", strings[i]) < 0) {
+                fprintf(stderr, "Output error\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return status;
+}
+```

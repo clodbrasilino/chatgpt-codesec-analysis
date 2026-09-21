@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_odd_index_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc((len / 2U) + 2U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *original = "abcdefghij";
+    char *filtered;
+
+    filtered = remove_odd_index_chars(original);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", original);
+    printf("Filtered: %s\n", filtered);
+
+    free(filtered);
+    filtered = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the CWE-126 (buffer over-read) weakness flagged by Flawfinder. `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so a string lacking a `\0` terminator cannot cause an unbounded read past the buffer.
+
+2. **Added a length sanity check** — If `strnlen` returns `MAX_INPUT_LEN`, the string was either not terminated within the bound or is unreasonably large, so the function fails safely by returning `NULL` rather than processing potentially truncated/invalid data.
+
+3. **Preserved existing defensive measures** — The `NULL` input check, `malloc` failure check, guaranteed null-termination of the result (`+ 2U` allocation covers odd-length inputs plus the terminator), and pointer nulling after `free` in `main` were all already sound and remain intact.
+
+The rest of the logic was correct: the allocation size `(len / 2U) + 2U` is sufficient for the worst case (ceil(len/2) characters plus the terminator), and there is no risk of integer overflow given the enforced length bound.

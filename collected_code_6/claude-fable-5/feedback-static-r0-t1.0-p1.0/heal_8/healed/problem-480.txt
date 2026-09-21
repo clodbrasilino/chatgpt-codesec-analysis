@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUFFER_SIZE];
+    char max_char;
+    char *newline;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness and why the code is safe:**
+
+The Flawfinder warning on `char input[INPUT_BUFFER_SIZE]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized buffer, not a confirmed vulnerability. The original code already mitigates it correctly, so the rewrite preserves those defenses:
+
+1. **Bounded read:** `fgets(input, (int)sizeof(input), stdin)` limits input to the buffer size, writing at most `INPUT_BUFFER_SIZE - 1` characters plus a null terminator. No overflow is possible.
+
+2. **Defensive null termination:** `input[sizeof(input) - 1] = '\0'` guarantees termination even in edge cases, protecting downstream string operations from reading out of bounds.
+
+3. **Bounded search:** `memchr(input, '\n', sizeof(input))` is used instead of `strchr`, keeping the newline search strictly within the buffer bounds.
+
+4. **Safe indexing in the counting function:** casting each character to `unsigned char` before indexing `counts[UCHAR_MAX + 1]` prevents negative-index undefined behavior on platforms where `char` is signed.
+
+5. **Robust error handling:** NULL-pointer checks, `fgets` failure handling, empty-input detection, and even the `printf` return value are checked.
+
+The code is C89/C99 compliant, has no undefined behavior, and the flagged buffer usage is properly bounds-checked throughout — the warning is a false positive that the existing mitigations already address.

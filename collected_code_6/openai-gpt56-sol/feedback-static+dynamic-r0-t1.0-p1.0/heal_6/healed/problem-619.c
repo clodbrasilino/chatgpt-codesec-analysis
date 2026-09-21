@@ -1,0 +1,89 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = fgetc(stdin);
+    } while (ch != '\n' && ch != EOF);
+
+    return ch == '\n' ? 0 : -1;
+}
+
+static int move_numbers_to_end(char *str, size_t capacity)
+{
+    size_t length;
+    size_t position = 0;
+    char *result;
+
+    if (str == NULL || capacity == 0) {
+        return -1;
+    }
+
+    length = strnlen(str, capacity);
+    if (length == capacity) {
+        return -1;
+    }
+
+    result = malloc(length + 1);
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (!isdigit((unsigned char)str[i])) {
+            result[position++] = str[i];
+        }
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (isdigit((unsigned char)str[i])) {
+            result[position++] = str[i];
+        }
+    }
+
+    result[position] = '\0';
+    memcpy(str, result, position + 1);
+    free(result);
+
+    return 0;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    ssize_t bytes_read;
+
+    bytes_read = getline(&input, &capacity, stdin);
+    if (bytes_read < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[--bytes_read] = '\0';
+    } else if (!feof(stdin)) {
+        if (discard_remaining_input() != 0) {
+            free(input);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (move_numbers_to_end(input, capacity) != 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (puts(input) == EOF) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+    return EXIT_SUCCESS;
+}

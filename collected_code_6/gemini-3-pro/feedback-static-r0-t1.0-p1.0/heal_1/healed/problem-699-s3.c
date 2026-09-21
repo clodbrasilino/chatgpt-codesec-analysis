@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_swaps(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1; 
+    }
+
+    int mismatches_0_to_1 = 0;
+    int mismatches_1_to_0 = 0;
+    size_t i = 0;
+
+    while (str1[i] != '\0' || str2[i] != '\0') {
+        if (str1[i] == '\0' || str2[i] == '\0') {
+            return -1;
+        }
+
+        if ((str1[i] != '0' && str1[i] != '1') || (str2[i] != '0' && str2[i] != '1')) {
+            return -1;
+        }
+
+        if (str1[i] != str2[i]) {
+            if (str1[i] == '0') {
+                mismatches_0_to_1++;
+            } else {
+                mismatches_1_to_0++;
+            }
+        }
+        i++;
+    }
+
+    if (mismatches_0_to_1 != mismatches_1_to_0) {
+        return -1;
+    }
+
+    return mismatches_0_to_1;
+}
+
+int main(void) {
+    const char *str1 = "1100";
+    const char *str2 = "0011";
+
+    int result = min_swaps(str1, str2);
+
+    if (result != -1) {
+        printf("Minimum number of swaps: %d\n", result);
+    } else {
+        printf("Conversion not possible or invalid input.\n");
+    }
+
+    return 0;
+}

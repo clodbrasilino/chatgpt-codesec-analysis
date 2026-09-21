@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int areRotations(const char *str1, const char *str2) {
+    size_t size1 = strnlen(str1, 1024);
+    size_t size2 = strnlen(str2, 1024);
+
+    if (size1 != size2) return 0;
+
+    if (size1 == 0) return 1;
+
+    char *temp = malloc(2 * size1 + 1);
+    if (temp == NULL) return 0;
+    snprintf(temp, 2 * size1 + 1, "%.*s%.*s", (int)size1, str1, (int)size1, str1);
+    int result = strnstr(temp, str2, 2 * size1) != NULL;
+    free(temp);
+    return result;
+}
+
+int main() {
+    const char s1[] = "abcd";
+    const char s2[] = "cdab";
+    if (areRotations(s1, s2)) {
+        printf("Given strings are rotations of each other.\n");
+    } else {
+        printf("Given strings are not rotations of each other.\n");
+    }
+    return 0;
+}
+```

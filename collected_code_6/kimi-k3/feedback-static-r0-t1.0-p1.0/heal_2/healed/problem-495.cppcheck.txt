@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-495.c:111:34: warning: Either the condition 'input_len==256' is redundant or the array 'input[27]' is accessed at index 256, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (input_len == 256 && input[input_len] != '\0') {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-495.c:111:19: note: Assuming that condition 'input_len==256' is not redundant
+    if (input_len == 256 && input[input_len] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-495.c:111:34: note: Array index out of bounds
+    if (input_len == 256 && input[input_len] != '\0') {
+                                 ^

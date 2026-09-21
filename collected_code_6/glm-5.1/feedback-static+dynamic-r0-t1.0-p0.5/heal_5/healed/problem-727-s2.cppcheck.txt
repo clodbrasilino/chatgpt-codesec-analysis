@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:44:31: style: Condition 'remaining_len>0' is always true [knownConditionTrueFalse]
+            if (remaining_len > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:40:19: note: Assuming that condition 'offset<input_len' is not redundant
+    while (offset < input_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:43:46: note: Assignment 'remaining_len=input_len-offset', assigned value is greater than 0
+            size_t remaining_len = input_len - offset;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:44:31: note: Condition 'remaining_len>0' is always true
+            if (remaining_len > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:128:17: style: Condition 'result4==NULL' is always true [knownConditionTrueFalse]
+    if (result4 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:127:43: note: Calling function 'remove_non_alnum' returns 0
+    const char *result4 = remove_non_alnum(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:127:43: note: Assignment 'result4=remove_non_alnum(NULL)', assigned value is 0
+    const char *result4 = remove_non_alnum(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-727-s2.c:128:17: note: Condition 'result4==NULL' is always true
+    if (result4 == NULL) {
+                ^

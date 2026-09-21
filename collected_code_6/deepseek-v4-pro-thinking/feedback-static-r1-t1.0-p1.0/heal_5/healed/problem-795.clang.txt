@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:156:28: error: member reference type 'MaxHeap' is not a pointer; did you mean to use '.'?
+  156 |             item_free(&heap->data[i]);
+      |                        ~~~~^~
+      |                            .
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:164:35: error: member reference type 'MaxHeap' is not a pointer; did you mean to use '.'?
+  164 |         result[i] = item_dup(&heap->data[i]);
+      |                               ~~~~^~
+      |                                   .
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:165:24: error: member reference type 'MaxHeap' is not a pointer; did you mean to use '.'?
+  165 |         item_free(&heap->data[i]);
+      |                    ~~~~^~
+      |                        .
+3 errors generated.

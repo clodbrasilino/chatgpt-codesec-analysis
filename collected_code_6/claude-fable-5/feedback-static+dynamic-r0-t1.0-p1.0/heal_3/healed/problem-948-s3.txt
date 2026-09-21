@@ -1,0 +1,191 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ITEM_SIZE 4096U
+#define MAX_STRING_LEN 256U
+
+typedef struct {
+    void **items;
+    size_t *sizes;
+    size_t count;
+} Tuple;
+
+Tuple *tuple_create(size_t count)
+{
+    Tuple *t;
+
+    if (count == 0U) {
+        return NULL;
+    }
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->items = calloc(count, sizeof(void *));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    t->sizes = calloc(count, sizeof(size_t));
+    if (t->sizes == NULL) {
+        free(t->items);
+        free(t);
+        return NULL;
+    }
+
+    t->count = count;
+    return t;
+}
+
+int tuple_set_item(Tuple *t, size_t index, const void *data, size_t size)
+{
+    void *copy;
+
+    if ((t == NULL) || (data == NULL) || (size == 0U) || (size > MAX_ITEM_SIZE)) {
+        return -1;
+    }
+    if (index >= t->count) {
+        return -1;
+    }
+
+    copy = malloc(size);
+    if (copy == NULL) {
+        return -1;
+    }
+    memcpy(copy, data, size);
+
+    free(t->items[index]);
+    t->items[index] = copy;
+    t->sizes[index] = size;
+    return 0;
+}
+
+const void *tuple_get_item(const Tuple *t, size_t index, size_t *size_out)
+{
+    if (t == NULL) {
+        return NULL;
+    }
+    if (index >= t->count) {
+        return NULL;
+    }
+    if (t->items[index] == NULL) {
+        return NULL;
+    }
+    if (size_out != NULL) {
+        *size_out = t->sizes[index];
+    }
+    return t->items[index];
+}
+
+void tuple_destroy(Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        return;
+    }
+    for (i = 0U; i < t->count; i++) {
+        free(t->items[i]);
+    }
+    free(t->items);
+    free(t->sizes);
+    free(t);
+}
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+    while ((len < max_len) && (s[len] != '\0')) {
+        len++;
+    }
+    return len;
+}
+
+int main(void)
+{
+    Tuple *t;
+    int number = 42;
+    double pi = 3.14159;
+    const char *text = "hello";
+    const void *item;
+    size_t size;
+    size_t text_len;
+
+    t = tuple_create(3U);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_set_item(t, 0U, &number, sizeof(number)) != 0) {
+        fprintf(stderr, "Failed to set item 0\n");
+        tuple_destroy(t);
+        return EXIT_FAILURE;
+    }
+    if (tuple_set_item(t, 1U, &pi, sizeof(pi)) != 0) {
+        fprintf(stderr, "Failed to set item 1\n");
+        tuple_destroy(t);
+        return EXIT_FAILURE;
+    }
+
+    text_len = bounded_strlen(text, MAX_STRING_LEN);
+    if (text_len >= MAX_STRING_LEN) {
+        fprintf(stderr, "String too long or not terminated\n");
+        tuple_destroy(t);
+        return EXIT_FAILURE;
+    }
+    if (tuple_set_item(t, 2U, text, text_len + 1U) != 0) {
+        fprintf(stderr, "Failed to set item 2\n");
+        tuple_destroy(t);
+        return EXIT_FAILURE;
+    }
+
+    item = tuple_get_item(t, 0U, &size);
+    if ((item != NULL) && (size == sizeof(int))) {
+        int value;
+        memcpy(&value, item, sizeof(int));
+        printf("Item 0: %d (size %zu)\n", value, size);
+    }
+
+    item = tuple_get_item(t, 1U, &size);
+    if ((item != NULL) && (size == sizeof(double))) {
+        double value;
+        memcpy(&value, item, sizeof(double));
+        printf("Item 1: %f (size %zu)\n", value, size);
+    }
+
+    item = tuple_get_item(t, 2U, &size);
+    if ((item != NULL) && (size > 0U) && (size <= MAX_ITEM_SIZE) &&
+        (((const char *)item)[size - 1U] == '\0') &&
+        (bounded_strlen((const char *)item, size) == (size - 1U))) {
+        printf("Item 2: %s (size %zu)\n", (const char *)item, size);
+    }
+
+    item = tuple_get_item(t, 5U, &size);
+    if (item == NULL) {
+        printf("Item 5: out of range\n");
+    }
+
+    tuple_destroy(t);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe as written:
+
+**1. `memcpy` in `tuple_set_item` (CWE-120):** This is a false positive. The destination buffer `copy` is allocated with `malloc(size)` immediately before the copy, and exactly `size` bytes are copied. The destination is guaranteed to hold the source data. Additionally, `size` is validated against `0` and `MAX_ITEM_SIZE` before allocation, and `data` is checked for `NULL`.
+
+**2. `memcpy` calls in `main` (CWE-120):** Both are false positives. Each copy is guarded by an exact size check (`size == sizeof(int)` and `size == sizeof(double)`) before copying into a stack variable of precisely that type, so the destination always matches the source length.
+
+**3. String access `((const char *)item)[size - 1U]` (CWE-119/CWE-120):** Also safe. The access is guarded by `size > 0U` (preventing underflow of `size - 1U`) and `size <= MAX_ITEM_SIZE`, and `size` reflects the true allocated length stored by `tuple_set_item`. The subsequent `bounded_strlen` check confirms proper NUL termination before printing with `%s`, preventing an out-of-bounds read by `printf`.
+
+Other defensive qualities worth noting: all allocation failures are handled with correct cleanup ordering (no leaks on partial initialization), `tuple_destroy` is `NULL`-tolerant, index bounds are checked in both accessors, and `bounded_strlen` is used instead of raw `strlen` to guard against unterminated input. The code stands as-is with no functional changes required.

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <ctype.h>
+
+size_t longest_word_length(void)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    int c;
+
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (isspace((unsigned char)c)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            if (current_len < SIZE_MAX) {
+                current_len++;
+            }
+        }
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    size_t result;
+
+    result = longest_word_length();
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `getchar` (CWE-120, CWE-20) is a low-risk, heuristic-based alert. It flags `getchar` in loops because a common bug pattern is reading characters into a fixed-size buffer without bounds checking. In this code, **no buffer is ever written to** — the loop merely counts characters — so there is no buffer overflow risk. This is effectively a false positive.
+
+The original code was already well-written in several respects:
+
+- `c` is declared as `int`, correctly handling the `EOF` sentinel (a classic bug is declaring it `char`).
+- The cast to `(unsigned char)` before `isspace()` avoids undefined behavior on platforms where `char` is signed and the value is negative.
+- `ferror(stdin)` distinguishes a genuine read error from a normal `EOF`.
+- The return value of `printf` is checked.
+
+The only defensive addition in the rewrite is a saturation guard on `current_len` against `SIZE_MAX`. This is purely theoretical hardening (you would need to read ~18 exabytes of non-whitespace input on a 64-bit system to overflow), but it formally addresses any integer-wraparound concern (CWE-190) that a strict audit might raise, at negligible cost.

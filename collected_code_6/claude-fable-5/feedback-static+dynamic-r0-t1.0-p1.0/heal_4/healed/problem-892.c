@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+void remove_multiple_spaces(char *str, size_t max_len)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    int prev_space = 0;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    while (read_idx < max_len && str[read_idx] != '\0') {
+        if (str[read_idx] == ' ') {
+            if (!prev_space) {
+                str[write_idx] = str[read_idx];
+                write_idx++;
+            }
+            prev_space = 1;
+        } else {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+            prev_space = 0;
+        }
+        read_idx++;
+    }
+
+    if (write_idx >= max_len) {
+        write_idx = max_len - 1;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    remove_multiple_spaces(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return 1;
+    }
+
+    return 0;
+}

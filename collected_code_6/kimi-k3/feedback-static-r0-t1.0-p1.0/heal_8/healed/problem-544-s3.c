@@ -1,0 +1,284 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static size_t safe_strlen(const char *s, size_t max_len) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int safe_memcpy(void *dest, size_t dest_size, const void *src, size_t src_size) {
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+    if (src_size > dest_size) {
+        return -1;
+    }
+    if (src_size > 0) {
+        memcpy(dest, src, src_size);
+    }
+    return 0;
+}
+
+static int safe_add_size(size_t a, size_t b, size_t *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    if (a > SIZE_MAX - b) {
+        return -1;
+    }
+    *result = a + b;
+    return 0;
+}
+
+static int safe_mul_size(size_t a, size_t b, size_t *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    if (a != 0 && b > SIZE_MAX / a) {
+        return -1;
+    }
+    *result = a * b;
+    return 0;
+}
+
+char *flatten_tuple_list(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return NULL;
+    }
+
+    size_t total_len = 0;
+    size_t i, j;
+
+    for (i = 0; i < list->count; i++) {
+        for (j = 0; j < list->tuples[i].count; j++) {
+            if (list->tuples[i].items[j] != NULL) {
+                size_t len = safe_strlen(list->tuples[i].items[j], 4096);
+                size_t temp;
+                if (safe_add_size(len, 1, &temp) != 0) {
+                    return NULL;
+                }
+                if (safe_add_size(total_len, temp, &total_len) != 0) {
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    if (total_len == 0) {
+        char *empty = malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    size_t alloc_size;
+    if (safe_add_size(total_len, 1, &alloc_size) != 0) {
+        return NULL;
+    }
+
+    char *result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+    size_t pos = 0;
+
+    for (i = 0; i < list->count; i++) {
+        for (j = 0; j < list->tuples[i].count; j++) {
+            if (list->tuples[i].items[j] != NULL) {
+                size_t len = safe_strlen(list->tuples[i].items[j], 4096);
+                size_t required;
+                if (safe_add_size(pos, len, &required) != 0) {
+                    free(result);
+                    return NULL;
+                }
+                if (safe_add_size(required, 1, &required) != 0) {
+                    free(result);
+                    return NULL;
+                }
+                if (required > alloc_size) {
+                    free(result);
+                    return NULL;
+                }
+                if (len > 0) {
+                    if (safe_memcpy(result + pos, alloc_size - pos, list->tuples[i].items[j], len) != 0) {
+                        free(result);
+                        return NULL;
+                    }
+                    pos += len;
+                }
+                if (pos < total_len) {
+                    if (pos >= alloc_size - 1) {
+                        free(result);
+                        return NULL;
+                    }
+                    result[pos++] = ' ';
+                }
+            }
+        }
+    }
+
+    if (pos > 0) {
+        result[pos - 1] = '\0';
+    } else {
+        result[pos] = '\0';
+    }
+
+    return result;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    size_t i, j;
+    for (i = 0; i < list->count; i++) {
+        for (j = 0; j < list->tuples[i].count; j++) {
+            free(list->tuples[i].items[j]);
+        }
+        free(list->tuples[i].items);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+static char *safe_strdup(const char *s) {
+    if (s == NULL) {
+        return NULL;
+    }
+    size_t len = safe_strlen(s, 4096);
+    size_t alloc_size;
+    if (safe_add_size(len, 1, &alloc_size) != 0) {
+        return NULL;
+    }
+    char *copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > 0) {
+        if (safe_memcpy(copy, alloc_size, s, len) != 0) {
+            free(copy);
+            return NULL;
+        }
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static void cleanup_partial_list(TupleList *list, size_t tuple_idx, size_t item_idx) {
+    size_t i, j;
+    for (i = 0; i < tuple_idx; i++) {
+        for (j = 0; j < list->tuples[i].count; j++) {
+            free(list->tuples[i].items[j]);
+        }
+        free(list->tuples[i].items);
+    }
+    if (tuple_idx < list->count) {
+        for (j = 0; j < item_idx; j++) {
+            free(list->tuples[tuple_idx].items[j]);
+        }
+        free(list->tuples[tuple_idx].items);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 2;
+    
+    size_t alloc_size;
+    if (safe_mul_size(list.count, sizeof(Tuple), &alloc_size) != 0) {
+        return EXIT_FAILURE;
+    }
+    list.tuples = malloc(alloc_size);
+    if (list.tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[0].count = 2;
+    if (safe_mul_size(list.tuples[0].count, sizeof(char *), &alloc_size) != 0) {
+        free(list.tuples);
+        return EXIT_FAILURE;
+    }
+    list.tuples[0].items = malloc(alloc_size);
+    if (list.tuples[0].items == NULL) {
+        free(list.tuples);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[0].items[0] = safe_strdup("Hello");
+    if (list.tuples[0].items[0] == NULL) {
+        cleanup_partial_list(&list, 0, 0);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[0].items[1] = safe_strdup("World");
+    if (list.tuples[0].items[1] == NULL) {
+        cleanup_partial_list(&list, 0, 1);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[1].count = 3;
+    if (safe_mul_size(list.tuples[1].count, sizeof(char *), &alloc_size) != 0) {
+        cleanup_partial_list(&list, 1, 0);
+        return EXIT_FAILURE;
+    }
+    list.tuples[1].items = malloc(alloc_size);
+    if (list.tuples[1].items == NULL) {
+        cleanup_partial_list(&list, 1, 0);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[1].items[0] = safe_strdup("C");
+    if (list.tuples[1].items[0] == NULL) {
+        cleanup_partial_list(&list, 1, 0);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[1].items[1] = safe_strdup("Programming");
+    if (list.tuples[1].items[1] == NULL) {
+        cleanup_partial_list(&list, 1, 1);
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[1].items[2] = safe_strdup("Language");
+    if (list.tuples[1].items[2] == NULL) {
+        cleanup_partial_list(&list, 1, 2);
+        return EXIT_FAILURE;
+    }
+
+    char *flattened = flatten_tuple_list(&list);
+    if (flattened != NULL) {
+        printf("%s\n", flattened);
+        free(flattened);
+    }
+
+    free_tuple_list(&list);
+
+    return EXIT_SUCCESS;
+}

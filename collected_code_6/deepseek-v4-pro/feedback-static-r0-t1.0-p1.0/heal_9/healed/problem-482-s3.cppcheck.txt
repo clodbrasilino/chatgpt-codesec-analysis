@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c:44:23: style: Condition 'match_len<=0' is always false [knownConditionTrueFalse]
+        if (match_len <= 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c:31:41: note: Assuming that condition 'end<=start' is not redundant
+        if (start < 0 || end < 0 || end <= start) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c:37:41: note: Assuming condition is false
+        if ((size_t)start >= cursor_len || (size_t)end > cursor_len) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c:43:29: note: Assignment 'match_len=end-start', assigned value is greater than 0
+        int match_len = end - start;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-482-s3.c:44:23: note: Condition 'match_len<=0' is always false
+        if (match_len <= 0) {
+                      ^

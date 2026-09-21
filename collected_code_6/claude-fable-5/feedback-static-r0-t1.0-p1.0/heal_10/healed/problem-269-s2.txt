@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    unsigned long guard = 0;
+
+    while (guard < ULONG_MAX) {
+        int extra = getchar();
+        if (extra == '\n' || extra == EOF) {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > UCHAR_MAX) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`[variableScope]` — `extra` in `flush_stdin`:** The variable `extra` was declared at function scope but only used inside the `while` loop. Moving the declaration into the loop body reduces its scope to the minimum required, which improves readability and prevents accidental misuse outside the loop. This fully resolves the cppcheck-style warning.
+
+2. **Flawfinder `getchar` warnings (CWE-120, CWE-20):** These are risk-level-1 informational findings rather than actual defects here, because:
+   - No buffer is being filled — each `getchar()` result is consumed as a single `int` and never written into an array, so CWE-120 (buffer overflow) cannot occur.
+   - Input validation (CWE-20) is already handled: the return value is checked against `EOF` before use, range-checked against `0..UCHAR_MAX`, and cast to `unsigned char` before being passed to `isprint()`, which avoids undefined behavior for negative values.
+   - The drain loop in `flush_stdin` is bounded by the `guard < ULONG_MAX` counter, guaranteeing termination even against a pathological non-terminating stream, mitigating any recursive/unbounded-loop concern.
+
+The remaining structure (checking `fflush` return, distinguishing printable vs. non-printable characters, avoiding buffer flushing when the user just pressed Enter) was already sound and is preserved unchanged.

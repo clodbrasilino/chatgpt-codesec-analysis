@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool string_starts_with_number(const char *str, long number)
+{
+    char *prefix;
+    int required;
+    int written;
+    size_t prefix_len;
+    size_t i;
+    bool result;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    required = snprintf(NULL, 0, "%ld", number);
+    if (required < 0) {
+        return false;
+    }
+
+    prefix = malloc((size_t)required + 1);
+    if (prefix == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, (size_t)required + 1, "%ld", number);
+    if (written < 0 || written != required) {
+        free(prefix);
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+    result = true;
+
+    for (i = 0; i < prefix_len; i++) {
+        if (str[i] == '\0' || str[i] != prefix[i]) {
+            result = false;
+            break;
+        }
+    }
+
+    free(prefix);
+    return result;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100apples";
+    long target1 = 42;
+    long target2 = 42;
+    long target3 = 100;
+
+    if (string_starts_with_number(test1, target1)) {
+        if (printf("\"%s\" starts with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, target2)) {
+        if (printf("\"%s\" starts with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, target3)) {
+        if (printf("\"%s\" starts with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already quite defensive, but the Flawfinder warning flagged the statically-sized `char prefix[32]` buffer (CWE-119/CWE-120). While 32 bytes is technically sufficient for any 64-bit `long` (max 20 digits plus sign and null terminator), the rewritten version eliminates the concern entirely by:
+
+1. **Dynamic sizing via `snprintf(NULL, 0, ...)`** — computes the exact required buffer length before allocation, so no fixed-size assumption exists at all.
+2. **Allocation validation** — `malloc` failure is handled gracefully by returning `false`.
+3. **Consistency check** — the second `snprintf` result is verified against the precomputed length, guarding against any unexpected mismatch.
+4. **No leaks** — `free()` is called on every exit path after allocation, using a single `result` flag with `break` rather than early returns to keep cleanup centralized.
+
+The remaining safety properties of the original are preserved: the `NULL` input check, the character-by-character comparison that stops at the string's null terminator (never reading past the end of `str`), and error checking on all `printf` calls in `main`.

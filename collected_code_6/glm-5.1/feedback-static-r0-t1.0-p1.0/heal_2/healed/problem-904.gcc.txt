@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-904.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-904.c:24:9: error: implicit declaration of function 'clock_gettime' [-Wimplicit-function-declaration]
+   24 |         clock_gettime(CLOCK_REALTIME, &ts);
+      |         ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-904.c:24:23: error: 'CLOCK_REALTIME' undeclared (first use in this function)
+   24 |         clock_gettime(CLOCK_REALTIME, &ts);
+      |                       ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-904.c:24:23: note: each undeclared identifier is reported only once for each function it appears in

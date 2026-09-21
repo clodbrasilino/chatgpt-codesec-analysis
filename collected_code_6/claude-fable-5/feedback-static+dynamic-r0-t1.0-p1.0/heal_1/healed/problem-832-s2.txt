@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+#define NUM_BUFFER_SIZE 64
+
+int extract_max_number(const char *input, double *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char buffer[NUM_BUFFER_SIZE];
+    double max_value;
+    int found;
+    int ret;
+    char *endptr;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "-?[0-9]+(\\.[0-9]+)?", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    found = 0;
+    max_value = -DBL_MAX;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            break;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len > 0 && len < sizeof(buffer)) {
+            double value;
+
+            memcpy(buffer, cursor + match.rm_so, len);
+            buffer[len] = '\0';
+
+            errno = 0;
+            value = strtod(buffer, &endptr);
+            if (errno == 0 && endptr != buffer && isfinite(value)) {
+                if (!found || value > max_value) {
+                    max_value = value;
+                    found = 1;
+                }
+            }
+        }
+
+        if (match.rm_eo == 0) {
+            break;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "Values: 42, -17, 3.14, 1000.5, and 999";
+    double max_value;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        fprintf(stderr, "No numeric value found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum value: %g\n", max_value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Buffer overflow concerns (CWE-119/CWE-120)**: The `memcpy` call is now only executed after explicitly verifying `len < sizeof(buffer)`, guaranteeing the destination can always hold the source data plus the null terminator. Matches that are too long to fit are now skipped entirely rather than truncated — truncating a numeric string would silently parse a *different* (wrong) value, which is arguably a correctness bug in the original.
+
+2. **Variable scope reduction**: `value` and `len` are now declared inside the loop body where they are actually used, satisfying the cppcheck `[variableScope]` findings and reducing the chance of stale-value bugs.
+
+3. **Defensive hardening**: Added a sanity check on `match.rm_so`/`match.rm_eo` before the offset arithmetic, protecting the cast to `size_t` from producing a huge unsigned value if the regex library ever returned unexpected offsets.
+
+4. Replaced the magic number `64` with a named constant for maintainability.

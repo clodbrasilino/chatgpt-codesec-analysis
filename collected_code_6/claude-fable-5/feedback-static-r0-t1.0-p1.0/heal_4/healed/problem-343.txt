@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+int count_digits_letters(const char *str, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return -1;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_digits_letters(buffer, &digits, &letters) != 0) {
+        fprintf(stderr, "Error counting characters\n");
+        return 1;
+    }
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and why it remains structurally unchanged:**
+
+The Flawfinder warning about the statically-sized `buffer` (CWE-119/CWE-120) is a low-risk, informational finding. The original code already mitigates every realistic overflow vector, so the rewrite preserves those defenses:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters plus the null terminator, preventing buffer overflow on input.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy — `fgets` already null-terminates, but this guards against any hypothetical misuse.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` instead of `strlen` ensures the scan never exceeds the buffer even if termination were somehow lost.
+
+4. **Safe ctype usage:** casting to `unsigned char` before calling `isdigit`/`isalpha` avoids undefined behavior for characters with negative `char` values (e.g., high-bit bytes on platforms where `char` is signed).
+
+5. **NULL-pointer validation:** `count_digits_letters` checks all pointer arguments and signals errors via return code, with the caller checking that code.
+
+6. **Correct format specifiers:** `%zu` matches `size_t`, avoiding format-string mismatches.
+
+The code is portable C (note: `strnlen` requires POSIX or C23; if strict C99 portability is needed, `strlen` would suffice here since termination is guaranteed).

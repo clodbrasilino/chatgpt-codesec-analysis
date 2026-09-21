@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-917.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-917.c:48:40: style: Condition 'start<len' is always true [knownConditionTrueFalse]
+            if (match_len > 0 && start < len && match_len <= len - start) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-917.c:30:20: note: Assuming that condition 'i+1<len' is not redundant
+            (i + 1 < len) &&
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-917.c:32:26: note: start is assigned 'i' here.
+            size_t start = i;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-917.c:48:40: note: Condition 'start<len' is always true
+            if (match_len > 0 && start < len && match_len <= len - start) {
+                                       ^

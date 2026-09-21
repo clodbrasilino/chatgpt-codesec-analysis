@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+#define FREQ_SIZE ((size_t)UCHAR_MAX + 1)
+
+int count_char_frequency(const char *str, size_t str_max, size_t freq_size, unsigned long freq[])
+{
+    size_t i;
+
+    if (str == NULL || freq == NULL || freq_size < FREQ_SIZE) {
+        return -1;
+    }
+
+    for (i = 0; i < freq_size; i++) {
+        freq[i] = 0;
+    }
+
+    for (i = 0; i < str_max && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (freq[c] < ULONG_MAX) {
+            freq[c]++;
+        }
+    }
+
+    if (i == str_max) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[BUFFER_SIZE];
+    unsigned long freq[FREQ_SIZE];
+    size_t len;
+    int i;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(buffer), sizeof(freq) / sizeof(freq[0]), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i <= UCHAR_MAX; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %lu\n", (char)i, freq[i]);
+            } else {
+                printf("0x%02X : %lu\n", (unsigned int)i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

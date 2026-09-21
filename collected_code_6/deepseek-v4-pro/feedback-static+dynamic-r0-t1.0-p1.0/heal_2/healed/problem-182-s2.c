@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int count_matches(const char *pattern, const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    int count = 0;
+    const char *p = str;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    while (regexec(&regex, p, 1, &match, 0) == 0) {
+        count++;
+        p += match.rm_eo;
+        if (match.rm_so == match.rm_eo) {
+            p++;
+        }
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+void categorize_characters(const char *str, int *uppercase, int *lowercase, int *special, int *numeric) {
+    *uppercase = 0;
+    *lowercase = 0;
+    *special = 0;
+    *numeric = 0;
+
+    *uppercase = count_matches("[A-Z]", str);
+    *lowercase = count_matches("[a-z]", str);
+    *special = count_matches("[^a-zA-Z0-9]", str);
+    *numeric = count_matches("[0-9]", str);
+}
+
+#define INPUT_SIZE 4096
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_length;
+    int uppercase, lowercase, special, numeric;
+
+    printf("Enter a string: ");
+    read_length = getline(&input, &buffer_size, stdin);
+    if (read_length == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    if (read_length > 0 && input[read_length - 1] == '\n') {
+        input[read_length - 1] = '\0';
+    }
+
+    categorize_characters(input, &uppercase, &lowercase, &special, &numeric);
+
+    printf("Uppercase: %d\n", uppercase);
+    printf("Lowercase: %d\n", lowercase);
+    printf("Special characters: %d\n", special);
+    printf("Numeric values: %d\n", numeric);
+
+    free(input);
+    return EXIT_SUCCESS;
+}

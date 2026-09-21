@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_repeated_word(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char buffer[1024];
+    char **seen = NULL;
+    size_t seen_count = 0;
+    size_t seen_capacity = 0;
+    char *result = NULL;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        while (str[i] != '\0' && !isalnum((unsigned char)str[i])) {
+            i++;
+        }
+        if (str[i] == '\0') {
+            break;
+        }
+
+        size_t j = 0;
+        while (str[i] != '\0' && isalnum((unsigned char)str[i])) {
+            if (j < sizeof(buffer) - 1) {
+                buffer[j++] = tolower((unsigned char)str[i]);
+            }
+            i++;
+        }
+        buffer[j] = '\0';
+
+        int found = 0;
+        for (size_t k = 0; k < seen_count; k++) {
+            if (strcmp(seen[k], buffer) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            result = strdup(buffer);
+            goto cleanup;
+        }
+
+        if (seen_count >= seen_capacity) {
+            size_t new_capacity = seen_capacity == 0 ? 8 : seen_capacity * 2;
+            char **new_seen = realloc(seen, new_capacity * sizeof(char *));
+            if (new_seen == NULL) {
+                goto cleanup;
+            }
+            seen = new_seen;
+            seen_capacity = new_capacity;
+        }
+
+        seen[seen_count] = strdup(buffer);
+        if (seen[seen_count] == NULL) {
+            goto cleanup;
+        }
+        seen_count++;
+    }
+
+cleanup:
+    for (size_t k = 0; k < seen_count; k++) {
+        free(seen[k]);
+    }
+    free(seen);
+
+    return result;
+}
+
+int main() {
+    const char *text = "This is a test, this is only a test.";
+    char *word = find_first_repeated_word(text);
+    if (word != NULL) {
+        printf("%s\n", word);
+        free(word);
+    } else {
+        printf("No repeated word found.\n");
+    }
+    return 0;
+}

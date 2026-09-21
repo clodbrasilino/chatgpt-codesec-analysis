@@ -1,0 +1,1 @@
+for (size_t i = 0U; i < len - 1U; i++) {

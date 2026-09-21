@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness and its mitigations:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[BUFFER_SIZE]` as a *potential* overflow risk. However, examining the code shows this is a false positive — the original code already implements all the necessary defenses, which I've preserved in the rewrite:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow. Using `sizeof(buffer)` rather than the macro directly ties the bound to the actual array declaration.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive hardening. While `fgets` always null-terminates on success, this makes the invariant explicit and protects against future refactoring mistakes.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` instead of `strlen()` ensures the scan can never run past the buffer even if termination were somehow lost.
+
+4. **Safe helper function contract** — `first_last_equal()` validates for `NULL`, zero `max_len`, empty strings, and the `len == max_len` edge case (an unterminated buffer), and only indexes `str[0]` and `str[len - 1]` after those checks — no out-of-bounds access is possible.
+
+5. **Return value checking** — the `fgets` result is checked against `NULL`, handling EOF/read errors gracefully with a proper `EXIT_FAILURE`.
+
+The code is safe as written; no functional changes were required beyond removing the comments as requested.

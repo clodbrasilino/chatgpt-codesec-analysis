@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-862.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-862.c:103:50: style: Condition 'results_capacity<required_size' is always false [knownConditionTrueFalse]
+        size_t safe_copy_size = results_capacity < required_size ? results_capacity : required_size;
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-862.c:99:27: note: Assuming that condition 'required_size>results_capacity' is not redundant
+        if (required_size > results_capacity) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-862.c:103:50: note: Condition 'results_capacity<required_size' is always false
+        size_t safe_copy_size = results_capacity < required_size ? results_capacity : required_size;
+                                                 ^

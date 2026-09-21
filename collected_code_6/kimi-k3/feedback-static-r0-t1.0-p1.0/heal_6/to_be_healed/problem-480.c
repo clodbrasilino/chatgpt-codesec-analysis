@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+char find_max_occurrence(const char *str, size_t *max_count)
+{
+    unsigned int counts[UCHAR_MAX + 1] = {0};
+    size_t i;
+    unsigned char max_char = 0;
+    unsigned int max = 0;
+
+    if (str == NULL || *str == '\0') {
+        if (max_count != NULL) {
+            *max_count = 0;
+        }
+        return '\0';
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max) {
+            max = counts[c];
+            max_char = c;
+        }
+    }
+
+    if (max_count != NULL) {
+        *max_count = (size_t)max;
+    }
+
+    return (char)max_char;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[1024];
+    size_t count;
+    char result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    if (len == sizeof(buffer) - 1) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+
+    result = find_max_occurrence(buffer, &count);
+
+    if (count > 0) {
+        printf("Maximum occurring character: '%c' (appears %zu times)\n", result, count);
+    } else {
+        printf("String is empty\n");
+    }
+
+    return 0;
+}

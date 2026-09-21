@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 255
+
+char *to_lowercase(const char *input)
+{
+    char *result;
+    size_t i;
+    size_t len;
+
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    result = (char *)malloc(len + 1);
+
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        result[i] = (char)tolower((unsigned char)input[i]);
+    }
+
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char *input;
+    char *lowercase_str;
+    size_t input_len;
+    int ch;
+    size_t buffer_size;
+
+    buffer_size = MAX_INPUT_LENGTH + 2;
+    input = (char *)malloc(buffer_size);
+
+    if (input == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(input, (int)buffer_size, stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+
+    input_len = strnlen(input, buffer_size);
+    if (input_len == buffer_size)
+    {
+        fprintf(stderr, "Input too long\n");
+        free(input);
+        return 1;
+    }
+
+    if (input_len > 0 && input[input_len - 1] != '\n' && !feof(stdin))
+    {
+        fprintf(stderr, "Input too long\n");
+        free(input);
+        return 1;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    lowercase_str = to_lowercase(input);
+
+    if (lowercase_str == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return 1;
+    }
+
+    printf("Lowercase string: %s\n", lowercase_str);
+
+    free(lowercase_str);
+    free(input);
+    lowercase_str = NULL;
+    input = NULL;
+
+    return 0;
+}

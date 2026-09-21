@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the original code and why this version is already safe:
+
+**The flagged weakness (CWE-119/CWE-120, statically-sized buffer):** The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a heuristic hit on any fixed-size array. The code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than a repeated literal keeps the bound tied to the actual array size.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defense-in-depth. `fgets` already null-terminates on success, but this makes the invariant explicit and protects against future refactoring to a non-terminating read function.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` instead of `strlen` guarantees the scan never runs past the buffer even if termination were somehow lost.
+
+4. **Safe newline stripping:** The `len > 0` check prevents an out-of-bounds access at `buffer[-1]` when the input is an empty string.
+
+**Other correct defensive practices already present:**
+
+- `isdigit((unsigned char)*str)` — casting to `unsigned char` avoids undefined behavior when `char` is signed and holds a negative value (e.g., extended/UTF-8 bytes).
+- `NULL` check in `count_numeric` guards against a null pointer dereference.
+- The `fgets` return value is checked, handling EOF/read errors gracefully.
+- `%zu` is the correct format specifier for `size_t`.
+
+No functional changes were required — the code as written already addresses the identified weakness; only the comments were removed per the request.

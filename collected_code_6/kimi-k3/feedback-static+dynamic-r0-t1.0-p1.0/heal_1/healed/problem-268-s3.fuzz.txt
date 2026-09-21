@@ -1,0 +1,2 @@
+problem-268-s3.c:10:20:medium:UBSan: signed integer overflow: 9333333330 * 1555555554 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000008,time:45462,execs:14452,op:havoc,rep:2)
+problem-268-s3.c:12:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000001,time:2155,execs:827,op:havoc,rep:1; likely memory-safety defect

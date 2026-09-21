@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-107-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-107-s3.c:111:26: style: Variable 'len_start' is assigned a value that is never used. [unreadVariable]
+        size_t len_start = safe_strlen(argv[1], INPUT_BUFFER_SIZE);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-107-s3.c:112:24: style: Variable 'len_end' is assigned a value that is never used. [unreadVariable]
+        size_t len_end = safe_strlen(argv[2], INPUT_BUFFER_SIZE);
+                       ^

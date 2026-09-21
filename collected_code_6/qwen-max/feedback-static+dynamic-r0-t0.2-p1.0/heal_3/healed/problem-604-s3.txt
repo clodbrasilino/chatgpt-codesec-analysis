@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverseWords(char *str) {
+    char *word_start = str;
+    int len = 0, i;
+    while (str[len]) len++;
+    
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) return;
+    result[len] = '\0';
+    
+    char *temp = str;
+    while (*temp) {
+        temp++;
+        if (*temp == ' ' || *temp == '\0') {
+            i = temp - word_start - 1;
+            while (i >= 0) {
+                result[--len] = word_start[i--];
+            }
+            while (*temp == ' ') {
+                result[--len] = *temp++;
+            }
+            word_start = temp;
+        }
+    }
+    memmove(str, result, len + 1);
+    free(result);
+}
+
+int main() {
+    char str[] = "Hello World This is C";
+    reverseWords(str);
+    printf("%s\n", str);
+    return 0;
+}
+```

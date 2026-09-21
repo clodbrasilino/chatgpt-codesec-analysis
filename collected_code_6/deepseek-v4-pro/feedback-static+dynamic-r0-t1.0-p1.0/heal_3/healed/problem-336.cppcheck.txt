@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-336.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-336.c:13:17: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (month[len] != '\0' && len < sizeof(lower_month) - 1) {
+                ^

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static bool is_vowel(char c)
+{
+    char lower_c = (char)tolower((unsigned char)c);
+    return (lower_c == 'a' || lower_c == 'e' || lower_c == 'i' || 
+            lower_c == 'o' || lower_c == 'u');
+}
+
+size_t count_vowels(const char *str)
+{
+    size_t count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str != '\0') {
+        if (is_vowel(*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+    size_t vowel_count;
+    
+    printf("Enter a string: ");
+    
+    bytes_read = getline(&input, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[bytes_read - 1] = '\0';
+    }
+    
+    vowel_count = count_vowels(input);
+    printf("Number of vowels: %zu\n", vowel_count);
+    
+    free(input);
+    return 0;
+}
+```

@@ -1,0 +1,180 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 256
+
+static bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: the above uses `INT_MAX`, so add `#include <limits.h>` — here is the corrected, complete version:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_INPUT_SIZE 256
+
+static bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key hardening changes addressing the flagged weaknesses:**
+
+1. **Flawfinder `getchar` (CWE-120, CWE-20):** The drain loop was moved into a dedicated `discard_remaining_input()` function that never writes the read character into any buffer — it only consumes and discards input, eliminating any buffer boundary concern in the loop.
+
+2. **Flawfinder `char` static array (CWE-119/CWE-120):** The fixed-size `buffer` is zero-initialized with `memset` before use, is only ever written through `fgets` with an explicit size bound derived from `sizeof(buffer)`, is unconditionally NUL-terminated at `size - 1`, and all subsequent reads use `strnlen` with the buffer size — guaranteeing no read or write ever exceeds the array bounds.
+
+3. **Additional defensive fixes:** `read_line` now rejects sizes smaller than 2 (which cannot hold a character plus terminator) and sizes exceeding `INT_MAX` (preventing a truncating cast when passed to `fgets`), and the `fflush` return value is checked.

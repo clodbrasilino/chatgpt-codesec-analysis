@@ -1,0 +1,155 @@
+## Analysis
+
+The Flawfinder warnings flag the two `memcpy` calls (CWE-120). The fix strategy is to make the destination-capacity invariants explicit and verifiable **before** each copy:
+
+1. **String copy** — `str_len` is bounded by `MAX_STRING_LENGTH` via `bounded_strnlen`, the allocation is exactly `str_len + 1` bytes, and an explicit check (`str_len >= str_capacity`) guards the `memcpy` so the destination provably holds the source plus the terminator.
+2. **List copy** — multiplication overflow is pre-checked (`list_size > SIZE_MAX / sizeof(int)`), the allocation is exactly `list_size * sizeof(int)` bytes, and an explicit check (`list_size > list_capacity / sizeof(int)`) guards the `memcpy` so the copy size can never exceed the destination.
+3. Struct fields are initialized to safe defaults so every failure path frees only valid pointers, and `list_size` is only set after the list copy succeeds.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096u
+
+typedef struct {
+    char *str;
+    int *list;
+    size_t list_size;
+} Tuple;
+
+static size_t bounded_strnlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+Tuple *create_tuple(const char *str, const int *list, size_t list_size)
+{
+    Tuple *t;
+    size_t str_len;
+    size_t str_capacity;
+    size_t list_capacity;
+
+    if (str == NULL || (list == NULL && list_size > 0)) {
+        return NULL;
+    }
+
+    if (list_size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    str_len = bounded_strnlen(str, MAX_STRING_LENGTH + 1u);
+    if (str_len > MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    str_capacity = str_len + 1u;
+    list_capacity = list_size * sizeof(int);
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->str = NULL;
+    t->list = NULL;
+    t->list_size = 0;
+
+    t->str = malloc(str_capacity);
+    if (t->str == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    if (str_len >= str_capacity) {
+        free(t->str);
+        free(t);
+        return NULL;
+    }
+
+    memcpy(t->str, str, str_len);
+    t->str[str_len] = '\0';
+
+    if (list_size > 0) {
+        if (list_size > list_capacity / sizeof(int)) {
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+
+        t->list = malloc(list_capacity);
+        if (t->list == NULL) {
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+
+        if (list_capacity < list_size * sizeof(int)) {
+            free(t->list);
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+
+        memcpy(t->list, list, list_capacity);
+        t->list_size = list_size;
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->str);
+        free(t->list);
+        free(t);
+    }
+}
+
+void print_tuple(const Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        printf("(null)\n");
+        return;
+    }
+
+    printf("(\"%s\", [", t->str);
+    for (i = 0; i < t->list_size; i++) {
+        printf("%d", t->list[i]);
+        if (i + 1 < t->list_size) {
+            printf(", ");
+        }
+    }
+    printf("])\n");
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    Tuple *t = create_tuple("example", numbers, size);
+
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t);
+    free_tuple(t);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes:** fields are zero-initialized right after allocating the `Tuple`; the string-copy guard (`str_len >= str_capacity`) and the list-copy guards (`list_size > list_capacity / sizeof(int)`, plus a re-validation of the byte count) are placed immediately before each `memcpy`, proving the destination always holds the source; `list_size` is stored only after a successful list copy, keeping the struct consistent on every path.

@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void extract_numbers(const char *str) {
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL string provided\n");
+        return;
+    }
+    
+    size_t i = 0;
+    
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            size_t start = i;
+            while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            printf("Number: %.*s, Position: %zu\n", (int)(i - start), str + start, start);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+    
+    printf("Enter a string: ");
+    bytes_read = getline(&input, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (bytes_read > 0 && input[bytes_read - 1] == '\n') {
+        input[bytes_read - 1] = '\0';
+    }
+    
+    extract_numbers(input);
+    
+    free(input);
+    
+    return EXIT_SUCCESS;
+}

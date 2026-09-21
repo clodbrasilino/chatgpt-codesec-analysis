@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_PASSWORD_LEN 256
+
+bool is_valid_password(const char *password) {
+    if (password == NULL) {
+        return false;
+    }
+
+    size_t len = 0;
+    while (len < MAX_PASSWORD_LEN && password[len] != '\0') {
+        len++;
+    }
+
+    if (len < 8) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = password[i];
+        if (isupper(c)) {
+            has_upper = true;
+        }
+        if (islower(c)) {
+            has_lower = true;
+        }
+        if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (ispunct(c)) {
+            has_special = true;
+        }
+        if (has_upper && has_lower && has_digit && has_special) {
+            break;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void) {
+    const char *test_passwords[] = {
+        "Short1!",
+        "nouppercase1!",
+        "NOLOWERCASE1!",
+        "NoDigit!!",
+        "NoSpecial1",
+        "ValidPass1!",
+        NULL
+    };
+
+    for (size_t i = 0; i < sizeof(test_passwords) / sizeof(test_passwords[0]); i++) {
+        if (test_passwords[i] == NULL) {
+            printf("Password: NULL - Valid: false\n");
+        } else {
+            printf("Password: %s - Valid: %s\n", test_passwords[i], is_valid_password(test_passwords[i]) ? "true" : "false");
+        }
+    }
+
+    return 0;
+}

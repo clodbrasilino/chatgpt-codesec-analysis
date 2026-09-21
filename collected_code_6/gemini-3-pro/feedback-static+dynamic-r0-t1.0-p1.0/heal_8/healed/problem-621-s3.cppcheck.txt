@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s3.c:37:17: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+                result = (char*)realloc(result, cap);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s3.c:54:17: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+                result = (char*)realloc(result, cap);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s3.c:65:17: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+                result = (char*)realloc(result, cap);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s3.c:77:9: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+        result = (char*)realloc(result, cap);
+        ^

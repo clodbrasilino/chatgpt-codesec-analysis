@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+#define VOWEL_COUNT 5
+
+bool contains_all_vowels(const char *str, size_t len)
+{
+    bool vowel_flags[VOWEL_COUNT] = {false};
+    size_t i;
+    
+    if (str == NULL) {
+        return false;
+    }
+    
+    for (i = 0; i < len; i++) {
+        char c = tolower((unsigned char)str[i]);
+        
+        switch (c) {
+            case 'a':
+                vowel_flags[0] = true;
+                break;
+            case 'e':
+                vowel_flags[1] = true;
+                break;
+            case 'i':
+                vowel_flags[2] = true;
+                break;
+            case 'o':
+                vowel_flags[3] = true;
+                break;
+            case 'u':
+                vowel_flags[4] = true;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    for (i = 0; i < VOWEL_COUNT; i++) {
+        if (!vowel_flags[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void)
+{
+    char *input = malloc(MAX_INPUT_SIZE);
+    
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter a string: ");
+    
+    if (fgets(input, MAX_INPUT_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    size_t len = strnlen(input, MAX_INPUT_SIZE);
+    
+    if (len == MAX_INPUT_SIZE) {
+        input[MAX_INPUT_SIZE - 1] = '\0';
+        len = MAX_INPUT_SIZE - 1;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (contains_all_vowels(input, len)) {
+        printf("String accepted: contains all vowels\n");
+    } else {
+        printf("String rejected: does not contain all vowels\n");
+    }
+    
+    free(input);
+    return 0;
+}

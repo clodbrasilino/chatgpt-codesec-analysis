@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:46:62: style: Condition 'total_bytes>0' is always true [knownConditionTrueFalse]
+    if (data_size <= (SIZE_MAX / sizeof(int)) && total_bytes > 0) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:35:21: note: Assuming that condition 'total_bytes==0' is not redundant
+    if (total_bytes == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:41:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:46:62: note: Condition 'total_bytes>0' is always true
+    if (data_size <= (SIZE_MAX / sizeof(int)) && total_bytes > 0) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:76:55: style: Condition 'result_bytes>0' is always true [knownConditionTrueFalse]
+    if (n <= (SIZE_MAX / sizeof(int)) && result_bytes > 0) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:63:22: note: Assuming that condition 'result_bytes==0' is not redundant
+    if (result_bytes == 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:70:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-10.c:76:55: note: Condition 'result_bytes>0' is always true
+    if (n <= (SIZE_MAX / sizeof(int)) && result_bytes > 0) {
+                                                      ^

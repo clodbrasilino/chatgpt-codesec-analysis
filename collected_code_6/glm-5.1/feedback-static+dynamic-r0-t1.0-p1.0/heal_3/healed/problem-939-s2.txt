@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[32];
+    int value;
+} Dict;
+
+int compare_dicts(const void *a, const void *b) {
+    const Dict *da = (const Dict *)a;
+    const Dict *db = (const Dict *)b;
+    return strncmp(da->key, db->key, 32);
+}
+
+void sort_dicts(Dict *dicts, size_t count) {
+    if (dicts == NULL || count == 0) {
+        return;
+    }
+    qsort(dicts, count, sizeof(Dict), compare_dicts);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        return EXIT_FAILURE;
+    }
+
+    Dict list[4] = {0};
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    snprintf(list[0].key, 32, "%s", "delta");
+    list[0].value = 4;
+
+    snprintf(list[1].key, 32, "%s", "alpha");
+    list[1].value = 1;
+
+    snprintf(list[2].key, 32, "%s", "charlie");
+    list[2].value = 3;
+
+    snprintf(list[3].key, 32, "%s", "bravo");
+    list[3].value = 2;
+
+    sort_dicts(list, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%s: %d\n", list[i].key, list[i].value);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096U
+
+char *remove_odd_characters(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *original = "abcdefghij";
+    char *filtered;
+
+    filtered = remove_odd_characters(original);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", original);
+    printf("Filtered: %s\n", filtered);
+
+    free(filtered);
+    filtered = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the Flawfinder CWE-126 finding. `strnlen` bounds the scan to `MAX_INPUT_LENGTH` bytes, so a non-NUL-terminated buffer can no longer cause an unbounded over-read.
+
+2. **Added a length sanity check** — If `strnlen` returns the maximum (meaning no terminator was found within the bound), the function rejects the input by returning `NULL` rather than processing a potentially unterminated string.
+
+3. **Preserved existing good practices** — The original code already handled `NULL` input, checked the `malloc` return value, guaranteed NUL-termination of the output, freed the allocation, and nulled the pointer after `free`. All of that is retained.
+
+**Note:** `strnlen` is POSIX (and C23); if strict C99 portability is required, compile with `-D_POSIX_C_SOURCE=200809L` or substitute a small manual bounded-scan loop.

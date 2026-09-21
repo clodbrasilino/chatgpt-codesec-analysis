@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_LEN 64
+
+typedef struct {
+    char name[NAME_LEN];
+    int value;
+} Record;
+
+int index_minimum(const Record *records, size_t count, char *out, size_t out_size)
+{
+    size_t i;
+    size_t min_idx = 0;
+    size_t name_len;
+
+    if (records == NULL || out == NULL || count == 0U || out_size == 0U) {
+        return -1;
+    }
+
+    for (i = 1U; i < count; i++) {
+        if (records[i].value < records[min_idx].value) {
+            min_idx = i;
+        }
+    }
+
+    name_len = strnlen(records[min_idx].name, NAME_LEN);
+
+    if (name_len >= NAME_LEN || name_len >= out_size) {
+        return -1;
+    }
+
+    memcpy(out, records[min_idx].name, name_len);
+    out[name_len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    Record records[] = {
+        {"Rash", 143},
+        {"Manjeet", 200},
+        {"Varsha", 100}
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    char result[NAME_LEN];
+
+    if (index_minimum(records, count, result, sizeof(result)) != 0) {
+        (void)fprintf(stderr, "Error: could not extract minimum record\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Record with minimum value: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the weaknesses flagged by Flawfinder, so the rewrite preserves those defenses rather than changing logic:
+
+1. **CWE-119/CWE-120 (statically-sized `char` arrays):** Flawfinder flags every fixed-size `char` buffer heuristically. The risk here is neutralized because:
+   - All copies into `out` are guarded: the caller passes `sizeof(result)` as `out_size`, and the function rejects any copy where `name_len >= out_size`.
+   - `Record.name` is never written past its bounds in this program; it's only initialized via designated initializers with string literals well under `NAME_LEN`.
+
+2. **CWE-120 (`memcpy` without bounds check):** The `memcpy` is safe because:
+   - `strnlen(..., NAME_LEN)` bounds the source length, protecting against a non-terminated `name` field.
+   - The `name_len >= NAME_LEN || name_len >= out_size` check guarantees both that the source was properly terminated and that the destination can hold `name_len` bytes plus the explicit NUL terminator written afterward.
+
+3. **Defensive API design:** NULL-pointer, zero-count, and zero-size guards prevent undefined behavior on degenerate inputs, and return codes are checked in `main` (including `printf`'s return value).
+
+No functional or security changes were required — the flagged findings are false positives given the existing bounds checking.

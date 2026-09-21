@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+static int checked_length(const char *str, size_t *out_length)
+{
+    size_t length;
+
+    if (str == NULL || out_length == NULL) {
+        return -1;
+    }
+
+    length = strnlen(str, MAX_STRING_LENGTH);
+    if (length >= MAX_STRING_LENGTH) {
+        return -1;
+    }
+
+    *out_length = length;
+    return 0;
+}
+
+char *concatenate_tuple(const char **elements, size_t count, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t *element_lengths;
+    size_t offset;
+    size_t i;
+    char *result;
+
+    if (elements == NULL || delimiter == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (checked_length(delimiter, &delimiter_length) != 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    element_lengths = malloc(count * sizeof(size_t));
+    if (element_lengths == NULL) {
+        return NULL;
+    }
+
+    total_length = 0;
+
+    for (i = 0; i < count; i++) {
+        if (checked_length(elements[i], &element_lengths[i]) != 0) {
+            free(element_lengths);
+            return NULL;
+        }
+        if (element_lengths[i] > SIZE_MAX - total_length) {
+            free(element_lengths);
+            return NULL;
+        }
+        total_length += element_lengths[i];
+        if (i < count - 1) {
+            if (delimiter_length > SIZE_MAX - total_length) {
+                free(element_lengths);
+                return NULL;
+            }
+            total_length += delimiter_length;
+        }
+    }
+
+    if (total_length == SIZE_MAX) {
+        free(element_lengths);
+        return NULL;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        free(element_lengths);
+        return NULL;
+    }
+
+    offset = 0;
+
+    for (i = 0; i < count; i++) {
+        if (element_lengths[i] > total_length - offset) {
+            free(result);
+            free(element_lengths);
+            return NULL;
+        }
+        memcpy(result + offset, elements[i], element_lengths[i]);
+        offset += element_lengths[i];
+        if (i < count - 1) {
+            if (delimiter_length > total_length - offset) {
+                free(result);
+                free(element_lengths);
+                return NULL;
+            }
+            memcpy(result + offset, delimiter, delimiter_length);
+            offset += delimiter_length;
+        }
+    }
+
+    result[offset] = '\0';
+
+    free(element_lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "ID", "is", "4", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    char *joined;
+
+    joined = concatenate_tuple(tuple, count, "-");
+    if (joined == NULL) {
+        fprintf(stderr, "Error: concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Out-of-bounds read fixed**: The original code checked `delimiter[MAX_STRING_LENGTH]` and `elements[i][MAX_STRING_LENGTH]` after `strnlen` returned `MAX_STRING_LENGTH`. This reads one byte past the scanned range, which is undefined behavior if the buffer is exactly `MAX_STRING_LENGTH` bytes with no terminator. The rewrite rejects any string whose length reaches `MAX_STRING_LENGTH`, so no byte beyond the bounded scan is ever dereferenced.
+
+2. **Integer overflow in allocation size**: Added a check that `count * sizeof(size_t)` cannot overflow before calling `malloc`, preventing an undersized allocation on pathological `count` values.
+
+3. **CWE-120 memcpy concerns**: Both `memcpy` calls remain guarded by explicit remaining-capacity checks (`element_lengths[i] > total_length - offset` and `delimiter_length > total_length - offset`) computed against the exact allocated size, so the destination provably holds the source data. The lengths copied are the same lengths used to size the buffer, and total-length accumulation is overflow-checked, satisfying the Flawfinder advisory.
+
+4. **Centralized validation**: The `checked_length` helper consolidates NULL and length validation, reducing duplicated logic and making the bounds contract explicit.

@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+    size_t total_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    total_bytes = n * sizeof(int);
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    if (head_bytes > total_bytes || tail_bytes > total_bytes) {
+        return -1;
+    }
+
+    if (head_bytes + tail_bytes != total_bytes) {
+        return -1;
+    }
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (head_bytes > total_bytes) {
+        free(temp);
+        return -1;
+    }
+    memcpy(temp, arr, head_bytes);
+
+    if (tail_bytes > total_bytes) {
+        free(temp);
+        return -1;
+    }
+    memmove(arr, arr + k, tail_bytes);
+
+    if (head_bytes > total_bytes - tail_bytes) {
+        free(temp);
+        return -1;
+    }
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Error: rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely defensive; the rewrite preserves and consolidates those protections against the two flagged CWE-120 (`memcpy` buffer overflow) weaknesses:
+
+1. **First `memcpy(temp, arr, head_bytes)`** — Safe because:
+   - `temp` is allocated with exactly `head_bytes` and checked for `NULL`.
+   - `head_bytes = k * sizeof(int)` where `k < n` (guaranteed by `k = k % n`), so the read from `arr` is always in bounds.
+   - Overflow in `n * sizeof(int)` is prevented by the `SIZE_MAX / sizeof(int)` check, and since `k < n`, `head_bytes` cannot overflow either.
+   - An explicit `head_bytes > total_bytes` guard precedes the copy.
+
+2. **Second `memcpy(arr + (n - k), temp, head_bytes)`** — Safe because:
+   - The destination offset `n - k` leaves exactly `k` elements (`head_bytes`) of space at the tail of `arr`, verified by the `head_bytes > total_bytes - tail_bytes` check (which reduces to `head_bytes > head_bytes`, i.e., always in bounds).
+   - The source `temp` holds exactly `head_bytes`.
+
+3. Other correctness points retained: the redundant `k > n` check was removed (unreachable after `k %= n`), `memmove` is correctly used for the potentially overlapping in-place shift, `temp` is freed on every exit path (no leaks), and all `printf` return values are checked.

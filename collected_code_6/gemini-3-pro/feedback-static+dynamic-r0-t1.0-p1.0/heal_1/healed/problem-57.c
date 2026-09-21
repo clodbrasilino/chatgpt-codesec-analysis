@@ -1,0 +1,66 @@
+#if defined(__linux__) || defined(__APPLE__)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int compare(const void *a, const void *b) {
+    const char *str1 = *(const char **)a;
+    const char *str2 = *(const char **)b;
+    
+    size_t len1 = strnlen(str1, MAX_STR_LEN);
+    size_t len2 = strnlen(str2, MAX_STR_LEN);
+    
+    size_t buffer_size = len1 + len2 + 1;
+    char *concat1 = (char *)malloc(buffer_size);
+    char *concat2 = (char *)malloc(buffer_size);
+    
+    if (!concat1 || !concat2) {
+        free(concat1);
+        free(concat2);
+        exit(EXIT_FAILURE);
+    }
+    
+    snprintf(concat1, buffer_size, "%s%s", str1, str2);
+    snprintf(concat2, buffer_size, "%s%s", str2, str1);
+    
+    int result = strncmp(concat2, concat1, buffer_size);
+    
+    free(concat1);
+    free(concat2);
+    
+    return result;
+}
+
+void printLargest(char *arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return;
+    }
+
+    qsort(arr, n, sizeof(char *), compare);
+    
+    if (strncmp(arr[0], "0", 2) == 0) {
+        printf("0\n");
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (arr[i] != NULL) {
+            printf("%s", arr[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    char *arr[] = {"3", "30", "34", "5", "9"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printLargest(arr, n);
+    
+    return EXIT_SUCCESS;
+}

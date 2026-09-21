@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool starts_with(const char *str, const char *prefix) {
+    int ret;
+    regex_t regex;
+
+    size_t prefix_len = strlen(prefix);
+    if (prefix_len >= 128) {
+        return false;
+    }
+
+    char pattern[128];
+    snprintf(pattern, sizeof(pattern), "^%.*s", (int)prefix_len, prefix);
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret) {
+        return false;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    return !ret;
+}
+
+int main() {
+    if (starts_with("hello world", "hello")) {
+        printf("The string starts with the given substring.\n");
+    } else {
+        printf("The string does not start with the given substring.\n");
+    }
+
+    if (starts_with("hello world", "world")) {
+        printf("The string starts with the given substring.\n");
+    } else {
+        printf("The string does not start with the given substring.\n");
+    }
+
+    return 0;
+}

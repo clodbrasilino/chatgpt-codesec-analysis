@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-456-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-456-s2.c:51:19: style: Condition 'max_count>0' is always false [knownConditionTrueFalse]
+    if (max_count > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-456-s2.c:49:37: note: Assignment 'max_count=(count>10)?10:count', assigned value is less than 1
+    size_t max_count = (count > 10) ? 10 : count;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-456-s2.c:51:19: note: Condition 'max_count>0' is always false
+    if (max_count > 0) {
+                  ^

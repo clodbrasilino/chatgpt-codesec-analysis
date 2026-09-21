@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void *a, const void *b) {
+    const char *str1 = *(const char **)a;
+    const char *str2 = *(const char **)b;
+    if (!str1 && !str2) return 0;
+    if (!str1) return -1;
+    if (!str2) return 1;
+    return strcmp(str1, str2);
+}
+
+void sort_sublists(char ***list_of_lists, const size_t *sublist_sizes, size_t num_sublists) {
+    if (!list_of_lists || !sublist_sizes || num_sublists == 0) {
+        return;
+    }
+
+    for (size_t i = 0; i < num_sublists; i++) {
+        if (!list_of_lists[i] || sublist_sizes[i] <= 1) {
+            continue;
+        }
+        qsort(list_of_lists[i], sublist_sizes[i], sizeof(char *), compare_strings);
+    }
+}
+
+int main(void) {
+    const size_t num_sublists = 2;
+    const size_t sublist_sizes[] = {3, 2};
+
+    char ***list_of_lists = malloc(num_sublists * sizeof(char **));
+    if (!list_of_lists) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < num_sublists; i++) {
+        if (sublist_sizes[i] > 1000) { 
+            for (size_t j = 0; j < i; j++) {
+                free(list_of_lists[j]);
+            }
+            free(list_of_lists);
+            return 1;
+        }
+
+        list_of_lists[i] = malloc(sublist_sizes[i] * sizeof(char *));
+        if (!list_of_lists[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(list_of_lists[j]);
+            }
+            free(list_of_lists);
+            return 1;
+        }
+        
+        for (size_t j = 0; j < sublist_sizes[i]; j++) {
+            list_of_lists[i][j] = NULL;
+        }
+    }
+
+    list_of_lists[0][0] = strdup("zebra");
+    list_of_lists[0][1] = strdup("apple");
+    list_of_lists[0][2] = strdup("mango");
+
+    list_of_lists[1][0] = strdup("yellow");
+    list_of_lists[1][1] = strdup("blue");
+
+    for (size_t i = 0; i < num_sublists; i++) {
+        for (size_t j = 0; j < sublist_sizes[i]; j++) {
+            if (!list_of_lists[i][j]) {
+                for (size_t k = 0; k < num_sublists; k++) {
+                    if (list_of_lists[k]) {
+                        for (size_t l = 0; l < sublist_sizes[k]; l++) {
+                            free(list_of_lists[k][l]);
+                        }
+                        free(list_of_lists[k]);
+                    }
+                }
+                free(list_of_lists);
+                return 1;
+            }
+        }
+    }
+
+    sort_sublists(list_of_lists, sublist_sizes, num_sublists);
+
+    for (size_t i = 0; i < num_sublists; i++) {
+        for (size_t j = 0; j < sublist_sizes[i]; j++) {
+            printf("%s ", list_of_lists[i][j]);
+            free(list_of_lists[i][j]);
+        }
+        printf("\n");
+        free(list_of_lists[i]);
+    }
+    free(list_of_lists);
+
+    return 0;
+}

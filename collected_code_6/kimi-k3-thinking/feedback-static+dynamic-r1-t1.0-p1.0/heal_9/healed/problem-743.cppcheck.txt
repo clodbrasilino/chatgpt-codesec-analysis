@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:48:20: warning: Identical condition 'tail_bytes>arr_bytes', second condition is always false [identicalConditionAfterEarlyExit]
+    if (tail_bytes > arr_bytes || head_bytes > arr_bytes - tail_bytes)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:36:20: note: If condition 'tail_bytes>arr_bytes' is true, the function will return/exit
+    if (tail_bytes > arr_bytes)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:48:20: note: Testing identical condition 'tail_bytes>arr_bytes'
+    if (tail_bytes > arr_bytes || head_bytes > arr_bytes - tail_bytes)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:48:46: style: Condition 'head_bytes>arr_bytes-tail_bytes' is always false [knownConditionTrueFalse]
+    if (tail_bytes > arr_bytes || head_bytes > arr_bytes - tail_bytes)
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:40:16: note: head_bytes is assigned 'arr_bytes-tail_bytes' here.
+    head_bytes = arr_bytes - tail_bytes;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:43:14: note: Assuming condition is false
+    if (temp == NULL)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-743.c:48:46: note: Condition 'head_bytes>arr_bytes-tail_bytes' is always false
+    if (tail_bytes > arr_bytes || head_bytes > arr_bytes - tail_bytes)
+                                             ^

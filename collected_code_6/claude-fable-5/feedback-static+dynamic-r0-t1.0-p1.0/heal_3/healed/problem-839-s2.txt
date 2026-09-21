@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char first[MAX_NAME_LEN];
+    int second;
+} Tuple;
+
+static int set_tuple(Tuple *t, const char *name, int value)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, MAX_NAME_LEN);
+    if (len >= MAX_NAME_LEN) {
+        return -1;
+    }
+
+    memcpy(t->first, name, len);
+    t->first[len] = '\0';
+    t->second = value;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    return strncmp(ta->first, tb->first, MAX_NAME_LEN);
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("(%.*s, %d)\n", MAX_NAME_LEN, tuples[i].first, tuples[i].second);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[5];
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (set_tuple(&tuples[0], "banana", 3) != 0 ||
+        set_tuple(&tuples[1], "apple", 5) != 0 ||
+        set_tuple(&tuples[2], "cherry", 1) != 0 ||
+        set_tuple(&tuples[3], "date", 7) != 0 ||
+        set_tuple(&tuples[4], "apricot", 2) != 0) {
+        (void)fprintf(stderr, "Error: failed to initialize tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sort_tuples(tuples, count) != 0) {
+        (void)fprintf(stderr, "Error: failed to sort tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuples(tuples, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**CWE-119/CWE-120 (statically-sized array `first`):** The fixed-size buffer is only ever written to through `set_tuple`, which validates the input length before any copy occurs. Since all writes are bounds-checked, the static array poses no overflow risk.
+
+**CWE-120 (`memcpy`):** This is a false positive in practice. The call is guarded by `strnlen(name, MAX_NAME_LEN)` followed by a rejection of any string where `len >= MAX_NAME_LEN`. This guarantees `len <= MAX_NAME_LEN - 1`, so `memcpy` writes at most 63 bytes and the null terminator lands at index 63 or lower — always within bounds. Using `strnlen` (rather than `strlen`) also protects against unterminated input strings.
+
+Other defensive measures already present and preserved:
+- NULL-pointer checks in `set_tuple`, `sort_tuples`, and `print_tuples`.
+- `strncmp` with an explicit bound in the comparator instead of `strcmp`.
+- `printf` with `%.*s` precision limiting, so output is safe even if a string were somehow unterminated.
+- Return-value checking on all fallible operations in `main`.
+
+No functional changes were required — the original code correctly mitigates both Flawfinder findings.

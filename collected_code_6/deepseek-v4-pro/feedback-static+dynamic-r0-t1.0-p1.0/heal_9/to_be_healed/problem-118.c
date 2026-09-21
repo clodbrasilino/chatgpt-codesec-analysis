@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static void free_list_partial(Node *head) {
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head->data);
+        free(head);
+        head = next;
+    }
+}
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        while (str[i] != '\0' && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (str[i] == '\0') {
+            break;
+        }
+
+        size_t start = i;
+        while (str[i] != '\0' && !isspace((unsigned char)str[i])) {
+            i++;
+        }
+        size_t word_len = i - start;
+
+        if (word_len == 0) {
+            continue;
+        }
+
+        Node *new_node = (Node *)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            free_list_partial(head);
+            return NULL;
+        }
+
+        char *word = (char *)malloc(word_len + 1);
+        if (word == NULL) {
+            free(new_node);
+            free_list_partial(head);
+            return NULL;
+        }
+
+        if (word_len > 0) {
+            memmove(word, str + start, word_len);
+        }
+        word[word_len] = '\0';
+
+        new_node->data = word;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    free_list_partial(head);
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    const char *test_str = "Hello world from C";
+    Node *list = string_to_list(test_str);
+
+    if (list != NULL) {
+        print_list(list);
+        free_list(list);
+    }
+
+    return 0;
+}

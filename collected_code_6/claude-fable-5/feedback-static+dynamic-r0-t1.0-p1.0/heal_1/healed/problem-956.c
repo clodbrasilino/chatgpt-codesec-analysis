@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+static void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+static char *copy_token(const char *src, size_t len)
+{
+    char *tok;
+
+    if (src == NULL || len == SIZE_MAX) {
+        return NULL;
+    }
+    tok = malloc(len + 1);
+    if (tok == NULL) {
+        return NULL;
+    }
+    memcpy(tok, src, len);
+    tok[len] = '\0';
+    return tok;
+}
+
+static int append_token(char ***tokens, size_t *n, char *tok)
+{
+    char **tmp;
+
+    if (*n >= SIZE_MAX / sizeof(**tokens)) {
+        return -1;
+    }
+    tmp = realloc(*tokens, (*n + 1) * sizeof(**tokens));
+    if (tmp == NULL) {
+        return -1;
+    }
+    *tokens = tmp;
+    tmp[*n] = tok;
+    (*n)++;
+    return 0;
+}
+
+static char **split_at_uppercase(const char *input, size_t input_max, size_t *count)
+{
+    regex_t re;
+    regmatch_t match;
+    char **tokens = NULL;
+    size_t n = 0;
+    const char *cursor;
+    size_t remaining;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    remaining = strnlen(input, input_max);
+    if (remaining >= input_max) {
+        return NULL;
+    }
+    cursor = input;
+
+    if (regcomp(&re, "[A-Z]", REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    while (regexec(&re, cursor, 1, &match, 0) == 0) {
+        size_t len = (size_t)match.rm_so;
+        char *tok;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so ||
+            (size_t)match.rm_eo > remaining) {
+            goto error;
+        }
+
+        tok = copy_token(cursor, len);
+        if (tok == NULL) {
+            goto error;
+        }
+
+        if (append_token(&tokens, &n, tok) != 0) {
+            free(tok);
+            goto error;
+        }
+
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+    }
+
+    {
+        char *tok = copy_token(cursor, remaining);
+        if (tok == NULL) {
+            goto error;
+        }
+        if (append_token(&tokens, &n, tok) != 0) {
+            free(tok);
+            goto error;
+        }
+    }
+
+    regfree(&re);
+    *count = n;
+    return tokens;
+
+error:
+    free_tokens(tokens, n);
+    regfree(&re);
+    return NULL;
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsRegexSplit";
+    size_t count = 0;
+    char **tokens = split_at_uppercase(text, 4096, &count);
+
+    if (tokens == NULL) {
+        if (fprintf(stderr, "Failed to split string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (printf("Token %zu: \"%s\"\n", i, tokens[i]) < 0) {
+            free_tokens(tokens, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_leading_zeroes(const char* ip) {
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(ip, 16);
+    if (len == 0 || len > 15) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(16 * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int i = 0;
+    int j = 0;
+    int octet_start = 1;
+    int zero_count = 0;
+
+    while (ip[i] != '\0') {
+        if (ip[i] == '.') {
+            if (octet_start && zero_count > 0) {
+                result[j++] = '0';
+            }
+            result[j++] = '.';
+            octet_start = 1;
+            zero_count = 0;
+        } else if (ip[i] == '0' && octet_start) {
+            zero_count++;
+        } else {
+            octet_start = 0;
+            result[j++] = ip[i];
+        }
+        i++;
+    }
+
+    if (octet_start && zero_count > 0) {
+        result[j++] = '0';
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    const char* ip1 = "192.168.001.001";
+    const char* ip2 = "000.000.000.000";
+    const char* ip3 = "010.000.015.00";
+    const char* ip4 = "1.2.3.4";
+
+    char* res1 = remove_leading_zeroes(ip1);
+    char* res2 = remove_leading_zeroes(ip2);
+    char* res3 = remove_leading_zeroes(ip3);
+    char* res4 = remove_leading_zeroes(ip4);
+
+    if (res1) {
+        printf("%s\n", res1);
+        free(res1);
+    }
+    if (res2) {
+        printf("%s\n", res2);
+        free(res2);
+    }
+    if (res3) {
+        printf("%s\n", res3);
+        free(res3);
+    }
+    if (res4) {
+        printf("%s\n", res4);
+        free(res4);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char max_char = '\0';
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[256]` is a low-risk, largely informational finding. The original code already mitigates the concern correctly, so the rewritten code preserves the same defensive measures:
+
+1. **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, writing at most 255 characters plus a null terminator. There is no possibility of overflow, unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant since `fgets` always null-terminates on success, but it costs nothing and guards against future refactoring mistakes.
+
+3. **Safe newline stripping:** Using `strcspn(buffer, "\n")` instead of `strchr`-based approaches avoids any risk of dereferencing a NULL pointer, and the resulting index is guaranteed to be within bounds.
+
+4. **Robust helper function:** `max_occurring_char` validates both pointers, rejects empty strings, casts through `unsigned char` before indexing (preventing negative-index UB on platforms where `char` is signed), and sizes the count array as `UCHAR_MAX + 1` so every possible byte value is a valid index.
+
+5. **Checked I/O:** Both `fgets` and `printf` return values are verified, with appropriate error paths.
+
+The code is safe as written; no substantive changes were required beyond removing the comments as requested.

@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **concatenate_adjacent(const char **tuple, size_t count, size_t *result_count)
+{
+    char **result;
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'len' can be reduced. [variableScope]
+     */
+    size_t len;
+
+    if (tuple == NULL || result_count == NULL || count < 2U) {
+        if (result_count != NULL) {
+            *result_count = 0U;
+        }
+        return NULL;
+    }
+
+    *result_count = count - 1U;
+    result = (char **)malloc(*result_count * sizeof(char *));
+    if (result == NULL) {
+        *result_count = 0U;
+        return NULL;
+    }
+
+    for (i = 0U; i < *result_count; i++) {
+        if (tuple[i] == NULL || tuple[i + 1U] == NULL) {
+            size_t j;
+            for (j = 0U; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_count = 0U;
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        len = strlen(tuple[i]) + strlen(tuple[i + 1U]) + 1U;
+        result[i] = (char *)malloc(len);
+        if (result[i] == NULL) {
+            size_t j;
+            for (j = 0U; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_count = 0U;
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(result[i], tuple[i]);
+        /* Possible weaknesses found:
+         * Flawfinder strcat: Does not check for buffer overflows when concatenating to destination [MS-banned] (CWE-120). Consider using strcat_s, strncat, strlcat, or snprintf (warning: strncat is easily misused). (risk 4, buffer)
+         */
+        strcat(result[i], tuple[i + 1U]);
+    }
+
+    return result;
+}
+
+void free_result(char **result, size_t count)
+{
+    size_t i;
+
+    if (result == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *tuple[] = { "DSP ", "IS ", "BEST ", "FOR ", "ALL ", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_count = 0U;
+    char **result;
+    size_t i;
+
+    result = concatenate_adjacent(tuple, count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < result_count; i++) {
+        printf("'%s'", result[i]);
+        if (i + 1U < result_count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_result(result, result_count);
+
+    return EXIT_SUCCESS;
+}

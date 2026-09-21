@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int min_flips_to_alternate(const char *str, size_t max_len) {
+    size_t len = safe_strlen(str, max_len);
+    if (len == 0) return 0;
+    
+    int flips_start0 = 0;
+    int flips_start1 = 0;
+    
+    for (size_t i = 0; i < len; i++) {
+        char expected_bit = (i % 2 == 0) ? '0' : '1';
+        if (str[i] != expected_bit) {
+            flips_start0++;
+        }
+        
+        expected_bit = (i % 2 == 0) ? '1' : '0';
+        if (str[i] != expected_bit) {
+            flips_start1++;
+        }
+    }
+    
+    return (flips_start0 < flips_start1) ? flips_start0 : flips_start1;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[101];
+    
+    printf("Enter binary string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[sizeof(input) - 1] = '\0';
+        
+        size_t len = strcspn(input, "\n");
+        if (len < sizeof(input)) {
+            input[len] = '\0';
+        }
+        
+        size_t str_len = safe_strlen(input, sizeof(input));
+        if (str_len >= sizeof(input)) {
+            str_len = sizeof(input) - 1;
+        }
+        
+        printf("Minimum flips required: %d\n", min_flips_to_alternate(input, str_len));
+    }
+    
+    return 0;
+}

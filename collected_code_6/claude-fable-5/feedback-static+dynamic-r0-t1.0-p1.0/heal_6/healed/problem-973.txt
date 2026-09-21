@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (len - d > temp_size || d > temp_size - (len - d)) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if (temp_size > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on the three `memcpy` calls are all **false positives** — the code already contains the guards Flawfinder cannot see statically:
+
+1. **First `memcpy(temp, str + d, len - d)`** — `temp` is `temp_size = len + 1` bytes, and the preceding check `len - d > temp_size` (plus `d < len` guaranteed by `d = d % len` with `d != 0`) ensures the copy of `len - d` bytes fits.
+
+2. **Second `memcpy(temp + (len - d), str, d)`** — the check `d > temp_size - (len - d)` guarantees the remaining space in `temp` can hold `d` bytes.
+
+3. **Third `memcpy(str, temp, temp_size)`** — guarded by `temp_size > buf_size`, and earlier by `len + 1 > buf_size`, so the destination buffer is provably large enough.
+
+Additional defensive properties already present:
+
+- `strnlen` bounded by `buf_size` prevents reading past an unterminated buffer, and `len == buf_size` rejects unterminated input.
+- `buf_size > MAX_STR_LEN` caps allocation size, avoiding excessive/overflowing allocations.
+- `malloc` return is checked; `temp` is freed on every exit path (no leaks).
+- `d % len` normalizes the rotation, preventing out-of-bounds pointer arithmetic on `str + d`.
+
+Since all destination-capacity checks precede each `memcpy`, the code is retained as-is with the advisory comments removed.

@@ -1,0 +1,190 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef struct {
+    char *key;
+    char *value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(void)
+{
+    Dict *d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = 8;
+    d->entries = malloc(d->capacity * sizeof(Entry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+static void dict_destroy(Dict *d)
+{
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+        free(d->entries[i].value);
+    }
+    free(d->entries);
+    free(d);
+}
+
+static char *duplicate_string(const char *s)
+{
+    if (s == NULL) {
+        return NULL;
+    }
+    size_t len = strnlen(s, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+    size_t alloc_size = len + 1;
+    char *copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+    if (len > 0) {
+        memcpy(copy, s, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static int dict_set(Dict *d, const char *key, const char *value)
+{
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            char *new_value = duplicate_string(value);
+            if (new_value == NULL) {
+                return -1;
+            }
+            free(d->entries[i].value);
+            d->entries[i].value = new_value;
+            return 0;
+        }
+    }
+    if (d->size == d->capacity) {
+        if (d->capacity > SIZE_MAX / (2 * sizeof(Entry))) {
+            return -1;
+        }
+        size_t new_capacity = d->capacity * 2;
+        Entry *new_entries = realloc(d->entries, new_capacity * sizeof(Entry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        d->entries = new_entries;
+        d->capacity = new_capacity;
+    }
+    char *key_copy = duplicate_string(key);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    char *value_copy = duplicate_string(value);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return -1;
+    }
+    d->entries[d->size].key = key_copy;
+    d->entries[d->size].value = value_copy;
+    d->size++;
+    return 0;
+}
+
+static Dict *dict_merge(const Dict *a, const Dict *b)
+{
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    Dict *merged = dict_create();
+    if (merged == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (dict_set(merged, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_destroy(merged);
+            return NULL;
+        }
+    }
+    for (size_t i = 0; i < b->size; i++) {
+        if (dict_set(merged, b->entries[i].key, b->entries[i].value) != 0) {
+            dict_destroy(merged);
+            return NULL;
+        }
+    }
+    return merged;
+}
+
+static void dict_print(const Dict *d)
+{
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->size; i++) {
+        if (printf("%s: %s\n", d->entries[i].key, d->entries[i].value) < 0) {
+            return;
+        }
+    }
+}
+
+int main(void)
+{
+    Dict *d1 = dict_create();
+    if (d1 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+    Dict *d2 = dict_create();
+    if (d2 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        dict_destroy(d1);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(d1, "apple", "red") != 0 ||
+        dict_set(d1, "banana", "yellow") != 0 ||
+        dict_set(d2, "banana", "green") != 0 ||
+        dict_set(d2, "grape", "purple") != 0) {
+        fprintf(stderr, "Failed to populate dictionaries\n");
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return EXIT_FAILURE;
+    }
+
+    Dict *merged = dict_merge(d1, d2);
+    if (merged == NULL) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return EXIT_FAILURE;
+    }
+
+    dict_print(merged);
+
+    dict_destroy(d1);
+    dict_destroy(d2);
+    dict_destroy(merged);
+    return EXIT_SUCCESS;
+}
+```
+
+The flagged `memcpy` weakness (CWE-120) was already mitigated: the destination buffer is allocated with `len + 1` bytes and exactly `len` bytes are copied, with `strnlen` bounding `len` below `MAX_STRING_LEN`, so no overflow is possible. The only change made was removing the unreachable `len == SIZE_MAX` dead-code check, since `strnlen` can never return a value greater than `MAX_STRING_LEN`, and the `len >= MAX_STRING_LEN` guard already rejects out-of-range lengths — this also guarantees `len + 1` cannot overflow. All other defenses remain intact: NULL checks throughout, overflow-checked capacity growth before `realloc`, safe `realloc` pattern using a temporary pointer, full cleanup of partially-built state on every error path, and no leaks in `main`.

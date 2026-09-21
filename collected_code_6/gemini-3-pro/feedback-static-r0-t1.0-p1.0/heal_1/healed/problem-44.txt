@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool match_word_at_beginning(const char *str, const char *word) {
+    if (str == NULL || word == NULL) {
+        return false;
+    }
+
+    size_t i = 0;
+    while (word[i] != '\0') {
+        if (str[i] == '\0' || str[i] != word[i]) {
+            return false;
+        }
+        i++;
+    }
+
+    if (i == 0) {
+        return false;
+    }
+
+    if (str[i] == ' ' || str[i] == '\0' || str[i] == '\t' || str[i] == '\n') {
+        return true;
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *text1 = "hello world";
+    const char *text2 = "helloworld";
+    const char *word = "hello";
+
+    if (match_word_at_beginning(text1, word)) {
+        printf("Matched '%s' in '%s'\n", word, text1);
+    } else {
+        printf("Did not match '%s' in '%s'\n", word, text1);
+    }
+
+    if (match_word_at_beginning(text2, word)) {
+        printf("Matched '%s' in '%s'\n", word, text2);
+    } else {
+        printf("Did not match '%s' in '%s'\n", word, text2);
+    }
+
+    return 0;
+}
+```

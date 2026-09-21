@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int findFirstMaxEvenWordLength(const char *str)
+{
+    size_t i;
+    int curLen = 0;
+    int maxLen = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        if (!isspace((unsigned char)str[i]))
+        {
+            curLen++;
+        }
+        else
+        {
+            if (curLen > 0 && (curLen % 2) == 0 && curLen > maxLen)
+            {
+                maxLen = curLen;
+            }
+            curLen = 0;
+        }
+    }
+
+    if (curLen > 0 && (curLen % 2) == 0 && curLen > maxLen)
+    {
+        maxLen = curLen;
+    }
+
+    return maxLen;
+}
+
+int main(void)
+{
+    char str[512];
+    size_t newlinePos;
+    int result;
+    int ch;
+
+    printf("Enter a sentence: ");
+
+    if (fgets(str, sizeof(str), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    newlinePos = strcspn(str, "\n");
+    if (str[newlinePos] == '\n')
+    {
+        str[newlinePos] = '\0';
+    }
+    else if (!feof(stdin))
+    {
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+        }
+    }
+
+    result = findFirstMaxEvenWordLength(str);
+
+    if (result > 0)
+    {
+        printf("Length of the first longest even word: %d\n", result);
+    }
+    else
+    {
+        printf("No even-length word found.\n");
+    }
+
+    return 0;
+}

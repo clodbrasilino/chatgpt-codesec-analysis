@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:64:20: style: Condition 'length==0' is always false [knownConditionTrueFalse]
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:57:41: note: Assuming that condition 'end<=start' is not redundant
+        if (start < 0 || end < 0 || end <= start || (size_t)end > input_len - offset) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:62:25: note: Assignment 'length=(unsigned long)(end-start)', assigned value is greater than 0
+        size_t length = (size_t)(end - start);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:64:20: note: Condition 'length==0' is always false
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:71:50: style: Condition 'copy_len>0' is always false [knownConditionTrueFalse]
+        if (copy_len < MAX_MATCH_LEN && copy_len > 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:70:56: note: Assignment 'copy_len=(length<256-1)?length:256-1', assigned value is less than 1
+        size_t copy_len = (length < MAX_MATCH_LEN - 1) ? length : MAX_MATCH_LEN - 1;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-43.c:71:50: note: Condition 'copy_len>0' is always false
+        if (copy_len < MAX_MATCH_LEN && copy_len > 0) {
+                                                 ^

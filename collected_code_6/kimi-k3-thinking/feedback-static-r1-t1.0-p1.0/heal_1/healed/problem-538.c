@@ -1,0 +1,117 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    char **items;
+    size_t size;
+} Tuple;
+
+Tuple *string_list_to_tuple(const char *list[], size_t count);
+void free_tuple(Tuple *tuple);
+void print_tuple(const Tuple *tuple);
+
+int main(void)
+{
+    const char *list[] = {"apple", "banana", "cherry", "date"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    Tuple *tuple = string_list_to_tuple(list, count);
+
+    if (tuple == NULL) {
+        fprintf(stderr, "Error: failed to convert string list to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple: ");
+    print_tuple(tuple);
+
+    free_tuple(tuple);
+    tuple = NULL;
+
+    return EXIT_SUCCESS;
+}
+
+Tuple *string_list_to_tuple(const char *list[], size_t count)
+{
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->size = count;
+    tuple->items = (char **)calloc(count, sizeof(char *));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            free_tuple(tuple);
+            return NULL;
+        }
+
+        size_t len = strnlen(list[i], MAX_STRING_LENGTH);
+        if (len == MAX_STRING_LENGTH) {
+            free_tuple(tuple);
+            return NULL;
+        }
+
+        tuple->items[i] = (char *)malloc(len + 1);
+        if (tuple->items[i] == NULL) {
+            free_tuple(tuple);
+            return NULL;
+        }
+
+        if (snprintf(tuple->items[i], len + 1, "%s", list[i]) < 0) {
+            free_tuple(tuple);
+            return NULL;
+        }
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+
+    free(tuple);
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    if (tuple == NULL) {
+        printf("()\n");
+        return;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("\"%s\"", tuple->items[i]);
+    }
+    if (tuple->size == 1) {
+        printf(",");
+    }
+    printf(")\n");
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-391-s2.c: In function 'freeDictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-391-s2.c:52:28: error: implicit declaration of function 'isList' [-Wimplicit-function-declaration]
+   52 |         if (temp->value && isList(temp)) {
+      |                            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-391-s2.c: At top level:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-391-s2.c:62:6: error: conflicting types for 'isList'; have '_Bool(const Node *)'
+   62 | bool isList(const Node *node) {
+      |      ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-391-s2.c:52:28: note: previous implicit declaration of 'isList' with type 'int()'
+   52 |         if (temp->value && isList(temp)) {
+      |                            ^~~~~~

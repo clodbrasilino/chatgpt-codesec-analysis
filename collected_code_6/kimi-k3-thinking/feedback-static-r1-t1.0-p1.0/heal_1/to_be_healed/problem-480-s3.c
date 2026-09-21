@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool find_max_occurring_char(const char *str, char *result)
+{
+    int freq[256] = {0};
+    int max_count = 0;
+    size_t i;
+
+    if (str == NULL || result == NULL || str[0] == '\0')
+    {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        if (freq[i] > max_count)
+        {
+            max_count = freq[i];
+            *result = (char)i;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[1024];
+    char result = '\0';
+
+    printf("Enter a string: ");
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (!find_max_occurring_char(input, &result))
+    {
+        fprintf(stderr, "Invalid or empty input string.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The maximum occurring character is '%c'.\n", result);
+
+    return EXIT_SUCCESS;
+}

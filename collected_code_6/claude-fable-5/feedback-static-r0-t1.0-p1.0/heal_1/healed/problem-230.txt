@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int replace_spaces(char *str, size_t max_len, char replacement)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (replacement == '\0') {
+        return -1;
+    }
+
+    if (max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[] = "Hello world this is a test";
+    int result;
+
+    result = replace_spaces(buffer, sizeof(buffer), '_');
+    if (result != 0) {
+        fprintf(stderr, "Error: failed to replace spaces\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weakness (CWE-126):**
+
+1. **Bounded string length calculation**: Replaced `strlen()` with `strnlen()`, which takes a maximum length parameter. This prevents an over-read if the string is not NUL-terminated — `strnlen` will never scan past `max_len` bytes.
+
+2. **New `max_len` parameter**: The function signature now requires the caller to pass the buffer's capacity, giving the function the information it needs to enforce bounds. The caller uses `sizeof(buffer)`, which is correct here since `buffer` is a true array (not a decayed pointer).
+
+3. **Termination validation**: If `strnlen` returns `max_len`, no NUL terminator was found within the buffer — the function rejects the input with `-1` rather than operating on an unterminated string.
+
+4. **Zero-size guard**: A `max_len == 0` check prevents degenerate calls and keeps the termination check meaningful.
+
+The loop itself was already safe (bounded by `len`, writes in place, no size changes), so the only real exposure was the unbounded `strlen` scan, which is now eliminated.

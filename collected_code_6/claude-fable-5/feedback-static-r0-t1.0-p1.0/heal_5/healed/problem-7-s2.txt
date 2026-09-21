@@ -1,0 +1,133 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex compilation failed: unknown error\n");
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex compilation failed: unable to allocate error buffer\n");
+        return;
+    }
+
+    (void)regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+    free(errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    size_t remaining;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    remaining = strnlen(text, MAX_INPUT_LENGTH);
+    if (remaining >= MAX_INPUT_LENGTH && text[MAX_INPUT_LENGTH - 1] != '\0') {
+        fprintf(stderr, "Input exceeds maximum allowed length\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex);
+        return -1;
+    }
+
+    cursor = text;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t start;
+        size_t end;
+        size_t length;
+        size_t bufsize;
+        char *word;
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        start = (size_t)match.rm_so;
+        end = (size_t)match.rm_eo;
+
+        if (end > remaining || start > remaining) {
+            break;
+        }
+
+        length = end - start;
+        if (length > remaining - start) {
+            break;
+        }
+
+        bufsize = length + 1;
+        if (bufsize < length) {
+            break;
+        }
+
+        word = malloc(bufsize);
+        if (word == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(word, cursor + start, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+        free(word);
+
+        cursor += end;
+        remaining -= end;
+
+        if (remaining == 0 || *cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown fox jumps over a lazy dog near it";
+
+    if (find_long_words(input) != 0) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The flawfinder warning on `memcpy` (CWE-120) was largely a false positive in the original code, since the destination buffer is allocated at `length + 1` immediately before the copy of exactly `length` bytes. However, the rewrite hardens the code further:
+
+1. **Explicit bounds validation before allocation** — `start` and `end` are converted to `size_t` once and validated against `remaining`, guaranteeing that `cursor + start` through `cursor + start + length` lies entirely within the known string bounds before `memcpy` executes.
+
+2. **Integer overflow guard** — `bufsize = length + 1` is checked for wraparound (`bufsize < length`), eliminating any theoretical path where a huge `length` could overflow to a tiny allocation followed by a large copy — the classic CWE-120/CWE-190 combination.
+
+3. **Destination size guaranteed to hold source** — the allocation size (`length + 1`) is provably at least `length + 1` bytes at the point of the `memcpy`, and the NUL terminator is written within bounds at `word[length]`.
+
+Other defensive properties of the original were preserved: `strnlen` capping against `MAX_INPUT_LENGTH` to avoid unbounded reads, checked `regcomp` with proper `regerror` reporting, `regfree` on all exit paths after compilation, and loop-progress guarantees (`match.rm_eo > match.rm_so`) preventing infinite loops on zero-width matches.

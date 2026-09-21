@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-174.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-174.c:65:21: style: The comparison 'to_copy > available' is always false because 'to_copy' and 'available' represent the same value. [knownConditionTrueFalse]
+        if (to_copy > available) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-174.c:64:26: note: 'to_copy' is assigned value 'len' here.
+        size_t to_copy = len;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-174.c:63:28: note: 'available' is assigned value 'len' here.
+        size_t available = len;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-174.c:65:21: note: The comparison 'to_copy > available' is always false because 'to_copy' and 'available' represent the same value.
+        if (to_copy > available) {
+                    ^

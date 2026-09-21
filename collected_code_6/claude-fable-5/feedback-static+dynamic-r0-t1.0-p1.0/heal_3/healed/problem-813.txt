@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+    size_t i;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    for (i = 0; i < sizeof(buffer) && buffer[i] != '\0'; i++) {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+    }
+
+    length = string_length(buffer);
+
+    printf("%lu\n", (unsigned long)length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied fixes:**
+
+1. **Test cases failing with `<no output>`:** The most likely culprit is the `%zu` format specifier. While `%zu` is standard C99, some older toolchains and runtimes (notably older MSVCRT-based environments) do not support it, causing `printf` to produce garbage or nothing at all. The fix casts `size_t` to `unsigned long` and uses the universally supported `%lu` specifier.
+
+2. **Missing output flush:** If the test harness reads the program's output through a pipe and the process terminates abnormally or buffering behaves unexpectedly, output can be lost. An explicit `fflush(stdout)` guarantees the result is delivered before exit.
+
+3. **Flawfinder CWE-119/CWE-120 (buffer) warning:** This is largely a false positive here, since `fgets` is already bounded by `sizeof(buffer)`. Defensive measures retained/added:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size.
+   - `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination.
+   - The newline-stripping loop is bounds-checked with `i < sizeof(buffer)`.
+   - `string_length` guards against `NULL` input.
+   - The explicit `(int)` cast on `sizeof(buffer)` silences potential signed/unsigned conversion warnings, since `fgets` takes an `int`.
+
+The logic itself (reading a line, stripping the trailing newline, computing length manually) was already correct; the failure mode pointed to an output/portability issue rather than a memory-safety bug.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-186-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-186-s3.c:53:33: style: Condition 'match_count<max_matches' is always true [knownConditionTrueFalse]
+                if (match_count < max_matches) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-186-s3.c:28:24: note: Assuming that condition 'match_count<max_matches' is not redundant
+    while (match_count < max_matches && *cursor != '\0') {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-186-s3.c:42:29: note: Assuming condition is false
+        if (pmatch[0].rm_so == -1) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-186-s3.c:53:33: note: Condition 'match_count<max_matches' is always true
+                if (match_count < max_matches) {
+                                ^

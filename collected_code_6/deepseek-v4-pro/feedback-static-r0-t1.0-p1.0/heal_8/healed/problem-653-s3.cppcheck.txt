@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:125:21: style: The comparison 'src_len > key_len' is always false because 'src_len' and 'key_len' represent the same value. [knownConditionTrueFalse]
+        if (src_len > key_len) src_len = key_len;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:124:26: note: 'src_len' is assigned value 'key_len' here.
+        size_t src_len = key_len;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:125:21: note: The comparison 'src_len > key_len' is always false because 'src_len' and 'key_len' represent the same value.
+        if (src_len > key_len) src_len = key_len;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:161:21: style: The comparison 'src_len > key_len' is always false because 'src_len' and 'key_len' represent the same value. [knownConditionTrueFalse]
+        if (src_len > key_len) src_len = key_len;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:160:26: note: 'src_len' is assigned value 'key_len' here.
+        size_t src_len = key_len;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-653-s3.c:161:21: note: The comparison 'src_len > key_len' is always false because 'src_len' and 'key_len' represent the same value.
+        if (src_len > key_len) src_len = key_len;
+                    ^

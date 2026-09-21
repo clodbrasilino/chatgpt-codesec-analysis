@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:6:15: style: Array index 'n' is used before limits check. [arrayIndexThenCheck]
+    while (str[n] != '\0' && n < 1000) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-61-s3.c:4:27: style: Parameter 'str' can be declared as pointer to const [constParameterPointer]
+int countSubstrings(char *str) {
+                          ^

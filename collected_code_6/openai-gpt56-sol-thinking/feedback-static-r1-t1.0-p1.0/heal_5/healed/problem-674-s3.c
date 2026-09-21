@@ -1,0 +1,465 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    const char *word;
+    size_t length;
+    size_t hash;
+    int used;
+} WordEntry;
+
+typedef struct {
+    WordEntry *entries;
+    size_t capacity;
+    size_t count;
+} WordSet;
+
+static int is_word_separator(unsigned char character)
+{
+    return character == ' ' ||
+           character == '\t' ||
+           character == '\r' ||
+           character == '\n' ||
+           character == '\v' ||
+           character == '\f';
+}
+
+static int cstring_length(const char *string, size_t *length)
+{
+    size_t position = 0;
+
+    if (string == NULL || length == NULL) {
+        return 0;
+    }
+
+    for (;;) {
+        if (position == SIZE_MAX) {
+            return 0;
+        }
+
+        if (string[position] == '\0') {
+            *length = position;
+            return 1;
+        }
+
+        ++position;
+    }
+}
+
+static int copy_bytes(char *destination,
+                      size_t destination_capacity,
+                      size_t destination_offset,
+                      const char *source,
+                      size_t length)
+{
+    size_t position;
+
+    if (destination == NULL ||
+        source == NULL ||
+        destination_offset > destination_capacity ||
+        length > destination_capacity - destination_offset) {
+        return 0;
+    }
+
+    for (position = 0; position < length; ++position) {
+        destination[destination_offset + position] = source[position];
+    }
+
+    return 1;
+}
+
+static int byte_sequences_equal(const char *left,
+                                const char *right,
+                                size_t length)
+{
+    size_t position;
+
+    if (left == NULL || right == NULL) {
+        return 0;
+    }
+
+    for (position = 0; position < length; ++position) {
+        if ((unsigned char)left[position] !=
+            (unsigned char)right[position]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static size_t hash_word(const char *word, size_t length)
+{
+    size_t hash = (size_t)5381;
+    size_t position;
+
+    for (position = 0; position < length; ++position) {
+        hash = ((hash << 5) + hash) ^ (unsigned char)word[position];
+    }
+
+    return hash;
+}
+
+static int word_set_init(WordSet *set)
+{
+    const size_t initial_capacity = 16;
+
+    if (set == NULL) {
+        return 0;
+    }
+
+    set->entries = NULL;
+    set->capacity = 0;
+    set->count = 0;
+
+    if (initial_capacity > SIZE_MAX / sizeof(*set->entries)) {
+        return 0;
+    }
+
+    set->entries = calloc(initial_capacity, sizeof(*set->entries));
+    if (set->entries == NULL) {
+        return 0;
+    }
+
+    set->capacity = initial_capacity;
+    return 1;
+}
+
+static void word_set_destroy(WordSet *set)
+{
+    if (set == NULL) {
+        return;
+    }
+
+    free(set->entries);
+    set->entries = NULL;
+    set->capacity = 0;
+    set->count = 0;
+}
+
+static int word_set_resize(WordSet *set, size_t new_capacity)
+{
+    WordEntry *new_entries;
+    size_t position;
+
+    if (set == NULL ||
+        set->entries == NULL ||
+        set->capacity == 0 ||
+        new_capacity == 0 ||
+        new_capacity <= set->count ||
+        (new_capacity & (new_capacity - 1)) != 0 ||
+        new_capacity > SIZE_MAX / sizeof(*new_entries)) {
+        return 0;
+    }
+
+    new_entries = calloc(new_capacity, sizeof(*new_entries));
+    if (new_entries == NULL) {
+        return 0;
+    }
+
+    for (position = 0; position < set->capacity; ++position) {
+        size_t index;
+
+        if (!set->entries[position].used) {
+            continue;
+        }
+
+        index = set->entries[position].hash & (new_capacity - 1);
+
+        while (new_entries[index].used) {
+            index = (index + 1) & (new_capacity - 1);
+        }
+
+        new_entries[index] = set->entries[position];
+    }
+
+    free(set->entries);
+    set->entries = new_entries;
+    set->capacity = new_capacity;
+
+    return 1;
+}
+
+static int word_set_add(WordSet *set, const char *word, size_t length)
+{
+    size_t hash;
+    size_t index;
+
+    if (set == NULL ||
+        set->entries == NULL ||
+        set->capacity == 0 ||
+        set->count >= set->capacity ||
+        (set->capacity & (set->capacity - 1)) != 0 ||
+        word == NULL) {
+        return -1;
+    }
+
+    hash = hash_word(word, length);
+    index = hash & (set->capacity - 1);
+
+    while (set->entries[index].used) {
+        if (set->entries[index].hash == hash &&
+            set->entries[index].length == length &&
+            byte_sequences_equal(set->entries[index].word,
+                                 word,
+                                 length)) {
+            return 0;
+        }
+
+        index = (index + 1) & (set->capacity - 1);
+    }
+
+    if (set->count >= set->capacity - set->capacity / 4) {
+        size_t new_capacity;
+
+        if (set->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+
+        new_capacity = set->capacity * 2;
+
+        if (!word_set_resize(set, new_capacity)) {
+            return -1;
+        }
+
+        index = hash & (set->capacity - 1);
+
+        while (set->entries[index].used) {
+            index = (index + 1) & (set->capacity - 1);
+        }
+    }
+
+    set->entries[index].word = word;
+    set->entries[index].length = length;
+    set->entries[index].hash = hash;
+    set->entries[index].used = 1;
+    ++set->count;
+
+    return 1;
+}
+
+static char *remove_duplicate_words(const char *input, size_t input_length)
+{
+    WordSet seen;
+    char *output;
+    size_t input_position = 0;
+    size_t output_length = 0;
+
+    if (input == NULL || input_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    output = malloc(input_length + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    if (!word_set_init(&seen)) {
+        free(output);
+        return NULL;
+    }
+
+    while (input_position < input_length) {
+        size_t word_start;
+        size_t word_length;
+        size_t separator_length;
+        int added;
+
+        while (input_position < input_length &&
+               is_word_separator((unsigned char)input[input_position])) {
+            ++input_position;
+        }
+
+        if (input_position == input_length) {
+            break;
+        }
+
+        word_start = input_position;
+
+        while (input_position < input_length &&
+               !is_word_separator((unsigned char)input[input_position])) {
+            ++input_position;
+        }
+
+        word_length = input_position - word_start;
+        added = word_set_add(&seen, input + word_start, word_length);
+
+        if (added < 0) {
+            word_set_destroy(&seen);
+            free(output);
+            return NULL;
+        }
+
+        if (added == 0) {
+            continue;
+        }
+
+        separator_length = output_length == 0 ? 0 : 1;
+
+        if (output_length > input_length ||
+            separator_length > input_length - output_length ||
+            word_length >
+                input_length - output_length - separator_length) {
+            word_set_destroy(&seen);
+            free(output);
+            return NULL;
+        }
+
+        if (separator_length != 0) {
+            output[output_length++] = ' ';
+        }
+
+        if (!copy_bytes(output,
+                        input_length,
+                        output_length,
+                        input + word_start,
+                        word_length)) {
+            word_set_destroy(&seen);
+            free(output);
+            return NULL;
+        }
+
+        output_length += word_length;
+    }
+
+    output[output_length] = '\0';
+    word_set_destroy(&seen);
+
+    return output;
+}
+
+int main(int argc, char **argv)
+{
+    char *input;
+    char *result;
+    size_t *argument_lengths;
+    size_t argument_count;
+    size_t input_length = 0;
+    size_t position = 0;
+    int status = EXIT_SUCCESS;
+    int index;
+
+    if (argc < 2 || argv == NULL) {
+        const char *program_name = "program";
+
+        if (argv != NULL && argc > 0 && argv[0] != NULL) {
+            program_name = argv[0];
+        }
+
+        fprintf(stderr, "Usage: %s <string>\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    argument_count = (size_t)(argc - 1);
+
+    if (argument_count > SIZE_MAX / sizeof(*argument_lengths)) {
+        fprintf(stderr, "Input is too large\n");
+        return EXIT_FAILURE;
+    }
+
+    argument_lengths = malloc(argument_count * sizeof(*argument_lengths));
+    if (argument_lengths == NULL) {
+        fprintf(stderr, "Failed to allocate argument metadata\n");
+        return EXIT_FAILURE;
+    }
+
+    for (index = 1; index < argc; ++index) {
+        size_t argument_length;
+
+        if (!cstring_length(argv[index], &argument_length)) {
+            fprintf(stderr, "Invalid command-line argument\n");
+            free(argument_lengths);
+            return EXIT_FAILURE;
+        }
+
+        argument_lengths[(size_t)(index - 1)] = argument_length;
+
+        if (argument_length > SIZE_MAX - input_length) {
+            fprintf(stderr, "Input is too large\n");
+            free(argument_lengths);
+            return EXIT_FAILURE;
+        }
+
+        input_length += argument_length;
+
+        if (index + 1 < argc) {
+            if (input_length == SIZE_MAX) {
+                fprintf(stderr, "Input is too large\n");
+                free(argument_lengths);
+                return EXIT_FAILURE;
+            }
+
+            ++input_length;
+        }
+    }
+
+    if (input_length == SIZE_MAX) {
+        fprintf(stderr, "Input is too large\n");
+        free(argument_lengths);
+        return EXIT_FAILURE;
+    }
+
+    input = malloc(input_length + 1);
+    if (input == NULL) {
+        fprintf(stderr, "Failed to allocate input buffer\n");
+        free(argument_lengths);
+        return EXIT_FAILURE;
+    }
+
+    for (index = 1; index < argc; ++index) {
+        size_t argument_length =
+            argument_lengths[(size_t)(index - 1)];
+
+        if (!copy_bytes(input,
+                        input_length,
+                        position,
+                        argv[index],
+                        argument_length)) {
+            fprintf(stderr, "Input size validation failed\n");
+            free(argument_lengths);
+            free(input);
+            return EXIT_FAILURE;
+        }
+
+        position += argument_length;
+
+        if (index + 1 < argc) {
+            if (position >= input_length) {
+                fprintf(stderr, "Input size validation failed\n");
+                free(argument_lengths);
+                free(input);
+                return EXIT_FAILURE;
+            }
+
+            input[position++] = ' ';
+        }
+    }
+
+    free(argument_lengths);
+
+    if (position != input_length) {
+        fprintf(stderr, "Input size validation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    input[position] = '\0';
+
+    result = remove_duplicate_words(input, input_length);
+    free(input);
+
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fputs(result, stdout) == EOF ||
+        fputc('\n', stdout) == EOF ||
+        fflush(stdout) == EOF) {
+        status = EXIT_FAILURE;
+    }
+
+    free(result);
+    return status;
+}

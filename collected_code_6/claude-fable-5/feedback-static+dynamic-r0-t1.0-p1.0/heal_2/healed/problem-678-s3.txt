@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_spaces(char *str)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ' ') {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    remove_spaces(buffer);
+
+    printf("Result: %s\n", buffer);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness:**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a low-risk, informational hit. The code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters plus a null terminator, preventing buffer overflow. Using `sizeof(buffer)` rather than a hardcoded constant keeps the bound synchronized with the array declaration.
+
+2. **Return value checked:** The `NULL` return from `fgets` is handled, avoiding operations on an indeterminate buffer on EOF/error.
+
+3. **Safe newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0'` is safe even when no newline exists — `strcspn` returns the index of the existing null terminator at worst, so the write stays in bounds.
+
+4. **In-place transformation:** `remove_spaces` only shrinks the string (`j <= i` always holds), so writing `str[j] = '\0'` can never exceed the original string length. It also guards against a `NULL` pointer.
+
+No functional changes were required; the warning is a false positive given the existing bounds checking, so the code stands as-is with the comments removed.

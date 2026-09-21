@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <stdint.h>
+
+char *remove_non_alphanumeric(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, SIZE_MAX);
+    if (input_len == 0) {
+        regfree(&regex);
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    if (input_len == SIZE_MAX) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    regmatch_t match;
+    const char *cursor = input;
+    size_t remaining_len = input_len;
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t match_start = match.rm_so;
+        size_t match_end = match.rm_eo;
+
+        if (match_start > remaining_len) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+
+        if (match_end > remaining_len || match_end < match_start) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+
+        if (match_start > 0) {
+            /* Possible weaknesses found:
+             *  new_size is assigned 'result_index+match_start' here.
+             */
+            size_t new_size = result_index + match_start;
+            /* Possible weaknesses found:
+             *  Assuming that condition 'new_size>input_len' is not redundant
+             *  Assuming condition is false
+             */
+            if (new_size > input_len || new_size < result_index) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             *  Condition 'result_index+match_start<=input_len' is always true
+             *  Condition 'result_index+match_start<=input_len' is always true [knownConditionTrueFalse]
+             */
+            if (result_index + match_start <= input_len) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + result_index, cursor, match_start);
+                result_index = new_size;
+            }
+        }
+
+        cursor += match_end;
+        remaining_len -= match_end;
+
+        if (remaining_len > input_len) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+    }
+
+    if (remaining_len > 0) {
+        /* Possible weaknesses found:
+         *  new_size is assigned 'result_index+remaining_len' here.
+         */
+        size_t new_size = result_index + remaining_len;
+        /* Possible weaknesses found:
+         *  Assuming that condition 'new_size>input_len' is not redundant
+         *  Assuming condition is false
+         */
+        if (new_size > input_len || new_size < result_index) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         *  Condition 'result_index+remaining_len<=input_len' is always true [knownConditionTrueFalse]
+         *  Condition 'result_index+remaining_len<=input_len' is always true
+         */
+        if (result_index + remaining_len <= input_len) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_index, cursor, remaining_len);
+            result_index = new_size;
+        }
+    }
+
+    if (result_index > input_len) {
+        regfree(&regex);
+        free(result);
+        return NULL;
+    }
+    result[result_index] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World! 123 @#$%^&*()";
+    char *cleaned = remove_non_alphanumeric(test_string);
+    
+    if (cleaned != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Cleaned: %s\n", cleaned);
+        free(cleaned);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

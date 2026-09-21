@@ -1,0 +1,228 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t character_position;
+    size_t word_position;
+    size_t length;
+} AdverbOccurrence;
+
+static int is_adverb(const char *word, size_t length)
+{
+    if (word == NULL || length < 3) {
+        return 0;
+    }
+
+    return tolower((unsigned char)word[length - 2]) == 'l' &&
+           tolower((unsigned char)word[length - 1]) == 'y';
+}
+
+int find_adverbs(const char *sentence, size_t sentence_length,
+                 AdverbOccurrence **occurrences, size_t *occurrence_count)
+{
+    AdverbOccurrence *results = NULL;
+    size_t result_count = 0;
+    size_t result_capacity = 0;
+    size_t word_position = 0;
+    size_t position = 0;
+
+    if (sentence == NULL || occurrences == NULL || occurrence_count == NULL) {
+        return -1;
+    }
+
+    *occurrences = NULL;
+    *occurrence_count = 0;
+
+    while (position < sentence_length) {
+        size_t start;
+        size_t length;
+
+        while (position < sentence_length &&
+               !isalpha((unsigned char)sentence[position])) {
+            ++position;
+        }
+
+        if (position == sentence_length) {
+            break;
+        }
+
+        start = position;
+
+        if (word_position == SIZE_MAX) {
+            free(results);
+            return -1;
+        }
+
+        ++word_position;
+
+        while (position < sentence_length &&
+               isalpha((unsigned char)sentence[position])) {
+            ++position;
+        }
+
+        length = position - start;
+
+        if (is_adverb(sentence + start, length)) {
+            if (result_count == result_capacity) {
+                size_t new_capacity;
+                AdverbOccurrence *expanded_results;
+
+                if (result_capacity == 0) {
+                    new_capacity = 8;
+                } else {
+                    if (result_capacity > SIZE_MAX / 2) {
+                        free(results);
+                        return -1;
+                    }
+
+                    new_capacity = result_capacity * 2;
+                }
+
+                if (new_capacity > SIZE_MAX / sizeof(*results)) {
+                    free(results);
+                    return -1;
+                }
+
+                expanded_results =
+                    realloc(results, new_capacity * sizeof(*results));
+                if (expanded_results == NULL) {
+                    free(results);
+                    return -1;
+                }
+
+                results = expanded_results;
+                result_capacity = new_capacity;
+            }
+
+            results[result_count].character_position = start + 1;
+            results[result_count].word_position = word_position;
+            results[result_count].length = length;
+            ++result_count;
+        }
+    }
+
+    *occurrences = results;
+    *occurrence_count = result_count;
+    return 0;
+}
+
+static int read_line(FILE *stream, char **line, size_t *line_length)
+{
+    size_t capacity = 256;
+    size_t length = 0;
+    char *buffer;
+
+    if (stream == NULL || line == NULL || line_length == NULL) {
+        return -1;
+    }
+
+    *line = NULL;
+    *line_length = 0;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    for (;;) {
+        unsigned char character;
+        size_t bytes_read = fread(&character, 1, 1, stream);
+
+        if (bytes_read == 0) {
+            if (ferror(stream)) {
+                free(buffer);
+                return -1;
+            }
+
+            if (length == 0) {
+                free(buffer);
+                return 0;
+            }
+
+            break;
+        }
+
+        if (character == '\n') {
+            break;
+        }
+
+        if (length == capacity - 1) {
+            size_t new_capacity;
+            char *expanded_buffer;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return -1;
+            }
+
+            new_capacity = capacity * 2;
+            expanded_buffer = realloc(buffer, new_capacity);
+            if (expanded_buffer == NULL) {
+                free(buffer);
+                return -1;
+            }
+
+            buffer = expanded_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)character;
+    }
+
+    buffer[length] = '\0';
+    *line = buffer;
+    *line_length = length;
+    return 1;
+}
+
+int main(void)
+{
+    char *sentence = NULL;
+    size_t sentence_length = 0;
+    AdverbOccurrence *occurrences = NULL;
+    size_t occurrence_count = 0;
+    int read_status;
+    int status = EXIT_SUCCESS;
+
+    read_status = read_line(stdin, &sentence, &sentence_length);
+    if (read_status < 0) {
+        fprintf(stderr, "Failed to read the sentence.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (read_status == 0) {
+        return EXIT_SUCCESS;
+    }
+
+    if (find_adverbs(sentence, sentence_length, &occurrences,
+                     &occurrence_count) != 0) {
+        fprintf(stderr, "Failed to find adverbs.\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t index = 0; index < occurrence_count; ++index) {
+        const AdverbOccurrence *occurrence = &occurrences[index];
+        size_t offset = occurrence->character_position - 1;
+
+        if (fwrite(sentence + offset, 1, occurrence->length, stdout) !=
+                occurrence->length ||
+            printf(": word %zu, character %zu\n",
+                   occurrence->word_position,
+                   occurrence->character_position) < 0) {
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    free(occurrences);
+    free(sentence);
+
+    if (status == EXIT_SUCCESS && fflush(stdout) == EOF) {
+        status = EXIT_FAILURE;
+    }
+
+    return status;
+}

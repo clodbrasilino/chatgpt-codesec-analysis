@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    size_t size;
+} Dictionary;
+
+static size_t bounded_string_length(const char *str, size_t max_length)
+{
+    size_t length = 0;
+
+    while (length < max_length && str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static char *duplicate_string(const char *str)
+{
+    char *copy;
+    size_t length;
+    int written;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    length = bounded_string_length(str, MAX_STRING_LENGTH);
+    if (length == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    length++;
+
+    copy = (char *)malloc(length);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(copy, length, "%s", str);
+    if (written < 0 || (size_t)written >= length) {
+        free(copy);
+        return NULL;
+    }
+
+    return copy;
+}
+
+void free_dictionary(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+
+    if (dict->pairs != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->pairs[i].key);
+            free(dict->pairs[i].value);
+        }
+        free(dict->pairs);
+        dict->pairs = NULL;
+    }
+
+    dict->size = 0;
+}
+
+int tuple_to_dictionary(const char **tuple, size_t tuple_size, Dictionary *dict)
+{
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+
+    dict->pairs = NULL;
+    dict->size = 0;
+
+    if (tuple_size % 2 != 0) {
+        return -1;
+    }
+
+    dict->size = tuple_size / 2;
+
+    if (dict->size == 0) {
+        return 0;
+    }
+
+    dict->pairs = (KeyValuePair *)calloc(dict->size, sizeof(KeyValuePair));
+    if (dict->pairs == NULL) {
+        dict->size = 0;
+        return -1;
+    }
+
+    for (size_t i = 0; i < dict->size; i++) {
+        dict->pairs[i].key = duplicate_string(tuple[i * 2]);
+        dict->pairs[i].value = duplicate_string(tuple[i * 2 + 1]);
+        if (dict->pairs[i].key == NULL || dict->pairs[i].value == NULL) {
+            free_dictionary(dict);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+void print_dictionary(const Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("%s: %s\n", dict->pairs[i].key, dict->pairs[i].value);
+    }
+}
+
+int main(void)
+{
+    const char *tuple[] = {"name", "Alice", "age", "30", "city", "New York"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    Dictionary dict;
+
+    if (tuple_to_dictionary(tuple, tuple_size, &dict) != 0) {
+        fprintf(stderr, "Error: failed to convert tuple to dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    print_dictionary(&dict);
+
+    free_dictionary(&dict);
+
+    return EXIT_SUCCESS;
+}

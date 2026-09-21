@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:49:40: style: Condition 'output_pos+remaining>output_size' is always false [knownConditionTrueFalse]
+            if (output_pos + remaining > output_size)
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:44:44: note: Assuming that condition 'output_pos+remaining+1>output_size' is not redundant
+            if (output_pos + remaining + 1 > output_size)
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:49:40: note: Condition 'output_pos+remaining>output_size' is always false
+            if (output_pos + remaining > output_size)
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:80:41: style: Condition 'output_pos+prefix_len>output_size' is always false [knownConditionTrueFalse]
+            if (output_pos + prefix_len > output_size)
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:72:41: note: Assuming that condition 'output_pos+prefix_len+2>output_size' is not redundant
+        if (output_pos + prefix_len + 2 > output_size)
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-631-s2.c:80:41: note: Condition 'output_pos+prefix_len>output_size' is always false
+            if (output_pos + prefix_len > output_size)
+                                        ^

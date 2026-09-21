@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:129:29: warning: Either the condition 'copy_len>=100' is redundant or the array 'current_word[100]' is accessed at index 100, which is out of bounds. [arrayIndexOutOfBoundsCond]
+                current_word[word_len] = '\0';
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:134:34: note: Assuming that condition 'copy_len>=100' is not redundant
+                    if (copy_len >= MAX_WORD_LEN) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:133:39: note: Assignment to 'copy_len=word_len'
+                    size_t copy_len = word_len;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:129:29: note: Array index out of bounds
+                current_word[word_len] = '\0';
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:159:21: warning: Either the condition 'copy_len>=100' is redundant or the array 'current_word[100]' is accessed at index 100, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        current_word[word_len] = '\0';
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:164:26: note: Assuming that condition 'copy_len>=100' is not redundant
+            if (copy_len >= MAX_WORD_LEN) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:163:31: note: Assignment to 'copy_len=word_len'
+            size_t copy_len = word_len;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-537-s2.c:159:21: note: Array index out of bounds
+        current_word[word_len] = '\0';
+                    ^

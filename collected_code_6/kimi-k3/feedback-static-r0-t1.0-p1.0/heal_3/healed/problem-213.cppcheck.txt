@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-213.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-213.c:36:21: style: Condition 'src_len>=dest_size' is always false [knownConditionTrueFalse]
+        if (src_len >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-213.c:30:17: note: Assuming condition 'src_len>=dest_size' is false
+    if (src_len >= dest_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-213.c:36:21: note: Condition 'src_len>=dest_size' is always false
+        if (src_len >= dest_size) {
+                    ^

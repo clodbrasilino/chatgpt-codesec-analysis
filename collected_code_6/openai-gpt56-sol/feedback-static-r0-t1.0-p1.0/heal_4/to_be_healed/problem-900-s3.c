@@ -1,0 +1,136 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static bool read_line(const char *prompt, char **line)
+{
+    char *buffer = NULL;
+    size_t capacity = 128;
+    size_t length = 0;
+
+    if (prompt == NULL || line == NULL) {
+        return false;
+    }
+
+    *line = NULL;
+
+    if (fputs(prompt, stdout) == EOF || fflush(stdout) == EOF) {
+        return false;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return false;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        int character = fgetc(stdin);
+
+        if (character == '\n') {
+            break;
+        }
+
+        if (character == EOF) {
+            if (ferror(stdin) || length == 0) {
+                free(buffer);
+                return false;
+            }
+            break;
+        }
+
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *new_buffer;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return false;
+            }
+
+            new_capacity = capacity * 2;
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return false;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)(unsigned char)character;
+    }
+
+    buffer[length] = '\0';
+    *line = buffer;
+    return true;
+}
+
+static bool string_starts_with_number(const char *string,
+                                      size_t string_length,
+                                      const char *number,
+                                      size_t number_length)
+{
+    if (string == NULL || number == NULL || number_length == 0) {
+        return false;
+    }
+
+    return number_length <= string_length &&
+           memcmp(string, number, number_length) == 0;
+}
+
+int main(void)
+{
+    char *string = NULL;
+    char *number = NULL;
+    size_t string_length;
+    size_t number_length;
+    int status = EXIT_FAILURE;
+
+    if (!read_line("Enter a string: ", &string)) {
+        goto cleanup;
+    }
+
+    if (!read_line("Enter the starting number: ", &number)) {
+        goto cleanup;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    string_length = strlen(string);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    number_length = strlen(number);
+
+    if (number_length == 0) {
+        if (fputs("The number must not be empty.\n", stderr) == EOF) {
+            goto cleanup;
+        }
+        goto cleanup;
+    }
+
+    if (string_starts_with_number(string, string_length,
+                                  number, number_length)) {
+        if (printf("The string starts with %s.\n", number) < 0) {
+            goto cleanup;
+        }
+    } else {
+        if (printf("The string does not start with %s.\n", number) < 0) {
+            goto cleanup;
+        }
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    free(number);
+    free(string);
+    return status;
+}

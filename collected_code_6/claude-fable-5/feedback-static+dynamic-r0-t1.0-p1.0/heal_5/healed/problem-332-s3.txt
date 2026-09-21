@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define CHARSET_SIZE (UCHAR_MAX + 1)
+#define INPUT_SIZE 256
+
+int count_char_frequency(const char *str, size_t str_size, size_t freq[CHARSET_SIZE])
+{
+    size_t i;
+
+    if (str == NULL || freq == NULL || str_size == 0) {
+        return -1;
+    }
+
+    memset(freq, 0, CHARSET_SIZE * sizeof(size_t));
+
+    for (i = 0; i < str_size && str[i] != '\0'; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    if (i == str_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    size_t freq[CHARSET_SIZE];
+    size_t i;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len >= sizeof(input)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    if (count_char_frequency(input, sizeof(input), freq) != 0) {
+        fprintf(stderr, "Failed to count character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %zu\n", (int)i, freq[i]);
+            } else {
+                printf("0x%02zX : %zu\n", i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already largely defensive, and the Flawfinder warnings (CWE-119/CWE-120) are advisory notices about statically-sized buffers rather than confirmed vulnerabilities. Here is how each concern is mitigated:
+
+1. **`char input[INPUT_SIZE]` buffer** — The warning flags the fixed-size array as a potential overflow source. It is safe here because:
+   - `fgets(input, (int)sizeof(input), stdin)` limits the read to `sizeof(input) - 1` characters plus the null terminator, so no overflow is possible.
+   - `input[sizeof(input) - 1] = '\0'` guarantees termination defensively (redundant with `fgets`, but harmless).
+   - `strnlen(input, sizeof(input))` is used instead of `strlen`, bounding the length scan. I added an explicit check `len >= sizeof(input)` to reject the (theoretically impossible after `fgets`) unterminated case, making the invariant explicit.
+
+2. **`size_t freq[CHARSET_SIZE]` buffer** — Indexing is done via `(unsigned char)str[i]`, which mathematically cannot exceed `UCHAR_MAX`, so the index is always within `[0, CHARSET_SIZE - 1]`. This is the correct idiom; a plain `char` index could be negative on platforms where `char` is signed.
+
+3. **`count_char_frequency` bounds discipline** — The loop condition `i < str_size && str[i] != '\0'` ensures the function never reads past the caller-supplied size, and it returns `-1` if no terminator is found within bounds, correctly refusing to process untrusted, unterminated data.
+
+4. **Output correctness** — The printable-ASCII check (`32..126`) prevents emitting control characters to the terminal, avoiding terminal-escape injection from user input.
+
+No dynamic allocation is needed; the fixed sizes are compile-time constants used consistently via `sizeof`, which is the recommended remediation for these Flawfinder findings.

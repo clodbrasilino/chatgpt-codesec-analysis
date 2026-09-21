@@ -1,0 +1,145 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 256U
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static int sort_sublists(char ***lists, const size_t *sizes, size_t num_lists)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            return -1;
+        }
+        if (sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+
+    return 0;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t num_lists)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[3][4] = {
+        { "banana", "apple", "cherry", "date" },
+        { "zebra", "mango", "kiwi", "lemon" },
+        { "orange", "grape", "fig", "plum" }
+    };
+    const size_t num_lists = sizeof(data) / sizeof(data[0]);
+    static const size_t sizes[3] = { 4, 4, 4 };
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    lists = calloc(num_lists, sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (sizes[i] > sizeof(data[i]) / sizeof(data[i][0])) {
+            fprintf(stderr, "Size exceeds available data\n");
+            free_lists(lists, sizes, num_lists);
+            return EXIT_FAILURE;
+        }
+        lists[i] = calloc(sizes[i], sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, num_lists);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free_lists(lists, sizes, num_lists);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (sort_sublists(lists, sizes, num_lists) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_lists(lists, sizes, num_lists);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        printf("List %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, num_lists);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and how they are addressed:**
+
+1. **`memcpy` (CWE-120) in `duplicate_string`:** This was already a false positive in the original code. The destination buffer is allocated as `malloc(len + 1)` and exactly `len` bytes are copied, followed by explicit null termination at `copy[len]`. The length is bounded via `strnlen(src, MAX_STRING_LEN)` with rejection of overlong strings, so no overflow is possible. The logic is retained as-is since it is provably safe.
+
+2. **Statically-sized arrays (CWE-119/CWE-120) in `main`:** Also largely a false positive since the array is `const` and read-only, but the rewrite hardens it by deriving `num_lists` from `sizeof(data) / sizeof(data[0])` instead of a hardcoded literal, and adding a runtime bounds check ensuring `sizes[i]` never exceeds the actual number of elements per row before indexing `data[i][j]`. This eliminates any possibility of out-of-bounds reads if `sizes` were ever modified inconsistently with `data`.
+
+All other defensive properties of the original are preserved: null checks throughout, `calloc` for zero-initialized pointer arrays (making partial cleanup in `free_lists` safe), and consistent error paths that free all allocated memory before exit.

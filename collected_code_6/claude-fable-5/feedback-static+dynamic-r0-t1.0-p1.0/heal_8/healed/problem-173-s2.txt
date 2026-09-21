@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len && read < max_len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warnings, which were all low-risk (risk 1) CWE-120/CWE-20 buffer-boundary heuristics triggered by array indexing inside loops. Here's why each flagged point is safe:
+
+1. **`strnlen(str, max_len)` with `len >= max_len` rejection** — guarantees `len < max_len`, so every `str[read]` access with `read < len` is in bounds and the string is guaranteed NUL-terminated within the buffer.
+
+2. **`isalnum((unsigned char)str[read])`** — the cast to `unsigned char` correctly avoids undefined behavior for negative `char` values (a common real bug with `<ctype.h>` functions).
+
+3. **`str[write] = str[read]` guarded by `write < max_len - 1`** — since `max_len > 0` is checked upfront, `max_len - 1` cannot underflow, and `write` is always a valid index, leaving room for the terminator.
+
+4. **Final `str[write] = '\0'`** — `write` can never exceed `max_len - 1` because of the loop guard, so the `write >= max_len` check is defensive but unreachable; the write is in bounds.
+
+The only change made is the belt-and-braces `read < max_len` condition in the loop header, which is logically redundant (since `len < max_len` is already enforced) but makes the bound explicit to static analyzers and future maintainers. Caller usage in `main` correctly passes `sizeof(input)`, which includes the NUL terminator of the array-initialized string, so no truncation or rejection occurs.

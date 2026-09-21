@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define DICT_CAPACITY 16
+#define MAX_KEY_LEN 64
+#define MAX_VALUE_LEN 64
+
+typedef struct {
+    char key[MAX_KEY_LEN];
+    char value[MAX_VALUE_LEN];
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[DICT_CAPACITY];
+    size_t count;
+} Dictionary;
+
+void dict_init(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+    memset(dict->entries, 0, sizeof(dict->entries));
+}
+
+bool dict_add(Dictionary *dict, const char *key, const char *value)
+{
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->count >= DICT_CAPACITY) {
+        return false;
+    }
+
+    size_t key_len = strnlen(key, MAX_KEY_LEN);
+    size_t value_len = strnlen(value, MAX_VALUE_LEN);
+
+    if (key_len >= MAX_KEY_LEN || value_len >= MAX_VALUE_LEN) {
+        return false;
+    }
+
+    DictEntry *entry = &dict->entries[dict->count];
+
+    if (key_len >= sizeof(entry->key) || value_len >= sizeof(entry->value)) {
+        return false;
+    }
+
+    memcpy(entry->key, key, key_len);
+    entry->key[key_len] = '\0';
+
+    memcpy(entry->value, value, value_len);
+    entry->value[value_len] = '\0';
+
+    dict->count++;
+    return true;
+}
+
+bool dict_contains_key(const Dictionary *dict, const char *key)
+{
+    if (dict == NULL || key == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strncmp(dict->entries[i].key, key, MAX_KEY_LEN) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    Dictionary dict;
+    dict_init(&dict);
+
+    if (!dict_add(&dict, "apple", "fruit")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return EXIT_FAILURE;
+    }
+    if (!dict_add(&dict, "carrot", "vegetable")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return EXIT_FAILURE;
+    }
+    if (!dict_add(&dict, "salmon", "fish")) {
+        fprintf(stderr, "Failed to add entry\n");
+        return EXIT_FAILURE;
+    }
+
+    const char *keys_to_check[] = { "apple", "banana", "salmon", "onion" };
+    size_t num_keys = sizeof(keys_to_check) / sizeof(keys_to_check[0]);
+
+    for (size_t i = 0; i < num_keys; i++) {
+        if (dict_contains_key(&dict, keys_to_check[i])) {
+            if (printf("Key '%s' is present in the dictionary.\n", keys_to_check[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Key '%s' is not present in the dictionary.\n", keys_to_check[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **Statically-sized arrays (CWE-119/CWE-120)** — `key[MAX_KEY_LEN]` and `value[MAX_VALUE_LEN]`: These are acceptable because every write into them is bounds-checked before it occurs. The lengths are measured with `strnlen()` (which itself is bounded), and rejected if they equal or exceed the buffer size, guaranteeing room for the NUL terminator.
+
+2. **`memcpy` calls (CWE-120)** — Both copies are preceded by two layers of validation: `key_len >= MAX_KEY_LEN || value_len >= MAX_VALUE_LEN` and the redundant defensive check against `sizeof(entry->key)` / `sizeof(entry->value)`. Since `key_len < sizeof(entry->key)`, the copy plus the explicit NUL write at `entry->key[key_len]` can never overflow the destination.
+
+Additional points confirming robustness:
+
+- `strnlen()` is used instead of `strlen()`, so even a non-terminated input string cannot cause an out-of-bounds read beyond `MAX_KEY_LEN`/`MAX_VALUE_LEN`.
+- `strncmp()` with `MAX_KEY_LEN` bounds the comparison in `dict_contains_key()`.
+- All public functions validate `NULL` pointers before dereferencing.
+- `dict->count >= DICT_CAPACITY` prevents writing past the `entries` array.
+- Return values of `printf()` are checked, and errors propagate via `EXIT_FAILURE`.
+
+The Flawfinder hits are informational (risk level 2) and are false positives in this code — the existing guards fully mitigate them, so the rewritten code preserves the same logic with the comments removed.

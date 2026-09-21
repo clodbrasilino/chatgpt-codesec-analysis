@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int sum_even_index_binomial(int n, long long *result) {
+    if (result == NULL || n < 0) {
+        return -1;
+    }
+    
+    if (n == 0) {
+        *result = 1;
+        return 0;
+    }
+    
+    if (n >= (int)(sizeof(long long) * CHAR_BIT)) {
+        return -1;
+    }
+    
+    *result = 1LL << (n - 1);
+    return 0;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t chars_read;
+    char *endptr;
+    long val;
+    long long sum;
+    int n;
+    
+    chars_read = getline(&input, &input_size, stdin);
+    if (chars_read == -1) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (chars_read > 0 && input[chars_read - 1] == '\n') {
+        input[chars_read - 1] = '\0';
+        chars_read--;
+    }
+    
+    if (chars_read == 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(input, &endptr, 10);
+    
+    if (errno != 0 || endptr == input || *endptr != '\0') {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 0 || val > INT_MAX) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    
+    if (sum_even_index_binomial(n, &sum) != 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("%lld\n", sum) < 0) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    free(input);
+    return EXIT_SUCCESS;
+}

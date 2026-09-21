@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int has_28_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t month_len = strlen(month);
+    
+    if (month_len != 8) {
+        return 0;
+    }
+    
+    if (tolower((unsigned char)month[0]) != 'f') return 0;
+    if (tolower((unsigned char)month[1]) != 'e') return 0;
+    if (tolower((unsigned char)month[2]) != 'b') return 0;
+    if (tolower((unsigned char)month[3]) != 'r') return 0;
+    if (tolower((unsigned char)month[4]) != 'u') return 0;
+    if (tolower((unsigned char)month[5]) != 'a') return 0;
+    if (tolower((unsigned char)month[6]) != 'r') return 0;
+    if (tolower((unsigned char)month[7]) != 'y') return 0;
+    
+    return 1;
+}
+
+int main(void) {
+    const char *months[] = {
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    };
+    
+    for (int i = 0; i < 12; i++) {
+        printf("%s has %s\n", months[i], 
+               has_28_days(months[i]) ? "28 days" : "not 28 days");
+    }
+    
+    return 0;
+}

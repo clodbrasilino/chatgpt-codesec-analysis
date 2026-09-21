@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-936-s3.c: In function 'rearrange_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-936-s3.c:64:66: error: passing argument 5 of 'qsort_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   64 |     qsort_r(tuples, (size_t)tuple_size, sizeof(Tuple), &arg_ptr, (int (*)(const void *, const void *, const void *, const void *))compare_tuples);
+      |                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                  |
+      |                                                                  int (*)(const void *, const void *, const void *, const void *)
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-936-s3.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:367:29: note: expected 'int (*)(void *, const void *, const void *)' but argument is of type 'int (*)(const void *, const void *, const void *, const void *)'
+  367 |             int (* _Nonnull __compar)(void *, const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

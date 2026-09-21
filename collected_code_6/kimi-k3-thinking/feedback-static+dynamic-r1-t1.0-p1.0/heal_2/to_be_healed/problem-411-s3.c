@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t input_len;
+    size_t i;
+    size_t j;
+    int upper;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    input_len = strlen(input);
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    upper = 1;
+
+    while (input[i] != '\0') {
+        if (input[i] == '_') {
+            upper = 1;
+        } else {
+            if (upper) {
+                result[j++] = (char)toupper((unsigned char)input[i]);
+                upper = 0;
+            } else {
+                result[j++] = input[i];
+            }
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        NULL
+    };
+    size_t t;
+
+    for (t = 0; tests[t] != NULL; t++) {
+        char *camel = snake_to_camel(tests[t]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[t]);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

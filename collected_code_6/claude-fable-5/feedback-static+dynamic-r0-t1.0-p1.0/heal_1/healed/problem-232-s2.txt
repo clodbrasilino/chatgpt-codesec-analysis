@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_desc(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return 1;
+    }
+    if (x > y) {
+        return -1;
+    }
+    return 0;
+}
+
+int get_n_largest(const int *data, size_t data_len, size_t n, int *result)
+{
+    int *copy;
+    size_t copy_size;
+    size_t result_size;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || data_len == 0 || n > data_len) {
+        return -1;
+    }
+    if (data_len > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy_size = data_len * sizeof(int);
+    result_size = n * sizeof(int);
+
+    if (result_size > copy_size) {
+        return -1;
+    }
+
+    copy = malloc(copy_size);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, data, copy_size);
+    qsort(copy, data_len, sizeof(int), compare_desc);
+    memcpy(result, copy, result_size);
+
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    int data[] = { 42, 7, 19, 88, 3, 56, 91, 23, 65, 10 };
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+    size_t n = 3;
+    int *result;
+    size_t i;
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Requested size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    result = malloc(n * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_largest(data, data_len, n, result) != 0) {
+        fprintf(stderr, "Failed to get largest items\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest items are:\n", n);
+    for (i = 0; i < n; i++) {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the changes:**
+
+1. **Added `<stdint.h>`** — the original code referenced `SIZE_MAX` without including the header that defines it, which is a portability bug (some toolchains define it in `<stdlib.h>` transitively, but the standard requires `<stdint.h>`).
+
+2. **First `memcpy` (CWE-120 flag)** — the destination `copy` is allocated with exactly `data_len * sizeof(int)` bytes, and the overflow guard `data_len > SIZE_MAX / sizeof(int)` prevents integer wraparound in the size computation. The copy length matches the allocation exactly, so this was a false positive; I made the size explicit via `copy_size` to make the invariant obvious to reviewers and static analyzers.
+
+3. **Second `memcpy` (CWE-120 flag)** — the function contract requires the caller to supply a `result` buffer of at least `n` ints. The guard `n > data_len` combined with the explicit `result_size > copy_size` check ensures we never read past `copy`. The write side cannot be verified inside the function (C carries no buffer-length metadata), so the defensive check in `main` before `malloc` plus the documented contract is the correct mitigation.
+
+4. **Caller-side hardening** — added an overflow check on `n * sizeof(int)` in `main` before allocation, closing the loop on the second Flawfinder finding: the destination buffer is provably at least `n * sizeof(int)` bytes.
+
+The core logic (copy, `qsort` descending, take first `n`) remains O(n log n) and correct; error paths all release owned memory, so there are no leaks.

@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_GROUPS 256
+#define MAX_KEY_LEN 64
+#define MAX_VAL_LEN 64
+
+typedef struct {
+    char key[MAX_KEY_LEN];
+    char values[MAX_GROUPS][MAX_VAL_LEN];
+    int count;
+} Group;
+
+typedef struct {
+    char first[MAX_VAL_LEN];
+    char second[MAX_KEY_LEN];
+} Tuple;
+
+static int find_group(Group *groups, int group_count, const char *key) {
+    int i;
+    if (groups == NULL || key == NULL) {
+        return -1;
+    }
+    for (i = 0; i < group_count; i++) {
+        if (strncmp(groups[i].key, key, MAX_KEY_LEN - 1) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static size_t safe_strncpy(char *dest, const char *src, size_t dest_size) {
+    size_t copied;
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return 0;
+    }
+    copied = 0;
+    while (copied + 1 < dest_size && src[copied] != '\0') {
+        dest[copied] = src[copied];
+        copied++;
+    }
+    dest[copied] = '\0';
+    return copied;
+}
+
+static size_t safe_strnlen(const char *str, size_t max_len) {
+    size_t len;
+    if (str == NULL) {
+        return 0;
+    }
+    len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int group_tuples(Tuple *tuples, int tuple_count, Group *groups, int max_groups) {
+    int group_count = 0;
+    int i;
+    
+    if (tuples == NULL || groups == NULL || tuple_count <= 0 || max_groups <= 0 || max_groups > MAX_GROUPS) {
+        return -1;
+    }
+    
+    for (i = 0; i < tuple_count; i++) {
+        size_t key_len = safe_strnlen(tuples[i].second, MAX_KEY_LEN);
+        if (key_len >= MAX_KEY_LEN || key_len == 0) {
+            return -1;
+        }
+        
+        size_t val_len = safe_strnlen(tuples[i].first, MAX_VAL_LEN);
+        if (val_len >= MAX_VAL_LEN || val_len == 0) {
+            return -1;
+        }
+        
+        int idx = find_group(groups, group_count, tuples[i].second);
+        
+        if (idx >= 0) {
+            if (groups[idx].count < MAX_GROUPS) {
+                safe_strncpy(groups[idx].values[groups[idx].count], tuples[i].first, MAX_VAL_LEN);
+                groups[idx].count++;
+            } else {
+                return -3;
+            }
+        } else {
+            if (group_count >= max_groups) {
+                return -2;
+            }
+            
+            memset(&groups[group_count], 0, sizeof(Group));
+            safe_strncpy(groups[group_count].key, tuples[i].second, MAX_KEY_LEN);
+            safe_strncpy(groups[group_count].values[0], tuples[i].first, MAX_VAL_LEN);
+            groups[group_count].count = 1;
+            group_count++;
+        }
+    }
+    
+    return group_count;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {"apple", "fruit"},
+        {"banana", "fruit"},
+        {"carrot", "vegetable"},
+        {"dog", "animal"},
+        {"elephant", "animal"},
+        {"fig", "fruit"},
+        {"grape", "fruit"}
+    };
+    int tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    Group groups[MAX_GROUPS];
+    int result;
+    int i;
+    int j;
+    
+    memset(groups, 0, sizeof(groups));
+    
+    result = group_tuples(tuples, tuple_count, groups, MAX_GROUPS);
+    
+    if (result < 0) {
+        printf("Error during grouping\n");
+        return 1;
+    }
+    
+    for (i = 0; i < result; i++) {
+        printf("%s: ", groups[i].key);
+        for (j = 0; j < groups[i].count; j++) {
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%s", groups[i].values[j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `char buffer[256]` (CWE-119/CWE-120) is a false positive in this code, and the mitigations are already correctly in place:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, writing at most 255 characters plus a null terminator. Unlike `gets()`, it cannot overflow.
+
+2. **Guaranteed null termination** — `fgets` always null-terminates on success, and the defensive `buffer[sizeof(buffer) - 1] = '\0';` provides belt-and-suspenders assurance.
+
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` returns an index within bounds even if no newline exists (it returns the index of the terminating null), so the assignment can never write out of bounds.
+
+4. **No unsafe copies** — no `strcpy`, `sprintf`, or unbounded `scanf("%s")` calls are present.
+
+Other correctness details already handled well:
+
+- `counts` is sized `UCHAR_MAX + 1` and indexed via an `unsigned char` cast, avoiding negative-index UB when `char` is signed and the input contains bytes ≥ 128.
+- NULL-pointer checks on both parameters of `max_occurring_char`.
+- The `found` flag correctly distinguishes an empty string from a valid result, rather than relying on a sentinel character.
+- Return values of `fgets` and `max_occurring_char` are checked, with errors reported to `stderr` and nonzero exit codes.
+
+The code compiles cleanly under `-Wall -Wextra -pedantic` and requires no functional changes to address the identified weakness.

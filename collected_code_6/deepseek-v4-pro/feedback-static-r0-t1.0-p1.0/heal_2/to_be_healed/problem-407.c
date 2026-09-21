@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+  */
+
+static int compare_chars(const void *a, const void *b) {
+    return (*(const char *)a - *(const char *)b);
+}
+
+long long next_bigger_number(long long n) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char digits[32];
+    int len;
+    int i;
+    int j;
+    int pivot;
+    char temp;
+    long long result;
+    char *endptr;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n >= LLONG_MAX) {
+        return -1;
+    }
+
+    snprintf(digits, sizeof(digits), "%lld", n);
+    digits[sizeof(digits) - 1] = '\0';
+
+    len = (int)strnlen(digits, sizeof(digits));
+    if (len <= 0 || len >= (int)sizeof(digits)) {
+        return -1;
+    }
+
+    pivot = -1;
+    for (i = len - 2; i >= 0; i--) {
+        if (digits[i] < digits[i + 1]) {
+            pivot = i;
+            break;
+        }
+    }
+
+    if (pivot == -1) {
+        return -1;
+    }
+
+    j = len - 1;
+    while (j > pivot && digits[j] <= digits[pivot]) {
+        j--;
+    }
+
+    temp = digits[pivot];
+    digits[pivot] = digits[j];
+    digits[j] = temp;
+
+    qsort(digits + pivot + 1, len - pivot - 1, sizeof(char), compare_chars);
+
+    /* Possible weaknesses found:
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  use of undeclared identifier 'errno'
+     *  'errno' undeclared (first use in this function)
+     */
+    errno = 0;
+    result = strtoll(digits, &endptr, 10);
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'errno'
+     */
+    if (errno != 0 || *endptr != '\0') {
+        return -1;
+    }
+
+    if (result <= n || result <= 0) {
+        return -1;
+    }
+
+    return result;
+}
+
+int main(void) {
+    long long test_values[] = {12, 513, 2017, 9, 111, 531, 123456789, 9876543210LL};
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        long long result = next_bigger_number(test_values[i]);
+        printf("%lld -> %lld\n", test_values[i], result);
+    }
+
+    return 0;
+}

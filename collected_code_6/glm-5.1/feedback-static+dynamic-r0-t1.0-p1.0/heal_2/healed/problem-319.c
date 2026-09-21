@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+
+char** find_five_char_words(const char* str, size_t* count) {
+    regex_t regex;
+    int ret;
+    regmatch_t matches[1];
+    char** result = NULL;
+    size_t capacity = 0;
+    *count = 0;
+
+    ret = regcomp(&regex, "\\<[a-zA-Z]{5}\\>", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    const char* p = str;
+    while (regexec(&regex, p, 1, matches, 0) == 0) {
+        if (matches[0].rm_so == -1) {
+            break;
+        }
+
+        if (*count >= capacity) {
+            capacity = (capacity == 0) ? MAX_MATCHES : capacity * 2;
+            char** temp = realloc(result, capacity * sizeof(char*));
+            if (temp == NULL) {
+                for (size_t i = 0; i < *count; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                *count = 0;
+                return NULL;
+            }
+            result = temp;
+        }
+
+        size_t len = matches[0].rm_eo - matches[0].rm_so;
+        char* word = malloc(len + 1);
+        if (word == NULL) {
+            for (size_t i = 0; i < *count; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            *count = 0;
+            return NULL;
+        }
+
+        memcpy(word, p + matches[0].rm_so, len);
+        word[len] = '\0';
+        result[*count] = word;
+        (*count)++;
+
+        p += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+
+    char** final_result = realloc(result, (*count) * sizeof(char*));
+    if (final_result != NULL) {
+        result = final_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* text = "Hello world this is a test regex apples";
+    size_t count;
+    char** words = find_five_char_words(text, &count);
+
+    if (words != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", words[i]);
+            free(words[i]);
+        }
+        free(words);
+    } else {
+        printf("No words found or memory allocation failed.\n");
+    }
+
+    return 0;
+}

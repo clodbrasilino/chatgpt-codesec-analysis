@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse(char *start, char *end) {
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+char* reverse_words(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        char *result = malloc(1);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, str, len + 1);
+
+    reverse(result, result + len - 1);
+
+    char *word_start = result;
+    char *current = result;
+
+    while (*current) {
+        if (*current == ' ') {
+            reverse(word_start, current - 1);
+            word_start = current + 1;
+        }
+        current++;
+    }
+    reverse(word_start, current - 1);
+
+    return result;
+}
+
+int main() {
+    const char str[] = "Hello World from C";
+    
+    char *reversed = reverse_words(str);
+    if (reversed == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Original: %s\n", str);
+    printf("Reversed: %s\n", reversed);
+
+    free(reversed);
+    reversed = NULL;
+
+    return 0;
+}

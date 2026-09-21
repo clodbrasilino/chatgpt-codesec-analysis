@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-348-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-348-s3.c:61:15: style: Condition 'range<=0' is always false [knownConditionTrueFalse]
+    if (range <= 0 || range > 1000000LL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-348-s3.c:54:17: note: Assuming that condition 'max_sum<min_sum' is not redundant
+    if (max_sum < min_sum || max_sum - min_sum >= LLONG_MAX) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-348-s3.c:59:41: note: Assignment 'range=max_sum-min_sum+1', assigned value is greater than 0
+    long long range = max_sum - min_sum + 1;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-348-s3.c:61:15: note: Condition 'range<=0' is always false
+    if (range <= 0 || range > 1000000LL) {
+              ^

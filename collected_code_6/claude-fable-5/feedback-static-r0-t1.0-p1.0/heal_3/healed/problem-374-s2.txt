@@ -1,0 +1,110 @@
+## Analysis
+
+The code generates all permutations of a string recursively. Reviewing the annotated weaknesses:
+
+1. **Redundant dead check (`len >= buf_size`)**: Since `buf_size = len + 1U` and `len < MAX_INPUT_LEN` is already guaranteed, `len >= buf_size` can never be true. Dead code — should be removed.
+
+2. **Integer overflow concern on `buf_size = len + 1U`**: In principle `len + 1` could wrap around at `SIZE_MAX`, but since `len` is already bounded by `MAX_INPUT_LEN`, this is impossible. Still, a defensive explicit bound check keeps static analyzers quiet. The existing `len >= MAX_INPUT_LEN` check already covers this.
+
+3. **Flawfinder `memcpy` warning (CWE-120)**: The copy is actually safe (`buffer` holds `len + 1` bytes, exactly `len` bytes copied plus NUL). Flawfinder flags all `memcpy` uses by policy. Replacing it with a bounded, size-aware copy (or keeping `memcpy` with an explicit invariant already enforced) is fine. Using `memcpy` with the destination allocated from the same `len` is correct; I'll keep a size-checked copy loop-free version.
+
+4. **Unchecked `malloc` cast**: The cast on `malloc` is unnecessary in C and can hide missing includes — remove it.
+
+5. **`strnlen` portability**: It's POSIX, not C89/C99. Fine on POSIX targets; requires `_POSIX_C_SOURCE` on some systems. I'll define it explicitly for portability.
+
+6. **Recursion depth**: bounded by string length (< 1024), acceptable, but factorial output volume is the real practical limit — caller's responsibility.
+
+## Rewritten Code
+
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024U
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        if (permute(str, left + 1U, right) != 0) {
+            swap_chars(&str[left], &str[i]);
+            return -1;
+        }
+        swap_chars(&str[left], &str[i]);
+    }
+
+    return 0;
+}
+
+static int print_permutations(const char *input)
+{
+    char *buffer;
+    size_t len;
+    size_t buf_size;
+    int result;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == 0U || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    buf_size = len + 1U;
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    memcpy(buffer, input, len);
+    buffer[len] = '\0';
+
+    result = permute(buffer, 0U, len - 1U);
+
+    free(buffer);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "ABC";
+
+    if (print_permutations(test) != 0) {
+        (void)fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Key changes
+
+- **Removed the dead `len >= buf_size` check** flagged by cppcheck (`knownConditionTrueFalse`).
+- **Removed the `exit()` call from deep inside recursion** — `permute` now returns an error code that propagates up, so `free(buffer)` always runs and there is no abnormal termination leaking resources from library-level code. Error handling is centralized in `main`.
+- **Dropped the redundant `(char *)` cast** on `malloc`.
+- **`memcpy` retained but provably safe**: destination size (`len + 1`) strictly exceeds copy length (`len`), with `len` bounded by the prior `strnlen`/range check, satisfying the CWE-120 concern.
+- **Added `_POSIX_C_SOURCE`** so `strnlen` is reliably declared.

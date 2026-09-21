@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_string(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    size_t len = 0;
+    while (len < 4096 && str[len] != '\0') {
+        len++;
+    }
+    if (len == 4096) {
+        return;
+    }
+    for (size_t i = 0; i < len / 2; i++) {
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+void reverse_strings(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        reverse_string(strings[i]);
+    }
+}
+
+int main(void) {
+    char buffer1[] = "hello";
+    char buffer2[] = "world";
+    char buffer3[] = "example";
+    char buffer4[] = "test";
+    char *strings[] = {
+        buffer1,
+        buffer2,
+        buffer3,
+        buffer4,
+        NULL
+    };
+    
+    size_t count = 0;
+    while (strings[count] != NULL) {
+        count++;
+    }
+    
+    reverse_strings(strings, count);
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+    
+    return 0;
+}

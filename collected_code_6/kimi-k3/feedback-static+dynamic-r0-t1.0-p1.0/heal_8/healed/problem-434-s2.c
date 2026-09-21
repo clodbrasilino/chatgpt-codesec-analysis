@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool match(const char *str) {
+    if (str == NULL || str[0] != 'a') {
+        return false;
+    }
+    int i = 1;
+    while (str[i] == 'b') {
+        i++;
+    }
+    return i > 1 && str[i] == '\0';
+}
+
+int main(void) {
+    char *str = NULL;
+    size_t size = 0;
+    ssize_t len;
+
+    printf("Enter a string: ");
+    
+    len = getline(&str, &size, stdin);
+    
+    if (len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(str);
+        return 1;
+    }
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+
+    if (match(str)) {
+        printf("Match found\n");
+    } else {
+        printf("No match\n");
+    }
+
+    free(str);
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void sort_string(char *str, size_t max_size) {
+    if (str == NULL || max_size == 0) {
+        return;
+    }
+
+    size_t len = 0;
+    while (len < max_size && str[len] != '\0') {
+        len++;
+    }
+
+    if (len <= 1) {
+        return;
+    }
+
+    for (size_t i = 0; i < len - 1; i++) {
+        for (size_t j = i + 1; j < len; j++) {
+            if (str[i] > str[j]) {
+                char temp = str[i];
+                str[i] = str[j];
+                str[j] = temp;
+            }
+        }
+    }
+}
+
+int main(void) {
+    char str[] = "programming";
+    
+    sort_string(str, sizeof(str));
+    
+    printf("%s\n", str);
+    
+    return 0;
+}

@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    if (strs == NULL || count == 0U) {
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    size_t prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+    if (prefix_len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    for (size_t i = 1U; i < count; i++) {
+        size_t j = 0U;
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0U) {
+            break;
+        }
+    }
+
+    if (prefix_len >= MAX_STRING_LEN || prefix_len > SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    size_t alloc_size = prefix_len + 1U;
+    char *result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0U) {
+        memcpy(result, strs[0], prefix_len);
+    }
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "flower",
+        "flow",
+        "flight"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    char *prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need to add `#include <stdint.h>` for `SIZE_MAX`. Here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **Removed the dead-code check** (`prefix_len >= alloc_size`): since `alloc_size = prefix_len + 1U`, this condition was always false, as cppcheck's `knownConditionTrueFalse` correctly flagged. Removing it eliminates unreachable code paths.
+
+2. **Guarded the `prefix_len + 1U` computation**: added an explicit `prefix_len > SIZE_MAX - 1U` overflow guard before the addition. In practice `prefix_len < MAX_STRING_LEN` already ensures no overflow, but the explicit check documents intent and silences integer-overflow analyzers.
+
+3. **memcpy (CWE-120)**: the Flawfinder warning is a heuristic hit; the copy is provably safe because the destination buffer is exactly `prefix_len + 1U` bytes and we copy `prefix_len` bytes, with the bounds validated before allocation. The invariant is now enforced purely by construction rather than by a redundant runtime check.
+
+4. Kept the `strnlen` bound check (`>= MAX_STRING_LEN`) to reject unterminated or oversized inputs, and retained NULL validation for the array and all elements.

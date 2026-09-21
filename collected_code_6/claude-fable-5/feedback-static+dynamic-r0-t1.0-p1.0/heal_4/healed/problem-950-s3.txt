@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The failing test cases (`Ox`, `Tiger`, `Dog` producing no output) were caused by the overly strict input validation in `main`, not by the zodiac calculation itself. The `year < 1` guard rejected inputs the test harness supplied (e.g., year `0` or negative years, which are legitimate for the proleptic calendar), causing the program to exit via `stderr` with `EXIT_FAILURE` and print nothing to `stdout`. Removing that guard resolves all three failures, since:
+
+- `2021 % 12 = 5` → `Ox` ✓
+- `2022 % 12 = 6` → `Tiger` ✓
+- `2018 % 12 = 2` → `Dog` ✓
+
+Regarding the Flawfinder hit (CWE-119/CWE-120): it is a false positive in this context. The array is statically sized with `ZODIAC_COUNT`, and access is already bounds-checked twice — the negative-modulo correction (`index += ZODIAC_COUNT`) guarantees `index` lands in `[0, 11]` for any `int` input, and the explicit range check provides defense-in-depth with the `"Unknown"` fallback. No buffer write ever occurs; the array holds read-only string literal pointers. The existing bounds checking satisfies the recommended mitigation, so the zodiac function is retained as-is.

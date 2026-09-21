@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+static char *concat_strings(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strnlen(a, MAX_STRING_LEN);
+    len_b = strnlen(b, MAX_STRING_LEN);
+
+    if (len_a >= MAX_STRING_LEN || len_b >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len_a > SIZE_MAX - len_b - 1U) {
+        return NULL;
+    }
+
+    result = malloc(len_a + len_b + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b);
+    result[len_a + len_b] = '\0';
+
+    return result;
+}
+
+static int concat_tuples(const StringTuple *t1, const StringTuple *t2, StringTuple *out)
+{
+    if (t1 == NULL || t2 == NULL || out == NULL) {
+        return -1;
+    }
+
+    out->first = NULL;
+    out->second = NULL;
+
+    out->first = concat_strings(t1->first, t2->first);
+    if (out->first == NULL) {
+        return -1;
+    }
+
+    out->second = concat_strings(t1->second, t2->second);
+    if (out->second == NULL) {
+        free(out->first);
+        out->first = NULL;
+        return -1;
+    }
+
+    return 0;
+}
+
+static void free_tuple(StringTuple *t)
+{
+    if (t != NULL) {
+        free(t->first);
+        free(t->second);
+        t->first = NULL;
+        t->second = NULL;
+    }
+}
+
+int main(void)
+{
+    StringTuple t1;
+    StringTuple t2;
+    StringTuple result;
+
+    t1.first = "Hello, ";
+    t1.second = "Good ";
+    t2.first = "World!";
+    t2.second = "Morning!";
+
+    if (concat_tuples(&t1, &t2, &result) != 0) {
+        fprintf(stderr, "Error: tuple concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("(%s, %s)\n", result.first, result.second) < 0) {
+        free_tuple(&result);
+        return EXIT_FAILURE;
+    }
+
+    free_tuple(&result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Added `<stdint.h>`** — the original code used `SIZE_MAX` without including this header, which is a portability bug (some libcs expose it transitively via `<stdlib.h>`, but that's not guaranteed by the standard).
+
+2. **Replaced `strlen` with `strnlen`** (CWE-126 mitigation) — `strnlen` bounds the scan to `MAX_STRING_LEN`, so an unterminated string can no longer cause an unbounded over-read. If the length reaches the cap, the function rejects the input rather than proceeding with a possibly-truncated length.
+
+3. **Bounded `memcpy` operations** (CWE-120 mitigation) — the destination buffer is allocated as exactly `len_a + len_b + 1`, and the copies use those same validated lengths. The second `memcpy` no longer copies `len_b + 1` bytes (which relied on `b` being NUL-terminated at exactly `len_b`); instead it copies `len_b` bytes and the NUL terminator is written explicitly. This decouples correctness from the source string's termination.
+
+4. **Overflow check retained** — the `SIZE_MAX - len_b - 1U` guard is kept, though with the `MAX_STRING_LEN` cap it is now effectively belt-and-suspenders.
+
+The memory-management logic (cleanup on partial failure in `concat_tuples`, idempotent `free_tuple` via NULL-ing pointers) was already sound and is preserved unchanged.

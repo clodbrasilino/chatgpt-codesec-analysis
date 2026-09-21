@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        long long int_val;
+        char *str_val;
+    } data;
+} Element;
+
+static int compare_elements(const void *a, const void *b)
+{
+    const Element *elem_a = (const Element *)a;
+    const Element *elem_b = (const Element *)b;
+    
+    if (elem_a->type == TYPE_INT && elem_b->type == TYPE_INT) {
+        if (elem_a->data.int_val < elem_b->data.int_val) return -1;
+        if (elem_a->data.int_val > elem_b->data.int_val) return 1;
+        return 0;
+    }
+    
+    if (elem_a->type == TYPE_STRING && elem_b->type == TYPE_STRING) {
+        return strcmp(elem_a->data.str_val, elem_b->data.str_val);
+    }
+    
+    if (elem_a->type == TYPE_INT) return -1;
+    return 1;
+}
+
+static bool is_valid_integer(const char *str, long long *result)
+{
+    if (str == NULL || *str == '\0') return false;
+    
+    char *endptr;
+    errno = 0;
+    long long val = strtoll(str, &endptr, 10);
+    
+    if (errno == ERANGE || val == LLONG_MAX || val == LLONG_MIN) {
+        if (errno == ERANGE) return false;
+    }
+    
+    if (*endptr != '\0') return false;
+    if (endptr == str) return false;
+    
+    *result = val;
+    return true;
+}
+
+static void free_elements(Element *arr, size_t count)
+{
+    if (arr == NULL) return;
+    
+    for (size_t i = 0; i < count; i++) {
+        if (arr[i].type == TYPE_STRING && arr[i].data.str_val != NULL) {
+            free(arr[i].data.str_val);
+        }
+    }
+    free(arr);
+}
+
+static int process_input(Element *arr, size_t *count, size_t capacity)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    size_t idx = 0;
+    
+    while (idx < capacity && (read_len = getline(&buffer, &buffer_size, stdin)) != -1) {
+        if (read_len > 0 && buffer[read_len - 1] == '\n') {
+            buffer[read_len - 1] = '\0';
+            read_len--;
+        }
+        
+        if (read_len == 0) continue;
+        
+        long long int_val;
+        if (is_valid_integer(buffer, &int_val)) {
+            arr[idx].type = TYPE_INT;
+            arr[idx].data.int_val = int_val;
+        } else {
+            char *str_copy = malloc((size_t)read_len + 1);
+            if (str_copy == NULL) {
+                free(buffer);
+                free_elements(arr, idx);
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(str_copy, buffer, (size_t)read_len + 1);
+            arr[idx].type = TYPE_STRING;
+            arr[idx].data.str_val = str_copy;
+        }
+        idx++;
+    }
+    
+    free(buffer);
+    *count = idx;
+    return 0;
+}
+
+int main(void)
+{
+    const size_t MAX_ELEMENTS = 1000;
+    Element *elements = calloc(MAX_ELEMENTS, sizeof(Element));
+    
+    if (elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t count = 0;
+    
+    if (process_input(elements, &count, MAX_ELEMENTS) != 0) {
+        fprintf(stderr, "Error processing input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (count > 0) {
+        qsort(elements, count, sizeof(Element), compare_elements);
+        
+        for (size_t i = 0; i < count; i++) {
+            if (elements[i].type == TYPE_INT) {
+                printf("%lld\n", elements[i].data.int_val);
+            } else {
+                printf("%s\n", elements[i].data.str_val);
+            }
+        }
+    }
+    
+    free_elements(elements, count);
+    return EXIT_SUCCESS;
+}

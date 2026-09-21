@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original code was already well-written from a security standpoint. The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk advisory that is fully mitigated by the existing code:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing buffer overflow. Using `sizeof(buffer)` instead of a hardcoded constant ensures the bound stays correct if the buffer size changes.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guards against any edge case and satisfies static analyzers.
+
+3. **Newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline. `strcspn` returns the string length if no newline exists, so this never writes out of bounds.
+
+4. **NULL check:** The return value of `fgets` is checked, handling EOF and read errors gracefully.
+
+5. **Safe counting:** `count_characters` guards against `NULL` input and only reads within the null-terminated string.
+
+No functional changes were required — the code as written already addresses the flagged weakness, so the rewrite simply removes the comments as requested.

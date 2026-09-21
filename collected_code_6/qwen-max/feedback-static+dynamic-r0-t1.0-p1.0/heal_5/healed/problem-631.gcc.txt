@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-631.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-631.c:42:37: error: lvalue required as unary '&' operand
+   42 |     if ((read_len = getline(&input, &sizeof(input), stdin)) != -1) {
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-631.c:42:29: error: passing argument 1 of 'getline' from incompatible pointer type [-Wincompatible-pointer-types]
+   42 |     if ((read_len = getline(&input, &sizeof(input), stdin)) != -1) {
+      |                             ^~~~~~
+      |                             |
+      |                             char (*)[1024]
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-631.c:1:
+/usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:475:60: note: expected 'char ** restrict' but argument is of type 'char (*)[1024]'
+  475 | ssize_t getline(char *_LIBC_COUNT(*__linecapp) *__restrict __linep, size_t * __restrict __linecapp, FILE * __restrict __stream) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~

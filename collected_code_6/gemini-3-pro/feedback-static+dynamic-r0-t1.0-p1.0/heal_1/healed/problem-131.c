@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int is_vowel(char c) {
+    switch (c) {
+        case 'a': case 'e': case 'i': case 'o': case 'u':
+        case 'A': case 'E': case 'I': case 'O': case 'U':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+void reverse_vowels(char *s, size_t max_len) {
+    if (s == NULL) {
+        return;
+    }
+
+    size_t len = 0;
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        return;
+    }
+
+    size_t left = 0;
+    size_t right = len - 1;
+
+    while (left < right) {
+        if (!is_vowel(s[left])) {
+            left++;
+        } else if (!is_vowel(s[right])) {
+            right--;
+        } else {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main(void) {
+    char str1[] = "hello";
+    char str2[] = "programming";
+    char str3[] = "AEIOUaeiou";
+    char str4[] = "";
+
+    reverse_vowels(str1, sizeof(str1));
+    printf("%s\n", str1);
+
+    reverse_vowels(str2, sizeof(str2));
+    printf("%s\n", str2);
+
+    reverse_vowels(str3, sizeof(str3));
+    printf("%s\n", str3);
+
+    reverse_vowels(str4, sizeof(str4));
+    printf("%s\n", str4);
+
+    return 0;
+}

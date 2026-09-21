@@ -1,0 +1,127 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int calculate_magic_square(size_t order, uint64_t *square)
+{
+    if (square == NULL || order == 0U || order % 2U == 0U) {
+        return -1;
+    }
+
+    size_t row = 0U;
+    size_t column = order / 2U;
+    const uint64_t limit = (uint64_t)order * (uint64_t)order;
+
+    for (uint64_t value = 1U; value <= limit; ++value) {
+        square[row * order + column] = value;
+
+        const size_t next_row = row == 0U ? order - 1U : row - 1U;
+        const size_t next_column =
+            column == order - 1U ? 0U : column + 1U;
+
+        if (square[next_row * order + next_column] != 0U) {
+            row = row == order - 1U ? 0U : row + 1U;
+        } else {
+            row = next_row;
+            column = next_column;
+        }
+    }
+
+    return 0;
+}
+
+static int parse_order(const char *text, size_t *order)
+{
+    if (text == NULL || order == NULL || *text == '\0' || *text == '-') {
+        return -1;
+    }
+
+    errno = 0;
+    char *end = NULL;
+    const uintmax_t value = strtoumax(text, &end, 10);
+
+    if (errno == ERANGE || end == text || *end != '\0' ||
+        value == 0U || value % 2U == 0U ||
+        value > SIZE_MAX || value > UINT64_MAX / value ||
+        value > SIZE_MAX / value ||
+        value * value > SIZE_MAX / sizeof(uint64_t)) {
+        return -1;
+    }
+
+    *order = (size_t)value;
+    return 0;
+}
+
+static unsigned int decimal_width(uint64_t value)
+{
+    unsigned int width = 1U;
+
+    while (value >= 10U) {
+        value /= 10U;
+        ++width;
+    }
+
+    return width;
+}
+
+static int print_magic_square(const uint64_t *square, size_t order)
+{
+    if (square == NULL || order == 0U) {
+        return -1;
+    }
+
+    const uint64_t maximum = (uint64_t)order * (uint64_t)order;
+    const unsigned int width = decimal_width(maximum);
+
+    for (size_t row = 0U; row < order; ++row) {
+        for (size_t column = 0U; column < order; ++column) {
+            if (printf("%*" PRIu64 "%c",
+                       (int)width,
+                       square[row * order + column],
+                       column + 1U == order ? '\n' : ' ') < 0) {
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        const char *program = argc > 0 && argv[0] != NULL
+                                  ? argv[0]
+                                  : "magic-square";
+        fprintf(stderr, "Usage: %s <positive-odd-order>\n", program);
+        return EXIT_FAILURE;
+    }
+
+    size_t order = 0U;
+
+    if (parse_order(argv[1], &order) != 0) {
+        fputs("Order must be a positive odd integer of supported size.\n",
+              stderr);
+        return EXIT_FAILURE;
+    }
+
+    uint64_t *square = calloc(order * order, sizeof(*square));
+
+    if (square == NULL) {
+        fputs("Unable to allocate memory for the magic square.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    int status = EXIT_SUCCESS;
+
+    if (calculate_magic_square(order, square) != 0 ||
+        print_magic_square(square, order) != 0) {
+        fputs("Unable to calculate or print the magic square.\n", stderr);
+        status = EXIT_FAILURE;
+    }
+
+    free(square);
+    return status;
+}

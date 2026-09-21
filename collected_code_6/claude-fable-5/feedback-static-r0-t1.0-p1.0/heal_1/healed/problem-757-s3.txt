@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_STR_LEN 4096U
+
+static bool is_reverse(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    size_t i;
+
+    if ((a == NULL) || (b == NULL)) {
+        return false;
+    }
+
+    len_a = strnlen(a, MAX_STR_LEN);
+    len_b = strnlen(b, MAX_STR_LEN);
+
+    if ((len_a >= MAX_STR_LEN) || (len_b >= MAX_STR_LEN)) {
+        return false;
+    }
+
+    if (len_a != len_b) {
+        return false;
+    }
+
+    for (i = 0U; i < len_a; i++) {
+        if (a[i] != b[len_a - 1U - i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static size_t count_reverse_pairs(const char *const *strings, size_t count)
+{
+    size_t pairs = 0U;
+    size_t i;
+    size_t j;
+
+    if (strings == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < count; i++) {
+        for (j = i + 1U; j < count; j++) {
+            if (is_reverse(strings[i], strings[j])) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void)
+{
+    const char *const test_list[] = {
+        "abc",
+        "cba",
+        "hello",
+        "olleh",
+        "world",
+        "abc"
+    };
+    size_t list_size = sizeof(test_list) / sizeof(test_list[0]);
+    size_t result;
+
+    result = count_reverse_pairs(test_list, list_size);
+
+    if (printf("Number of reverse string pairs: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the Flawfinder CWE-126 (buffer over-read) warnings. `strnlen` bounds the scan to `MAX_STR_LEN` characters, so an unterminated string can no longer cause an unbounded over-read.
+
+2. **Added a bound-check guard** — If `strnlen` returns `MAX_STR_LEN`, the string may be unterminated (or simply too long to trust), so the function safely returns `false` rather than processing potentially invalid data.
+
+3. **Everything else preserved** — The NULL checks, unsigned loop arithmetic (`len_a - 1U - i` is safe because the loop only runs when `len_a > 0`), and the `printf` return-value check were already defensively written and remain intact.
+
+**Note:** `strnlen` is POSIX / C23. If strict C99/C11 portability is required, a small static helper performing a bounded scan would be the equivalent replacement.

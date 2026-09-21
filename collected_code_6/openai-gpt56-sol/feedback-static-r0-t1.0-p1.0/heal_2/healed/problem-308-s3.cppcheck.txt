@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-308-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-308-s3.c:107:19: style: Condition 'right>left' is always true [knownConditionTrueFalse]
+        if (right > left && right < *size &&
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-308-s3.c:100:15: note: right is assigned 'left+1U' here.
+        right = left + 1U;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-308-s3.c:107:19: note: Condition 'right>left' is always true
+        if (right > left && right < *size &&
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-308-s3.c:312:9: style: The scope of the variable 'status' can be reduced. [variableScope]
+    int status;
+        ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-87-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-87-s3.c:35:15: warning: Either the condition 'key_len==4096' is redundant or the array 'key[2]' is accessed at index 4096, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (key[key_len] != '\0' && key_len < 4096) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-87-s3.c:38:17: note: Assuming that condition 'key_len==4096' is not redundant
+    if (key_len == 4096 && key[key_len] != '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-87-s3.c:35:15: note: Array index out of bounds
+    while (key[key_len] != '\0' && key_len < 4096) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-87-s3.c:35:15: style: Array index 'key_len' is used before limits check. [arrayIndexThenCheck]
+    while (key[key_len] != '\0' && key_len < 4096) {
+              ^

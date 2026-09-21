@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got ["exercise","practice","solution"]
+  *  test case 1 failed: expected ['Python'], got ["Python","exerci","practi","soluti"]
+  */
+
+char **extract_strings(char **input, int count, int size, int *output_count) {
+    if (input == NULL || count <= 0 || size <= 0 || output_count == NULL) {
+        if (output_count != NULL) {
+            *output_count = 0;
+        }
+        return NULL;
+    }
+
+    char **result = (char **)malloc((size_t)count * sizeof(char *));
+    if (result == NULL) {
+        *output_count = 0;
+        return NULL;
+    }
+
+    int extracted = 0;
+    for (int i = 0; i < count; i++) {
+        if (input[i] == NULL) {
+            continue;
+        }
+
+        size_t len = strnlen(input[i], (size_t)(size + 1));
+        /* Possible weaknesses found:
+         *  Assuming condition 'len<(unsigned long)size' is false
+         */
+        if (len < (size_t)size) {
+            continue;
+        }
+
+        result[extracted] = (char *)malloc(((size_t)size + 1) * sizeof(char));
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (result[extracted] == NULL) {
+            for (int j = 0; j < extracted; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *output_count = 0;
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         *  Condition 'len<(unsigned long)size' is always false [knownConditionTrueFalse]
+         *  Condition 'len<(unsigned long)size' is always false
+         */
+        size_t copy_len = (len < (size_t)size) ? len : (size_t)size;
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result[extracted], input[i], copy_len);
+        result[extracted][copy_len] = '\0';
+        extracted++;
+    }
+
+    if (extracted == 0) {
+        free(result);
+        *output_count = 0;
+        return NULL;
+    }
+
+    char **final_result = (char **)realloc(result, (size_t)extracted * sizeof(char *));
+    if (final_result == NULL) {
+        for (int j = 0; j < extracted; j++) {
+            free(result[j]);
+        }
+        free(result);
+        *output_count = 0;
+        return NULL;
+    }
+
+    *output_count = extracted;
+    return final_result;
+}
+
+int main(void) {
+    char *strings[] = {"exercise", "practice", "solution", "Python", "exerci", "practi", "soluti"};
+    int count = sizeof(strings) / sizeof(strings[0]);
+    int output_count = 0;
+    int extract_size = 6;
+
+    char **extracted = extract_strings(strings, count, extract_size, &output_count);
+
+    if (extracted != NULL) {
+        for (int i = 0; i < output_count; i++) {
+            printf("%s\n", extracted[i]);
+            free(extracted[i]);
+        }
+        free(extracted);
+    } else {
+        printf("No strings extracted or error occurred\n");
+    }
+
+    return 0;
+}

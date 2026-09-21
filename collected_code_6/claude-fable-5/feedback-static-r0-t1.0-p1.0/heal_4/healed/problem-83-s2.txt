@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+static int get_added_char(const char *str, size_t max_len, char *result)
+{
+    unsigned long sum;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == 0U || len == max_len) {
+        return -1;
+    }
+
+    sum = 0UL;
+    for (i = 0U; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    *result = (char)((sum % 26UL) + (unsigned long)'a');
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (get_added_char(buffer, sizeof(buffer), &result) != 0) {
+        fprintf(stderr, "Invalid or empty input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Resulting character: %c\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original source is already well-hardened, and the Flawfinder hit on `char buffer[BUFFER_SIZE]` is a low-risk (risk 2) informational warning inherent to any statically-sized array — not an actual defect. The code already mitigates every concern the warning raises:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, so no overflow can occur (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `memset` zero-initializes the buffer, and `buffer[sizeof(buffer) - 1U] = '\0'` is a defensive belt-and-suspenders guarantee of NUL termination even though `fgets` already ensures it.
+3. **Safe length calculation:** `bounded_strlen` never scans past `max_len`, avoiding the out-of-bounds read risk of plain `strlen` on a potentially unterminated buffer.
+4. **Defensive API design:** `get_added_char` validates all pointers, rejects `max_len == 0`, rejects empty strings, and rejects the `len == max_len` case (unterminated data), returning an error code rather than proceeding.
+5. **No signed-char pitfalls:** the `(unsigned char)` cast before summing avoids implementation-defined behavior with negative `char` values, and `unsigned long` accumulation cannot overflow for a 256-byte input (max sum ≈ 65,280).
+
+Since the flagged "weakness" is fully mitigated by the existing bounds checking, the rewrite preserves the logic verbatim with the analysis comments removed, as no functional fix is required.

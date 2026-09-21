@@ -1,0 +1,110 @@
+## Analysis
+
+The code checks whether an array contains consecutive integers by copying, sorting, and verifying adjacent elements differ by exactly 1. Key observations:
+
+1. **The `memcpy` warning (CWE-120) is a false positive here** — the destination buffer is allocated with exactly `size * sizeof(int)` bytes, the same amount copied, and the multiplication is guarded against overflow via `size > SIZE_MAX / sizeof(int)`.
+2. **NULL/zero-size inputs** are handled defensively.
+3. **`INT_MAX` overflow guard** in the comparison loop prevents signed overflow UB when computing `copy[i - 1] + 1`.
+4. **Duplicate values** correctly cause a `false` result since sorted duplicates differ by 0.
+5. The original list is not mutated (`const`-correct, works on a copy).
+
+The code is already safe; the rewrite below preserves all defensive checks that satisfy the flagged weakness.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+bool contains_consecutive_numbers(const int *list, size_t size)
+{
+    int *copy = NULL;
+    size_t i;
+    size_t bytes;
+    bool result = true;
+
+    if (list == NULL || size == 0U) {
+        return false;
+    }
+
+    if (size == 1U) {
+        return true;
+    }
+
+    if (size > SIZE_MAX / sizeof(int)) {
+        return false;
+    }
+
+    bytes = size * sizeof(int);
+
+    copy = malloc(bytes);
+    if (copy == NULL) {
+        return false;
+    }
+
+    memcpy(copy, list, bytes);
+    qsort(copy, size, sizeof(int), compare_ints);
+
+    for (i = 1U; i < size; i++) {
+        if (copy[i - 1U] == INT_MAX || copy[i] != copy[i - 1U] + 1) {
+            result = false;
+            break;
+        }
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    int list1[] = {3, 4, 5, 6, 7};
+    int list2[] = {10, 12, 11, 14};
+    int list3[] = {2, 3, 1, 4, 5};
+
+    if (contains_consecutive_numbers(list1, sizeof(list1) / sizeof(list1[0]))) {
+        printf("list1 contains consecutive numbers\n");
+    } else {
+        printf("list1 does not contain consecutive numbers\n");
+    }
+
+    if (contains_consecutive_numbers(list2, sizeof(list2) / sizeof(list2[0]))) {
+        printf("list2 contains consecutive numbers\n");
+    } else {
+        printf("list2 does not contain consecutive numbers\n");
+    }
+
+    if (contains_consecutive_numbers(list3, sizeof(list3) / sizeof(list3[0]))) {
+        printf("list3 contains consecutive numbers\n");
+    } else {
+        printf("list3 does not contain consecutive numbers\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Why the `memcpy` is safe:** the allocation size (`bytes`) and the copy size are computed from the same expression, with an explicit `SIZE_MAX / sizeof(int)` overflow check beforehand and a `malloc` NULL check afterward — the destination can therefore always hold the source data, satisfying CWE-120 mitigation requirements.
+
+Expected output:
+```
+list1 contains consecutive numbers
+list2 does not contain consecutive numbers
+list3 contains consecutive numbers
+```

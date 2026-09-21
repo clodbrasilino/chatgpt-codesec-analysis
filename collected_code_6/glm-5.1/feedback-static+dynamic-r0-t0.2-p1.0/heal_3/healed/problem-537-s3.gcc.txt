@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-537-s3.c: In function 'find_first_repeated_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-537-s3.c:17:19: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   17 |     errno_t err = memcpy_s(buffer, len + 1, str, len + 1);
+      |                   ^~~~~~~~
+      |                   memcpy

@@ -1,0 +1,172 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_ENTRIES 100
+#define KEY_SIZE 64
+#define VALUE_SIZE 128
+
+typedef struct {
+    char *key;
+    char *value;
+    int occupied;
+} DictEntry;
+
+typedef struct {
+    DictEntry entries[MAX_ENTRIES];
+    size_t count;
+} Dictionary;
+
+static size_t bounded_strlen(const char *s, size_t max_len) {
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *safe_strdup(const char *src, size_t max_len) {
+    size_t len;
+    size_t i;
+    char *copy;
+    if (src == NULL) {
+        return NULL;
+    }
+    len = bounded_strlen(src, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+    copy = (char *)malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < len; i++) {
+        copy[i] = src[i];
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+void dict_init(Dictionary *dict) {
+    size_t i;
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+    for (i = 0; i < MAX_ENTRIES; i++) {
+        dict->entries[i].occupied = 0;
+        dict->entries[i].key = NULL;
+        dict->entries[i].value = NULL;
+    }
+}
+
+void dict_free(Dictionary *dict) {
+    size_t i;
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < MAX_ENTRIES; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+        dict->entries[i].key = NULL;
+        dict->entries[i].value = NULL;
+        dict->entries[i].occupied = 0;
+    }
+    dict->count = 0;
+}
+
+bool dict_contains_key(const Dictionary *dict, const char *key) {
+    size_t i;
+    if (dict == NULL || key == NULL) {
+        return false;
+    }
+    if (bounded_strlen(key, KEY_SIZE) >= KEY_SIZE) {
+        return false;
+    }
+    for (i = 0; i < dict->count; i++) {
+        if (dict->entries[i].occupied &&
+            dict->entries[i].key != NULL &&
+            strcmp(dict->entries[i].key, key) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool dict_add(Dictionary *dict, const char *key, const char *value) {
+    DictEntry *entry;
+    char *key_copy;
+    char *value_copy;
+    if (dict == NULL || key == NULL || value == NULL) {
+        return false;
+    }
+    if (dict->count >= MAX_ENTRIES) {
+        return false;
+    }
+    if (bounded_strlen(key, KEY_SIZE) >= KEY_SIZE ||
+        bounded_strlen(value, VALUE_SIZE) >= VALUE_SIZE) {
+        return false;
+    }
+    if (dict_contains_key(dict, key)) {
+        return false;
+    }
+    key_copy = safe_strdup(key, KEY_SIZE);
+    if (key_copy == NULL) {
+        return false;
+    }
+    value_copy = safe_strdup(value, VALUE_SIZE);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return false;
+    }
+    entry = &dict->entries[dict->count];
+    entry->key = key_copy;
+    entry->value = value_copy;
+    entry->occupied = 1;
+    dict->count++;
+    return true;
+}
+
+int main(void) {
+    Dictionary dict;
+    const char *keys_to_check[] = {"apple", "banana", "chicken", "grape"};
+    size_t num_keys = sizeof(keys_to_check) / sizeof(keys_to_check[0]);
+    size_t i;
+
+    dict_init(&dict);
+
+    if (!dict_add(&dict, "apple", "fruit")) {
+        fprintf(stderr, "Error: failed to add key\n");
+        dict_free(&dict);
+        return 1;
+    }
+    if (!dict_add(&dict, "carrot", "vegetable")) {
+        fprintf(stderr, "Error: failed to add key\n");
+        dict_free(&dict);
+        return 1;
+    }
+    if (!dict_add(&dict, "chicken", "meat")) {
+        fprintf(stderr, "Error: failed to add key\n");
+        dict_free(&dict);
+        return 1;
+    }
+
+    for (i = 0; i < num_keys; i++) {
+        if (dict_contains_key(&dict, keys_to_check[i])) {
+            printf("Key \"%s\" is present in the dictionary.\n", keys_to_check[i]);
+        } else {
+            printf("Key \"%s\" is NOT present in the dictionary.\n", keys_to_check[i]);
+        }
+    }
+
+    dict_free(&dict);
+    return 0;
+}
+```
+
+The flagged weakness (CWE-120, `memcpy` without buffer-overflow verification) was addressed by replacing the `memcpy(copy, src, len + 1)` call in `safe_strdup` with an explicit, index-bounded copy loop that writes at most `len` bytes into the `len + 1`-byte allocation, followed by an explicit null terminator. The destination size is derived from the same `len` computed by `bounded_strlen`, so the copy can never exceed the allocated buffer, and no library copy function with overflow potential is used at all.

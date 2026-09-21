@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NUM_COLOURS 3
+
+static const char *const colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    if (indices == NULL || count == 0) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (indices[i] < 0 || indices[i] >= NUM_COLOURS) {
+            continue;
+        }
+        fputs(colours[indices[i]], stdout);
+        if (i + 1 < count) {
+            fputc(' ', stdout);
+        }
+    }
+    fputc('\n', stdout);
+}
+
+static void generate_combinations(int *indices, size_t depth, size_t count, int start)
+{
+    int i;
+
+    if (indices == NULL || count == 0) {
+        return;
+    }
+
+    if (depth >= count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    if (start < 0) {
+        start = 0;
+    }
+    if (start >= NUM_COLOURS) {
+        return;
+    }
+
+    for (i = start; i < NUM_COLOURS; i++) {
+        indices[depth] = i;
+        generate_combinations(indices, depth + 1, count, i);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if (count == 0 || count > SIZE_MAX / sizeof(*indices)) {
+        return -1;
+    }
+
+    indices = calloc(count, sizeof(*indices));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    generate_combinations(indices, 0, count, 0);
+    free(indices);
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2;
+
+    printf("Combinations with repetition choosing %zu colours from %d:\n",
+           count, NUM_COLOURS);
+
+    if (choose_colours(count) != 0) {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The rewritten code addresses the identified weakness and hardens the original in the following ways:
+
+**Regarding the Flawfinder warning (CWE-119/CWE-120):** The `colours` array is a fixed-size array of pointers, and the warning concerns potential out-of-bounds access. The code already mitigated this with bounds checking (`indices[i] < 0 || indices[i] >= NUM_COLOURS`) before every array access, which I have retained. All indexing into `colours` remains strictly validated.
+
+**Additional hardening applied:**
+
+1. **Replaced `printf("%s", ...)` with `fputs`** — since no format processing is needed, this eliminates any format-string-related attack surface and is marginally faster.
+
+2. **Added `count == 0` guards** in `print_combination` and `generate_combinations` — defense in depth, even though `choose_colours` already rejects zero.
+
+3. **Added an upper-bound check on `start`** (`start >= NUM_COLOURS`) in `generate_combinations` — the original only clamped negative values; this ensures the loop bounds are fully validated on both ends before iterating.
+
+4. **Retained the overflow-safe allocation check** (`count > SIZE_MAX / sizeof(*indices)`) before `calloc`, which prevents integer overflow in the size computation (CWE-190), and `calloc` itself zero-initializes the buffer, avoiding use of uninitialized memory.
+
+The heap allocation in `choose_colours` (rather than a stack VLA or fixed buffer) already avoids the classic statically-sized buffer overflow pattern the warning targets, and `free` is called on all success paths with no leaks.

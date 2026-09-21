@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NUM_COLOURS 3
+
+static const char *const colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    if (indices == NULL || count == 0) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (indices[i] < 0 || indices[i] >= NUM_COLOURS) {
+            continue;
+        }
+        fputs(colours[indices[i]], stdout);
+        if (i + 1 < count) {
+            fputc(' ', stdout);
+        }
+    }
+    fputc('\n', stdout);
+}
+
+static void generate_combinations(int *indices, size_t depth, size_t count, int start)
+{
+    int i;
+
+    if (indices == NULL || count == 0) {
+        return;
+    }
+
+    if (depth >= count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    if (start < 0) {
+        start = 0;
+    }
+    if (start >= NUM_COLOURS) {
+        return;
+    }
+
+    for (i = start; i < NUM_COLOURS; i++) {
+        indices[depth] = i;
+        generate_combinations(indices, depth + 1, count, i);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if (count == 0 || count > SIZE_MAX / sizeof(*indices)) {
+        return -1;
+    }
+
+    indices = calloc(count, sizeof(*indices));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    generate_combinations(indices, 0, count, 0);
+    free(indices);
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2;
+
+    printf("Combinations with repetition choosing %zu colours from %d:\n",
+           count, NUM_COLOURS);
+
+    if (choose_colours(count) != 0) {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `colours` array as a potential buffer risk. The code as written already mitigates this concern, and the rewrite preserves those mitigations:
+
+1. **Bounds checking on array access** — `print_combination` validates every index with `indices[i] < 0 || indices[i] >= NUM_COLOURS` before dereferencing `colours[indices[i]]`, so no out-of-bounds read of the static array is possible.
+
+2. **Recursion bounds** — `generate_combinations` clamps `start` into `[0, NUM_COLOURS)` and writes to `indices[depth]` only when `depth < count`, preventing out-of-bounds writes into the heap buffer.
+
+3. **Overflow-safe allocation** — `choose_colours` checks `count > SIZE_MAX / sizeof(*indices)` before calling `calloc`, guarding against multiplication overflow, and verifies the allocation succeeded before use. `calloc` also zero-initializes the buffer, so no uninitialized reads occur.
+
+4. **NULL guards** — both helper functions reject NULL pointers and zero counts defensively.
+
+5. **Read-only static data** — the `colours` array is declared `static const char *const`, so neither the pointers nor the strings can be modified, eliminating write-based overflow vectors on the flagged array.
+
+The Flawfinder hit is effectively a false positive here: the fixed-size array is only ever indexed through validated values, and all dynamic buffers are size-checked, allocated safely, and freed exactly once.

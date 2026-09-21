@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c: In function 'find_n_cheapest_items':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:156:28: error: invalid type argument of '->' (have 'MaxHeap')
+  156 |             item_free(&heap->data[i]);
+      |                            ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:164:35: error: invalid type argument of '->' (have 'MaxHeap')
+  164 |         result[i] = item_dup(&heap->data[i]);
+      |                                   ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_5/healed/problem-795.c:165:24: error: invalid type argument of '->' (have 'MaxHeap')
+  165 |         item_free(&heap->data[i]);
+      |                        ^~

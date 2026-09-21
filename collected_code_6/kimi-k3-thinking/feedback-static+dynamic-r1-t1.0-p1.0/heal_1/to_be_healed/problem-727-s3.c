@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t i = 0;
+    size_t j = 0;
+    int ret;
+
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0)
+    {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    result = malloc(len + 1);
+    if (result == NULL)
+    {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (i < len)
+    {
+        size_t match_start;
+        size_t match_end;
+
+        ret = regexec(&regex, input + i, 1, &match, 0);
+        if (ret == REG_NOMATCH)
+        {
+            while (i < len)
+            {
+                result[j++] = input[i++];
+            }
+            break;
+        }
+        else if (ret != 0)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        match_start = i + (size_t)match.rm_so;
+        match_end = i + (size_t)match.rm_eo;
+
+        while (i < match_start)
+        {
+            result[j++] = input[i++];
+        }
+        i = match_end;
+    }
+
+    result[j] = '\0';
+    regfree(&regex);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "Hello, World! 123 @#$%^&*()";
+    char *cleaned;
+
+    cleaned = remove_non_alnum(input);
+    if (cleaned == NULL)
+    {
+        fprintf(stderr, "Error: failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Cleaned:  %s\n", cleaned);
+
+    free(cleaned);
+
+    return EXIT_SUCCESS;
+}

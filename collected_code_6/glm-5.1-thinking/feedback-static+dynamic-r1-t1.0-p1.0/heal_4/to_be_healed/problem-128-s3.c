@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char* duplicate_string(const char* src) {
+    size_t len;
+    char* dst;
+    
+    if (src == NULL) {
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(src);
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+    len++;
+    
+    dst = malloc(len);
+    if (dst == NULL) {
+        return NULL;
+    }
+    
+    snprintf(dst, len, "%s", src);
+    return dst;
+}
+
+char** shortlist_words(const char** words, int word_count, int n, int* result_count) {
+    char** shortlist;
+    int count;
+    int i;
+    int j;
+    char** resized;
+    size_t alloc_size;
+    
+    if (words == NULL || result_count == NULL || word_count < 0) {
+        return NULL;
+    }
+    
+    if (word_count == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    alloc_size = (size_t)word_count;
+    if (alloc_size > SIZE_MAX / sizeof(char*)) {
+        return NULL;
+    }
+    
+    shortlist = malloc(alloc_size * sizeof(char*));
+    if (shortlist == NULL) {
+        return NULL;
+    }
+    
+    count = 0;
+    for (i = 0; i < word_count; i++) {
+        if (words[i] != NULL && (n < 0 || strnlen(words[i], (size_t)n + 1) > (size_t)n)) {
+            shortlist[count] = duplicate_string(words[i]);
+            if (shortlist[count] == NULL) {
+                for (j = 0; j < count; j++) {
+                    free(shortlist[j]);
+                }
+                free(shortlist);
+                return NULL;
+            }
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        free(shortlist);
+        *result_count = 0;
+        return NULL;
+    }
+    
+    resized = realloc(shortlist, (size_t)count * sizeof(char*));
+    if (resized != NULL) {
+        shortlist = resized;
+    }
+    
+    *result_count = count;
+    return shortlist;
+}
+
+int main(void) {
+    const char* words[] = {"apple", "banana", "cat", "dog", "elephant", "fox"};
+    int word_count = sizeof(words) / sizeof(words[0]);
+    int n = 3;
+    int result_count = 0;
+    
+    char** shortlisted = shortlist_words(words, word_count, n, &result_count);
+    
+    if (shortlisted != NULL) {
+        for (int i = 0; i < result_count; i++) {
+            printf("%s\n", shortlisted[i]);
+            free(shortlisted[i]);
+        }
+        free(shortlisted);
+    }
+    
+    return 0;
+}

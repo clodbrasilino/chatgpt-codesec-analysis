@@ -1,0 +1,182 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Entry {
+    char *key;
+    int value;
+    struct Entry *next;
+} Entry;
+
+typedef struct Dictionary {
+    Entry **buckets;
+    size_t capacity;
+    size_t size;
+} Dictionary;
+
+static unsigned long hash_function(const char *key, size_t capacity) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *key++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % capacity;
+}
+
+Dictionary *dictionary_create(size_t capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->buckets = (Entry **)calloc(capacity, sizeof(Entry *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    dict->capacity = capacity;
+    dict->size = 0;
+    return dict;
+}
+
+int dictionary_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) {
+        return -1;
+    }
+    unsigned long index = hash_function(key, dict->capacity);
+    Entry *current = dict->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+    Entry *new_entry = (Entry *)malloc(sizeof(Entry));
+    if (!new_entry) {
+        return -1;
+    }
+    size_t key_len = strnlen(key, 4096);
+    new_entry->key = (char *)malloc(key_len + 1);
+    if (!new_entry->key) {
+        free(new_entry);
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(new_entry->key, key, key_len);
+    new_entry->key[key_len] = '\0';
+    new_entry->value = value;
+    new_entry->next = dict->buckets[index];
+    dict->buckets[index] = new_entry;
+    dict->size++;
+    return 0;
+}
+
+int dictionary_contains(const Dictionary *dict, const char *key) {
+    if (!dict || !key) {
+        return 0;
+    }
+    unsigned long index = hash_function(key, dict->capacity);
+    Entry *current = dict->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+int dictionary_get(const Dictionary *dict, const char *key, int *value) {
+    if (!dict || !key || !value) {
+        return -1;
+    }
+    unsigned long index = hash_function(key, dict->capacity);
+    Entry *current = dict->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            *value = current->value;
+            return 0;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
+int dictionary_remove(Dictionary *dict, const char *key) {
+    if (!dict || !key) {
+        return -1;
+    }
+    unsigned long index = hash_function(key, dict->capacity);
+    Entry *current = dict->buckets[index];
+    Entry *prev = NULL;
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                dict->buckets[index] = current->next;
+            }
+            free(current->key);
+            free(current);
+            dict->size--;
+            return 0;
+        }
+        prev = current;
+        current = current->next;
+    }
+    return -1;
+}
+
+void dictionary_destroy(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->capacity; i++) {
+        Entry *current = dict->buckets[i];
+        while (current) {
+            Entry *temp = current;
+            current = current->next;
+            free(temp->key);
+            free(temp);
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict = dictionary_create(16);
+    if (!dict) {
+        return 1;
+    }
+
+    dictionary_insert(dict, "apple", 1);
+    dictionary_insert(dict, "banana", 2);
+    dictionary_insert(dict, "cherry", 3);
+
+    const char *keys_to_check[] = {"apple", "banana", "grape", "cherry", NULL};
+
+    for (int i = 0; keys_to_check[i] != NULL; i++) {
+        if (dictionary_contains(dict, keys_to_check[i])) {
+            printf("Key '%s' is present in the dictionary.\n", keys_to_check[i]);
+        } else {
+            printf("Key '%s' is NOT present in the dictionary.\n", keys_to_check[i]);
+        }
+    }
+
+    int value;
+    if (dictionary_get(dict, "banana", &value) == 0) {
+        printf("Value for 'banana': %d\n", value);
+    }
+
+    dictionary_remove(dict, "banana");
+
+    if (!dictionary_contains(dict, "banana")) {
+        printf("'banana' successfully removed.\n");
+    }
+
+    dictionary_destroy(dict);
+    return 0;
+}

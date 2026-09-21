@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 12
+#define MAX_OUTPUT_LEN 11
+
+int convert_date_format(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    int ret;
+    int result = -1;
+
+    if (input == NULL || output == NULL || output_size < MAX_OUTPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret == 0) {
+        size_t year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+        size_t month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+        size_t day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+        if (year_len == 4 && month_len == 2 && day_len == 2) {
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char year[5] = {0};
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char month[3] = {0};
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char day[3] = {0};
+
+            if (year_len < sizeof(year) && month_len < sizeof(month) && day_len < sizeof(day)) {
+                snprintf(year, sizeof(year), "%.*s", (int)year_len, input + matches[1].rm_so);
+                snprintf(month, sizeof(month), "%.*s", (int)month_len, input + matches[2].rm_so);
+                snprintf(day, sizeof(day), "%.*s", (int)day_len, input + matches[3].rm_so);
+
+                ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+                if (ret > 0 && (size_t)ret < output_size) {
+                    result = 0;
+                }
+            }
+        }
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[MAX_INPUT_LEN] = {0};
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output[MAX_OUTPUT_LEN] = {0};
+
+    printf("Enter date (yyyy-mm-dd): ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (convert_date_format(input, output, sizeof(output)) == 0) {
+        printf("Converted date: %s\n", output);
+    } else {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

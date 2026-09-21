@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_chars(char *str1, const char *str2) {
+    size_t len1 = strlen(str1);
+    char *result = malloc(len1 + 1);
+    if (result == NULL) {
+        return;
+    }
+    result[0] = '\0';
+    
+    for (size_t i = 0; i < len1; i++) {
+        int should_copy = 1;
+        for (size_t j = 0; str2[j] != '\0'; j++) {
+            if (str1[i] == str2[j]) {
+                should_copy = 0;
+                break;
+            }
+        }
+        if (should_copy) {
+            size_t len_result = strlen(result);
+            result[len_result] = str1[i];
+            result[len_result + 1] = '\0';
+        }
+    }
+    
+    strcpy(str1, result);
+    free(result);
+}
+
+int main() {
+    char str1[100] = "hello world";
+    const char *str2 = "lo";
+    remove_chars(str1, str2);
+    printf("%s\n", str1);
+    return 0;
+}

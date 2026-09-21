@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int find_kth_element(const int *arr, size_t n, size_t k, int *result)
+{
+    int *copy;
+    size_t bytes;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || k == 0 || k > n) {
+        return -1;
+    }
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(int);
+
+    copy = malloc(bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, arr, bytes);
+    qsort(copy, n, sizeof(int), compare_ints);
+
+    *result = copy[k - 1];
+    free(copy);
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 7, 10, 4, 3, 20, 15 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+    int result = 0;
+
+    if (find_kth_element(arr, n, k, &result) != 0) {
+        fprintf(stderr, "Error: could not find the %zu-th element\n", k);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The %zu-th smallest element is %d\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of changes:**
+
+1. **Added `#include <stdint.h>`** — the original code used `SIZE_MAX` without including the header that defines it. Some toolchains define it in `<stdlib.h>` transitively, but relying on that is non-portable and could cause a compilation failure or, worse, an implicit declaration issue on older compilers.
+
+2. **The Flawfinder `memcpy` warning (CWE-120)** — this is a false positive in the original code, but I made the safety explicit by computing `bytes = n * sizeof(int)` once and using it for both the `malloc` allocation and the `memcpy` copy size. This guarantees the destination buffer size and the copy length are derived from the same expression, eliminating any possibility of divergence during future maintenance.
+
+3. **Overflow guard retained** — the `n > SIZE_MAX / sizeof(int)` check correctly prevents integer overflow in the allocation size, so the `memcpy` can never exceed the allocated buffer.
+
+The rest of the code was already sound: proper NULL checks, bounds validation on `k`, checked `malloc` return, freed memory before return, and checked `printf` return value.

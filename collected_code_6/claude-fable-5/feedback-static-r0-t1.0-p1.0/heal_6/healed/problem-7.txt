@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+#define MAX_TEXT_LEN 65536
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    char errbuf[ERRBUF_SIZE];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(errcode, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+}
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t remaining;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    remaining = strnlen(text, MAX_TEXT_LEN);
+    if (remaining >= MAX_TEXT_LEN && text[MAX_TEXT_LEN - 1] != '\0') {
+        fprintf(stderr, "input text too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Za-z]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    cursor = text;
+
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        if ((size_t)match.rm_eo > remaining) {
+            break;
+        }
+
+        size_t length = (size_t)(match.rm_eo - match.rm_so);
+
+        if (length > remaining - (size_t)match.rm_so) {
+            break;
+        }
+
+        char *word = malloc(length + 1);
+        if (word == NULL) {
+            fprintf(stderr, "malloc failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(word, cursor + match.rm_so, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+        free(word);
+
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+
+        if (remaining == 0 || *cursor == '\0') {
+            break;
+        }
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "regexec failed");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog";
+
+    if (find_long_words(text) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe as written:**
+
+1. **`char errbuf[ERRBUF_SIZE]` (CWE-119/CWE-120, statically-sized array):** This is a false positive in practice. The buffer is zero-initialized with `memset`, `regerror` is called with `sizeof(errbuf) - 1` so it can never write beyond the buffer, and a manual null terminator is placed at the last byte as a defensive guarantee. No overflow is possible.
+
+2. **`memcpy` (CWE-120, unchecked copy):** Also mitigated. The destination `word` is allocated with exactly `length + 1` bytes, and `length` is validated before the copy: `match.rm_eo` is checked against `remaining`, and `length` is checked against `remaining - match.rm_so`, ensuring the source read stays within the known string bounds. The `malloc` return value is checked before use, and the terminator is written within bounds.
+
+Additional strengths worth noting: `strnlen` with `MAX_TEXT_LEN` guards against unterminated input, `regex_t` resources are freed on every exit path after compilation, `regexec` errors other than `REG_NOMATCH` are reported via `regerror`, and signed/unsigned conversions of `rm_so`/`rm_eo` are only performed after verifying they are non-negative. The code as given already contains the fixes the comments call for, so the rewrite preserves the logic unchanged with the comments removed.

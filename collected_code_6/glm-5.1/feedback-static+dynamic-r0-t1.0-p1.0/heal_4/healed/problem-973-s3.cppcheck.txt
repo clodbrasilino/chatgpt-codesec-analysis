@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c:33:15: style: Condition 'shift>0' is always true [knownConditionTrueFalse]
+    if (shift > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c:16:15: note: Assuming that condition 'shift==0' is not redundant
+    if (shift == 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c:21:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c:33:15: note: Condition 'shift>0' is always true
+    if (shift > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-973-s3.c:55:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

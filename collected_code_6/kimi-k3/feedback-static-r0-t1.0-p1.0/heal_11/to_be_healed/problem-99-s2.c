@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+
+int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size) {
+    size_t index = 0;
+    size_t i;
+    size_t required_size;
+    
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+    
+    required_size = (decimal == 0) ? 2 : 0;
+    
+    if (decimal != 0) {
+        unsigned int temp = decimal;
+        while (temp > 0) {
+            required_size++;
+            temp /= 2;
+        }
+        required_size++;
+    }
+    
+    if (buffer_size < required_size) {
+        return -1;
+    }
+    
+    if (decimal == 0) {
+        buffer[index++] = '0';
+    } else {
+        unsigned int temp = decimal;
+        while (temp > 0) {
+            buffer[index++] = (char)((temp % 2) + '0');
+            temp /= 2;
+        }
+    }
+    
+    buffer[index] = '\0';
+    
+    for (i = 0; i < index / 2; i++) {
+        char temp_char = buffer[i];
+        buffer[i] = buffer[index - 1 - i];
+        buffer[index - 1 - i] = temp_char;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary_buffer[BINARY_BUFFER_SIZE];
+    unsigned int decimal_number;
+    int result;
+    
+    printf("Enter a decimal number: ");
+    
+    if (scanf("%u", &decimal_number) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = decimal_to_binary(decimal_number, binary_buffer, sizeof(binary_buffer));
+    
+    if (result != 0) {
+        fprintf(stderr, "Error: Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Binary equivalent: %s\n", binary_buffer);
+    
+    return EXIT_SUCCESS;
+}

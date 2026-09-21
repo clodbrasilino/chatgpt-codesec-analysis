@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TEXT_LEN 4096
+
+int match_a_followed_by_bb(const char *text)
+{
+    size_t i;
+    size_t len;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    len = strnlen(text, MAX_TEXT_LEN);
+
+    for (i = 0; i < len; i++) {
+        if (text[i] == 'a') {
+            size_t count = 0;
+            size_t j = i + 1;
+
+            while (j < len && text[j] == 'b' && count < 3) {
+                count++;
+                j++;
+            }
+
+            if (count >= 2 && count <= 3) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "abb",
+        "abbb",
+        "abbbb",
+        "ab",
+        "aabbc",
+        "xyz",
+        "aabbbbc",
+        ""
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        int result = match_a_followed_by_bb(tests[i]);
+        if (printf("\"%s\" -> %s\n", tests[i], result ? "match" : "no match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis and changes made:**
+
+The original code was already quite solid — it null-checks the input, uses `size_t` for indices, and bounds all loop accesses against `len`. The only flagged weakness was the Flawfinder warning on `strlen` (CWE-126): if a caller passes a buffer that is not NUL-terminated, `strlen` will over-read past the end of the buffer.
+
+The fix replaces `strlen` with `strnlen`, bounded by a defined maximum (`MAX_TEXT_LEN`). This guarantees the scan never reads more than a fixed number of bytes, so a missing NUL terminator can no longer cause an unbounded over-read. Note that `strnlen` is POSIX (available via `<string.h>` on POSIX systems; compile with `-D_POSIX_C_SOURCE=200809L` if using strict `-std=c99`).
+
+All other logic — the bounded `while` loop, the `count >= 2 && count <= 3` match condition, and the checked `printf` return value in `main` — remains unchanged, as it was already defensive and correct.

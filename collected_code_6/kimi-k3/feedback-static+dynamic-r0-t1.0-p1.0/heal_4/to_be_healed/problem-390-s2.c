@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(const char *str)
+{
+    Node *node;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, 1024);
+    if (len == 1024) {
+        free(node);
+        return NULL;
+    }
+
+    node->data = malloc(len + 1);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+
+    if (len > 0) {
+        if (len + 1 > len) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(node->data, str, len);
+        }
+    }
+    node->data[len] = '\0';
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+static int insert_at_beginning(Node **head, const char *prefix)
+{
+    Node *current;
+    char *new_data;
+    size_t prefix_len;
+
+    if (head == NULL || prefix == NULL) {
+        return -1;
+    }
+
+    prefix_len = strnlen(prefix, 1024);
+    if (prefix_len == 1024) {
+        return -1;
+    }
+    if (prefix_len == 0) {
+        return 0;
+    }
+
+    current = *head;
+    while (current != NULL) {
+        size_t data_len;
+        size_t total_len;
+
+        if (current->data == NULL) {
+            return -1;
+        }
+
+        data_len = strnlen(current->data, 1024);
+        if (data_len == 1024) {
+            return -1;
+        }
+
+        if (prefix_len > SIZE_MAX - data_len - 1) {
+            return -1;
+        }
+
+        /* Possible weaknesses found:
+         *  total_len is assigned 'prefix_len+data_len+1' here.
+         */
+        total_len = prefix_len + data_len + 1;
+        new_data = malloc(total_len);
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (new_data == NULL) {
+            return -1;
+        }
+
+        if (prefix_len > 0 && total_len >= prefix_len) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(new_data, prefix, prefix_len);
+        }
+        /* Possible weaknesses found:
+         *  Condition 'total_len>=prefix_len+data_len' is always true
+         *  Condition 'total_len>=prefix_len+data_len' is always true [knownConditionTrueFalse]
+         */
+        if (data_len > 0 && total_len >= prefix_len + data_len) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(new_data + prefix_len, current->data, data_len);
+        }
+        new_data[prefix_len + data_len] = '\0';
+
+        free(current->data);
+        current->data = new_data;
+        current = current->next;
+    }
+
+    return 0;
+}
+
+static void print_list(const Node *head)
+{
+    while (head != NULL) {
+        printf("%s\n", head->data);
+        head = head->next;
+    }
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    Node *node1;
+    Node *node2;
+    Node *node3;
+    int result;
+
+    node1 = create_node("apple");
+    node2 = create_node("banana");
+    node3 = create_node("cherry");
+
+    if (node1 == NULL || node2 == NULL || node3 == NULL) {
+        free(node1);
+        free(node2);
+        free(node3);
+        return EXIT_FAILURE;
+    }
+
+    node1->next = node2;
+    node2->next = node3;
+    head = node1;
+
+    printf("Before:\n");
+    print_list(head);
+
+    result = insert_at_beginning(&head, "fruit_");
+    if (result != 0) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nAfter:\n");
+    print_list(head);
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

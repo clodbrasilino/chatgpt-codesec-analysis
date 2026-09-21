@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+int remove_chars(char *str, const char *mask)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return -1;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+
+    return 0;
+}
+
+static int read_line(char *buffer, size_t size, const char *prompt)
+{
+    if (buffer == NULL || size == 0) {
+        return -1;
+    }
+
+    printf("%s", prompt);
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (read_line(first, sizeof(first), "Enter first string: ") != 0) {
+        fprintf(stderr, "Error reading first string\n");
+        return 1;
+    }
+
+    if (read_line(second, sizeof(second), "Enter second string: ") != 0) {
+        fprintf(stderr, "Error reading second string\n");
+        return 1;
+    }
+
+    if (remove_chars(first, second) != 0) {
+        fprintf(stderr, "Error processing strings\n");
+        return 1;
+    }
+
+    printf("Result: %s\n", first);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings flagged on `first` and `second` are informational (risk level 2) about statically-sized buffers in general — they indicate a *potential* class of weakness (CWE-119/CWE-120), not an actual vulnerability in this code. The original code already mitigates them correctly:
+
+1. **Bounded input:** `read_line()` uses `fgets(buffer, (int)size, stdin)` with the buffer size passed via `sizeof(first)` / `sizeof(second)` at the call site, so input can never overflow the 256-byte buffers.
+
+2. **NULL and size validation:** `read_line()` rejects a `NULL` buffer or zero size, and `remove_chars()` rejects `NULL` pointers before dereferencing.
+
+3. **Newline stripping via `strcspn`:** `buffer[strcspn(buffer, "\n")] = '\0'` is safe even when no newline is present (it writes over the existing terminator), avoiding the classic `strlen(buffer)-1` underflow bug on empty input.
+
+4. **Safe character indexing:** casting to `(unsigned char)` before indexing `present[]` prevents negative-index undefined behavior on platforms where `char` is signed.
+
+5. **In-place compaction:** `remove_chars()` only ever writes `j <= i` positions within the existing string, so no overflow is possible there either.
+
+Since the flagged weaknesses were already properly addressed by bounds-limited I/O and defensive checks, the code is retained as-is with the analysis comments removed.

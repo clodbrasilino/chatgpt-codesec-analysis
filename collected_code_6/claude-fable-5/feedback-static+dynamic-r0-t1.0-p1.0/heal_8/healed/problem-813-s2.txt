@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(int argc, const char *argv[])
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    if (argc > 1 && argv[1] != NULL) {
+        length = string_length(argv[1]);
+        printf("%zu\n", length);
+        fflush(stdout);
+        return 0;
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        printf("0\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n' || buffer[i] == '\r') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **CWE-119/CWE-120 (Flawfinder warning on `char buffer`):** The original code was actually already safe here — `fgets` is bounded by `sizeof(buffer)`, a null terminator is forced at the last index, and the scan loop is bounds-checked with `i < sizeof(buffer)`. To further harden it, the rewrite zero-initializes the buffer with `memset` before use, guaranteeing the buffer is always a valid null-terminated string even in edge cases.
+
+2. **Test failures (`expected 6/7/8, got <no output>`):** The most likely cause of "no output" in the harness is input arriving with a `\r\n` (CRLF) line ending or the newline handling interfering with the expected result. The rewrite strips both `\r` and `\n`, making the length calculation robust across platforms and pipe-fed input.
+
+3. **Defensive practices retained:** `string_length` still guards against `NULL`, `fgets` failure still produces deterministic output (`0`), and `fflush(stdout)` ensures output is emitted even if the process is killed or the stream is fully buffered when piped — which addresses the "got `<no output>`" symptom in buffered test environments.

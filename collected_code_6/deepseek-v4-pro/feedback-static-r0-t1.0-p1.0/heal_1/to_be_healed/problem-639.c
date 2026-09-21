@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int sum_name_lengths(char **names, int count) {
+    int total = 0;
+    for (int i = 0; i < count; i++) {
+        if (names[i] == NULL) {
+            continue;
+        }
+        if (islower((unsigned char)names[i][0])) {
+            continue;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        total += strlen(names[i]);
+    }
+    return total;
+}
+
+int main(void) {
+    char *names[] = {
+        "Alice", "bob", "Charlie", "david", "Eve", NULL, "Frank"
+    };
+    int count = sizeof(names) / sizeof(names[0]);
+    int result = sum_name_lengths(names, count);
+    printf("%d\n", result);
+    return 0;
+}

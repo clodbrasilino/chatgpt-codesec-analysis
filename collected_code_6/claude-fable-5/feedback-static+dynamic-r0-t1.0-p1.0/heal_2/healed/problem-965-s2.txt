@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t out_size;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+    out_size = (len * 2U) + 1U;
+
+    output = malloc(out_size);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if (i > 0U) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    while (fgets(buffer, (int)sizeof(buffer), stdin) != NULL) {
+        char *result;
+        size_t blen = strlen(buffer);
+
+        while ((blen > 0U) &&
+               ((buffer[blen - 1U] == '\n') || (buffer[blen - 1U] == '\r'))) {
+            buffer[blen - 1U] = '\0';
+            blen--;
+        }
+
+        result = camel_to_snake(buffer);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for input: %s\n", buffer);
+            return EXIT_FAILURE;
+        }
+
+        if (printf("%s\n", result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addressing the failed test cases: the original program only processed a hardcoded internal test array and printed in the format `input -> output`, so when the test harness supplied inputs such as `PythonProgram`, `PythonLanguage`, or `ProgrammingLanguage` on stdin, it produced no matching output. The rewritten version reads each line from standard input, strips the trailing newline safely, converts it, and prints only the snake_case result, so inputs like `PythonProgram` now correctly yield `python_program`. The conversion function itself retains its defensive checks: NULL input rejection, bounded length via `strnlen`, overflow-safe output size calculation, allocation failure handling, and unsigned-char casts before `isupper`/`tolower` to avoid undefined behavior.

@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, bounded by an explicit `max_len` parameter passed to `toggle_case`. Even if the string were somehow not null-terminated, the read is capped at the buffer size. A guard against `max_len == 0` was also added.
+
+2. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is defined once via `BUFFER_SIZE` and consistently propagated with `sizeof(buffer)` to both `fgets` and `toggle_case`, ensuring bounds are always enforced at the point of use. As defense-in-depth, the last byte of the buffer is explicitly null-terminated after `fgets` (although `fgets` guarantees termination on success, this protects against future refactoring where the read function might change).
+
+The overall structure remains defensive: `NULL` checks in `toggle_case`, `unsigned char` casts before the `ctype.h` calls (avoiding undefined behavior for negative `char` values), and error checking on both input and output operations.

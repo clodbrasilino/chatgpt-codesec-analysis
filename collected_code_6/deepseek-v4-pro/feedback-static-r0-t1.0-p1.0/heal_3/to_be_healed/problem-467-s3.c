@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+char *decimal_to_octal(int decimal) {
+    char *octal = malloc(12 * sizeof(char));
+    if (octal == NULL) {
+        return NULL;
+    }
+    
+    if (decimal == 0) {
+        octal[0] = '0';
+        octal[1] = '\0';
+        return octal;
+    }
+    
+    int is_negative = 0;
+    unsigned int num;
+    if (decimal < 0) {
+        is_negative = 1;
+        num = (unsigned int)(-(long long)decimal);
+    } else {
+        num = (unsigned int)decimal;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char temp[12];
+    int i = 0;
+    while (num > 0 && i < 11) {
+        temp[i++] = '0' + (num % 8);
+        num /= 8;
+    }
+    temp[i] = '\0';
+    
+    int index = 0;
+    if (is_negative) {
+        octal[index++] = '-';
+    }
+    
+    int max_digits = 11 - is_negative;
+    int digits_to_copy = i;
+    if (digits_to_copy > max_digits) {
+        digits_to_copy = max_digits;
+    }
+    
+    for (int j = digits_to_copy - 1; j >= 0; j--) {
+        octal[index++] = temp[j];
+    }
+    octal[index] = '\0';
+    
+    return octal;
+}
+
+int main(void) {
+    int test_values[] = {0, 8, 64, -8, -64, 123, -123, 100, -100};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        char *result = decimal_to_octal(test_values[i]);
+        if (result != NULL) {
+            printf("Decimal: %d -> Octal: %s\n", test_values[i], result);
+            free(result);
+        } else {
+            printf("Memory allocation failed for decimal: %d\n", test_values[i]);
+        }
+    }
+    
+    return 0;
+}

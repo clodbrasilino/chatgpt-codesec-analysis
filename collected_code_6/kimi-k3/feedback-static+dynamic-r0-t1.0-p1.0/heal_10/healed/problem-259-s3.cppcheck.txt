@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-259-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-259-s3.c:60:38: style: Condition 'result.data!=NULL' is always true [knownConditionTrueFalse]
+    if (copy_size > 0 && result.data != NULL && source->data != NULL) {
+                                     ^

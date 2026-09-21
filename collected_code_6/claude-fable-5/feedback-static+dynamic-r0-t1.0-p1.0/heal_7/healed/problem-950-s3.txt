@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(int argc, char *argv[])
+{
+    int year;
+    long value;
+    char *endptr;
+
+    if (argc > 1) {
+        errno = 0;
+        endptr = NULL;
+        value = strtol(argv[1], &endptr, 10);
+        if (errno != 0 || endptr == argv[1] || *endptr != '\0' ||
+            value < INT_MIN || value > INT_MAX) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+        year = (int)value;
+    } else {
+        if (scanf("%d", &year) != 1) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original zodiac logic was actually correct — the modulo arithmetic and array indexing were safe (negative remainders were handled, bounds were double-checked, and the Flawfinder warning about the statically-sized array was a false positive since indexing is fully guarded).
+
+The real cause of the failing test cases (`<no output>` for Ox, Tiger, Dog) is almost certainly the input mechanism: the tests appear to supply the year as a **command-line argument**, while the original program only read from `stdin` via `scanf`. When `scanf` found nothing on stdin, it returned failure and the program exited with only a message on `stderr` — hence "no output" on stdout.
+
+The rewrite fixes this by:
+
+1. Accepting the year from `argv[1]` when provided, parsed robustly with `strtol` (checking `errno`, trailing characters, and `int` range — avoiding the undefined behavior `atoi` would risk on overflow).
+2. Falling back to `scanf` on stdin for interactive use, preserving the original behavior.
+3. Keeping the defensive bounds checking in `chinese_zodiac`, which satisfies the CWE-119/CWE-120 concern about the fixed-size array.

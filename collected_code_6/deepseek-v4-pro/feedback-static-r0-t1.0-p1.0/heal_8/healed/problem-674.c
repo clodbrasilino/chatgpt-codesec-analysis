@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_WORDS 1000
+#define MAX_WORD_LEN 100
+
+typedef struct {
+    char words[MAX_WORDS][MAX_WORD_LEN];
+    int count;
+} WordList;
+
+static int is_duplicate(const WordList *list, const char *word) {
+    if (word == NULL || list == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i < list->count; i++) {
+        if (strncmp(list->words[i], word, MAX_WORD_LEN) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int add_word(WordList *list, const char *word) {
+    if (list == NULL || word == NULL) {
+        return 0;
+    }
+    
+    if (list->count >= MAX_WORDS) {
+        return 0;
+    }
+    
+    size_t len = strlen(word);
+    if (len >= MAX_WORD_LEN) {
+        return 0;
+    }
+    
+    if (len + 1 > MAX_WORD_LEN) {
+        return 0;
+    }
+    
+    memcpy(list->words[list->count], word, len);
+    list->words[list->count][len] = '\0';
+    list->count++;
+    return 1;
+}
+
+void remove_duplicate_words(char *str) {
+    if (str == NULL || *str == '\0') {
+        return;
+    }
+
+    WordList seen;
+    memset(&seen, 0, sizeof(seen));
+    
+    size_t str_len = strlen(str);
+    if (str_len == 0) {
+        return;
+    }
+    
+    char *result = (char *)malloc(str_len + 1);
+    if (result == NULL) {
+        return;
+    }
+    result[0] = '\0';
+
+    char *str_copy = (char *)malloc(str_len + 1);
+    if (str_copy == NULL) {
+        free(result);
+        return;
+    }
+    memcpy(str_copy, str, str_len + 1);
+
+    char *state = NULL;
+    char *token = strtok_r(str_copy, " \t\n\r", &state);
+    int first = 1;
+    size_t current_len = 0;
+
+    while (token != NULL && current_len < str_len) {
+        size_t token_len = strlen(token);
+        if (token_len == 0) {
+            token = strtok_r(NULL, " \t\n\r", &state);
+            continue;
+        }
+        
+        if (!is_duplicate(&seen, token)) {
+            add_word(&seen, token);
+            
+            if (!first) {
+                if (current_len + 1 < str_len + 1) {
+                    result[current_len] = ' ';
+                    current_len++;
+                }
+            }
+            
+            size_t space_left = str_len - current_len;
+            size_t copy_amount = token_len;
+            if (copy_amount > space_left) {
+                copy_amount = space_left;
+            }
+            memcpy(result + current_len, token, copy_amount);
+            current_len += copy_amount;
+            
+            if (current_len <= str_len) {
+                result[current_len] = '\0';
+            }
+            
+            first = 0;
+        }
+        token = strtok_r(NULL, " \t\n\r", &state);
+    }
+
+    size_t copy_len = current_len;
+    if (copy_len > str_len) {
+        copy_len = str_len;
+    }
+    memcpy(str, result, copy_len);
+    str[copy_len] = '\0';
+    
+    free(result);
+    free(str_copy);
+}
+
+int main(void) {
+    char str[] = "hello world hello again world test hello";
+    
+    printf("Original: %s\n", str);
+    remove_duplicate_words(str);
+    printf("After removing duplicates: %s\n", str);
+
+    return 0;
+}

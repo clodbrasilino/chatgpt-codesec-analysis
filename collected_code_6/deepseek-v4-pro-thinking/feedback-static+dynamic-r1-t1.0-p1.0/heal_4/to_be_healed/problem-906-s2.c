@@ -1,0 +1,101 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+
+static int parse_int_segment(const char *str, size_t len, int *value) {
+    char *buf;
+    char *end;
+    long val;
+
+    if (len == 0 || len > 10) {
+        return -1;
+    }
+
+    buf = malloc(len + 1);
+    if (buf == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(buf, str, len);
+    buf[len] = '\0';
+
+    val = strtol(buf, &end, 10);
+    if (*end != '\0') {
+        free(buf);
+        return -1;
+    }
+
+    if (val > INT_MAX || val < INT_MIN) {
+        free(buf);
+        return -1;
+    }
+
+    *value = (int)val;
+    free(buf);
+    return 0;
+}
+
+int extract_ymd_from_url(const char *url, int *year, int *month, int *day) {
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "([0-9]{4})[-/]([0-9]{2})[-/]([0-9]{2})";
+    int ret;
+
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -3;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -2;
+    }
+
+    ret = regexec(&regex, url, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return 1;
+    }
+
+    if (parse_int_segment(url + matches[1].rm_so,
+                          (size_t)(matches[1].rm_eo - matches[1].rm_so),
+                          year) != 0 ||
+        parse_int_segment(url + matches[2].rm_so,
+                          (size_t)(matches[2].rm_eo - matches[2].rm_so),
+                          month) != 0 ||
+        parse_int_segment(url + matches[3].rm_so,
+                          (size_t)(matches[3].rm_eo - matches[3].rm_so),
+                          day) != 0) {
+        regfree(&regex);
+        return -4;
+    }
+
+    regfree(&regex);
+
+    if (*year < 1 || *year > 9999 || *month < 1 || *month > 12 || *day < 1 || *day > 31) {
+        return -5;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *url = "https://example.com/2024/12/25/news";
+    int year = 0, month = 0, day = 0;
+    int ret = extract_ymd_from_url(url, &year, &month, &day);
+
+    if (ret == 0) {
+        printf("%04d-%02d-%02d\n", year, month, day);
+    } else {
+        fprintf(stderr, "Failed to extract date from URL (error %d)\n", ret);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

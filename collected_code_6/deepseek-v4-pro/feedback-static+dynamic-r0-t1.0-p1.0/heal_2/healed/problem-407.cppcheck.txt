@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-407.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-407.c:32:25: style: Condition 'len>=(int)sizeof(digits)' is always false [knownConditionTrueFalse]
+    if (len <= 0 || len >= (int)sizeof(digits)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-407.c:27:42: note: Assuming that condition 'print_result>=(int)sizeof(digits)' is not redundant
+    if (print_result < 0 || print_result >= (int)sizeof(digits)) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-407.c:31:9: note: len is assigned 'print_result' here.
+    len = print_result;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-407.c:32:25: note: Condition 'len>=(int)sizeof(digits)' is always false
+    if (len <= 0 || len >= (int)sizeof(digits)) {
+                        ^

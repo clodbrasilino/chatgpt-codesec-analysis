@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_vowel(char c)
+{
+    switch (c) {
+    case 'a': case 'e': case 'i': case 'o': case 'u':
+    case 'A': case 'E': case 'I': case 'O': case 'U':
+        return true;
+    default:
+        return false;
+    }
+}
+
+static int reverse_vowels(char *s, size_t max_len)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+    char tmp;
+
+    if (s == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = strnlen(s, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len < 2U) {
+        return 0;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        while ((left < right) && (!is_vowel(s[left]))) {
+            left++;
+        }
+        while ((left < right) && (!is_vowel(s[right]))) {
+            right--;
+        }
+        if (left < right) {
+            tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+            left++;
+            right--;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE] = {0};
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (reverse_vowels(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The identified weakness (CWE-119/CWE-120, statically-sized array `buffer`) is already properly mitigated in this code, so no functional changes were required:
+
+- **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer capacity, preventing overflow at input time.
+- **Guaranteed termination**: `buffer[sizeof(buffer) - 1U] = '\0'` defensively ensures NUL-termination even in edge cases.
+- **Length-limited scanning**: `strnlen` is used instead of `strlen` everywhere, so no read can run past the buffer even if termination were lost.
+- **Defensive API contract**: `reverse_vowels` validates the pointer, rejects a zero `max_len`, and returns an error if the string is not terminated within `max_len` (`len >= max_len`), so it never indexes out of bounds.
+- **Checked I/O**: return values of `fgets` and `printf` are verified, with failure paths returning `EXIT_FAILURE`.
+
+The Flawfinder hit is a level-2 informational warning triggered simply by the presence of a fixed-size `char` array; the surrounding bounds checks satisfy the recommended mitigations, so the code stands as-is with comments removed.

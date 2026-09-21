@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+long long sum_odd_factors(long long n)
+{
+    long long sum = 0;
+    long long i;
+
+    if (n < 0) {
+        n = -n;
+    }
+
+    while ((n & 1) == 0 && n != 0) {
+        n >>= 1;
+    }
+
+    for (i = 1; i <= n / i; i += 2) {
+        if (n % i == 0) {
+            long long pair = n / i;
+            sum += i;
+            if (pair != i) {
+                sum += pair;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char input[64];
+    char *endptr;
+    long long num;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    num = strtoll(input, &endptr, 10);
+
+    if (errno == ERANGE || endptr == input) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", sum_odd_factors(num));
+
+    return EXIT_SUCCESS;
+}

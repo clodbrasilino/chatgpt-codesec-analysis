@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 10, got 5
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 2, got 0
+  */
+
+long long maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        long long max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += (long long)prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    long long* dp = (long long*)calloc(pricesSize, sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (int i = 1; i <= k; i++) {
+        long long max_diff = - (long long)prices[0];
+        for (int j = 1; j < pricesSize; j++) {
+            long long prev_dp = dp[j];
+            long long curr_profit = (long long)prices[j] + max_diff;
+            
+            if (dp[j - 1] > curr_profit) {
+                dp[j] = dp[j - 1];
+            } else {
+                dp[j] = curr_profit;
+            }
+
+            long long diff = prev_dp - prices[j];
+            if (diff > max_diff) {
+                max_diff = diff;
+            }
+        }
+    }
+
+    long long result = dp[pricesSize - 1];
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    int k = 0;
+    if (scanf("%d", &k) != 1) {
+        return 0;
+    }
+
+    int capacity = 1000;
+    int* prices = (int*)malloc(capacity * sizeof(int));
+    if (!prices) {
+        return 1;
+    }
+    
+    int pricesSize = 0;
+    int val;
+
+    while (scanf("%d", &val) == 1) {
+        if (pricesSize >= capacity) {
+            capacity *= 2;
+            int* temp = (int*)realloc(prices, capacity * sizeof(int));
+            if (!temp) {
+                free(prices);
+                return 1;
+            }
+            prices = temp;
+        }
+        prices[pricesSize++] = val;
+    }
+
+    long long profit = maxProfit(k, prices, pricesSize);
+    printf("%lld\n", profit);
+    
+    free(prices);
+    return 0;
+}

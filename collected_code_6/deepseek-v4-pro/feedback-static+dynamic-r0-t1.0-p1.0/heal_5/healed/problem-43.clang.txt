@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-43.c:64:68: error: chained comparison 'X <= Y <= Z' does not behave the same as a mathematical expression [-Wparentheses]
+   64 |             if (len <= (size_t)(p + pmatch[0].rm_so - input) + len <= strlen(input)) {
+      |                                                                    ^
+1 error generated.

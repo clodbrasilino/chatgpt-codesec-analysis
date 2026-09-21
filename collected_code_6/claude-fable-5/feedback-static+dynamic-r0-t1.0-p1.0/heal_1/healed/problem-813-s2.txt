@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the Flawfinder warning about the statically-sized `buffer` (CWE-119/CWE-120) is a heuristic flag on `char buffer[256]`, not an actual proven overflow, because:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** correctly bounds the read to the buffer size and guarantees null-termination on success, so no classic `gets()`-style overflow is possible.
+2. **`string_length()`** already guards against `NULL` input.
+
+The rewritten version adds two defensive hardening measures to fully satisfy the audit:
+
+- **Explicit null-termination** (`buffer[sizeof(buffer) - 1] = '\0';`) as a belt-and-suspenders guarantee, protecting against any hypothetical non-conforming `fgets` implementation or future refactoring that replaces `fgets` with a function that doesn't terminate.
+- **Bounds-checked newline-stripping loop** (`i < sizeof(buffer)`) so the scan can never run past the array even if termination were somehow violated — this directly addresses the "perform bounds checking" remediation advice in the Flawfinder comment.
+
+The `(int)` cast on `sizeof(buffer)` is a minor correctness nicety since `fgets` takes an `int`, avoiding an implicit `size_t`-to-`int` conversion warning under strict compiler flags (`-Wconversion`).

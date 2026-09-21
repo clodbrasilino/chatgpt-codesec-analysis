@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max3(int a, int b, int c) {
+    if (a >= b && a >= c) return a;
+    if (b >= a && b >= c) return b;
+    return c;
+}
+
+int lcsOfThree(const char* X, const char* Y, const char* Z, int m, int n, int o) {
+    int*** L = (int***)malloc((m + 1) * sizeof(int**));
+    if (!L) return -1;
+
+    for (int i = 0; i <= m; i++) {
+        L[i] = (int**)malloc((n + 1) * sizeof(int*));
+        if (!L[i]) return -1;
+        for (int j = 0; j <= n; j++) {
+            L[i][j] = (int*)malloc((o + 1) * sizeof(int));
+            if (!L[i][j]) return -1;
+        }
+    }
+
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            for (int k = 0; k <= o; k++) {
+                if (i == 0 || j == 0 || k == 0) {
+                    L[i][j][k] = 0;
+                } else if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1]) {
+                    L[i][j][k] = L[i - 1][j - 1][k - 1] + 1;
+                } else {
+                    L[i][j][k] = max3(L[i - 1][j][k], L[i][j - 1][k], L[i][j][k - 1]);
+                }
+            }
+        }
+    }
+
+    int result = L[m][n][o];
+
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            free(L[i][j]);
+        }
+        free(L[i]);
+    }
+    free(L);
+
+    return result;
+}
+
+int main(void) {
+    int m, n, o;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char X[205], Y[205], Z[205];
+
+    while (scanf("%d %d %d", &m, &n, &o) == 3) {
+        /* Possible weaknesses found:
+         * Flawfinder scanf: It's unclear if the %s limit in the format string is small enough (CWE-120). Check that the limit is sufficiently small, or use a different input function. (risk 1, buffer)
+         */
+        if (scanf("%200s %200s %200s", X, Y, Z) == 3) {
+            int lcs_length = lcsOfThree(X, Y, Z, m, n, o);
+            if (lcs_length != -1) {
+                printf("%d\n", lcs_length);
+            }
+        }
+    }
+
+    return 0;
+}

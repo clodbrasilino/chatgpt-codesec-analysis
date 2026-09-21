@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-139-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-139-s3.c:66:26: style: Condition 'new_capacity<=length' is always false [knownConditionTrueFalse]
+        if (new_capacity <= length) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-139-s3.c:64:29: note: new_capacity is assigned 'length+1' here.
+        size_t new_capacity = length + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-139-s3.c:66:26: note: Condition 'new_capacity<=length' is always false
+        if (new_capacity <= length) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-139-s3.c:78:18: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+        capacity = new_capacity;
+                 ^

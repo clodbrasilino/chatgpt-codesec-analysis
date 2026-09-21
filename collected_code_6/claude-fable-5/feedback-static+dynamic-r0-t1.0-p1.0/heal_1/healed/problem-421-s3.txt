@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concatenate_tuple(const char *const *elements, size_t count, const char *delimiter)
+{
+    size_t total_length;
+    size_t delimiter_length;
+    size_t element_length;
+    size_t offset;
+    size_t i;
+    char *result;
+
+    if (elements == NULL || delimiter == NULL || count == 0U) {
+        return NULL;
+    }
+
+    delimiter_length = strlen(delimiter);
+    total_length = 0U;
+
+    for (i = 0U; i < count; i++) {
+        if (elements[i] == NULL) {
+            return NULL;
+        }
+        element_length = strlen(elements[i]);
+        if (total_length > (size_t)-1 - element_length) {
+            return NULL;
+        }
+        total_length += element_length;
+    }
+
+    if (delimiter_length != 0U && (count - 1U) > ((size_t)-1 - total_length) / delimiter_length) {
+        return NULL;
+    }
+    total_length += delimiter_length * (count - 1U);
+
+    if (total_length == (size_t)-1) {
+        return NULL;
+    }
+
+    result = malloc(total_length + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    offset = 0U;
+    for (i = 0U; i < count; i++) {
+        if (i > 0U && delimiter_length > 0U) {
+            memcpy(result + offset, delimiter, delimiter_length);
+            offset += delimiter_length;
+        }
+        element_length = strlen(elements[i]);
+        if (element_length > 0U) {
+            memcpy(result + offset, elements[i], element_length);
+            offset += element_length;
+        }
+    }
+    result[offset] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"ID", "is", "4", "UTS"};
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    char *joined;
+
+    joined = concatenate_tuple(tuple, count, "-");
+    if (joined == NULL) {
+        fprintf(stderr, "Error: concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-120 (`strcat` buffer overflow):** Replaced both `strcat` calls with `memcpy` using an explicitly tracked `offset`. This eliminates the repeated rescanning of the destination string (an O(n²) Schlemiel-the-Painter pattern) and removes any reliance on unbounded concatenation. The null terminator is written exactly once at the known final offset.
+
+2. **CWE-126 (`strlen` over-read):** The `strlen` risk cannot be fully eliminated for a C-string API, since the contract requires NUL-terminated inputs; this remains a documented precondition. However, all pointers are validated against `NULL` before use, which was already present and preserved.
+
+3. **Integer overflow hardening (implicit CWE-190):** Added overflow checks when accumulating `total_length` and when computing `delimiter_length * (count - 1U)`, preventing an undersized `malloc` that would have turned an arithmetic wrap into a heap buffer overflow. Also guarded the `total_length + 1U` allocation size.
+
+4. **Empty-string handling:** `memcpy` with zero length is guarded to keep behavior well-defined and cheap for empty delimiters/elements.

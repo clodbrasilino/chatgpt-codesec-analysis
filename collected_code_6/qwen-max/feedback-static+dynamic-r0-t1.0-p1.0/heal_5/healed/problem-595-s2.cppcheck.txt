@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-595-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-595-s2.c:26:14: style: Condition 'len1!=len2' is always false [knownConditionTrueFalse]
+    if (len1 != len2) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-595-s2.c:21:14: note: Assuming that condition 'len1!=sizeof(str1)/sizeof(str1[0])-1' is not redundant
+    if (len1 != sizeof(str1) / sizeof(str1[0]) - 1 || len2 != sizeof(str2) / sizeof(str2[0]) - 1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-595-s2.c:26:14: note: Condition 'len1!=len2' is always false
+    if (len1 != len2) {
+             ^

@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+
+static int is_word_char(int c)
+{
+    return isalnum((unsigned char)c) || c == '_';
+}
+
+static int word_has_inner_z(const char *word, size_t len)
+{
+    if (word == NULL || len < 3U) {
+        return 0;
+    }
+
+    for (size_t i = 1U; i < len - 1U; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int match_word_with_inner_z(const char *text, char *result, size_t result_size)
+{
+    if (text == NULL || result == NULL || result_size == 0U) {
+        return -1;
+    }
+
+    result[0] = '\0';
+
+    const size_t text_len = strnlen(text, (size_t)-1 / 2U);
+    size_t i = 0U;
+
+    while (i < text_len) {
+        while (i < text_len && !is_word_char((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t start = i;
+
+        while (i < text_len && is_word_char((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t len = i - start;
+
+        if (len > 0U && word_has_inner_z(&text[start], len)) {
+            if (len >= result_size) {
+                return -1;
+            }
+            memcpy(result, &text[start], len);
+            result[len] = '\0';
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the lazy dog jumped",
+        "zebra runs fast",
+        "jazz is nice",
+        "amazing puzzle here",
+        "no match at all",
+        "buzz fizz quiz"
+    };
+
+    char result[MAX_WORD_LEN];
+    memset(result, 0, sizeof(result));
+
+    const size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0U; i < num_tests; i++) {
+        const int status = match_word_with_inner_z(tests[i], result, sizeof(result));
+
+        if (status == 1) {
+            if (printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], result) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else if (status == 0) {
+            if (printf("Input: \"%s\" -> No match\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Error processing input: \"%s\"\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+Both Flawfinder findings are false positives in this code, and no functional changes were required — the mitigations are already present:
+
+1. **`memcpy` (CWE-120, risk 2):** The copy is guarded by `if (len >= result_size) return -1;` immediately before the call, guaranteeing the destination can hold `len` bytes plus the NUL terminator written at `result[len]`. The destination size is passed explicitly by the caller and validated for zero at function entry, so no overflow is possible.
+
+2. **Statically-sized `char result[MAX_WORD_LEN]` (CWE-119/CWE-120, risk 2):** The buffer size is always communicated to the callee via `sizeof(result)`, and the callee performs strict bounds checking before writing. The `memset` initialization also uses `sizeof(result)`, avoiding any magic-number mismatch.
+
+Additional defensive measures already in place worth noting:
+
+- `strnlen` with a capped maximum (`(size_t)-1 / 2U`) prevents unbounded scans and avoids overflow in subsequent size arithmetic.
+- All `ctype` calls cast their argument to `unsigned char`, avoiding undefined behavior for negative `char` values.
+- NULL-pointer and zero-size parameters are rejected up front, and `result` is always NUL-terminated (set to `""` on entry) even on the no-match path.
+- Return values of `printf`/`fprintf` are checked, and error paths propagate `EXIT_FAILURE`.
+
+The code is safe as written; the Flawfinder hits are pattern-based warnings that the existing bounds checks already address.

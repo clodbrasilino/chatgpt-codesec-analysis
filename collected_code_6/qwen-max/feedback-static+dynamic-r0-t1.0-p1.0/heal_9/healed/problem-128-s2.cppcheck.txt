@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-128-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-128-s2.c:38:51: style: Condition 'current->word[len]=='\0'' is always true [knownConditionTrueFalse]
+        if (len > (size_t)n && current->word[len] == '\0') {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-128-s2.c:37:20: note: len is assigned 'strlen(current->word)' here.
+        size_t len = strlen(current->word);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-128-s2.c:37:28: note: Return index of string to the first element that is 0
+        size_t len = strlen(current->word);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-128-s2.c:38:51: note: Condition 'current->word[len]=='\0'' is always true
+        if (len > (size_t)n && current->word[len] == '\0') {
+                                                  ^

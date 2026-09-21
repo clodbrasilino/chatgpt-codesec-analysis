@@ -1,0 +1,194 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct KeyValue {
+    char *key;
+    int value;
+    struct KeyValue *next;
+} KeyValue;
+
+typedef struct {
+    KeyValue *head;
+    int size;
+} Dictionary;
+
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    dict->size = 0;
+    return dict;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *safe_strdup(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    while (len < SIZE_MAX && str[len] != '\0') {
+        len++;
+    }
+    
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+    
+    char *copy = (char *)malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    
+    memcpy(copy, str, len + 1);
+    return copy;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+    
+    KeyValue *new_node = (KeyValue *)malloc(sizeof(KeyValue));
+    if (new_node == NULL) {
+        return -1;
+    }
+    
+    new_node->key = safe_strdup(key);
+    if (new_node->key == NULL) {
+        free(new_node);
+        return -1;
+    }
+    
+    new_node->value = value;
+    new_node->next = dict->head;
+    dict->head = new_node;
+    dict->size++;
+    
+    return 0;
+}
+
+char **dict_get_keys(Dictionary *dict, int *count) {
+    if (dict == NULL || count == NULL) {
+        return NULL;
+    }
+    
+    *count = dict->size;
+    if (dict->size == 0) {
+        return NULL;
+    }
+    
+    char **keys = (char **)malloc(sizeof(char *) * dict->size);
+    if (keys == NULL) {
+        return NULL;
+    }
+    
+    KeyValue *current = dict->head;
+    int index = 0;
+    
+    while (current != NULL && index < dict->size) {
+        if (current->key == NULL) {
+            for (int i = 0; i < index; i++) {
+                free(keys[i]);
+            }
+            free(keys);
+            return NULL;
+        }
+        
+        keys[index] = safe_strdup(current->key);
+        if (keys[index] == NULL) {
+            for (int i = 0; i < index; i++) {
+                free(keys[i]);
+            }
+            free(keys);
+            return NULL;
+        }
+        
+        index++;
+        current = current->next;
+    }
+    
+    return keys;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        KeyValue *temp = current;
+        current = current->next;
+        free(temp->key);
+        free(temp);
+    }
+    
+    free(dict);
+}
+
+void free_keys(char **keys, int count) {
+    if (keys == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        free(keys[i]);
+    }
+    free(keys);
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return 1;
+    }
+    
+    dict_add(dict, "name", 1);
+    dict_add(dict, "age", 2);
+    dict_add(dict, "city", 3);
+    dict_add(dict, "email", 4);
+    
+    int count = 0;
+    char **keys = dict_get_keys(dict, &count);
+    
+    if (keys == NULL && count > 0) {
+        fprintf(stderr, "Failed to get keys\n");
+        dict_free(dict);
+        return 1;
+    }
+    
+    printf("Dictionary keys (%d):\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("%d: %s\n", i, keys[i]);
+    }
+    
+    free_keys(keys, count);
+    dict_free(dict);
+    
+    return 0;
+}

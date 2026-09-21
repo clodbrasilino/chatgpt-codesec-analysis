@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-207-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-207-s3.c:44:11: style: The if condition is the same as the previous if condition [duplicateCondition]
+    if (n >= (SIZE_MAX / sizeof(int)) - 1) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-207-s3.c:40:11: note: First condition
+    if (n >= (SIZE_MAX / sizeof(int *)) - 1) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-207-s3.c:44:11: note: Second condition
+    if (n >= (SIZE_MAX / sizeof(int)) - 1) {
+          ^

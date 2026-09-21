@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stddef.h>
+
+unsigned long long count_substrings(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t n = 0;
+    while (n < max_len && str[n] != '\0') {
+        n++;
+    }
+    
+    return ((unsigned long long)n * (n + 1)) / 2;
+}
+
+int main(void) {
+    const char test_str[] = "abcdef";
+    unsigned long long result = count_substrings(test_str, sizeof(test_str));
+    printf("%llu\n", result);
+    return 0;
+}

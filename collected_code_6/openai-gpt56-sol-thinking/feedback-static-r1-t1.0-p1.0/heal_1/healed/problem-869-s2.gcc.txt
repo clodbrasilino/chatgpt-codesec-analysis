@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-869-s2.c: In function 'remove_sublists_outside_range':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-869-s2.c:141:9: error: implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
+  141 |         memmove(list->sublists,
+      |         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-869-s2.c:6:1: note: include '<string.h>' or provide a declaration of 'memmove'
+    5 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    6 | 

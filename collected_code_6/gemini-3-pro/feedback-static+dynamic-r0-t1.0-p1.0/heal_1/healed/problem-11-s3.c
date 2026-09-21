@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void removeFirstAndLastOccurrence(char *str, char ch) {
+    if (str == NULL) {
+        return;
+    }
+
+    int firstIndex = -1;
+    int lastIndex = -1;
+    int len = 0;
+
+    while (str[len] != '\0') {
+        if (str[len] == ch) {
+            if (firstIndex == -1) {
+                firstIndex = len;
+            }
+            lastIndex = len;
+        }
+        len++;
+    }
+
+    if (firstIndex != -1) {
+        if (firstIndex == lastIndex) {
+            memmove(&str[firstIndex], &str[firstIndex + 1], len - firstIndex);
+        } else {
+            memmove(&str[lastIndex], &str[lastIndex + 1], len - lastIndex);
+            memmove(&str[firstIndex], &str[firstIndex + 1], len - 1 - firstIndex);
+        }
+    }
+}
+
+int main(void) {
+    char str[] = "hello world, this is a test string.";
+    char ch = 'o';
+
+    printf("Original: %s\n", str);
+    removeFirstAndLastOccurrence(str, ch);
+    printf("Modified: %s\n", str);
+
+    return 0;
+}

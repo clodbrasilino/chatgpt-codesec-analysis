@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int merge(int *arr, size_t left, size_t mid, size_t right)
+{
+    size_t n1 = mid - left + 1;
+    size_t n2 = right - mid;
+    size_t i, j, k;
+    int *L;
+    int *R;
+
+    L = malloc(n1 * sizeof(int));
+    if (L == NULL) {
+        return -1;
+    }
+
+    R = malloc(n2 * sizeof(int));
+    if (R == NULL) {
+        free(L);
+        return -1;
+    }
+
+    for (i = 0; i < n1; i++) {
+        L[i] = arr[left + i];
+    }
+
+    for (j = 0; j < n2; j++) {
+        R[j] = arr[mid + 1 + j];
+    }
+
+    i = 0;
+    j = 0;
+    k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+
+    free(L);
+    free(R);
+    return 0;
+}
+
+static int merge_sort(int *arr, size_t left, size_t right)
+{
+    if (arr == NULL) {
+        return -1;
+    }
+
+    if (left < right) {
+        size_t mid = left + (right - left) / 2;
+
+        if (merge_sort(arr, left, mid) != 0) {
+            return -1;
+        }
+        if (merge_sort(arr, mid + 1, right) != 0) {
+            return -1;
+        }
+        if (merge(arr, left, mid, right) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 38, 27, 43, 3, 9, 82, 10 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    if (merge_sort(arr, 0, n - 1) != 0) {
+        fprintf(stderr, "Error: merge sort failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes made to address the identified weaknesses:
+
+1. **CWE-120 (Flawfinder memcpy warnings)**: Replaced both `memcpy` calls with explicit element-by-element copy loops. The loop bounds (`n1` and `n2`) exactly match the allocated buffer sizes, making the bounds-safety statically evident and eliminating the flagged pattern entirely. The `<string.h>` include was removed since it is no longer needed.
+
+2. **variableScope (cppcheck)**: Moved the declaration of `mid` inside the `if (left < right)` block in `merge_sort`, reducing its scope to where it is actually used.
+
+3. **knownConditionTrueFalse (cppcheck)**: Removed the `if (n > 0)` check in `main`, since `n` is a compile-time constant equal to 7 and the condition was always true. The call to `merge_sort(arr, 0, n - 1)` is safe because `n` is guaranteed non-zero for a non-empty array literal.
+
+The remaining logic — the merge algorithm, error propagation on allocation failure, `NULL` pointer checks, and `printf` return-value checks — was preserved as-is, since it was already correct and defensive.

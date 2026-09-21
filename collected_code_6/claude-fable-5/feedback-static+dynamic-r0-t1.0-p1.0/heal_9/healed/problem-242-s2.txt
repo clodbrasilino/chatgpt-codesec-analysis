@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL || max_len == 0)
+    {
+        return;
+    }
+
+    while (i < max_len && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer, sizeof(buffer));
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120, buffer overflow via statically-sized arrays). The rewritten version preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the string is terminated even in edge cases, so subsequent string operations can't run off the end of the buffer.
+
+3. **Bounds-checked traversal** — `strip_newline()` takes an explicit `max_len` parameter and checks `i < max_len` before dereferencing, preventing out-of-bounds reads/writes even if a non-terminated buffer were passed.
+
+4. **NULL-pointer guards** — Both helper functions validate their pointer arguments before use, and `strip_newline()` also rejects a zero-length buffer.
+
+5. **Error handling** — The `fgets()` return value is checked, handling EOF and read errors gracefully rather than operating on uninitialized buffer contents.
+
+6. **Correct format specifier** — `%zu` is the proper specifier for `size_t`, avoiding undefined behavior from format-string/type mismatches.
+
+The Flawfinder warning is a static heuristic triggered merely by the presence of a fixed-size array; the surrounding code already satisfies the recommended mitigations (bounds checking and length-limited functions), so no functional changes were required — only removal of comments per the request.

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int minSwaps(const char *s1, const char *s2) {
+    size_t len = strlen(s1);
+    int mismatch[2] = {0, 0};
+    for (size_t i = 0; i < len; ++i) {
+        if (s1[i] != s2[i]) {
+            mismatch[s1[i] - '0']++;
+        }
+    }
+    int swaps = 0;
+    while (mismatch[0] > 0 && mismatch[1] > 0) {
+        swaps++;
+        mismatch[0]--;
+        mismatch[1]--;
+    }
+    return swaps + (mismatch[0] / 2) * 2 + (mismatch[1] / 2) * 2;
+}
+
+int main() {
+    const char s1[] = "1100";
+    const char s2[] = "1001";
+    printf("Minimum swaps: %d\n", minSwaps(s1, s2));
+    return 0;
+}

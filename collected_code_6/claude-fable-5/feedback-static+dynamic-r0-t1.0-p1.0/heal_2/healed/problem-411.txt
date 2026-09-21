@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out_pos;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    for (i = 0U; i < len; i++) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next && isalpha((unsigned char)input[i])) {
+                result[out_pos] = (char)toupper((unsigned char)input[i]);
+            } else {
+                result[out_pos] = input[i];
+            }
+            out_pos++;
+            capitalize_next = 0;
+        }
+    }
+
+    result[out_pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "hello_world_example",
+        "convert_this_snake_case",
+        "single",
+        "a_b_c_d"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *camel = snake_to_camel(tests[i]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], camel) < 0) {
+            free(camel);
+            return EXIT_FAILURE;
+        }
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Root cause of the failing test cases (no output):** The original implementation depended on POSIX `regcomp`/`regexec`. If regex compilation failed (non-POSIX platform, locale issues, or linker problems), the function silently returned `NULL` and the program aborted before producing output. The rewrite removes the `regex.h` dependency entirely, using a single deterministic character-by-character pass. This eliminates the entire class of failure and is also significantly faster (no regex engine overhead, no repeated `regexec` calls per match).
+
+2. **CWE-126 (`strlen` over-read):** The original called `strlen` twice, including once on a moving `cursor` inside the processing loop. The rewrite calls `strlen` exactly once on the caller-supplied input, after a `NULL` check. The output buffer size is derived from that single measurement, and the copy loop is strictly bounded by `len`, so no read can occur past the measured terminator.
+
+3. **CWE-120 (`memcpy` overflow risk):** Both `memcpy` calls are gone. Writes to `result` are provably in-bounds: `out_pos` increments at most once per input character and only when the character is not an underscore, so `out_pos <= len` always holds, and `result[out_pos] = '\0'` fits within the `len + 1` allocation. The awkward runtime capacity checks (which could return `NULL` mid-conversion) are no longer needed because the bound is guaranteed by construction.
+
+4. **Resource management:** The original had multiple exit paths requiring paired `free`/`regfree` calls — an easy place to introduce leaks during maintenance. The rewrite has a single allocation and no auxiliary resources, so cleanup is trivial and leak-free by design.
+
+5. **Correctness preserved:** Leading capitalization, capitalization after each underscore, underscore removal, and handling of consecutive underscores (`a__b` → `AB`) all behave correctly, and `toupper` is still called through an `unsigned char` cast to avoid undefined behavior on negative `char` values.

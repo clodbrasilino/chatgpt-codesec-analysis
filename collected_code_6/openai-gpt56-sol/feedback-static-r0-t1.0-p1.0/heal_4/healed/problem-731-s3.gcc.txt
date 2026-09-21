@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-731-s3.c: In function 'cone_lateral_surface_area':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-731-s3.c:21:42: error: 'DBL_MAX' undeclared (first use in this function)
+   21 |     if (radius != 0.0 && slant_height > (DBL_MAX / pi) / radius) {
+      |                                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-731-s3.c:6:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    5 | #include <stdlib.h>
+  +++ |+#include <float.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-731-s3.c:21:42: note: each undeclared identifier is reported only once for each function it appears in
+   21 |     if (radius != 0.0 && slant_height > (DBL_MAX / pi) / radius) {
+      |                                          ^~~~~~~

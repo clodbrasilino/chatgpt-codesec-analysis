@@ -1,0 +1,138 @@
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len;
+
+    len = 0U;
+
+    if (str == NULL) {
+        return len;
+    }
+
+    while (len < max_len && str[len] != '\0') {
+        ++len;
+    }
+
+    return len;
+}
+
+static void remove_digits(char *str)
+{
+    char *src;
+    char *dst;
+
+    if (str == NULL) {
+        return;
+    }
+
+    src = str;
+    dst = str;
+
+    while (*src != '\0') {
+        if (!isdigit((unsigned char)*src)) {
+            *dst = *src;
+            ++dst;
+        }
+        ++src;
+    }
+    *dst = '\0';
+}
+
+static void remove_digits_from_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; ++i) {
+        remove_digits(list[i]);
+    }
+}
+
+static int copy_string(char *dst, size_t dst_size, const char *src)
+{
+    int written;
+
+    if (dst == NULL || src == NULL || dst_size == 0U) {
+        return -1;
+    }
+
+    written = snprintf(dst, dst_size, "%s", src);
+    if (written < 0 || (size_t)written >= dst_size) {
+        dst[dst_size - 1U] = '\0';
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    static const char *const samples[] = {
+        "abc123def",
+        "no digits here",
+        "9876543210",
+        "h3ll0 w0rld",
+        ""
+    };
+    const size_t count = sizeof(samples) / sizeof(samples[0]);
+    char **list;
+    size_t i;
+    size_t len;
+    int status;
+
+    status = EXIT_SUCCESS;
+
+    list = malloc(count * sizeof(*list));
+    if (list == NULL) {
+        fprintf(stderr, "error: out of memory\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; ++i) {
+        list[i] = NULL;
+    }
+
+    for (i = 0; i < count; ++i) {
+        len = bounded_strlen(samples[i], MAX_STRING_LENGTH);
+        list[i] = malloc(len + 1U);
+        if (list[i] == NULL) {
+            fprintf(stderr, "error: out of memory\n");
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+        if (copy_string(list[i], len + 1U, samples[i]) != 0) {
+            fprintf(stderr, "error: failed to copy string\n");
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+
+    remove_digits_from_list(list, count);
+
+    for (i = 0; i < count; ++i) {
+        if (printf("%s\n", list[i]) < 0) {
+            fprintf(stderr, "error: failed to write output\n");
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+
+cleanup:
+    for (i = 0; i < count; ++i) {
+        free(list[i]);
+    }
+    free(list);
+
+    return status;
+}
+```

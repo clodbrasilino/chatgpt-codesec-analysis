@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    
+    char first_char = str[0];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    
+    for (size_t i = 1; i < len; i++) {
+        if (str[i] != first_char) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "aaaa";
+    const char *test2 = "aaba";
+    const char *test3 = "x";
+    const char *test4 = "";
+    
+    printf("%s: %s\n", test1, all_characters_same(test1) ? "All same" : "Not all same");
+    printf("%s: %s\n", test2, all_characters_same(test2) ? "All same" : "Not all same");
+    printf("%s: %s\n", test3, all_characters_same(test3) ? "All same" : "Not all same");
+    printf("%s: %s\n", test4, all_characters_same(test4) ? "All same" : "Not all same");
+    
+    return 0;
+}

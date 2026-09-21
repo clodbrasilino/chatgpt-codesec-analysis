@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:123:9: error: call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  123 |     if (strchr(buffer, '\n') == NULL) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:123:9: note: include the header <string.h> or explicitly provide a declaration for 'strchr'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:143:5: error: use of undeclared identifier 'errno'
+  143 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:146:9: error: use of undeclared identifier 'errno'
+  146 |     if (errno == ERANGE || end == start || parsed == 0) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-834.c:146:18: error: use of undeclared identifier 'ERANGE'
+  146 |     if (errno == ERANGE || end == start || parsed == 0) {
+      |                  ^~~~~~
+4 errors generated.

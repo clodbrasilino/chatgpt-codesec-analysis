@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-788-s2.c: In function 'create_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-788-s2.c:36:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   36 |         memcpy_s(t->list, list_size * sizeof(int), list, list_size * sizeof(int));
+      |         ^~~~~~~~
+      |         memcpy

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int is_valid_email(const char *email) {
+    const char *pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    regex_t re;
+    int ret;
+
+    if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0) {
+        return 0;
+    }
+
+    ret = regexec(&re, email, 0, NULL, 0);
+    regfree(&re);
+
+    return ret == 0;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char email[256];
+    printf("Enter an email address: ");
+    if (fgets(email, sizeof(email), stdin) != NULL) {
+        size_t len = strcspn(email, "\n");
+        if (len >= sizeof(email) - 1) {
+            if (email[len] == '\n') {
+                email[len] = '\0';
+            } else {
+                printf("Email address is too long.\n");
+                return 0;
+            }
+        } else {
+            email[len] = '\0';
+        }
+        if (is_valid_email(email)) {
+            printf("Valid email address.\n");
+        } else {
+            printf("Invalid email address.\n");
+        }
+    } else {
+        printf("Failed to read email address.\n");
+    }
+    return 0;
+}

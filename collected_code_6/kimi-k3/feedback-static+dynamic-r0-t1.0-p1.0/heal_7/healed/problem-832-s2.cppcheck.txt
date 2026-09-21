@@ -1,0 +1,73 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:51:17: style: Condition 'len>remaining_len-start' is always false [knownConditionTrueFalse]
+        if (len > remaining_len - start) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:38:63: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo <= match.rm_so) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:42:22: note: start is assigned '(unsigned long)match.rm_so' here.
+        size_t start = (size_t)match.rm_so;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:43:22: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+        size_t end = (size_t)match.rm_eo;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:45:33: note: Assuming condition is false
+        if (end > remaining_len || start >= remaining_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:49:26: note: Assignment 'len=end-start', assigned value is less than 0
+        size_t len = end - start;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:45:42: note: Assuming that condition 'start>=remaining_len' is not redundant
+        if (end > remaining_len || start >= remaining_len) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:51:17: note: Condition 'len>remaining_len-start' is always false
+        if (len > remaining_len - start) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:61:17: style: Condition 'len>0' is always false [knownConditionTrueFalse]
+        if (len > 0 && len <= remaining_len - start) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:38:63: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo <= match.rm_so) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:42:22: note: start is assigned '(unsigned long)match.rm_so' here.
+        size_t start = (size_t)match.rm_so;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:43:22: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+        size_t end = (size_t)match.rm_eo;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:45:33: note: Assuming condition is false
+        if (end > remaining_len || start >= remaining_len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:49:26: note: Assignment 'len=end-start', assigned value is less than 0
+        size_t len = end - start;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:56:21: note: Assuming condition is false
+        if (num_str == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:61:17: note: Condition 'len>0' is always false
+        if (len > 0 && len <= remaining_len - start) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:61:28: style: Condition 'len<=remaining_len-start' is always true [knownConditionTrueFalse]
+        if (len > 0 && len <= remaining_len - start) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:51:17: note: Assuming that condition 'len>remaining_len-start' is not redundant
+        if (len > remaining_len - start) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:56:21: note: Assuming condition is false
+        if (num_str == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:61:28: note: Condition 'len<=remaining_len-start' is always true
+        if (len > 0 && len <= remaining_len - start) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:82:17: style: Condition 'end>remaining_len' is always false [knownConditionTrueFalse]
+        if (end > remaining_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:45:17: note: Assuming that condition 'end>remaining_len' is not redundant
+        if (end > remaining_len || start >= remaining_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:56:21: note: Assuming condition is false
+        if (num_str == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-832-s2.c:82:17: note: Condition 'end>remaining_len' is always false
+        if (end > remaining_len) {
+                ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-206.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-206.c:183:12: style: The scope of the variable 'new_capacity' can be reduced. [variableScope]
+    size_t new_capacity = 0U;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-206.c:349:9: style: The scope of the variable 'arg_index' can be reduced. [variableScope]
+    int arg_index = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-206.c:183:25: style: Variable 'new_capacity' is assigned a value that is never used. [unreadVariable]
+    size_t new_capacity = 0U;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_9/healed/problem-206.c:349:19: style: Variable 'arg_index' is assigned a value that is never used. [unreadVariable]
+    int arg_index = 0;
+                  ^

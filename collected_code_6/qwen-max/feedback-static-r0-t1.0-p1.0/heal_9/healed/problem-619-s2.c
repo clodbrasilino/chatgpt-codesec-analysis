@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void move_numbers(char *str, size_t str_len) {
+    char result[str_len + 1] = "";
+    char temp[str_len + 1] = "";
+    int j = 0, k = 0;
+
+    for (int i = 0; i < str_len; i++) {
+        if (isdigit((unsigned char)str[i])) {
+            if (j < str_len) {
+                result[j++] = str[i];
+            }
+        } else {
+            if (k < str_len) {
+                temp[k++] = str[i];
+            }
+        }
+    }
+
+    result[j] = '\0';
+    temp[k] = '\0';
+
+    size_t remaining_space = str_len - strlen(result);
+    if (remaining_space > 0 && strlen(temp) <= remaining_space) {
+        strncat(result, temp, remaining_space);
+    }
+
+    size_t result_len = strlen(result);
+    if (result_len <= str_len) {
+        memcpy(str, result, result_len + 1);
+    } else {
+        memcpy(str, result, str_len);
+        str[str_len] = '\0';
+    }
+}
+
+int main() {
+    char str[] = "a2b3c4d5e6";
+    move_numbers(str, sizeof(str) - 1);
+    printf("%s\n", str);
+    return 0;
+}

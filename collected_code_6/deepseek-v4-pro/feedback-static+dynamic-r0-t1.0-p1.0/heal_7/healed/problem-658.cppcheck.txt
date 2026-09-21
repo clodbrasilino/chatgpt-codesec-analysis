@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-658.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-658.c:151:19: style: Condition 'item_size>0' is always true [knownConditionTrueFalse]
+    if (item_size > 0 && array_length > (SIZE_MAX / item_size)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-658.c:147:57: note: Assuming that condition 'item_size==0' is not redundant
+    if (array == NULL || array_length == 0 || item_size == 0 || max_count == NULL) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-658.c:151:19: note: Condition 'item_size>0' is always true
+    if (item_size > 0 && array_length > (SIZE_MAX / item_size)) {
+                  ^

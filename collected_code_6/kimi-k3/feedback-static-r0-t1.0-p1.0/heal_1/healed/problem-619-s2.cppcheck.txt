@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-619-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-619-s2.c:13:34: warning: Either the condition 'len<max_len' is redundant or the array 'input[19]' is accessed at index 1023, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < max_len && input[len] != '\0') {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-619-s2.c:12:22: note: Assignment 'max_len=1024', assigned value is 1024
+    size_t max_len = 1024;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-619-s2.c:13:16: note: Assuming that condition 'len<max_len' is not redundant
+    while (len < max_len && input[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-619-s2.c:13:34: note: Array index out of bounds
+    while (len < max_len && input[len] != '\0') {
+                                 ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-743.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-743.c:44:20: style: Condition 'tail_bytes>temp_bytes' is always false [knownConditionTrueFalse]
+    if (tail_bytes > temp_bytes || tail_bytes > arr_bytes)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-743.c:37:16: note: temp_bytes is assigned 'tail_bytes' here.
+    temp_bytes = tail_bytes;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-743.c:39:14: note: Assuming condition is false
+    if (temp == NULL)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-743.c:44:20: note: Condition 'tail_bytes>temp_bytes' is always false
+    if (tail_bytes > temp_bytes || tail_bytes > arr_bytes)
+                   ^

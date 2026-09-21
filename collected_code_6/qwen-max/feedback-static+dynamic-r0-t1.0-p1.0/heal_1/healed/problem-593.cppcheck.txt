@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-593.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-593.c:13:29: style: Array index 'i' is used before limits check. [arrayIndexThenCheck]
+            for (i = 0; part[i] == '0' && i < len - 1; i++);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-593.c:33:17: warning: Size of pointer 'ip' used instead of size of its data. [pointerSize]
+        strncpy(ip, temp, sizeof(ip) - 1);
+                ^

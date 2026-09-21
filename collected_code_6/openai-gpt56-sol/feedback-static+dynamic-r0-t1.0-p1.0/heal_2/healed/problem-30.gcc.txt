@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-30.c: In function 'count_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-30.c:14:24: error: 'UCHAR_MAX' undeclared (first use in this function)
+   14 |     size_t frequencies[UCHAR_MAX + 1U] = {0};
+      |                        ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-30.c:4:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-30.c:14:24: note: each undeclared identifier is reported only once for each function it appears in
+   14 |     size_t frequencies[UCHAR_MAX + 1U] = {0};
+      |                        ^~~~~~~~~

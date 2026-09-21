@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_SENTENCE_LEN 4096
+#define MAX_WORD_LEN 256
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    size_t needed = regerror(errcode, regex, NULL, 0);
+    char *errbuf = malloc(needed);
+
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unknown regex error (allocation failed)\n", context);
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    fprintf(stderr, "%s: %s\n", context, errbuf);
+    free(errbuf);
+}
+
+int find_adverbs(const char *sentence)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Za-z]+ly";
+    int ret;
+    size_t offset = 0;
+    size_t len;
+    int count = 0;
+
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: sentence is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len >= MAX_SENTENCE_LEN) {
+        fprintf(stderr, "Error: sentence too long or not null-terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, sentence + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t start = offset + (size_t)match.rm_so;
+        size_t end = offset + (size_t)match.rm_eo;
+
+        if (start > len || end > len || start > end) {
+            fprintf(stderr, "Error: match out of bounds\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t word_len = end - start;
+
+        if (word_len == 0 || word_len >= MAX_WORD_LEN) {
+            offset = (end > offset) ? end : offset + 1;
+            continue;
+        }
+
+        if (end < len && isalpha((unsigned char)sentence[end])) {
+            offset = end;
+            continue;
+        }
+
+        printf("Adverb: %-15.*s Position: %zu-%zu\n",
+               (int)word_len, sentence + start, start, end - 1);
+        count++;
+
+        offset = end;
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran to the store and quietly bought some milk, then happily walked home.";
+    int result;
+
+    printf("Sentence: %s\n\n", sentence);
+
+    result = find_adverbs(sentence);
+    if (result < 0) {
+        fprintf(stderr, "Failed to search for adverbs\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("\nTotal adverbs found: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

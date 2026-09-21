@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void remove_words_of_length_k(char *str, int k) {
+    if (str == NULL || k <= 0) {
+        return;
+    }
+
+    int read_idx = 0;
+    int write_idx = 0;
+    int is_first = 1;
+
+    while (str[read_idx] != '\0') {
+        while (str[read_idx] == ' ') {
+            read_idx++;
+        }
+        
+        if (str[read_idx] == '\0') {
+            break;
+        }
+
+        int word_start = read_idx;
+        while (str[read_idx] != ' ' && str[read_idx] != '\0') {
+            read_idx++;
+        }
+        
+        int word_len = read_idx - word_start;
+
+        if (word_len != k) {
+            if (!is_first) {
+                str[write_idx++] = ' ';
+            }
+            for (int i = 0; i < word_len; i++) {
+                str[write_idx++] = str[word_start + i];
+            }
+            is_first = 0;
+        }
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void) {
+    int k;
+    size_t size = 256;
+    char *str = (char *)malloc(size * sizeof(char));
+    
+    if (str == NULL) {
+        return 1;
+    }
+
+    if (fgets(str, (int)size, stdin) != NULL) {
+        for (size_t i = 0; i < size; i++) {
+            if (str[i] == '\n') {
+                str[i] = '\0';
+                break;
+            }
+            if (str[i] == '\0') {
+                break;
+            }
+        }
+
+        if (scanf("%d", &k) == 1) {
+            remove_words_of_length_k(str, k);
+            printf("%s\n", str);
+        }
+    }
+
+    free(str);
+    return 0;
+}

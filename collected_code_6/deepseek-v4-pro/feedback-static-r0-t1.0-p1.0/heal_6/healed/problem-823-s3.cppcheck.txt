@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-823-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-823-s3.c:13:28: style: Redundant condition: The condition 'pattern_len == 1024' is redundant since 'pattern_len > 1022' is sufficient. [redundantCondition]
+    if (pattern_len > 1022 || pattern_len == 1024) {
+                           ^

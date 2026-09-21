@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (snake_str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    char *camel_str = malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    size_t camel_idx = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (snake_str[i] == '_' && i + 1 < len && islower((unsigned char)snake_str[i + 1])) {
+            camel_str[camel_idx++] = (char)toupper((unsigned char)snake_str[++i]);
+        } else if (snake_str[i] != '_') {
+            camel_str[camel_idx++] = snake_str[i];
+        }
+    }
+    camel_str[camel_idx] = '\0';
+
+    char *shrunk = realloc(camel_str, camel_idx + 1);
+    if (shrunk != NULL) {
+        camel_str = shrunk;
+    }
+
+    return camel_str;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        "this_is_a_snake_case_string_123",
+        NULL
+    };
+    
+    for (int i = 0; tests[i] != NULL; i++) {
+        char *output = snake_to_camel(tests[i]);
+        if (output == NULL) {
+            return 1;
+        }
+        printf("%s\n", output);
+        free(output);
+    }
+    return 0;
+}

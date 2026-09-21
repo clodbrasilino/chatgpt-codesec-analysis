@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_PATTERN_LENGTH 255
+#define INPUT_BUFFER_SIZE 258
+
+bool match_pattern(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(str, MAX_PATTERN_LENGTH + 1);
+    
+    if (len == 0 || len > MAX_PATTERN_LENGTH) {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    if (len == 1) {
+        return true;
+    }
+    
+    if (len == 2) {
+        return str[1] == 'b';
+    }
+    
+    return false;
+}
+
+int main(void) {
+    char input[INPUT_BUFFER_SIZE];
+    bool input_valid = false;
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    bool newline_found = false;
+    size_t newline_pos = 0;
+    
+    while (newline_pos < sizeof(input) && input[newline_pos] != '\0') {
+        if (input[newline_pos] == '\n') {
+            input[newline_pos] = '\0';
+            newline_found = true;
+            input_valid = true;
+            break;
+        }
+        newline_pos++;
+    }
+    
+    if (!newline_found) {
+        if (newline_pos >= sizeof(input) - 1) {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) {
+            }
+        }
+        input[sizeof(input) - 1] = '\0';
+        input_valid = true;
+    }
+    
+    if (!input_valid) {
+        return 1;
+    }
+    
+    size_t length = strnlen(input, INPUT_BUFFER_SIZE);
+    
+    if (length > MAX_PATTERN_LENGTH) {
+        printf("No match\n");
+        return 0;
+    }
+    
+    if (match_pattern(input)) {
+        printf("Match\n");
+    } else {
+        printf("No match\n");
+    }
+    
+    return 0;
+}

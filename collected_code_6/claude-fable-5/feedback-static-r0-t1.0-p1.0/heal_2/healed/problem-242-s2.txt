@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0')
+    {
+        if (buffer[i] == '\n')
+        {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original source is already well-defended against the weakness Flawfinder flagged (CWE-119/CWE-120, buffer overflow on a statically-sized array). The flagged item is a heuristic hit on the `char buffer[BUFFER_SIZE]` declaration itself, not an actual exploitable flaw, because:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters plus the null terminator — no unbounded `gets()` or `scanf("%s")` is used.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-braces guarantee that the buffer is null-terminated even in pathological cases.
+3. **Bounds-checked iteration:** the newline-stripping loop checks `i < sizeof(buffer)` before every dereference, so it can never walk past the array.
+4. **NULL-safe helper:** `count_characters()` guards against a `NULL` pointer and only reads up to the terminator, which is guaranteed to exist within bounds.
+5. **Correct format specifier:** `%zu` is properly used for `size_t`, avoiding undefined behavior on platforms where `size_t` differs from `unsigned int`.
+
+Since the mitigations are already in place, the rewrite preserves the logic verbatim and simply removes the comments as requested. No functional changes were necessary.

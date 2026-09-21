@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+void remove_chars(char *str, const char *mask);
+static bool read_line(char *buffer, size_t size);
+
+void remove_chars(char *str, const char *mask)
+{
+    bool present[256] = { false };
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = true;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    char *newline;
+
+    if (buffer == NULL || size == 0) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    newline = memchr(buffer, '\n', size);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char first[BUFFER_SIZE];
+    char second[BUFFER_SIZE];
+
+    printf("Enter the first string: ");
+    if (!read_line(first, sizeof(first))) {
+        fprintf(stderr, "Error reading first string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the second string: ");
+    if (!read_line(second, sizeof(second))) {
+        fprintf(stderr, "Error reading second string\n");
+        return EXIT_FAILURE;
+    }
+
+    remove_chars(first, second);
+
+    printf("Result: %s\n", first);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on `first` and `second` are informational (risk level 2) — they flag *any* statically-sized `char` array because such buffers are a common overflow vector (CWE-119/CWE-120). In this code, the warnings are already mitigated, so no functional changes were required:
+
+1. **Bounds-checked input:** All writes into the buffers go through `read_line()`, which uses `fgets(buffer, (int)size, stdin)` with `sizeof(first)` / `sizeof(second)` passed at the call site. `fgets` never writes more than `size - 1` characters plus the terminator, so overflow is impossible.
+
+2. **Guaranteed termination:** `buffer[size - 1] = '\0';` is defensive belt-and-braces (technically redundant after a successful `fgets`, but harmless), and `memchr` — rather than `strchr` — is used to strip the newline, which is safe even against non-terminated data.
+
+3. **NULL/size validation:** Both `read_line` and `remove_chars` validate their pointer arguments and reject `size == 0`, preventing the `buffer[size - 1]` expression from underflowing.
+
+4. **In-place filtering is shrink-only:** `remove_chars` writes index `j` which is always `<= i`, so the result can never exceed the original string length; the final `str[j] = '\0'` lands within the original bounds.
+
+5. **Lookup table indexing:** The cast to `(unsigned char)` before indexing `present[256]` correctly avoids negative-index UB on platforms where `char` is signed.
+
+The code is safe as written; the rewrite simply removes the analyzer annotations per your request.

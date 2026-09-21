@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t shortestCommonSupersequenceLength(const char *s1, size_t len1, const char *s2, size_t len2) {
+    if (s1 == NULL || s2 == NULL) {
+        return (size_t)-1;
+    }
+
+    const char *strA = s1;
+    const char *strB = s2;
+    size_t m = len1;
+    size_t n = len2;
+
+    if (m < n) {
+        const char *tempStr = strA;
+        strA = strB;
+        strB = tempStr;
+        m = len2;
+        n = len1;
+    }
+
+    size_t *prev = calloc(n + 1, sizeof(size_t));
+    if (prev == NULL) {
+        return (size_t)-1;
+    }
+
+    size_t *curr = calloc(n + 1, sizeof(size_t));
+    if (curr == NULL) {
+        free(prev);
+        return (size_t)-1;
+    }
+
+    for (size_t i = 1; i <= m; i++) {
+        for (size_t j = 1; j <= n; j++) {
+            if (strA[i - 1] == strB[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else {
+                curr[j] = prev[j] > curr[j - 1] ? prev[j] : curr[j - 1];
+            }
+        }
+
+        size_t *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+
+    size_t lcs = prev[n];
+
+    free(prev);
+    free(curr);
+
+    return m + n - lcs;
+}
+
+int main(void) {
+    const char str1[] = "AGGTAB";
+    const char str2[] = "GXTXAYB";
+
+    size_t len1 = sizeof(str1) - 1;
+    size_t len2 = sizeof(str2) - 1;
+
+    size_t result = shortestCommonSupersequenceLength(str1, len1, str2, len2);
+
+    if (result == (size_t)-1) {
+        printf("Error\n");
+        return 1;
+    }
+
+    printf("%zu\n", result);
+
+    return 0;
+}
+```

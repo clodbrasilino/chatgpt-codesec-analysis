@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+typedef struct {
+    int key;
+    int *values;
+    int value_count;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    int entry_count;
+} Dictionary;
+
+typedef struct {
+    int *values;
+    int count;
+} UniqueValues;
+
+UniqueValues extract_unique_values(const Dictionary *dict) {
+    UniqueValues result;
+    result.values = NULL;
+    result.count = 0;
+
+    if (dict == NULL || dict->entries == NULL || dict->entry_count <= 0) {
+        return result;
+    }
+
+    size_t total_values = 0;
+    for (int i = 0; i < dict->entry_count; i++) {
+        if (dict->entries[i].values != NULL && dict->entries[i].value_count > 0) {
+            if ((size_t)dict->entries[i].value_count > SIZE_MAX - total_values) {
+                return result;
+            }
+            total_values += (size_t)dict->entries[i].value_count;
+        }
+    }
+
+    if (total_values == 0) {
+        return result;
+    }
+
+    int *all_values = (int *)malloc(total_values * sizeof(int));
+    if (all_values == NULL) {
+        return result;
+    }
+
+    size_t index = 0;
+    for (int i = 0; i < dict->entry_count; i++) {
+        if (dict->entries[i].values == NULL || dict->entries[i].value_count <= 0) {
+            continue;
+        }
+
+        size_t copy_size = (size_t)dict->entries[i].value_count * sizeof(int);
+        if (copy_size > total_values * sizeof(int) - index * sizeof(int)) {
+            free(all_values);
+            return result;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(all_values + index, dict->entries[i].values, copy_size);
+        index += (size_t)dict->entries[i].value_count;
+    }
+
+    int *unique_values = (int *)malloc(total_values * sizeof(int));
+    if (unique_values == NULL) {
+        free(all_values);
+        return result;
+    }
+
+    size_t unique_count = 0;
+    for (size_t i = 0; i < total_values; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (unique_values[j] == all_values[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            unique_values[unique_count] = all_values[i];
+            unique_count++;
+        }
+    }
+
+    free(all_values);
+
+    if (unique_count == 0) {
+        free(unique_values);
+        return result;
+    }
+
+    size_t result_size = unique_count * sizeof(int);
+    result.values = (int *)malloc(result_size);
+    if (result.values == NULL) {
+        free(unique_values);
+        return result;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result.values, unique_values, result_size);
+    result.count = (int)unique_count;
+
+    free(unique_values);
+    return result;
+}
+
+int main(void) {
+    int values1[] = {1, 2, 3, 4};
+    int values2[] = {3, 4, 5, 6};
+    int values3[] = {7, 8, 9};
+
+    DictEntry entries[3];
+    entries[0].key = 1;
+    entries[0].values = values1;
+    entries[0].value_count = 4;
+    entries[1].key = 2;
+    entries[1].values = values2;
+    entries[1].value_count = 4;
+    entries[2].key = 3;
+    entries[2].values = values3;
+    entries[2].value_count = 3;
+
+    Dictionary dict;
+    dict.entries = entries;
+    dict.entry_count = 3;
+
+    UniqueValues result = extract_unique_values(&dict);
+
+    if (result.values != NULL) {
+        for (int i = 0; i < result.count; i++) {
+            printf("%d ", result.values[i]);
+        }
+        printf("\n");
+        free(result.values);
+    }
+
+    return 0;
+}

@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MIN_PASSWORD_LENGTH 8
+#define MAX_PASSWORD_LENGTH 64
+#define BUFFER_SIZE (MAX_PASSWORD_LENGTH + 2)
+#define MAX_DISCARD_CHARS 4096
+
+bool is_valid_password(const char *password);
+static bool read_line(char *buffer, size_t size);
+static void clear_buffer(char *buffer, size_t size);
+
+bool is_valid_password(const char *password)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL) {
+        return false;
+    }
+
+    length = strnlen(password, (size_t)MAX_PASSWORD_LENGTH + 1U);
+
+    if ((length < (size_t)MIN_PASSWORD_LENGTH) ||
+        (length > (size_t)MAX_PASSWORD_LENGTH)) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (isupper(c) != 0) {
+            has_upper = true;
+        } else if (islower(c) != 0) {
+            has_lower = true;
+        } else if (isdigit(c) != 0) {
+            has_digit = true;
+        } else if (ispunct(c) != 0) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit && has_special);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t length;
+    bool truncated = false;
+
+    if ((buffer == NULL) || (size < 2U)) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        buffer[0] = '\0';
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+    length = strnlen(buffer, size);
+
+    if ((length > 0U) && (buffer[length - 1U] == '\n')) {
+        buffer[length - 1U] = '\0';
+    } else if (length == (size - 1U)) {
+        int ch;
+        size_t discarded = 0U;
+
+        truncated = true;
+
+        do {
+            ch = getchar();
+            discarded++;
+        } while ((ch != EOF) && (ch != '\n') &&
+                 (discarded < (size_t)MAX_DISCARD_CHARS));
+
+        if ((ch != EOF) && (ch != '\n')) {
+            clearerr(stdin);
+        }
+    } else {
+        ;
+    }
+
+    if (truncated) {
+        buffer[0] = '\0';
+    }
+
+    return true;
+}
+
+static void clear_buffer(char *buffer, size_t size)
+{
+    volatile char *p = (volatile char *)buffer;
+    size_t i;
+
+    if (buffer == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < size; i++) {
+        p[i] = '\0';
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE] = { 0 };
+    int result = EXIT_SUCCESS;
+
+    if (printf("Enter password: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        (void)fprintf(stderr, "Error reading input.\n");
+        clear_buffer(buffer, sizeof(buffer));
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_password(buffer)) {
+        if (printf("Password is valid.\n") < 0) {
+            result = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Password is invalid.\n") < 0) {
+            result = EXIT_FAILURE;
+        }
+    }
+
+    clear_buffer(buffer, sizeof(buffer));
+
+    return result;
+}
+```
+
+**Analysis of the original findings and the applied fixes:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20, risk 1):** The original discard loop `while ((ch != EOF) && (ch != '\n'))` was already safe from buffer overflow since it writes nothing to memory, but it could spin indefinitely on a pathological or malicious stream. The rewrite bounds the discard loop with `MAX_DISCARD_CHARS`, guaranteeing termination, and calls `clearerr(stdin)` so the stream remains usable. This converts a theoretical unbounded-input concern into a provably bounded operation.
+
+2. **Flawfinder `char` array warning (CWE-119/CWE-120, risk 2):** The statically-sized `buffer[BUFFER_SIZE]` was already used safely, since `fgets` receives `sizeof(buffer)` and `strnlen` is bounded. As defense-in-depth, the rewrite adds an explicit `buffer[size - 1U] = '\0'` after `fgets` to guarantee NUL-termination regardless of libc behavior, ensuring all subsequent `strnlen` and validation logic operates on a terminated string.
+
+The remaining structure was preserved because it already follows good practice: NULL and size guards, `strnlen` instead of `strlen`, `unsigned char` casts before `ctype.h` calls (avoiding undefined behavior on negative `char` values), `volatile`-qualified secure buffer wiping that resists compiler dead-store elimination, and checked return values on all I/O calls.

@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+void free_tuple(Tuple *tuple);
+Tuple* string_to_tuple(const char *str);
+void print_tuple(const Tuple *tuple);
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    if (tuple->elements) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+    }
+    free(tuple);
+}
+
+Tuple* string_to_tuple(const char *str) {
+    if (!str) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->count = len;
+
+    if (len == 0) {
+        tuple->elements = NULL;
+        return tuple;
+    }
+
+    tuple->elements = (char **)malloc(len * sizeof(char *));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        tuple->elements[i] = (char *)malloc(2);
+        if (!tuple->elements[i]) {
+            tuple->count = i;
+            free_tuple(tuple);
+            return NULL;
+        }
+        tuple->elements[i][0] = str[i];
+        tuple->elements[i][1] = '\0';
+    }
+
+    return tuple;
+}
+
+void print_tuple(const Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < tuple->count; i++) {
+        printf("'%s'", tuple->elements[i]);
+        if (i < tuple->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(int argc, const char *argv[]) {
+    char *buffer = NULL;
+
+    if (argc > 1) {
+        size_t arg_len = 0;
+        while (argv[1][arg_len] != '\0') {
+            arg_len++;
+        }
+        buffer = (char *)malloc(arg_len + 1);
+        if (!buffer) {
+            return EXIT_FAILURE;
+        }
+        for (size_t i = 0; i < arg_len; i++) {
+            buffer[i] = argv[1][i];
+        }
+        buffer[arg_len] = '\0';
+    } else {
+        size_t capacity = 8192;
+        buffer = (char *)malloc(capacity);
+        if (!buffer) {
+            return EXIT_FAILURE;
+        }
+        if (!fgets(buffer, (int)capacity, stdin)) {
+            free(buffer);
+            return EXIT_SUCCESS;
+        }
+        size_t i = 0;
+        while (buffer[i] != '\0' && buffer[i] != '\r' && buffer[i] != '\n') {
+            i++;
+        }
+        buffer[i] = '\0';
+    }
+
+    Tuple *tuple = string_to_tuple(buffer);
+    if (tuple) {
+        print_tuple(tuple);
+        free_tuple(tuple);
+    } else {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-674.c: In function 'remove_duplicates':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-674.c:24:38: error: passing argument 2 of 'is_word_in_array' from incompatible pointer type [-Wincompatible-pointer-types]
+   24 |         if (!is_word_in_array(token, words, word_count)) {
+      |                                      ^~~~~
+      |                                      |
+      |                                      char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-674.c:8:52: note: expected 'const char **' but argument is of type 'char **'
+    8 | int is_word_in_array(const char *word, const char *array[], int count) {
+      |                                        ~~~~~~~~~~~~^~~~~~~

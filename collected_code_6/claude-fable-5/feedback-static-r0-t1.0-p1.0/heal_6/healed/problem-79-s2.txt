@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning about the statically-sized `char buffer[MAX_WORD_LEN]` (CWE-119/CWE-120) is already properly mitigated in this code:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, writing at most `sizeof(buffer) - 1` characters plus a null terminator. This prevents the classic `gets()`-style overflow.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1U] = '\0';` is a defensive belt-and-suspenders measure. While `fgets` already null-terminates on success, this ensures termination even in edge cases.
+
+3. **Bounded string operations** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, guaranteeing the length scan never walks past the buffer boundary even if termination were somehow lost.
+
+4. **Safe newline stripping** — The `len > 0U` check before accessing `buffer[len - 1U]` prevents an out-of-bounds read/write on an empty string (guards against unsigned underflow of `len - 1U`).
+
+5. **Return value checking** — The `fgets` return value is checked for `NULL`, handling EOF and read errors gracefully.
+
+6. **`is_length_odd` robustness** — The function guards against a `NULL` pointer and uses the bounded `strnlen`, making it safe as a standalone utility.
+
+Since all recommended mitigations (bounds checking, length-limiting functions, null-pointer guards) are already present, the code is retained as-is with the comments removed. The Flawfinder hit is a false positive in this context — it flags the presence of a fixed-size array, but every access to it is properly bounded.

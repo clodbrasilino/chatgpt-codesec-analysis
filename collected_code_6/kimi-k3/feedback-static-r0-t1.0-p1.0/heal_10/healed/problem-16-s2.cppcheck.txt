@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:51:33: style: Condition 'seq_len+1>dest_size' is always false [knownConditionTrueFalse]
+                if (seq_len + 1 > dest_size) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:50:50: note: Assignment 'dest_size=(seq_len+1)*sizeof(char)', assigned value is symbolic=seq_len+1
+                size_t dest_size = (seq_len + 1) * sizeof(char);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:51:33: note: Condition 'seq_len+1>dest_size' is always false
+                if (seq_len + 1 > dest_size) {
+                                ^

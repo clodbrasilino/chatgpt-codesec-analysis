@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:71:35: style: Condition '(out_pos+chunk)>out_len' is always false [knownConditionTrueFalse]
+            if ((out_pos + chunk) > out_len ||
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:64:36: note: Assuming that condition '(out_pos+chunk+2U)>out_len' is not redundant
+        if ((out_pos + chunk + 2U) > out_len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:71:35: note: Condition '(out_pos+chunk)>out_len' is always false
+            if ((out_pos + chunk) > out_len ||
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:72:34: style: Condition '(offset+chunk)>in_len' is always false [knownConditionTrueFalse]
+                (offset + chunk) > in_len) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:58:30: note: Assuming that condition '(offset+chunk)>=in_len' is not redundant
+        if ((offset + chunk) >= in_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:64:36: note: Assuming condition is false
+        if ((out_pos + chunk + 2U) > out_len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:72:34: note: Condition '(offset+chunk)>in_len' is always false
+                (offset + chunk) > in_len) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:105:31: style: Condition '(out_pos+chunk)>out_len' is always false [knownConditionTrueFalse]
+        if ((out_pos + chunk) > out_len ||
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:98:32: note: Assuming that condition '(out_pos+chunk+1U)>out_len' is not redundant
+    if ((out_pos + chunk + 1U) > out_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-748-s2.c:105:31: note: Condition '(out_pos+chunk)>out_len' is always false
+        if ((out_pos + chunk) > out_len ||
+                              ^

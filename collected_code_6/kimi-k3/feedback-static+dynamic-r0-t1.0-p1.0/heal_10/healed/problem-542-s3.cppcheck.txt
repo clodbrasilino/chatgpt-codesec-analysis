@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:69:43: style: Condition 'result_len+copy_len<=buffer_size' is always true [knownConditionTrueFalse]
+                if (result_len + copy_len <= buffer_size) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:64:43: note: Assuming that condition 'result_len+copy_len>=buffer_size' is not redundant
+                if (result_len + copy_len >= buffer_size) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:69:43: note: Condition 'result_len+copy_len<=buffer_size' is always true
+                if (result_len + copy_len <= buffer_size) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:102:42: style: Condition 'result_len+(str_len-pos)<=buffer_size' is always true [knownConditionTrueFalse]
+        if (result_len + (str_len - pos) <= buffer_size) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:97:42: note: Assuming that condition 'result_len+(str_len-pos)>=buffer_size' is not redundant
+        if (result_len + (str_len - pos) >= buffer_size) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:102:42: note: Condition 'result_len+(str_len-pos)<=buffer_size' is always true
+        if (result_len + (str_len - pos) <= buffer_size) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:119:24: style: Condition 'result_len+1<=buffer_size' is always true [knownConditionTrueFalse]
+    if (result_len + 1 <= buffer_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:113:24: note: Assuming that condition 'result_len+1>buffer_size' is not redundant
+    if (result_len + 1 > buffer_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:119:24: note: Condition 'result_len+1<=buffer_size' is always true
+    if (result_len + 1 <= buffer_size) {
+                       ^

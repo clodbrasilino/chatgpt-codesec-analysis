@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c:88:19: style: Condition 'copy_size>result_bytes' is always false [knownConditionTrueFalse]
+    if (copy_size > result_bytes || copy_size > total_pairs * sizeof(Pair)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c:87:15: note: copy_size is assigned 'k*sizeof(struct Pair)' here.
+    copy_size = k * sizeof(Pair);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c:79:18: note: result_bytes is assigned 'k*sizeof(struct Pair)' here.
+    result_bytes = k * sizeof(Pair);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c:81:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-408-s2.c:88:19: note: Condition 'copy_size>result_bytes' is always false
+    if (copy_size > result_bytes || copy_size > total_pairs * sizeof(Pair)) {
+                  ^

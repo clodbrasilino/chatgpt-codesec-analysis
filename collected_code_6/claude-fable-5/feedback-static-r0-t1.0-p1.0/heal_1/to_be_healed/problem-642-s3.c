@@ -1,0 +1,218 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} Row;
+
+static void fatal(const char *message)
+{
+    fprintf(stderr, "%s\n", message);
+    exit(EXIT_FAILURE);
+}
+
+static void *safe_malloc(size_t count, size_t size)
+{
+    void *ptr;
+
+    if (count == 0U || size == 0U) {
+        fatal("Invalid allocation request");
+    }
+    if (count > SIZE_MAX / size) {
+        fatal("Allocation size overflow");
+    }
+    ptr = malloc(count * size);
+    if (ptr == NULL) {
+        fatal("Memory allocation failed");
+    }
+    return ptr;
+}
+
+static int tuple_compare(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->first < tb->first) {
+        return -1;
+    }
+    if (ta->first > tb->first) {
+        return 1;
+    }
+    if (ta->second < tb->second) {
+        return -1;
+    }
+    if (ta->second > tb->second) {
+        return 1;
+    }
+    return 0;
+}
+
+static Tuple *sorted_copy(const Row *row)
+{
+    Tuple *copy;
+
+    if (row->count == 0U) {
+        return NULL;
+    }
+    copy = (Tuple *)safe_malloc(row->count, sizeof(Tuple));
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, row->tuples, row->count * sizeof(Tuple));
+    qsort(copy, row->count, sizeof(Tuple), tuple_compare);
+    return copy;
+}
+
+static int rows_similar(const Tuple *a, const Tuple *b, size_t count_a, size_t count_b)
+{
+    size_t i;
+
+    if (count_a != count_b) {
+        return 0;
+    }
+    for (i = 0; i < count_a; i++) {
+        if (tuple_compare(&a[i], &b[i]) != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static size_t remove_similar_rows(Row *rows, size_t row_count)
+{
+    Tuple **normalized;
+    unsigned char *keep;
+    size_t i;
+    size_t j;
+    size_t write_index;
+
+    if (rows == NULL || row_count == 0U) {
+        return 0;
+    }
+
+    normalized = (Tuple **)safe_malloc(row_count, sizeof(Tuple *));
+    keep = (unsigned char *)safe_malloc(row_count, sizeof(unsigned char));
+
+    for (i = 0; i < row_count; i++) {
+        normalized[i] = sorted_copy(&rows[i]);
+        keep[i] = 1U;
+    }
+
+    for (i = 0; i < row_count; i++) {
+        if (keep[i] == 0U) {
+            continue;
+        }
+        for (j = i + 1U; j < row_count; j++) {
+            if (keep[j] == 0U) {
+                continue;
+            }
+            if (rows_similar(normalized[i], normalized[j],
+                             rows[i].count, rows[j].count) != 0) {
+                keep[j] = 0U;
+            }
+        }
+    }
+
+    write_index = 0;
+    for (i = 0; i < row_count; i++) {
+        if (keep[i] != 0U) {
+            rows[write_index] = rows[i];
+            write_index++;
+        } else {
+            free(rows[i].tuples);
+            rows[i].tuples = NULL;
+            rows[i].count = 0;
+        }
+    }
+
+    for (i = 0; i < row_count; i++) {
+        free(normalized[i]);
+    }
+    free(normalized);
+    free(keep);
+
+    return write_index;
+}
+
+static Row make_row(const Tuple *source, size_t count)
+{
+    Row row;
+
+    row.count = count;
+    if (count == 0U) {
+        row.tuples = NULL;
+        return row;
+    }
+    row.tuples = (Tuple *)safe_malloc(count, sizeof(Tuple));
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(row.tuples, source, count * sizeof(Tuple));
+    return row;
+}
+
+static void print_matrix(const Row *rows, size_t row_count)
+{
+    size_t i;
+    size_t j;
+
+    printf("[");
+    for (i = 0; i < row_count; i++) {
+        printf("[");
+        for (j = 0; j < rows[i].count; j++) {
+            printf("(%d, %d)", rows[i].tuples[j].first, rows[i].tuples[j].second);
+            if (j + 1U < rows[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1U < row_count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    Tuple row0[] = { {4, 5}, {3, 2} };
+    Tuple row1[] = { {2, 2}, {4, 6} };
+    Tuple row2[] = { {3, 2}, {4, 5} };
+    Tuple row3[] = { {1, 1}, {9, 9} };
+    Tuple row4[] = { {9, 9}, {1, 1} };
+    size_t row_count = 5;
+    size_t new_count;
+    size_t i;
+    Row *matrix;
+
+    matrix = (Row *)safe_malloc(row_count, sizeof(Row));
+    matrix[0] = make_row(row0, sizeof(row0) / sizeof(row0[0]));
+    matrix[1] = make_row(row1, sizeof(row1) / sizeof(row1[0]));
+    matrix[2] = make_row(row2, sizeof(row2) / sizeof(row2[0]));
+    matrix[3] = make_row(row3, sizeof(row3) / sizeof(row3[0]));
+    matrix[4] = make_row(row4, sizeof(row4) / sizeof(row4[0]));
+
+    printf("Original matrix:\n");
+    print_matrix(matrix, row_count);
+
+    new_count = remove_similar_rows(matrix, row_count);
+
+    printf("Matrix after removing similar rows:\n");
+    print_matrix(matrix, new_count);
+
+    for (i = 0; i < new_count; i++) {
+        free(matrix[i].tuples);
+    }
+    free(matrix);
+
+    return EXIT_SUCCESS;
+}

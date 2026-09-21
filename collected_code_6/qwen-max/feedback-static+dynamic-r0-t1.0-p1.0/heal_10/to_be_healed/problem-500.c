@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected '  hello there have a rocky day', got <no output>
+  *  test case 2 failed: expected '  Part of the journey is end', got <no output>
+  *  test case 1 failed: expected '  Hi there How are you', got <no output>
+  */
+
+char *concat_elements(const char *array[], size_t count) {
+    if (count == 0) return NULL;
+
+    size_t total_length = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (array[i] != NULL) {
+            size_t len = strnlen(array[i], 1024);
+            if (len > 0) total_length += len;
+        }
+    }
+
+    total_length += (count - 1);
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) return NULL;
+
+    result[0] = '\0';
+    size_t offset = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (i > 0 && array[i] != NULL) {
+            result[offset++] = ' ';
+        }
+        if (array[i] != NULL) {
+            size_t len = strnlen(array[i], 1024);
+            if (len > 0 && offset + len <= total_length + 1) {
+                /* Possible weaknesses found:
+                 * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+                 */
+                strncpy(result + offset, array[i], len);
+                offset += len;
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+    }
+    result[total_length] = '\0';
+
+    return result;
+}
+
+int main() {
+    const char *elements[] = {"  hello there have a rocky day", "  Hi there How are you", "  Part of the journey is end"};
+    size_t count = sizeof(elements) / sizeof(elements[0]);
+
+    char *combined = concat_elements(elements, count);
+    if (combined != NULL) {
+        printf("%s\n", combined);
+        free(combined);
+    }
+
+    return 0;
+}

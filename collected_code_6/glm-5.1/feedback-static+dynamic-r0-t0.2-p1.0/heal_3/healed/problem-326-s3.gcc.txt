@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-326-s3.c: In function 'get_most_frequent_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-326-s3.c:108:57: error: 'word_len' undeclared (first use in this function)
+  108 |                 result = strdup_custom(entries[i].word, word_len);
+      |                                                         ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-326-s3.c:108:57: note: each undeclared identifier is reported only once for each function it appears in

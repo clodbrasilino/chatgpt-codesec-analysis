@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-73-s2.c:59:32: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+                if (alloc_size > 0) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-73-s2.c:51:45: note: Assignment 'alloc_size=raw_len+1', assigned value is greater than 0
+                size_t alloc_size = raw_len + 1;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-73-s2.c:53:33: note: Assuming condition is false
+                if (result[idx] == NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-73-s2.c:59:32: note: Condition 'alloc_size>0' is always true
+                if (alloc_size > 0) {
+                               ^

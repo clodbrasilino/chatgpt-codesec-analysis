@@ -1,0 +1,126 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+
+static int sum_even_natural_numbers(uint64_t left, uint64_t right,
+                                    uint64_t *result)
+{
+    uint64_t first;
+    uint64_t last;
+    uint64_t count;
+    uint64_t half;
+    uint64_t factor;
+
+    if (result == NULL || left == 0 || left > right) {
+        return 0;
+    }
+
+    if ((left & UINT64_C(1)) != 0) {
+        if (left == UINT64_MAX) {
+            *result = 0;
+            return 1;
+        }
+        first = left + UINT64_C(1);
+    } else {
+        first = left;
+    }
+
+    last = right - (right & UINT64_C(1));
+
+    if (first > last) {
+        *result = 0;
+        return 1;
+    }
+
+    count = ((last - first) / UINT64_C(2)) + UINT64_C(1);
+
+    if ((count & UINT64_C(1)) == 0) {
+        half = count / UINT64_C(2);
+        if (first > UINT64_MAX - last) {
+            return 0;
+        }
+        factor = first + last;
+    } else {
+        if (first > UINT64_MAX - last) {
+            return 0;
+        }
+        half = (first + last) / UINT64_C(2);
+        factor = count;
+    }
+
+    if (half != 0 && factor > UINT64_MAX / half) {
+        return 0;
+    }
+
+    *result = half * factor;
+    return 1;
+}
+
+static int read_range(uint64_t *left, uint64_t *right)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char extra;
+    int matched;
+
+    if (left == NULL || right == NULL) {
+        return 0;
+    }
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    if (buffer[0] != '\0') {
+        size_t length = 0;
+
+        while (buffer[length] != '\0') {
+            ++length;
+        }
+
+        if (length > 0 && buffer[length - 1] != '\n' && !feof(stdin)) {
+            int ch;
+
+            do {
+                /* Possible weaknesses found:
+                 * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+                 */
+                ch = getchar();
+            } while (ch != '\n' && ch != EOF);
+
+            return 0;
+        }
+    }
+
+    errno = 0;
+    matched = sscanf(buffer, "%" SCNu64 " %" SCNu64 " %c",
+                     left, right, &extra);
+
+    return errno != ERANGE && matched == 2;
+}
+
+int main(void)
+{
+    uint64_t left;
+    uint64_t right;
+    uint64_t sum;
+
+    if (!read_range(&left, &right)) {
+        fputs("Invalid input\n", stderr);
+        return 1;
+    }
+
+    if (!sum_even_natural_numbers(left, right, &sum)) {
+        fputs("Invalid range or arithmetic overflow\n", stderr);
+        return 1;
+    }
+
+    if (printf("%" PRIu64 "\n", sum) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

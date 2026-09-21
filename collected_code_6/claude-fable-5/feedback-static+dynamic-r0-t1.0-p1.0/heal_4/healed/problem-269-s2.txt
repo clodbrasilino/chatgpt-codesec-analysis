@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    do {
+        c = getchar();
+        count++;
+        if (count >= ULONG_MAX) {
+            break;
+        }
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code is actually already well-written and the Flawfinder findings are low-risk (risk level 1) informational warnings rather than genuine vulnerabilities. Here's why:
+
+1. **`getchar()` warnings (CWE-120, CWE-20):** Flawfinder flags `getchar()` generically because character-reading functions in loops *can* be misused to overflow buffers. However, this code never stores input into a fixed-size buffer — it reads single characters into an `int`, so no buffer overflow is possible. The result is correctly stored as `int` (not `char`), which is essential for reliable `EOF` detection.
+
+2. **Input validation (CWE-20):** Already handled well — the code checks for `EOF`, drains the rest of the line via `flush_input()`, and validates printability with `isprint()` using a proper `unsigned char` cast, avoiding undefined behavior for negative `char` values.
+
+3. **Defensive addition in the rewrite:** I added a bounded counter to `flush_input()`. In practice the loop always terminates on `EOF`, but the explicit bound formally satisfies the "check boundaries in loops" concern (CWE-20) and guards against pathological stream implementations.
+
+4. **Existing good practices retained:** checking `fflush()` return value, `(unsigned char)` casts before `ctype.h` functions, and returning standard `EXIT_SUCCESS`/`EXIT_FAILURE` codes.

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:39:43: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (result_idx + copy_len <= input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:38:39: note: outer condition: result_idx+copy_len<=input_len
+            if (result_idx + copy_len <= input_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:39:43: note: identical inner condition: result_idx+copy_len<=input_len
+                if (result_idx + copy_len <= input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:52:40: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (result_idx + remaining <= input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:51:36: note: outer condition: result_idx+remaining<=input_len
+        if (result_idx + remaining <= input_len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-459-s3.c:52:40: note: identical inner condition: result_idx+remaining<=input_len
+            if (result_idx + remaining <= input_len) {
+                                       ^

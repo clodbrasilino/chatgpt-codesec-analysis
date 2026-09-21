@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced `strlen()` with `strnlen()`, which takes a maximum length parameter. This guarantees the read never exceeds the buffer bounds even if the string is not null-terminated. If `strnlen` returns `max_len`, the string lacks a terminator within bounds and is rejected as invalid.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now a named constant (`MAX_INPUT_LEN`), `fgets` is already bounded by `sizeof(buffer)`, and a defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination before any string operations. The `ascii_sum` function signature was changed to accept the buffer's capacity, so bounds information travels with the pointer rather than being assumed.

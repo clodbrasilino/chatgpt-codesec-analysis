@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <ctype.h>
+
+uint64_t rectangular_number(uint32_t n) {
+    return (uint64_t)n * ((uint64_t)n + 1);
+}
+
+int main(void) {
+    char buffer[64];
+    char *endptr;
+    unsigned long value;
+    uint32_t n;
+    size_t len;
+    int valid = 1;
+
+    printf("Enter n: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (strchr(buffer, '\n') == NULL) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    len = strcspn(buffer, "\n");
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    buffer[len] = '\0';
+
+    if (len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)buffer[i])) {
+            valid = 0;
+            break;
+        }
+    }
+
+    if (!valid) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    errno = 0;
+    value = strtoul(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || *endptr != '\0' || value > UINT32_MAX) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    n = (uint32_t)value;
+
+    printf("%" PRIu64 "\n", rectangular_number(n));
+
+    return 0;
+}

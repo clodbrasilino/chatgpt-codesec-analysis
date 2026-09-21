@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringsWithSameFirstLast(const char *s, int len) {
+    int count = 0;
+    for (int i = 0; i < len; ++i) {
+        for (int j = i + 1; j <= len; ++j) {
+            if (s[i] == s[j - 1]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char str[] = "abcab";
+    int result = countSubstringsWithSameFirstLast(str, (int)strlen(str));
+    printf("%d\n", result);
+    return 0;
+}
+```
+In the provided code, the `strlen` function is used correctly to determine the length of the null-terminated string. The identified warning by Flawfinder is more about the general use of `strlen`, which can cause issues if the string is not null-terminated. However, in this specific context, the string `str` is a null-terminated string literal, so `strlen` is used safely.
+
+The code itself does not need changes regarding the `strlen` usage. If you were to handle non-null-terminated strings, you would need a different approach, but that's not applicable here. The code is already correct and safe as it stands.

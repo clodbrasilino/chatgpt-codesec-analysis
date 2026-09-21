@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t buffer_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    buffer_size = length + 1U;
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need to add `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Summary of fixes applied:**
+
+1. **`knownConditionTrueFalse` (cppcheck)**: Removed the redundant `length < buffer_size` check. Since `buffer_size = length + 1U` and the overflow case is already rejected beforehand, that condition could never be false — dead code that obscures intent.
+
+2. **Overflow guard clarity**: Replaced `(size_t)-1` with `SIZE_MAX` from `<stdint.h>`, which expresses the same guard against `length + 1U` wrapping to zero, but is far more readable and idiomatic.
+
+3. **Flawfinder CWE-120 on `memcpy`**: This was a low-risk advisory rather than a genuine defect. The rewrite keeps `memcpy` but makes its safety self-evident: the destination is allocated as exactly `length + 1` bytes, `length` bytes are copied, and the terminator is written at index `length`. No copy can exceed the allocation.
+
+4. **`malloc` failure**: The existing `NULL` check was already correct and is retained, so the "assuming condition is false" analyzer note is satisfied by the explicit early return.
+
+The `main` function required no changes — it correctly checks the return of `extract_quoted`, handles I/O errors from `printf`/`fprintf`, and frees the buffer on every exit path, avoiding leaks.

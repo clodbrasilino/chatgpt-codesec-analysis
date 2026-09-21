@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-13-s3.c: In function 'open_regular_file':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-13-s3.c:201:32: error: 'O_NOFOLLOW' undeclared (first use in this function)
+  201 |     fd = open(path, O_RDONLY | O_NOFOLLOW | O_NOCTTY);
+      |                                ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-13-s3.c:201:32: note: each undeclared identifier is reported only once for each function it appears in

@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **extract_quoted(const char *input, size_t *count);
+void free_matches(char **matches, size_t count);
+
+char **extract_quoted(const char *input, size_t *count)
+{
+    regex_t regex;
+    regmatch_t pmatch[2];
+    const char *cursor;
+    char **matches = NULL;
+    char **tmp;
+    size_t n = 0;
+    int ret;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    cursor = input;
+    while (regexec(&regex, cursor, 2, pmatch, 0) == 0) {
+        size_t len;
+        char *value;
+
+        if (pmatch[1].rm_so < 0 || pmatch[1].rm_eo < pmatch[1].rm_so) {
+            break;
+        }
+
+        len = (size_t)(pmatch[1].rm_eo - pmatch[1].rm_so);
+        value = malloc(len + 1);
+        if (value == NULL) {
+            free_matches(matches, n);
+            regfree(&regex);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(value, cursor + pmatch[1].rm_so, len);
+        value[len] = '\0';
+
+        tmp = realloc(matches, (n + 1) * sizeof(char *));
+        if (tmp == NULL) {
+            free(value);
+            free_matches(matches, n);
+            regfree(&regex);
+            return NULL;
+        }
+        matches = tmp;
+        matches[n] = value;
+        n++;
+
+        if (pmatch[0].rm_eo == 0) {
+            break;
+        }
+        cursor += pmatch[0].rm_eo;
+    }
+
+    regfree(&regex);
+    *count = n;
+    return matches;
+}
+
+void free_matches(char **matches, size_t count)
+{
+    size_t i;
+
+    if (matches == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(matches[i]);
+    }
+    free(matches);
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello\" and she replied \"good morning\" then \"bye\".";
+    char **values;
+    size_t count = 0;
+    size_t i;
+
+    values = extract_quoted(text, &count);
+    if (values == NULL && count == 0) {
+        fprintf(stderr, "No matches found or an error occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Match %zu: %s\n", i + 1, values[i]) < 0) {
+            free_matches(values, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_matches(values, count);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+#include <string.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+int find_max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char max_char = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            max_char = c;
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    *result = (char)max_char;
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUFFER_SIZE];
+    char max_char;
+    char *newline;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    newline = memchr(input, '\n', sizeof(input));
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    if (find_max_occurring_char(input, &max_char) != 0) {
+        fprintf(stderr, "Empty string or invalid input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The code already correctly mitigates the Flawfinder-reported weakness (CWE-119/CWE-120) regarding the statically-sized `input` buffer:
+
+1. **Bounded read:** `fgets(input, (int)sizeof(input), stdin)` limits input to the buffer size, preventing overflow — this is the primary fix for the flagged risk.
+2. **Guaranteed termination:** `input[sizeof(input) - 1] = '\0'` is defensive redundancy ensuring null termination even in edge cases.
+3. **Safe newline stripping:** `memchr` bounded by `sizeof(input)` avoids scanning past the buffer, unlike an unbounded `strchr` on a potentially unterminated string.
+4. **Robust counting function:** `find_max_occurring_char` validates pointers, casts to `unsigned char` before indexing (avoiding negative-index UB with signed `char` on high-bit characters), and uses a correctly sized `counts[UCHAR_MAX + 1]` table.
+5. **Error handling:** All I/O return values (`fgets`, `printf`) are checked, and empty input is rejected via the `found` flag.
+
+No functional changes were required — the identified weakness was already properly addressed, so the rewrite preserves the safe implementation with comments removed as requested.

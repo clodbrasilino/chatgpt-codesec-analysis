@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <string.h>
+
+long countNonEmptySubstrings(const char *str) {
+    long n = 0;
+    while (str[n] != '\0') {
+        n++;
+    }
+    return (n * (n + 1)) / 2;
+}
+
+int main() {
+    const char *input = "test";
+    long result = countNonEmptySubstrings(input);
+    printf("Number of non-empty substrings: %ld\n", result);
+    return 0;
+}

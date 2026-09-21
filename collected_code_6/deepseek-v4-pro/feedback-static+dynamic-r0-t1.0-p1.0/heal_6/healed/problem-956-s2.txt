@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static size_t count_uppercase_splits(const char *input, size_t len) {
+    size_t count = 1;
+    const char *p = input;
+    const char *end = input + len;
+
+    while (p < end) {
+        if (*p >= 'A' && *p <= 'Z') {
+            count++;
+        }
+        p++;
+    }
+    return count;
+}
+
+char **split_at_uppercase(const char *input) {
+    size_t count;
+    char **result;
+    size_t i = 0;
+    size_t start = 0;
+    size_t len;
+
+    if (!input) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    if (len > 4096) {
+        len = 4096;
+    }
+
+    if (len == 0) {
+        result = malloc(2 * sizeof(char *));
+        if (!result) {
+            return NULL;
+        }
+        result[0] = malloc(1);
+        if (!result[0]) {
+            free(result);
+            return NULL;
+        }
+        result[0][0] = '\0';
+        result[1] = NULL;
+        return result;
+    }
+
+    count = count_uppercase_splits(input, len);
+
+    result = malloc((count + 1) * sizeof(char *));
+    if (!result) {
+        return NULL;
+    }
+
+    start = 0;
+    i = 0;
+
+    while (i < count) {
+        size_t end = len;
+
+        if (i < count - 1) {
+            size_t q = start;
+            int found = 0;
+
+            while (q < len) {
+                if (input[q] >= 'A' && input[q] <= 'Z') {
+                    if (q > start) {
+                        end = q;
+                        found = 1;
+                    }
+                    break;
+                }
+                q++;
+            }
+            if (!found) {
+                end = len;
+            }
+        }
+
+        {
+            size_t segment_len = end - start;
+            result[i] = malloc(segment_len + 1);
+            if (!result[i]) {
+                size_t j;
+                for (j = 0; j < i; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            if (segment_len > 0) {
+                memcpy(result[i], input + start, segment_len);
+            }
+            result[i][segment_len] = '\0';
+        }
+
+        start = end;
+        i++;
+    }
+
+    result[count] = NULL;
+    return result;
+}
+
+void free_split_result(char **result) {
+    int i = 0;
+    if (!result) return;
+    while (result[i] != NULL) {
+        free(result[i]);
+        i++;
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *test_string = "helloWorldThisIsATest";
+    char **parts = split_at_uppercase(test_string);
+    int i = 0;
+
+    if (!parts) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    printf("Original: %s\n", test_string);
+    printf("Split parts:\n");
+    while (parts[i] != NULL) {
+        printf("  [%d]: '%s'\n", i, parts[i]);
+        i++;
+    }
+
+    free_split_result(parts);
+    return 0;
+}
+```

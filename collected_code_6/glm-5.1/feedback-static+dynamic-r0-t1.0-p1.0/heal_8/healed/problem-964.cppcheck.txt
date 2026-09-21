@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964.c:37:18: style: Condition 'null_str==NULL' is always false [knownConditionTrueFalse]
+    if (null_str == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964.c:17:28: note: Assignment 'null_str="not null"', assigned value is "not null"
+    const char *null_str = "not null";
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964.c:37:18: note: Condition 'null_str==NULL' is always false
+    if (null_str == NULL) {
+                 ^

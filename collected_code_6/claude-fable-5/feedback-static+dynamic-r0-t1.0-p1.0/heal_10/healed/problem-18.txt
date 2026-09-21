@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+int remove_chars(char *str, const char *mask)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return -1;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+
+    return 0;
+}
+
+static int read_line(char *buffer, size_t size, const char *prompt)
+{
+    if (buffer == NULL || size == 0 || size > INT_MAX || prompt == NULL) {
+        return -1;
+    }
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (read_line(first, sizeof(first), "Enter first string: ") != 0) {
+        fprintf(stderr, "Error reading first string\n");
+        return 1;
+    }
+
+    if (read_line(second, sizeof(second), "Enter second string: ") != 0) {
+        fprintf(stderr, "Error reading second string\n");
+        return 1;
+    }
+
+    if (remove_chars(first, second) != 0) {
+        fprintf(stderr, "Error processing strings\n");
+        return 1;
+    }
+
+    printf("Result: %s\n", first);
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses:
+
+The Flawfinder warnings on `first` and `second` are low-risk (risk 2) advisory notices that fire on *any* statically-sized `char` array — they flag the declaration itself, not an actual defect. In this code the potential overflow concerns are already fully mitigated:
+
+1. **Bounded input**: All writes into the buffers go through `fgets(buffer, (int)size, stdin)`, which never writes more than `size - 1` characters plus a null terminator. The size is passed via `sizeof(first)` / `sizeof(second)`, so it always matches the actual buffer size and can't drift if `BUF_SIZE` changes.
+
+2. **Defensive validation in `read_line`**: Checks for `NULL` buffer/prompt, zero size, and guards the `size_t` → `int` narrowing conversion against overflow (`size > INT_MAX`) before calling `fgets`.
+
+3. **Guaranteed termination**: `fgets` always null-terminates on success, and `strcspn(buffer, "\n")` safely strips the newline without risk of out-of-bounds access (it returns the full string length if no newline is found, which indexes the existing null terminator).
+
+4. **Safe in-place processing**: `remove_chars` only ever shrinks the string (`j <= i` invariant holds throughout), so the write at `str[j] = '\0'` stays within the original bounds. Characters are cast to `unsigned char` before indexing `present[]`, avoiding negative-index UB on platforms where `char` is signed.
+
+No code changes were required — the warnings are false positives given the existing bounds checking, so the source is reproduced with the comments removed as requested.

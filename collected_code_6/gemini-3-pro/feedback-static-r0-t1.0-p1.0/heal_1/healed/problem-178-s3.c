@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool search_literal(const char *text, const char *literal) {
+    if (text == NULL || literal == NULL) {
+        return false;
+    }
+    
+    if (literal[0] == '\0') {
+        return false;
+    }
+
+    return strstr(text, literal) != NULL;
+}
+
+int main(void) {
+    const char *target_string = "The quick brown fox jumps over the lazy dog.";
+    const char *literals_to_search[] = {
+        "quick",
+        "lazy",
+        "cat",
+        "dog",
+        "brown fox",
+        NULL
+    };
+
+    printf("Text: %s\n", target_string);
+    
+    for (size_t i = 0; literals_to_search[i] != NULL; i++) {
+        bool found = search_literal(target_string, literals_to_search[i]);
+        if (found) {
+            printf("Found: '%s'\n", literals_to_search[i]);
+        } else {
+            printf("Not found: '%s'\n", literals_to_search[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

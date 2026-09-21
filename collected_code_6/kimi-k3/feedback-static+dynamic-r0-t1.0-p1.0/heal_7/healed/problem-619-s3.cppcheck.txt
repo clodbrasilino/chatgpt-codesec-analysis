@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:105:32: style: Condition 'out_pos+nlen>output_size' is always false [knownConditionTrueFalse]
+            if (out_pos + nlen > output_size)
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:100:33: note: Assuming that condition 'out_pos+nlen+2>output_size' is not redundant
+            (out_pos + nlen + 2 > output_size))
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:105:32: note: Condition 'out_pos+nlen>output_size' is always false
+            if (out_pos + nlen > output_size)
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:122:31: style: Condition 'out_pos+rem_len>output_size' is always false [knownConditionTrueFalse]
+        if (out_pos + rem_len > output_size)
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:117:32: note: Assuming that condition 'out_pos+rem_len+1>output_size' is not redundant
+        (out_pos + rem_len + 1 > output_size))
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-619-s3.c:122:31: note: Condition 'out_pos+rem_len>output_size' is always false
+        if (out_pos + rem_len > output_size)
+                              ^

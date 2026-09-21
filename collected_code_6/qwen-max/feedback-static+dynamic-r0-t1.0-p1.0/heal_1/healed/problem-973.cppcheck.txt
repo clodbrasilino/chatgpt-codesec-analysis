@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-973.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-973.c:13:9: warning: Either the condition 'd<=0' is redundant or the array 'temp[2147483648]' is accessed at index 2147483648, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    temp[d] = '\0';
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-973.c:9:11: note: Assuming that condition 'd<=0' is not redundant
+    if (d <= 0) return;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-973.c:13:9: note: Array index out of bounds
+    temp[d] = '\0';
+        ^

@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_substrings(const char *str, size_t len) {
+    if (len == 0) {
+        return 0;
+    }
+    
+    int *prefix = (int *)malloc((len + 1) * sizeof(int));
+    if (prefix == NULL) {
+        return -1;
+    }
+    
+    prefix[0] = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            free(prefix);
+            return -1;
+        }
+        prefix[i + 1] = prefix[i] + (str[i] - '0');
+    }
+    
+    int count = 0;
+    for (size_t sublen = 1; sublen <= len; sublen++) {
+        for (size_t i = 0; i <= len - sublen; i++) {
+            int sum = prefix[i + sublen] - prefix[i];
+            if ((size_t)sum == sublen) {
+                count++;
+            }
+        }
+    }
+    
+    free(prefix);
+    return count;
+}
+
+int main(void) {
+    char input[1024];
+    printf("Enter a numeric string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = 0;
+    while (input[len] != '\0') {
+        len++;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len == 0) {
+        printf("0\n");
+        return 0;
+    }
+    
+    if (len >= sizeof(input)) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = count_substrings(input, len);
+    if (result < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    return 0;
+}

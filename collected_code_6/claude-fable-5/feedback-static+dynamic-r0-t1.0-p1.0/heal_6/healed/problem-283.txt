@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(number, max_len);
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        const int digit = number[i] - '0';
+        if (digit < 0 || digit > 9) {
+            return false;
+        }
+        counts[digit]++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT] = {0};
+    size_t len;
+
+    printf("Enter a number: ");
+    fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else if (len == sizeof(input) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+1. **`char input[MAX_INPUT]` (CWE-119/CWE-120, statically-sized buffer):** This warning is largely a false positive in the original code, because the buffer is used safely. The code already applies the correct mitigations:
+   - `fgets(input, (int)sizeof(input), stdin)` limits the read to the buffer size, so no overflow is possible.
+   - Explicit null-termination via `input[sizeof(input) - 1U] = '\0'` guards against any edge case.
+   - `strnlen` is used instead of `strlen`, bounding all length computations to `sizeof(input)`.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** Also a false positive — the loop never writes to any buffer; it merely drains leftover characters from `stdin` when the input line exceeded the buffer capacity. In the rewrite I factored it into `discard_remaining_input()` to make its intent explicit and keep `main` free of the flagged pattern.
+
+3. **Additional hardening in the rewrite:**
+   - Added `fflush(stdout)` after the prompt so it is guaranteed to appear before blocking on input (stdout may be fully buffered when redirected).
+   - `digit_frequency_valid` retains its defensive checks: NULL pointer, zero `max_len`, empty string, unterminated buffer (`len >= max_len`), non-digit rejection via `isdigit` with the correct `unsigned char` cast, and redundant range validation of the computed digit before indexing `counts[]`, preventing any out-of-bounds array write.
+
+The code was already well-defended; the rewrite preserves those defenses and slightly improves structure and output flushing.

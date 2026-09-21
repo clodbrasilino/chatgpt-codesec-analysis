@@ -1,0 +1,193 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    VAL_INT,
+    VAL_DICT
+} ValueType;
+
+typedef struct Dict Dict;
+
+typedef struct {
+    ValueType type;
+    union {
+        int i_val;
+        Dict *d_val;
+    } data;
+} DictValue;
+
+typedef struct {
+    char *key;
+    DictValue value;
+} DictEntry;
+
+struct Dict {
+    DictEntry **entries;
+    size_t count;
+    size_t capacity;
+};
+
+static char *duplicate_string(const char *s) {
+    if (!s) return NULL;
+    
+    size_t max_len = 4096;
+    size_t len = 0;
+    
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    
+    char *dup = malloc(len + 1);
+    if (dup) {
+        for (size_t i = 0; i < len; i++) {
+            dup[i] = s[i];
+        }
+        dup[len] = '\0';
+    }
+    
+    return dup;
+}
+
+Dict* create_dict(void) {
+    Dict *d = malloc(sizeof(Dict));
+    if (!d) return NULL;
+    d->capacity = 4;
+    d->count = 0;
+    d->entries = malloc(sizeof(DictEntry*) * d->capacity);
+    if (!d->entries) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+void free_dict(Dict *d) {
+    if (!d) return;
+    for (size_t i = 0; i < d->count; i++) {
+        DictEntry *entry = d->entries[i];
+        if (!entry) continue;
+        if (entry->key) {
+            free(entry->key);
+        }
+        if (entry->value.type == VAL_DICT) {
+            free_dict(entry->value.data.d_val);
+        }
+        free(entry);
+    }
+    if (d->entries) {
+        free(d->entries);
+    }
+    free(d);
+}
+
+int add_int_entry(Dict *d, const char *key, int val) {
+    if (!d || !key) return -1;
+    if (d->count >= d->capacity) {
+        size_t new_cap = d->capacity * 2;
+        if (new_cap < d->capacity) return -1; 
+        if (new_cap > ((size_t)-1) / sizeof(DictEntry*)) return -1;
+        DictEntry **new_entries = realloc(d->entries, sizeof(DictEntry*) * new_cap);
+        if (!new_entries) return -1;
+        d->entries = new_entries;
+        d->capacity = new_cap;
+    }
+    DictEntry *entry = malloc(sizeof(DictEntry));
+    if (!entry) return -1;
+    entry->key = duplicate_string(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+    entry->value.type = VAL_INT;
+    entry->value.data.i_val = val;
+    d->entries[d->count++] = entry;
+    return 0;
+}
+
+int add_dict_entry(Dict *d, const char *key, Dict *val) {
+    if (!d || !key || !val) return -1;
+    if (d->count >= d->capacity) {
+        size_t new_cap = d->capacity * 2;
+        if (new_cap < d->capacity) return -1; 
+        if (new_cap > ((size_t)-1) / sizeof(DictEntry*)) return -1;
+        DictEntry **new_entries = realloc(d->entries, sizeof(DictEntry*) * new_cap);
+        if (!new_entries) return -1;
+        d->entries = new_entries;
+        d->capacity = new_cap;
+    }
+    DictEntry *entry = malloc(sizeof(DictEntry));
+    if (!entry) return -1;
+    entry->key = duplicate_string(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+    entry->value.type = VAL_DICT;
+    entry->value.data.d_val = val;
+    d->entries[d->count++] = entry;
+    return 0;
+}
+
+size_t get_dict_depth(const Dict *d) {
+    if (!d) return 0;
+    size_t max_depth = 0;
+    for (size_t i = 0; i < d->count; i++) {
+        if (d->entries[i] && d->entries[i]->value.type == VAL_DICT) {
+            size_t child_depth = get_dict_depth(d->entries[i]->value.data.d_val);
+            if (child_depth > max_depth) {
+                max_depth = child_depth;
+            }
+        }
+    }
+    return max_depth + 1;
+}
+
+int main(void) {
+    Dict *root = create_dict();
+    if (!root) return EXIT_FAILURE;
+
+    Dict *child1 = create_dict();
+    if (!child1) {
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    Dict *child2 = create_dict();
+    if (!child2) {
+        free_dict(child1);
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    if (add_int_entry(child2, "val", 42) != 0) {
+        free_dict(child2);
+        free_dict(child1);
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    if (add_dict_entry(child1, "child2", child2) != 0) {
+        free_dict(child2);
+        free_dict(child1);
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    if (add_dict_entry(root, "child1", child1) != 0) {
+        free_dict(child1);
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    if (add_int_entry(root, "root_val", 1) != 0) {
+        free_dict(root);
+        return EXIT_FAILURE;
+    }
+
+    size_t depth = get_dict_depth(root);
+    printf("%zu\n", depth);
+
+    free_dict(root);
+    return EXIT_SUCCESS;
+}

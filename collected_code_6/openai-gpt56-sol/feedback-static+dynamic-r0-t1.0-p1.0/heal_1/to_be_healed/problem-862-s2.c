@@ -1,0 +1,247 @@
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *word;
+    size_t count;
+} WordCount;
+
+static void free_word_counts(WordCount *words, size_t count)
+{
+    if (words == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        free(words[i].word);
+    }
+
+    free(words);
+}
+
+static char *duplicate_lowercase_word(const char *start, size_t length)
+{
+    if (length == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *word = malloc(length + 1);
+    if (word == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        word[i] = (char)tolower((unsigned char)start[i]);
+    }
+
+    word[length] = '\0';
+    return word;
+}
+
+static int add_word(WordCount **words, size_t *count, size_t *capacity,
+                    const char *start, size_t length)
+{
+    char *word = duplicate_lowercase_word(start, length);
+    if (word == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < *count; ++i) {
+        if (strcmp((*words)[i].word, word) == 0) {
+            if ((*words)[i].count == SIZE_MAX) {
+                free(word);
+                return -1;
+            }
+
+            ++(*words)[i].count;
+            free(word);
+            return 0;
+        }
+    }
+
+    if (*count == *capacity) {
+        size_t new_capacity = *capacity == 0 ? 16 : *capacity * 2;
+
+        if (new_capacity < *capacity ||
+            new_capacity > SIZE_MAX / sizeof(**words)) {
+            free(word);
+            return -1;
+        }
+
+        WordCount *new_words = realloc(*words, new_capacity * sizeof(**words));
+        if (new_words == NULL) {
+            free(word);
+            return -1;
+        }
+
+        *words = new_words;
+        *capacity = new_capacity;
+    }
+
+    (*words)[*count].word = word;
+    (*words)[*count].count = 1;
+    ++*count;
+
+    return 0;
+}
+
+static int compare_word_counts(const void *left, const void *right)
+{
+    const WordCount *a = left;
+    const WordCount *b = right;
+
+    if (a->count < b->count) {
+        return 1;
+    }
+
+    if (a->count > b->count) {
+        return -1;
+    }
+
+    return strcmp(a->word, b->word);
+}
+
+static int find_most_common_words(const char *text, size_t n,
+                                  WordCount **result, size_t *result_count)
+{
+    if (text == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    WordCount *words = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    const char *cursor = text;
+
+    while (*cursor != '\0') {
+        while (*cursor != '\0' && !isalnum((unsigned char)*cursor)) {
+            ++cursor;
+        }
+
+        const char *start = cursor;
+
+        while (*cursor != '\0' && isalnum((unsigned char)*cursor)) {
+            ++cursor;
+        }
+
+        size_t length = (size_t)(cursor - start);
+        if (length > 0 &&
+            add_word(&words, &count, &capacity, start, length) != 0) {
+            free_word_counts(words, count);
+            return -1;
+        }
+    }
+
+    qsort(words, count, sizeof(*words), compare_word_counts);
+
+    if (n < count) {
+        for (size_t i = n; i < count; ++i) {
+            free(words[i].word);
+        }
+        count = n;
+    }
+
+    if (count == 0) {
+        free(words);
+        words = NULL;
+    }
+
+    *result = words;
+    *result_count = count;
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <n> <text>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    char *end = NULL;
+    unsigned long long parsed_n = strtoull(argv[1], &end, 10);
+
+    if (errno != 0 || end == argv[1] || *end != '\0' ||
+        parsed_n > SIZE_MAX) {
+        fprintf(stderr, "Invalid value for n\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t text_length = 0;
+    for (int i = 2; i < argc; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t argument_length = strlen(argv[i]);
+
+        if (argument_length > SIZE_MAX - text_length ||
+            (i + 1 < argc && text_length + argument_length == SIZE_MAX)) {
+            fprintf(stderr, "Input text is too large\n");
+            return EXIT_FAILURE;
+        }
+
+        text_length += argument_length;
+        if (i + 1 < argc) {
+            ++text_length;
+        }
+    }
+
+    if (text_length == SIZE_MAX) {
+        fprintf(stderr, "Input text is too large\n");
+        return EXIT_FAILURE;
+    }
+
+    char *text = malloc(text_length + 1);
+    if (text == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    char *destination = text;
+    for (int i = 2; i < argc; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t argument_length = strlen(argv[i]);
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(destination, argv[i], argument_length);
+        destination += argument_length;
+
+        if (i + 1 < argc) {
+            *destination++ = ' ';
+        }
+    }
+    *destination = '\0';
+
+    WordCount *results = NULL;
+    size_t result_count = 0;
+
+    if (find_most_common_words(text, (size_t)parsed_n,
+                               &results, &result_count) != 0) {
+        fprintf(stderr, "Unable to process input\n");
+        free(text);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result_count; ++i) {
+        if (printf("%s: %zu\n", results[i].word, results[i].count) < 0) {
+            free_word_counts(results, result_count);
+            free(text);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_word_counts(results, result_count);
+    free(text);
+
+    return EXIT_SUCCESS;
+}

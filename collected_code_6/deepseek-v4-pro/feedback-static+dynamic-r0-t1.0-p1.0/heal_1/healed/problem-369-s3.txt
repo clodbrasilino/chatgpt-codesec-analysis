@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+double lateral_surface_area_cuboid(double length, double width, double height) {
+    if (length < 0 || width < 0 || height < 0) {
+        fprintf(stderr, "Error: Dimensions cannot be negative.\n");
+        return -1.0;
+    }
+    return 2.0 * height * (length + width);
+}
+
+int main(void) {
+    double length, width, height;
+    char *input_buffer = NULL;
+    size_t buffer_size = 0;
+    char *endptr;
+    ssize_t line_length;
+
+    printf("Enter length: ");
+    line_length = getline(&input_buffer, &buffer_size, stdin);
+    if (line_length == -1) {
+        fprintf(stderr, "Error: Failed to read input.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+    if (line_length > 0 && input_buffer[line_length - 1] == '\n') {
+        input_buffer[line_length - 1] = '\0';
+    }
+    length = strtod(input_buffer, &endptr);
+    if (endptr == input_buffer || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid input for length.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter width: ");
+    line_length = getline(&input_buffer, &buffer_size, stdin);
+    if (line_length == -1) {
+        fprintf(stderr, "Error: Failed to read input.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+    if (line_length > 0 && input_buffer[line_length - 1] == '\n') {
+        input_buffer[line_length - 1] = '\0';
+    }
+    width = strtod(input_buffer, &endptr);
+    if (endptr == input_buffer || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid input for width.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter height: ");
+    line_length = getline(&input_buffer, &buffer_size, stdin);
+    if (line_length == -1) {
+        fprintf(stderr, "Error: Failed to read input.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+    if (line_length > 0 && input_buffer[line_length - 1] == '\n') {
+        input_buffer[line_length - 1] = '\0';
+    }
+    height = strtod(input_buffer, &endptr);
+    if (endptr == input_buffer || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid input for height.\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(input_buffer);
+
+    double area = lateral_surface_area_cuboid(length, width, height);
+    if (area < 0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("Lateral surface area: %.2f\n", area);
+    return EXIT_SUCCESS;
+}
+```

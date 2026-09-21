@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:40:35: warning: Either the condition 'input_len==1024' is redundant or the array 'input[22]' is accessed at index 1023, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (input_len == 1024 && input[input_len - 1] != '\0') {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:40:19: note: Assuming that condition 'input_len==1024' is not redundant
+    if (input_len == 1024 && input[input_len - 1] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:40:35: note: Array index out of bounds
+    if (input_len == 1024 && input[input_len - 1] != '\0') {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:34:15: style: Condition 'input==NULL' is always false [knownConditionTrueFalse]
+    if (input == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:29:25: note: Assignment 'input="Hello, World! 123 @#$"', assigned value is "Hello, World! 123 @#$"
+    const char *input = "Hello, World! 123 @#$";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-727-s2.c:34:15: note: Condition 'input==NULL' is always false
+    if (input == NULL) {
+              ^

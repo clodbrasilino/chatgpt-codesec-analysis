@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    if (d > len || (len - d) > len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weaknesses:**
+
+The Flawfinder warnings on the three `memcpy` calls are effectively false positives, because the original code already establishes the necessary invariants before any copy occurs:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` was allocated with `len + 1` bytes, and `len - d` is strictly less than `len` since `d >= 1` after the modulo and early-return checks. The source read `str + d` up to `len - d` bytes stays within the string, whose length was verified with `strnlen` bounded by `buf_size`.
+
+2. **`memcpy(temp + (len - d), str, d)`** — the two copies together write exactly `len` bytes into a `len + 1` buffer, leaving room for the terminator written explicitly afterward.
+
+3. **`memcpy(str, temp, len + 1)`** — guarded by the explicit `len + 1 > buf_size` check, so the destination is guaranteed to hold `len + 1` bytes.
+
+Other defensive measures already present: `NULL` and zero-size rejection, an upper bound (`MAX_STR_LEN`) preventing pathological sizes, use of `strnlen` instead of `strlen` to avoid reading past an unterminated buffer, detection of a missing terminator (`len == buf_size`), a `malloc` failure check, and proper `free` on the single exit path after allocation.
+
+In the rewrite I added one extra explicit invariant check (`d > len || (len - d) > len`) before the copies. It is mathematically redundant given the preceding logic, but it makes the bounds relationship visible to static analyzers and future maintainers, directly addressing the "make sure destination can always hold the source data" advisory without changing behavior. The program still prints `eksforGeeksGe` for the sample input.

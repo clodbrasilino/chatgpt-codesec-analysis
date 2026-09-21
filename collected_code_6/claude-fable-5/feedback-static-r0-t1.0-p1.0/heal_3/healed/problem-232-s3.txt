@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_desc(const void *a, const void *b)
+{
+    int lhs = *(const int *)a;
+    int rhs = *(const int *)b;
+
+    if (lhs < rhs) {
+        return 1;
+    }
+    if (lhs > rhs) {
+        return -1;
+    }
+    return 0;
+}
+
+int get_n_largest(const int *data, size_t size, size_t n, int *result,
+                  size_t result_capacity)
+{
+    int *copy;
+    size_t copy_bytes;
+    size_t out_bytes;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (size == 0U || n == 0U || n > size) {
+        return -1;
+    }
+    if (n > result_capacity) {
+        return -1;
+    }
+    if (size > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy_bytes = size * sizeof(int);
+    out_bytes = n * sizeof(int);
+
+    copy = malloc(copy_bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, data, copy_bytes);
+    qsort(copy, size, sizeof(int), compare_desc);
+
+    if (out_bytes > result_capacity * sizeof(int)) {
+        free(copy);
+        return -1;
+    }
+
+    memcpy(result, copy, out_bytes);
+    free(copy);
+
+    return 0;
+}
+
+int main(void)
+{
+    int dataset[] = { 42, 7, 93, 15, 88, 3, 61, 27, 54, 99 };
+    size_t size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3U;
+    int *largest;
+    size_t i;
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Requested size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    largest = malloc(n * sizeof(int));
+    if (largest == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_largest(dataset, size, n, largest, n) != 0) {
+        fprintf(stderr, "Failed to get largest items\n");
+        free(largest);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest items are:\n", n);
+    for (i = 0U; i < n; i++) {
+        printf("%d\n", largest[i]);
+    }
+
+    free(largest);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the flagged weaknesses:**
+
+Both Flawfinder hits on `memcpy` (CWE-120) were already effectively mitigated in the original code, and remain so here:
+
+1. **First `memcpy` (into `copy`):** The destination is allocated with exactly `copy_bytes` (`size * sizeof(int)`), the same number of bytes copied. The overflow check `size > SIZE_MAX / sizeof(int)` guarantees the multiplication cannot wrap, and the `malloc` return value is checked. No overflow is possible.
+
+2. **Second `memcpy` (into `result`):** The guard `n > result_capacity` ensures the caller-supplied buffer can hold `n` integers before any copy occurs. I added an explicit defensive check of `out_bytes` against the destination capacity immediately before the copy, which makes the invariant local and obvious to static analyzers and reviewers, at negligible cost.
+
+Other defensive properties preserved: NULL-pointer validation, zero/oversized `n` rejection, allocation failure handling in both `main` and the helper, and no memory leaks on any error path (the `copy` buffer is freed on the new early-return path as well). The Flawfinder warnings are false positives in context, but the rewrite makes the bounds reasoning explicit at the point of the copy.

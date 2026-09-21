@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:13:35: warning: Either the condition 'length<64' is redundant or the array 'password[5]' is accessed at index 63, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (length < 64 && password[length] != '\0') {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:13:19: note: Assuming that condition 'length<64' is not redundant
+    while (length < 64 && password[length] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:13:35: note: Array index out of bounds
+    while (length < 64 && password[length] != '\0') {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:14:21: warning: Either the condition 'length<64' is redundant or the array 'password[5]' is accessed at index 63, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        if (password[length] >= 'A' && password[length] <= 'Z') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:13:19: note: Assuming that condition 'length<64' is not redundant
+    while (length < 64 && password[length] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-822.c:14:21: note: Array index out of bounds
+        if (password[length] >= 'A' && password[length] <= 'Z') {
+                    ^

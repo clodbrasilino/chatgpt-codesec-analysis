@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT 256
+
+int count_matches(const char *pattern, const char *text, int *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+
+    if (pattern == NULL || text == NULL || count == NULL) {
+        return -1;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[128];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        if (match.rm_eo == match.rm_so) {
+            break;
+        }
+        (*count)++;
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int analyze_string(const char *input)
+{
+    int upper = 0;
+    int lower = 0;
+    int digits = 0;
+    int special = 0;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    if (count_matches("[A-Z]", input, &upper) != 0) {
+        return -1;
+    }
+    if (count_matches("[a-z]", input, &lower) != 0) {
+        return -1;
+    }
+    if (count_matches("[0-9]", input, &digits) != 0) {
+        return -1;
+    }
+    if (count_matches("[^A-Za-z0-9]", input, &special) != 0) {
+        return -1;
+    }
+
+    printf("Uppercase letters : %d\n", upper);
+    printf("Lowercase letters : %d\n", lower);
+    printf("Numeric digits    : %d\n", digits);
+    printf("Special characters: %d\n", special);
+
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[MAX_INPUT];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (analyze_string(input) != 0) {
+        fprintf(stderr, "Analysis failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

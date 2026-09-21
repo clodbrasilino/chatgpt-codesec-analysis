@@ -1,0 +1,115 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 1;
+    size_t i;
+    size_t offset = 0;
+    size_t *lengths;
+    char *result;
+
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LENGTH + 1);
+        if (len > MAX_STRING_LENGTH) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (total > SIZE_MAX - len) {
+            free(lengths);
+            return NULL;
+        }
+        lengths[i] = len;
+        total += len;
+    }
+
+    result = malloc(total);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (offset >= total || lengths[i] > total - 1 - offset) {
+            free(result);
+            free(lengths);
+            return NULL;
+        }
+        memcpy(result + offset, list[i], lengths[i]);
+        offset += lengths[i];
+    }
+
+    if (offset >= total) {
+        free(result);
+        free(lengths);
+        return NULL;
+    }
+    result[offset] = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *joined;
+
+    joined = concatenate_list(words, count);
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder-reported `memcpy` weakness (CWE-120). The rewritten version preserves and slightly strengthens those defenses:
+
+1. **Destination sizing is provably correct before copying**: `total` is computed with overflow guards (`total > SIZE_MAX - len`), so `malloc(total)` allocates exactly enough space for all strings plus the NUL terminator.
+
+2. **Per-iteration bounds validation**: before every `memcpy`, the code verifies that `offset` is within bounds and that `lengths[i]` fits in the remaining space (`total - 1 - offset`), guaranteeing the destination can hold the source data — precisely what the Flawfinder note asks for.
+
+3. **Length capture via `strnlen` with a hard cap** (`MAX_STRING_LENGTH`) prevents unbounded reads of non-terminated input and TOCTOU-style surprises; the same cached `lengths[i]` values are reused for both allocation and copying, so the size checked is the size copied.
+
+4. **Explicit guard before writing the terminator** (`offset >= total`) ensures `result[offset] = '\0'` can never write out of bounds, closing the one spot where the original relied on implicit reasoning.
+
+5. **Multiplication overflow check** (`count > SIZE_MAX / sizeof(size_t)`) protects the `lengths` allocation, and all error paths release previously acquired memory, avoiding leaks (CWE-401).
+
+The remaining Flawfinder hit on `memcpy` is a false positive by construction: the tool flags the function name heuristically, but every invocation here is dominated by explicit capacity checks.

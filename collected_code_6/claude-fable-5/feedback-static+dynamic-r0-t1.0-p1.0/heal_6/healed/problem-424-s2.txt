@@ -1,0 +1,131 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096U
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t n = 0U;
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U) {
+        return NULL;
+    }
+
+    result = (char *)malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = bounded_strlen(strings[i], MAX_STR_LEN);
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+static int print_rear(const char *const *words, size_t count)
+{
+    char *rear;
+    size_t i;
+
+    rear = extract_rear(words, count);
+    if (rear == NULL) {
+        fprintf(stderr, "Failed to extract rear elements\n");
+        return -1;
+    }
+
+    if (fputs("[", stdout) == EOF) {
+        free(rear);
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("'%c'", rear[i]) < 0) {
+            free(rear);
+            return -1;
+        }
+        if (i + 1U < count) {
+            if (fputs(", ", stdout) == EOF) {
+                free(rear);
+                return -1;
+            }
+        }
+    }
+
+    if (fputs("]\n", stdout) == EOF) {
+        free(rear);
+        return -1;
+    }
+
+    if (fflush(stdout) != 0) {
+        free(rear);
+        return -1;
+    }
+
+    free(rear);
+    return 0;
+}
+
+int main(void)
+{
+    const char *const words0[] = { "Mers", "for", "Vers" };
+    const char *const words1[] = { "take", "war", "junipere" };
+    const char *const words2[] = { "china", "most", "go" };
+
+    if (print_rear(words0, sizeof(words0) / sizeof(words0[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_rear(words1, sizeof(words1) / sizeof(words1[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_rear(words2, sizeof(words2) / sizeof(words2[0])) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original algorithm in `extract_rear` was logically correct — for each input string it extracts the last character (`strings[i][len - 1U]`), which matches the expected outputs:
+
+- `{"Mers", "for", "Vers"}` → `['s', 'r', 's']`
+- `{"take", "war", "junipere"}` → `['e', 'r', 'e']`
+- `{"china", "most", "go"}` → `['a', 't', 'o']`
+
+The "no output" failures typically point to output never reaching the test harness rather than a computation bug. The rewrite hardens the code against the plausible causes:
+
+1. **Buffered/interleaved output** — `stdout` is explicitly flushed after each complete line, so output is not lost if the process terminates abnormally or the harness reads a pipe before exit.
+2. **Fragile format-string printing** — the combined `printf("'%c'%s", ...)` was split into simple, unambiguous calls (`printf("'%c'", ...)` plus `fputs` for separators), eliminating any chance of format/argument mismatch swallowing output.
+3. **Memory safety preserved** — `rear` is freed on every exit path, `NULL` inputs and `NULL` elements are rejected, empty strings map to `' '`, and `bounded_strlen` caps scanning at `MAX_STR_LEN` to avoid reading past unterminated buffers.
+4. **Allocation of `count + 1U`** correctly accounts for the terminating `'\0'`, and `result[count] = '\0'` keeps the buffer a valid C string.

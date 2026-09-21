@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-255-s2.c:14:13: error: call to undeclared function 'generateCominations'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |             generateCominations(colors, numColors, toChoose, combination, index + 1);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-255-s2.c:14:13: note: did you mean 'generateCombinations'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-255-s2.c:5:6: note: 'generateCombinations' declared here
+    5 | void generateCombinations(const char *colors, int numColors, int toChoose, char *combination, int index) {
+      |      ^
+    6 |     if (index == toChoose) {
+    7 |         combination[index] = '\0';
+    8 |         printf("%s\n", combination);
+    9 |         return;
+   10 |     }
+   11 |     for (int i = 0; i < numColors; ++i) {
+   12 |         if (colors[i] != '\0') {
+   13 |             combination[index] = colors[i];
+   14 |             generateCominations(colors, numColors, toChoose, combination, index + 1);
+      |             ~~~~~~~~~~~~~~~~~~~
+      |             generateCombinations
+1 error generated.

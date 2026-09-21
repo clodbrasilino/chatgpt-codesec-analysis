@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:34:11: warning: Uninitialized variable: arr1 [uninitvar]
+    qsort(arr1, t1->size, sizeof(int), compare_ints);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:29:23: note: Assuming condition is false
+    for (int i = 0; i < t1->size; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:34:11: note: Uninitialized variable: arr1
+    qsort(arr1, t1->size, sizeof(int), compare_ints);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:35:11: warning: Uninitialized variable: arr2 [uninitvar]
+    qsort(arr2, t2->size, sizeof(int), compare_ints);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:29:23: note: Assuming condition is false
+    for (int i = 0; i < t1->size; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-400-s3.c:35:11: note: Uninitialized variable: arr2
+    qsort(arr2, t2->size, sizeof(int), compare_ints);
+          ^

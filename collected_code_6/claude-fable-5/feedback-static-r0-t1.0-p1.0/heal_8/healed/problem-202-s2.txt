@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+char *remove_even_chars(const char *input, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, max_len);
+
+    result = malloc(len / 2 + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (i % 2 != 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    output = remove_even_chars(buffer, sizeof(buffer));
+    if (output == NULL) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %s\n", output);
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder finding (CWE-119/CWE-120), which is a heuristic warning triggered simply by the presence of a statically-sized `char` array. The existing mitigations are:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless).
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` instead of `strlen`, so length computation can never run past the buffer even if termination were somehow missing.
+4. **Correct allocation math**: `remove_even_chars` allocates `len / 2 + 1` bytes. Since it keeps only characters at odd indices, exactly `len / 2` characters are copied (for both even and odd `len`), leaving room for the terminator — no off-by-one.
+5. **NULL and allocation checks**: both the `input == NULL` guard and the `malloc` failure check are present, and the caller checks the return value before use.
+6. **No memory leaks**: `free(output)` is called on the success path, and error paths exit before allocation or after a failed allocation.
+
+Since the flagged weakness is a false positive already mitigated by bounds-checked functions, the correct "fix" is to keep the code as-is with the advisory comment removed.

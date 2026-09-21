@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    if (input_len >= SIZE_MAX / 2) {
+        return NULL;
+    }
+
+    size_t max_result_len = input_len * 2 + 1;
+    char *result = malloc(max_result_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t dst_pos = 0;
+    int prev_lower_or_digit = 0;
+
+    for (size_t i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (dst_pos + 2 >= max_result_len) {
+            free(result);
+            return NULL;
+        }
+
+        if (i > 0 && isupper(c) && prev_lower_or_digit) {
+            result[dst_pos++] = '_';
+        }
+
+        result[dst_pos++] = (char)tolower(c);
+        prev_lower_or_digit = (islower(c) || isdigit(c)) ? 1 : 0;
+    }
+
+    result[dst_pos] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "camelCase",
+        "snakeCaseTest",
+        "already_snake",
+        "UPPERCASE",
+        "mixedCASEString",
+        "with123Numbers",
+        "a",
+        "",
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *converted = camel_to_snake(test_cases[i]);
+        if (converted != NULL) {
+            printf("%s -> %s\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("%s -> (conversion failed)\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

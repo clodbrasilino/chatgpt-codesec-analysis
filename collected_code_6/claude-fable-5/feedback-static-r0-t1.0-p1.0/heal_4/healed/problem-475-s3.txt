@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define KEY_SIZE 64U
+
+typedef struct {
+    char *key;
+    int value;
+} Counter;
+
+static int compare_by_value(const void *a, const void *b)
+{
+    const Counter *ca = (const Counter *)a;
+    const Counter *cb = (const Counter *)b;
+
+    if (ca->value < cb->value) {
+        return 1;
+    }
+    if (ca->value > cb->value) {
+        return -1;
+    }
+    return strcmp(ca->key, cb->key);
+}
+
+static int sort_counter_by_value(Counter *counters, size_t count)
+{
+    if (counters == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(counters, count, sizeof(Counter), compare_by_value);
+    return 0;
+}
+
+static int set_counter(Counter *counter, const char *key, int value)
+{
+    size_t len;
+    size_t alloc_size;
+    char *copy;
+
+    if (counter == NULL || key == NULL) {
+        return -1;
+    }
+
+    len = strnlen(key, KEY_SIZE);
+    if (len >= KEY_SIZE) {
+        return -1;
+    }
+
+    alloc_size = len + 1U;
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    if (len > 0U) {
+        memcpy(copy, key, len);
+    }
+    copy[len] = '\0';
+
+    counter->key = copy;
+    counter->value = value;
+    return 0;
+}
+
+static void free_counters(Counter *counters, size_t count)
+{
+    size_t i;
+
+    if (counters == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        free(counters[i].key);
+        counters[i].key = NULL;
+    }
+    free(counters);
+}
+
+int main(void)
+{
+    size_t count = 5U;
+    size_t i;
+    Counter *counters = calloc(count, sizeof(Counter));
+
+    if (counters == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (set_counter(&counters[0], "apple", 3) != 0 ||
+        set_counter(&counters[1], "banana", 7) != 0 ||
+        set_counter(&counters[2], "cherry", 1) != 0 ||
+        set_counter(&counters[3], "date", 7) != 0 ||
+        set_counter(&counters[4], "elderberry", 5) != 0) {
+        fprintf(stderr, "Failed to initialize counters\n");
+        free_counters(counters, count);
+        return EXIT_FAILURE;
+    }
+
+    if (sort_counter_by_value(counters, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_counters(counters, count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("%s: %d\n", counters[i].key, counters[i].value) < 0) {
+            fprintf(stderr, "Output failed\n");
+            free_counters(counters, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_counters(counters, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the changes made:
+
+1. **Removed the redundant `len >= alloc_size` check**: Since `alloc_size = len + 1U` and `len < KEY_SIZE` is already guaranteed (so no overflow can occur when adding 1), the condition `len >= alloc_size` was provably always false, as the static analyzer correctly flagged. Dead code like this adds noise and can confuse future maintainers.
+
+2. **The `memcpy` Flawfinder warning was a false positive**: The destination buffer `copy` is allocated with exactly `len + 1U` bytes, and precisely `len` bytes are copied, followed by explicit null termination at `copy[len]`. The bounds are mathematically guaranteed safe because:
+   - `strnlen(key, KEY_SIZE)` bounds `len` to at most `KEY_SIZE`
+   - The `len >= KEY_SIZE` check rejects unterminated/oversized input
+   - `len + 1U` cannot overflow since `len < 64`
+
+3. **The `malloc` NULL check is retained**: The "assuming condition is false" note was just the analyzer's path assumption, not a defect — the check is correct and necessary.
+
+4. **Everything else was already sound**: proper NULL parameter validation, correct `qsort` usage with a deterministic tie-breaking comparator (stable ordering via `strcmp`), complete memory cleanup on all exit paths including error paths, and checked `printf` return values.

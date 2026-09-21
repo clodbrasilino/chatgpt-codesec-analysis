@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int get_n_smallest(const int *data, size_t data_len, size_t n, int *result,
+                   size_t result_len)
+{
+    int *copy;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (n == 0 || n > data_len || n > result_len) {
+        return -1;
+    }
+    if (data_len > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy = malloc(data_len * sizeof(int));
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, data, data_len * sizeof(int));
+    qsort(copy, data_len, sizeof(int), compare_ints);
+    memcpy(result, copy, n * sizeof(int));
+
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    int dataset[] = { 42, 7, 19, 3, 88, 15, 1, 56, 23, 9 };
+    size_t dataset_len = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    int *smallest;
+    size_t i;
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Invalid value of n\n");
+        return EXIT_FAILURE;
+    }
+
+    smallest = malloc(n * sizeof(int));
+    if (smallest == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_smallest(dataset, dataset_len, n, smallest, n) != 0) {
+        fprintf(stderr, "Failed to get n smallest items\n");
+        free(smallest);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest items are:", n);
+    for (i = 0; i < n; i++) {
+        printf(" %d", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-120 (memcpy buffer overflow concerns)**: Added an explicit `result_len` parameter to `get_n_smallest` so the function can verify the destination buffer is large enough (`n > result_len` check) before the second `memcpy`. The first `memcpy` was already safe since `copy` is allocated with exactly `data_len * sizeof(int)`, guarded by the `SIZE_MAX / sizeof(int)` overflow check.
+
+2. **knownConditionTrueFalse (always-false conditions)**: Removed the redundant `n == 0` and `n > dataset_len` checks in `main`, since `n` is a compile-time constant (4) and those conditions can never be true. The validation logic properly lives in `get_n_smallest`, which handles arbitrary runtime inputs. Only the multiplication-overflow guard for the `malloc` call remains, as it directly protects the allocation size computation.
+
+3. The `n * sizeof(int)` allocation and copy sizes remain protected against integer overflow via the `SIZE_MAX / sizeof(int)` guards, ensuring `malloc` never receives a wrapped-around size.

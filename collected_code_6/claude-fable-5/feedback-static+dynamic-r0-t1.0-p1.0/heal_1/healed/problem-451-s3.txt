@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static int remove_whitespace(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t out_pos = 0;
+    const char *cursor = input;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    if (strnlen(input, MAX_INPUT_LEN + 1) > MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:space:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[256];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strnlen(cursor, MAX_INPUT_LEN);
+            if (remaining >= output_size || out_pos >= output_size - remaining) {
+                regfree(&regex);
+                return -1;
+            }
+            memcpy(output + out_pos, cursor, remaining);
+            out_pos += remaining;
+            break;
+        } else if (ret != 0) {
+            char errbuf[256];
+            errbuf[0] = '\0';
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1] = '\0';
+            fprintf(stderr, "regexec failed: %s\n", errbuf);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            regfree(&regex);
+            return -1;
+        }
+
+        if ((size_t)match.rm_so >= output_size ||
+            out_pos >= output_size - (size_t)match.rm_so) {
+            regfree(&regex);
+            return -1;
+        }
+        memcpy(output + out_pos, cursor, (size_t)match.rm_so);
+        out_pos += (size_t)match.rm_so;
+        cursor += match.rm_eo;
+    }
+
+    if (out_pos >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+
+    output[out_pos] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    static const char input[] = "  Hello,   World!  This\tis a\ntest string.  ";
+    size_t input_len = strnlen(input, sizeof(input));
+    size_t buf_size;
+    char *output;
+
+    if (input_len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buf_size = input_len + 1;
+    output = malloc(buf_size);
+    if (output == NULL) {
+        fprintf(stderr, "malloc failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (remove_whitespace(input, output, buf_size) != 0) {
+        fprintf(stderr, "remove_whitespace failed\n");
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: \"%s\"\n", input) < 0 ||
+        printf("Result:   \"%s\"\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced all `strlen` calls with `strnlen` bounded by a `MAX_INPUT_LEN` cap, and validated the input length up front so an unterminated or oversized string can never cause an over-read. In `main`, the input is a fixed array so `strnlen(input, sizeof(input))` is provably bounded.
+
+2. **CWE-120/CWE-119 (`memcpy` overflows):** Rewrote the bounds checks to avoid integer overflow — instead of `out_pos + remaining >= output_size` (which can wrap on huge values), the checks now use subtraction form (`out_pos >= output_size - remaining`) after first verifying `remaining < output_size`, guaranteeing every `memcpy` destination range is valid.
+
+3. **CWE-119 (`errbuf` static arrays):** The buffers are still fixed-size (as `regerror` requires), but they are now explicitly initialized and force-terminated after the call, and `regerror` is always given `sizeof(errbuf)` so it cannot overflow.
+
+4. **Additional hardening:** Added validation of `match.rm_so`/`rm_eo` to prevent an infinite loop or negative-offset copy on a pathological zero-length or malformed match, and a final explicit bounds check before writing the NUL terminator.

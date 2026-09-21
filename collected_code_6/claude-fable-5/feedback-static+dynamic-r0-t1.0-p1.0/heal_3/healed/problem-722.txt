@@ -1,0 +1,170 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct StudentEntry {
+    char name[MAX_NAME_LEN];
+    double height;
+    double width;
+    struct StudentEntry *next;
+} StudentEntry;
+
+typedef struct {
+    StudentEntry *head;
+    size_t count;
+} StudentDict;
+
+static StudentDict *dict_create(void)
+{
+    StudentDict *dict = malloc(sizeof(StudentDict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    dict->count = 0;
+    return dict;
+}
+
+static int dict_insert(StudentDict *dict, const char *name, double height, double width)
+{
+    StudentEntry *entry;
+    size_t name_len;
+
+    if (dict == NULL || name == NULL) {
+        return -1;
+    }
+
+    name_len = strnlen(name, MAX_NAME_LEN);
+    if (name_len >= MAX_NAME_LEN) {
+        return -1;
+    }
+
+    entry = malloc(sizeof(StudentEntry));
+    if (entry == NULL) {
+        return -1;
+    }
+
+    if (name_len > sizeof(entry->name) - 1) {
+        free(entry);
+        return -1;
+    }
+
+    memcpy(entry->name, name, name_len);
+    entry->name[name_len] = '\0';
+    entry->height = height;
+    entry->width = width;
+    entry->next = dict->head;
+    dict->head = entry;
+    dict->count++;
+    return 0;
+}
+
+static void dict_destroy(StudentDict *dict)
+{
+    StudentEntry *current;
+    StudentEntry *next;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+static StudentDict *filter_students(const StudentDict *dict, double min_height, double min_width)
+{
+    StudentDict *filtered;
+    const StudentEntry *current;
+
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    filtered = dict_create();
+    if (filtered == NULL) {
+        return NULL;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        if (current->height >= min_height && current->width >= min_width) {
+            if (dict_insert(filtered, current->name, current->height, current->width) != 0) {
+                dict_destroy(filtered);
+                return NULL;
+            }
+        }
+        current = current->next;
+    }
+    return filtered;
+}
+
+static void dict_print(const StudentDict *dict)
+{
+    const StudentEntry *current;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        printf("%s: height=%.2f, width=%.2f\n", current->name, current->height, current->width);
+        current = current->next;
+    }
+}
+
+int main(void)
+{
+    StudentDict *students;
+    StudentDict *filtered;
+
+    students = dict_create();
+    if (students == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_insert(students, "Alice", 165.5, 45.0) != 0 ||
+        dict_insert(students, "Bob", 180.2, 60.5) != 0 ||
+        dict_insert(students, "Carol", 155.0, 40.2) != 0 ||
+        dict_insert(students, "Dave", 175.8, 55.3) != 0) {
+        fprintf(stderr, "Failed to insert student\n");
+        dict_destroy(students);
+        return EXIT_FAILURE;
+    }
+
+    printf("All students:\n");
+    dict_print(students);
+
+    filtered = filter_students(students, 160.0, 50.0);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to filter students\n");
+        dict_destroy(students);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nFiltered students (height >= 160.0, width >= 50.0):\n");
+    dict_print(filtered);
+
+    dict_destroy(filtered);
+    dict_destroy(students);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`char name[MAX_NAME_LEN]` (CWE-119/CWE-120, statically-sized array):** This is a low-risk informational warning. The mitigation is ensuring every write into this buffer is bounds-checked. In `dict_insert`, `strnlen(name, MAX_NAME_LEN)` bounds the length scan itself (avoiding over-reads on non-terminated input), and the `name_len >= MAX_NAME_LEN` check rejects any name that would not fit including its null terminator.
+
+2. **`memcpy` (CWE-120, unchecked copy):** Flawfinder cannot prove the destination is large enough, so it flags every `memcpy`. The rewrite adds an explicit defensive guard (`name_len > sizeof(entry->name) - 1`) immediately before the copy, tying the check directly to the destination buffer's actual size via `sizeof` rather than the macro. This makes the invariant locally verifiable, robust against future refactoring of the struct, and silences the concern in practice: the copy of `name_len` bytes plus the explicit null termination at `entry->name[name_len]` can never exceed `MAX_NAME_LEN` bytes total.
+
+The remaining logic (linked-list ownership, `dict_destroy` cleanup on all error paths, null-checks on `malloc`) was already sound and is preserved: there are no leaks, no double-frees, and no use-after-free paths in the error handling of `main` or `filter_students`.

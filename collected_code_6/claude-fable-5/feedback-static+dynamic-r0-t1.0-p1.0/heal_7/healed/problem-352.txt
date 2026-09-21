@@ -1,0 +1,76 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and why the flagged weakness is already mitigated:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk heuristic hit, and the original code already contains all the appropriate mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size and never overflows, unlike `gets()` or an unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null-termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy (fgets already null-terminates on success), ensuring no unterminated-string reads downstream.
+
+3. **Bounded string measurement** — `all_chars_unique()` uses `strnlen(str, max_len)` rather than `strlen()`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read. This is why `_POSIX_C_SOURCE 200809L` is defined.
+
+4. **NULL check** — the function safely rejects a `NULL` pointer before dereferencing.
+
+5. **Safe indexing** — casting to `unsigned char` before indexing `seen[256]` prevents negative-index undefined behavior on platforms where `char` is signed.
+
+6. **Newline stripping via `strcspn`** — safe even when no newline exists, since `strcspn` returns the index of the terminating null in that case, which is a valid writable position.
+
+7. **Error handling** — the `fgets` return value is checked, and failure is reported to `stderr` with a non-zero exit code.
+
+The code is correct as written; no functional changes were required beyond removing the comments as requested.

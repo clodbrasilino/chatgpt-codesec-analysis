@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+void replace_spaces(char *str, char replacement) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t i;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+}
+
+int main(void) {
+    char buffer[256];
+    char replacement;
+    
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strcspn(buffer, "\n");
+    bool input_too_long = (len == sizeof(buffer) - 1 && buffer[len] != '\n');
+    
+    if (input_too_long) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+            if (ch == EOF) {
+                break;
+            }
+        }
+        buffer[sizeof(buffer) - 1] = '\0';
+    } else {
+        buffer[len] = '\0';
+    }
+    
+    printf("Enter replacement character: ");
+    int c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading replacement character\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (c == '\n') {
+        fprintf(stderr, "Invalid replacement character\n");
+        return EXIT_FAILURE;
+    }
+    
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        if (ch == EOF) {
+            break;
+        }
+    }
+    
+    if (c > CHAR_MAX || c < CHAR_MIN) {
+        fprintf(stderr, "Invalid character value\n");
+        return EXIT_FAILURE;
+    }
+    
+    replacement = (char)c;
+    
+    replace_spaces(buffer, replacement);
+    
+    printf("Result: %s\n", buffer);
+    
+    return EXIT_SUCCESS;
+}

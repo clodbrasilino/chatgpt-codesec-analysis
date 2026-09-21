@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* move_numbers_to_given_string(const char* input, char* output, size_t output_size) {
+    int index = 0;
+    for (int i = 0; input[i] != '\0' && index < output_size - 1; ++i) {
+        if (input[i] >= '0' && input[i] <= '9') {
+            output[index++] = input[i];
+        }
+    }
+    output[index] = '\0';
+    return output;
+}
+
+int main() {
+    const char* input = "Hello123World456";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output[50] = "";
+    move_numbers_to_given_string(input, output, sizeof(output));
+    printf("Numbers: %s\n", output);
+    return 0;
+}

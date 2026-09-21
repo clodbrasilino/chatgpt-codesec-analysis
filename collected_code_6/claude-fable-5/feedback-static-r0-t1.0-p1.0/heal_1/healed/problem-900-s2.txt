@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool string_starts_with_number(const char *str, int number)
+{
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%d", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    if (strncmp(str, prefix, prefix_len) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100 percent";
+    int result_status = EXIT_SUCCESS;
+
+    if (string_starts_with_number(test1, 42)) {
+        if (printf("\"%s\" starts with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 42\n", test1) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, 7)) {
+        if (printf("\"%s\" starts with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 7\n", test2) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, 100)) {
+        if (printf("\"%s\" starts with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with 100\n", test3) < 0) {
+            result_status = EXIT_FAILURE;
+        }
+    }
+
+    return result_status;
+}
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **Removed `strlen(prefix)`** — the return value of `snprintf` already gives the exact length of the formatted prefix (it's validated to be non-negative and within bounds), so there's no need to re-scan the buffer. This eliminates the CWE-126 concern on `prefix`.
+
+2. **Removed `strlen(str)`** — this was the real over-read risk, since `str` is externally supplied and its termination can't be guaranteed by the function. `strncmp` is bounded by `prefix_len` and stops at the first difference or NUL byte in either string, so the length pre-check was redundant. A string shorter than the prefix will simply fail the comparison at its NUL terminator. This bounds all reads of `str` to at most `prefix_len` bytes.
+
+3. **The `snprintf` into the statically-sized `prefix[32]`** (CWE-119/CWE-120 flag) was already safe: `sizeof(prefix)` bounds the write, the buffer is guaranteed NUL-terminated on success, and truncation/error is explicitly detected via the `written < 0 || (size_t)written >= sizeof(prefix)` check. The 32-byte buffer comfortably holds any `int` representation (max ~11 characters plus NUL, even for 64-bit `int` it would be 21). This logic is retained unchanged.
+
+4. **NULL check on `str`** is preserved, and the `written` value is cast once to `size_t` for the comparison, keeping the code free of signed/unsigned warnings.
+
+The rewritten function now performs zero unbounded reads: every memory access is either bounded by `sizeof(prefix)` or by `prefix_len`/NUL-termination semantics of `strncmp`.

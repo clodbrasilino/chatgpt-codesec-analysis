@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-684-s3.c:22:29: error: use of undeclared identifier 'len'
+   22 |     int full_repeats = n / (len + 1);
+      |                             ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-684-s3.c:23:31: error: use of undeclared identifier 'len'
+   23 |     int partial_length = n % (len + 1);
+      |                               ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-684-s3.c:24:77: error: use of undeclared identifier 'len'
+   24 |     return count * full_repeats + count_chars_in_partial(partial_length, s, len + 1, c);
+      |                                                                             ^~~
+3 errors generated.

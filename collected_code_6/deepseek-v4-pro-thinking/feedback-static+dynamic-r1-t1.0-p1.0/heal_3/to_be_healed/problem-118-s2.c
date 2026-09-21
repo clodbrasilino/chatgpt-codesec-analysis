@@ -1,0 +1,243 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+typedef struct WordNode {
+    Node *word;
+    struct WordNode *next;
+} WordNode;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    const char *p;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (p = str; *p != '\0'; ++p) {
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+
+        new_node->data = *p;
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_list(const Node *head) {
+    const Node *current;
+    for (current = head; current != NULL; current = current->next) {
+        putchar(current->data);
+    }
+}
+
+WordNode *string_to_word_list(const char *str) {
+    WordNode *head = NULL;
+    WordNode *tail = NULL;
+    const char *p;
+    const char *start;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'len' can be reduced. [variableScope]
+     */
+    size_t len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'word_str' can be reduced. [variableScope]
+     */
+    char *word_str;
+    Node *word_list;
+    WordNode *new_word;
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    p = str;
+    while (*p != '\0') {
+        while (*p == ' ' || *p == '\t') {
+            ++p;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+        while (*p != '\0' && *p != ' ' && *p != '\t') {
+            ++p;
+        }
+
+        len = p - start;
+        word_str = malloc(len + 1);
+        if (word_str == NULL) {
+            while (head != NULL) {
+                WordNode *temp = head;
+                head = head->next;
+                free_list(temp->word);
+                free(temp);
+            }
+            return NULL;
+        }
+
+        for (i = 0; i < len; ++i) {
+            word_str[i] = start[i];
+        }
+        word_str[len] = '\0';
+
+        word_list = string_to_list(word_str);
+        free(word_str);
+
+        if (word_list == NULL) {
+            while (head != NULL) {
+                WordNode *temp = head;
+                head = head->next;
+                free_list(temp->word);
+                free(temp);
+            }
+            return NULL;
+        }
+
+        new_word = malloc(sizeof(*new_word));
+        if (new_word == NULL) {
+            free_list(word_list);
+            while (head != NULL) {
+                WordNode *temp = head;
+                head = head->next;
+                free_list(temp->word);
+                free(temp);
+            }
+            return NULL;
+        }
+
+        new_word->word = word_list;
+        new_word->next = NULL;
+
+        if (tail == NULL) {
+            head = new_word;
+        } else {
+            tail->next = new_word;
+        }
+        tail = new_word;
+    }
+
+    return head;
+}
+
+void free_word_list(WordNode *head) {
+    while (head != NULL) {
+        WordNode *temp = head;
+        head = head->next;
+        free_list(temp->word);
+        free(temp);
+    }
+}
+
+void print_word_list(const WordNode *head) {
+    const WordNode *current;
+
+    putchar('[');
+    for (current = head; current != NULL; current = current->next) {
+        putchar('\'');
+        print_list(current->word);
+        putchar('\'');
+        if (current->next != NULL) {
+            fputs(", ", stdout);
+        }
+    }
+    puts("]");
+}
+
+char *read_line(FILE *fp) {
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    int ch;
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = fgetc(fp)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            char *new_buffer;
+            capacity *= 2;
+            new_buffer = realloc(buffer, capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void) {
+    char *line;
+    WordNode *word_list;
+
+    line = read_line(stdin);
+    if (line == NULL) {
+        return 1;
+    }
+
+    if (line[0] == '\0') {
+        free(line);
+        return 0;
+    }
+
+    word_list = string_to_word_list(line);
+    free(line);
+
+    if (word_list != NULL) {
+        print_word_list(word_list);
+        free_word_list(word_list);
+    }
+
+    return 0;
+}

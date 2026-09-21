@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_uppercase(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out = 0;
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (!isupper(c)) {
+            result[out] = (char)c;
+            out++;
+        }
+    }
+
+    result[out] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *cleaned;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        if (ferror(stdin)) {
+            fprintf(stderr, "Failed to read input\n");
+            return EXIT_FAILURE;
+        }
+        buffer[0] = '\0';
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    cleaned = remove_uppercase(buffer);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+1. **`<no output>` test failures** — The most likely cause of the failing test cases was the handling of edge conditions around input termination. The original code returned `EXIT_FAILURE` on *any* `NULL` from `fgets`, including a benign EOF with no data (e.g., input supplied without a trailing newline through certain harnesses, or an empty stream). The rewrite distinguishes a genuine stream error (`ferror`) from EOF, so the program still produces output instead of silently failing.
+
+2. **Unflushed stdout** — If the test harness captures output from a pipe and the process exits abnormally, buffered output can be lost. An explicit `fflush(stdout)` with error checking guarantees output is delivered, addressing the `<no output>` symptom.
+
+3. **Carriage-return handling** — Test inputs created on Windows (`\r\n` line endings) would leave a stray `\r` in the buffer, corrupting comparisons. The rewrite strips both `\n` and `\r` in a loop.
+
+4. **CWE-119/CWE-120 (Flawfinder warning on `buffer`)** — The fixed-size buffer remains, but it is safely bounded: `fgets` is limited to `sizeof(buffer)`, the buffer is zero-initialized, explicitly NUL-terminated at the last index, and all length computations use `strnlen` with an explicit bound. No overflow is possible.
+
+5. **Existing sound practices retained** — `isupper` is called with an `unsigned char` cast (avoiding UB on negative `char` values), `malloc` results are checked, allocated memory is freed on all paths, and `remove_uppercase` guards against `NULL` input.

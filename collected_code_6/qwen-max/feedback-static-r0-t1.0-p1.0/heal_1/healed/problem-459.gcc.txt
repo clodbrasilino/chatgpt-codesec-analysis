@@ -1,0 +1,8 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459.c:2:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459.c: In function 'remove_uppercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459.c:19:37: error: 'test_string' undeclared (first use in this function)
+   19 |         strncpy(str, result, sizeof(test_string));
+      |                                     ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-459.c:19:37: note: each undeclared identifier is reported only once for each function it appears in

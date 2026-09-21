@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 255) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The Flawfinder warning on `getchar()` (CWE-120, CWE-20) is largely a false positive in this context, since the code reads exactly one character into an `int` — there is no buffer to overflow. However, the rewrite hardens the code against the underlying concern (improper input validation, CWE-20) in the following ways:
+
+1. **EOF handling retained** — `getchar()` correctly returns `int`, and the `EOF` check is preserved before any use of the value. This is the most common `getchar()` mistake (storing the result in a `char`), and the original code already avoided it.
+
+2. **Range validation added** — The value is explicitly validated to be within `0–255` before being cast to `char`, guarding against any implementation-defined behavior when narrowing the `int` result.
+
+3. **Safe printing of non-printable characters** — The original code printed the raw character with `%c` unconditionally. If the user entered a control character (e.g., `Ctrl+D` mid-line, escape sequences, or a bell character), it would be echoed directly to the terminal, which can corrupt terminal state or enable escape-sequence injection in logs. The rewrite uses `isprint()` to only echo printable characters.
+
+4. **No loop, no recursion** — Since `getchar()` is called exactly once, the specific CWE-120 buffer-boundary concern (reads in a loop accumulating into a buffer) does not apply, and no `unsigned char` buffer indexing is needed.
+
+The `get_ascii_value` helper correctly casts through `unsigned char` before widening to `int`, avoiding negative values on platforms where `char` is signed — that was already correct and is retained.

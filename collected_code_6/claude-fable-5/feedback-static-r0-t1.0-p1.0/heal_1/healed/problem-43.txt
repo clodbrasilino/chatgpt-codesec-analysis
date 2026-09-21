@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "regexec failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "hello",
+        "hello_world_again"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_lowercase_underscore(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes made to address the identified weaknesses:
+
+1. **`errbuf` variable scope reduced**: The `errbuf` array is now declared inside the `if (ret != 0)` block where it's actually used. This also mitigates the Flawfinder buffer concern by limiting the buffer's lifetime, and the code already used `sizeof(errbuf)` with `regerror()`, which safely bounds all writes to the buffer.
+
+2. **`result` variable scope reduced**: The `result` variable is now declared inside the `for` loop body, since it's only needed per-iteration.
+
+The statically-sized buffer warning (CWE-119/CWE-120) is a false positive in practice here because `regerror()` receives `sizeof(errbuf)` and guarantees null-terminated output within bounds — no overflow is possible.

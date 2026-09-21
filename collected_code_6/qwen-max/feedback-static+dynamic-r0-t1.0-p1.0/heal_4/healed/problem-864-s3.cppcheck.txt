@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-864-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-864-s3.c:15:68: style: Parameter 'lengths' can be declared as pointer to const [constParameterPointer]
+void find_palindromes(const char *strings[], size_t count, size_t *lengths, char **result, size_t *result_count) {
+                                                                   ^

@@ -1,0 +1,214 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef enum {
+    VALUE_STRING,
+    VALUE_DICT
+} ValueType;
+
+typedef struct Dict Dict;
+
+typedef struct DictEntry {
+    char *key;
+    ValueType type;
+    union {
+        char *str_value;
+        Dict *dict_value;
+    } value;
+    struct DictEntry *next;
+} DictEntry;
+
+struct Dict {
+    DictEntry *head;
+};
+
+static size_t bounded_length(const char *src, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *copy_string(const char *src)
+{
+    size_t len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    char *dest;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = bounded_length(src, MAX_STRING_LENGTH);
+    if (len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    len += 1;
+    dest = malloc(len);
+    if (dest != NULL) {
+        for (i = 0; i < len - 1; i++) {
+            dest[i] = src[i];
+        }
+        dest[len - 1] = '\0';
+    }
+    return dest;
+}
+
+Dict *create_dict(void)
+{
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+int dict_add_string(Dict *dict, const char *key, const char *value)
+{
+    DictEntry *entry;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    entry = malloc(sizeof(DictEntry));
+    if (entry == NULL) {
+        return -1;
+    }
+    entry->key = copy_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return -1;
+    }
+    entry->value.str_value = copy_string(value);
+    if (entry->value.str_value == NULL) {
+        free(entry->key);
+        free(entry);
+        return -1;
+    }
+    entry->type = VALUE_STRING;
+    entry->next = dict->head;
+    dict->head = entry;
+    return 0;
+}
+
+int dict_add_dict(Dict *dict, const char *key, Dict *nested)
+{
+    DictEntry *entry;
+
+    if (dict == NULL || key == NULL || nested == NULL) {
+        return -1;
+    }
+    entry = malloc(sizeof(DictEntry));
+    if (entry == NULL) {
+        return -1;
+    }
+    entry->key = copy_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return -1;
+    }
+    entry->type = VALUE_DICT;
+    entry->value.dict_value = nested;
+    entry->next = dict->head;
+    dict->head = entry;
+    return 0;
+}
+
+int dict_depth(const Dict *dict)
+{
+    int max_depth = 0;
+    const DictEntry *entry;
+
+    if (dict == NULL) {
+        return 0;
+    }
+    entry = dict->head;
+    while (entry != NULL) {
+        if (entry->type == VALUE_DICT) {
+            int depth = dict_depth(entry->value.dict_value);
+            if (depth > max_depth) {
+                max_depth = depth;
+            }
+        }
+        entry = entry->next;
+    }
+    return max_depth + 1;
+}
+
+void free_dict(Dict *dict)
+{
+    DictEntry *entry;
+
+    if (dict == NULL) {
+        return;
+    }
+    entry = dict->head;
+    while (entry != NULL) {
+        DictEntry *next = entry->next;
+        free(entry->key);
+        if (entry->type == VALUE_DICT) {
+            free_dict(entry->value.dict_value);
+        } else {
+            free(entry->value.str_value);
+        }
+        free(entry);
+        entry = next;
+    }
+    free(dict);
+}
+
+int main(void)
+{
+    Dict *root = create_dict();
+    Dict *level1 = create_dict();
+    Dict *level2 = create_dict();
+
+    if (root == NULL || level1 == NULL || level2 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        free_dict(root);
+        free_dict(level1);
+        free_dict(level2);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_string(root, "name", "root") != 0 ||
+        dict_add_string(level1, "name", "level1") != 0 ||
+        dict_add_string(level2, "name", "level2") != 0) {
+        fprintf(stderr, "Failed to add entry\n");
+        free_dict(root);
+        free_dict(level1);
+        free_dict(level2);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_dict(level1, "child", level2) != 0) {
+        fprintf(stderr, "Failed to add entry\n");
+        free_dict(root);
+        free_dict(level1);
+        free_dict(level2);
+        return EXIT_FAILURE;
+    }
+    level2 = NULL;
+
+    if (dict_add_dict(root, "child", level1) != 0) {
+        fprintf(stderr, "Failed to add entry\n");
+        free_dict(root);
+        free_dict(level1);
+        return EXIT_FAILURE;
+    }
+    level1 = NULL;
+
+    printf("Depth of dictionary: %d\n", dict_depth(root));
+
+    free_dict(root);
+    return EXIT_SUCCESS;
+}

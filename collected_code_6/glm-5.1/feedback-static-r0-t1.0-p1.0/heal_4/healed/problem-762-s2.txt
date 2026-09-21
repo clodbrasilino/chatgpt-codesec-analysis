@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+bool has_30_days(int month) {
+    if (month < 1 || month > 12) {
+        return false;
+    }
+    
+    switch (month) {
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            return true;
+        default:
+            return false;
+    }
+}
+
+int main(int argc, char const * const argv[const]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <month_number>\n", argv[0]);
+        return 1;
+    }
+    
+    char *endptr;
+    long month_long;
+    
+    errno = 0;
+    month_long = strtol(argv[1], &endptr, 10);
+    
+    if (errno == ERANGE || month_long < INT_MIN || month_long > INT_MAX || *endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        return 1;
+    }
+    
+    if (has_30_days((int)month_long)) {
+        printf("1\n");
+    } else {
+        printf("0\n");
+    }
+    
+    return 0;
+}

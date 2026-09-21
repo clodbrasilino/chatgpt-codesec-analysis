@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_char(char *str, size_t max_len, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char original[] = "hello world, hello everyone";
+    size_t source_len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    source_len = strlen(original);
+
+    if (source_len == SIZE_MAX) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = source_len + 1;
+
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, source_len);
+    buffer[source_len] = '\0';
+
+    replaced = replace_char(buffer, buffer_size, 'l', 'L');
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: for `SIZE_MAX` you also need `#include <stdint.h>` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Summary of fixes applied:**
+
+1. **Dead condition removed** — the `source_len > buffer_size` check was always false (`knownConditionTrueFalse`) because `buffer_size` was assigned directly from `source_len`. It has been eliminated, since the allocation size is now derived from the source length by construction.
+
+2. **CWE-120 memcpy concern resolved** — the destination is allocated as `source_len + 1`, guaranteeing it can always hold exactly the bytes being copied plus the terminator. The copy length and the allocation size are derived from the same computation, so no overflow is possible.
+
+3. **Explicit null termination** — `buffer[source_len] = '\0'` writes the terminator at a provably in-bounds index rather than relying on `buffer_size - 1` arithmetic.
+
+4. **Overflow guard on `+ 1`** — the `SIZE_MAX` check prevents the theoretical wraparound in `source_len + 1`, which would otherwise cause a zero-byte allocation and a subsequent heap overflow.
+
+5. **Retained defensive practices** — the `NULL` check in `replace_char`, the bounded loop (`i < max_len`), checked `printf` return values, `free` on all exit paths, and pointer nulling after `free` were all preserved.

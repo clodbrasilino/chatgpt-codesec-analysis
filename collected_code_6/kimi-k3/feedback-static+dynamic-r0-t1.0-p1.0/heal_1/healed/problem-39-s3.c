@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool canRearrange(const char *str, size_t len) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    if (len <= 1) {
+        return true;
+    }
+    
+    int freq[256] = {0};
+    int max_freq = 0;
+    
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        freq[c]++;
+        if (freq[c] > max_freq) {
+            max_freq = freq[c];
+        }
+    }
+    
+    return max_freq <= (int)((len + 1) / 2);
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t len;
+    
+    len = getline(&buffer, &buffer_size, stdin);
+    if (len == -1) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+    
+    if (canRearrange(buffer, (size_t)len)) {
+        printf("true\n");
+    } else {
+        printf("false\n");
+    }
+    
+    free(buffer);
+    return EXIT_SUCCESS;
+}

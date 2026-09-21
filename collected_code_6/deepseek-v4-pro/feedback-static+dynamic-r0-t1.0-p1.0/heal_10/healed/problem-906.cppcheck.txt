@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:67:28: style: Condition 'm_len>2' is always false [knownConditionTrueFalse]
+    if (y_len > 4 || m_len > 2 || d_len > 2) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:55:42: note: Assuming that condition 'm_len>2' is not redundant
+    if (y_len != 4 || m_len < 1 || m_len > 2 || d_len < 1 || d_len > 2) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:62:27: note: Assuming condition is false
+        d_start > url_len || d_start + d_len > url_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:67:28: note: Condition 'm_len>2' is always false
+    if (y_len > 4 || m_len > 2 || d_len > 2) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:67:41: style: Condition 'd_len>2' is always false [knownConditionTrueFalse]
+    if (y_len > 4 || m_len > 2 || d_len > 2) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:55:68: note: Assuming that condition 'd_len>2' is not redundant
+    if (y_len != 4 || m_len < 1 || m_len > 2 || d_len < 1 || d_len > 2) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:62:27: note: Assuming condition is false
+        d_start > url_len || d_start + d_len > url_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-906.c:67:41: note: Condition 'd_len>2' is always false
+    if (y_len > 4 || m_len > 2 || d_len > 2) {
+                                        ^

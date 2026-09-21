@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c: In function 'safe_fopen':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:162:14: error: implicit declaration of function 'open'; did you mean 'popen'? [-Wimplicit-function-declaration]
+  162 |     int fd = open(resolved_path, O_RDONLY | O_NOFOLLOW);
+      |              ^~~~
+      |              popen
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:162:34: error: 'O_RDONLY' undeclared (first use in this function)
+  162 |     int fd = open(resolved_path, O_RDONLY | O_NOFOLLOW);
+      |                                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:162:34: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:162:45: error: 'O_NOFOLLOW' undeclared (first use in this function)
+  162 |     int fd = open(resolved_path, O_RDONLY | O_NOFOLLOW);
+      |                                             ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:167:17: error: storage size of 'st' isn't known
+  167 |     struct stat st;
+      |                 ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:168:9: error: implicit declaration of function 'fstat' [-Wimplicit-function-declaration]
+  168 |     if (fstat(fd, &st) != 0) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:169:9: error: implicit declaration of function 'close'; did you mean 'pclose'? [-Wimplicit-function-declaration]
+  169 |         close(fd);
+      |         ^~~~~
+      |         pclose
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-13.c:173:10: error: implicit declaration of function 'S_ISREG' [-Wimplicit-function-declaration]
+  173 |     if (!S_ISREG(st.st_mode)) {
+      |          ^~~~~~~

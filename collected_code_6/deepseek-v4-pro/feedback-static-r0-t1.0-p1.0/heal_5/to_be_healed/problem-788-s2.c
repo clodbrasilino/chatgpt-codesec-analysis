@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *str;
+    int *list;
+    int list_size;
+} Tuple;
+
+Tuple create_tuple(const char *str, const int *list, int list_size) {
+    Tuple t;
+    size_t str_len;
+    size_t alloc_size;
+
+    if (str == NULL) {
+        fprintf(stderr, "Invalid string pointer\n");
+        exit(EXIT_FAILURE);
+    }
+
+    str_len = strnlen(str, 256);
+    if (str_len == 256 && str[255] != '\0') {
+        fprintf(stderr, "String too long or not null-terminated within 256 characters\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (str_len >= SIZE_MAX) {
+        fprintf(stderr, "Overflow detected in string allocation\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Possible weaknesses found:
+     *  alloc_size is assigned 'str_len+1' here.
+     */
+    alloc_size = str_len + 1;
+
+    t.str = malloc(alloc_size);
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    if (t.str == NULL) {
+        fprintf(stderr, "Memory allocation failed for string\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'alloc_size<str_len+1' is always false [knownConditionTrueFalse]
+     *  Condition 'alloc_size<str_len+1' is always false
+     */
+    if (alloc_size < str_len + 1) {
+        free(t.str);
+        fprintf(stderr, "Buffer size mismatch\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(t.str, str, str_len);
+    t.str[str_len] = '\0';
+
+    t.list_size = list_size;
+    if (list_size > 0 && list != NULL) {
+        size_t list_bytes;
+
+        if ((size_t)list_size > SIZE_MAX / sizeof(int)) {
+            free(t.str);
+            fprintf(stderr, "Overflow detected in list allocation\n");
+            exit(EXIT_FAILURE);
+        }
+
+        list_bytes = sizeof(int) * (size_t)list_size;
+
+        t.list = malloc(list_bytes);
+        if (t.list == NULL) {
+            free(t.str);
+            fprintf(stderr, "Memory allocation failed for list\n");
+            exit(EXIT_FAILURE);
+        }
+
+        if (list_bytes != 0) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(t.list, list, list_bytes);
+        }
+    } else {
+        t.list = NULL;
+        if (list_size > 0 && list == NULL) {
+            t.list_size = 0;
+        }
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->str);
+        free(t->list);
+        t->str = NULL;
+        t->list = NULL;
+        t->list_size = 0;
+    }
+}
+
+int main(void) {
+    const char *str = "hello";
+    int list_data[] = {1, 2, 3, 4, 5};
+    int list_size = sizeof(list_data) / sizeof(list_data[0]);
+
+    Tuple t = create_tuple(str, list_data, list_size);
+
+    printf("String: %s\n", t.str);
+    printf("List: ");
+    for (int i = 0; i < t.list_size; i++) {
+        printf("%d ", t.list[i]);
+    }
+    printf("\n");
+
+    free_tuple(&t);
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The flagged weakness (CWE-119/CWE-120, statically-sized buffer) was already mitigated in the original code, so no functional changes were required:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure (fgets already null-terminates, but this protects against future refactoring).
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` always returns a valid index within the string, so the assignment cannot write out of bounds.
+4. **Bounded string traversal** — `all_chars_unique` takes an explicit `max_len` parameter and checks both the length bound and the null terminator in its loop condition, so it never reads past the buffer even if the terminator were missing.
+5. **NULL-pointer check** — the function defensively rejects `NULL` input.
+6. **Correct char handling** — casting to `unsigned char` before indexing `seen[256]` avoids negative-index undefined behavior on platforms where `char` is signed.
+
+The Flawfinder hit is a low-risk (risk 2) informational warning inherent to any fixed-size array; the code satisfies all recommended mitigations (bounds checking and length-limiting functions).

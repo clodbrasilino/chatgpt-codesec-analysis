@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool areCharactersUnique(const char *str) {
+    if (str == NULL) return false;
+    size_t length = strnlen(str, 257);
+    if (length > 256) return false;
+    bool charSet[256] = {false};
+    for (size_t i = 0; i < length; ++i) {
+        unsigned char c = (unsigned char)str[i];
+        if (c >= 256) return false;
+        if (charSet[c]) return false;
+        charSet[c] = true;
+    }
+    return true;
+}
+
+int main() {
+    const char *test1 = "abcdef";
+    const char *test2 = "hello";
+    printf("%s: %s\n", test1, areCharactersUnique(test1) ? "Unique" : "Not Unique");
+    printf("%s: %s\n", test2, areCharactersUnique(test2) ? "Unique" : "Not Unique");
+    return 0;
+}

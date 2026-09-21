@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk, informational hit triggered by the mere presence of a statically-sized array. In this code the weakness is already properly mitigated:
+
+1. **Bounded read:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `sizeof(buffer) - 1` characters plus a null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than a hardcoded constant also keeps the bound correct if `BUFFER_SIZE` changes.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure ensuring the buffer is null-terminated even if the input handling were to change.
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` is the idiomatic, safe way to remove the trailing newline — it never indexes past the terminator, unlike the classic buggy pattern `buffer[strlen(buffer) - 1] = '\0'` which underflows on empty input.
+
+4. **Safe indexing in `first_repeated_char`:** casting to `unsigned char` before indexing `seen[256]` prevents negative-index undefined behavior on platforms where `char` is signed — a subtle but real out-of-bounds risk that is correctly handled here.
+
+5. **NULL check and error handling:** the function guards against `NULL` input, and the `fgets` return value is checked, so EOF/read errors are handled cleanly.
+
+No functional changes were required; the code as written already contains the appropriate fixes for the identified weakness.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-814.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-814.c:56:9: style: Variable 'len' is reassigned a value before the old one has been used. [redundantAssignment]
+    len = strlen(input);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-814.c:32:12: note: len is assigned
+        len--;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-814.c:56:9: note: len is overwritten
+    len = strlen(input);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-814.c:59:12: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+        len--;
+           ^

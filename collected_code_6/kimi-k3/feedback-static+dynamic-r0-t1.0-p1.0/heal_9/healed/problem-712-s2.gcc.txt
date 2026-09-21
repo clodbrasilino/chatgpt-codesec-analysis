@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-712-s2.c: In function 'create_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-712-s2.c:118:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+  118 |     if (memcpy_s(list.data, copy_size, arr, copy_size) != 0) {
+      |         ^~~~~~~~
+      |         memcpy

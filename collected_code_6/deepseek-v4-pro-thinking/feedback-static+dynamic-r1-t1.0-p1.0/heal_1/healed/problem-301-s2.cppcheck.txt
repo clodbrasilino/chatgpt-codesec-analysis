@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-301-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-301-s2.c:35:36: warning: Either the condition 'len<255' is redundant or the array 'key[2]' is accessed at index 254, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < MAX_KEY_LEN && key[len] != '\0') {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-301-s2.c:35:16: note: Assuming that condition 'len<255' is not redundant
+    while (len < MAX_KEY_LEN && key[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-301-s2.c:35:36: note: Array index out of bounds
+    while (len < MAX_KEY_LEN && key[len] != '\0') {
+                                   ^

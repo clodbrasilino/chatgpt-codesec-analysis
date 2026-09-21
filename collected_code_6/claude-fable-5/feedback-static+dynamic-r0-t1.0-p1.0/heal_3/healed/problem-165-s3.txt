@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer`:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure, even though `fgets` already null-terminates on success.
+
+3. **Bounded string length**: `strnlen(str, max_len)` is used instead of `strlen`, so even if a non-terminated buffer were passed, reads stay within bounds.
+
+4. **NULL check**: `count_matching_positions` guards against a NULL pointer before dereferencing.
+
+5. **Safe newline stripping**: `strcspn(buffer, "\n")` always returns an index within the string (at worst the index of the terminating `'\0'`), so the assignment is always in bounds.
+
+6. **Error handling**: The return value of `fgets` is checked, and failure is reported to `stderr` with a non-zero exit code.
+
+Since the identified weakness was already mitigated, the rewritten code is functionally identical with the comments removed — no further changes were required to address the CWE findings.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:54:35: style: Condition 'remaining_len<=input_len-(current-input)' is always true [knownConditionTrueFalse]
+                if (remaining_len <= input_len - (current - input)) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:30:34: note: remaining_len is assigned 'input_len-(current-input)' here.
+            size_t remaining_len = input_len - (current - input);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:46:36: note: Assuming condition is false
+                if (result[*count] == NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:54:35: note: Condition 'remaining_len<=input_len-(current-input)' is always true
+                if (remaining_len <= input_len - (current - input)) {
+                                  ^

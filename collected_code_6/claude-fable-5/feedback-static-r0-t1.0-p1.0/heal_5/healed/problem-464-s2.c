@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_KEY_LEN 64
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(size_t capacity)
+{
+    Dict *d = NULL;
+
+    if (capacity == 0 || capacity > SIZE_MAX / sizeof(DictEntry)) {
+        return NULL;
+    }
+
+    d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+
+    d->entries = calloc(capacity, sizeof(DictEntry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+
+    d->size = 0;
+    d->capacity = capacity;
+    return d;
+}
+
+static void dict_destroy(Dict *d)
+{
+    if (d != NULL) {
+        if (d->entries != NULL) {
+            for (size_t i = 0; i < d->size; i++) {
+                free(d->entries[i].key);
+                d->entries[i].key = NULL;
+            }
+            free(d->entries);
+            d->entries = NULL;
+        }
+        free(d);
+    }
+}
+
+static bool dict_add(Dict *d, const char *key, int value)
+{
+    size_t key_len;
+    size_t alloc_len;
+    char *key_copy;
+
+    if (d == NULL || key == NULL) {
+        return false;
+    }
+
+    if (d->size >= d->capacity) {
+        return false;
+    }
+
+    key_len = strnlen(key, MAX_KEY_LEN);
+    if (key_len >= MAX_KEY_LEN) {
+        return false;
+    }
+
+    alloc_len = key_len + 1;
+    key_copy = malloc(alloc_len);
+    if (key_copy == NULL) {
+        return false;
+    }
+
+    if (key_len >= alloc_len) {
+        free(key_copy);
+        return false;
+    }
+
+    memcpy(key_copy, key, key_len);
+    key_copy[key_len] = '\0';
+
+    d->entries[d->size].key = key_copy;
+    d->entries[d->size].value = value;
+    d->size++;
+    return true;
+}
+
+static bool all_values_same(const Dict *d, bool *result)
+{
+    if (d == NULL || result == NULL) {
+        return false;
+    }
+
+    if (d->size == 0) {
+        *result = true;
+        return true;
+    }
+
+    *result = true;
+    for (size_t i = 1; i < d->size; i++) {
+        if (d->entries[i].value != d->entries[0].value) {
+            *result = false;
+            break;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    Dict *d1 = NULL;
+    Dict *d2 = NULL;
+    bool result = false;
+
+    d1 = dict_create(4);
+    if (d1 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!dict_add(d1, "a", 10) || !dict_add(d1, "b", 10) || !dict_add(d1, "c", 10)) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_destroy(d1);
+        return EXIT_FAILURE;
+    }
+
+    if (!all_values_same(d1, &result)) {
+        fprintf(stderr, "Check failed\n");
+        dict_destroy(d1);
+        return EXIT_FAILURE;
+    }
+    printf("Dict 1: all values same = %s\n", result ? "true" : "false");
+
+    d2 = dict_create(4);
+    if (d2 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        dict_destroy(d1);
+        return EXIT_FAILURE;
+    }
+
+    if (!dict_add(d2, "x", 1) || !dict_add(d2, "y", 2) || !dict_add(d2, "z", 1)) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return EXIT_FAILURE;
+    }
+
+    if (!all_values_same(d2, &result)) {
+        fprintf(stderr, "Check failed\n");
+        dict_destroy(d1);
+        dict_destroy(d2);
+        return EXIT_FAILURE;
+    }
+    printf("Dict 2: all values same = %s\n", result ? "true" : "false");
+
+    dict_destroy(d1);
+    dict_destroy(d2);
+    return EXIT_SUCCESS;
+}

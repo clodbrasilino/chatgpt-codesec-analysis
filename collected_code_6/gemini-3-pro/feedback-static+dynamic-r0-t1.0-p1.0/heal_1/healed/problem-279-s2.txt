@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long nth_decagonal_number(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    return (unsigned long long)n * (4ULL * n - 3ULL);
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    errno = 0;
+    long long n_input = strtoll(argv[1], &endptr, 10);
+
+    if (errno == ERANGE || n_input < 0 || n_input > UINT_MAX || endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Error: n must be a valid non-negative integer within range.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned int n = (unsigned int)n_input;
+    unsigned long long result = nth_decagonal_number(n);
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

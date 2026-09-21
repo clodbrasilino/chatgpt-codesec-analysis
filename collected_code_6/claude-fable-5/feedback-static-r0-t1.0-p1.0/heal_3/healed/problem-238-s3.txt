@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The rewritten code addresses the identified weaknesses as follows:
+
+**CWE-119/CWE-120 (statically-sized buffer):** The buffer is only ever written to via `fgets` with `sizeof(buffer)` as the limit, which guarantees no overflow. A forced null terminator at `buffer[sizeof(buffer) - 1]` provides defense-in-depth, and `strnlen` with an explicit bound is used instead of `strlen`, so no read can run past the array even if termination were somehow lost.
+
+**CWE-120/CWE-20 (getchar in a loop):** The drain loop never writes to any buffer — it only discards characters — so no boundary can be violated. It is factored into `flush_stdin()` with a `do/while` that terminates on both `'\n'` and `EOF`, preventing an infinite loop if the stream closes.
+
+Additional hardening: `count_substrings` performs its arithmetic in `unsigned long long` to avoid integer overflow for the `len * (len + 1) / 2` computation, and it guards against a `NULL` pointer argument. All input paths check return values (`fgets` failure is reported and exits with `EXIT_FAILURE`).

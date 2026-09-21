@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+bool is_valid_triangle(int angle1, int angle2, int angle3) {
+    if (angle1 <= 0 || angle2 <= 0 || angle3 <= 0) {
+        return false;
+    }
+    
+    if (angle1 >= 180 || angle2 >= 180 || angle3 >= 180) {
+        return false;
+    }
+    
+    if (angle1 + angle2 + angle3 == 180) {
+        return true;
+    }
+    
+    return false;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *const argv[]) {
+    if (argc != 4) {
+        return 1;
+    }
+
+    char *endptr;
+    long angles[3];
+
+    for (int i = 0; i < 3; i++) {
+        errno = 0;
+        angles[i] = strtol(argv[i + 1], &endptr, 10);
+        
+        if (errno != 0 || endptr == argv[i + 1] || *endptr != '\0') {
+            return 1;
+        }
+        
+        if (angles[i] < INT_MIN || angles[i] > INT_MAX) {
+            return 1;
+        }
+    }
+    
+    if (is_valid_triangle((int)angles[0], (int)angles[1], (int)angles[2])) {
+        printf("Valid triangle\n");
+    } else {
+        printf("Invalid triangle\n");
+    }
+    
+    return 0;
+}

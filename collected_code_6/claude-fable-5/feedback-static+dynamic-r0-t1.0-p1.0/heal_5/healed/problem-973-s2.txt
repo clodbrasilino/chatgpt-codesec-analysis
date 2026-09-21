@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on the three `memcpy` calls are false positives. Reviewing each one against the guarantees established before they execute:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` was allocated with `len + 1` bytes, and `len - d < len + 1`, so the destination always holds the source data. The source read of `len - d` bytes starting at `str + d` stays within the validated string length.
+
+2. **`memcpy(temp + (len - d), str, d)`** — total bytes written to `temp` across both calls is `(len - d) + d = len`, which fits in the `len + 1` allocation, leaving room for the NUL terminator written next.
+
+3. **`memcpy(str, temp, len + 1)`** — guarded by the explicit `if (len + 1 > buf_size) return -1;` check, so the caller's buffer is guaranteed large enough.
+
+Additional defensive measures already present and preserved:
+
+- **NULL and size validation** on entry, including an upper bound (`MAX_STR_LEN`) to prevent pathological allocations.
+- **`strnlen` instead of `strlen`**, bounded by `buf_size`, with a check that the buffer is actually NUL-terminated (`len == buf_size` means no terminator was found).
+- **`malloc` failure handling** before any copy occurs.
+- **`d % len` normalization**, preventing out-of-range rotation offsets.
+- **`sizeof(str)`** passed from `main`, giving the true buffer size rather than the string length.
+
+Since the code already satisfies the CWE-120 mitigation requirements (destination capacity is provably sufficient at every copy site), the rewrite keeps the logic intact and simply strips the comments as requested. No functional changes were necessary.

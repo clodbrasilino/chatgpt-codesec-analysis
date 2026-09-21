@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-602.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-602.c:45:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0 && input[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-602.c:40:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-602.c:45:13: note: Condition 'len>0' is always true
+    if (len > 0 && input[len - 1] == '\n') {
+            ^

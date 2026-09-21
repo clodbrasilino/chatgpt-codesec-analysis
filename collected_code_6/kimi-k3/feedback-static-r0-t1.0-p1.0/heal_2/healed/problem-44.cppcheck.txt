@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-44.c:15:16: style: Array index 'word_len' is used before limits check. [arrayIndexThenCheck]
+    while (word[word_len] != '\0' && word_len < SIZE_MAX) {
+               ^

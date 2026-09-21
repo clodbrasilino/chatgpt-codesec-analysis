@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-914-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-914-s2.c:46:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   46 |         free(str);
+      |         ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-914-s2.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'free'
+    4 | #include <stdint.h>
+  +++ |+#include <stdlib.h>
+    5 | 

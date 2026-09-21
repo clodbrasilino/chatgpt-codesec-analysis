@@ -1,0 +1,216 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_ADVERBS 128
+#define INITIAL_LINE_CAPACITY 128
+
+typedef struct {
+    char *word;
+    size_t word_position;
+    size_t char_offset;
+} Adverb;
+
+static int ends_with_ly(const char *word, size_t len)
+{
+    if (word == NULL || len < 3) {
+        return 0;
+    }
+    return tolower((unsigned char)word[len - 2]) == 'l' &&
+           tolower((unsigned char)word[len - 1]) == 'y';
+}
+
+static int copy_token(char *dest, size_t dest_size, const char *src, size_t src_len)
+{
+    size_t i;
+
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+    if (src_len == SIZE_MAX || src_len + 1 > dest_size) {
+        return -1;
+    }
+    for (i = 0; i < src_len; i++) {
+        dest[i] = src[i];
+    }
+    dest[src_len] = '\0';
+    return 0;
+}
+
+static size_t find_adverbs(const char *sentence, Adverb *results, size_t capacity)
+{
+    size_t count = 0;
+    size_t word_pos = 0;
+    size_t i = 0;
+
+    if (sentence == NULL || results == NULL || capacity == 0) {
+        return 0;
+    }
+
+    while (sentence[i] != '\0') {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            size_t wlen;
+
+            while (isalpha((unsigned char)sentence[i]) || sentence[i] == '\'') {
+                i++;
+            }
+            wlen = i - start;
+            word_pos++;
+
+            if (ends_with_ly(sentence + start, wlen) && count < capacity) {
+                char *word;
+
+                if (wlen == SIZE_MAX) {
+                    break;
+                }
+
+                word = malloc(wlen + 1);
+                if (word == NULL) {
+                    break;
+                }
+
+                if (copy_token(word, wlen + 1, sentence + start, wlen) != 0) {
+                    free(word);
+                    break;
+                }
+
+                results[count].word = word;
+                results[count].word_position = word_pos;
+                results[count].char_offset = start;
+                count++;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return count;
+}
+
+static int grow_buffer(char **buffer, size_t *capacity, size_t required)
+{
+    size_t new_capacity;
+    char *tmp;
+
+    if (buffer == NULL || capacity == NULL || *buffer == NULL) {
+        return -1;
+    }
+    if (required <= *capacity) {
+        return 0;
+    }
+
+    new_capacity = *capacity;
+    while (new_capacity < required) {
+        if (new_capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        new_capacity *= 2;
+        if (new_capacity <= *capacity) {
+            return -1;
+        }
+    }
+
+    tmp = realloc(*buffer, new_capacity);
+    if (tmp == NULL) {
+        return -1;
+    }
+    *buffer = tmp;
+    *capacity = new_capacity;
+    return 0;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = INITIAL_LINE_CAPACITY;
+    size_t length = 0;
+    char *buffer;
+    int c;
+
+    if (stream == NULL || INITIAL_LINE_CAPACITY < 2) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((c = fgetc(stream)) != EOF && c != '\n') {
+        if (length >= SIZE_MAX - 2) {
+            free(buffer);
+            return NULL;
+        }
+        if (length + 2 > capacity) {
+            if (grow_buffer(&buffer, &capacity, length + 2) != 0) {
+                free(buffer);
+                return NULL;
+            }
+        }
+        if (length >= capacity - 1) {
+            free(buffer);
+            return NULL;
+        }
+        buffer[length] = (char)c;
+        length++;
+    }
+
+    if (ferror(stream) || (c == EOF && length == 0)) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length > 0 && buffer[length - 1] == '\r') {
+        length--;
+    }
+
+    buffer[length] = '\0';
+
+    return buffer;
+}
+
+int main(void)
+{
+    char *sentence;
+    Adverb results[MAX_ADVERBS];
+    size_t count;
+    size_t k;
+
+    printf("Enter a sentence: ");
+    fflush(stdout);
+
+    sentence = read_line(stdin);
+    if (sentence == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sentence[0] == '\0') {
+        fprintf(stderr, "Error: empty sentence.\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+
+    count = find_adverbs(sentence, results, MAX_ADVERBS);
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (k = 0; k < count; k++) {
+            printf("  Word #%zu at character %zu: %s\n",
+                   results[k].word_position,
+                   results[k].char_offset,
+                   results[k].word);
+        }
+    }
+
+    for (k = 0; k < count; k++) {
+        free(results[k].word);
+    }
+    free(sentence);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-788.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-788.c:73:24: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+        if (alloc_size > 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-788.c:62:24: note: Assuming that condition 'alloc_size==0' is not redundant
+        if (alloc_size == 0 || alloc_size / sizeof(int) != list_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-788.c:68:20: note: Assuming condition is false
+        if (t.list == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-788.c:73:24: note: Condition 'alloc_size>0' is always true
+        if (alloc_size > 0) {
+                       ^

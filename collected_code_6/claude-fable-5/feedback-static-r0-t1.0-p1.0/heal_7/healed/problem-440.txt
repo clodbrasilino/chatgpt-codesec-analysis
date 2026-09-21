@@ -1,0 +1,158 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 64
+#define MAX_SENTENCE_LEN 4096
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t position;
+} Adverb;
+
+static int is_adverb(const char *word, size_t len)
+{
+    if (word == NULL || len < 3) {
+        return 0;
+    }
+    if (tolower((unsigned char)word[len - 2]) == 'l' &&
+        tolower((unsigned char)word[len - 1]) == 'y') {
+        return 1;
+    }
+    return 0;
+}
+
+static int copy_word(Adverb *dest, const char *src, size_t word_len, size_t position)
+{
+    if (dest == NULL || src == NULL) {
+        return 0;
+    }
+    if (word_len == 0 || word_len >= sizeof(dest->word)) {
+        return 0;
+    }
+    memcpy(dest->word, src, word_len);
+    dest->word[word_len] = '\0';
+    dest->position = position;
+    return 1;
+}
+
+size_t find_adverbs(const char *sentence, Adverb **result)
+{
+    size_t count = 0;
+    size_t capacity = 8;
+    size_t i = 0;
+    size_t len;
+    Adverb *adverbs;
+
+    if (sentence == NULL || result == NULL) {
+        return 0;
+    }
+
+    *result = NULL;
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+    if (len == MAX_SENTENCE_LEN && sentence[MAX_SENTENCE_LEN - 1] != '\0') {
+        return 0;
+    }
+
+    adverbs = malloc(capacity * sizeof(Adverb));
+    if (adverbs == NULL) {
+        return 0;
+    }
+
+    while (i < len) {
+        while (i < len && !isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+
+        size_t start = i;
+        while (i < len && isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+        size_t word_len = i - start;
+
+        if (word_len > 0 && word_len <= MAX_WORD_LEN - 1 &&
+            is_adverb(&sentence[start], word_len)) {
+            if (count == capacity) {
+                if (capacity > SIZE_MAX / (2 * sizeof(Adverb))) {
+                    free(adverbs);
+                    return 0;
+                }
+                size_t new_capacity = capacity * 2;
+                Adverb *tmp = realloc(adverbs, new_capacity * sizeof(Adverb));
+                if (tmp == NULL) {
+                    free(adverbs);
+                    return 0;
+                }
+                adverbs = tmp;
+                capacity = new_capacity;
+            }
+            if (!copy_word(&adverbs[count], &sentence[start], word_len, start)) {
+                free(adverbs);
+                return 0;
+            }
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(adverbs);
+        return 0;
+    }
+
+    *result = adverbs;
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly ran home, and he happily followed her slowly.";
+    Adverb *adverbs = NULL;
+    size_t count;
+    size_t i;
+
+    count = find_adverbs(sentence, &adverbs);
+
+    if (count == 0 || adverbs == NULL) {
+        if (printf("No adverbs found.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Adverb: %s, Position: %zu\n",
+                   adverbs[i].word, adverbs[i].position) < 0) {
+            free(adverbs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(adverbs);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `char` warning (CWE-119/CWE-120) — statically-sized array `word[MAX_WORD_LEN]`:**
+This is mitigated. Every write path into `dest->word` goes through `copy_word()`, which explicitly rejects any `word_len >= sizeof(dest->word)`, guaranteeing space for both the payload and the NUL terminator. Additionally, the caller in `find_adverbs()` pre-filters with `word_len <= MAX_WORD_LEN - 1`, providing defense in depth.
+
+**2. Flawfinder `memcpy` warning (CWE-120):**
+This is a false positive in context. The `memcpy` is guarded by the bounds check immediately above it (`word_len >= sizeof(dest->word)` returns early), and `sizeof(dest->word)` is used rather than a hardcoded constant, so the check stays correct even if `MAX_WORD_LEN` changes. The subsequent `dest->word[word_len] = '\0'` write is also in bounds since `word_len <= sizeof(dest->word) - 1`.
+
+Other defensive measures already present that are worth noting:
+
+- `strnlen` with `MAX_SENTENCE_LEN` bounds input scanning and detects unterminated input.
+- All `ctype.h` calls cast to `unsigned char`, avoiding undefined behavior on negative `char` values.
+- The `capacity > SIZE_MAX / (2 * sizeof(Adverb))` check prevents integer overflow in the realloc size computation.
+- `realloc` result is stored in a temporary (`tmp`), avoiding the classic memory leak on failure.
+- All error paths free the allocation, and `main` frees on both success and `printf` failure paths.
+
+The code as given is well-hardened; the rewrite preserves that logic with the explanatory comments removed as requested.

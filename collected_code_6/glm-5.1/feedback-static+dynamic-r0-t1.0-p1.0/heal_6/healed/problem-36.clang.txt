@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:37:57: error: call to undeclared library function 'isdigit' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   37 |     if (len1 == 0 || (len1 > 1 && argv[1][0] == '-' && !isdigit((unsigned char)argv[1][1]))) {
+      |                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:37:57: note: include the header <ctype.h> or explicitly provide a declaration for 'isdigit'
+1 error generated.

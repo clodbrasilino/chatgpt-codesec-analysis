@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+void free_result(char **result, size_t count);
+char **concatenate_adjacent(const char **tuple, size_t count, size_t *result_count);
+
+char **concatenate_adjacent(const char **tuple, size_t count, size_t *result_count)
+{
+    if (tuple == NULL || result_count == NULL || count < 2U) {
+        if (result_count != NULL) {
+            *result_count = 0U;
+        }
+        return NULL;
+    }
+
+    size_t out_count = count - 1U;
+    char **result = calloc(out_count, sizeof(char *));
+    if (result == NULL) {
+        *result_count = 0U;
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < out_count; i++) {
+        if (tuple[i] == NULL || tuple[i + 1U] == NULL) {
+            free_result(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        size_t len1 = strnlen(tuple[i], MAX_STRING_LEN);
+        size_t len2 = strnlen(tuple[i + 1U], MAX_STRING_LEN);
+
+        if (len1 >= MAX_STRING_LEN || len2 >= MAX_STRING_LEN ||
+            len1 > SIZE_MAX - len2 - 1U) {
+            free_result(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        size_t total = len1 + len2 + 1U;
+        char *combined = malloc(total);
+        if (combined == NULL) {
+            free_result(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        int written = snprintf(combined, total, "%s%s", tuple[i], tuple[i + 1U]);
+        if (written < 0 || (size_t)written >= total) {
+            free(combined);
+            free_result(result, i);
+            *result_count = 0U;
+            return NULL;
+        }
+
+        result[i] = combined;
+    }
+
+    *result_count = out_count;
+    return result;
+}
+
+void free_result(char **result, size_t count)
+{
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0U; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *tuple[] = { "DSP", "IS", "BEST", "FOR", "ALL", "UTS" };
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_count = 0U;
+
+    char **result = concatenate_adjacent(tuple, count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0U; i < result_count; i++) {
+        printf("'%s'", result[i]);
+        if (i + 1U < result_count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_result(result, result_count);
+    return EXIT_SUCCESS;
+}

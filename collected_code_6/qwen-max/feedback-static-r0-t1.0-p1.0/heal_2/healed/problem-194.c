@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int octalToDecimal(const char *octal, size_t len) {
+    int decimal = 0, base = 1;
+
+    for (int i = len - 1; i >= 0; --i) {
+        if (isdigit(octal[i]) && octal[i] < '8') {
+            decimal += (octal[i] - '0') * base;
+            base *= 8;
+        } else {
+            return -1; 
+        }
+    }
+    return decimal;
+}
+
+int main() {
+    const char octal[] = "123";
+    size_t len = sizeof(octal) / sizeof(octal[0]) - 1;
+    int decimal = octalToDecimal(octal, len);
+
+    if (decimal != -1) {
+        printf("Octal: %s, Decimal: %d\n", octal, decimal);
+    } else {
+        printf("Invalid octal number: %s\n", octal);
+    }
+
+    return 0;
+}

@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_whitespace(const char *input, size_t max_len)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *result;
+    size_t result_len;
+    size_t input_len;
+    size_t copy_len;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[[:space:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, max_len);
+    if (input_len == max_len && input[input_len] != '\0') {
+        regfree(&regex);
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    result_len = 0;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            copy_len = strnlen(cursor, input_len - (size_t)(cursor - input));
+            if (result_len + copy_len > input_len) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            memcpy(result + result_len, cursor, copy_len);
+            result_len += copy_len;
+            break;
+        } else if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        copy_len = (size_t)match.rm_so;
+        if (result_len + copy_len > input_len) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        memcpy(result + result_len, cursor, copy_len);
+        result_len += copy_len;
+        cursor += match.rm_eo;
+    }
+
+    result[result_len] = '\0';
+    regfree(&regex);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_string = "Hello World \t This is a test \n string";
+    char *cleaned;
+
+    cleaned = remove_whitespace(test_string, strlen(test_string) + 1);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Error: Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", test_string);
+    printf("Cleaned:  %s\n", cleaned);
+
+    free(cleaned);
+
+    return EXIT_SUCCESS;
+}

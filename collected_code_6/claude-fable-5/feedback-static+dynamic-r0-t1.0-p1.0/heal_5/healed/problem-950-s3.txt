@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on the `signs` array is a **false positive**. Flawfinder performs simple lexical scanning and flags any statically-sized array of `char`-related types (CWE-119/CWE-120) without understanding context. In this code:
+
+1. **The array is never written to** — it is declared `static const char *const`, meaning both the pointers and the strings they reference are immutable. Buffer overflow via writing is impossible.
+
+2. **All reads are bounds-checked** — the index is computed with `year % ZODIAC_COUNT`, corrected for negative results (since C99, the `%` operator can yield negative values for negative operands), and then defensively validated with `if (index < 0 || index >= ZODIAC_COUNT)` before array access. This guarantees the index is always within `[0, 11]`.
+
+3. **Input handling is safe** — `scanf("%d", ...)` writes to a single `int`, and its return value is checked before `year` is used, avoiding use of an uninitialized variable.
+
+Since the identified weakness was already fully mitigated, the rewritten code is functionally identical with the comments stripped, as requested. No further hardening is required for this construct.

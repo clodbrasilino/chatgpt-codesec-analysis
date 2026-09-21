@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-822.c:11:18: error: call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   11 |         else if (strchr("!@#$%^&*()-_=+[]{}|;:',.<>/?", password[i])) has_special = true;
+      |                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_2/healed/problem-822.c:11:18: note: include the header <string.h> or explicitly provide a declaration for 'strchr'
+1 error generated.

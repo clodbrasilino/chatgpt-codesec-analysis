@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+Tuple string_to_tuple(const char *str) {
+    Tuple tuple;
+    tuple.items = NULL;
+    tuple.count = 0;
+
+    if (str == NULL) {
+        return tuple;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        return tuple;
+    }
+
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return tuple;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(copy, str);
+
+    size_t capacity = 4;
+    tuple.items = malloc(capacity * sizeof(char *));
+    if (tuple.items == NULL) {
+        free(copy);
+        return tuple;
+    }
+
+    char *token = strtok(copy, ",");
+    while (token != NULL) {
+        while (*token == ' ') token++;
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        char *end = token + strlen(token) - 1;
+        while (end > token && *end == ' ') end--;
+        *(end + 1) = '\0';
+
+        if (tuple.count == capacity) {
+            capacity *= 2;
+            char **new_items = realloc(tuple.items, capacity * sizeof(char *));
+            if (new_items == NULL) {
+                for (size_t i = 0; i < tuple.count; i++) {
+                    free(tuple.items[i]);
+                }
+                free(tuple.items);
+                free(copy);
+                tuple.items = NULL;
+                tuple.count = 0;
+                return tuple;
+            }
+            tuple.items = new_items;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        tuple.items[tuple.count] = malloc(strlen(token) + 1);
+        if (tuple.items[tuple.count] == NULL) {
+            for (size_t i = 0; i < tuple.count; i++) {
+                free(tuple.items[i]);
+            }
+            free(tuple.items);
+            free(copy);
+            tuple.items = NULL;
+            tuple.count = 0;
+            return tuple;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(tuple.items[tuple.count], token);
+        tuple.count++;
+
+        token = strtok(NULL, ",");
+    }
+
+    free(copy);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    if (tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    tuple->items = NULL;
+    tuple->count = 0;
+}
+
+int main(void) {
+    const char *input = "apple, banana, cherry, date";
+    Tuple result = string_to_tuple(input);
+
+    if (result.items == NULL && result.count == 0) {
+        fprintf(stderr, "Failed to convert string to tuple\n");
+        return 1;
+    }
+
+    printf("Tuple contains %zu items:\n", result.count);
+    for (size_t i = 0; i < result.count; i++) {
+        printf("  [%zu] %s\n", i, result.items[i]);
+    }
+
+    free_tuple(&result);
+    return 0;
+}

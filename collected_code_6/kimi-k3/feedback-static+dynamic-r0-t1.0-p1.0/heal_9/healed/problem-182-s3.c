@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT 1024
+#define NUM_PATTERNS 4
+
+int check_patterns(const char *input, int *results, size_t results_size) {
+    const char *patterns[NUM_PATTERNS] = {
+        "[A-Z]",
+        "[a-z]",
+        "[0-9]",
+        "[^A-Za-z0-9]"
+    };
+    
+    regex_t regex;
+    size_t i;
+    
+    if (input == NULL || results == NULL || results_size < NUM_PATTERNS) {
+        return -1;
+    }
+    
+    for (i = 0; i < NUM_PATTERNS; i++) {
+        results[i] = 0;
+    }
+    
+    for (i = 0; i < NUM_PATTERNS; i++) {
+        int ret = regcomp(&regex, patterns[i], REG_EXTENDED);
+        if (ret != 0) {
+            return -1;
+        }
+        
+        ret = regexec(&regex, input, 0, NULL, 0);
+        if (ret == 0) {
+            results[i] = 1;
+        } else if (ret != REG_NOMATCH) {
+            regfree(&regex);
+            return -1;
+        }
+        
+        regfree(&regex);
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    char input[MAX_INPUT];
+    int results[NUM_PATTERNS];
+    int status;
+    size_t len;
+    int c;
+    
+    printf("Enter a string: ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(input, sizeof(input));
+    
+    if (len == sizeof(input)) {
+        fprintf(stderr, "Input not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    status = check_patterns(input, results, NUM_PATTERNS);
+    if (status != 0) {
+        fprintf(stderr, "Error processing patterns\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Uppercase letters: %s\n", results[0] ? "Found" : "Not found");
+    printf("Lowercase letters: %s\n", results[1] ? "Found" : "Not found");
+    printf("Numeric values: %s\n", results[2] ? "Found" : "Not found");
+    printf("Special characters: %s\n", results[3] ? "Found" : "Not found");
+    
+    return EXIT_SUCCESS;
+}

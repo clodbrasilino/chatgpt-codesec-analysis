@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-621-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-621-s2.c:60:39: style: Condition 'num_len<temp_num_capacity' is always true [knownConditionTrueFalse]
+            size_t copy_len = num_len < temp_num_capacity ? num_len : temp_num_capacity;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-621-s2.c:54:25: note: Assuming that condition 'num_len>=temp_num_capacity' is not redundant
+            if (num_len >= temp_num_capacity) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-621-s2.c:60:39: note: Condition 'num_len<temp_num_capacity' is always true
+            size_t copy_len = num_len < temp_num_capacity ? num_len : temp_num_capacity;
+                                      ^

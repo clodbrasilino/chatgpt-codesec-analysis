@@ -1,0 +1,75 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original source-code is already well-hardened against the Flawfinder warning (CWE-119/CWE-120). Here is why the statically-sized buffer does not pose a real risk in this implementation:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to at most `BUFFER_SIZE - 1` characters plus the terminator, preventing any buffer overflow on read. The return value is also checked against `NULL`, correctly handling EOF and read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the buffer is always a valid C string, even in pathological cases.
+
+3. **Bounded string operations** — `strnlen()` is used instead of `strlen()`, both in `main` and in `count_position_matches()`, so length computation can never run past the buffer boundary.
+
+4. **Safe function contract** — `count_position_matches()` validates its parameters (`NULL` check, zero-length check) and passes the buffer size explicitly, so the callee never assumes more space than the caller provides. The loop is doubly bounded by `len` and the constant `26`.
+
+5. **Safe newline stripping** — the `len > 0` check before accessing `buffer[len - 1]` avoids an out-of-bounds read on empty input.
+
+Since the Flawfinder finding is a static heuristic triggered merely by the presence of a fixed-size `char` array (risk level 2, informational), and all accesses are properly bounds-checked, no functional changes were required — the code is reproduced as-is with the comments removed, per the request.

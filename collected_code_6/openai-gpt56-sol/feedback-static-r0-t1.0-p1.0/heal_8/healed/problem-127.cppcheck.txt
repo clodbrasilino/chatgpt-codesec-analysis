@@ -1,0 +1,11 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-127.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-127.c:54:34: warning: Either the condition 'right>0' is redundant or there is division by zero at line 54. [zerodivcond]
+            if (left < INT64_MAX / right) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-127.c:49:19: note: Assuming that condition 'right>0' is not redundant
+        if (right > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-127.c:54:34: note: Division by zero
+            if (left < INT64_MAX / right) {
+                                 ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-127.c: __GNUC__;__clang__...

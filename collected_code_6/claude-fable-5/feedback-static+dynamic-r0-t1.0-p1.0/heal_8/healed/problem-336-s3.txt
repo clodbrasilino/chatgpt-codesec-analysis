@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT_LEN];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < len && i < sizeof(normalized) - 1; i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+    int result;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = has_28_days(input);
+
+    if (result < 0) {
+        fprintf(stderr, "Invalid month name\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days\n", input);
+    } else {
+        printf("%s does not contain 28 days\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the weaknesses flagged by Flawfinder, which are mostly informational warnings triggered by pattern matching rather than actual vulnerabilities:
+
+1. **`char normalized[MAX_INPUT_LEN]` / `char input[MAX_INPUT_LEN]` (CWE-119/CWE-120):** Both buffers are protected. `fgets` is called with `sizeof(input)` limiting the read, the buffer is explicitly null-terminated afterward, and the normalization loop is doubly bounded by `i < len && i < sizeof(normalized) - 1` before writing the terminator at index `i`. `strnlen` (rather than `strlen`) guarantees the length check never runs past the buffer.
+
+2. **`getchar` in a loop (CWE-120/CWE-20):** This is a false positive — `flush_stdin` never stores the characters, it only discards them until newline or EOF, so no buffer boundary can be violated.
+
+3. **Input validation (CWE-20):** I strengthened `has_28_days` slightly by rejecting any non-alphabetic characters, so inputs like `"feb!ruary"` or digit-containing strings are treated as invalid rather than silently normalized. This is the only functional change; everything else in the original was already correct and idiomatic (checked `fflush` return, `NULL` checks, `EXIT_FAILURE`/`EXIT_SUCCESS`, cast to `unsigned char` before `tolower` to avoid UB on negative `char` values).

@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings (CWE-120 buffer overflow, CWE-20 improper input validation) are all **risk level 1** — the lowest severity — and in this case they are false positives. Here's why the code is already safe:
+
+1. **NULL and zero-length guard** — `str == NULL || max_len == 0` is checked before any access, preventing dereference of invalid pointers and underflow of `max_len - 1`.
+
+2. **Bounded read loop** — `read < max_len && str[read] != '\0'` guarantees the read index never exceeds the caller-supplied buffer size, even if the string is not null-terminated within `max_len`.
+
+3. **Bounded write with reserved terminator slot** — `write < max_len - 1` ensures the write index always leaves room for the null terminator, and since `write <= read`, in-place compaction can never overrun.
+
+4. **Guaranteed null termination** — the final block terminates the string in all code paths, including truncation.
+
+5. **Correct `isspace` usage** — casting to `unsigned char` avoids undefined behavior when `char` is signed and holds negative values (a common real-world bug that Flawfinder doesn't even check for).
+
+6. **Safe call site** — `main` passes `sizeof(text)`, which is the true buffer size including the terminator, so the contract between caller and callee is honored.
+
+No functional changes were required; the original code already implements the defensive checks the static-analysis comments ask you to verify. The rewrite simply removes the comments as requested.

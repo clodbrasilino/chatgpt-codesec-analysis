@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-544.c: In function 'flatten_tuple_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-544.c:31:97: error: implicit declaration of function 'log10' [-Wimplicit-function-declaration]
+   31 |         if (a_val == INT_MIN) required += 11; else required += (a_val <= 0) + (a_val > 0 ? (int)log10(abs(a_val)) + 1 : 0);
+      |                                                                                                 ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-544.c:5:1: note: include '<math.h>' or provide a declaration of 'log10'
+    4 | #include <limits.h>
+  +++ |+#include <math.h>
+    5 | 

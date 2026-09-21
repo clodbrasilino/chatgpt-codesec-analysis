@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-237.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-237.c:142:17: style: Variable 'group.count' is reassigned a value before the old one has been used. [redundantAssignment]
+    group.count = count;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-237.c:122:17: note: group.count is assigned
+    group.count = count;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-237.c:142:17: note: group.count is overwritten
+    group.count = count;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-237.c:142:17: style: Variable 'group.count' is assigned a value that is never used. [unreadVariable]
+    group.count = count;
+                ^

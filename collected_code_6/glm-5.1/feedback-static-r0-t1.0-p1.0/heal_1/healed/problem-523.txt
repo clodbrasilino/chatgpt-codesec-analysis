@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool validate_string(const char *str, size_t max_len, size_t min_len) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strnlen(str, max_len + 1);
+    if (len > max_len) {
+        return false;
+    }
+
+    if (len < min_len) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = str[i];
+        if (isupper(c)) {
+            has_upper = true;
+        }
+        if (islower(c)) {
+            has_lower = true;
+        }
+        if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void) {
+    const char *test_str = "Valid123";
+    bool result = validate_string(test_str, 20, 8);
+
+    if (result) {
+        printf("Valid\n");
+    } else {
+        printf("Invalid\n");
+    }
+
+    return 0;
+}

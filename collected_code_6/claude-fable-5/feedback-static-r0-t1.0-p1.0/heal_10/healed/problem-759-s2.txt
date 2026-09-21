@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define BUFFER_SIZE 128
+#define GUARD_LIMIT 1048576U
+
+static bool is_decimal_with_precision_two(const char *str);
+static bool read_line(char *buffer, size_t size);
+static void discard_remaining_input(void);
+
+static bool is_decimal_with_precision_two(const char *str)
+{
+    size_t i = 0;
+    size_t digits_before = 0;
+    size_t digits_after = 0;
+
+    if (str == NULL || str[0] == '\0') {
+        return false;
+    }
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+    }
+
+    while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+        digits_before++;
+        i++;
+    }
+
+    if (digits_before == 0) {
+        return false;
+    }
+
+    if (str[i] != '.') {
+        return false;
+    }
+    i++;
+
+    while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+        digits_after++;
+        i++;
+    }
+
+    if (str[i] != '\0') {
+        return false;
+    }
+
+    return digits_after == 2;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < GUARD_LIMIT);
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    if (buffer == NULL || size < 2 || size > (size_t)INT32_MAX) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        discard_remaining_input();
+        fprintf(stderr, "Input too long\n");
+        return false;
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (!read_line(buffer, sizeof(buffer))) {
+        return EXIT_FAILURE;
+    }
+
+    if (is_decimal_with_precision_two(buffer)) {
+        printf("Valid decimal with precision 2\n");
+    } else {
+        printf("Invalid decimal with precision 2\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20)** — Already mitigated. The `discard_remaining_input()` loop does not write to any buffer; it only consumes characters. The `GUARD_LIMIT` counter also prevents an unbounded loop against a malicious or non-terminating stream, and the loop correctly checks for `EOF` (using `int ch`, not `char`, which is essential for correct EOF detection).
+
+2. **Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120)** — Already mitigated. The buffer is:
+   - Zero-initialized with `memset` before use.
+   - Filled only via `fgets` with an exact `sizeof(buffer)` bound, which never overflows.
+   - Explicitly NUL-terminated at `buffer[size - 1]` as a defensive measure.
+   - Validated for truncation: if no newline is present and EOF hasn't been reached, the leftover input is drained and the input rejected — preventing the classic split-line vulnerability where the residue of an over-long line is misinterpreted as the next input.
+
+3. **Additional hardening already in place:**
+   - `read_line` validates `size >= 2` and caps it at `INT32_MAX` before the narrowing cast to `int` for `fgets`, avoiding integer truncation/overflow.
+   - All `isdigit` calls cast to `unsigned char`, avoiding undefined behavior on negative `char` values (CWE-704 style pitfalls).
+   - `strcspn` safely strips `\r\n` without risk of out-of-bounds access.
+
+The code as given is already defensively written; the rewrite preserves those mitigations verbatim with the commentary removed, since no genuine exploitable weakness remained to fix.

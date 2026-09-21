@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:23: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   23 |         errno_t err = memcpy_s(dst, len + 1, src, len);
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:23: note: did you mean 'memcpy'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:78:3: note: 'memcpy' declared here
+   78 |                 memcpy(void *_LIBC_SIZE(__n) __dst, const void *_LIBC_SIZE(__n) __src,
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:67:31: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   67 |                 errno_t err = memcpy_s(word, word_len + 1, start, word_len);
+      |                               ^
+2 errors generated.

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void toggle_case(char *str, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        if (islower(str[i])) {
+            str[i] = toupper(str[i]);
+        } else if (isupper(str[i])) {
+            str[i] = tolower(str[i]);
+        }
+    }
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strcspn(input, "\n");
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+            len--;
+        }
+        if (len < sizeof(input)) {
+            toggle_case(input, len);
+            printf("Toggled case: %s\n", input);
+        } else {
+            printf("Input is too long.\n");
+        }
+    }
+    return 0;
+}

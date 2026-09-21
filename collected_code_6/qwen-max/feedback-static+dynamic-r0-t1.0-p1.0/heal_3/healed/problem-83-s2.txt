@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int sum_of_chars(const char *str) {
+    int sum = 0;
+    for (int i = 0; str[i] != '\0'; ++i) {
+        sum += (unsigned char)str[i];
+    }
+    return sum;
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
+        int result = sum_of_chars(input);
+        printf("Sum of characters: %d\n", result);
+    } else {
+        printf("Failed to read input.\n");
+    }
+    return 0;
+}
+```
+
+The provided code is already safe from the buffer overflow issue mentioned, as `fgets` is used with a size limit (`sizeof(input)`), and the newline character is removed using `strcspn`. The function `sum_of_chars` also correctly handles the string. Therefore, no changes are needed in this case.

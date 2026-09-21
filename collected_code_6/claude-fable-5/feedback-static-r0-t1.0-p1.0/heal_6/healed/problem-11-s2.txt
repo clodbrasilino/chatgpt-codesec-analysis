@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_first_last(char *str, size_t max_size, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t pos;
+
+    if (str == NULL || max_size == 0 || ch == '\0') {
+        return;
+    }
+
+    len = strnlen(str, max_size);
+    if (len == 0 || len >= max_size) {
+        return;
+    }
+
+    first = memchr(str, (unsigned char)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = strrchr(str, ch);
+
+    if (last != NULL && last != first) {
+        pos = (size_t)(last - str);
+        memmove(str + pos, str + pos + 1, len - pos);
+        len--;
+    }
+
+    pos = (size_t)(first - str);
+    memmove(str + pos, str + pos + 1, len - pos);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return 1;
+    }
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        do {
+            c = getchar();
+        } while (c != EOF && c != '\n');
+    }
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return 1;
+    }
+    ch = (char)c;
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder warnings are essentially false positives that the existing code mitigates correctly:
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`)**: Mitigated by using `fgets(buffer, sizeof(buffer), stdin)`, which enforces the buffer bound, plus an explicit forced null-termination at `buffer[sizeof(buffer) - 1]`. All subsequent length calculations use `strnlen` with `sizeof(buffer)` as the cap, so no unbounded string operations occur.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop)**: The first `getchar` loop only *drains* excess stdin input when the line was truncated (`len == sizeof(buffer) - 1` with no newline) — it never writes to a buffer, so no overflow is possible. It correctly terminates on both `\n` and `EOF`, avoiding infinite loops on closed streams.
+
+3. **The second `getchar`**: The return value is stored in an `int` (not `char`) before the `EOF` comparison — this is the correct idiom, since comparing a `char` against `EOF` is unreliable.
+
+4. **`remove_first_last`**: Defensively validates `str != NULL`, `max_size != 0`, and `ch != '\0'`; uses `strnlen` bounded by `max_size` and rejects unterminated buffers (`len >= max_size`); the `memmove` size calculations (`len - pos`) correctly include the null terminator in the shifted region, and `memmove` (rather than `memcpy`) is properly used for overlapping regions.
+
+No functional changes were required — the rewrite preserves the code with the audit comments removed, as all identified weaknesses were already properly addressed.

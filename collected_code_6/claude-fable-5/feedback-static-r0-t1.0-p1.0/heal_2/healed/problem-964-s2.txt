@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    if (len == max_len) {
+        return false;
+    }
+
+    return (len % 2U) == 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    char *newline = NULL;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged CWE-119/CWE-120 (buffer overflow) weakness. Here's why the rewrite is safe:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow into adjacent memory. This directly addresses the Flawfinder warning about statically-sized arrays.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1U] = '\0'` is a defensive belt-and-suspenders measure; `fgets` already null-terminates, but this protects against future refactoring mistakes.
+
+3. **Bounded string measurement** — `strnlen(word, max_len)` instead of `strlen` guarantees the scan never reads past `max_len` bytes, even if a non-terminated buffer were somehow passed in.
+
+4. **NULL check and truncation detection** — `is_word_length_even` rejects `NULL` pointers and treats `len == max_len` (a possibly-truncated/unterminated string) as invalid rather than trusting it.
+
+5. **Improvement added: stdin flushing on truncation** — one subtle issue in the original was that if the user typed more than 255 characters, the excess remained in the stdin buffer. The rewrite detects a missing newline and drains the remaining input with `getchar()`, preventing stale data from leaking into any subsequent reads.
+
+6. **Initialized buffer** — `memset` ensures no uninitialized memory is ever read or printed, avoiding potential information disclosure.
+
+The Flawfinder hit is a heuristic warning triggered simply by the presence of a fixed-size `char` array; the surrounding code correctly mitigates the risk through consistent bounds checking.

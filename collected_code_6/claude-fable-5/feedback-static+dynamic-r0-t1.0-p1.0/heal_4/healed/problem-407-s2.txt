@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define DIGITS_BUF_SIZE 32
+
+long long next_bigger(long long n)
+{
+    char digits[DIGITS_BUF_SIZE];
+    int len;
+    int i;
+    int pivot;
+    int swap_idx;
+    char tmp;
+    int lo;
+    int hi;
+    long long result;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    memset(digits, 0, sizeof(digits));
+
+    len = snprintf(digits, sizeof(digits), "%lld", n);
+    if (len < 0 || (size_t)len >= sizeof(digits)) {
+        return -1;
+    }
+
+    pivot = -1;
+    for (i = len - 2; i >= 0; i--) {
+        if (digits[i] < digits[i + 1]) {
+            pivot = i;
+            break;
+        }
+    }
+
+    if (pivot == -1) {
+        return -1;
+    }
+
+    swap_idx = -1;
+    for (i = len - 1; i > pivot; i--) {
+        if (digits[i] > digits[pivot]) {
+            swap_idx = i;
+            break;
+        }
+    }
+
+    if (swap_idx == -1) {
+        return -1;
+    }
+
+    tmp = digits[pivot];
+    digits[pivot] = digits[swap_idx];
+    digits[swap_idx] = tmp;
+
+    lo = pivot + 1;
+    hi = len - 1;
+    while (lo < hi) {
+        tmp = digits[lo];
+        digits[lo] = digits[hi];
+        digits[hi] = tmp;
+        lo++;
+        hi--;
+    }
+
+    result = 0;
+    for (i = 0; i < len; i++) {
+        int d = digits[i] - '0';
+        if (d < 0 || d > 9) {
+            return -1;
+        }
+        if (result > (LLONG_MAX - d) / 10) {
+            return -1;
+        }
+        result = result * 10 + d;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long inputs[] = {12LL, 513LL, 2017LL, 414LL, 144LL, 9LL, 111LL, 531LL};
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        long long res = next_bigger(inputs[i]);
+        if (res == -1) {
+            if (printf("%lld -> no bigger number possible\n", inputs[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("%lld -> %lld\n", inputs[i], res) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `digits` array is already properly mitigated in this code, so no functional changes were required:
+
+1. **Buffer initialization** — `memset(digits, 0, sizeof(digits))` guarantees the buffer starts zeroed, so no uninitialized reads are possible.
+
+2. **Bounded write** — `snprintf(digits, sizeof(digits), ...)` is used rather than `sprintf`, so the write can never exceed the buffer. The return value is checked both for encoding errors (`len < 0`) and truncation (`(size_t)len >= sizeof(digits)`), rejecting any input that would not fit.
+
+3. **Adequate sizing** — `DIGITS_BUF_SIZE` (32) comfortably exceeds the maximum length of a `long long` decimal representation (19 digits plus NUL), providing headroom.
+
+4. **Bounded indexing** — every loop index (`pivot`, `swap_idx`, `lo`, `hi`, `i`) is derived from and constrained by `len`, which has been validated against the buffer size, so no out-of-bounds access can occur.
+
+5. **Integer overflow protection** — the reconstruction loop checks `result > (LLONG_MAX - d) / 10` before multiplying, preventing signed overflow (undefined behavior), and validates each character is a decimal digit as defense-in-depth.
+
+6. **Robust I/O** — `printf` return values are checked in `main`, with `EXIT_FAILURE`/`EXIT_SUCCESS` used for portable exit statuses.
+
+The code is a correct, safe implementation of the "next bigger number with the same digits" algorithm (next lexicographic permutation), and the flagged weakness is a false positive given the existing bounds checking.

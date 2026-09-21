@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void count_digits_letters(const char *str, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    count_digits_letters(buffer, &digits, &letters);
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120, statically-sized array):**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk (risk 2) informational flag rather than an actual vulnerability in this code. The source already mitigates it correctly, and the rewrite preserves those mitigations:
+
+1. **Bounds-checked input** — `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, so no overflow is possible on input. Using `sizeof(buffer)` instead of the macro directly keeps the size expression tied to the actual array declaration.
+
+2. **Defensive null-termination** — `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after `fgets`, but it is a harmless belt-and-suspenders guarantee that the buffer is a valid C string before further processing.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even if termination were somehow missing, the scan cannot run past the buffer.
+
+4. **Safe character classification** — casting to `unsigned char` before calling `isdigit`/`isalpha` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+5. **Return value checking** — the `fgets` result is validated, handling EOF/error paths cleanly with `EXIT_FAILURE`.
+
+No functional changes were required; the code as written already satisfies the fixes the warning asks for, so the rewrite is the same logic with the audit comment removed.

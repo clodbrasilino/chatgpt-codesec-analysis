@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int check_even_parity(uint32_t num)
+{
+    uint32_t v = num;
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    v ^= v >> 2;
+    v ^= v >> 1;
+    return (int)(v & 1U);
+}
+
+int main(void)
+{
+    uint32_t num = 0;
+    char buffer[BUFFER_SIZE];
+    char *endptr;
+    unsigned long temp;
+
+    printf("Enter an unsigned integer: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    errno = 0;
+    temp = strtoul(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0') || temp > UINT32_MAX) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    num = (uint32_t)temp;
+
+    if (check_even_parity(num) == 0) {
+        printf("The number has even parity.\n");
+    } else {
+        printf("The number does not have even parity.\n");
+    }
+
+    return 0;
+}

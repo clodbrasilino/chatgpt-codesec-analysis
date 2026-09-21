@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+    1 | n = strnlen(s, max_len);
+      | ^
+      | int
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:5: error: call to undeclared function 'strnlen'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1 | n = strnlen(s, max_len);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:13: error: use of undeclared identifier 's'
+    1 | n = strnlen(s, max_len);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:1:16: error: use of undeclared identifier 'max_len'
+    1 | n = strnlen(s, max_len);
+      |                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-61-s3.c:2:1: error: expected identifier or '('
+    2 | if (n >= max_len) {
+      | ^
+5 errors generated.

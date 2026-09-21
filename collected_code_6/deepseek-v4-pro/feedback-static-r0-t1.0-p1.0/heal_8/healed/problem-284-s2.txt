@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct node {
+    char *data;
+    struct node *next;
+} node_t;
+
+int all_items_equal(node_t *head, const char *target) {
+    if (target == NULL) {
+        return 0;
+    }
+    
+    node_t *current = head;
+    while (current != NULL) {
+        if (current->data == NULL || strcmp(current->data, target) != 0) {
+            return 0;
+        }
+        current = current->next;
+    }
+    return 1;
+}
+
+node_t *create_node(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = strnlen(str, SIZE_MAX);
+    
+    if (len >= SIZE_MAX) {
+        return NULL;
+    }
+    
+    node_t *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    size_t alloc_size = len + 1;
+    if (alloc_size < len) {
+        free(new_node);
+        return NULL;
+    }
+    
+    new_node->data = malloc(alloc_size);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    memcpy(new_node->data, str, len + 1);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(node_t *head) {
+    node_t *current = head;
+    while (current != NULL) {
+        node_t *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    node_t *head = create_node("apple");
+    if (head != NULL) {
+        head->next = create_node("apple");
+        if (head->next != NULL) {
+            head->next->next = create_node("apple");
+        }
+    }
+    
+    printf("Test 1: %d\n", all_items_equal(head, "apple"));
+    printf("Test 2: %d\n", all_items_equal(head, "banana"));
+    
+    free_list(head);
+    
+    node_t *empty = NULL;
+    printf("Test 3: %d\n", all_items_equal(empty, "apple"));
+    printf("Test 4: %d\n", all_items_equal(empty, NULL));
+    
+    node_t *mixed = create_node("apple");
+    if (mixed != NULL) {
+        mixed->next = create_node("banana");
+        if (mixed->next != NULL) {
+            mixed->next->next = create_node("apple");
+        }
+    }
+    
+    printf("Test 5: %d\n", all_items_equal(mixed, "apple"));
+    
+    free_list(mixed);
+    
+    return 0;
+}

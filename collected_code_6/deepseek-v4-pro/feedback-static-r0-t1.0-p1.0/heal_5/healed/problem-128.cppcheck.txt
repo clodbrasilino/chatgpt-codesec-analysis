@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-128.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-128.c:24:55: style: Condition 'word_count>0' is always true [knownConditionTrueFalse]
+            size_t len = strnlen(words[i], word_count > 0 ? (size_t)word_count * 64 : 4096);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-128.c:9:37: note: Assuming condition 'word_count<=0' is false
+    if (words == NULL || word_count <= 0 || n < 0 || result_count == NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-128.c:17:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-128.c:24:55: note: Condition 'word_count>0' is always true
+            size_t len = strnlen(words[i], word_count > 0 ? (size_t)word_count * 64 : 4096);
+                                                      ^

@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256
+#define MAX_DISCARD_ITERATIONS 65536
+
+bool is_valid_password(const char *str, size_t required_length);
+static void discard_remaining_input(void);
+static void secure_clear(void *ptr, size_t len);
+
+bool is_valid_password(const char *str, size_t required_length)
+{
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    size_t length = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (required_length == 0 || required_length >= MAX_INPUT_LENGTH) {
+        return false;
+    }
+
+    length = strnlen(str, MAX_INPUT_LENGTH);
+
+    if (length >= MAX_INPUT_LENGTH) {
+        return false;
+    }
+
+    if (length != required_length) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit);
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t count = 0;
+
+    do {
+        ch = getchar();
+        count++;
+    } while (ch != '\n' && ch != EOF && count < MAX_DISCARD_ITERATIONS);
+}
+
+static void secure_clear(void *ptr, size_t len)
+{
+    volatile unsigned char *p;
+    size_t i;
+
+    if (ptr == NULL || len == 0) {
+        return;
+    }
+
+    p = (volatile unsigned char *)ptr;
+
+    for (i = 0; i < len; i++) {
+        p[i] = 0;
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LENGTH];
+    size_t required_length = 8;
+    size_t input_length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string to validate (required length %zu): ", required_length);
+
+    if (fflush(stdout) != 0) {
+        secure_clear(buffer, sizeof(buffer));
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        secure_clear(buffer, sizeof(buffer));
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    input_length = strnlen(buffer, sizeof(buffer));
+
+    if (input_length > 0 && buffer[input_length - 1] == '\n') {
+        buffer[input_length - 1] = '\0';
+    } else if (input_length == sizeof(buffer) - 1) {
+        discard_remaining_input();
+    }
+
+    if (is_valid_password(buffer, required_length)) {
+        printf("The string is valid.\n");
+    } else {
+        printf("The string is invalid.\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discard_remaining_input`:**
+This is a false positive as written. The loop never stores the character into a buffer — it only discards input. Additionally, the loop is bounded by `MAX_DISCARD_ITERATIONS`, preventing an unbounded spin on a malicious or broken stream, and it correctly terminates on both `'\n'` and `EOF`. No fix is required beyond what is already present.
+
+**2. Flawfinder `char buffer[MAX_INPUT_LENGTH]` warning (CWE-119/CWE-120) in `main`:**
+Also mitigated. All accesses to `buffer` are bounds-checked:
+- Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which cannot overflow the buffer.
+- The buffer is explicitly NUL-terminated at `sizeof(buffer) - 1` as a defensive measure.
+- Length is computed with `strnlen(buffer, sizeof(buffer))`, never with unbounded `strlen`.
+- Overlong input is detected (`input_length == sizeof(buffer) - 1` without a trailing newline) and the excess is safely drained via `discard_remaining_input()`, so a subsequent read cannot consume stale data.
+
+**Additional good practices already present:**
+- `is_valid_password` validates the pointer for NULL, rejects zero or out-of-range required lengths, and casts to `unsigned char` before calling `ctype.h` functions (avoiding undefined behavior for negative `char` values).
+- `secure_clear` uses a `volatile` pointer to defeat dead-store elimination by the optimizer, ensuring the password material is actually wiped from memory on every exit path, including error paths.
+- `fflush(stdout)` return value is checked, and all failure paths clear the buffer before returning.
+
+The code is correct as-is; the Flawfinder hits are informational (risk levels 1–2) and both are properly mitigated, so the rewritten source is functionally identical with the advisory comments removed.

@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+static bool is_palindrome(const char *str, size_t len) {
+    for (size_t i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - 1 - i]) return false;
+    }
+    return true;
+}
+
+static size_t decrement_str(char *str, size_t len) {
+    size_t i = len;
+    while (i > 0 && str[i - 1] == '0') {
+        str[i - 1] = '9';
+        i--;
+    }
+    if (i > 0) {
+        str[i - 1]--;
+    }
+    if (str[0] == '0' && len > 1) {
+        memmove(str, str + 1, len - 1);
+        str[len - 1] = '\0';
+        return len - 1;
+    }
+    return len;
+}
+
+static void make_palindrome(char *str, size_t len) {
+    for (size_t i = 0; i < len / 2; i++) {
+        str[len - 1 - i] = str[i];
+    }
+}
+
+static bool handle_smaller(char *str, size_t len, size_t capacity) {
+    size_t half = (len + 1) / 2;
+    if (half > capacity) {
+        return false;
+    }
+
+    char *left = (char *)malloc(half + 1);
+    if (left == NULL) exit(EXIT_FAILURE);
+
+    memcpy(left, str, half);
+    left[half] = '\0';
+    
+    size_t left_len = decrement_str(left, half);
+    
+    if (left_len == 0 || (left_len == 1 && left[0] == '0')) {
+        free(left);
+        if (len == 1) {
+            if (2 <= capacity) {
+                str[0] = '0';
+                str[1] = '\0';
+            }
+            return true;
+        }
+        if (len > 0 && len - 1 < capacity) {
+            if (len - 1 > 0) {
+                memset(str, '9', len - 1);
+            }
+            str[len - 1] = '\0';
+        }
+        return true;
+    }
+    
+    size_t total_len = left_len + (len - half);
+    if (total_len >= capacity) {
+        free(left);
+        return false;
+    }
+    
+    memset(str, 0, capacity);
+    memcpy(str, left, left_len);
+    make_palindrome(str, total_len);
+    str[total_len] = '\0';
+    
+    free(left);
+    return true;
+}
+
+static void previous_palindrome(char *num, size_t capacity) {
+    size_t len = 0;
+    while (len < capacity && num[len] != '\0') {
+        len++;
+    }
+    if (len == 0 || len >= capacity) return;
+
+    char *tmp = (char *)malloc(capacity);
+    if (tmp == NULL) exit(EXIT_FAILURE);
+    
+    if (len + 1 <= capacity) {
+        memcpy(tmp, num, len + 1);
+    } else {
+        memcpy(tmp, num, capacity);
+        tmp[capacity - 1] = '\0';
+        len = capacity - 1;
+    }
+
+    if (is_palindrome(tmp, len)) {
+        size_t new_len = decrement_str(tmp, len);
+        if (new_len == 1 && tmp[0] == '0') {
+            if (2 <= capacity) {
+                memcpy(num, "0", 2);
+            }
+        } else if (new_len < len) {
+            if (new_len < capacity) {
+                if (new_len > 0) {
+                    memset(num, '9', new_len);
+                }
+                num[new_len] = '\0';
+            }
+        } else {
+            if (new_len + 1 <= capacity) {
+                memcpy(num, tmp, new_len + 1);
+                if (!is_palindrome(num, new_len)) {
+                    handle_smaller(num, new_len, capacity);
+                }
+            }
+        }
+        free(tmp);
+        return;
+    }
+
+    make_palindrome(tmp, len);
+    if (strcmp(tmp, num) < 0) {
+        if (len + 1 <= capacity) {
+            memcpy(num, tmp, len + 1);
+        }
+        free(tmp);
+        return;
+    }
+
+    if (!handle_smaller(tmp, len, capacity)) {
+        if (len + 1 <= capacity) {
+            memcpy(num, tmp, len + 1);
+        }
+    } else {
+        if (len + 1 <= capacity) {
+            memcpy(num, tmp, len + 1);
+        }
+    }
+    free(tmp);
+}
+
+int main(void) {
+    char input[1024];
+    if (fgets(input, sizeof(input), stdin) == NULL) return EXIT_FAILURE;
+    
+    input[strcspn(input, "\n")] = '\0';
+    
+    size_t len = strlen(input);
+    
+    if (len == 0 || len >= sizeof(input)) return EXIT_FAILURE;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (input[i] < '0' || input[i] > '9') return EXIT_FAILURE;
+    }
+    
+    previous_palindrome(input, sizeof(input));
+    printf("%s\n", input);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-217-s3.c: In function 'find_first_repeated':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-217-s3.c:10:24: error: 'UCHAR_MAX' undeclared (first use in this function)
+   10 |     unsigned char seen[UCHAR_MAX + 1] = {0};
+      |                        ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-217-s3.c:4:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-217-s3.c:10:24: note: each undeclared identifier is reported only once for each function it appears in
+   10 |     unsigned char seen[UCHAR_MAX + 1] = {0};
+      |                        ^~~~~~~~~

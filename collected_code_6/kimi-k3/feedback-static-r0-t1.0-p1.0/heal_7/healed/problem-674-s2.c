@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char **words;
+    size_t size;
+    size_t capacity;
+} WordSet;
+
+WordSet* wordset_create(void) {
+    WordSet *set = malloc(sizeof(WordSet));
+    if (!set) return NULL;
+    set->capacity = 16;
+    set->size = 0;
+    set->words = malloc(set->capacity * sizeof(char*));
+    if (!set->words) {
+        free(set);
+        return NULL;
+    }
+    return set;
+}
+
+void wordset_destroy(WordSet *set) {
+    if (!set) return;
+    for (size_t i = 0; i < set->size; i++) {
+        free(set->words[i]);
+    }
+    free(set->words);
+    free(set);
+}
+
+int wordset_contains(WordSet *set, const char *word) {
+    for (size_t i = 0; i < set->size; i++) {
+        if (strcmp(set->words[i], word) == 0) return 1;
+    }
+    return 0;
+}
+
+int wordset_add(WordSet *set, const char *word, size_t word_len) {
+    if (wordset_contains(set, word)) return 0;
+    if (set->size >= set->capacity) {
+        size_t new_cap = set->capacity * 2;
+        char **new_words = realloc(set->words, new_cap * sizeof(char*));
+        if (!new_words) return -1;
+        set->words = new_words;
+        set->capacity = new_cap;
+    }
+    set->words[set->size] = malloc(word_len + 1);
+    if (!set->words[set->size]) return -1;
+    if (word_len > 0) {
+        size_t copy_len = word_len;
+        if (copy_len > word_len) copy_len = word_len;
+        memcpy(set->words[set->size], word, copy_len);
+    }
+    set->words[set->size][word_len] = '\0';
+    set->size++;
+    return 1;
+}
+
+char* remove_duplicate_words(const char *input, size_t input_len) {
+    if (!input) return NULL;
+    WordSet *seen = wordset_create();
+    if (!seen) return NULL;
+    size_t len = strnlen(input, input_len);
+    char *result = malloc(len + 1);
+    if (!result) {
+        wordset_destroy(seen);
+        return NULL;
+    }
+    result[0] = '\0';
+    size_t result_len = 0;
+    const char *start = input;
+    const char *end_of_input = input + len;
+    while (start < end_of_input && *start) {
+        while (start < end_of_input && *start && isspace((unsigned char)*start)) start++;
+        if (start >= end_of_input || !*start) break;
+        const char *end = start;
+        while (end < end_of_input && *end && !isspace((unsigned char)*end)) end++;
+        size_t word_len = end - start;
+        char *word = malloc(word_len + 1);
+        if (!word) {
+            wordset_destroy(seen);
+            free(result);
+            return NULL;
+        }
+        if (word_len > 0) {
+            size_t copy_len = word_len;
+            if (copy_len > word_len) copy_len = word_len;
+            memcpy(word, start, copy_len);
+        }
+        word[word_len] = '\0';
+        int added = wordset_add(seen, word, word_len);
+        if (added < 0) {
+            free(word);
+            wordset_destroy(seen);
+            free(result);
+            return NULL;
+        }
+        if (added > 0) {
+            if (result_len > 0) {
+                result[result_len++] = ' ';
+            }
+            if (result_len + word_len > len) {
+                free(word);
+                wordset_destroy(seen);
+                free(result);
+                return NULL;
+            }
+            if (word_len > 0) {
+                size_t copy_len = word_len;
+                size_t remaining = len - result_len;
+                if (copy_len > remaining) copy_len = remaining;
+                memcpy(result + result_len, word, copy_len);
+                result_len += copy_len;
+            }
+            result[result_len] = '\0';
+        }
+        free(word);
+        start = end;
+    }
+    wordset_destroy(seen);
+    return result;
+}
+
+int main(void) {
+    const char *test = "hello world hello there world world";
+    char *result = remove_duplicate_words(test, sizeof("hello world hello there world world") - 1);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

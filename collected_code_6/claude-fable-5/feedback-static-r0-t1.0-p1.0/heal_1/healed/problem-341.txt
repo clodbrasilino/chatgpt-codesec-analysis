@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int *set_to_ordered_tuple(const int *set, size_t size)
+{
+    int *tuple = NULL;
+    size_t total_bytes = 0U;
+
+    if (set == NULL || size == 0U) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    total_bytes = size * sizeof(int);
+
+    tuple = malloc(total_bytes);
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    memcpy(tuple, set, total_bytes);
+    qsort(tuple, size, sizeof(int), compare_ints);
+
+    return tuple;
+}
+
+int main(void)
+{
+    int set[] = {7, 2, 9, 4, 1};
+    size_t size = sizeof(set) / sizeof(set[0]);
+    size_t i = 0U;
+    int *tuple = NULL;
+
+    tuple = set_to_ordered_tuple(set, size);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < size; i++) {
+        if (i > 0U) {
+            printf(", ");
+        }
+        printf("%d", tuple[i]);
+    }
+    printf(")\n");
+
+    free(tuple);
+    tuple = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warning about `memcpy` (CWE-120) flags the risk that the destination buffer may not be large enough to hold the source data. In the original code there were two latent issues addressed in the rewrite:
+
+1. **Integer overflow guard on the allocation size**: The expression `size * sizeof(int)` can wrap around on very large `size` values, causing `malloc` to allocate a buffer smaller than what `memcpy` subsequently writes — a classic heap buffer overflow. The rewrite adds a check `size > SIZE_MAX / sizeof(int)` before performing the multiplication, requiring the `<stdint.h>` header for `SIZE_MAX`.
+
+2. **Single computed byte count**: The byte count is computed once into `total_bytes` and used consistently for both `malloc` and `memcpy`, guaranteeing the destination is exactly as large as the copy length, which directly satisfies the "make sure destination can always hold the source data" mitigation.
+
+The rest of the program was already sound: `malloc` return value is checked, `size == 0` and `NULL` inputs are rejected, the allocated memory is freed and the pointer nulled, and `qsort` uses a well-formed comparator that avoids the `x - y` overflow anti-pattern.

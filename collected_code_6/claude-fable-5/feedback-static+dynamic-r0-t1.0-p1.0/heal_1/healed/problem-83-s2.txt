@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+static int get_added_char(const char *str, size_t max_len, char *result)
+{
+    unsigned long sum;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0U || len == max_len) {
+        return -1;
+    }
+
+    sum = 0UL;
+    for (i = 0U; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    *result = (char)((sum % 26UL) + (unsigned long)'a');
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (get_added_char(buffer, sizeof(buffer), &result) != 0) {
+        fprintf(stderr, "Invalid or empty input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Resulting character: %c\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+The key hardening changes made to address the Flawfinder findings:
+
+1. **CWE-126 (`strlen` over-read)**: Both calls to `strlen` were replaced with `strnlen`, bounded by the known buffer capacity. Even if a non-terminated string were ever passed, the read is capped at `max_len`. In `get_added_char`, a return value equal to `max_len` is treated as an error, since it indicates the string was not properly terminated within bounds.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now a named constant, the buffer is zero-initialized with `memset`, and a defensive explicit NUL terminator is written at the last index after `fgets`. Combined with `fgets` already limiting input to `sizeof(buffer)`, no write or read can exceed the array bounds.
+
+3. **Interface hardening**: `get_added_char` now takes an explicit `max_len` parameter rather than trusting the caller to supply a terminated string, making the bounds contract part of the API.

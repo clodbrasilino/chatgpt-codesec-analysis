@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_KEY_LEN 256
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(size_t capacity)
+{
+    Dict *d = malloc(sizeof(Dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->entries = malloc(capacity * sizeof(DictEntry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = capacity;
+    return d;
+}
+
+static bool dict_insert(Dict *d, const char *key, int value)
+{
+    if (d == NULL || key == NULL || d->size >= d->capacity) {
+        return false;
+    }
+    size_t len = strnlen(key, MAX_KEY_LEN);
+    if (len >= MAX_KEY_LEN) {
+        return false;
+    }
+    size_t buf_size = len + 1;
+    char *k = malloc(buf_size);
+    if (k == NULL) {
+        return false;
+    }
+    memcpy(k, key, buf_size - 1);
+    k[buf_size - 1] = '\0';
+    d->entries[d->size].key = k;
+    d->entries[d->size].value = value;
+    d->size++;
+    return true;
+}
+
+static void dict_destroy(Dict *d)
+{
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+    }
+    free(d->entries);
+    free(d);
+}
+
+static bool all_values_same(const Dict *d)
+{
+    if (d == NULL || d->size == 0) {
+        return true;
+    }
+    int first = d->entries[0].value;
+    for (size_t i = 1; i < d->size; i++) {
+        if (d->entries[i].value != first) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    Dict *d1 = dict_create(4);
+    if (d1 == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (!dict_insert(d1, "a", 10) ||
+        !dict_insert(d1, "b", 10) ||
+        !dict_insert(d1, "c", 10)) {
+        fprintf(stderr, "Insert failed\n");
+        dict_destroy(d1);
+        return EXIT_FAILURE;
+    }
+    printf("Dict 1 all same: %s\n", all_values_same(d1) ? "true" : "false");
+    dict_destroy(d1);
+
+    Dict *d2 = dict_create(4);
+    if (d2 == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (!dict_insert(d2, "x", 1) ||
+        !dict_insert(d2, "y", 2) ||
+        !dict_insert(d2, "z", 1)) {
+        fprintf(stderr, "Insert failed\n");
+        dict_destroy(d2);
+        return EXIT_FAILURE;
+    }
+    printf("Dict 2 all same: %s\n", all_values_same(d2) ? "true" : "false");
+    dict_destroy(d2);
+
+    return EXIT_SUCCESS;
+}

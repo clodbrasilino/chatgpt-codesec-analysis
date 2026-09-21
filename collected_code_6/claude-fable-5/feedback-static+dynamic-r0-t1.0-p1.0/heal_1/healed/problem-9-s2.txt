@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+int find_min_rotations(const char *str, size_t *result)
+{
+    size_t len;
+    size_t i;
+    char *temp;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len == 0U || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    temp = (char *)malloc((2U * len) + 1U);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (snprintf(temp, (2U * len) + 1U, "%s%s", str, str) < 0) {
+        free(temp);
+        return -1;
+    }
+
+    for (i = 1U; i <= len; i++) {
+        if (strncmp(str, &temp[i], len) == 0) {
+            *result = i;
+            free(temp);
+            return 0;
+        }
+    }
+
+    free(temp);
+    return -1;
+}
+
+int main(void)
+{
+    const char *input = "abcabc";
+    size_t rotations = 0U;
+
+    if (find_min_rotations(input, &rotations) == 0) {
+        if (printf("Minimum rotations for \"%s\": %zu\n", input, rotations) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Error: could not compute rotations\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-126 mitigation (`strlen` over-read):** Replaced `strlen(str)` with `strnlen(str, MAX_INPUT_LEN)`, which bounds the scan to a maximum length. If the string is not NUL-terminated within that bound, `strnlen` returns `MAX_INPUT_LEN`, which is then rejected by the `len >= MAX_INPUT_LEN` check. This prevents an unbounded over-read on non-terminated input.
+
+2. **Sanity bound on input length:** The `MAX_INPUT_LEN` cap also implicitly guards the `2U * len + 1U` arithmetic against `size_t` overflow, which would otherwise be a theoretical concern for extremely large strings.
+
+**What was already correct and preserved:**
+
+- NULL-pointer checks on both parameters before use.
+- `malloc` return value checked before writing to `temp`.
+- `snprintf` used with an explicit buffer size (no `strcpy`/`strcat`), and its return value checked.
+- `strncmp` bounded comparison rather than `strcmp`.
+- `free(temp)` on every exit path after allocation — no memory leaks.
+- Return values of `printf`/`fprintf` checked in `main`, with proper `EXIT_SUCCESS`/`EXIT_FAILURE` codes.

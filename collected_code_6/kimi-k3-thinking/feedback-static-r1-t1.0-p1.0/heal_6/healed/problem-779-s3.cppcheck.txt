@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:91:24: warning: Identical condition 'src_length>dest_capacity', second condition is always false [identicalConditionAfterEarlyExit]
+        if (src_length > dest_capacity || copy_size > dest_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:70:20: note: If condition 'src_length>dest_capacity' is true, the function will return/exit
+    if (src_length > dest_capacity) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:91:24: note: Testing identical condition 'src_length>dest_capacity'
+        if (src_length > dest_capacity || copy_size > dest_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:91:53: warning: Identical condition 'copy_size>dest_size', second condition is always false [identicalConditionAfterEarlyExit]
+        if (src_length > dest_capacity || copy_size > dest_size) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:83:19: note: If condition 'copy_size>dest_size' is true, the function will return/exit
+    if (copy_size > dest_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_6/healed/problem-779-s3.c:91:53: note: Testing identical condition 'copy_size>dest_size'
+        if (src_length > dest_capacity || copy_size > dest_size) {
+                                                    ^

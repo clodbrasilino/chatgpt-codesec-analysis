@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[50];
+} Tuple;
+
+bool is_matching(Tuple t1, Tuple t2) {
+    if (t1.id == t2.id && strncmp(t1.name, t2.name, sizeof(t1.name)) == 0) {
+        return true;
+    }
+    return false;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'tuple_array2' can be declared as pointer to const [constParameterPointer]
+ */
+void remove_matching_tuples(Tuple** tuple_array1, size_t* size1, Tuple* tuple_array2, size_t size2) {
+    if (tuple_array1 == NULL || *tuple_array1 == NULL || tuple_array2 == NULL) {
+        return;
+    }
+
+    size_t new_size = 0;
+    Tuple* temp_array = (Tuple*)malloc(*size1 * sizeof(Tuple));
+    if (temp_array == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < *size1; i++) {
+        bool match = false;
+        for (size_t j = 0; j < size2; j++) {
+            if (is_matching((*tuple_array1)[i], tuple_array2[j])) {
+                match = true;
+                break;
+            }
+        }
+        if (!match) {
+            temp_array[new_size] = (*tuple_array1)[i];
+            new_size++;
+        }
+    }
+
+    Tuple* resized_array = (Tuple*)realloc(temp_array, new_size * sizeof(Tuple));
+    if (resized_array == NULL && new_size > 0) {
+        free(temp_array);
+        return;
+    }
+    
+    if (new_size == 0) {
+        free(temp_array);
+        resized_array = NULL;
+    }
+
+    free(*tuple_array1);
+    *tuple_array1 = resized_array;
+    *size1 = new_size;
+}
+
+int main() {
+    size_t size1 = 4;
+    Tuple* list1 = (Tuple*)malloc(size1 * sizeof(Tuple));
+    if (list1 == NULL) {
+        return 1;
+    }
+    
+    list1[0] = (Tuple){1, "Apple"};
+    list1[1] = (Tuple){2, "Banana"};
+    list1[2] = (Tuple){3, "Orange"};
+    list1[3] = (Tuple){4, "Grape"};
+
+    size_t size2 = 2;
+    Tuple list2[] = {
+        {2, "Banana"},
+        {4, "Grape"}
+    };
+
+    remove_matching_tuples(&list1, &size1, list2, size2);
+
+    for (size_t i = 0; i < size1; i++) {
+        printf("ID: %d, Name: %s\n", list1[i].id, list1[i].name);
+    }
+
+    free(list1);
+    return 0;
+}

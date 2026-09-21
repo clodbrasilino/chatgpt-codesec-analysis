@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    if (len == max_len) {
+        return false;
+    }
+
+    return (len % 2U) == 0U;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == sizeof(buffer) - 1U && buffer[len - 1U] != '\0') {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length (%zu)\n", buffer, len);
+    } else {
+        printf("The word \"%s\" has an odd length (%zu)\n", buffer, len);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length and cannot read past the buffer bounds even if the string were not null-terminated.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined as a named constant, `fgets` is still bounded by `sizeof(buffer)`, and an explicit `buffer[sizeof(buffer) - 1U] = '\0'` guarantees null-termination defensively before any string operations.
+
+3. **Bounds propagation**: `is_word_length_even` now accepts a `max_len` parameter so the callee can also perform bounds-checked scanning rather than trusting the caller's termination guarantee.
+
+4. **Input truncation handling**: If the input filled the buffer without a newline, the remaining characters on `stdin` are drained so leftover input doesn't affect subsequent reads (a common latent bug with `fgets`).

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double cylinder_surface_area(double radius, double *area) {
+    if (radius < 0) {
+        return -1.0;
+    }
+    *area = 2.0 * M_PI * radius * radius + 2.0 * M_PI * radius;
+    return 0.0;
+}
+
+int main(int argc, char *const argv[]) {
+    double radius;
+    double area;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <radius>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    radius = strtod(argv[1], &endptr);
+    if (endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid radius value\n");
+        return EXIT_FAILURE;
+    }
+
+    if (cylinder_surface_area(radius, &area) < 0) {
+        fprintf(stderr, "Error: Radius cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.10f\n", area);
+    return EXIT_SUCCESS;
+}
+```

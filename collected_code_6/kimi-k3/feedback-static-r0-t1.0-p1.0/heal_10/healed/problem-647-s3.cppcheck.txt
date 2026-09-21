@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647-s3.c:112:28: style: Condition 'substr_len>=size' is always false [knownConditionTrueFalse]
+            if (substr_len >= size)
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647-s3.c:96:21: note: size is assigned 'substr_len+1' here.
+        size_t size = substr_len + 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647-s3.c:99:23: note: Assuming condition is false
+        if (result[k] == NULL)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-647-s3.c:112:28: note: Condition 'substr_len>=size' is always false
+            if (substr_len >= size)
+                           ^

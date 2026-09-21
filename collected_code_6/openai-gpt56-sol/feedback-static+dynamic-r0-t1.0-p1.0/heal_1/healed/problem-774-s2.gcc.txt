@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-774-s2.c: In function 'is_valid_email':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-774-s2.c:22:11: error: implicit declaration of function 'memchr' [-Wimplicit-function-declaration]
+   22 |     end = memchr(email, '\0', 255U);
+      |           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-774-s2.c:5:1: note: include '<string.h>' or provide a declaration of 'memchr'
+    4 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    5 | 

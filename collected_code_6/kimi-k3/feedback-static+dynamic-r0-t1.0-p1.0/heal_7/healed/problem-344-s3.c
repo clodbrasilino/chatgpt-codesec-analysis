@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <errno.h>
+
+uint64_t count_odd_factors(uint64_t start, uint64_t end) {
+    if (start > end) {
+        return 0;
+    }
+    
+    uint64_t sqrt_end = (uint64_t)sqrt((double)end);
+    while ((sqrt_end + 1) * (sqrt_end + 1) <= end) {
+        sqrt_end++;
+    }
+    while (sqrt_end * sqrt_end > end) {
+        sqrt_end--;
+    }
+    
+    uint64_t sqrt_start_minus_one = 0;
+    if (start > 0) {
+        uint64_t s = start - 1;
+        sqrt_start_minus_one = (uint64_t)sqrt((double)s);
+        while ((sqrt_start_minus_one + 1) * (sqrt_start_minus_one + 1) <= s) {
+            sqrt_start_minus_one++;
+        }
+        while (sqrt_start_minus_one * sqrt_start_minus_one > s) {
+            sqrt_start_minus_one--;
+        }
+    }
+    
+    return sqrt_end - sqrt_start_minus_one;
+}
+
+int main(void) {
+    char start_buf[64];
+    char end_buf[64];
+    uint64_t start, end;
+    char *endptr;
+    
+    if (fgets(start_buf, sizeof(start_buf), stdin) == NULL) {
+        return 1;
+    }
+    if (fgets(end_buf, sizeof(end_buf), stdin) == NULL) {
+        return 1;
+    }
+    
+    errno = 0;
+    start = strtoull(start_buf, &endptr, 10);
+    if (errno != 0 || endptr == start_buf || (*endptr != '\n' && *endptr != '\0')) {
+        return 1;
+    }
+    
+    errno = 0;
+    end = strtoull(end_buf, &endptr, 10);
+    if (errno != 0 || endptr == end_buf || (*endptr != '\n' && *endptr != '\0')) {
+        return 1;
+    }
+    
+    if (start > end) {
+        return 1;
+    }
+    
+    uint64_t result = count_odd_factors(start, end);
+    printf("%" PRIu64 "\n", result);
+    
+    return 0;
+}

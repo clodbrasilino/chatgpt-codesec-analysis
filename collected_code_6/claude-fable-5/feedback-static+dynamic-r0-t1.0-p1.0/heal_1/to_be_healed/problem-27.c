@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits_from_string(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)input[i])) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+char **remove_digits_from_list(const char **list, size_t count)
+{
+    char **output;
+    size_t i;
+    size_t k;
+
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    output = malloc(count * sizeof(char *));
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        output[i] = remove_digits_from_string(list[i]);
+        if (output[i] == NULL) {
+            for (k = 0; k < i; k++) {
+                free(output[k]);
+            }
+            free(output);
+            return NULL;
+        }
+    }
+
+    return output;
+}
+
+void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "hello123world",
+        "abc456def",
+        "2024report",
+        "no_digits_here",
+        "999"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char **cleaned;
+    size_t i;
+
+    cleaned = remove_digits_from_list(strings, count);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("\"%s\" -> \"%s\"\n", strings[i], cleaned[i]) < 0) {
+            free_string_list(cleaned, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_string_list(cleaned, count);
+    return EXIT_SUCCESS;
+}

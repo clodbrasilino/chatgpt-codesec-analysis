@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-310-s2.c: In function 'string_to_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-310-s2.c:42:39: error: 'INT_MAX' undeclared (first use in this function)
+   42 |     size_t len = strnlen(str, (size_t)INT_MAX);
+      |                                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-310-s2.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-310-s2.c:42:39: note: each undeclared identifier is reported only once for each function it appears in
+   42 |     size_t len = strnlen(str, (size_t)INT_MAX);
+      |                                       ^~~~~~~

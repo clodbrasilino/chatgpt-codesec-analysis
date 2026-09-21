@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool can_rearrange_no_adjacent(const char *str)
+{
+    size_t counts[256] = {0};
+    size_t len;
+    size_t max_count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN) {
+        return false;
+    }
+    if (len == 0) {
+        return true;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+        }
+    }
+
+    return max_count <= (len + 1) / 2;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab",
+        "aaab",
+        "aa",
+        "a",
+        "",
+        "abcdef",
+        "aabbcc",
+        "aaabc"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        if (printf("\"%s\": %s\n", tests[i],
+                   can_rearrange_no_adjacent(tests[i]) ? "yes" : "no") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the CWE-126 (buffer over-read) weakness flagged by Flawfinder. `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so a non-NUL-terminated string can no longer cause an unbounded over-read past the buffer.
+
+2. **Added a bound check** — If `strnlen` returns `MAX_INPUT_LEN`, the string is either too long or unterminated within the bound, so the function safely rejects it by returning `false` rather than processing potentially invalid data.
+
+3. **Retained defensive practices already present** — The `NULL` check, the cast to `unsigned char` before indexing `counts` (avoiding negative-index UB with `char` values above 127), the `printf` return-value check, and the use of `EXIT_SUCCESS`/`EXIT_FAILURE` are all preserved, as they were already correct.
+
+The core algorithm (a rearrangement with no two adjacent equal characters exists iff the most frequent character count is at most `⌈len/2⌉`) is unchanged and remains correct.

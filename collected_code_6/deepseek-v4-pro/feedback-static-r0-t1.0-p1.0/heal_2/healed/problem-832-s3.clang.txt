@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-832-s3.c:21:13: warning: Although the value stored to 'reg_result' is used in the enclosing expression, the value is never actually read from 'reg_result' [deadcode.DeadStores]
+   21 |     while ((reg_result = regexec(&regex, cursor, 1, match, 0)) == 0) {
+      |             ^            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

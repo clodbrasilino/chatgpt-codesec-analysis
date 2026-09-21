@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+static int is_hex_string(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+    
+    const char *p = str;
+    
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        p += 2;
+        if (*p == '\0') {
+            return 0;
+        }
+    }
+    
+    while (*p != '\0') {
+        if (!isxdigit((unsigned char)*p)) {
+            return 0;
+        }
+        p++;
+    }
+    
+    return 1;
+}
+
+static long long parse_hex_value(const char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+    
+    const char *p = str;
+    if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X')) {
+        p += 2;
+    }
+    
+    if (*p == '\0') {
+        return -1;
+    }
+    
+    errno = 0;
+    char *endptr = NULL;
+    long long value = strtoll(p, &endptr, 16);
+    
+    if (endptr == p || *endptr != '\0') {
+        return -1;
+    }
+    
+    if (errno == ERANGE || value < 0) {
+        return -1;
+    }
+    
+    return value;
+}
+
+long long count_hex_numbers_in_range(const char *start_str, const char *end_str) {
+    if (start_str == NULL || end_str == NULL) {
+        return -1;
+    }
+    
+    if (!is_hex_string(start_str) || !is_hex_string(end_str)) {
+        return -1;
+    }
+    
+    long long start_val = parse_hex_value(start_str);
+    long long end_val = parse_hex_value(end_str);
+    
+    if (start_val < 0 || end_val < 0) {
+        return -1;
+    }
+    
+    if (start_val > end_val) {
+        long long temp = start_val;
+        start_val = end_val;
+        end_val = temp;
+    }
+    
+    if (start_val < 0 || end_val < 0 || end_val > LLONG_MAX - 1) {
+        return -1;
+    }
+    
+    return end_val - start_val + 1;
+}
+
+int main(void) {
+    char *start_input = NULL;
+    char *end_input = NULL;
+    size_t start_size = 0;
+    size_t end_size = 0;
+    ssize_t start_len = 0;
+    ssize_t end_len = 0;
+    
+    printf("Enter start hex value: ");
+    start_len = getline(&start_input, &start_size, stdin);
+    if (start_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(start_input);
+        return 1;
+    }
+    
+    if (start_len > 0 && start_input[start_len - 1] == '\n') {
+        start_input[start_len - 1] = '\0';
+        start_len--;
+    }
+    
+    if (start_len > 255) {
+        fprintf(stderr, "Input too long\n");
+        free(start_input);
+        return 1;
+    }
+    
+    printf("Enter end hex value: ");
+    end_len = getline(&end_input, &end_size, stdin);
+    if (end_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(start_input);
+        free(end_input);
+        return 1;
+    }
+    
+    if (end_len > 0 && end_input[end_len - 1] == '\n') {
+        end_input[end_len - 1] = '\0';
+        end_len--;
+    }
+    
+    if (end_len > 255) {
+        fprintf(stderr, "Input too long\n");
+        free(start_input);
+        free(end_input);
+        return 1;
+    }
+    
+    long long count = count_hex_numbers_in_range(start_input, end_input);
+    
+    free(start_input);
+    free(end_input);
+    
+    if (count < 0) {
+        fprintf(stderr, "Invalid input values\n");
+        return 1;
+    }
+    
+    printf("Count of hex numbers in range: %lld\n", count);
+    
+    return 0;
+}

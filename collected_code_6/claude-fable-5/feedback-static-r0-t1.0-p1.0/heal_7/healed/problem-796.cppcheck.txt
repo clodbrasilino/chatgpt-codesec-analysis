@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:57:19: style: Condition 'dest_size<=len' is always false [knownConditionTrueFalse]
+    if (dest_size <= len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:56:15: note: dest_size is assigned 'len+1' here.
+    dest_size = len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:57:19: note: Condition 'dest_size<=len' is always false
+    if (dest_size <= len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:64:13: style: Condition 'len>=dest_size' is always false [knownConditionTrueFalse]
+    if (len >= dest_size) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:56:15: note: dest_size is assigned 'len+1' here.
+    dest_size = len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:61:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-796.c:64:13: note: Condition 'len>=dest_size' is always false
+    if (len >= dest_size) {
+            ^

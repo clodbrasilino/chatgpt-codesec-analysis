@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+#define ERRBUF_LEN 128
+#define MATCH_COUNT 5
+#define MAX_URL_LEN 2048
+
+typedef struct {
+    char year[MAX_FIELD_LEN];
+    char month[MAX_FIELD_LEN];
+    char day[MAX_FIELD_LEN];
+} UrlDate;
+
+static int copy_match(const char *source, size_t source_len,
+                      const regmatch_t *match,
+                      char *dest, size_t dest_size)
+{
+    size_t length;
+
+    if (source == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+    if ((size_t)match->rm_eo > source_len) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, source + match->rm_so, length);
+    dest[length] = '\0';
+    return 0;
+}
+
+int extract_date_from_url(const char *url, UrlDate *result)
+{
+    regex_t regex;
+    regmatch_t matches[MATCH_COUNT];
+    size_t url_len;
+    int ret;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    memset(result, 0, sizeof(*result));
+
+    url_len = strnlen(url, MAX_URL_LEN);
+    if (url_len >= MAX_URL_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_LEN];
+        memset(errbuf, 0, sizeof(errbuf));
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, url, MATCH_COUNT, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(url, url_len, &matches[1], result->year, sizeof(result->year)) != 0 ||
+        copy_match(url, url_len, &matches[2], result->month, sizeof(result->month)) != 0 ||
+        copy_match(url, url_len, &matches[3], result->day, sizeof(result->day)) != 0) {
+        memset(result, 0, sizeof(*result));
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/some-article",
+        "https://news.site.org/2019/1/9",
+        "https://example.com/no-date-here"
+    };
+    size_t count = sizeof(urls) / sizeof(urls[0]);
+    size_t i;
+    UrlDate date;
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s\n  Year: %s, Month: %s, Day: %s\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s\n  No date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Statically-sized `char` arrays in `UrlDate` (CWE-119/CWE-120):** These are safe because every write into them goes through `copy_match()`, which explicitly verifies `length >= dest_size` before copying and always null-terminates. The regex pattern itself also constrains match lengths (`{4}` and `{1,2}`), which are well below `MAX_FIELD_LEN`.
+
+**2. `memcpy` in `copy_match()` (CWE-120):** The call is guarded by comprehensive validation — null-pointer checks, negative/inverted offset checks (`rm_so < 0`, `rm_eo < rm_so`), a source-bounds check (`rm_eo > source_len`), and the destination-size check (`length >= dest_size`, reserving room for the terminator). This is a false positive from Flawfinder's pattern matching.
+
+**3. `errbuf` in `extract_date_from_url()`:** Safe because `regerror()` is passed `sizeof(errbuf)` and guarantees truncation, plus the code defensively zeroes the buffer and forces a final null terminator.
+
+**Additional hardening already present:** input length capped via `strnlen(url, MAX_URL_LEN)`, `result` zeroed on entry and on partial failure (avoiding leakage of stale data), `regfree()` called on all exit paths (no resource leak), and `printf` return values checked. No changes were required beyond removing the comments as requested.

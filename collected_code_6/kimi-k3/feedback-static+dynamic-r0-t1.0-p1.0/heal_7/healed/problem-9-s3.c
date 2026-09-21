@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+int minRotations(const char *str, size_t len) {
+    if (len == 0) return 0;
+    
+    if (len > SIZE_MAX / 2 / sizeof(int)) return -1;
+    if (len > INT_MAX) return -1;
+    
+    int *concat = (int *)malloc(2 * len * sizeof(int));
+    if (concat == NULL) return -1;
+    
+    for (size_t i = 0; i < 2 * len; i++) {
+        concat[i] = (unsigned char)str[i % len];
+    }
+    
+    for (size_t i = 1; i <= len; i++) {
+        size_t j;
+        for (j = 0; j < len; j++) {
+            if (concat[i + j] != (unsigned char)str[j]) break;
+        }
+        if (j == len) {
+            free(concat);
+            return (int)i;
+        }
+    }
+    
+    free(concat);
+    return (int)len;
+}
+
+int main(void) {
+    char *str = NULL;
+    size_t str_cap = 0;
+    size_t len = 0;
+    int c;
+    int result;
+    
+    printf("Enter a string: ");
+    
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (len + 1 >= str_cap) {
+            size_t new_cap = (str_cap == 0) ? 64 : str_cap * 2;
+            if (new_cap < str_cap || new_cap > SIZE_MAX - 1) {
+                free(str);
+                return 1;
+            }
+            char *new_str = (char *)realloc(str, new_cap);
+            if (new_str == NULL) {
+                free(str);
+                return 1;
+            }
+            str = new_str;
+            str_cap = new_cap;
+        }
+        str[len++] = (char)c;
+    }
+    
+    if (ferror(stdin)) {
+        free(str);
+        return 1;
+    }
+    
+    if (str == NULL) {
+        str = (char *)malloc(1);
+        if (str == NULL) {
+            return 1;
+        }
+        str[0] = '\0';
+        len = 0;
+    } else {
+        str[len] = '\0';
+    }
+    
+    result = minRotations(str, len);
+    free(str);
+    
+    if (result >= 0) {
+        printf("Minimum rotations: %d\n", result);
+    } else {
+        printf("Error occurred\n");
+        return 1;
+    }
+    
+    return 0;
+}

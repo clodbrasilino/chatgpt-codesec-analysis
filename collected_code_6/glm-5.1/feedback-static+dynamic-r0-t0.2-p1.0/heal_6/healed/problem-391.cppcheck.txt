@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-391.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-391.c:52:15: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+        if (i >= sizes[0]) break;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-391.c:51:23: note: outer condition: i<sizes[0]
+    for (int i = 0; i < sizes[0]; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-391.c:52:15: note: opposite inner condition: i>=sizes[0]
+        if (i >= sizes[0]) break;
+              ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-711.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-711.c:17:25: style: Condition 'len>=12' is always false [knownConditionTrueFalse]
+    if (len <= 0 || len >= 12) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-711.c:12:32: note: Assuming that condition 'written>=(int)sizeof(str)' is not redundant
+    if (written < 0 || written >= (int)sizeof(str)) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-711.c:16:13: note: len is assigned 'written' here.
+    int len = written;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-711.c:17:25: note: Condition 'len>=12' is always false
+    if (len <= 0 || len >= 12) {
+                        ^

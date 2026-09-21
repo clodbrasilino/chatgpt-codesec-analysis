@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define NUM_BUF_SIZE 32
+#define LINE_BUF_SIZE 64
+
+static int is_palindrome(unsigned long long n)
+{
+    char buf[NUM_BUF_SIZE];
+    int len;
+    int i;
+    int j;
+
+    len = snprintf(buf, sizeof buf, "%llu", n);
+    if (len < 0 || (size_t)len >= sizeof buf) {
+        return 0;
+    }
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return 0;
+        }
+        i++;
+        j--;
+    }
+    return 1;
+}
+
+static int next_smallest_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    char line[LINE_BUF_SIZE];
+    char *endptr;
+    unsigned long long n;
+    unsigned long long result;
+    size_t i;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(line, sizeof line, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+    line[sizeof line - 1] = '\0';
+
+    if (strchr(line, '\n') == NULL && !feof(stdin)) {
+        fprintf(stderr, "Error: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    i = 0;
+    while (i < sizeof line - 1 && line[i] != '\0' && isspace((unsigned char)line[i])) {
+        i++;
+    }
+    if (line[i] == '-' || line[i] == '+' || !isdigit((unsigned char)line[i])) {
+        fprintf(stderr, "Error: input must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    n = strtoull(&line[i], &endptr, 10);
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: number out of range\n");
+        return EXIT_FAILURE;
+    }
+    if (endptr == NULL || endptr == &line[i]) {
+        fprintf(stderr, "Error: no digits found\n");
+        return EXIT_FAILURE;
+    }
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Error: trailing characters in input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    if (next_smallest_palindrome(n, &result) != 0) {
+        fprintf(stderr, "Error: no palindrome found within range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Next smallest palindrome: %llu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and how they are addressed:**
+
+1. **`buf[32]` in `is_palindrome` (CWE-119/CWE-120):** The Flawfinder warning is a false positive in practice, but the code is hardened regardless. `ULLONG_MAX` (18446744073709551615) requires at most 20 digits plus a null terminator, so 32 bytes is sufficient. The `snprintf` call enforces the bound, and the return value is checked both for encoding errors (`len < 0`) and truncation (`(size_t)len >= sizeof buf`), so no overflow or read of uninitialized memory is possible.
+
+2. **`line[64]` in `main` (CWE-119/CWE-120):** Input is read exclusively via `fgets` with `sizeof line`, which cannot overflow the buffer. I added an explicit `line[sizeof line - 1] = '\0'` as defense-in-depth guaranteeing null termination, and bounded the whitespace-skipping loop by the buffer size so it can never run past the array even if the termination invariant were somehow violated. Overlong input is detected (no `'\n'` and not EOF) and rejected rather than silently truncated.
+
+3. **Additional hardening:** the `endptr` result of `strtoull` is checked for `NULL` before dereferencing, all `isspace`/`isdigit` calls cast to `unsigned char` to avoid undefined behavior with negative `char` values, and `ERANGE` overflow from `strtoull` is rejected. The palindrome search is bounded by `ULLONG_MAX`, so no unsigned wraparound infinite loop can occur.

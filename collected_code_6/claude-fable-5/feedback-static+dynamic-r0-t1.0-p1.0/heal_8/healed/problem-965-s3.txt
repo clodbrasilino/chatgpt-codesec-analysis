@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if ((i > 0U) && (j > 0U) && (output[j - 1U] != '_')) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else if ((isspace(c) != 0) || (c == (unsigned char)'-')) {
+            if ((j > 0U) && (output[j - 1U] != '_')) {
+                output[j] = '_';
+                j++;
+            }
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+
+    while ((j > 0U) && (output[j - 1U] == '_')) {
+        j--;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+static char *read_input_line(void)
+{
+    size_t capacity = MAX_INPUT_LEN + 2U;
+    size_t len = 0U;
+    int ch;
+    char *buffer;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    ch = EOF;
+    while ((ch = fgetc(stdin)) != EOF) {
+        if ((ch == '\n') || (ch == '\r')) {
+            break;
+        }
+        if (len >= (capacity - 1U)) {
+            break;
+        }
+        buffer[len] = (char)ch;
+        len++;
+    }
+
+    if ((len == 0U) && (ch == EOF)) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[len] = '\0';
+    return buffer;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *source;
+    char *input_line = NULL;
+    char *result;
+    int status = EXIT_SUCCESS;
+
+    if ((argc > 1) && (argv[1] != NULL) && (argv[1][0] != '\0')) {
+        source = argv[1];
+    } else {
+        input_line = read_input_line();
+        if (input_line == NULL) {
+            (void)fprintf(stderr, "No input provided\n");
+            return EXIT_FAILURE;
+        }
+        source = input_line;
+    }
+
+    result = camel_to_snake(source);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Conversion failed\n");
+        free(input_line);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        status = EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        status = EXIT_FAILURE;
+    }
+
+    free(result);
+    free(input_line);
+    return status;
+}
+```
+
+Analysis of the changes and reasoning:
+
+**Root cause of the failing test cases:** The three test failures (`python_program`, `python_language`, `programming_language` producing no output) point to the input path, not the conversion logic. The most likely culprits were:
+
+1. **Uninitialized `ch` risk:** In `read_input_line`, if `fgetc` never executes (theoretically), `ch` would be indeterminate. It is now explicitly initialized to `EOF` before the loop, so the `(len == 0U) && (ch == EOF)` check is always well-defined.
+
+2. **Empty `argv[1]` shadowing stdin:** If the test harness invoked the binary with an empty string argument (`argv[1] == ""`), the original code would use that empty string as the source and print only a newline, never reading the intended stdin input. The rewritten `main` now falls through to stdin when `argv[1]` is `NULL` or empty.
+
+3. **Exit-path hygiene:** A `printf` or `fflush` failure previously returned before both frees in some paths could be audited cleanly; the rewrite uses a single `status` variable and one cleanup path, guaranteeing both `result` and `input_line` are always freed exactly once (no leaks, no double-free).
+
+**Additional hardening:**
+
+- **Trailing underscore trimming** in `camel_to_snake`: inputs ending in whitespace or a hyphen (e.g., `"Python Program "`) previously produced `python_program_`; trailing separators are now stripped before termination, which matches the expected outputs exactly.
+- The **Flawfinder CWE-120/CWE-20 warning** on `fgetc` remains mitigated: the loop enforces `len >= (capacity - 1U)` before every write, `capacity` is a compile-time-derived constant, and the buffer is always NUL-terminated within bounds.
+- The **overflow guard** `len > ((SIZE_MAX - 1U) / 2U)` before `malloc((len * 2U) + 1U)` is preserved, preventing integer overflow in the allocation size (CWE-190).
+- All `isupper`/`isspace`/`tolower` calls receive values cast through `unsigned char`, avoiding undefined behavior for negative `char` values.

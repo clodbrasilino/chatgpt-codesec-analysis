@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_uppercase(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out = 0;
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (!isupper(c)) {
+            result[out] = (char)c;
+            out++;
+        }
+    }
+
+    result[out] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *cleaned;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    cleaned = remove_uppercase(buffer);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+The identified weakness (CWE-119/CWE-120 regarding the statically-sized `buffer` array) is already properly mitigated in this code, so no functional changes were required:
+
+- **Bounded input reading**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow.
+- **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive measure ensuring the string is always terminated.
+- **Bounded length operations**: `strnlen` is used instead of `strlen`, with explicit size limits, and `remove_uppercase` rejects inputs at or beyond `MAX_INPUT_LEN`.
+- **Safe allocation and indexing**: The output buffer is allocated at `len + 1`, and the write index `out` can never exceed `len`, so `result[out] = '\0'` stays in bounds.
+- **Correct `ctype` usage**: The cast to `unsigned char` before `isupper()` avoids undefined behavior with negative `char` values.
+- **Resource handling**: `cleaned` is freed on all exit paths after allocation, and return values of `fgets`, `malloc`, and `printf` are all checked.
+
+The Flawfinder hit is a low-risk (level 2) informational warning inherent to any fixed-size array; the surrounding bounds checking satisfies its recommendation.

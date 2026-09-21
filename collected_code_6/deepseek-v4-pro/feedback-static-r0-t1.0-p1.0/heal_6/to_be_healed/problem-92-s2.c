@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+bool is_undulating(const char *num, size_t len) {
+    if (len < 3) return false;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)num[i])) return false;
+    }
+    
+    if (num[0] == num[1]) return false;
+    
+    for (size_t i = 1; i < len - 1; i++) {
+        if (num[i] == num[i-1] || num[i] == num[i+1] || num[i-1] != num[i+1]) {
+            return false;
+        }
+    }
+    
+    return num[len-1] != num[len-2];
+}
+
+int main(void) {
+    enum { BUFFER_SIZE = 256 };
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[BUFFER_SIZE] = {0};
+    size_t input_len;
+    bool input_complete = false;
+    
+    printf("Enter a number: ");
+    if (fgets(input, BUFFER_SIZE, stdin) == NULL) {
+        return 1;
+    }
+    
+    input_len = strnlen(input, BUFFER_SIZE);
+    if (input_len > 0 && input_len < (size_t)BUFFER_SIZE) {
+        if (input[input_len - 1] == '\n') {
+            input[input_len - 1] = '\0';
+            input_len--;
+            input_complete = true;
+        }
+    }
+    
+    if (!input_complete) {
+        enum { CHUNK_SIZE = 64 };
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char discard[CHUNK_SIZE];
+        bool newline_found = false;
+        
+        while (!newline_found) {
+            if (fgets(discard, CHUNK_SIZE, stdin) == NULL) {
+                break;
+            }
+            size_t discard_len = strnlen(discard, CHUNK_SIZE);
+            if (discard_len > 0 && discard[discard_len - 1] == '\n') {
+                newline_found = true;
+            }
+            if (discard_len < (size_t)(CHUNK_SIZE - 1)) {
+                break;
+            }
+        }
+        
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    if (input_len == 0) {
+        printf("Empty input\n");
+        return 1;
+    }
+    
+    if (is_undulating(input, input_len)) {
+        printf("%s is an undulating number\n", input);
+    } else {
+        printf("%s is not an undulating number\n", input);
+    }
+    
+    return 0;
+}

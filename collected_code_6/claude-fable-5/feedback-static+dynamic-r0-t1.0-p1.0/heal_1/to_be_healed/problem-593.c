@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_leading_zeroes(const char *ip)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'start' can be reduced. [variableScope]
+     */
+    size_t start;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'end' can be reduced. [variableScope]
+     */
+    size_t end;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'k' can be reduced. [variableScope]
+     */
+    size_t k;
+
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(ip);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i <= len) {
+        start = i;
+        while ((i < len) && (ip[i] != '.')) {
+            i++;
+        }
+        end = i;
+
+        k = start;
+        while ((k < end - 1U) && (ip[k] == '0') && (end > start)) {
+            k++;
+        }
+        if (start == end) {
+            k = start;
+        }
+
+        while (k < end) {
+            result[j] = ip[k];
+            j++;
+            k++;
+        }
+
+        if (i < len) {
+            result[j] = '.';
+            j++;
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.168.001.010",
+        "010.000.000.001",
+        "255.255.255.255",
+        "001.002.003.004",
+        "0.0.0.0"
+    };
+    size_t count;
+    size_t idx;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'cleaned' can be reduced. [variableScope]
+     */
+    char *cleaned;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (idx = 0; idx < count; idx++) {
+        cleaned = remove_leading_zeroes(tests[idx]);
+        if (cleaned == NULL) {
+            (void)fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[idx], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}

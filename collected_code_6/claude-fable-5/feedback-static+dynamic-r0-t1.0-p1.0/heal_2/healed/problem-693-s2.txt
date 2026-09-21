@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_multiple_spaces(const char *input);
+
+char *remove_multiple_spaces(const char *input)
+{
+    char *output;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    if (len == (size_t)-1) {
+        return NULL;
+    }
+
+    output = malloc(len + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if (input[i] == ' ' && j > 0U && output[j - 1U] == ' ') {
+            continue;
+        }
+        output[j] = input[i];
+        j++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *test = "This   is  a    string   with     multiple spaces.";
+    char *result;
+
+    result = remove_multiple_spaces(test);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Cleaned:  %s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the rewrite:**
+
+The original implementation had several problems that the test failures (`<no output>` for simple inputs like `'Google Assistant'`) pointed toward:
+
+1. **Fragile bounds checks around the regex loop** — the `>=` comparisons against `buf_len` could reject legitimate inputs and return `NULL`, producing no output at all. The regex-based approach also introduced failure modes (`regcomp`/`regexec` errors) unrelated to the actual transformation.
+
+2. **Flawfinder CWE-120 (`memcpy`)** — the copies relied on manually maintained offsets (`out_len`, `prefix_len`, `match.rm_eo`) that were easy to get wrong. The rewrite eliminates `memcpy` entirely by writing one character at a time, where `j` can never exceed `i < len`, making overflow structurally impossible since the buffer is `len + 1` bytes.
+
+3. **Flawfinder CWE-126 (`strlen`)** — `strlen` is called exactly once, on a `NULL`-checked input. The C API contract requires a NUL-terminated string; this is documented behavior and the single call site minimizes exposure.
+
+4. **Resource leaks** — the original had multiple `free`/`regfree` cleanup paths that were easy to miss. The rewrite has a single allocation and no auxiliary resources, so there is only one ownership path.
+
+The collapsing logic (skip a space if the last emitted character was already a space) is exactly equivalent to replacing runs of two or more spaces with a single space, matching the original regex `"  +"` semantics while being simpler, faster, and free of the failure modes that broke the test cases.

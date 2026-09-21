@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits(const char *input) {
+    size_t len = strlen(input);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    char *ptr = result;
+    for (size_t i = 0; i < len; ++i) {
+        if (!isdigit((unsigned char)input[i])) {
+            *ptr++ = input[i];
+        }
+    }
+    *ptr = '\0';
+    return result;
+}
+
+void free_strings(char **strings, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *inputs[] = {"abc123", "456def", "789ghi", "jkl0"};
+    int count = sizeof(inputs) / sizeof(inputs[0]);
+
+    char **results = (char **)malloc(count * sizeof(char *));
+    if (results == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        results[i] = remove_digits(inputs[i]);
+        if (results[i] == NULL) {
+            free_strings(results, i);
+            return 1;
+        }
+    }
+
+    for (int i = 0; i < count; ++i) {
+        printf("%s\n", results[i]);
+    }
+
+    free_strings(results, count);
+    return 0;
+}
+```

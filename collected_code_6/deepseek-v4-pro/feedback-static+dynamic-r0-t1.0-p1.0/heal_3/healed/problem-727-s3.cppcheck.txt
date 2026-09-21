@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-727-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-727-s3.c:21:36: warning: Invalid test for overflow 'dest+*dest_len+src_len<dest+*dest_len'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always false. [invalidTestForOverflow]
+    if (dest + *dest_len + src_len < dest + *dest_len) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-727-s3.c:47:25: style: Condition 'result_capacity==0' is always false [knownConditionTrueFalse]
+    if (result_capacity == 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-727-s3.c:45:40: note: Assignment 'result_capacity=input_len+1', assigned value is greater than 0
+    size_t result_capacity = input_len + 1;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-727-s3.c:47:25: note: Condition 'result_capacity==0' is always false
+    if (result_capacity == 0) {
+                        ^

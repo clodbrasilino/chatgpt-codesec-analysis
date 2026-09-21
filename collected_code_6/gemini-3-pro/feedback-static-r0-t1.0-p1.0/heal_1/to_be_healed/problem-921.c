@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int** chunk_tuples(const int *data, size_t total_tuples, size_t n, size_t chunk_size, size_t *out_num_chunks, size_t *out_last_chunk_tuples) {
+    if (!data || !out_num_chunks || !out_last_chunk_tuples || n == 0 || chunk_size == 0) {
+        return NULL;
+    }
+
+    size_t num_chunks = (total_tuples + chunk_size - 1) / chunk_size;
+    int **chunks = (int **)malloc(num_chunks * sizeof(int *));
+    if (!chunks) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_chunks; ++i) {
+        size_t tuples_in_chunk = chunk_size;
+        if (i == num_chunks - 1 && (total_tuples % chunk_size) != 0) {
+            tuples_in_chunk = total_tuples % chunk_size;
+        }
+
+        chunks[i] = (int *)malloc(tuples_in_chunk * n * sizeof(int));
+        if (!chunks[i]) {
+            for (size_t j = 0; j < i; ++j) {
+                free(chunks[j]);
+            }
+            free(chunks);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(chunks[i], data + (i * chunk_size * n), tuples_in_chunk * n * sizeof(int));
+    }
+
+    *out_num_chunks = num_chunks;
+    *out_last_chunk_tuples = (total_tuples % chunk_size != 0) ? (total_tuples % chunk_size) : chunk_size;
+
+    return chunks;
+}
+
+int main(void) {
+    size_t total_tuples = 10;
+    size_t n = 3;
+    size_t chunk_size = 4;
+    size_t total_elements = total_tuples * n;
+
+    int *data = (int *)malloc(total_elements * sizeof(int));
+    if (!data) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < total_elements; ++i) {
+        data[i] = (int)i;
+    }
+
+    size_t num_chunks = 0;
+    size_t last_chunk_tuples = 0;
+
+    int **chunks = chunk_tuples(data, total_tuples, n, chunk_size, &num_chunks, &last_chunk_tuples);
+    if (!chunks) {
+        free(data);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_chunks; ++i) {
+        size_t tuples_in_chunk = (i == num_chunks - 1) ? last_chunk_tuples : chunk_size;
+        for (size_t j = 0; j < tuples_in_chunk * n; ++j) {
+            printf("%d ", chunks[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (size_t i = 0; i < num_chunks; ++i) {
+        free(chunks[i]);
+    }
+    free(chunks);
+    free(data);
+
+    return EXIT_SUCCESS;
+}

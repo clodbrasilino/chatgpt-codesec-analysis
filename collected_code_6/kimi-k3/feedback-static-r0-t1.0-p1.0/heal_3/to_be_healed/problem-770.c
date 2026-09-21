@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long sum_fourth_power_odd(int n)
+{
+    unsigned long long sum = 0ULL;
+    int i;
+    
+    if (n <= 0) {
+        return 0ULL;
+    }
+    
+    for (i = 0; i < n; i++) {
+        unsigned long long odd = (unsigned long long)(2 * i + 1);
+        unsigned long long fourth = odd * odd * odd * odd;
+        
+        if (ULLONG_MAX - sum < fourth) {
+            return 0ULL;
+        }
+        sum += fourth;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char *endptr;
+    long val;
+    int n;
+    unsigned long long result;
+    size_t len;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    len = 0;
+    while (len < sizeof(buffer) && buffer[len] != '\0') {
+        len++;
+    }
+    
+    if (len == sizeof(buffer)) {
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && buffer[len - 1] != '\n' && !feof(stdin)) {
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 0 || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    
+    result = sum_fourth_power_odd(n);
+    
+    if (result == 0ULL && n > 0) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

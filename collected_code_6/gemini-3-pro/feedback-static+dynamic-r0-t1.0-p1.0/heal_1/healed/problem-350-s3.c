@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void minimizeString(const char *str, char *result) {
+    if (str == NULL || result == NULL) {
+        return;
+    }
+
+    if (str[0] == '\0') {
+        result[0] = '\0';
+        return;
+    }
+
+    int maxCount = 0;
+    char charToRemove = '\0';
+    int counts[256] = {0};
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > maxCount) {
+            maxCount = counts[c];
+            charToRemove = c;
+        }
+    }
+
+    int j = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] != charToRemove) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+}
+
+int main(void) {
+    const char *original = "abracadabra";
+    size_t len = 0;
+    
+    while (original[len] != '\0') {
+        len++;
+    }
+    
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return 1;
+    }
+
+    minimizeString(original, result);
+    printf("%s\n", result);
+
+    free(result);
+    return 0;
+}

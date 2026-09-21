@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+
+#define MAX_STRING_LEN 1000000
+
+uint64_t count_non_empty_substrings(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t len = strnlen(str, max_len);
+    if (len == 0) {
+        return 0;
+    }
+    
+    uint64_t n = (uint64_t)len;
+    if (n > UINT64_MAX / (n + 1)) {
+        return 0;
+    }
+    return (n * (n + 1)) / 2;
+}
+
+int main(void) {
+    const char *input = "hello";
+    uint64_t result = count_non_empty_substrings(input, MAX_STRING_LEN);
+    
+    printf("%" PRIu64 "\n", result);
+    
+    return 0;
+}

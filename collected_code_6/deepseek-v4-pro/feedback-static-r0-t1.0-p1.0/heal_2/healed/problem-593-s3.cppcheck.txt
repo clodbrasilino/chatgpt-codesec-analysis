@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:58:18: warning: Either the condition 'result_len_final>=16' is redundant or the array 'result[16]' is accessed at index 16, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (result[result_len_final] != '\0' && result_len_final < sizeof(result)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:67:42: note: Assuming that condition 'result_len_final>=16' is not redundant
+    if (ip_len >= 16 || result_len_final >= 16) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:58:18: note: Array index out of bounds
+    while (result[result_len_final] != '\0' && result_len_final < sizeof(result)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:37:21: style: Array index 'token_len' is used before limits check. [arrayIndexThenCheck]
+        while (start[token_len] != '\0' && token_len < sizeof(result) - result_len - 1) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:58:18: style: Array index 'result_len_final' is used before limits check. [arrayIndexThenCheck]
+    while (result[result_len_final] != '\0' && result_len_final < sizeof(result)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-593-s3.c:63:14: style: Array index 'ip_len' is used before limits check. [arrayIndexThenCheck]
+    while (ip[ip_len] != '\0' && ip_len < 16) {
+             ^

@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *str, const char *mask);
+
+void remove_chars(char *str, const char *mask)
+{
+    bool present[256] = { false };
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = true;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+static bool read_line(char *buffer, size_t size, const char *prompt)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0 || prompt == NULL) {
+        return false;
+    }
+
+    printf("%s", prompt);
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char first[BUF_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char second[BUF_SIZE];
+
+    if (!read_line(first, sizeof(first), "Enter the first string: ")) {
+        fprintf(stderr, "Error reading first string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_line(second, sizeof(second), "Enter the second string: ")) {
+        fprintf(stderr, "Error reading second string\n");
+        return EXIT_FAILURE;
+    }
+
+    remove_chars(first, second);
+
+    printf("Result: %s\n", first);
+
+    return EXIT_SUCCESS;
+}

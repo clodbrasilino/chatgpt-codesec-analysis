@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+#include <ctype.h>
+
+int first_digit(int num) {
+    if (num == INT_MIN) {
+        return 2;
+    }
+    if (num < 0) {
+        num = -num;
+    }
+    while (num >= 10) {
+        num /= 10;
+    }
+    return num;
+}
+
+int main(void) {
+    char buffer[256];
+    char *endptr;
+    long input;
+    int number;
+    size_t len;
+    size_t i;
+    int c;
+
+    printf("Enter an integer: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = 0;
+    while (len < sizeof(buffer) && buffer[len] != '\0') {
+        len++;
+    }
+    if (len == sizeof(buffer)) {
+        buffer[sizeof(buffer) - 1] = '\0';
+        len = sizeof(buffer) - 1;
+    }
+
+    if (len > 0 && buffer[len - 1] != '\n') {
+        while ((c = getchar()) != '\n' && c != EOF) {}
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    i = 0;
+    while (i < len && isspace((unsigned char)buffer[i])) {
+        i++;
+    }
+    if (i >= len) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtol(buffer, &endptr, 10);
+
+    if (errno == ERANGE || input < (long)INT_MIN || input > (long)INT_MAX) {
+        fprintf(stderr, "Number out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    number = (int)input;
+    printf("%d\n", first_digit(number));
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why it is already sound against the flagged weakness:
+
+The Flawfinder warning about the statically-sized `char buffer[MAX_INPUT_LEN]` (CWE-119/CWE-120) is a heuristic hit on the array declaration itself, not an actual defect. The code already applies every mitigation the tool recommends:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow, and its return value is checked so a read failure is handled gracefully.
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive belt-and-suspenders measure (technically redundant with `fgets`, which always null-terminates on success, but harmless and explicit).
+3. **Length-limited operations**: `strnlen` is used instead of `strlen`, both in `main` and in `count_position_matches`, so even a non-terminated buffer could not cause an out-of-bounds scan.
+4. **Safe newline stripping**: the `len > 0` check before accessing `buffer[len - 1]` avoids an underflow on empty input.
+5. **Defensive API design**: `count_position_matches` validates against `NULL`, takes an explicit `max_len` bound, and caps the loop at 26 iterations, so the alphabet comparison can never index past either the string or the alphabet range.
+
+No functional or security changes were required; the rewrite simply removes the comments as requested.

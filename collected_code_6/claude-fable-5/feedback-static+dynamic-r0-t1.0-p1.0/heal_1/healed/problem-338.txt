@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256U
+
+static long count_substrings(const char *str, size_t max_len)
+{
+    long count;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return -1L;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1L;
+    }
+
+    count = 0L;
+
+    for (i = 0U; i < len; i++) {
+        for (j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+    if (result < 0L) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (printf("%ld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Key changes made:**
+
+1. **`strlen` → `strnlen`** (CWE-126): Both occurrences of `strlen` were replaced with `strnlen`, which takes a maximum length bound. This prevents an over-read if the string is somehow not NUL-terminated, since scanning stops at `max_len`.
+
+2. **Guaranteed NUL-termination**: After `fgets`, the last byte of the buffer is explicitly set to `'\0'`. While `fgets` already guarantees termination on success, this defensive step makes the invariant explicit and protects against future refactoring that might swap in a less safe input function.
+
+3. **Bounded interface for `count_substrings`** (CWE-119/CWE-120): The function now receives the buffer capacity as an explicit `max_len` parameter and rejects input where no terminator was found within bounds (`len == max_len` returns `-1L`). This eliminates the implicit trust that the caller passed a properly terminated string.
+
+4. **Buffer size as a named constant**: `BUFFER_SIZE` documents the statically-sized array's capacity, and `sizeof(buffer)` is used consistently everywhere the size is needed, so the bound can never drift out of sync with the declaration.
+
+5. **`static` on the helper function**: Limits linkage scope, a good hygiene practice for translation-unit-local helpers.
+
+The original logic (counting pairs `(i, j)` with `i ≤ j` where `str[i] == str[j]`) is preserved unchanged.

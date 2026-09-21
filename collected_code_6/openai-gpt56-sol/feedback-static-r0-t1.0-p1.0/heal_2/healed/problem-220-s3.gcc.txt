@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-220-s3.c: In function 'read_maximum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-220-s3.c:44:13: error: implicit declaration of function 'strtoumax'; did you mean 'strtoull'? [-Wimplicit-function-declaration]
+   44 |     value = strtoumax(line, &end, 10);
+      |             ^~~~~~~~~
+      |             strtoull

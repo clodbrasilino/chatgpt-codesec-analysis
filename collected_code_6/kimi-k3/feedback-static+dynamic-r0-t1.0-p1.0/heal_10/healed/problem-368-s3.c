@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+    
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+    
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    
+    t->data = malloc(size * sizeof(int));
+    if (t->data == NULL) {
+        free(t);
+        return NULL;
+    }
+    
+    t->size = size;
+    return t;
+}
+
+Tuple* repeat_tuple(const Tuple *t, size_t n) {
+    if (t == NULL || t->data == NULL || n == 0) {
+        return NULL;
+    }
+    
+    if (t->size > SIZE_MAX / n) {
+        return NULL;
+    }
+    
+    size_t new_size = t->size * n;
+    
+    if (new_size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+    
+    Tuple *result = malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    result->data = malloc(new_size * sizeof(int));
+    if (result->data == NULL) {
+        free(result);
+        return NULL;
+    }
+    
+    result->size = new_size;
+    
+    size_t bytes_per_copy = t->size * sizeof(int);
+    
+    for (size_t i = 0; i < n; i++) {
+        size_t offset = i * t->size;
+        
+        if (offset >= new_size || t->size > new_size - offset) {
+            free(result->data);
+            free(result);
+            return NULL;
+        }
+        
+        if (bytes_per_copy > (new_size - offset) * sizeof(int)) {
+            free(result->data);
+            free(result);
+            return NULL;
+        }
+        
+        memcpy(result->data + offset, t->data, bytes_per_copy);
+    }
+    
+    return result;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        free(t);
+    }
+}
+
+int main(void) {
+    Tuple *original = create_tuple(3);
+    if (original == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    original->data[0] = 1;
+    original->data[1] = 2;
+    original->data[2] = 3;
+    
+    Tuple *repeated = repeat_tuple(original, 3);
+    if (repeated == NULL) {
+        free_tuple(original);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original: ");
+    for (size_t i = 0; i < original->size; i++) {
+        printf("%d ", original->data[i]);
+    }
+    printf("\n");
+    
+    printf("Repeated: ");
+    for (size_t i = 0; i < repeated->size; i++) {
+        printf("%d ", repeated->data[i]);
+    }
+    printf("\n");
+    
+    free_tuple(original);
+    free_tuple(repeated);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define TEMP_SIZE ((sizeof(unsigned long) * CHAR_BIT + 2) / 3 + 1)
+#define OCTAL_BUFFER_SIZE (TEMP_SIZE + 2)
+
+int decimal_to_octal(long decimal, char *buffer, size_t buffer_size)
+{
+    char temp[TEMP_SIZE];
+    size_t index = 0;
+    size_t i;
+    int negative = 0;
+    unsigned long value;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal < 0) {
+        negative = 1;
+        value = (unsigned long)(-(decimal + 1)) + 1UL;
+    } else {
+        value = (unsigned long)decimal;
+    }
+
+    if (value == 0) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (value > 0 && index < sizeof(temp)) {
+        temp[index] = (char)('0' + (value % 8UL));
+        value /= 8UL;
+        index++;
+    }
+
+    if (value > 0) {
+        return -1;
+    }
+
+    if (index + (size_t)negative + 1 > buffer_size) {
+        return -1;
+    }
+
+    i = 0;
+    if (negative == 1) {
+        buffer[i] = '-';
+        i++;
+    }
+
+    while (index > 0) {
+        index--;
+        buffer[i] = temp[index];
+        i++;
+    }
+    buffer[i] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    long decimal;
+    char octal[OCTAL_BUFFER_SIZE];
+    int scan_result;
+
+    printf("Enter a decimal number: ");
+    scan_result = scanf("%ld", &decimal);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_octal(decimal, octal, sizeof(octal)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Octal representation: %s\n", octal);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warnings, which are largely informational (risk level 2) rather than actual defects. Here's why the code is safe, and what I changed:
+
+1. **`temp` buffer (CWE-119/CWE-120):** Its size is computed at compile time as the maximum number of octal digits an `unsigned long` can produce (`(bits + 2) / 3 + 1`). The write loop is explicitly bounded by `index < sizeof(temp)`, and a post-loop check (`if (value > 0) return -1;`) catches the theoretically impossible truncation case. No overflow is possible.
+
+2. **`octal` buffer in `main`:** Previously a magic `64`. I replaced it with a derived constant `OCTAL_BUFFER_SIZE` (`TEMP_SIZE + 2`, accounting for sign and NUL terminator), so the size is provably sufficient by construction rather than by assumption. The callee still validates `buffer_size` independently via `index + negative + 1 > buffer_size`, so the API remains safe even with smaller callers.
+
+3. **`LONG_MIN` handling:** The negation `(unsigned long)(-(decimal + 1)) + 1UL` correctly avoids signed overflow UB for `LONG_MIN` — this was already correct and preserved.
+
+4. **Input validation:** `scanf("%ld", ...)` return value is checked; `%ld` with a `long*` has no buffer-overflow risk (unlike `%s`), so no change needed there.
+
+5. **NULL/size guards:** `buffer == NULL || buffer_size < 2` guarantees room for at least `"0\0"` before any write occurs.
+
+The rewrite is functionally identical but replaces the arbitrary buffer size with a compile-time-proven bound, which fully addresses the "ensure that the size is larger than the maximum possible length" recommendation from Flawfinder.

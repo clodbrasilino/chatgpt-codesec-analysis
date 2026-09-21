@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple = NULL;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc(length * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Output format mismatch (root cause of the failing tests):** The test cases expected output in the form `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']` — a bracket-delimited list. The original `print_tuple` used parentheses `(...)`, and more importantly, the extra decoration lines (`Input string: "..."` and the `Tuple: ` prefix) polluted stdout so the harness matched nothing (`got <no output>`). I changed the delimiters to `[` / `]` and removed the extra `printf` calls from `main` so each input produces exactly one clean line of expected output.
+
+2. **Flawfinder `strlen` warning (CWE-126):** This is a risk-1 informational finding. The strings passed in are compile-time string literals in `main`, which are guaranteed NUL-terminated, and `string_to_tuple` guards against `NULL` and empty strings before calling `strlen`. The call is safe as used; no functional change required.
+
+3. **Memory handling retained correctly:** The `malloc` failure paths still clean up properly (freeing `tuple` if `tuple->items` allocation fails), and `free_tuple` remains NULL-safe, so there are no leaks or double-frees.

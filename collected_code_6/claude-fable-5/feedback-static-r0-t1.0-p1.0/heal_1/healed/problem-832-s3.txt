@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <errno.h>
+#include <limits.h>
+
+int extract_max_number(const char *input, long *result)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char buffer[64];
+    long max_value = LONG_MIN;
+    int found = 0;
+    int rc;
+
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+
+    rc = regcomp(&regex, "-?[0-9]+", REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        size_t len;
+        long value;
+        char *endptr;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            return -1;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+        if (len >= sizeof(buffer)) {
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(buffer, cursor + match.rm_so, len);
+        buffer[len] = '\0';
+
+        errno = 0;
+        value = strtol(buffer, &endptr, 10);
+        if (errno == ERANGE || endptr == buffer || *endptr != '\0') {
+            regfree(&regex);
+            return -1;
+        }
+
+        if (!found || value > max_value) {
+            max_value = value;
+            found = 1;
+        }
+
+        cursor += match.rm_eo;
+        if (match.rm_eo == match.rm_so) {
+            if (*cursor == '\0') {
+                break;
+            }
+            cursor++;
+        }
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = max_value;
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "abc 42 def -17 ghi 1000 jkl 999";
+    long max_value;
+
+    if (extract_max_number(test, &max_value) != 0) {
+        fprintf(stderr, "No numeric value found or error occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum numeric value: %ld\n", max_value);
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **Variable scope reduction (`value`, `len`, `endptr`)**: These variables are now declared inside the `while` loop body, limiting their scope to where they are actually used. This satisfies the cppcheck `[variableScope]` findings and reduces the risk of accidental reuse of stale values across iterations.
+
+2. **`memcpy` / buffer overflow concern (CWE-120)**: The bounds check `len >= sizeof(buffer)` was already present before the `memcpy`, guaranteeing that `len` bytes plus the null terminator always fit within `buffer`. I additionally added a defensive sanity check on `match.rm_so` and `match.rm_eo` to guarantee the computed length can never underflow to a huge unsigned value before the size comparison, hardening the copy against any pathological regex library behavior.
+
+3. **Statically-sized array (CWE-119/CWE-120)**: The fixed-size `buffer[64]` remains safe because every write path is length-checked before copying, and the terminator index (`buffer[len]`) is guaranteed in-bounds by the `len >= sizeof(buffer)` rejection. Since a 64-byte buffer far exceeds the maximum textual length of any `long` value parseable by `strtol`, overly long digit runs are correctly rejected rather than truncated.
+
+The remaining logic (regex lifecycle management with `regfree` on all exit paths, `errno`/`endptr` validation of `strtol`, and empty-match progression guard) was already correct and is preserved.

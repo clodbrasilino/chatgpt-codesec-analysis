@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *output = NULL;
+    const char *cursor = NULL;
+    size_t out_len = 0;
+    size_t in_len = 0;
+    size_t out_cap = 0;
+    int ret = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    in_len = strnlen(input, MAX_INPUT_LEN);
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        free(output);
+        return NULL;
+    }
+
+    cursor = input;
+    out_len = 0;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t rest = strnlen(cursor, MAX_INPUT_LEN);
+            if (rest >= out_cap || out_len >= (out_cap - rest)) {
+                regfree(&regex);
+                free(output);
+                return NULL;
+            }
+            memcpy(&output[out_len], cursor, rest);
+            out_len += rest;
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        if (((size_t)match.rm_so + 2U) >= out_cap ||
+            out_len >= (out_cap - ((size_t)match.rm_so + 2U))) {
+            regfree(&regex);
+            free(output);
+            return NULL;
+        }
+
+        memcpy(&output[out_len], cursor, (size_t)match.rm_so);
+        out_len += (size_t)match.rm_so;
+
+        if (cursor != input || match.rm_so > 0) {
+            output[out_len] = '_';
+            out_len++;
+        }
+
+        output[out_len] = (char)tolower((unsigned char)cursor[match.rm_so]);
+        out_len++;
+
+        cursor += match.rm_eo;
+    }
+
+    if (out_len >= out_cap) {
+        regfree(&regex);
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+    regfree(&regex);
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[i], result);
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key hardening changes made to address the flagged CWE-120 concerns:
+
+1. **First `memcpy` (rest of string):** The bounds check was restructured to `rest >= out_cap || out_len >= (out_cap - rest)`, which validates capacity using only subtraction after guarding the subtrahend. This eliminates any possibility of unsigned integer wraparound in `out_len + rest` that could bypass the guard before the copy.
+
+2. **Second `memcpy` (prefix before match):** Similarly rewritten as `((size_t)match.rm_so + 2U) >= out_cap || out_len >= (out_cap - ((size_t)match.rm_so + 2U))`, guaranteeing room for the copied prefix plus the underscore and lowered character without overflow-prone addition chains.
+
+3. **Regex offset validation:** Added an explicit sanity check that `match.rm_so >= 0` and `match.rm_eo > match.rm_so` before casting to `size_t`, preventing a negative offset from becoming a huge unsigned length passed to `memcpy`, and guaranteeing forward progress of `cursor` (no infinite loop).
+
+4. **Final terminator guard:** A defensive `out_len >= out_cap` check before writing the NUL terminator ensures the closing write can never land out of bounds even if logic upstream changes.
+
+The overall allocation strategy (`2 * in_len + 1`) remains correct since the worst case expands each character to at most two bytes (`_x`), and the input length is capped by `MAX_INPUT_LEN` via `strnlen`, so the checks are now provably sufficient for every `memcpy` destination.

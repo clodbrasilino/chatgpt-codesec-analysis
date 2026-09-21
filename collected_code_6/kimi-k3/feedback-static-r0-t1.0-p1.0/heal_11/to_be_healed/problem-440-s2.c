@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LENGTH 256
+#define MAX_ADVERBS 100
+#define MAX_SENTENCE_LENGTH 1024
+
+typedef struct {
+    char *word;
+    size_t position;
+} Adverb;
+
+bool ends_with_ly(const char *word, size_t len) {
+    if (len < 3) {
+        return false;
+    }
+    return (word[len-2] == 'l' && word[len-1] == 'y');
+}
+
+bool is_word_char(int c) {
+    return isalnum(c) || c == '\'' || c == '-';
+}
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void free_adverbs(Adverb *adverbs, size_t count) {
+    if (adverbs == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(adverbs[i].word);
+    }
+    free(adverbs);
+}
+
+size_t find_adverbs(const char *sentence, size_t sentence_max_len, Adverb *adverbs, size_t max_adverbs) {
+    size_t adverb_count = 0;
+    size_t i = 0;
+    size_t sentence_len;
+    
+    if (sentence == NULL || adverbs == NULL || max_adverbs == 0) {
+        return 0;
+    }
+    
+    sentence_len = safe_strlen(sentence, sentence_max_len);
+    
+    while (i < sentence_len && adverb_count < max_adverbs) {
+        if (is_word_char((unsigned char)sentence[i])) {
+            size_t word_start = i;
+            size_t word_len = 0;
+            
+            while (i < sentence_len && is_word_char((unsigned char)sentence[i])) {
+                i++;
+                word_len++;
+            }
+            
+            if (word_len > 0 && word_len < MAX_WORD_LENGTH && ends_with_ly(sentence + word_start, word_len)) {
+                adverbs[adverb_count].word = malloc(word_len + 1);
+                if (adverbs[adverb_count].word == NULL) {
+                    break;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(adverbs[adverb_count].word, sentence + word_start, word_len);
+                adverbs[adverb_count].word[word_len] = '\0';
+                adverbs[adverb_count].position = word_start;
+                adverb_count++;
+            }
+        } else {
+            i++;
+        }
+    }
+    
+    return adverb_count;
+}
+
+int main(void) {
+    char *sentence = NULL;
+    size_t sentence_capacity = MAX_SENTENCE_LENGTH;
+    size_t sentence_len = 0;
+    int c;
+    Adverb *adverbs = NULL;
+    size_t adverb_count = 0;
+    
+    printf("Enter a sentence: ");
+    
+    sentence = malloc(sentence_capacity);
+    if (sentence == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (sentence_len + 1 >= sentence_capacity) {
+            size_t new_capacity = sentence_capacity * 2;
+            char *new_sentence = realloc(sentence, new_capacity);
+            if (new_sentence == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free(sentence);
+                return EXIT_FAILURE;
+            }
+            sentence = new_sentence;
+            sentence_capacity = new_capacity;
+        }
+        sentence[sentence_len++] = (char)c;
+    }
+    sentence[sentence_len] = '\0';
+    
+    adverbs = calloc(MAX_ADVERBS, sizeof(Adverb));
+    if (adverbs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(sentence);
+        return EXIT_FAILURE;
+    }
+    
+    adverb_count = find_adverbs(sentence, sentence_len + 1, adverbs, MAX_ADVERBS);
+    
+    if (adverb_count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", adverb_count);
+        for (size_t i = 0; i < adverb_count; i++) {
+            printf("  \"%s\" at position %zu\n", adverbs[i].word, adverbs[i].position);
+        }
+    }
+    
+    free_adverbs(adverbs, adverb_count);
+    free(sentence);
+    
+    return EXIT_SUCCESS;
+}

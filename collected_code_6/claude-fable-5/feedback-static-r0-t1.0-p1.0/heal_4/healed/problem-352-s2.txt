@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120, buffer overflow on a statically-sized array). The Flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a low-confidence heuristic hit — it flags every fixed-size buffer declaration regardless of how it's used. Here the mitigations are already correct:
+
+1. **Bounded read:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `sizeof(buffer) - 1` characters plus the null terminator, so no overflow is possible on input. The return value is also checked for `NULL`, handling EOF/read errors.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant after a successful `fgets` (which always null-terminates), but it's harmless defensive hardening.
+
+3. **Safe newline stripping:** Using `strcspn(buffer, "\n")` instead of `strchr` avoids a potential null-pointer dereference when no newline is present (e.g., input longer than the buffer or EOF without newline). `strcspn` returns the index of the terminator in that case, so the assignment safely rewrites the existing `'\0'`.
+
+4. **Bounded scanning:** `all_chars_unique` takes an explicit `max_len` and checks both the bound and the null terminator in its loop condition, plus a `NULL` guard. The cast to `unsigned char` before indexing `seen[]` correctly avoids undefined behavior from negative `char` values on platforms where `char` is signed.
+
+No functional changes were required — the rewrite simply removes the audit comments, as the identified weakness was a false positive already mitigated by the existing bounds checking.

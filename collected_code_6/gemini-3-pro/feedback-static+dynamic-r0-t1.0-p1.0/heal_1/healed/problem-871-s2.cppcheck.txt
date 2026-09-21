@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:14:16: warning: Either the condition 'len1==4096' is redundant or the array 'str1[5]' is accessed at index 4096, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (str1[len1] != '\0' && len1 < MAX_STR_LEN) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:23:43: note: Assuming that condition 'len1==4096' is not redundant
+    if (len1 != len2 || len1 == 0 || len1 == MAX_STR_LEN) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:14:16: note: Array index out of bounds
+    while (str1[len1] != '\0' && len1 < MAX_STR_LEN) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:14:16: style: Array index 'len1' is used before limits check. [arrayIndexThenCheck]
+    while (str1[len1] != '\0' && len1 < MAX_STR_LEN) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:19:16: style: Array index 'len2' is used before limits check. [arrayIndexThenCheck]
+    while (str2[len2] != '\0' && len2 < MAX_STR_LEN) {
+               ^

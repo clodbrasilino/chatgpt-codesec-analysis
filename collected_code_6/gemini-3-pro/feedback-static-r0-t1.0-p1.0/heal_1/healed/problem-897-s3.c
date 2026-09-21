@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool isWordPresent(const char *sentence, const char *word) {
+    if (sentence == NULL || word == NULL) {
+        return false;
+    }
+
+    size_t wordLen = 0;
+    while (word[wordLen] != '\0') {
+        wordLen++;
+    }
+
+    if (wordLen == 0) {
+        return false;
+    }
+
+    const char *current = sentence;
+    while ((current = strstr(current, word)) != NULL) {
+        bool startBoundary = (current == sentence || isspace((unsigned char)*(current - 1)) || ispunct((unsigned char)*(current - 1)));
+        
+        const char *end = current + wordLen;
+        bool endBoundary = (*end == '\0' || isspace((unsigned char)*end) || ispunct((unsigned char)*end));
+
+        if (startBoundary && endBoundary) {
+            return true;
+        }
+        current++;
+    }
+
+    return false;
+}
+
+int main(void) {
+    size_t sentence_size = 256;
+    size_t word_size = 64;
+    
+    char *sentence = (char *)calloc(sentence_size, sizeof(char));
+    if (sentence == NULL) {
+        return 1;
+    }
+
+    char *word = (char *)calloc(word_size, sizeof(char));
+    if (word == NULL) {
+        free(sentence);
+        return 1;
+    }
+
+    if (fgets(sentence, sentence_size, stdin) == NULL) {
+        free(sentence);
+        free(word);
+        return 1;
+    }
+
+    if (fgets(word, word_size, stdin) == NULL) {
+        free(sentence);
+        free(word);
+        return 1;
+    }
+
+    sentence[strcspn(sentence, "\n")] = '\0';
+    word[strcspn(word, "\n")] = '\0';
+
+    if (isWordPresent(sentence, word)) {
+        printf("Present\n");
+    } else {
+        printf("Not Present\n");
+    }
+
+    free(sentence);
+    free(word);
+    
+    return 0;
+}

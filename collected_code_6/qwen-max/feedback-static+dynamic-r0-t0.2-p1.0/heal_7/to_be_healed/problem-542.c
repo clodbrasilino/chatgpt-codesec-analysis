@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void replace_chars(char *str, size_t str_len) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED)) return;
+
+    for (size_t i = 0; ; i++) {
+        int rc = regexec(&regex, str + i, 1, pmatch, 0);
+        if (rc == REG_NOMATCH || pmatch[0].rm_so == -1) break;
+
+        size_t len = pmatch[0].rm_so;
+        size_t match_end = i + pmatch[0].rm_eo;
+        size_t remaining_len = str_len - match_end;
+
+        if (len + 2 + remaining_len >= str_len) continue;
+
+        snprintf(str + i + len, str_len - (i + len), ":%.*s", (int)remaining_len, str + match_end);
+        str[i + len] = ':';
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        str_len = strlen(str);
+        i += len + 1;
+        if (pmatch[0].rm_so == 0) i++;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_chars(str, sizeof(str) - 1);
+    printf("%s\n", str);
+    return 0;
+}

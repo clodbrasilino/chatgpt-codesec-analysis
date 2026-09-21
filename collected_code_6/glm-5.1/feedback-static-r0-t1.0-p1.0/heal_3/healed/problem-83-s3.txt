@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char find_char(const char *str, size_t len) {
+    unsigned int sum = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+    return (char)(sum % 256);
+}
+
+int main(int argc, char * const argv[const]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    size_t len = strlen(argv[1]);
+    char result = find_char(argv[1], len);
+    printf("%c\n", result);
+    return EXIT_SUCCESS;
+}

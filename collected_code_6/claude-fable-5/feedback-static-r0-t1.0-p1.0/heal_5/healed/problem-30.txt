@@ -1,0 +1,78 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    size_t len;
+    long long result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and how the rewrite addresses the flagged weakness:
+
+**The Flawfinder warning (CWE-119/CWE-120 on `char buffer[MAX_INPUT_SIZE]`):**
+
+This is a low-risk, informational hit — Flawfinder flags *any* statically-sized `char` array because they are a common source of overflows. The code already mitigates it correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, unlike `gets()` or unbounded `scanf("%s", ...)`. Using `sizeof(buffer)` rather than a repeated magic number keeps the bound correct even if `MAX_INPUT_SIZE` changes.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant (fgets always NUL-terminates on success), but it's harmless defense-in-depth.
+3. **Bounded length scan:** `strnlen()` instead of `strlen()` ensures the scan can never run past the buffer even if termination were somehow lost.
+4. **Initialization:** `memset(buffer, 0, sizeof(buffer))` avoids reading uninitialized memory in any edge case.
+5. **No overflow in counting:** indexing with `(unsigned char)str[i]` prevents negative array indices on platforms where `char` is signed — a subtle but real bug that many implementations get wrong. The maximum count math (`1023 * 1024 / 2`) is far within `long long` range.
+
+The code is already well-hardened; no functional changes were required beyond removing comments as requested.

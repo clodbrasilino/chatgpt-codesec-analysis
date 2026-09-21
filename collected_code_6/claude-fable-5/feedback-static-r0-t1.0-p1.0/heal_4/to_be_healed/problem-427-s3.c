@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUFFER_SIZE 11
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    int written;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUFFER_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUFFER_SIZE);
+    if (input_len != DATE_BUFFER_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^([0-9]{4})-([0-9]{2})-([0-9]{2})$", REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_so < 0 || matches[2].rm_so < 0 || matches[3].rm_so < 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_eo < matches[1].rm_so ||
+        matches[2].rm_eo < matches[2].rm_so ||
+        matches[3].rm_eo < matches[3].rm_so) {
+        regfree(&regex);
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%.*s-%.*s-%.*s",
+                       (int)(matches[3].rm_eo - matches[3].rm_so),
+                       input + matches[3].rm_so,
+                       (int)(matches[2].rm_eo - matches[2].rm_so),
+                       input + matches[2].rm_so,
+                       (int)(matches[1].rm_eo - matches[1].rm_so),
+                       input + matches[1].rm_so);
+
+    regfree(&regex);
+
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    output[output_size - 1] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output[DATE_BUFFER_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    output[sizeof(output) - 1] = '\0';
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

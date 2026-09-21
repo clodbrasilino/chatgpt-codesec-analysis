@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int convert_date_format(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    int ret;
+    int year_len, month_len, day_len;
+    
+    if (input == NULL || output == NULL || output_size < 11) {
+        return -1;
+    }
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+    
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    year_len = matches[1].rm_eo - matches[1].rm_so;
+    month_len = matches[2].rm_eo - matches[2].rm_so;
+    day_len = matches[3].rm_eo - matches[3].rm_so;
+    
+    if (year_len != 4 || month_len != 2 || day_len != 2) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    ret = snprintf(output, output_size, "%.*s-%.*s-%.*s",
+                   day_len, input + matches[3].rm_so,
+                   month_len, input + matches[2].rm_so,
+                   year_len, input + matches[1].rm_so);
+    
+    regfree(&regex);
+    
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+    
+    return 0;
+}
+
+int main(void)
+{
+    char input[256];
+    char output[11];
+    int result;
+    
+    printf("Enter date (yyyy-mm-dd): ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input[strcspn(input, "\n")] = '\0';
+    
+    result = convert_date_format(input, output, sizeof(output));
+    
+    if (result != 0) {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Converted date: %s\n", output);
+    
+    return EXIT_SUCCESS;
+}

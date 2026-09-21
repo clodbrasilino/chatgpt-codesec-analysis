@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+
+        {
+            size_t start = i;
+            int has_z = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    has_z = 1;
+                }
+                i++;
+            }
+
+            if (has_z) {
+                size_t len = i - start;
+                size_t j;
+
+                if (len >= result_size) {
+                    return 0;
+                }
+
+                for (j = 0; j < len && j < result_size - 1; j++) {
+                    result[j] = text[start + j];
+                }
+                result[j] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     *  Assignment 'text="The lazy dog jumped over the fence"', assigned value is "The lazy dog jumped over the fence"
+     */
+    const char *text = "The lazy dog jumped over the fence";
+    size_t buffer_size;
+    char *result;
+
+    /* Possible weaknesses found:
+     *  Condition 'text==NULL' is always false
+     *  Condition 'text==NULL' is always false [knownConditionTrueFalse]
+     */
+    if (text == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    buffer_size = strlen(text) + 1;
+
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    memset(result, 0, buffer_size);
+
+    if (match_word_with_z(text, result, buffer_size)) {
+        if (printf("Found word: %s\n", result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No word containing 'z' found\n") < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

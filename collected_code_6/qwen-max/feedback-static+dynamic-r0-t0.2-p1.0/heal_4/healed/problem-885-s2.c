@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areIsomorphic(char *s1, char *s2) {
+    if (s1 == NULL || s2 == NULL) return false;
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *s1 == *s2;
+}
+
+int main() {
+    char str1[] = "egg";
+    char str2[] = "add";
+    if (areIsomorphic(str1, str2)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    return 0;
+}

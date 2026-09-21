@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-44-s2.c: In function 'match_word_at_beginning':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-44-s2.c:10:37: error: 'SIZE_MAX' undeclared (first use in this function)
+   10 |     size_t word_len = strnlen(word, SIZE_MAX);
+      |                                     ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-44-s2.c:4:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    3 | #include <stdbool.h>
+  +++ |+#include <stdint.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-44-s2.c:10:37: note: each undeclared identifier is reported only once for each function it appears in
+   10 |     size_t word_len = strnlen(word, SIZE_MAX);
+      |                                     ^~~~~~~~

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+
+uint32_t toggle_even_bits(uint32_t num) {
+    return num ^ 0xAAAAAAAAu;
+}
+
+int main(void) {
+    char buffer[64];
+    char *endptr;
+    unsigned long value;
+    size_t len;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] != '\n' && !feof(stdin)) {
+        return 1;
+    }
+    
+    errno = 0;
+    value = strtoul(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || value > UINT32_MAX) {
+        return 1;
+    }
+    
+    printf("%" PRIu32 "\n", toggle_even_bits((uint32_t)value));
+    
+    return 0;
+}

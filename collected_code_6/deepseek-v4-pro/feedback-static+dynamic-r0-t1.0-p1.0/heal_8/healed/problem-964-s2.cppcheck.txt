@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964-s2.c:26:46: style: Condition 'is_even_length(test5)' is always false [knownConditionTrueFalse]
+    printf("%s: %s\n", "NULL", is_even_length(test5) ? "even" : "odd");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964-s2.c:26:46: note: Calling function 'is_even_length' returns 0
+    printf("%s: %s\n", "NULL", is_even_length(test5) ? "even" : "odd");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-964-s2.c:26:46: note: Condition 'is_even_length(test5)' is always false
+    printf("%s: %s\n", "NULL", is_even_length(test5) ? "even" : "odd");
+                                             ^

@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096U
+
+bool is_alternating(const char *str)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len < 2U) {
+        return false;
+    }
+
+    if (str[0] == str[1]) {
+        return false;
+    }
+
+    for (i = 2U; i < len; i++) {
+        if (str[i] != str[i - 2U]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "ababab",
+        "xyxyxy",
+        "aaaa",
+        "abcabc",
+        "ab",
+        "a",
+        "",
+        "xyxyx"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        if (is_alternating(tests[i])) {
+            if (printf("\"%s\": yes\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("\"%s\": no\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change:** The flagged `strlen` call was replaced with `strnlen` bounded by `MAX_INPUT_LEN`. This addresses CWE-126 (buffer over-read): if a non-NUL-terminated buffer is ever passed in, the scan stops at the bound instead of reading past the allocation. Inputs at or beyond the bound are rejected (`len >= MAX_INPUT_LEN` returns `false`), so the function never operates on a potentially unterminated string.
+
+Notes on the rest of the code, which was already sound and left intact:
+
+- The `NULL` check precedes any dereference.
+- All indices use `size_t` with unsigned literals, avoiding signed/unsigned mismatch; the loop starting at `i = 2U` guarantees `i - 2U` never underflows.
+- The string literals in `tests[]` are always NUL-terminated, so `main` itself was never at risk — the fix hardens `is_alternating` as a general-purpose API.
+- `printf` return values are still checked, and `EXIT_SUCCESS`/`EXIT_FAILURE` are used for portability.
+
+`strnlen` is POSIX (and C23); if strict C99/C11 portability is required, an equivalent bounded loop can replace it.

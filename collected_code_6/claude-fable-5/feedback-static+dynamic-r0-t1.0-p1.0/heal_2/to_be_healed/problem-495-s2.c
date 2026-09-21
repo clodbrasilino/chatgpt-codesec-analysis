@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase(const char *input);
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'NTYSZTNOGI', got <no output>
+  *  test case 1 failed: expected 'PTEAIMAAY', got <no output>
+  *  test case 0 failed: expected 'KDALOOOHLAJSI', got <no output>
+  */
+
+char *remove_lowercase(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t result_len;
+    size_t input_len;
+    size_t offset;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[256] = {0};
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    input_len = strlen(input);
+    if (input_len == (size_t)-1) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+
+    result_len = 0;
+    offset = 0;
+
+    while (offset < input_len) {
+        ret = regexec(&regex, input + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = input_len - offset;
+            if (result_len + remaining > input_len) {
+                fprintf(stderr, "Internal bounds error\n");
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_len, input + offset, remaining);
+            result_len += remaining;
+            break;
+        } else if (ret != 0) {
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char errbuf[256] = {0};
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1] = '\0';
+            fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so ||
+            (size_t)match.rm_eo > input_len - offset) {
+            fprintf(stderr, "Invalid match offsets\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (result_len + (size_t)match.rm_so > input_len) {
+            fprintf(stderr, "Internal bounds error\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + result_len, input + offset, (size_t)match.rm_so);
+        result_len += (size_t)match.rm_so;
+        offset += (size_t)match.rm_eo;
+    }
+
+    result[result_len] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "HelloWorldFOO123bar",
+        "KDeoALOklOOHserfLoAJSIskdsf",
+        "ALLUPPERCASE",
+        "alllowercase",
+        "Mix3d C4s3 Str1ng"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *cleaned = remove_lowercase(test_strings[i]);
+        if (cleaned == NULL) {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+        printf("Original: %s\n", test_strings[i]);
+        printf("Cleaned:  %s\n\n", cleaned);
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}

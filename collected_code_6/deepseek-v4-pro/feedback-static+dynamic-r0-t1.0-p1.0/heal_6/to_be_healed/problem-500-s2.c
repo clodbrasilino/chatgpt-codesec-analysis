@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concatenate_list(char **list, int count) {
+    size_t total_length = 0;
+    size_t len;
+    int i;
+    char *result;
+    size_t remaining;
+
+    if (list == NULL || count <= 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            len = strnlen(list[i], SIZE_MAX);
+            if (len > SIZE_MAX - total_length) {
+                return NULL;
+            }
+            total_length += len;
+        }
+    }
+
+    if (total_length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    remaining = total_length;
+    for (i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            len = strnlen(list[i], remaining);
+            if (len > remaining) {
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + total_length - remaining, list[i], len);
+            remaining -= len;
+        }
+    }
+
+    result[total_length] = '\0';
+    return result;
+}
+
+int main(void) {
+    char *list1[] = {"Hello", " ", "World", "!"};
+    char *list2[] = {"The", " ", "quick", " ", "brown", " ", "fox"};
+    char *list3[] = {"", "Empty", "", "String", ""};
+    char *result;
+
+    result = concatenate_list(list1, 4);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concatenate_list(list2, 7);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = concatenate_list(list3, 5);
+    if (result != NULL) {
+        printf("[%s]\n", result);
+        free(result);
+    }
+
+    result = concatenate_list(NULL, 3);
+    if (result == NULL) {
+        printf("NULL input handled\n");
+    }
+
+    return 0;
+}

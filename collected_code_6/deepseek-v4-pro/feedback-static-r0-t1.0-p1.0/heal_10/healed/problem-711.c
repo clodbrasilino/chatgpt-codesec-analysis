@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <inttypes.h>
+
+int check_product_equal(int n) {
+    char str[24];
+    int result = snprintf(str, sizeof(str), "%d", n);
+    
+    if (result < 0 || (size_t)result >= sizeof(str)) {
+        return 0;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+    
+    unsigned long long even_product = 1;
+    unsigned long long odd_product = 1;
+    size_t i;
+
+    for (i = 0; i < len; i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            return 0;
+        }
+        int digit = str[i] - '0';
+        if (digit == 0) {
+            if (i % 2 == 0) {
+                even_product = 0;
+            } else {
+                odd_product = 0;
+            }
+            continue;
+        }
+        if (i % 2 == 0) {
+            if (even_product > ULLONG_MAX / (unsigned long long)digit) {
+                return 0;
+            }
+            even_product *= (unsigned long long)digit;
+        } else {
+            if (odd_product > ULLONG_MAX / (unsigned long long)digit) {
+                return 0;
+            }
+            odd_product *= (unsigned long long)digit;
+        }
+    }
+
+    return even_product == odd_product;
+}
+
+int main(void) {
+    char input_buffer[32] = {0};
+    int num;
+    
+    printf("Enter a number: ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t input_len = strlen(input_buffer);
+    if (input_len == 0 || input_len >= sizeof(input_buffer)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (input_buffer[input_len - 1] == '\n') {
+        input_buffer[input_len - 1] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
+    
+    char *endptr;
+    errno = 0;
+    long long val = strtoll(input_buffer, &endptr, 10);
+    
+    if (errno != 0 || *endptr != '\0' || val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    num = (int)val;
+
+    if (num == 0) {
+        printf("Product of digits at even and odd places are not equal\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (check_product_equal(num)) {
+        printf("Product of digits at even and odd places are equal\n");
+    } else {
+        printf("Product of digits at even and odd places are not equal\n");
+    }
+
+    return EXIT_SUCCESS;
+}

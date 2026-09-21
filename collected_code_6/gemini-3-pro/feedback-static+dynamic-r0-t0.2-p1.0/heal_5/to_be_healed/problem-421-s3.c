@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ITEM_LEN 4096
+#define MAX_TOTAL_LEN 65536
+
+static size_t safe_strnlen(const char *str, size_t maxlen) {
+    size_t len = 0;
+    while (len < maxlen && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char* concatenate_tuple(const char** tuple, size_t tuple_size, const char* delimiter) {
+    if (!tuple || !delimiter || tuple_size == 0) {
+        return NULL;
+    }
+
+    size_t delimiter_length = safe_strnlen(delimiter, MAX_ITEM_LEN);
+    size_t total_length = 0;
+
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i]) {
+            size_t item_len = safe_strnlen(tuple[i], MAX_ITEM_LEN);
+            if (MAX_TOTAL_LEN - total_length < item_len) {
+                return NULL;
+            }
+            total_length += item_len;
+        }
+    }
+
+    size_t delimiter_total = delimiter_length * (tuple_size - 1);
+    if (MAX_TOTAL_LEN - total_length < delimiter_total + 1) {
+        return NULL;
+    }
+    
+    total_length += delimiter_total + 1;
+
+    char* result = (char*)malloc(total_length);
+    if (!result) {
+        return NULL;
+    }
+
+    char* current_ptr = result;
+    size_t remaining = total_length;
+
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i]) {
+            size_t len = safe_strnlen(tuple[i], MAX_ITEM_LEN);
+            if (len > 0 && remaining > len) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(current_ptr, tuple[i], len);
+                current_ptr += len;
+                remaining -= len;
+            }
+        }
+        if (i < tuple_size - 1 && delimiter_length > 0) {
+            if (remaining > delimiter_length) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(current_ptr, delimiter, delimiter_length);
+                current_ptr += delimiter_length;
+                remaining -= delimiter_length;
+            }
+        }
+    }
+    
+    if (remaining > 0) {
+        *current_ptr = '\0';
+    } else {
+        result[total_length - 1] = '\0';
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* tuple[] = {"apple", "banana", "cherry", "date"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char* delimiter = ", ";
+
+    char* concatenated_string = concatenate_tuple(tuple, tuple_size, delimiter);
+
+    if (concatenated_string) {
+        printf("%s\n", concatenated_string);
+        free(concatenated_string);
+    } else {
+        fprintf(stderr, "Failed to concatenate tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

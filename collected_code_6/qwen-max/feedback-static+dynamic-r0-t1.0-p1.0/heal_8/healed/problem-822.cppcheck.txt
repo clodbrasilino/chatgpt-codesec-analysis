@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822.c:9:35: warning: Either the condition 'length<20' is redundant or the array 'password[5]' is accessed at index 19, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (length < 20 && password[length] != '\0') {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822.c:9:19: note: Assuming that condition 'length<20' is not redundant
+    while (length < 20 && password[length] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-822.c:9:35: note: Array index out of bounds
+    while (length < 20 && password[length] != '\0') {
+                                  ^

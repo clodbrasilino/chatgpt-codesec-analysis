@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DICT_SIZE 100
+#define KEY_SIZE 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[KEY_SIZE];
+    int value;
+    int is_used;
+} Entry;
+
+typedef struct {
+    Entry entries[DICT_SIZE];
+    int count;
+} Dictionary;
+
+void dict_init(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+    for (int i = 0; i < DICT_SIZE; i++) {
+        dict->entries[i].is_used = 0;
+        dict->entries[i].value = 0;
+        dict->entries[i].key[0] = '\0';
+    }
+}
+
+int dict_is_empty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return -1;
+    }
+    return (dict->count == 0) ? 1 : 0;
+}
+
+int dict_set(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->count >= DICT_SIZE) {
+        return -1;
+    }
+
+    size_t key_len = strnlen(key, KEY_SIZE - 1);
+    if (key_len >= KEY_SIZE - 1) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dict->entries[dict->count].key, key, key_len + 1);
+    dict->entries[dict->count].value = value;
+    dict->entries[dict->count].is_used = 1;
+    dict->count++;
+
+    return 0;
+}
+
+int dict_get(const Dictionary *dict, const char *key, int *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < dict->count; i++) {
+        if (dict->entries[i].is_used && strcmp(dict->entries[i].key, key) == 0) {
+            *value = dict->entries[i].value;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int dict_remove(Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < dict->count; i++) {
+        if (dict->entries[i].is_used && strcmp(dict->entries[i].key, key) == 0) {
+            dict->entries[i].is_used = 0;
+            dict->entries[i].key[0] = '\0';
+            dict->entries[i].value = 0;
+
+            if (i < dict->count - 1) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(&dict->entries[i], &dict->entries[dict->count - 1], sizeof(Entry));
+            }
+            dict->count--;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+size_t dict_size(const Dictionary *dict) {
+    if (dict == NULL) {
+        return 0;
+    }
+    return dict->count;
+}
+
+int main(void) {
+    Dictionary dict;
+    int result;
+    int value;
+
+    dict_init(&dict);
+
+    result = dict_is_empty(&dict);
+    if (result == 1) {
+        printf("Dictionary is empty\n");
+    } else if (result == 0) {
+        printf("Dictionary is not empty\n");
+    } else {
+        printf("Invalid dictionary pointer\n");
+    }
+
+    if (dict_set(&dict, "test", 42) != 0) {
+        printf("Failed to set entry\n");
+    }
+
+    result = dict_is_empty(&dict);
+    if (result == 1) {
+        printf("Dictionary is empty\n");
+    } else if (result == 0) {
+        printf("Dictionary is not empty\n");
+    } else {
+        printf("Invalid dictionary pointer\n");
+    }
+
+    if (dict_set(&dict, "hello", 100) == 0) {
+        printf("Successfully set 'hello' to 100\n");
+    }
+
+    if (dict_get(&dict, "test", &value) == 0) {
+        printf("Value for 'test': %d\n", value);
+    } else {
+        printf("Key 'test' not found\n");
+    }
+
+    printf("Dictionary size: %zu\n", dict_size(&dict));
+
+    if (dict_remove(&dict, "test") == 0) {
+        printf("Removed 'test'\n");
+    }
+
+    if (dict_get(&dict, "test", &value) != 0) {
+        printf("Key 'test' no longer exists\n");
+    }
+
+    printf("Dictionary size: %zu\n", dict_size(&dict));
+
+    return 0;
+}

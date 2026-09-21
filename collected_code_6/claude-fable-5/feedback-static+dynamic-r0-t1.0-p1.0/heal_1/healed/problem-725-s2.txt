@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **extract_quoted(const char *input, size_t *count);
+void free_matches(char **matches, size_t count);
+
+char **extract_quoted(const char *input, size_t *count)
+{
+    regex_t regex;
+    regmatch_t pmatch[2];
+    const char *cursor;
+    char **matches = NULL;
+    char **tmp;
+    size_t n = 0;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[256];
+        size_t needed;
+
+        needed = regerror(ret, &regex, errbuf, sizeof(errbuf));
+        if (needed >= sizeof(errbuf)) {
+            errbuf[sizeof(errbuf) - 1] = '\0';
+        }
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    cursor = input;
+    remaining = strlen(input);
+
+    while (regexec(&regex, cursor, 2, pmatch, 0) == 0) {
+        size_t len;
+        char *value;
+
+        if (pmatch[1].rm_so < 0 ||
+            pmatch[1].rm_eo < pmatch[1].rm_so ||
+            (size_t)pmatch[1].rm_eo > remaining) {
+            break;
+        }
+
+        len = (size_t)(pmatch[1].rm_eo - pmatch[1].rm_so);
+
+        if (len > remaining - (size_t)pmatch[1].rm_so) {
+            break;
+        }
+
+        value = malloc(len + 1);
+        if (value == NULL) {
+            free_matches(matches, n);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (len > 0) {
+            memcpy(value, cursor + pmatch[1].rm_so, len);
+        }
+        value[len] = '\0';
+
+        if (n >= (SIZE_MAX / sizeof(char *)) - 1) {
+            free(value);
+            free_matches(matches, n);
+            regfree(&regex);
+            return NULL;
+        }
+
+        tmp = realloc(matches, (n + 1) * sizeof(char *));
+        if (tmp == NULL) {
+            free(value);
+            free_matches(matches, n);
+            regfree(&regex);
+            return NULL;
+        }
+        matches = tmp;
+        matches[n] = value;
+        n++;
+
+        if (pmatch[0].rm_eo <= 0 || (size_t)pmatch[0].rm_eo > remaining) {
+            break;
+        }
+        cursor += pmatch[0].rm_eo;
+        remaining -= (size_t)pmatch[0].rm_eo;
+    }
+
+    regfree(&regex);
+    *count = n;
+    return matches;
+}
+
+void free_matches(char **matches, size_t count)
+{
+    size_t i;
+
+    if (matches == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(matches[i]);
+    }
+    free(matches);
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello\" and she replied \"good morning\" then \"bye\".";
+    char **values;
+    size_t count = 0;
+    size_t i;
+
+    values = extract_quoted(text, &count);
+    if (values == NULL && count == 0) {
+        fprintf(stderr, "No matches found or an error occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Match %zu: %s\n", i + 1, values[i]) < 0) {
+            free_matches(values, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_matches(values, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` — add it to the includes:
+
+```c
+#include <stdint.h>
+```
+
+Summary of the hardening applied against the flagged weaknesses:
+
+1. **`errbuf` (CWE-119/CWE-120):** The buffer was already passed with `sizeof(errbuf)`, which bounds the write. I additionally captured `regerror`'s return value (the required size) and force NUL-termination defensively if truncation occurred, so the subsequent `fprintf` can never read past the buffer.
+
+2. **`memcpy` (CWE-120):** The destination is allocated as exactly `len + 1`, so the copy of `len` bytes always fits. To make this provably safe, the rewrite validates the match offsets against the actual remaining string length (`remaining`) before computing `len`, guards against `rm_eo` exceeding the string bounds, and skips the `memcpy` entirely for zero-length matches. A `remaining` counter is maintained across iterations so cursor advancement can never move past the end of the input.
+
+3. **Extra hardening:** An overflow check on `(n + 1) * sizeof(char *)` was added before `realloc` to prevent an integer-overflow-driven undersized allocation.

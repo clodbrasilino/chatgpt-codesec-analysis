@@ -1,0 +1,157 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *duplicate_word(const char *word, size_t len)
+{
+    char *copy;
+
+    if (word == NULL || len >= MAX_WORD_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        if (bounded_strlen(word, MAX_WORD_LEN) < len) {
+            free(copy);
+            return NULL;
+        }
+        memcpy(copy, word, len);
+    }
+    copy[len] = '\0';
+
+    return copy;
+}
+
+char **shortlist_words(const char **words, size_t count, size_t n, size_t *result_count)
+{
+    char **result = NULL;
+    size_t found = 0;
+    size_t i;
+
+    if (words == NULL || result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    for (i = 0; i < count; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                found++;
+            }
+        }
+    }
+
+    if (found == 0) {
+        return NULL;
+    }
+
+    if (found > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = calloc(found, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count && *result_count < found; i++) {
+        if (words[i] != NULL) {
+            size_t len = bounded_strlen(words[i], MAX_WORD_LEN);
+            if (len < MAX_WORD_LEN && len > n) {
+                char *copy = duplicate_word(words[i], len);
+                if (copy == NULL) {
+                    size_t j;
+                    for (j = 0; j < *result_count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                result[*result_count] = copy;
+                (*result_count)++;
+            }
+        }
+    }
+
+    return result;
+}
+
+void free_shortlist(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "cat", "banana", "dog", "elephant", "hi" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    size_t n = 3;
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = shortlist_words(words, count, n, &result_count);
+
+    if (result == NULL) {
+        if (printf("No words longer than %zu found.\n", n) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Words longer than %zu:\n", n) < 0) {
+        free_shortlist(result, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", result[i]) < 0) {
+            free_shortlist(result, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_shortlist(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the always-false condition** (`alloc_size < len`): Since `duplicate_word` already guarantees `len < MAX_WORD_LEN` (4096), the expression `len + 1` can never overflow `size_t`. The redundant check and the intermediate `alloc_size` variable were removed, resolving the `knownConditionTrueFalse` finding.
+
+2. **The `memcpy` finding (CWE-120)** is a false positive in this context, but the code remains structured so its safety is provable: the destination is allocated with exactly `len + 1` bytes immediately before the copy, and the source is verified via `bounded_strlen(word, MAX_WORD_LEN) >= len` to contain at least `len` readable bytes before `memcpy(copy, word, len)` executes. No additional change was required beyond keeping this defensive validation in place.
+
+All other defensive measures were preserved: NULL checks, the `SIZE_MAX / sizeof(char *)` overflow guard before `calloc`, full cleanup on partial allocation failure, and checked `printf` return values in `main`.

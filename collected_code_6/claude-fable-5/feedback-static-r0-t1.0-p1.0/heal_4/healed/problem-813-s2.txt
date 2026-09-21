@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code is already well-defended against the weakness Flawfinder flagged. The warning about the statically-sized `buffer` (CWE-119/CWE-120) is a heuristic alert — Flawfinder flags any fixed-size `char` array because such arrays are *potentially* misused, not because this code actually misuses it. Reviewing the mitigations already in place:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible on input.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guards against any doubt.
+3. **Bounds-checked iteration:** The newline-stripping loop checks `i < sizeof(buffer)` before every dereference, so it can never read past the array.
+4. **NULL-safe helper:** `string_length()` guards against a `NULL` pointer before dereferencing, and only reads up to the terminator that is guaranteed to exist.
+5. **Error handling:** The `fgets` return value is checked, so EOF or a read error is handled cleanly rather than operating on indeterminate data.
+
+Since the flagged risk (level 2, informational) was already fully mitigated, the correct "fix" is to keep the logic intact — the rewrite above simply removes the comments as requested. Optionally, the newline-strip loop could be replaced with `buffer[strcspn(buffer, "\n")] = '\0';` for brevity, but the explicit loop is equally safe and arguably clearer about its bounds.

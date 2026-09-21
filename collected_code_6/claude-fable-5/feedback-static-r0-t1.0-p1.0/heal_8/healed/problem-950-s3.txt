@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weakness and its mitigation:
+
+**Flawfinder warning (CWE-119/CWE-120, statically-sized array, risk 2):** This is a heuristic hit on the fixed-size `signs` array. Flawfinder flags any statically-sized array because improper indexing could cause an out-of-bounds read or write. In this code the weakness is fully mitigated:
+
+1. **Modulo confinement:** `index = year % ZODIAC_COUNT` mathematically restricts the value to the range `(-11, 11)`.
+2. **Negative-remainder correction:** In C, the `%` operator can yield a negative result for negative operands. The `if (index < 0) index += ZODIAC_COUNT;` adjustment normalizes the index into `[0, 11]`. Although `main` rejects years `< 1`, keeping this guard makes `chinese_zodiac` safe as a standalone reusable function.
+3. **Explicit defensive bounds check:** The final `if (index < 0 || index >= ZODIAC_COUNT)` check guarantees no out-of-bounds access is possible before `signs[index]` is dereferenced, satisfying the "perform bounds checking" recommendation directly.
+4. **Read-only data:** The array is declared `static const char *const`, so neither the pointers nor the pointed-to strings can be written through it, eliminating any buffer-overflow write vector (CWE-120).
+
+Additional robustness already present: `scanf` return value is validated before `year` is used, preventing use of an uninitialized variable on malformed input, and input is range-checked before processing. The remaining flawfinder finding is therefore a false positive; the code is safe as written.

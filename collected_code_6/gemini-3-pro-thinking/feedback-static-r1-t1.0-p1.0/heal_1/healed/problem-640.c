@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char *remove_parentheses(const char *input);
+
+char *remove_parentheses(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t capacity = 64;
+    char *output = (char *)malloc(capacity);
+    
+    if (output == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int depth = 0;
+
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            if (j >= capacity - 1) {
+                capacity *= 2;
+                char *temp = (char *)realloc(output, capacity);
+                if (temp == NULL) {
+                    free(output);
+                    return NULL;
+                }
+                output = temp;
+            }
+            output[j++] = input[i];
+        }
+    }
+    
+    output[j] = '\0';
+
+    char *resized_output = (char *)realloc(output, j + 1);
+    if (resized_output != NULL) {
+        return resized_output;
+    }
+
+    return output;
+}
+
+int main(void) {
+    const char *test_string = "Hello (this is a test) World!";
+    char *result = remove_parentheses(test_string);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

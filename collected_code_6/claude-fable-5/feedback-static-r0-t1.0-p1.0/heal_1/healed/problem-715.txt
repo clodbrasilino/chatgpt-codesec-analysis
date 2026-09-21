@@ -1,0 +1,177 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+typedef struct {
+    long *items;
+    size_t count;
+} Tuple;
+
+static int count_tokens(const char *str, size_t *count)
+{
+    size_t n = 0;
+    const char *p = str;
+
+    if (str == NULL || count == NULL) {
+        return -1;
+    }
+
+    while (*p != '\0') {
+        while (*p == ' ' || *p == ',' || *p == '\t') {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+        n++;
+        while (*p != '\0' && *p != ' ' && *p != ',' && *p != '\t') {
+            p++;
+        }
+    }
+
+    *count = n;
+    return 0;
+}
+
+static int string_to_tuple(const char *str, Tuple *result)
+{
+    size_t n = 0;
+    size_t i = 0;
+    size_t len = 0;
+    char *copy = NULL;
+    char *token = NULL;
+    char *saveptr = NULL;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    result->items = NULL;
+    result->count = 0;
+
+    if (count_tokens(str, &n) != 0) {
+        return -1;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(long)) {
+        return -1;
+    }
+
+    len = strlen(str);
+    if (len == SIZE_MAX) {
+        return -1;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+    memcpy(copy, str, len);
+    copy[len] = '\0';
+
+    result->items = malloc(n * sizeof(long));
+    if (result->items == NULL) {
+        free(copy);
+        return -1;
+    }
+
+    token = strtok_r(copy, " ,\t", &saveptr);
+    while (token != NULL && i < n) {
+        char *endptr = NULL;
+        long value;
+
+        errno = 0;
+        value = strtol(token, &endptr, 10);
+        if (endptr == token || *endptr != '\0') {
+            free(copy);
+            free(result->items);
+            result->items = NULL;
+            return -1;
+        }
+        if (errno == ERANGE && (value == LONG_MAX || value == LONG_MIN)) {
+            free(copy);
+            free(result->items);
+            result->items = NULL;
+            return -1;
+        }
+        result->items[i] = value;
+        i++;
+        token = strtok_r(NULL, " ,\t", &saveptr);
+    }
+
+    result->count = i;
+    free(copy);
+    return 0;
+}
+
+static void print_tuple(const Tuple *t)
+{
+    size_t i = 0;
+
+    if (t == NULL) {
+        return;
+    }
+
+    if (printf("(") < 0) {
+        return;
+    }
+    for (i = 0; i < t->count; i++) {
+        if (i > 0) {
+            if (printf(", ") < 0) {
+                return;
+            }
+        }
+        if (printf("%ld", t->items[i]) < 0) {
+            return;
+        }
+    }
+    if (printf(")\n") < 0) {
+        return;
+    }
+}
+
+static void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        t->items = NULL;
+        t->count = 0;
+    }
+}
+
+int main(void)
+{
+    const char *input = "1, -2, 3, 4, 5";
+    Tuple result;
+
+    if (string_to_tuple(input, &result) != 0) {
+        if (fprintf(stderr, "Failed to convert string to tuple\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(&result);
+    free_tuple(&result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **`variableScope` / `unreadVariable` for `value`**: The `value` variable is now declared inside the `while` loop body, reducing its scope to where it is actually used and eliminating the unused initial assignment. The `endptr` variable was moved inside the loop as well for the same reason.
+
+2. **Flawfinder `strlen` / `memcpy` warnings (CWE-126, CWE-120)**: The string length is now computed exactly once and stored in `len`, avoiding redundant `strlen` calls. The copy is performed with `memcpy(copy, str, len)` followed by explicit null termination (`copy[len] = '\0'`), which guarantees the destination buffer of `len + 1` bytes can always hold the copied data plus terminator. A guard against `len == SIZE_MAX` prevents integer overflow in `malloc(len + 1)`. Note that `str` is already validated as non-NULL, and as a `const char *` parameter the null-termination contract is the caller's responsibility—this is the standard idiom for C string APIs.
+
+3. **Missing include**: Added `<stdint.h>`, which is required for `SIZE_MAX` (the original code relied on it being pulled in transitively, which is not portable).
+
+The rest of the code was already sound: allocation results are checked, the `n > SIZE_MAX / sizeof(long)` guard prevents multiplication overflow, `strtol` errors (including `ERANGE`) are handled, memory is freed on every error path, and `strtok_r` is used instead of the non-reentrant `strtok`.

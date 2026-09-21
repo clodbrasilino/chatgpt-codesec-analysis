@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_WORD_LEN 64
+#define MAX_WORDS 100
+
+bool match_two_p_words(const char *words[], size_t count, char *first, char *second, size_t buf_size)
+{
+    size_t i;
+    size_t p_count = 0;
+    
+    if (words == NULL || first == NULL || second == NULL || buf_size == 0 || count > MAX_WORDS) {
+        return false;
+    }
+    
+    for (i = 0; i < count && p_count < 2; i++) {
+        if (words[i] != NULL && words[i][0] == 'p') {
+            size_t len = strnlen(words[i], buf_size);
+            if (len >= buf_size) {
+                return false;
+            }
+            
+            if (p_count == 0) {
+                strncpy(first, words[i], buf_size - 1);
+                first[buf_size - 1] = '\0';
+                p_count++;
+            } else {
+                strncpy(second, words[i], buf_size - 1);
+                second[buf_size - 1] = '\0';
+                p_count++;
+            }
+        }
+    }
+    
+    return (p_count == 2);
+}
+
+int main(void)
+{
+    const char *word_list[] = {
+        "apple",
+        "pear",
+        "peach",
+        "banana",
+        "plum",
+        "orange"
+    };
+    
+    char first_match[MAX_WORD_LEN] = {0};
+    char second_match[MAX_WORD_LEN] = {0};
+    size_t word_count = sizeof(word_list) / sizeof(word_list[0]);
+    
+    if (match_two_p_words(word_list, word_count, first_match, second_match, MAX_WORD_LEN)) {
+        printf("First match: %s\n", first_match);
+        printf("Second match: %s\n", second_match);
+    } else {
+        printf("Could not find two words starting with 'p'\n");
+    }
+    
+    return 0;
+}

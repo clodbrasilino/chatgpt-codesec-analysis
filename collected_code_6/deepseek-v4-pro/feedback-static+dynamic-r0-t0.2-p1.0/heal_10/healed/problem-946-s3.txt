@@ -1,0 +1,179 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define INITIAL_CAPACITY 100
+#define MAX_TEXT_LEN 1000000
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+typedef struct {
+    WordCount *items;
+    int size;
+    int capacity;
+} WordCountArray;
+
+static void init_array(WordCountArray *arr) {
+    arr->capacity = INITIAL_CAPACITY;
+    arr->size = 0;
+    arr->items = malloc(arr->capacity * sizeof(WordCount));
+    if (!arr->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void free_array(WordCountArray *arr) {
+    if (arr) {
+        for (int i = 0; i < arr->size; i++) {
+            free(arr->items[i].word);
+        }
+        free(arr->items);
+        arr->items = NULL;
+        arr->size = 0;
+        arr->capacity = 0;
+    }
+}
+
+static void add_word(WordCountArray *arr, const char *word) {
+    if (!arr || !word) {
+        return;
+    }
+
+    for (int i = 0; i < arr->size; i++) {
+        if (strcmp(arr->items[i].word, word) == 0) {
+            arr->items[i].count++;
+            return;
+        }
+    }
+    
+    if (arr->size >= arr->capacity) {
+        arr->capacity *= 2;
+        WordCount *new_items = realloc(arr->items, arr->capacity * sizeof(WordCount));
+        if (!new_items) {
+            fprintf(stderr, "Memory reallocation failed\n");
+            free_array(arr);
+            exit(EXIT_FAILURE);
+        }
+        arr->items = new_items;
+    }
+    
+    size_t word_len = strnlen(word, MAX_WORD_LEN - 1);
+    if (word_len >= MAX_WORD_LEN - 1) {
+        word_len = MAX_WORD_LEN - 1;
+    }
+    
+    arr->items[arr->size].word = malloc(word_len + 1);
+    if (!arr->items[arr->size].word) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_array(arr);
+        exit(EXIT_FAILURE);
+    }
+    
+    memcpy(arr->items[arr->size].word, word, word_len);
+    arr->items[arr->size].word[word_len] = '\0';
+    arr->items[arr->size].count = 1;
+    arr->size++;
+}
+
+static void to_lowercase(char *str) {
+    if (!str) {
+        return;
+    }
+    size_t i = 0;
+    while (i < MAX_WORD_LEN - 1 && str[i] != '\0') {
+        str[i] = (char)tolower((unsigned char)str[i]);
+        i++;
+    }
+    str[i] = '\0';
+}
+
+static void find_most_common(const char *text, WordCountArray *result) {
+    if (!text || !result) {
+        return;
+    }
+
+    init_array(result);
+    
+    char *word = malloc(MAX_WORD_LEN);
+    if (!word) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_array(result);
+        exit(EXIT_FAILURE);
+    }
+    
+    int word_len = 0;
+    size_t text_len = strnlen(text, MAX_TEXT_LEN);
+    size_t i = 0;
+    
+    while (i < text_len && text[i] != '\0') {
+        if (isalpha((unsigned char)text[i])) {
+            if (word_len < MAX_WORD_LEN - 1) {
+                word[word_len++] = text[i];
+            }
+        } else {
+            if (word_len > 0) {
+                word[word_len] = '\0';
+                to_lowercase(word);
+                add_word(result, word);
+                word_len = 0;
+            }
+        }
+        i++;
+    }
+    
+    if (word_len > 0) {
+        word[word_len] = '\0';
+        to_lowercase(word);
+        add_word(result, word);
+    }
+    
+    free(word);
+    
+    if (result->size == 0) {
+        return;
+    }
+    
+    int max_count = 0;
+    for (int j = 0; j < result->size; j++) {
+        if (result->items[j].count > max_count) {
+            max_count = result->items[j].count;
+        }
+    }
+    
+    WordCountArray filtered;
+    init_array(&filtered);
+    
+    for (int j = 0; j < result->size; j++) {
+        if (result->items[j].count == max_count) {
+            add_word(&filtered, result->items[j].word);
+            filtered.items[filtered.size - 1].count = max_count;
+        }
+    }
+    
+    free_array(result);
+    *result = filtered;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog barks, and the fox runs away.";
+    WordCountArray result;
+    
+    find_most_common(text, &result);
+    
+    printf("Most common word(s) and their counts:\n");
+    for (int i = 0; i < result.size; i++) {
+        printf("%s: %d\n", result.items[i].word, result.items[i].count);
+    }
+    
+    free_array(&result);
+    
+    return 0;
+}
+```

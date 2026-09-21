@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char* extract_numbers(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t digit_count = 0;
+    const char* ptr = input;
+    while (*ptr != '\0') {
+        if (isdigit((unsigned char)*ptr)) {
+            digit_count++;
+        }
+        ptr++;
+    }
+
+    char* result = (char*)malloc(digit_count + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    ptr = input;
+    while (*ptr != '\0') {
+        if (isdigit((unsigned char)*ptr)) {
+            result[j++] = *ptr;
+        }
+        ptr++;
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* test_string = "Hello123World456!";
+    
+    char* extracted = extract_numbers(test_string);
+    if (extracted != NULL) {
+        printf("%s\n", extracted);
+        free(extracted);
+    }
+
+    return 0;
+}

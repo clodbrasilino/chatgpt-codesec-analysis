@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 1024
+
+size_t count_vowels(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        int c = tolower((unsigned char)str[i]);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t len;
+    size_t vowels;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    vowels = count_vowels(buffer);
+    printf("Number of vowels: %zu\n", vowels);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended, and the flagged weaknesses were largely false positives that the existing code mitigates:
+
+1. **`getchar` in a loop (CWE-120, CWE-20)** — This is a false positive. The `flush_stdin` function discards characters without storing them into any buffer, so no overflow is possible. The loop terminates correctly on both `'\n'` and `EOF`, avoiding an infinite loop if the stream closes.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — Mitigated correctly:
+   - `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size and always null-terminates on success.
+   - The defensive `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination even in pathological cases.
+   - `strnlen` (rather than `strlen`) bounds the length scan to the buffer size.
+   - Truncated input is detected (`len == sizeof(buffer) - 1` with no newline) and the remainder of the line is drained, preventing stale input from leaking into subsequent reads.
+
+3. **Other good practices already present:** the `tolower((unsigned char)...)` cast avoids undefined behavior for negative `char` values, `count_vowels` guards against `NULL`, the `fgets` return value is checked, and `%zu` correctly matches `size_t`.
+
+No functional changes were required — only the removal of comments as requested.

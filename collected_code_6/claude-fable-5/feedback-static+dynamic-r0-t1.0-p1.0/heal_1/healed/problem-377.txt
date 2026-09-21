@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ch) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char target;
+    int input;
+    int discard;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(buffer, '\n') == NULL) {
+        while ((discard = getchar()) != '\n' && discard != EOF) {
+            ;
+        }
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter the character to remove: ");
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)input;
+
+    while ((discard = getchar()) != '\n' && discard != EOF) {
+        ;
+    }
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied fixes:**
+
+The original code was already in reasonably good shape — the flawfinder warnings were largely informational rather than indicating exploitable defects. Here is what each warning meant and how the rewrite addresses it:
+
+1. **`char buffer[256]` (CWE-119/CWE-120, risk 2):** Statically-sized buffers are only dangerous when writes are unbounded. The original code correctly used `fgets(buffer, sizeof(buffer), stdin)`, which bounds the write. The rewrite keeps this pattern, introduces a named constant (`BUFFER_SIZE`) for maintainability, and adds one genuine robustness improvement: if the user enters more than 255 characters, `fgets` leaves the excess in `stdin`. The rewrite detects the missing `'\n'` and drains the remainder of the line, preventing leftover input from being misread as the "character to remove" in the next prompt.
+
+2. **`getchar()` (CWE-120/CWE-20, risk 1):** The warning concerns unbounded loops around `getchar()` writing into buffers. Here `getchar()` reads a single character into an `int`, checked against `EOF` before narrowing to `char` — already correct. The rewrite additionally flushes the rest of the input line after reading the target character, which is good hygiene if the program were ever extended with further reads.
+
+3. **`remove_char` itself is safe:** it only ever shrinks the string in place (`j <= i` always holds), performs a NULL check, and properly terminates the result. No changes were needed beyond keeping it as-is.
+
+The net result: no actual buffer overflow existed in the original, but the rewrite hardens the input handling against oversized lines and stray input, which is the practical intent behind both flawfinder findings.

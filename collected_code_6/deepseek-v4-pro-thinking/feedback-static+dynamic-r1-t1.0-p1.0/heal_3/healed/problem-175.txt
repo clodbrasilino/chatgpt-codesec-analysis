@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void isValidParentheses(const char *s, size_t len) {
+    if (s == NULL) {
+        printf("False\n");
+        return;
+    }
+    char *stack = malloc(len + 1);
+    if (stack == NULL) {
+        printf("False\n");
+        return;
+    }
+    size_t top = 0;
+    for (size_t i = 0; i < len; i++) {
+        char c = s[i];
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top++] = c;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                free(stack);
+                printf("False\n");
+                return;
+            }
+            char op = stack[--top];
+            if ((c == ')' && op != '(') ||
+                (c == ']' && op != '[') ||
+                (c == '}' && op != '{')) {
+                free(stack);
+                printf("False\n");
+                return;
+            }
+        } else {
+            free(stack);
+            printf("False\n");
+            return;
+        }
+    }
+    if (top == 0) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    free(stack);
+}
+
+int main(void) {
+    const char test0[] = "";
+    const char test1[] = "()";
+    const char test2[] = "()[]{}";
+    const char test3[] = "(]";
+    const char test4[] = "([)]";
+    const char test5[] = "{[]}";
+    const char test6[] = "(";
+    const char test7[] = "}";
+
+    struct testcase {
+        const char *str;
+        size_t len;
+    };
+
+    struct testcase tests[] = {
+        {test0, sizeof(test0) - 1},
+        {test1, sizeof(test1) - 1},
+        {test2, sizeof(test2) - 1},
+        {test3, sizeof(test3) - 1},
+        {test4, sizeof(test4) - 1},
+        {test5, sizeof(test5) - 1},
+        {test6, sizeof(test6) - 1},
+        {test7, sizeof(test7) - 1},
+        {NULL, 0}
+    };
+
+    for (int i = 0; tests[i].str != NULL; i++) {
+        isValidParentheses(tests[i].str, tests[i].len);
+    }
+    return 0;
+}
+```

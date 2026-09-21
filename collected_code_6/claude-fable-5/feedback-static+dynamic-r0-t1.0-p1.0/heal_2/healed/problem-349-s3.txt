@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256U
+
+static bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; str[i] != '\0'; i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+        if (guard > (size_t)1000000U) {
+            break;
+        }
+    } while ((ch != '\n') && (ch != EOF));
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LENGTH];
+    size_t len;
+
+    (void)memset(input, 0, sizeof(input));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = safe_strlen(input, sizeof(input));
+
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(input)) {
+        printf("The string is a binary string.\n");
+    } else {
+        printf("The string is not a binary string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original source was already quite defensively written, but the Flawfinder warnings pointed at two areas worth hardening:
+
+1. **CWE-119/CWE-120 (statically-sized buffer `input`):** The original code already mitigated this correctly — `fgets()` is bounded by `sizeof(input)`, the buffer is zero-initialized with `memset()`, a forced null terminator is written at `input[sizeof(input) - 1U]`, and `safe_strlen()` never reads past `max_len`. These mitigations are preserved in the rewrite, so no out-of-bounds read or write is possible on `input`.
+
+2. **CWE-120/CWE-20 (`getchar()` in a loop):** The concern is an unbounded drain loop. In the rewrite, the drain logic is factored into `flush_stdin()`, which retains the `EOF` termination condition (preventing an infinite loop on closed streams) and adds a guard counter as an upper bound so the loop cannot spin indefinitely on a pathological or non-terminating input stream. Crucially, the drained characters are never stored, so no buffer can overflow.
+
+Additional minor robustness improvements: `fflush(stdout)` ensures the prompt is visible before blocking on input, and the `fprintf` return value cast to `(void)` makes the intentional discard explicit, consistent with the defensive style of the rest of the program.

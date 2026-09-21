@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    const char *end;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    end = memchr(str, '\0', max_len);
+    if (end == NULL) {
+        return max_len;
+    }
+
+    return (size_t)(end - str);
+}
+
+static long count_substrings(const char *str, size_t max_len)
+{
+    long count;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return -1L;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == max_len) {
+        return -1L;
+    }
+
+    count = 0L;
+
+    for (i = 0U; i < len; i++) {
+        for (j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+    if (result < 0L) {
+        (void)fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (printf("%ld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already largely defensive, and the Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a low-risk informational finding rather than an actual vulnerability here. Here's why the code is safe:
+
+1. **Bounded input reading**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus a null terminator, preventing buffer overflow at the read site.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1U] = '\0';` is a belt-and-braces measure ensuring termination even in edge cases.
+
+3. **Bounded string length calculation**: `bounded_strlen()` uses `memchr` capped at `max_len`, so it never reads past the buffer even if the terminator were missing — unlike a raw `strlen`.
+
+4. **Defensive validation in `count_substrings()`**: it rejects `NULL` pointers and treats an unterminated buffer (`len == max_len`) as invalid input, returning `-1L`.
+
+5. **Checked I/O return values**: both `fgets` and `printf` return values are verified.
+
+The single improvement made in the rewrite is a `NULL` check inside `bounded_strlen()` itself, so the helper is safe even if called before the `NULL` check in `count_substrings()` (defense in depth). One residual consideration: the nested loop is O(n²), but with input capped at 255 characters this poses no practical DoS risk. Potential `long` overflow of `count` is also impossible given the maximum count is bounded by 255×256/2 = 32,640.

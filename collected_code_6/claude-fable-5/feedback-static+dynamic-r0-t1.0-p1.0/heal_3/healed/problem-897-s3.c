@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_LEN 1024
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+    while (i < max_len && s[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+int is_word_present(const char *sentence, const char *word)
+{
+    size_t word_len;
+    const char *p;
+    const char *end;
+
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    word_len = bounded_strlen(word, MAX_LEN);
+    if (word_len == 0U || word_len >= MAX_LEN) {
+        return 0;
+    }
+
+    p = sentence;
+    end = sentence + bounded_strlen(sentence, MAX_LEN);
+
+    while (p < end && *p != '\0') {
+        while (p < end && *p != '\0' && !isalnum((unsigned char)*p)) {
+            p++;
+        }
+        if (p >= end || *p == '\0') {
+            break;
+        }
+        const char *start = p;
+        while (p < end && *p != '\0' && isalnum((unsigned char)*p)) {
+            p++;
+        }
+        size_t token_len = (size_t)(p - start);
+        if (token_len == word_len && strncmp(start, word, word_len) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void strip_newline(char *s, size_t max_len)
+{
+    size_t len;
+
+    if (s == NULL || max_len == 0U) {
+        return;
+    }
+    len = bounded_strlen(s, max_len);
+    if (len > 0U && s[len - 1U] == '\n') {
+        s[len - 1U] = '\0';
+    }
+}
+
+static int read_line(char *buffer, size_t size, const char *prompt)
+{
+    if (buffer == NULL || size == 0U || size > (size_t)INT_MAX || prompt == NULL) {
+        return 0;
+    }
+    printf("%s", prompt);
+    if (fflush(stdout) != 0) {
+        return 0;
+    }
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return 0;
+    }
+    buffer[size - 1U] = '\0';
+    strip_newline(buffer, size);
+    return 1;
+}
+
+int main(void)
+{
+    char sentence[MAX_LEN];
+    char word[MAX_LEN];
+
+    memset(sentence, 0, sizeof(sentence));
+    memset(word, 0, sizeof(word));
+
+    if (read_line(sentence, sizeof(sentence), "Enter a sentence: ") == 0) {
+        fprintf(stderr, "Error reading sentence.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (read_line(word, sizeof(word), "Enter a word: ") == 0) {
+        fprintf(stderr, "Error reading word.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_present(sentence, word) == 1) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool are_characters_unique(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t max_len = 256;
+    size_t len = strnlen(str, max_len + 1);
+    if (len > max_len) {
+        return false;
+    }
+
+    bool *char_set = (bool *)calloc(max_len, sizeof(bool));
+    if (char_set == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (char_set[c]) {
+            free(char_set);
+            return false;
+        }
+        char_set[c] = true;
+    }
+
+    free(char_set);
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "abcdef";
+    const char *test2 = "hello";
+    const char *test3 = NULL;
+    const char *test4 = "";
+
+    printf("%s: %d\n", test1 ? test1 : "NULL", are_characters_unique(test1));
+    printf("%s: %d\n", test2 ? test2 : "NULL", are_characters_unique(test2));
+    printf("%s: %d\n", test3 ? test3 : "NULL", are_characters_unique(test3));
+    printf("%s: %d\n", test4 ? test4 : "NULL", are_characters_unique(test4));
+
+    return 0;
+}

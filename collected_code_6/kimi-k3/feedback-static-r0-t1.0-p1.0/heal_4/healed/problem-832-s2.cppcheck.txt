@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c:48:17: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len > 0 && len <= strlen(cursor + start)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c:37:41: note: Assuming that condition 'end<=start' is not redundant
+        if (start < 0 || end < 0 || end <= start) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c:41:22: note: Assignment 'len=(unsigned long)(end-start)', assigned value is greater than 0
+        size_t len = (size_t)(end - start);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c:43:21: note: Assuming condition is false
+        if (num_str == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-832-s2.c:48:17: note: Condition 'len>0' is always true
+        if (len > 0 && len <= strlen(cursor + start)) {
+                ^

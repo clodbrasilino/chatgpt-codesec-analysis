@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static int is_valid_ipv4(const char *ip) {
+    regex_t regex;
+    int ret;
+    int result;
+    const char *pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+
+    if (ip == NULL) {
+        return 0;
+    }
+
+    if (strnlen(ip, 16) > 15) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+
+    ret = regexec(&regex, ip, 0, NULL, 0);
+    
+    result = (ret == 0) ? 1 : 0;
+    
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    char ip[64] = {0};
+    size_t len;
+    
+    printf("Enter an IP address: ");
+    if (fgets(ip, sizeof(ip), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(ip, sizeof(ip));
+    
+    if (len > 0 && ip[len - 1] == '\n') {
+        ip[len - 1] = '\0';
+        len--;
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+    }
+    
+    if (len == 0) {
+        printf("Empty input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (is_valid_ipv4(ip)) {
+        printf("%s is a valid IPv4 address\n", ip);
+    } else {
+        printf("%s is not a valid IPv4 address\n", ip);
+    }
+    
+    return EXIT_SUCCESS;
+}

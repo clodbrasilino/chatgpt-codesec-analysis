@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count);
+void free_string_list(char **list, size_t count);
+static size_t bounded_length(const char *s);
+static char *duplicate_bounded(const char *s, size_t len);
+
+static size_t bounded_length(const char *s)
+{
+    return strnlen(s, MAX_STRING_LENGTH);
+}
+
+static char *duplicate_bounded(const char *s, size_t len)
+{
+    char *copy;
+    size_t alloc_size;
+
+    if (s == NULL || len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    alloc_size = len + 1;
+
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        if (bounded_length(s) < len) {
+            free(copy);
+            return NULL;
+        }
+        if (len >= alloc_size) {
+            free(copy);
+            return NULL;
+        }
+        memcpy(copy, s, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count)
+{
+    char **result = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    if (list == NULL || list_count == 0 || target_size >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL && bounded_length(list[i]) == target_size) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL) {
+            size_t len = bounded_length(list[i]);
+            if (len == target_size) {
+                result[count] = duplicate_bounded(list[i], len);
+                if (result[count] == NULL) {
+                    free_string_list(result, count);
+                    return NULL;
+                }
+                count++;
+            }
+        }
+    }
+
+    *result_count = count;
+    return result;
+}
+
+void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *strings[] = { "apple", "cat", "dog", "banana", "fox", "grape" };
+    size_t total = sizeof(strings) / sizeof(strings[0]);
+    size_t result_count = 0;
+    size_t target_size = 3;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings_by_size(strings, total, target_size, &result_count);
+
+    if (extracted == NULL) {
+        if (printf("No strings of size %zu found.\n", target_size) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Strings of size %zu:\n", target_size) < 0) {
+        free_string_list(extracted, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", extracted[i]) < 0) {
+            free_string_list(extracted, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_string_list(extracted, result_count);
+    return EXIT_SUCCESS;
+}

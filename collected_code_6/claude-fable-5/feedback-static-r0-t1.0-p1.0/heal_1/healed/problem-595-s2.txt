@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count10 = 0;
+    long count01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN + 1);
+    len2 = strnlen(s2, MAX_INPUT_LEN + 1);
+
+    if (len1 > MAX_INPUT_LEN || len2 > MAX_INPUT_LEN) {
+        return -1L;
+    }
+
+    if (len1 != len2) {
+        return -1L;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') {
+                count10++;
+            } else {
+                count01++;
+            }
+        }
+    }
+
+    if (count10 != count01) {
+        return -1L;
+    }
+
+    return count10;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "0011";
+    long result;
+
+    result = min_swaps(a, b);
+
+    if (result < 0) {
+        if (fprintf(stderr, "Conversion not possible or invalid input\n") < 0) {
+            return 1;
+        }
+        return 1;
+    }
+
+    if (printf("Minimum swaps required: %ld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already quite defensive (NULL checks, character validation, checked return values on `printf`/`fprintf`), but the Flawfinder comments flagged the two `strlen` calls as CWE-126 risks (buffer over-read on non-NUL-terminated input).
+
+The fix replaces `strlen` with `strnlen`, bounded by a defined maximum (`MAX_INPUT_LEN`). Key points:
+
+1. **Bounded scan:** `strnlen(s, MAX_INPUT_LEN + 1)` reads at most `MAX_INPUT_LEN + 1` bytes, so a missing NUL terminator can no longer cause an unbounded over-read.
+
+2. **Detecting truncation:** By scanning one byte beyond the limit, a return value greater than `MAX_INPUT_LEN` reliably indicates the string is either too long or unterminated within the allowed window, and the function rejects it with `-1L` rather than silently truncating.
+
+3. **Behavior preserved:** For all valid, properly terminated inputs within the limit, the function's semantics are identical — it still returns the minimum number of swaps needed to transform `s1` into `s2` (equal counts of `1→0` and `0→1` mismatches), or `-1L` on any invalid input.
+
+Note that `strnlen` is POSIX (and C23 via `strnlen_s` variants); if strict C89/C99 portability is required, a small local bounded-length helper loop would be the equivalent fix.

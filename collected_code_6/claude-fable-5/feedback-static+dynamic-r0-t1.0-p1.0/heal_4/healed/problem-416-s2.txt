@@ -1,0 +1,186 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 128
+#define MAX_DISCARD_CHARS 4096
+
+static long long max2(long long a, long long b)
+{
+    return (a > b) ? a : b;
+}
+
+static long long maxSum(long long n, long long *memo, long long limit)
+{
+    long long divided;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    if (n < limit && memo[n] != -1) {
+        return memo[n];
+    }
+
+    divided = maxSum(n / 2, memo, limit) +
+              maxSum(n / 3, memo, limit) +
+              maxSum(n / 4, memo, limit);
+
+    divided = max2(n, divided);
+
+    if (n < limit) {
+        memo[n] = divided;
+    }
+
+    return divided;
+}
+
+static int findMaxSum(long long n, long long *result)
+{
+    long long *memo;
+    long long limit;
+    long long i;
+
+    if (n < 0 || result == NULL) {
+        return -1;
+    }
+
+    if (n >= 999999) {
+        limit = 1000000;
+    } else {
+        limit = n + 1;
+    }
+
+    if (limit <= 0) {
+        return -1;
+    }
+
+    if ((unsigned long long)limit > SIZE_MAX / sizeof(long long)) {
+        return -1;
+    }
+
+    memo = malloc((size_t)limit * sizeof(long long));
+    if (memo == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < limit; i++) {
+        memo[i] = -1;
+    }
+
+    *result = maxSum(n, memo, limit);
+
+    free(memo);
+    return 0;
+}
+
+static void discardRestOfLine(void)
+{
+    int c;
+    size_t count = 0;
+
+    do {
+        c = getchar();
+        count++;
+    } while (c != '\n' && c != EOF && count < MAX_DISCARD_CHARS);
+}
+
+static int readNonNegative(long long *out)
+{
+    char buffer[INPUT_BUFFER_SIZE];
+    char *endptr;
+    long long value;
+
+    if (out == NULL) {
+        return -1;
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        discardRestOfLine();
+        return -1;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtoll(buffer, &endptr, 10);
+
+    if (endptr == buffer) {
+        return -1;
+    }
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    if (value < 0) {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long result;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (readNonNegative(&n) != 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (findMaxSum(n, &result) != 0) {
+        fprintf(stderr, "Computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum for %lld is %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the changes made to address the flagged weaknesses:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discardRestOfLine`:**
+The original loop called `getchar()` unbounded until newline or EOF. While it never writes to a buffer (so an actual overflow was impossible), an adversarial or broken stream could cause an effectively unbounded loop. The rewrite adds a `count` guard capped at `MAX_DISCARD_CHARS`, bounding the loop deterministically and satisfying the "check buffer boundaries in loops" recommendation.
+
+**2. Flawfinder `char buffer[128]` warning (CWE-119/CWE-120) in `readNonNegative`:**
+The original code was already defensively written, and those mitigations are preserved:
+- `memset` zero-initializes the buffer before use.
+- `fgets(buffer, sizeof(buffer), stdin)` limits the read length, preventing overflow.
+- Explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees NUL-termination.
+- Detection of oversized lines (no `'\n'` and not EOF) rejects truncated input rather than silently parsing a partial number.
+- `strtoll` with `errno`/`endptr` validation guards against overflow (`ERANGE`), empty input, and trailing garbage.
+
+**Other notes on the existing code's soundness (retained as-is):**
+- `findMaxSum` correctly guards the `malloc` size against `SIZE_MAX / sizeof(long long)` overflow before casting to `size_t`.
+- The memoization boundary check `n < limit` prevents out-of-bounds indexing into `memo`.
+- Recursion depth in `maxSum` is O(log n) per branch, so stack exhaustion is not a practical concern even for `LLONG_MAX` inputs.
+- Negative inputs are rejected both at parse time and in `findMaxSum`, and `result` is checked for `NULL`.

@@ -1,0 +1,175 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string(const char *input, const char *delimiter_pattern, int *token_count) {
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    int count = 0;
+    int capacity = 10;
+    const char *cursor;
+    const char *token_start;
+    int compile_result;
+    size_t input_length;
+    size_t token_length;
+    size_t remaining_length;
+
+    if (input == NULL || delimiter_pattern == NULL || token_count == NULL) {
+        return NULL;
+    }
+
+    input_length = strlen(input);
+    if (input_length == 0) {
+        *token_count = 0;
+        return NULL;
+    }
+
+    compile_result = regcomp(&regex, delimiter_pattern, REG_EXTENDED);
+    if (compile_result != 0) {
+        return NULL;
+    }
+
+    tokens = malloc(capacity * sizeof(char *));
+    if (tokens == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    token_start = input;
+
+    while (*cursor != '\0') {
+        int exec_result = regexec(&regex, cursor, 1, &match, 0);
+        if (exec_result == 0) {
+            token_length = (size_t)(cursor + match.rm_so - token_start);
+            if (token_length > 0) {
+                if (count >= capacity) {
+                    capacity *= 2;
+                    char **new_tokens = realloc(tokens, capacity * sizeof(char *));
+                    if (new_tokens == NULL) {
+                        int i;
+                        for (i = 0; i < count; i++) {
+                            free(tokens[i]);
+                        }
+                        free(tokens);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    tokens = new_tokens;
+                }
+
+                tokens[count] = malloc(token_length + 1);
+                if (tokens[count] == NULL) {
+                    int i;
+                    for (i = 0; i < count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    regfree(&regex);
+                    return NULL;
+                }
+
+                memcpy(tokens[count], token_start, token_length);
+                tokens[count][token_length] = '\0';
+                count++;
+            }
+            cursor += match.rm_eo;
+            token_start = cursor;
+        } else if (exec_result == REG_NOMATCH) {
+            break;
+        } else {
+            int i;
+            for (i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    if (*token_start != '\0') {
+        remaining_length = input_length - (size_t)(token_start - input);
+
+        if (count >= capacity) {
+            capacity *= 2;
+            char **new_tokens = realloc(tokens, capacity * sizeof(char *));
+            if (new_tokens == NULL) {
+                int i;
+                for (i = 0; i < count; i++) {
+                    free(tokens[i]);
+                }
+                free(tokens);
+                regfree(&regex);
+                return NULL;
+            }
+            tokens = new_tokens;
+        }
+
+        tokens[count] = malloc(remaining_length + 1);
+        if (tokens[count] == NULL) {
+            int i;
+            for (i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(tokens[count], token_start, remaining_length);
+        tokens[count][remaining_length] = '\0';
+        count++;
+    }
+
+    if (count == 0) {
+        free(tokens);
+        tokens = NULL;
+    } else {
+        char **final_tokens = realloc(tokens, count * sizeof(char *));
+        if (final_tokens != NULL) {
+            tokens = final_tokens;
+        }
+    }
+
+    *token_count = count;
+    regfree(&regex);
+    return tokens;
+}
+
+void free_tokens(char **tokens, int count) {
+    int i;
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void) {
+    const char *input = "Hello,world;this:is|a test";
+    const char *pattern = "[,;:| ]+";
+    int token_count = 0;
+    char **tokens = split_string(input, pattern, &token_count);
+
+    if (tokens == NULL && token_count > 0) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    if (tokens != NULL) {
+        int i;
+        for (i = 0; i < token_count; i++) {
+            printf("Token %d: %s\n", i, tokens[i]);
+        }
+        free_tokens(tokens, token_count);
+    }
+
+    return 0;
+}
+```

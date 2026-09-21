@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  include '<stdlib.h>' or provide a declaration of 'malloc'
+  */
+
+void replace_chars(char *str, size_t str_len) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED)) return;
+
+    /* Possible weaknesses found:
+     *  include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
+     *  implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+     *  call to undeclared library function 'malloc' with type 'void *(unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     */
+    char *new_str = malloc(str_len + 1);
+    if (!new_str) return;
+
+    size_t new_index = 0;
+    for (size_t i = 0; ; i++) {
+        int rc = regexec(&regex, str + i, 1, pmatch, 0);
+        if (rc == REG_NOMATCH || pmatch[0].rm_so == -1) break;
+
+        size_t len = pmatch[0].rm_so;
+        /* Possible weaknesses found:
+         *  Variable 'match_end' is assigned a value that is never used. [unreadVariable]
+         */
+        size_t match_end = i + pmatch[0].rm_eo;
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(new_str + new_index, str + i, len);
+        new_index += len;
+        new_str[new_index++] = ':';
+
+        i += len + 1;
+    }
+
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'i'
+     *  'i' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    size_t remaining_len = str_len - (i - pmatch[0].rm_eo);
+    if (remaining_len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         *  use of undeclared identifier 'i'
+         */
+        memcpy(new_str + new_index, str + i, remaining_len);
+        new_index += remaining_len;
+    }
+
+    new_str[new_index] = '\0';
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(str, new_str, new_index + 1);
+    /* Possible weaknesses found:
+     *  call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  implicit declaration of function 'free' [-Wimplicit-function-declaration]
+     *  include the header <stdlib.h> or explicitly provide a declaration for 'free'
+     *  include '<stdlib.h>' or provide a declaration of 'free'
+     */
+    free(new_str);
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_chars(str, sizeof(str) - 1);
+    printf("%s\n", str);
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+
+int is_concatenation(const char *str, const char *sub) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t str_len = strlen(str);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t sub_len = strlen(sub);
+    
+    if (sub_len == 0 || str_len % sub_len != 0) {
+        return 0;
+    }
+    
+    for (size_t i = 0; i < str_len; i += sub_len) {
+        if (memcmp(str + i, sub, sub_len) != 0) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main() {
+    const char *test_str = "abcabcabc";
+    const char *sub_str = "abc";
+    
+    if (is_concatenation(test_str, sub_str)) {
+        printf("The string is a concatenation of the given substring.\n");
+    } else {
+        printf("The string is not a concatenation of the given substring.\n");
+    }
+    
+    return 0;
+}

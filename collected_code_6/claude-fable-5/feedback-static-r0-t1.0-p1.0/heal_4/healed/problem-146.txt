@@ -1,0 +1,92 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    size_t discarded = 0;
+
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        if (discarded < (size_t)-1) {
+            discarded++;
+        }
+    }
+
+    return (ch == EOF) ? EOF : 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        discard_remaining_input();
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already quite defensive — the two Flawfinder hits were largely false positives, but the rewrite hardens them further:
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`):** The buffer was already safely bounded via `fgets(buffer, sizeof(buffer), stdin)`. The rewrite adds an explicit defensive NUL termination (`buffer[sizeof(buffer) - 1] = '\0'`) as a belt-and-suspenders guarantee before any string functions touch the buffer, and `ascii_sum` continues to use `strnlen` with an explicit bound rather than `strlen`.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** `getchar` returns an `int` and the loop stores nothing into a buffer, so no overflow was possible. The rewrite moves the drain logic into a dedicated `discard_remaining_input()` helper that correctly checks for `EOF` (avoiding an infinite loop if the stream ends without a newline) and keeps the loop free of any buffer writes.
+
+3. **Additional hardening:** The return value of `fflush(stdout)` is now checked, `ascii_sum` casts each character to `unsigned char` to avoid sign-extension issues on platforms with signed `char` (preserved from the original), and the sentinel `len == max_len` check still rejects unterminated input.

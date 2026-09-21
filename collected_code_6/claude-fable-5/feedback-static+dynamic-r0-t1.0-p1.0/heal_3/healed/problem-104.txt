@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096U
+#define NUM_LISTS 3U
+#define LIST_SIZE 4U
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static int sort_sublists(char ***lists, const size_t *sizes, size_t num_lists)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            return -1;
+        }
+        if (sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+
+    return 0;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t num_lists)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[NUM_LISTS][LIST_SIZE] = {
+        { "banana", "apple", "cherry", "date" },
+        { "zebra", "mango", "kiwi", "lemon" },
+        { "orange", "grape", "fig", "plum" }
+    };
+    const size_t num_lists = NUM_LISTS;
+    const size_t sizes[NUM_LISTS] = { LIST_SIZE, LIST_SIZE, LIST_SIZE };
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    lists = calloc(num_lists, sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        lists[i] = calloc(sizes[i], sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, num_lists);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free_lists(lists, sizes, num_lists);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (sort_sublists(lists, sizes, num_lists) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_lists(lists, sizes, num_lists);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        printf("List %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, num_lists);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`memcpy` (CWE-120) in `duplicate_string`** — This was already effectively mitigated in the original code. The destination buffer is allocated as `len + 1` bytes, and exactly `len` bytes are copied followed by explicit NUL termination. The length itself is bounded via `strnlen(src, MAX_STRING_LEN)` with rejection when `len >= MAX_STRING_LEN`, so an unterminated or oversized source cannot cause an over-read or over-write. This is a false positive from Flawfinder's pattern matching; the code is retained as-is since it is correct.
+
+2. **Statically-sized `char` arrays (CWE-119/CWE-120) in `main`** — The `data` array holds only compile-time constant string literals and is never written to. The residual risk was the magic numbers `3` and `4` appearing independently in the array declaration, `num_lists`, and `sizes`, which could drift out of sync during maintenance. This has been hardened by introducing `NUM_LISTS` and `LIST_SIZE` macros so the array dimensions, the loop bounds, and the `sizes` initializer are all derived from a single source of truth, eliminating any possibility of out-of-bounds indexing due to mismatched constants.
+
+All other defensive properties of the original are preserved: NULL checks before dereferencing, `calloc` for zero-initialized pointer arrays (guaranteeing `free_lists` never frees uninitialized pointers on partial-allocation failure paths), and cleanup on every error path to avoid leaks.

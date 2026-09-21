@@ -1,0 +1,280 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define INITIAL_CAPACITY 16
+#define MAX_KEY_LEN 64
+#define MAX_VALUE_LEN 128
+
+typedef struct {
+    char *key;
+    char *value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static size_t bounded_strlen(const char *s, size_t maxlen) {
+    size_t len = 0;
+    while (len < maxlen && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *bounded_strdup(const char *s, size_t maxlen) {
+    size_t len;
+    char *copy;
+    if (s == NULL) {
+        return NULL;
+    }
+    len = bounded_strlen(s, maxlen);
+    if (len >= maxlen) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+static int dict_init(Dict *d, size_t capacity) {
+    if (d == NULL) {
+        return -1;
+    }
+    if (capacity == 0) {
+        capacity = INITIAL_CAPACITY;
+    }
+    if (capacity > SIZE_MAX / sizeof(*d->entries)) {
+        d->entries = NULL;
+        d->size = 0;
+        d->capacity = 0;
+        return -1;
+    }
+    d->entries = calloc(capacity, sizeof(*d->entries));
+    if (d->entries == NULL) {
+        d->size = 0;
+        d->capacity = 0;
+        return -1;
+    }
+    d->size = 0;
+    d->capacity = capacity;
+    return 0;
+}
+
+static void dict_free(Dict *d) {
+    size_t i;
+    if (d != NULL) {
+        if (d->entries != NULL) {
+            for (i = 0; i < d->size; i++) {
+                free(d->entries[i].key);
+                free(d->entries[i].value);
+                d->entries[i].key = NULL;
+                d->entries[i].value = NULL;
+            }
+            free(d->entries);
+        }
+        d->entries = NULL;
+        d->size = 0;
+        d->capacity = 0;
+    }
+}
+
+static int dict_resize(Dict *d) {
+    size_t new_capacity;
+    Entry *new_entries;
+    if (d == NULL) {
+        return -1;
+    }
+    if (d->capacity == 0) {
+        new_capacity = INITIAL_CAPACITY;
+    } else {
+        if (d->capacity > SIZE_MAX / (2 * sizeof(*d->entries))) {
+            return -1;
+        }
+        new_capacity = d->capacity * 2;
+    }
+    new_entries = realloc(d->entries, new_capacity * sizeof(*new_entries));
+    if (new_entries == NULL) {
+        return -1;
+    }
+    memset(new_entries + d->size, 0, (new_capacity - d->size) * sizeof(*new_entries));
+    d->entries = new_entries;
+    d->capacity = new_capacity;
+    return 0;
+}
+
+static int dict_find(const Dict *d, const char *key, size_t *out_index) {
+    size_t i;
+    if (d == NULL || key == NULL || out_index == NULL) {
+        return 0;
+    }
+    for (i = 0; i < d->size; i++) {
+        if (d->entries[i].key != NULL &&
+            strncmp(d->entries[i].key, key, MAX_KEY_LEN) == 0) {
+            *out_index = i;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int dict_set(Dict *d, const char *key, const char *value) {
+    size_t idx;
+    char *new_key;
+    char *new_value;
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    if (bounded_strlen(key, MAX_KEY_LEN) >= MAX_KEY_LEN ||
+        bounded_strlen(value, MAX_VALUE_LEN) >= MAX_VALUE_LEN) {
+        return -1;
+    }
+    if (dict_find(d, key, &idx)) {
+        new_value = bounded_strdup(value, MAX_VALUE_LEN);
+        if (new_value == NULL) {
+            return -1;
+        }
+        free(d->entries[idx].value);
+        d->entries[idx].value = new_value;
+        return 0;
+    }
+    if (d->size >= d->capacity) {
+        if (dict_resize(d) != 0) {
+            return -1;
+        }
+    }
+    new_key = bounded_strdup(key, MAX_KEY_LEN);
+    if (new_key == NULL) {
+        return -1;
+    }
+    new_value = bounded_strdup(value, MAX_VALUE_LEN);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+    d->entries[d->size].key = new_key;
+    d->entries[d->size].value = new_value;
+    d->size++;
+    return 0;
+}
+
+static const char *dict_get(const Dict *d, const char *key) {
+    size_t idx;
+    if (d == NULL || key == NULL) {
+        return NULL;
+    }
+    if (dict_find(d, key, &idx)) {
+        return d->entries[idx].value;
+    }
+    return NULL;
+}
+
+static int dict_merge(const Dict *src1, const Dict *src2, Dict *dest) {
+    size_t i;
+    if (src1 == NULL || src2 == NULL || dest == NULL) {
+        return -1;
+    }
+    if (src1->size > SIZE_MAX - src2->size) {
+        return -1;
+    }
+    if (dict_init(dest, src1->size + src2->size) != 0) {
+        return -1;
+    }
+    for (i = 0; i < src1->size; i++) {
+        if (dict_set(dest, src1->entries[i].key, src1->entries[i].value) != 0) {
+            dict_free(dest);
+            return -1;
+        }
+    }
+    for (i = 0; i < src2->size; i++) {
+        if (dict_set(dest, src2->entries[i].key, src2->entries[i].value) != 0) {
+            dict_free(dest);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void dict_print(const Dict *d) {
+    size_t i;
+    if (d == NULL) {
+        return;
+    }
+    printf("{");
+    for (i = 0; i < d->size; i++) {
+        printf("\"%s\": \"%s\"", d->entries[i].key, d->entries[i].value);
+        if (i + 1 < d->size) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void) {
+    Dict dict1;
+    Dict dict2;
+    Dict merged;
+    const char *occupation;
+
+    if (dict_init(&dict1, INITIAL_CAPACITY) != 0) {
+        fprintf(stderr, "Error: failed to initialize dict1\n");
+        return EXIT_FAILURE;
+    }
+    if (dict_init(&dict2, INITIAL_CAPACITY) != 0) {
+        fprintf(stderr, "Error: failed to initialize dict2\n");
+        dict_free(&dict1);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(&dict1, "name", "Alice") != 0 ||
+        dict_set(&dict1, "age", "30") != 0 ||
+        dict_set(&dict1, "city", "New York") != 0) {
+        fprintf(stderr, "Error: failed to populate dict1\n");
+        dict_free(&dict1);
+        dict_free(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(&dict2, "country", "USA") != 0 ||
+        dict_set(&dict2, "city", "Boston") != 0 ||
+        dict_set(&dict2, "occupation", "Engineer") != 0) {
+        fprintf(stderr, "Error: failed to populate dict2\n");
+        dict_free(&dict1);
+        dict_free(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_merge(&dict1, &dict2, &merged) != 0) {
+        fprintf(stderr, "Error: failed to merge dictionaries\n");
+        dict_free(&dict1);
+        dict_free(&dict2);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dict1:  ");
+    dict_print(&dict1);
+    printf("Dict2:  ");
+    dict_print(&dict2);
+    printf("Merged: ");
+    dict_print(&merged);
+
+    occupation = dict_get(&merged, "occupation");
+    if (occupation != NULL) {
+        printf("Lookup occupation: %s\n", occupation);
+    }
+
+    dict_free(&dict1);
+    dict_free(&dict2);
+    dict_free(&merged);
+
+    return EXIT_SUCCESS;
+}
+```

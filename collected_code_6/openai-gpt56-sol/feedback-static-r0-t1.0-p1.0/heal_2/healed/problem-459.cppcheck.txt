@@ -1,0 +1,34 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:51:27: style: Condition 'available!=0' is always true [knownConditionTrueFalse]
+            if (available != 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:39:26: note: Assuming that condition 'source_offset<input_length' is not redundant
+    while (source_offset < input_length) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:40:41: note: Assignment 'available=input_length-source_offset', assigned value is greater than 0
+        size_t available = input_length - source_offset;
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:45:27: note: Assuming condition is false
+            if (available > input_length - destination_offset) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:51:27: note: Condition 'available!=0' is always true
+            if (available != 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:73:63: style: Condition 'start>end' is always true [knownConditionTrueFalse]
+            if (start > available || end > available || start > end ||
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:63:25: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+            match.rm_eo <= match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:70:26: note: start is assigned '(unsigned long)match.rm_so' here.
+            size_t start = (size_t)match.rm_so;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:71:26: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+            size_t end = (size_t)match.rm_eo;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:73:63: note: Condition 'start>end' is always true
+            if (start > available || end > available || start > end ||
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459.c:58:27: style: Variable 'source_offset' is assigned a value that is never used. [unreadVariable]
+            source_offset = input_length;
+                          ^

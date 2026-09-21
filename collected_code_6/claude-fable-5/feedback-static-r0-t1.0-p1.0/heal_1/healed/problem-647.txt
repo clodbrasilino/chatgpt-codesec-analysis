@@ -1,0 +1,159 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char **split_at_uppercase(const char *input, size_t *count)
+{
+    size_t len;
+    size_t capacity = 8;
+    size_t num = 0;
+    size_t start = 0;
+    size_t i;
+    char **result;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN && input[MAX_INPUT_LEN - 1] != '\0') {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i <= len; i++) {
+        if (i == len || (i > 0 && isupper((unsigned char)input[i]))) {
+            size_t seglen = i - start;
+            char *segment;
+
+            if (seglen == 0) {
+                start = i;
+                continue;
+            }
+
+            segment = malloc(seglen + 1);
+            if (segment == NULL) {
+                size_t j;
+                for (j = 0; j < num; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            if (start + seglen <= len) {
+                memcpy(segment, input + start, seglen);
+                segment[seglen] = '\0';
+            } else {
+                size_t j;
+                free(segment);
+                for (j = 0; j < num; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            if (num >= capacity) {
+                size_t new_capacity;
+                char **tmp;
+
+                if (capacity > SIZE_MAX / 2 / sizeof(char *)) {
+                    size_t j;
+                    free(segment);
+                    for (j = 0; j < num; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+
+                new_capacity = capacity * 2;
+                tmp = realloc(result, new_capacity * sizeof(char *));
+                if (tmp == NULL) {
+                    size_t j;
+                    free(segment);
+                    for (j = 0; j < num; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = tmp;
+                capacity = new_capacity;
+            }
+
+            result[num] = segment;
+            num++;
+            start = i;
+        }
+    }
+
+    *count = num;
+    return result;
+}
+
+void free_split(char **parts, size_t count)
+{
+    size_t i;
+
+    if (parts == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(parts[i]);
+    }
+    free(parts);
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsATest";
+    size_t count = 0;
+    size_t i;
+    char **parts;
+
+    parts = split_at_uppercase(text, &count);
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", parts[i]) < 0) {
+            free_split(parts, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_split(parts, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll also need `#include <stdint.h>` for `SIZE_MAX`; here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+```
+
+Key changes addressing the flagged weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, and the code rejects input that is not null-terminated within that bound, preventing an unbounded over-read on a non-terminated string.
+
+2. **CWE-120 (`memcpy` overflow):** The destination buffer is allocated with exactly `seglen + 1` bytes immediately before the copy, and an explicit bounds check (`start + seglen <= len`) guarantees the source read stays within the validated input, so the destination always holds the source data plus the terminator.
+
+3. **Additional hardening:** Added an overflow guard on the `capacity * 2 * sizeof(char *)` computation before `realloc` to prevent a size_t wraparound leading to an undersized allocation.

@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:148:19: style: Condition 'dest_size>0' is always true [knownConditionTrueFalse]
+    if (dest_size > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:132:50: note: Assuming that condition 'dest_size==0' is not redundant
+    if (dest == NULL || src == NULL || dest_size == 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:148:19: note: Condition 'dest_size>0' is always true
+    if (dest_size > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:186:21: style: Condition 'buffer_size>0' is always true [knownConditionTrueFalse]
+    if (buffer_size > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:171:22: note: Assuming that condition 'sentence_len==0' is not redundant
+    if (sentence_len == 0 || sentence_len >= BUFFER_SIZE - 1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:175:32: note: Assignment 'buffer_size=sentence_len+1', assigned value is greater than 1
+    buffer_size = sentence_len + 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:182:16: note: Assuming condition is false
+    if (buffer == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:186:21: note: Condition 'buffer_size>0' is always true
+    if (buffer_size > 0) {
+                    ^

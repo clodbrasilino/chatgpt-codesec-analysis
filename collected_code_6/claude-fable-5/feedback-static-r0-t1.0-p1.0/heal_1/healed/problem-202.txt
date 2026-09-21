@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_even_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "abcdefgh";
+    char *filtered;
+
+    filtered = remove_even_chars(text);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", filtered) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    free(filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the Flawfinder warning (CWE-126). `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so a non-null-terminated buffer can no longer cause an unbounded over-read.
+
+2. **Added an explicit length-limit check** — If `strnlen` returns `MAX_INPUT_LEN`, we cannot be certain the string was properly terminated within the bound, so the function fails safely by returning `NULL` rather than processing potentially truncated or malformed data.
+
+3. **Preserved all existing defensive measures** — The original code was already solid in several respects: `NULL` input check, `malloc` failure check, checked `printf` return values, and `free` on every exit path (no leaks). These were kept intact.
+
+Note that `strnlen` is POSIX / C23; if strict C89/C99 portability is required, a small manual bounded-scan loop could replace it.

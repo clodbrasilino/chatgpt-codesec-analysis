@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'string', got <no output>
+  *  test case 0 failed: expected 'python', got <no output>
+  *  test case 2 failed: expected 'alpha', got <no output>
+  */
+
+char* remove_parenthesis_area(const char *input) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    int result_index = 0;
+    int depth = 0;
+
+    /* Possible weaknesses found:
+     *  Assuming that condition 'i<=len' is not redundant
+     */
+    for (size_t i = 0; i <= len; ++i) {
+        if (i < len && input[i] == '(') {
+            depth++;
+        } else if (i < len && input[i] == ')') {
+            depth--;
+        /* Possible weaknesses found:
+         *  Condition 'i==len' is always true
+         *  Condition 'i==len' is always true [knownConditionTrueFalse]
+         *  Assuming that condition 'i<len' is not redundant
+         */
+        } else if (depth == 0 && (i < len || i == len)) {
+            if (i < len) {
+                result[result_index++] = input[i];
+            }
+        }
+    }
+
+    result[result_index] = '\0';
+    return result;
+}
+
+int main() {
+    const char *test_cases[] = {
+        "python",
+        "(string)",
+        "alpha(beta(gamma))delta",
+        "This is a (test) string with (multiple) (parentheses)."
+    };
+    const char *expected_results[] = {
+        "python",
+        "",
+        "adelta",
+        "This is a  string with ."
+    };
+
+    for (size_t i = 0; i < sizeof(test_cases)/sizeof(test_cases[0]); ++i) {
+        char *output = remove_parenthesis_area(test_cases[i]);
+        if (output != NULL) {
+            printf("%s\n", output);
+            free(output);
+        } else {
+            fprintf(stderr, "Memory allocation failed.\n");
+        }
+        if (strcmp(output, expected_results[i]) != 0) {
+            fprintf(stderr, "Test case %zu failed: expected '%s', got '%s'\n", i, expected_results[i], output);
+        }
+    }
+
+    return 0;
+}

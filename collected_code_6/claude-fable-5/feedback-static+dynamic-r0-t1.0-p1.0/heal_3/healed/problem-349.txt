@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The original code already mitigates the statically-sized buffer risk flagged by Flawfinder, and the rewrite preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, preventing a buffer overflow (the classic `gets()` vulnerability is avoided).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the buffer is always a valid C string, even in edge cases.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, so the length scan can never run past the buffer boundary even if termination were somehow missing.
+
+4. **Safe newline stripping** — the `len > 0` check prevents an out-of-bounds access via `buffer[len - 1]` when the input is empty.
+
+5. **NULL and empty-string guards** in `is_binary_string()` prevent dereferencing invalid pointers and treat empty input as non-binary.
+
+The Flawfinder hit is a risk-level-2 informational warning inherent to any fixed-size array; since all reads and writes are bounds-checked, the code is safe as written and no structural changes were required.

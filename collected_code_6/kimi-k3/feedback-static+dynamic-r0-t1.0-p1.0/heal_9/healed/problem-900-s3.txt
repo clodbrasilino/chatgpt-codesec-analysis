@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+int starts_with_number(const char *str, size_t str_len, int number)
+{
+    char *num_str = NULL;
+    int ret;
+    size_t num_len;
+    size_t required_size;
+
+    if (str == NULL || str_len == 0)
+    {
+        return 0;
+    }
+
+    if (strnlen(str, str_len) != str_len)
+    {
+        return 0;
+    }
+
+    ret = snprintf(NULL, 0, "%d", number);
+    if (ret < 0)
+    {
+        return 0;
+    }
+
+    required_size = (size_t)ret + 1;
+    num_str = malloc(required_size);
+    if (num_str == NULL)
+    {
+        return 0;
+    }
+
+    ret = snprintf(num_str, required_size, "%d", number);
+    if (ret < 0 || (size_t)ret >= required_size)
+    {
+        free(num_str);
+        return 0;
+    }
+
+    num_len = (size_t)ret;
+
+    if (num_len > str_len)
+    {
+        free(num_str);
+        return 0;
+    }
+
+    if (strncmp(str, num_str, num_len) == 0)
+    {
+        free(num_str);
+        return 1;
+    }
+
+    free(num_str);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "12345 is the number";
+    int test_number = 12345;
+    size_t test_string_len = strnlen(test_string, 1024);
+
+    if (test_string_len == 1024)
+    {
+        printf("String does not start with %d\n", test_number);
+        return 0;
+    }
+
+    if (starts_with_number(test_string, test_string_len, test_number))
+    {
+        printf("String starts with %d\n", test_number);
+    }
+    else
+    {
+        printf("String does not start with %d\n", test_number);
+    }
+
+    return 0;
+}
+```

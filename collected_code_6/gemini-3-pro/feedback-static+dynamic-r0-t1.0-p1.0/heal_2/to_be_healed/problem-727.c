@@ -1,0 +1,85 @@
+#if defined(__linux__) || defined(__APPLE__)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stddef.h>
+
+#define MAX_INPUT_LEN 8192
+
+void filter_alphanumeric(const char *input, char **output) {
+    if (!input || !output) {
+        return;
+    }
+
+    regex_t regex;
+    int ret;
+    ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0) {
+        *output = NULL;
+        return;
+    }
+
+    size_t len = strnlen(input, MAX_INPUT_LEN);
+    
+    char *safe_input = (char *)malloc(len + 1);
+    if (!safe_input) {
+        regfree(&regex);
+        *output = NULL;
+        return;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(safe_input, input, len);
+    safe_input[len] = '\0';
+
+    *output = (char *)malloc(len + 1);
+    if (!*output) {
+        free(safe_input);
+        regfree(&regex);
+        return;
+    }
+
+    char *out_ptr = *output;
+    regmatch_t pmatch[1];
+    const char *p = safe_input;
+
+    while (regexec(&regex, p, 1, pmatch, 0) == 0) {
+        size_t match_start = pmatch[0].rm_so;
+        size_t match_end = pmatch[0].rm_eo;
+
+        for (size_t i = 0; i < match_start; ++i) {
+            *out_ptr++ = p[i];
+        }
+        
+        p += match_end;
+    }
+
+    while (*p != '\0') {
+        *out_ptr++ = *p++;
+    }
+    *out_ptr = '\0';
+
+    free(safe_input);
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *input = "Hello, World! 123 @#$";
+    char *output = NULL;
+
+    filter_alphanumeric(input, &output);
+
+    if (output) {
+        printf("%s\n", output);
+        free(output);
+    } else {
+        fprintf(stderr, "Error processing string or memory allocation failed.\n");
+    }
+
+    return 0;
+}

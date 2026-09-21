@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:136:57: style: Condition 'alloc_size==0' is always false [knownConditionTrueFalse]
+    if (alloc_size > SENTENCE_BUFFER_SIZE || alloc_size == 0) {
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:135:31: note: Assignment 'alloc_size=sentence_len+1', assigned value is greater than 0
+    alloc_size = sentence_len + 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-440-s2.c:136:57: note: Condition 'alloc_size==0' is always false
+    if (alloc_size > SENTENCE_BUFFER_SIZE || alloc_size == 0) {
+                                                        ^

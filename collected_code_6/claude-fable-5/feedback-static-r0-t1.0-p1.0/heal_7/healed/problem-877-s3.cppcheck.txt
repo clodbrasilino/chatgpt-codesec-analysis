@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-877-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-877-s3.c:77:48: error: syntax error [syntaxError]
+4. **Validated sorting**: `sort_string` checks for `NULL`, zero-length limits, and rejects unterminated strings (`len >= max_len`) before calling `qsort`.
+                                               ^

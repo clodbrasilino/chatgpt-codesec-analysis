@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_long_words(char *words[], int word_count, int n, int *filtered_count) {
+    *filtered_count = 0;
+    for (int i = 0; i < word_count; ++i) {
+        size_t len = 0;
+        char *str = words[i];
+        /* Possible weaknesses found:
+         *  Condition '*str!='\0'' is always true [knownConditionTrueFalse]
+         */
+        while (*str && *str != '\0') {
+            len++;
+            str++;
+        }
+        if (len > n) {
+            (*filtered_count)++;
+        }
+    }
+    char **result = (char **)malloc(*filtered_count * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    *filtered_count = 0;
+    for (int i = 0; i < word_count; ++i) {
+        size_t len = 0;
+        char *str = words[i];
+        /* Possible weaknesses found:
+         *  Condition '*str!='\0'' is always true [knownConditionTrueFalse]
+         */
+        while (*str && *str != '\0') {
+            len++;
+            str++;
+        }
+        if (len > n) {
+            result[*filtered_count] = words[i];
+            (*filtered_count)++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char *words[] = {"hello", "world", "a", "ab", "abc", "abcd"};
+    int word_count = 6;
+    int n = 2;
+    int filtered_count;
+
+    char **filtered_words = filter_long_words(words, word_count, n, &filtered_count);
+
+    if (filtered_words != NULL) {
+        for (int i = 0; i < filtered_count; ++i) {
+            printf("%s\n", filtered_words[i]);
+        }
+        free(filtered_words);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-405.c:33:16: warning: Value stored to 'name_len' during its initialization is never read [deadcode.DeadStores]
+   33 |         size_t name_len = strnlen(name, sizeof(tuple->name) - 1);
+      |                ^~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+        {
+            size_t start = i;
+            int has_z = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    has_z = 1;
+                }
+                i++;
+            }
+            if (has_z) {
+                size_t len = i - start;
+
+                if (len >= result_size) {
+                    return 0;
+                }
+                memcpy(result, &text[start], len);
+                result[len] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The lazy dog jumped over the fence";
+    char result[256];
+
+    if (match_word_with_z(text, result, sizeof(result))) {
+        if (printf("Found word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No word containing 'z' found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder warnings in the original code are already properly mitigated, so no functional changes were required:
+
+1. **`memcpy` (CWE-120):** The copy is guarded by `if (len >= result_size) return 0;` immediately before the call, which guarantees that `len` bytes plus the null terminator (`result[len] = '\0'`) always fit within the destination buffer. The bound is passed in by the caller via `result_size`, so the function never assumes a buffer size.
+
+2. **Statically-sized array `char result[256]` (CWE-119/CWE-120):** The buffer size is passed to the function using `sizeof(result)` rather than a hard-coded literal, so the bounds check inside `match_word_with_z` always reflects the actual buffer capacity. If the array size changes, the check adapts automatically.
+
+Additional defensive measures already present and preserved:
+- NULL-pointer and zero-size parameter validation at function entry.
+- `result[0] = '\0'` ensures the output buffer is always a valid string even on failure paths after validation.
+- Casting to `unsigned char` before `isalpha()`/`tolower()` avoids undefined behavior with negative `char` values.
+- Return values of `printf` are checked in `main`.
+
+The code is safe as written; the Flawfinder hits are false positives given the surrounding bounds checks.

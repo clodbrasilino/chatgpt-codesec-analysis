@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warning about the statically-sized `buffer[256]` (CWE-119/CWE-120) is a low-risk, informational finding, and the code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant after `fgets` plus `memset`, but harmless).
+3. **Safe length computation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+4. **Correct indexing:** The `counts[UCHAR_MAX + 1]` table is indexed via an `unsigned char` cast, avoiding negative-index UB on platforms where `char` is signed.
+5. **NULL and empty-input checks:** `max_occurring_char` validates its arguments and the return values of `fgets` and `printf` are checked.
+
+No functional changes were required; the identified weakness is already fixed, so the code stands as written with the comments removed.

@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void split_at_uppercase(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t i = 0;
+    while (str[i] != '\0' && i < max_len) {
+        if (isupper((unsigned char)str[i]) && i > 0) {
+            putchar(' ');
+        }
+        putchar(str[i]);
+        i++;
+    }
+    if (i > 0) {
+        putchar('\n');
+    }
+}
+
+int main(void) {
+    const char *test_str = "SplitThisStringAtUppercaseLetters";
+    size_t max_len = 1024;
+    split_at_uppercase(test_str, max_len);
+    return 0;
+}
+```

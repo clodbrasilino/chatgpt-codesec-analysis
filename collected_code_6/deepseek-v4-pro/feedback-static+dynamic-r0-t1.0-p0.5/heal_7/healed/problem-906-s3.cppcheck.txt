@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:23: style: Condition 'year_buf_size<year_len+1' is always false [knownConditionTrueFalse]
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:72:19: note: year_buf_size is assigned 'year_len+1' here.
+    year_buf_size = year_len + 1;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:23: note: Condition 'year_buf_size<year_len+1' is always false
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:56: style: Condition 'month_buf_size<month_len+1' is always false [knownConditionTrueFalse]
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:73:20: note: month_buf_size is assigned 'month_len+1' here.
+    month_buf_size = month_len + 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:56: note: Condition 'month_buf_size<month_len+1' is always false
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:88: style: Condition 'day_buf_size<day_len+1' is always false [knownConditionTrueFalse]
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:74:18: note: day_buf_size is assigned 'day_len+1' here.
+    day_buf_size = day_len + 1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-906-s3.c:76:88: note: Condition 'day_buf_size<day_len+1' is always false
+    if (year_buf_size < year_len + 1 || month_buf_size < month_len + 1 || day_buf_size < day_len + 1) {
+                                                                                       ^

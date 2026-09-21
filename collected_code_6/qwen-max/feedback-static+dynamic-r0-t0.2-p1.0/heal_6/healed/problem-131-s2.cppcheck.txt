@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-131-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-131-s2.c:34:13: style: Condition 'len>1' is always true [knownConditionTrueFalse]
+    if (len > 1) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-131-s2.c:33:30: note: Assignment 'len=sizeof(str)/sizeof(str[0])', assigned value is 12
+    size_t len = sizeof(str) / sizeof(str[0]);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-131-s2.c:34:13: note: Condition 'len>1' is always true
+    if (len > 1) {
+            ^

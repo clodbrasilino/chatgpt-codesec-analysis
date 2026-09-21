@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:64:29: style: Condition 'len+1>0' is always true [knownConditionTrueFalse]
+                if (len + 1 > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:54:21: note: Assuming that condition 'len>0' is not redundant
+            if (len > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:56:31: note: Assuming condition is false
+                if (result[n] == NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:64:29: note: Condition 'len+1>0' is always true
+                if (len + 1 > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:85:39: style: Condition 'remaining_len+1>0' is always true [knownConditionTrueFalse]
+                if (remaining_len + 1 > 0) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:75:31: note: Assuming that condition 'remaining_len>0' is not redundant
+            if (remaining_len > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:77:31: note: Assuming condition is false
+                if (result[n] == NULL) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:85:39: note: Condition 'remaining_len+1>0' is always true
+                if (remaining_len + 1 > 0) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:65:33: style: Same expression on both sides of '<='. [duplicateExpression]
+                    if (len + 1 <= (len + 1)) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73-s2.c:86:43: style: Same expression on both sides of '<='. [duplicateExpression]
+                    if (remaining_len + 1 <= (remaining_len + 1)) {
+                                          ^

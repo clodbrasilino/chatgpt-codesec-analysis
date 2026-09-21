@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256U
+
+char *remove_even_chars(const char *input, size_t max_len);
+
+char *remove_even_chars(const char *input, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) != 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    output = remove_even_chars(buffer, sizeof(buffer));
+    if (output == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and why it is already safe:**
+
+The Flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a heuristic hit on any statically-sized array (CWE-119/CWE-120). Examining the code shows the risk is fully mitigated, so the rewrite preserves the same defensive structure:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow; its return value is checked for read failure/EOF.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1U] = '\0';` is a belt-and-braces guarantee (fgets already null-terminates, but this is defense in depth).
+
+3. **Bounded length computation** — `strnlen` is used instead of `strlen` in both `main` and `remove_even_chars`, so no unbounded scan can occur even on a malformed string.
+
+4. **Truncation detection** — `remove_even_chars` rejects input where `len >= max_len`, treating a possibly-unterminated/truncated string as an error rather than processing it.
+
+5. **Correct allocation and indexing** — `malloc(len + 1U)` always reserves room for the terminator; `j` can never exceed `len`, so `result[j] = '\0'` is in bounds. The malloc return is checked.
+
+6. **No leaks or UB** — `free(output)` occurs on every exit path after allocation; `printf`'s return is checked; unused return values are explicitly cast to `(void)` (MISRA-style discipline).
+
+The warning is a false positive; the code as written already implements the recommended mitigations (bounds checking and length-limiting functions).

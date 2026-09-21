@@ -1,0 +1,177 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_VALUES 100
+#define KEY_SIZE 32
+
+typedef struct {
+    char key[KEY_SIZE];
+    int values[MAX_VALUES];
+    size_t count;
+} DictEntry;
+
+static int contains(const int *arr, size_t len, int value)
+{
+    size_t i;
+    for (i = 0; i < len; i++) {
+        if (arr[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int set_key(DictEntry *entry, const char *key)
+{
+    size_t len;
+
+    if (entry == NULL || key == NULL) {
+        return -1;
+    }
+
+    len = strnlen(key, sizeof(entry->key));
+    if (len >= sizeof(entry->key)) {
+        return -1;
+    }
+
+    memcpy(entry->key, key, len);
+    entry->key[len] = '\0';
+    return 0;
+}
+
+int extract_unique_values(const DictEntry *dict, size_t entry_count,
+                          int **result, size_t *result_count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t unique_count = 0;
+    int *buffer = NULL;
+
+    if (dict == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *result_count = 0;
+
+    for (i = 0; i < entry_count; i++) {
+        if (dict[i].count > MAX_VALUES) {
+            return -1;
+        }
+        if (total > SIZE_MAX - dict[i].count) {
+            return -1;
+        }
+        total += dict[i].count;
+    }
+
+    if (total == 0) {
+        return 0;
+    }
+
+    if (total > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    buffer = malloc(total * sizeof(int));
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < entry_count; i++) {
+        for (j = 0; j < dict[i].count; j++) {
+            if (unique_count < total &&
+                !contains(buffer, unique_count, dict[i].values[j])) {
+                buffer[unique_count] = dict[i].values[j];
+                unique_count++;
+            }
+        }
+    }
+
+    qsort(buffer, unique_count, sizeof(int), compare_ints);
+
+    *result = buffer;
+    *result_count = unique_count;
+    return 0;
+}
+
+int main(void)
+{
+    DictEntry dict[3];
+    int *unique = NULL;
+    size_t unique_count = 0;
+    size_t i;
+    int status;
+
+    memset(dict, 0, sizeof(dict));
+
+    if (set_key(&dict[0], "a") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[0].values[0] = 5;
+    dict[0].values[1] = 7;
+    dict[0].values[2] = 1;
+    dict[0].count = 3;
+
+    if (set_key(&dict[1], "b") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[1].values[0] = 7;
+    dict[1].values[1] = 2;
+    dict[1].values[2] = 5;
+    dict[1].count = 3;
+
+    if (set_key(&dict[2], "c") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[2].values[0] = 10;
+    dict[2].values[1] = 1;
+    dict[2].count = 2;
+
+    status = extract_unique_values(dict, 3, &unique, &unique_count);
+    if (status != 0) {
+        fprintf(stderr, "Failed to extract unique values\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique values: ");
+    for (i = 0; i < unique_count; i++) {
+        printf("%d ", unique[i]);
+    }
+    printf("\n");
+
+    free(unique);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder hits were both already mitigated in the original code, so the rewrite is largely a confirmation with one defensive addition:
+
+1. **`char key[KEY_SIZE]` (CWE-119/CWE-120)** — The statically-sized buffer is safe because `set_key()` is the only writer. It uses `strnlen(key, sizeof(entry->key))` to bound the length check, rejects any key with `len >= sizeof(entry->key)` (leaving room for the terminator), and only then copies. No overflow is possible.
+
+2. **`memcpy` (CWE-120)** — The copy is guarded by the length check above, so the destination is guaranteed to hold `len + 1` bytes. The explicit `entry->key[len] = '\0'` ensures NUL termination. This is a false positive, and the pattern is preferable to `strncpy` (which doesn't guarantee termination) or `strcpy`.
+
+3. **Additional hardening added** — In `extract_unique_values()`, I added a `unique_count < total` guard before writing into `buffer`. It's provably unreachable given the earlier per-entry `count > MAX_VALUES` validation and overflow-checked summation, but it makes the buffer write locally verifiable and protects against future refactoring errors.
+
+The existing integer-overflow guards (`total > SIZE_MAX - dict[i].count` and `total > SIZE_MAX / sizeof(int)`) correctly prevent CWE-190 leading to an undersized `malloc`, and all pointer parameters are NULL-checked. The code is safe as written.

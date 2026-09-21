@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120). Here's why the code is safe as written:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to `MAX_INPUT_LEN - 1` characters plus a null terminator, so the statically-sized `buffer` cannot overflow. This is the correct mitigation for the Flawfinder warning, which is a heuristic hit on the `char buffer[...]` declaration rather than an actual defect.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy (fgets already null-terminates on success), but it's harmless and protects against future refactoring mistakes.
+
+3. **Newline stripping via `strcspn`** — safer than the common `strchr`-based idiom because it never dereferences a NULL and always yields a valid index within the buffer.
+
+4. **Defensive `all_chars_unique`** — checks for `NULL`, bounds the loop with both `max_len` and the null terminator, and casts to `unsigned char` before indexing `seen[]`, avoiding undefined behavior from negative `char` values on platforms where `char` is signed.
+
+5. **Error handling** — the `fgets` return value is checked, and failure reports to `stderr` with a non-zero exit code.
+
+No functional changes were required; the rewrite simply removes the comments as requested since the identified weakness was already properly mitigated.

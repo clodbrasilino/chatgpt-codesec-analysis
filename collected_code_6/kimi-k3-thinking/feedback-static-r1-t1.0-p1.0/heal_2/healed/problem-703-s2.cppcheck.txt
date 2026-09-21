@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:83:19: style: Condition 'dest_size<=key_len' is always false [knownConditionTrueFalse]
+    if (dest_size <= key_len || dest_size > MAX_KEY_LENGTH) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:82:22: note: dest_size is assigned 'key_len+1' here.
+    size_t dest_size = key_len + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:83:19: note: Condition 'dest_size<=key_len' is always false
+    if (dest_size <= key_len || dest_size > MAX_KEY_LENGTH) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:91:17: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (key_len >= dest_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:83:19: note: Assuming condition 'dest_size<=key_len' is false
+    if (dest_size <= key_len || dest_size > MAX_KEY_LENGTH) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:88:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-703-s2.c:91:17: note: Condition 'key_len>=dest_size' is always false
+    if (key_len >= dest_size) {
+                ^

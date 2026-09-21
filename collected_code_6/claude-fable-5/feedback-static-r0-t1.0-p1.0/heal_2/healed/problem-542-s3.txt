@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix);
+int replace_with_colon(char *str);
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    size_t errlen;
+    char *errbuf;
+
+    errlen = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(errlen);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unable to allocate error buffer\n", prefix);
+        return;
+    }
+    regerror(errcode, regex, errbuf, errlen);
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+    free(errbuf);
+}
+
+int replace_with_colon(char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t offset = 0;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    while (offset < len && str[offset] != '\0') {
+        ret = regexec(&regex, str + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+        if (offset + (size_t)match.rm_so >= len ||
+            offset + (size_t)match.rm_eo > len) {
+            regfree(&regex);
+            return -1;
+        }
+        str[offset + (size_t)match.rm_so] = ':';
+        offset += (size_t)match.rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    char text[] = "Hello world, this is a.test string. Enjoy,coding today";
+
+    printf("Original: %s\n", text);
+
+    if (replace_with_colon(text) != 0) {
+        fprintf(stderr, "Replacement failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Modified: %s\n", text);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The Flawfinder warning flagged `strlen` (CWE-126, buffer over-read) because it will read past the end of a buffer if the string is not NUL-terminated. The rewritten code replaces it with `strnlen(str, MAX_INPUT_LEN)`, which bounds the scan to a defined maximum length. If the result equals the bound (meaning no terminator was found within the limit, or the string is suspiciously long), the function rejects the input and returns `-1` rather than proceeding.
+
+Other defensive properties already present in the original code were preserved:
+
+- **NULL pointer check** on `str` before any dereference.
+- **Bounds validation** of `rm_so`/`rm_eo` offsets against `len` before writing, preventing out-of-bounds writes even if the regex engine returned unexpected match offsets.
+- **Proper resource cleanup**: `regfree` is called on every exit path after successful `regcomp`, and the error buffer in `print_regex_error` is freed after use, avoiding memory leaks.
+- **Error propagation**: `regcomp`/`regexec` failures are reported via `regerror` with dynamically sized buffers rather than fixed-size arrays, avoiding truncation or overflow of error messages.
+
+The program output remains functionally identical: it replaces spaces, commas, and periods with colons in the test string.

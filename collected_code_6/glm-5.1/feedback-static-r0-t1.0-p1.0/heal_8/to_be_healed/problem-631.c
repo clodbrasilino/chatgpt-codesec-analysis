@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_whitespace_swap(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    const char *p = str;
+    size_t index = 0;
+
+    while (*p != '\0') {
+        if (*p == ' ') {
+            result[index++] = '_';
+            p++;
+        } else if (*p == '_') {
+            result[index++] = ' ';
+            p++;
+        } else {
+            size_t copy_len = strcspn(p, " _");
+            if (index + copy_len > len) {
+                copy_len = len - index;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + index, p, copy_len);
+            index += copy_len;
+            p += copy_len;
+        }
+    }
+
+    result[index] = '\0';
+
+    char *shrunk = realloc(result, index + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    char *result1 = replace_whitespace_swap("hello world_this_is_a_test");
+    if (result1 != NULL) {
+        printf("%s\n", result1);
+        free(result1);
+    }
+
+    char *result2 = replace_whitespace_swap("no_spaces_or_underscores");
+    if (result2 != NULL) {
+        printf("%s\n", result2);
+        free(result2);
+    }
+
+    /* Possible weaknesses found:
+     *  Calling function 'replace_whitespace_swap' returns 0
+     *  Assignment 'result3=replace_whitespace_swap(NULL)', assigned value is 0
+     *  Variable 'result3' can be declared as pointer to const [constVariablePointer]
+     */
+    char *result3 = replace_whitespace_swap(NULL);
+    /* Possible weaknesses found:
+     *  Condition 'result3==NULL' is always true [knownConditionTrueFalse]
+     *  Condition 'result3==NULL' is always true
+     */
+    if (result3 == NULL) {
+        printf("Handled NULL input correctly\n");
+    }
+
+    return 0;
+}

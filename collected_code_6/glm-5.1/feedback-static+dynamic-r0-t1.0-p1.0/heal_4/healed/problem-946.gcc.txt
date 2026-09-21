@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-946.c: In function 'find_most_common':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-946.c:73:70: error: 'word_list_capability' undeclared (first use in this function); did you mean 'word_list_capacity'?
+   73 |                 size_t new_capacity = word_list_capacity == 0 ? 16 : word_list_capability * 2;
+      |                                                                      ^~~~~~~~~~~~~~~~~~~~
+      |                                                                      word_list_capacity
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-946.c:73:70: note: each undeclared identifier is reported only once for each function it appears in

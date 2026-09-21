@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120, statically-sized buffer):**
+
+The Flawfinder warning about `char buffer[MAX_WORD_LEN]` is a low-risk, informational hit. The original code already mitigates it correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `sizeof(buffer) - 1` characters plus the null terminator, preventing any buffer overflow on input. This is the key defense against CWE-120.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1U] = '\0';` is defensive redundancy—`fgets` already null-terminates, but this makes the invariant explicit and protects against future refactoring mistakes.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even if termination were somehow lost, no out-of-bounds read occurs. The same applies inside `is_length_odd` with the `MAX_WORD_LEN` bound.
+
+4. **Safe indexing:** The newline-stripping logic checks `len > 0U` before accessing `buffer[len - 1U]`, avoiding an underflow/out-of-bounds access on empty input.
+
+5. **NULL guard:** `is_length_odd` checks `word == NULL` before dereferencing.
+
+6. **Error handling:** Both the `fgets` failure path and the empty-input case are handled with diagnostics on `stderr` and `EXIT_FAILURE`.
+
+No further changes were required; the code as written already satisfies bounds-checking best practices, so the rewrite is functionally identical with the analysis comments removed.

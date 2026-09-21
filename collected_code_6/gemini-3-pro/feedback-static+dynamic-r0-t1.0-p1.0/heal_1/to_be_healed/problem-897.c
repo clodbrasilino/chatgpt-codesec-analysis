@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int find_word(const char *sentence, const char *word) {
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t sentence_len = strlen(sentence);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t word_len = strlen(word);
+
+    if (word_len == 0 || sentence_len < word_len) {
+        return 0;
+    }
+
+    char *sentence_copy = strdup(sentence);
+    if (sentence_copy == NULL) {
+        return 0;
+    }
+
+    int found = 0;
+    char *saveptr = NULL;
+    char *token = strtok_r(sentence_copy, " \t\n\r.,!?;:", &saveptr);
+
+    while (token != NULL) {
+        if (strcmp(token, word) == 0) {
+            found = 1;
+            break;
+        }
+        token = strtok_r(NULL, " \t\n\r.,!?;:", &saveptr);
+    }
+
+    free(sentence_copy);
+    return found;
+}
+
+int main(void) {
+    const char *sentence = "The quick brown fox jumps over the lazy dog.";
+    const char *word1 = "fox";
+    const char *word2 = "cat";
+
+    if (find_word(sentence, word1)) {
+        printf("Word '%s' found in sentence.\n", word1);
+    } else {
+        printf("Word '%s' not found in sentence.\n", word1);
+    }
+
+    if (find_word(sentence, word2)) {
+        printf("Word '%s' found in sentence.\n", word2);
+    } else {
+        printf("Word '%s' not found in sentence.\n", word2);
+    }
+
+    return 0;
+}

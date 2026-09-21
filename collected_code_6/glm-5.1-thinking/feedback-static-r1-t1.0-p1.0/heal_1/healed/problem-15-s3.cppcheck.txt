@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:26:21: style: Condition 'alloc_items<=count' is always false [knownConditionTrueFalse]
+    if (alloc_items <= count) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:25:24: note: alloc_items is assigned 'count+1' here.
+    size_t alloc_items = count + 1;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:26:21: note: Condition 'alloc_items<=count' is always false
+    if (alloc_items <= count) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:46:28: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+            if (alloc_size <= len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:45:31: note: alloc_size is assigned 'len+1' here.
+            size_t alloc_size = len + 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-15-s3.c:46:28: note: Condition 'alloc_size<=len' is always false
+            if (alloc_size <= len) {
+                           ^

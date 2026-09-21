@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    suffix_len = len - d;
+
+    if (len > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    if (temp_size > str_size) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > temp_size - 1 ||
+        d > temp_size - 1 - suffix_len ||
+        (d + suffix_len) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings on the three `memcpy` calls are false positives in this code — each copy is already provably safe before it executes:
+
+1. **`memcpy(temp, str + d, suffix_len)`** — `temp` holds `temp_size = len + 1` bytes, and the guard `suffix_len > temp_size - 1` ensures `suffix_len <= len`, so the destination can always hold the data. The source read of `suffix_len` bytes starting at `str + d` stays within `str[0..len-1]` since `d + suffix_len == len`.
+
+2. **`memcpy(temp + suffix_len, str, d)`** — the guard `d > temp_size - 1 - suffix_len` guarantees `suffix_len + d <= len`, so the write ends at or before `temp[len - 1]`, leaving room for the terminator written at `temp[len]`.
+
+3. **`memcpy(str, temp, temp_size)`** — the earlier check `temp_size > str_size` rejects any case where the caller's buffer is too small, so copying `temp_size` bytes back (including the NUL terminator) cannot overflow `str`.
+
+Additional defensive measures already in place that address the CWE-120 class of issues:
+
+- `strnlen` with `str_size` bounds the length scan and detects unterminated buffers (`len >= str_size` rejection).
+- The `len > SIZE_MAX - 1` check prevents integer overflow when computing `temp_size`.
+- `malloc` failure is handled, and `temp` is freed on every exit path after allocation, so there are no leaks.
+- Early returns handle the degenerate cases (`NULL` input, empty string, `d % len == 0`) without touching memory.
+
+Since every destination size is verified against every copy length prior to each `memcpy`, no functional changes were required — the rewrite preserves the checks and simply strips the comments as requested. If you wanted to silence the static-analysis tool entirely, the alternative would be an in-place rotation (e.g., the three-reversal algorithm), which eliminates both the heap allocation and the `memcpy` calls altogether.

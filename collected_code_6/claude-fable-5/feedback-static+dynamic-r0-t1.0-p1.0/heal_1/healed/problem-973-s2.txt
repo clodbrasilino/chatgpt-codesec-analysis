@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || buf_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (len - d > len || d > len || len + 1 > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, bounded by an explicit `buf_size` parameter passed by the caller. If no null terminator is found within the buffer (`len == buf_size`), the function fails safely instead of reading out of bounds.
+
+2. **CWE-120 (`memcpy` buffer overflows):** The function now receives the destination buffer's actual size (`buf_size`), and validates that `len + 1` fits within it before the final `memcpy` back into `str`. The copies into `temp` are safe by construction since `temp` is allocated with exactly `len + 1` bytes and the two segments (`len - d` and `d`) sum to `len`, but explicit sanity checks were added defensively.
+
+3. **Caller contract:** `main` now passes `sizeof(str)` so the callee has authoritative knowledge of the destination capacity, eliminating the implicit trust that made the original flagged by Flawfinder.

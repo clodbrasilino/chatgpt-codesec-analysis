@@ -1,0 +1,156 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096U
+#define LIST_COUNT 3U
+#define SUBLIST_SIZE 3U
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static int sort_sublists(char ***lists, const size_t *sizes, size_t list_count)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (lists[i] == NULL) {
+            return -1;
+        }
+        if (sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+
+    return 0;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LENGTH);
+    if (len >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    if (len > SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t list_count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[LIST_COUNT][SUBLIST_SIZE] = {
+        { "banana", "apple", "cherry" },
+        { "zebra", "mango", "kiwi" },
+        { "orange", "grape", "lemon" }
+    };
+    static const size_t sizes[LIST_COUNT] = {
+        SUBLIST_SIZE, SUBLIST_SIZE, SUBLIST_SIZE
+    };
+    const size_t list_count = LIST_COUNT;
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    lists = calloc(list_count, sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (sizes[i] > SUBLIST_SIZE) {
+            fprintf(stderr, "Invalid sublist size\n");
+            free_lists(lists, sizes, list_count);
+            return EXIT_FAILURE;
+        }
+        lists[i] = calloc(sizes[i], sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, list_count);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free_lists(lists, sizes, list_count);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (sort_sublists(lists, sizes, list_count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_lists(lists, sizes, list_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        printf("Sublist %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, list_count);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**1. `memcpy` in `duplicate_string` (CWE-120, Flawfinder risk 2):** This finding is a false positive. The destination buffer is allocated as `malloc(len + 1U)` immediately before the copy, and exactly `len` bytes are copied, followed by explicit NUL termination at `copy[len]`. The length itself is bounded by `strnlen(src, MAX_STRING_LENGTH)` with a rejection path if `len >= MAX_STRING_LENGTH`, so the destination is always large enough. The `SIZE_MAX - 1U` overflow guard is technically redundant given the `MAX_STRING_LENGTH` check, but it's harmless defensive coding.
+
+**2. Statically-sized `char` arrays (CWE-119/CWE-120, Flawfinder risk 2):** Also a false positive. The `data` array holds `const char *const` pointers to string literals, not writable buffers, and is never written to. All iteration over it is bounded by `LIST_COUNT` and `SUBLIST_SIZE`, with an explicit runtime check (`sizes[i] > SUBLIST_SIZE`) before any access.
+
+Other notable strengths of the code: consistent NULL checks after every allocation, a single cleanup path via `free_lists` that tolerates partially-constructed structures (thanks to `calloc` zero-initialization), correct `qsort` comparator handling of `char **` elements, and `%zu` format specifiers for `size_t`. No changes were required beyond removing the comments as requested.

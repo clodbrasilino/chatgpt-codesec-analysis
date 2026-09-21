@@ -1,0 +1,186 @@
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct word_entry {
+    const char *word;
+    size_t count;
+};
+
+static char *duplicate_string(const char *source)
+{
+    size_t length;
+    char *copy;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    length = strlen(source);
+    if (length == SIZE_MAX) {
+        errno = EOVERFLOW;
+        return NULL;
+    }
+
+    copy = malloc(length + 1U);
+    if (copy == NULL) {
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, source, length + 1U);
+    return copy;
+}
+
+char *get_most_frequent_word(const char *const strings[], size_t count)
+{
+    struct word_entry *entries;
+    size_t used;
+    size_t i;
+    size_t j;
+    size_t best;
+    char *result;
+    int saved_errno;
+
+    if (strings == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    if (count == 0U) {
+        errno = ENOENT;
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(*entries)) {
+        errno = EOVERFLOW;
+        return NULL;
+    }
+
+    entries = malloc(count * sizeof(*entries));
+    if (entries == NULL) {
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    used = 0U;
+
+    for (i = 0U; i < count; ++i) {
+        if (strings[i] == NULL) {
+            saved_errno = EINVAL;
+            free(entries);
+            errno = saved_errno;
+            return NULL;
+        }
+
+        if (strings[i][0] == '\0') {
+            continue;
+        }
+
+        for (j = 0U; j < used; ++j) {
+            if (strcmp(entries[j].word, strings[i]) == 0) {
+                if (entries[j].count == SIZE_MAX) {
+                    saved_errno = EOVERFLOW;
+                    free(entries);
+                    errno = saved_errno;
+                    return NULL;
+                }
+
+                ++entries[j].count;
+                break;
+            }
+        }
+
+        if (j == used) {
+            entries[used].word = strings[i];
+            entries[used].count = 1U;
+            ++used;
+        }
+    }
+
+    if (used == 0U) {
+        free(entries);
+        errno = ENOENT;
+        return NULL;
+    }
+
+    best = 0U;
+    for (i = 1U; i < used; ++i) {
+        if (entries[i].count > entries[best].count) {
+            best = i;
+        }
+    }
+
+    result = duplicate_string(entries[best].word);
+    saved_errno = errno;
+    free(entries);
+    errno = saved_errno;
+
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    const char **strings;
+    size_t count;
+    size_t i;
+    char *word;
+    int saved_errno;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <word> [word ...]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    count = (size_t)argc - 1U;
+
+    if (count > SIZE_MAX / sizeof(*strings)) {
+        fprintf(stderr, "Too many words\n");
+        return EXIT_FAILURE;
+    }
+
+    strings = malloc(count * sizeof(*strings));
+    if (strings == NULL) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        strings[i] = argv[i + 1U];
+    }
+
+    word = get_most_frequent_word(strings, count);
+    if (word == NULL) {
+        saved_errno = errno;
+        free(strings);
+
+        if (saved_errno == ENOENT) {
+            fprintf(stderr, "No non-empty words were provided\n");
+        } else {
+            errno = saved_errno;
+            perror("get_most_frequent_word");
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", word) < 0) {
+        saved_errno = errno;
+        free(word);
+        free(strings);
+        errno = saved_errno;
+        perror("printf");
+        return EXIT_FAILURE;
+    }
+
+    free(word);
+    free(strings);
+    return EXIT_SUCCESS;
+}

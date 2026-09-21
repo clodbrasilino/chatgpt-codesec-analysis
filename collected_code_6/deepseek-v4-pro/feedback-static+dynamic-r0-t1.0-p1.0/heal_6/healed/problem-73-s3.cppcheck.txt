@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:46:32: style: Condition 'alloc_size<remaining_len' is always false [knownConditionTrueFalse]
+                if (alloc_size < remaining_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:45:35: note: alloc_size is assigned 'remaining_len+1' here.
+                size_t alloc_size = remaining_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:46:32: note: Condition 'alloc_size<remaining_len' is always false
+                if (alloc_size < remaining_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:63:35: style: Condition 'remaining_len>0' is always true [knownConditionTrueFalse]
+                if (remaining_len > 0) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:31:31: note: Assuming that condition 'remaining_len>0' is not redundant
+            if (remaining_len > 0 && *current != '\0') {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:55:36: note: Assuming condition is false
+                if (result[*count] == NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:63:35: note: Condition 'remaining_len>0' is always true
+                if (remaining_len > 0) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:95:28: style: Condition 'alloc_size<token_len' is always false [knownConditionTrueFalse]
+            if (alloc_size < token_len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:94:31: note: alloc_size is assigned 'token_len+1' here.
+            size_t alloc_size = token_len + 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:95:28: note: Condition 'alloc_size<token_len' is always false
+            if (alloc_size < token_len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:112:71: style: Condition 'token_len>0' is always true [knownConditionTrueFalse]
+            if (current + token_len <= input + input_len && token_len > 0) {
+                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:80:23: note: Assuming that condition 'token_len>0' is not redundant
+        if (token_len > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:104:23: note: Assuming condition is false
+            if (token == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-73-s3.c:112:71: note: Condition 'token_len>0' is always true
+            if (current + token_len <= input + input_len && token_len > 0) {
+                                                                      ^

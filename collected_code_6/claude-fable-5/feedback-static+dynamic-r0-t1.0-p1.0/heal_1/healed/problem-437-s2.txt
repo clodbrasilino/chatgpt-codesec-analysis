@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096U
+
+char *remove_odd_characters(const char *input)
+{
+    size_t length;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(input, MAX_INPUT_LENGTH);
+    if (length >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = (char *)malloc((length / 2U) + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 1U; i < length; i += 2U) {
+        result[j] = input[i];
+        j++;
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = { "python", "program", "language" };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *output = remove_odd_characters(test_strings[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("Input: %s -> Output: %s\n", test_strings[i], output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the Flawfinder CWE-126 finding. `strnlen` bounds the scan to `MAX_INPUT_LENGTH` bytes, so a non-null-terminated buffer can no longer cause an unbounded over-read.
+
+2. **Added a length sanity check** — If `strnlen` returns the maximum (meaning no terminator was found within the bound), the function rejects the input by returning `NULL` rather than processing a potentially untrusted or malformed string.
+
+**Notes on the rest of the code:**
+
+- The allocation size `(length / 2U) + 1U` is correct: for a string of length *n*, the loop copies exactly `⌊n/2⌋` characters (indices 1, 3, 5, ...), leaving one byte for the terminator — no off-by-one.
+- `malloc` failure and `printf` failure are already checked, and `free` is called on all paths, so there are no leaks.
+- Portability note: `strnlen` is POSIX.1-2008 / C23. If you must target strict C99, you'd implement a small bounded-length helper yourself, but on any modern POSIX or glibc/musl system this compiles cleanly.

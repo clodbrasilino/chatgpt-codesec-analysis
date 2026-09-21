@@ -1,0 +1,168 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define DATE_INPUT_LEN 10U
+#define OUTPUT_MIN_SIZE 11U
+#define INPUT_BUF_SIZE 32U
+#define OUTPUT_BUF_SIZE 16U
+
+static int days_in_month(unsigned int year, unsigned int month)
+{
+    static const unsigned int days[12] = {
+        31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+    };
+    unsigned int result;
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    result = days[month - 1U];
+
+    if (month == 2U) {
+        if ((year % 4U == 0U && year % 100U != 0U) || (year % 400U == 0U)) {
+            result = 29U;
+        }
+    }
+
+    return (int)result;
+}
+
+static int parse_fixed_uint(const char *s, size_t start, size_t count, unsigned int *value)
+{
+    unsigned int result = 0U;
+    size_t i;
+
+    if (s == NULL || value == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        unsigned char c = (unsigned char)s[start + i];
+        if (!isdigit(c)) {
+            return -1;
+        }
+        result = (result * 10U) + (unsigned int)(c - '0');
+    }
+
+    *value = result;
+    return 0;
+}
+
+int convert_date(const char *input, size_t input_size, char *output, size_t output_size)
+{
+    unsigned int year;
+    unsigned int month;
+    unsigned int day;
+    size_t i;
+    size_t len;
+    int written;
+    int max_day;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    if (input_size == 0U || output_size < OUTPUT_MIN_SIZE) {
+        return -1;
+    }
+
+    if (memchr(input, '\0', input_size) == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, input_size);
+    if (len != DATE_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0U; i < DATE_INPUT_LEN; i++) {
+        if (i == 4U || i == 7U) {
+            if (input[i] != '-') {
+                return -1;
+            }
+        } else {
+            if (!isdigit((unsigned char)input[i])) {
+                return -1;
+            }
+        }
+    }
+
+    if (parse_fixed_uint(input, 0U, 4U, &year) != 0) {
+        return -1;
+    }
+
+    if (parse_fixed_uint(input, 5U, 2U, &month) != 0) {
+        return -1;
+    }
+
+    if (parse_fixed_uint(input, 8U, 2U, &day) != 0) {
+        return -1;
+    }
+
+    if (year < 1U || year > 9999U) {
+        return -1;
+    }
+
+    if (month < 1U || month > 12U) {
+        return -1;
+    }
+
+    max_day = days_in_month(year, month);
+    if (max_day < 0) {
+        return -1;
+    }
+
+    if (day < 1U || day > (unsigned int)max_day) {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%02u-%02u-%04u", day, month, year);
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE];
+    char output[OUTPUT_BUF_SIZE];
+
+    memset(input, 0, sizeof(input));
+    memset(output, 0, sizeof(output));
+
+    printf("Enter date (yyyy-mm-dd): ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+    input[strcspn(input, "\n")] = '\0';
+
+    if (convert_date(input, sizeof(input), output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The flagged weaknesses (CWE-119/CWE-120 on the statically-sized `char` arrays) are already mitigated in this code, so no functional changes were required:
+
+- **`input[INPUT_BUF_SIZE]`**: Reads are bounded via `fgets(input, (int)sizeof(input), stdin)`, which cannot overflow the buffer. Null-termination is guaranteed both by `fgets` semantics and the explicit `input[sizeof(input) - 1U] = '\0'` defensive write. The newline is stripped safely with `strcspn`.
+
+- **`output[OUTPUT_BUF_SIZE]`**: Writes are bounded via `snprintf(output, output_size, ...)`, and truncation is detected by checking `written >= output_size`. The caller passes `sizeof(output)` and `convert_date` rejects any `output_size < OUTPUT_MIN_SIZE` (11 bytes, exactly fitting `"dd-mm-yyyy"` plus the terminator).
+
+- **Additional hardening already present**: `memchr` verifies the input is null-terminated within bounds before `strnlen` is used, `strnlen` caps the scan length, all array indexing in `parse_fixed_uint` is derived from validated fixed offsets within the verified 10-character string, `isdigit` receives values cast to `unsigned char` (avoiding UB on negative `char`), and both buffers are zero-initialized with `memset`.
+
+The Flawfinder hits are risk-level-2 informational warnings triggered purely by the presence of fixed-size arrays; the surrounding bounds checks satisfy the recommended mitigations, so the code stands as-is with the comments removed.

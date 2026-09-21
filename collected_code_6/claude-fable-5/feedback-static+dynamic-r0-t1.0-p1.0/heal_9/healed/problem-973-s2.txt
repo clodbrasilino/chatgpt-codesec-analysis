@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t first_part;
+    size_t second_part;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    first_part = len - d;
+    second_part = d;
+
+    if (first_part + second_part != len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (first_part > 0) {
+        memcpy(temp, str + d, first_part);
+    }
+
+    if (second_part > 0) {
+        memcpy(temp + first_part, str, second_part);
+    }
+
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes from the original:
+
+1. **Removed the redundant `d > len` check** — after `d = d % len`, the value of `d` is mathematically guaranteed to be in the range `[0, len)`, so this condition can never be true.
+
+2. **Removed the redundant `len + 1 > buf_size` check** — since `strnlen` already guarantees `len < buf_size` (we return `-1` if `len == buf_size`), it follows that `len + 1 <= buf_size` always holds.
+
+3. **Removed the always-false conditions `first_part > len` and `second_part > len`** — flagged by the static analyzer as `knownConditionTrueFalse`. Since `first_part = len - d` with `d < len`, and `second_part = d < len`, neither can exceed `len`. Only the sum invariant check is retained as a defensive sanity check.
+
+4. **Simplified the final `memcpy` guard** — the `len + 1 <= buf_size` condition before copying back was provably always true at that point, so the dead `else` branch (with its `free`/`return -1`) was removed.
+
+5. **The `memcpy` calls remain**, as the Flawfinder warnings (CWE-120) are informational: all destination buffers are provably large enough — `temp` is allocated with `len + 1` bytes, and `str` is verified to have `buf_size >= len + 1` capacity — so the copies are safe by construction.

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STR_MAX 64
+
+typedef struct {
+    int first;
+    double second;
+    char third[TUPLE_STR_MAX];
+} Tuple;
+
+int tuple_set_third(Tuple *t, const char *value)
+{
+    size_t len;
+
+    if (t == NULL || value == NULL) {
+        return -1;
+    }
+
+    len = strnlen(value, sizeof(t->third));
+    if (len >= sizeof(t->third)) {
+        return -1;
+    }
+
+    memcpy(t->third, value, len);
+    t->third[len] = '\0';
+    return 0;
+}
+
+char *tuple_to_string(const Tuple *t)
+{
+    char *result;
+    int needed;
+    size_t size;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (memchr(t->third, '\0', sizeof(t->third)) == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    size = (size_t)needed + 1U;
+    result = malloc(size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(result, size, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0 || (size_t)needed >= size) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple t;
+    char *str;
+
+    memset(&t, 0, sizeof(t));
+
+    t.first = 42;
+    t.second = 3.14;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **Statically-sized array `third[TUPLE_STR_MAX]` (CWE-119/CWE-120):** The array itself is not a flaw; the risk is in how it's written to. All writes go through `tuple_set_third()`, which performs proper bounds checking, so no fix beyond what exists is needed.
+
+2. **`memcpy` (CWE-120):** The flawfinder warning is a false positive here. Before the `memcpy`, the code uses `strnlen(value, sizeof(t->third))` to bound the length measurement (avoiding over-read on unterminated input), then rejects any string where `len >= sizeof(t->third)`, guaranteeing room for both the data and the null terminator. The explicit `t->third[len] = '\0'` ensures termination.
+
+**Other defensive measures already present:**
+
+- `tuple_to_string()` validates the struct's string is null-terminated via `memchr` before passing it to `snprintf`, preventing over-reads if a caller bypasses the setter.
+- The two-pass `snprintf` pattern (measure, then allocate exactly) avoids truncation and heap overflow, and the return value is checked both times, including the negative-return encoding-error case.
+- `malloc` failure is handled, and `free` is called on every error path after allocation, so there are no leaks.
+- `main` zero-initializes the struct with `memset`, checks all return values including `printf`, and uses `EXIT_SUCCESS`/`EXIT_FAILURE` portably.
+
+The code as given already correctly mitigates both flagged CWEs; the rewrite simply removes the annotation comments.

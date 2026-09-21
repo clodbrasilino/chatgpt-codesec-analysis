@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-949-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-949-s2.c:156:56: style: The comparison 'copy_size <= dest_capacity' is always true because 'copy_size' and 'dest_capacity' represent the same value. [knownConditionTrueFalse]
+            if (copy_size <= src_capacity && copy_size <= dest_capacity) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-949-s2.c:152:42: note: 'copy_size' is assigned value 'counts[i]*sizeof(int)' here.
+            size_t copy_size = counts[i] * sizeof(int);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-949-s2.c:153:46: note: 'dest_capacity' is assigned value 'counts[i]*sizeof(int)' here.
+            size_t dest_capacity = counts[i] * sizeof(int);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-949-s2.c:156:56: note: The comparison 'copy_size <= dest_capacity' is always true because 'copy_size' and 'dest_capacity' represent the same value.
+            if (copy_size <= src_capacity && copy_size <= dest_capacity) {
+                                                       ^

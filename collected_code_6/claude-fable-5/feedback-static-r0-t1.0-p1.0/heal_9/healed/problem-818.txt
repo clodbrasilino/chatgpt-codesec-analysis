@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk, heuristic-based flag. The original code already mitigates it correctly, so the rewritten code preserves those defenses:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, preventing buffer overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Defensive null-termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after `fgets` but serves as belt-and-suspenders hardening.
+
+3. **Bounded length check:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, guaranteeing the scan never runs past the buffer even if termination were somehow missing.
+
+4. **Safe `ctype` usage:** The cast `(unsigned char)*str` before `islower()` avoids undefined behavior when `char` is signed and holds negative values (e.g., extended/UTF-8 bytes).
+
+5. **NULL guard:** `count_lowercase` checks for `NULL` before dereferencing.
+
+6. **Error handling:** The return value of `fgets` is checked, and a nonzero exit status is returned on input failure.
+
+No functional changes were required — the code as written already addresses the identified weakness; only the comments were removed as requested.

@@ -1,0 +1,165 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+static size_t safe_strnlen(const char *s, size_t maxlen) {
+    if (s == NULL) {
+        return 0;
+    }
+    
+    size_t len = 0;
+    while (len < maxlen && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int safe_strcpy(char *dest, const char *src, size_t dest_size) {
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+    
+    size_t src_len = safe_strnlen(src, dest_size);
+    if (src_len >= dest_size) {
+        dest[0] = '\0';
+        return -1;
+    }
+    
+    if (src_len > 0) {
+        memcpy(dest, src, src_len);
+    }
+    dest[src_len] = '\0';
+    return 0;
+}
+
+static int safe_strcat(char *dest, const char *src, size_t dest_size) {
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+    
+    size_t dest_len = safe_strnlen(dest, dest_size);
+    if (dest_len >= dest_size) {
+        return -1;
+    }
+    
+    size_t remaining = dest_size - dest_len;
+    size_t src_len = safe_strnlen(src, remaining);
+    
+    if (src_len >= remaining) {
+        return -1;
+    }
+    
+    if (src_len > 0) {
+        memcpy(dest + dest_len, src, src_len);
+    }
+    dest[dest_len + src_len] = '\0';
+    return 0;
+}
+
+StringTuple* concatenate_tuples(const StringTuple *tuple1, const StringTuple *tuple2) {
+    if (tuple1 == NULL || tuple2 == NULL || 
+        tuple1->first == NULL || tuple1->second == NULL ||
+        tuple2->first == NULL || tuple2->second == NULL) {
+        return NULL;
+    }
+
+    const size_t MAX_STRING_LEN = 1024 * 1024;
+    
+    size_t len1 = safe_strnlen(tuple1->first, MAX_STRING_LEN);
+    size_t len2 = safe_strnlen(tuple1->second, MAX_STRING_LEN);
+    size_t len3 = safe_strnlen(tuple2->first, MAX_STRING_LEN);
+    size_t len4 = safe_strnlen(tuple2->second, MAX_STRING_LEN);
+
+    if (len1 >= MAX_STRING_LEN || len2 >= MAX_STRING_LEN || 
+        len3 >= MAX_STRING_LEN || len4 >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len1 > SIZE_MAX - len3 - 1 || len2 > SIZE_MAX - len4 - 1) {
+        return NULL;
+    }
+
+    StringTuple *result = malloc(sizeof(StringTuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->first = malloc(len1 + len3 + 1);
+    if (result->first == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->second = malloc(len2 + len4 + 1);
+    if (result->second == NULL) {
+        free(result->first);
+        free(result);
+        return NULL;
+    }
+
+    if (safe_strcpy(result->first, tuple1->first, len1 + len3 + 1) != 0) {
+        free(result->first);
+        free(result->second);
+        free(result);
+        return NULL;
+    }
+
+    if (safe_strcat(result->first, tuple2->first, len1 + len3 + 1) != 0) {
+        free(result->first);
+        free(result->second);
+        free(result);
+        return NULL;
+    }
+
+    if (safe_strcpy(result->second, tuple1->second, len2 + len4 + 1) != 0) {
+        free(result->first);
+        free(result->second);
+        free(result);
+        return NULL;
+    }
+
+    if (safe_strcat(result->second, tuple2->second, len2 + len4 + 1) != 0) {
+        free(result->first);
+        free(result->second);
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->first);
+        free(tuple->second);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    StringTuple tuple1 = {"Hello", "World"};
+    StringTuple tuple2 = {"Foo", "Bar"};
+    
+    StringTuple *result = concatenate_tuples(&tuple1, &tuple2);
+    
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to concatenate tuples\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("First: %s\n", result->first);
+    printf("Second: %s\n", result->second);
+    
+    free_tuple(result);
+    
+    return EXIT_SUCCESS;
+}
+```

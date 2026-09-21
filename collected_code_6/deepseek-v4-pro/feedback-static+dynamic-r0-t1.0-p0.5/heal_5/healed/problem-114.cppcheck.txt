@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-114.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-114.c:87:14: style: Condition 'size>0' is always true [knownConditionTrueFalse]
+    if (size > 0 && alloc_size / sizeof(int) != (size_t)size) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-114.c:79:49: note: Assuming that condition 'size<=0' is not redundant
+    if (tuple == NULL || source == NULL || size <= 0) return 0;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-114.c:85:22: note: Assuming condition is false
+    if (new_elements == NULL) return 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-114.c:87:14: note: Condition 'size>0' is always true
+    if (size > 0 && alloc_size / sizeof(int) != (size_t)size) {
+             ^

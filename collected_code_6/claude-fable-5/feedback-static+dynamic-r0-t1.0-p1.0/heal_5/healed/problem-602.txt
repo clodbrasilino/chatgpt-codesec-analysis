@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        continue;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the weaknesses Flawfinder flagged; the rewrite preserves and slightly tightens those mitigations:
+
+1. **CWE-119/CWE-120 (statically-sized `buffer`)** — Mitigated by using `fgets(buffer, sizeof(buffer), stdin)`, which enforces the bound automatically, plus a defensive explicit NUL termination at `buffer[sizeof(buffer) - 1]`. Using `sizeof(buffer)` rather than repeating the macro keeps the bound correct even if the declaration changes.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop)** — The drain loop reads into a single `int` and never writes to any buffer, so no overflow is possible. It correctly checks for both `'\n'` and `EOF`, avoiding an infinite loop on closed/truncated input. I factored it into `flush_stdin()` for clarity.
+
+3. **Other correctness points retained:**
+   - `first_repeated_char` casts to `unsigned char` before indexing `seen[]`, avoiding UB from negative `char` values on platforms where `char` is signed.
+   - The `NULL` check on `str` guards against misuse.
+   - `strcspn` safely strips the trailing newline whether or not one is present.
+   - Added `fflush(stdout)` so the prompt is guaranteed to appear before blocking on input when stdout is line-buffered or fully buffered (e.g., piped output).

@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 1;
+    size_t i;
+    size_t offset = 0;
+    size_t *lengths;
+    char *result;
+
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+        len = strlen(list[i]);
+        if (total > SIZE_MAX - len) {
+            free(lengths);
+            return NULL;
+        }
+        lengths[i] = len;
+        total += len;
+    }
+
+    result = malloc(total);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        memcpy(result + offset, list[i], lengths[i]);
+        offset += lengths[i];
+    }
+    result[offset] = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *joined;
+
+    joined = concatenate_list(words, count);
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Added `<stdint.h>`** — the original code used `SIZE_MAX` without including the header that defines it, which would fail to compile under strict C (it was likely pulled in transitively).
+
+2. **Replaced `strcat` with `memcpy` (fixes CWE-120)** — the flagged `strcat` calls are replaced by bounded `memcpy` operations using pre-computed lengths and a running offset. This eliminates the unbounded-concatenation weakness and also removes the O(n²) "Schlemiel the Painter" performance problem, since `strcat` rescans the destination string on every call.
+
+3. **Cached string lengths** — lengths are measured exactly once via `strlen` and stored, so the copy phase cannot diverge from the size calculation (closing a potential TOCTOU-style mismatch if the strings were mutated between passes — impossible here given `const`, but a good defensive pattern).
+
+4. **Overflow guard on the lengths allocation** — `count * sizeof(size_t)` is checked against `SIZE_MAX` before `malloc`.
+
+5. **Regarding the `strlen` finding (CWE-126)** — this is inherent to accepting C strings; it cannot be "fixed" without changing the API to pass explicit lengths. The existing mitigations (NULL checks per element and the `SIZE_MAX` overflow guard on `total`) remain in place, and the contract requires NUL-terminated inputs.
+
+6. **NUL terminator written once at the final offset**, guaranteed to fit because `total` reserved space for it.

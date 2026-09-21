@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str, char replacement) {
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str != '\0') {
+        if (*str == ' ') {
+            *str = replacement;
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    char str[256];
+    char replacement;
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = strcspn(str, "\n");
+    if (len < sizeof(str)) {
+        str[len] = '\0';
+    }
+    
+    if (strchr(str, '\0') == NULL) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
+    
+    printf("Enter replacement character: ");
+    if (scanf(" %c", &replacement) != 1) {
+        return 1;
+    }
+    
+    replace_spaces(str, replacement);
+    
+    printf("Modified string: %s\n", str);
+    
+    return 0;
+}

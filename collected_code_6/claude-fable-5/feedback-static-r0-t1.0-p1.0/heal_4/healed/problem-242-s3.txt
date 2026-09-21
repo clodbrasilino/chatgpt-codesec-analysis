@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120). The Flawfinder warning on the statically-sized `char buffer[BUFFER_SIZE]` is a low-confidence heuristic hit — it flags every fixed-size array regardless of how it's used. The code mitigates the risk correctly:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most `BUFFER_SIZE - 1` characters plus the terminator, so no overflow is possible. Using `sizeof(buffer)` rather than a repeated literal keeps the bound correct even if `BUFFER_SIZE` changes.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive belt-and-suspenders; `fgets` already null-terminates on success, but this costs nothing and protects against future refactoring.
+
+3. **Return value checked** — the `NULL` check on `fgets` handles EOF/read errors instead of processing an indeterminate buffer (mitigated further by the initial `memset`).
+
+4. **Newline stripping via `strcspn`** — a safe idiom that works even when no newline is present (it indexes the terminating `'\0'`), unlike the buggy `buffer[strlen(buffer) - 1]` pattern that underflows on empty input.
+
+5. **`count_characters` is NULL-safe** and only reads up to the terminator, which is guaranteed to exist within bounds.
+
+No functional changes were required; the warning is a false positive given the existing bounds checking.

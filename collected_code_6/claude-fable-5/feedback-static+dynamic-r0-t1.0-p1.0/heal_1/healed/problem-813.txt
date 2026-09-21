@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < sizeof(buffer) && buffer[i] != '\0'; i++) {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was actually already quite well-written from a security standpoint. The Flawfinder warning about the statically-sized `char buffer[MAX_INPUT]` is a heuristic flag (risk level 2, low) rather than an actual vulnerability, because:
+
+1. **`fgets` is used correctly** — it reads at most `sizeof(buffer) - 1` characters and always null-terminates, so no buffer overflow can occur on input (unlike `gets` or an unbounded `scanf("%s", ...)`).
+
+2. **The return value of `fgets` is checked**, handling EOF and read errors properly.
+
+3. **`string_length` guards against NULL**, avoiding a potential null-pointer dereference.
+
+**Defensive hardening added in the rewrite:**
+
+- **Bounds-checked newline-stripping loop** (`i < sizeof(buffer)`): the original loop relied solely on finding `'\0'`. While `fgets` guarantees termination, adding an explicit bound makes the loop provably safe even if the buffer's contents were ever corrupted or the input source changed — directly addressing the CWE-119/CWE-120 concern about improper restriction of operations within buffer bounds.
+
+- **Explicit terminator enforcement** (`buffer[sizeof(buffer) - 1] = '\0'`): a belt-and-braces guarantee that the buffer is always a valid C string before being passed to `string_length` and `printf`, eliminating any possibility of an out-of-bounds read.
+
+These changes satisfy the Flawfinder recommendation ("perform bounds checking, use functions that limit length") without changing the program's observable behavior.

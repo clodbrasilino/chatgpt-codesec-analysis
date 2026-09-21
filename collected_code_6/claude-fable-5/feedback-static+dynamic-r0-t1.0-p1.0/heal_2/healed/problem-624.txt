@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *string_to_upper(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello, World! 123 abc";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+
+    len = strnlen(source, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len >= buffer_size) {
+        fprintf(stderr, "Buffer too small for copy\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    if (string_to_upper(buffer) == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original:  %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Uppercase: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flawfinder warning on `memcpy` (CWE-120) is a heuristic flag, not a confirmed vulnerability. The destination buffer is allocated as `len + 1` bytes and exactly `len` bytes are copied, followed by explicit null termination, so no overflow could occur.
+
+The rewritten version addresses the warning defensively by:
+
+1. **Explicit bounds check before `memcpy`**: verifying `len < buffer_size` immediately prior to the copy makes the invariant locally provable, which satisfies static analyzers and protects against future refactoring errors where the allocation size and copy length might drift apart.
+2. **Retaining `strnlen` with `MAX_INPUT_LEN`**: guards against unterminated or oversized input, preventing the length used for allocation and copying from being attacker-controlled beyond the cap.
+3. **Consistent error paths**: every failure branch frees the buffer before returning, avoiding memory leaks.
+4. **Safe `toupper` usage**: the cast to `unsigned char` before calling `toupper` remains, preventing undefined behavior for negative `char` values on platforms where `char` is signed.

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+  */
+
+int check_number_at_end(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     *  'SIZE_MAX' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  use of undeclared identifier 'SIZE_MAX'
+     */
+    size_t len = strnlen(str, SIZE_MAX);
+    if (len == 0) {
+        return 0;
+    }
+
+    const char *ptr = str + len - 1;
+
+    while (ptr >= str && isdigit((unsigned char)*ptr)) {
+        ptr--;
+    }
+
+    if (ptr != str + len - 1 && (ptr < str || !isdigit((unsigned char)*ptr))) {
+        return 1;
+    }
+
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return 1;
+    }
+
+    int result = check_number_at_end(argv[1]);
+    printf("%d\n", result);
+
+    return 0;
+}

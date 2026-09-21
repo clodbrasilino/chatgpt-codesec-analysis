@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already largely defensive, but I made one meaningful improvement to fully address the Flawfinder warning:
+
+1. **`count_characters` now takes an explicit bounds parameter** — The original hard-coded `BUFFER_SIZE` inside the function, which silently coupled it to a specific buffer size. If the function were ever called with a smaller buffer, it could read out of bounds. Passing `max_len` explicitly makes the bounds check correct for any caller and eliminates the CWE-119/CWE-120 concern at the API level.
+
+**Existing mitigations that were kept (already correct in the original):**
+
+- `fgets(buffer, sizeof(buffer), stdin)` limits input length and prevents overflow (unlike `gets` or unbounded `scanf("%s")`).
+- The return value of `fgets` is checked for `NULL` (EOF/error handling).
+- `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination (technically redundant with `fgets`, but harmless defense-in-depth).
+- `strcspn` is used to strip the trailing newline safely — it never reads past the null terminator and avoids the classic `buffer[strlen(buffer)-1]` bug that breaks on empty input.
+- `memset` zero-initializes the buffer, ensuring no uninitialized reads.
+- `%zu` is the correct format specifier for `size_t`.
+
+The statically-sized array itself is fine here because every access to it is bounds-checked; the Flawfinder hit on `char buffer[BUFFER_SIZE]` is a heuristic warning, and the surrounding code satisfies its remediation guidance.

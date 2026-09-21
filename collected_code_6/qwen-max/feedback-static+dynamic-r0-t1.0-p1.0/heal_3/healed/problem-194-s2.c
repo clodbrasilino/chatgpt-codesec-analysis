@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+
+int octalToDecimal(int octal) {
+    int decimal = 0, i = 0;
+    while (octal != 0) {
+        decimal += (octal % 10) * (int)pow(8, i);
+        ++i;
+        octal /= 10;
+    }
+    return decimal;
+}
+
+int main() {
+    char input[16];
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        char *end;
+        long num = strtol(input, &end, 8);
+
+        if (num >= INT_MIN && num <= INT_MAX && *input != '\n' && (*end == '\n' || (*end == ' ' && end[1] == '\n')) && end > input) {
+            printf("%d\n", octalToDecimal((int)num));
+        } else {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        fprintf(stderr, "Input error\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

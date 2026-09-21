@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+
+int maxDiff(char *str) {
+    int max_diff = -1;
+    int current_diff = 0;
+    int count_zeros = 0;
+    int count_ones = 0;
+    
+    if (str == NULL) {
+        return -1;
+    }
+    
+    size_t len = strnlen(str, 1024);
+    
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+        if (str[i] == '0') {
+            current_diff++;
+            count_zeros++;
+            if (current_diff > max_diff) {
+                max_diff = current_diff;
+            }
+        } else if (str[i] == '1') {
+            current_diff--;
+            count_ones++;
+            if (current_diff < 0) {
+                current_diff = 0;
+            }
+        } else {
+            break;
+        }
+    }
+    
+    if (count_zeros == 0) {
+        return -1;
+    }
+    
+    return max_diff;
+}
+
+int main(void) {
+    char str1[] = "11000010001";
+    printf("%d\n", maxDiff(str1));
+    
+    char str2[] = "111111";
+    printf("%d\n", maxDiff(str2));
+    
+    char str3[] = "000000";
+    printf("%d\n", maxDiff(str3));
+    
+    char str4[] = "010101";
+    printf("%d\n", maxDiff(str4));
+    
+    char str5[] = "10001";
+    printf("%d\n", maxDiff(str5));
+    
+    return 0;
+}

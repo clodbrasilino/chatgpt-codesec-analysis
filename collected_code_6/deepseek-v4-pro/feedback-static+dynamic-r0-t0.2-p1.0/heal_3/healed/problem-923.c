@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int shortest_common_supersequence_length(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t len1 = strnlen(str1, (size_t)INT_MAX);
+    size_t len2 = strnlen(str2, (size_t)INT_MAX);
+
+    if (len1 >= (size_t)INT_MAX || len2 >= (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (len1 > (size_t)(INT_MAX / (len2 + 1)) || len2 > (size_t)(INT_MAX - 1)) {
+        return -1;
+    }
+
+    size_t cols = len2 + 1;
+    size_t total_size = (len1 + 1) * cols;
+    int *dp = (int *)malloc(total_size * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t j = 0; j <= len2; j++) {
+        dp[j] = (int)j;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        dp[i * cols] = (int)i;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        for (size_t j = 1; j <= len2; j++) {
+            size_t index = i * cols + j;
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[index] = dp[(i - 1) * cols + (j - 1)] + 1;
+            } else {
+                int from_left = dp[i * cols + (j - 1)];
+                int from_above = dp[(i - 1) * cols + j];
+                dp[index] = (from_above < from_left ? from_above : from_left) + 1;
+            }
+        }
+    }
+
+    int result = dp[len1 * cols + len2];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    const char str1[] = "AGGTAB";
+    const char str2[] = "GXTXAYB";
+    int result = shortest_common_supersequence_length(str1, str2);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    return 0;
+}

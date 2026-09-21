@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <limits.h>
+
+char **split_at_uppercase(const char *str, size_t *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, 1024);
+    if (len == 0 || len == 1024) {
+        *count = 0;
+        return NULL;
+    }
+
+    size_t max_parts = 1;
+    for (size_t i = 1; i < len; i++) {
+        if (isupper((unsigned char)str[i])) {
+            max_parts++;
+        }
+    }
+
+    if (max_parts > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    char **result = malloc(max_parts * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t part_count = 0;
+    size_t start = 0;
+
+    for (size_t i = 1; i <= len; i++) {
+        if (i == len || isupper((unsigned char)str[i])) {
+            size_t part_len = i - start;
+            
+            if (part_len == SIZE_MAX || part_len > len - start || part_len > 1024) {
+                for (size_t j = 0; j < part_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            
+            if (part_len + 1 < part_len) {
+                for (size_t j = 0; j < part_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            
+            result[part_count] = malloc(part_len + 1);
+            if (result[part_count] == NULL) {
+                for (size_t j = 0; j < part_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            
+            if (part_len > 0) {
+                if (start + part_len > len || part_len > strnlen(str + start, len - start)) {
+                    for (size_t j = 0; j <= part_count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                if (part_len <= part_len + 1) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result[part_count], str + start, part_len);
+                }
+            }
+            result[part_count][part_len] = '\0';
+            part_count++;
+            start = i;
+        }
+    }
+
+    *count = part_count;
+    return result;
+}
+
+void free_split_result(char **result, size_t count) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *test_string = "HelloWorldThisIsATest";
+    size_t count = 0;
+
+    char **parts = split_at_uppercase(test_string, &count);
+
+    if (parts == NULL && count == 0) {
+        printf("Empty string or error occurred.\n");
+        return 1;
+    }
+
+    if (parts == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Split \"%s\" at uppercase letters:\n", test_string);
+    for (size_t i = 0; i < count; i++) {
+        printf("Part %zu: \"%s\"\n", i + 1, parts[i]);
+    }
+
+    free_split_result(parts, count);
+
+    return 0;
+}

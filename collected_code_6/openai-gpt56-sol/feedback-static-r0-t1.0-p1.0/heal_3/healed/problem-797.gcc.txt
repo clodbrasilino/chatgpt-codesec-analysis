@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-797.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-797.c:61:35: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   61 |     if (input[0] != '\0' && input[strlen(input) - 1] != '\n' && !feof(stdin)) {
+      |                                   ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-797.c:7:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    6 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    7 | 

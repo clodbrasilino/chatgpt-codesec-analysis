@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str) {
+    if (str == NULL) return;
+
+    int i, count = 0, len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') count++;
+    }
+
+    int new_length = len + (count * 2);
+    char *new_str = (char *)malloc(new_length + 1);
+    if (new_str == NULL) return;
+
+    for (i = len - 1; i >= 0; i--) {
+        if (str[i] == ' ') {
+            new_str[new_length - 1] = '0';
+            new_str[new_length - 2] = '2';
+            new_str[new_length - 3] = '%';
+            new_length -= 3;
+        } else {
+            new_str[new_length - 1] = str[i];
+            new_length--;
+        }
+    }
+    new_str[new_length] = '\0';
+    strcpy(str, new_str);
+    free(new_str);
+}
+
+int main() {
+    char str1[] = "Mr John Smith    ";
+    replace_spaces(str1);
+    printf("Replaced string: %s\n", str1);
+
+    char str2[] = " Test String with Spaces  ";
+    replace_spaces(str2);
+    printf("Replaced string: %s\n", str2);
+
+    return 0;
+}

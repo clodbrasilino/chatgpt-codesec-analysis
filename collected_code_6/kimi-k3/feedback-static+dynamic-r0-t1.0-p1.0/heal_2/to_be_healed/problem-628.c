@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char* replaceSpaces(const char* str, size_t maxLen) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    size_t spaceCount = 0;
+    int terminated = 0;
+    
+    for (size_t i = 0; i < maxLen; i++) {
+        if (str[i] == '\0') {
+            terminated = 1;
+            break;
+        }
+        len++;
+        if (str[i] == ' ') {
+            spaceCount++;
+        }
+    }
+    
+    if (!terminated) {
+        return NULL;
+    }
+    
+    if (len > (SIZE_MAX - 1) / 3 && spaceCount > 0) {
+        return NULL;
+    }
+    
+    size_t newLen = len + (spaceCount * 2) + 1;
+    char* result = malloc(newLen);
+    
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            result[j++] = '%';
+            result[j++] = '2';
+            result[j++] = '0';
+        } else {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+    
+    return result;
+}
+
+int main(void) {
+    const char* testString = "Hello World This Is A Test";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char* modifiedString = replaceSpaces(testString, strlen(testString) + 1);
+    
+    if (modifiedString != NULL) {
+        printf("Original: %s\n", testString);
+        printf("Modified: %s\n", modifiedString);
+        free(modifiedString);
+    } else {
+        fprintf(stderr, "Memory allocation failed or invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

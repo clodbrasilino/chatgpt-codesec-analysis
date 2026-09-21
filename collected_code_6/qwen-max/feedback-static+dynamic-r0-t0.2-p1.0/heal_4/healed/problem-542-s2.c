@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void replace_chars(char *str, size_t len) {
+    regex_t regex;
+    regmatch_t match[1];
+    char *ptr = str;
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED | REG_NEWLINE) != 0) {
+        return;
+    }
+
+    while (regexec(&regex, ptr, 1, match, 0) == 0) {
+        size_t match_len = match[0].rm_eo - match[0].rm_so;
+        size_t remaining_len = len - (ptr - str);
+        memmove(ptr + 1, ptr + match_len, remaining_len - match_len + 1);
+        *ptr = ':';
+        ptr += 2;
+        len -= match_len - 1;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_chars(str, sizeof(str));
+    printf("%s\n", str);
+    return 0;
+}

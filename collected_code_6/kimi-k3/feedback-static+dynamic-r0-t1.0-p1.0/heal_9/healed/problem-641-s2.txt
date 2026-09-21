@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
+
+uint64_t nonagonal_number(uint64_t n) {
+    if (n > 72340172838076673ULL) {
+        return 0;
+    }
+    return n * (7 * n - 5) / 2;
+}
+
+int main(void) {
+    char buf[64];
+    uint64_t n;
+    char *end;
+
+    if (fgets(buf, sizeof(buf), stdin) == NULL) {
+        return 1;
+    }
+
+    errno = 0;
+    n = strtoull(buf, &end, 10);
+    if (errno != 0 || end == buf) {
+        return 1;
+    }
+
+    while (*end != '\0') {
+        if (!isspace((unsigned char)*end)) {
+            return 1;
+        }
+        end++;
+    }
+
+    printf("%" PRIu64 "\n", nonagonal_number(n));
+    return 0;
+}
+```

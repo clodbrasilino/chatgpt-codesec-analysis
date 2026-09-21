@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    if (k > n || (n - k) > n) {
+        return -1;
+    }
+
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    if (head_bytes > n * sizeof(int) || tail_bytes > n * sizeof(int)) {
+        return -1;
+    }
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, head_bytes);
+    memmove(arr, arr + k, tail_bytes);
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the Flawfinder warnings on `memcpy` are generic (risk level 2), flagging the *use* of the function rather than an actual proven overflow. In the original:
+
+- `temp` is allocated with exactly `head_bytes`, and the first `memcpy` copies exactly `head_bytes` into it — no overflow.
+- The second `memcpy` writes `head_bytes` starting at `arr + (n - k)`, which ends exactly at `arr + n` — within bounds, given the caller passes a correct `n`.
+- The `SIZE_MAX / sizeof(int)` guard already prevents integer overflow in the byte-size calculations.
+
+The rewritten version adds defensive invariant checks (`k <= n`, byte counts bounded by the total array size) to make the bounds guarantees explicit and satisfy static analyzers. The remaining implicit contract — that `n` accurately describes the buffer pointed to by `arr` — cannot be verified in C and must be honored by the caller, as `main` correctly does using `sizeof(arr) / sizeof(arr[0])`.
+
+Expected output: `5 6 52 36 12 10`

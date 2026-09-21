@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got ["python",""
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    const char *start = str;
+    while (*start != '\0') {
+        while (isspace((unsigned char)*start)) {
+            start++;
+        }
+        if (*start == '\0') {
+            break;
+        }
+
+        const char *end = start;
+        while (*end != '\0' && !isspace((unsigned char)*end)) {
+            end++;
+        }
+
+        size_t len = end - start;
+        char *word = malloc(len + 1);
+        if (word == NULL) {
+            free_list(head);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(word, start, len);
+        word[len] = '\0';
+
+        Node *new_node = malloc(sizeof(Node));
+        if (new_node == NULL) {
+            free(word);
+            free_list(head);
+            return NULL;
+        }
+
+        new_node->data = word;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+
+        start = end;
+    }
+
+    return head;
+}
+
+void print_list(Node *head) {
+    printf("[");
+    Node *current = head;
+    while (current != NULL) {
+        printf("'%s'", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(int argc, const char * const argv[]) {
+    char *input = NULL;
+
+    if (argc > 1) {
+        size_t total_len = 0;
+        for (int i = 1; i < argc; i++) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            total_len += strlen(argv[i]);
+            if (i < argc - 1) {
+                total_len++;
+            }
+        }
+        input = malloc(total_len + 1);
+        if (input == NULL) {
+            printf("[]\n");
+            fflush(stdout);
+            return EXIT_SUCCESS;
+        }
+        size_t pos = 0;
+        for (int i = 1; i < argc; i++) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t arg_len = strlen(argv[i]);
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(input + pos, argv[i], arg_len);
+            pos += arg_len;
+            if (i < argc - 1) {
+                input[pos++] = ' ';
+            }
+        }
+        input[pos] = '\0';
+    } else {
+        size_t buf_size = 4096;
+        size_t len = 0;
+        input = malloc(buf_size);
+        if (input == NULL) {
+            printf("[]\n");
+            fflush(stdout);
+            return EXIT_SUCCESS;
+        }
+        input[0] = '\0';
+        while (fgets(input + len, buf_size - len, stdin) != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            len += strlen(input + len);
+            if (len > 0 && input[len - 1] == '\n') {
+                break;
+            }
+            while (len + 1 >= buf_size) {
+                size_t new_buf_size = buf_size * 2;
+                if (new_buf_size <= buf_size) {
+                    new_buf_size = buf_size + 4096;
+                }
+                buf_size = new_buf_size;
+                char *new_input = realloc(input, buf_size);
+                if (new_input == NULL) {
+                    free(input);
+                    printf("[]\n");
+                    fflush(stdout);
+                    return EXIT_SUCCESS;
+                }
+                input = new_input;
+            }
+        }
+        input[strcspn(input, "\n")] = '\0';
+    }
+
+    Node *list = string_to_list(input);
+    print_list(list);
+    free_list(list);
+    free(input);
+
+    return EXIT_SUCCESS;
+}

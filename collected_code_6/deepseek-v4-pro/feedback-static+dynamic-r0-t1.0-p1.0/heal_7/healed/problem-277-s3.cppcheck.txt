@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:60:17: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (key_len >= dest_size) return -1;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:58:22: note: dest_size is assigned 'key_len+1' here.
+    size_t dest_size = key_len + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:60:17: note: Condition 'key_len>=dest_size' is always false
+    if (key_len >= dest_size) return -1;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:65:19: style: Condition 'dest_size>0' is always true [knownConditionTrueFalse]
+    if (dest_size > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:58:32: note: Assignment 'dest_size=key_len+1', assigned value is greater than 0
+    size_t dest_size = key_len + 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:63:9: note: Assuming condition is false
+    if (!key_copy) return -1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-277-s3.c:65:19: note: Condition 'dest_size>0' is always true
+    if (dest_size > 0) {
+                  ^

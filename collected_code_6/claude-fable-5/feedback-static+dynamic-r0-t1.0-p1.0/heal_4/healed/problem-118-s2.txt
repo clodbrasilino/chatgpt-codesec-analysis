@@ -1,0 +1,191 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 1024
+
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
+
+Node *create_node(const char *start, size_t length);
+void free_list(Node *head);
+Node *string_to_word_list(const char *str, size_t max_len);
+int print_word_list(const Node *head);
+
+Node *create_node(const char *start, size_t length)
+{
+    Node *node;
+    char *word;
+
+    if (start == NULL || length == 0 || length >= MAX_INPUT) {
+        return NULL;
+    }
+
+    node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+
+    word = malloc(length + 1);
+    if (word == NULL) {
+        free(node);
+        return NULL;
+    }
+
+    memcpy(word, start, length);
+    word[length] = '\0';
+
+    node->word = word;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->word);
+        free(tmp);
+    }
+}
+
+Node *string_to_word_list(const char *str, size_t max_len)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i = 0;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    while (i < max_len && str[i] != '\0') {
+        while (i < max_len && str[i] != '\0' && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= max_len || str[i] == '\0') {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t length;
+            Node *node;
+
+            while (i < max_len && str[i] != '\0' && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            length = i - start;
+            node = create_node(&str[start], length);
+            if (node == NULL) {
+                free_list(head);
+                return NULL;
+            }
+
+            if (head == NULL) {
+                head = node;
+                tail = node;
+            } else {
+                tail->next = node;
+                tail = node;
+            }
+        }
+    }
+
+    return head;
+}
+
+int print_word_list(const Node *head)
+{
+    const Node *current = head;
+
+    if (fputc('[', stdout) == EOF) {
+        return -1;
+    }
+
+    while (current != NULL) {
+        if (printf("'%s'", current->word) < 0) {
+            return -1;
+        }
+        if (current->next != NULL) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+        current = current->next;
+    }
+
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    Node *list;
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+
+    list = string_to_word_list(input, sizeof(input));
+    if (list == NULL && len > 0) {
+        int only_spaces = 1;
+        size_t i;
+        for (i = 0; i < len; i++) {
+            if (!isspace((unsigned char)input[i])) {
+                only_spaces = 0;
+                break;
+            }
+        }
+        if (!only_spaces) {
+            fprintf(stderr, "Failed to convert string to list\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (print_word_list(list) != 0) {
+        free_list(list);
+        fprintf(stderr, "Failed to print list\n");
+        return EXIT_FAILURE;
+    }
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**1. `memcpy` in `create_node` (CWE-120, Flawfinder risk 2):** This is a false positive. The destination buffer is allocated with `malloc(length + 1)` immediately before the copy, so it is guaranteed to hold exactly `length` bytes plus the null terminator. Additionally, `length` is validated at function entry (`length == 0 || length >= MAX_INPUT` returns `NULL`), and the caller (`string_to_word_list`) derives `length` from bounded index arithmetic (`i - start` where `i < max_len`), so the source read is also within bounds. No fix is required; the pattern of allocate-then-copy with a matching size is correct.
+
+**2. Statically-sized `char input[MAX_INPUT]` in `main` (CWE-119/CWE-120, Flawfinder risk 2):** Also mitigated. The buffer is:
+- Zero-initialized with `memset` before use.
+- Filled only via `fgets(input, sizeof(input), stdin)`, which enforces the bound and always null-terminates on success.
+- Defensively terminated again with `input[sizeof(input) - 1] = '\0'`.
+- Measured with `strnlen` (bounded) rather than `strlen`.
+- Passed to `string_to_word_list` together with `sizeof(input)` so all subsequent indexing is bounds-checked against `max_len`.
+
+Both Flawfinder hits are heuristic pattern matches rather than actual vulnerabilities; the surrounding bounds checks already constitute the recommended fixes, so the rewritten code preserves the logic with the comments removed.

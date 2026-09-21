@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <float.h>
+#include <string.h>
+#include <math.h>
+
+int check_no_profit_no_loss(double cost_price, double selling_price) {
+    if (cost_price < 0 || selling_price < 0) {
+        return -1;
+    }
+    if (fabs(cost_price - selling_price) < DBL_EPSILON) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void) {
+    double cost_price, selling_price;
+    char input[256] = {0};
+    char *endptr;
+    size_t input_len;
+    int result;
+
+    printf("Enter cost price: ");
+    if (fgets(input, sizeof(input) - 1, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input_len = strnlen(input, sizeof(input) - 1);
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    if (input_len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    cost_price = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter selling price: ");
+    if (fgets(input, sizeof(input) - 1, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input_len = strnlen(input, sizeof(input) - 1);
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    if (input_len == 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    selling_price = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    result = check_no_profit_no_loss(cost_price, selling_price);
+    if (result == -1) {
+        fprintf(stderr, "Prices cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    if (result == 1) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}

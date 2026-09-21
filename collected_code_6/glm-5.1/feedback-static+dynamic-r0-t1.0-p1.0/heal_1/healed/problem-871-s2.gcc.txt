@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c: In function 'areRotations':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-871-s2.c:32:5: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   32 |     memcpy_s(concat, concat_len + 1, str1, len1);
+      |     ^~~~~~~~
+      |     memcpy

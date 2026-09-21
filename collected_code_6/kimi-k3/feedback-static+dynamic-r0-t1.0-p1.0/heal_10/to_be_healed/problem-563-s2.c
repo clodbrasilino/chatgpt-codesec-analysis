@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+char **extract_quoted_values(const char *str, size_t *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    size_t capacity = 10;
+    char **results = malloc(capacity * sizeof(char *));
+    if (results == NULL) {
+        return NULL;
+    }
+
+    const char *p = str;
+    while (*p != '\0') {
+        if (*p == '"') {
+            p++;
+            const char *start = p;
+            while (*p != '\0' && *p != '"') {
+                p++;
+            }
+
+            if (*p == '"') {
+                size_t len = (size_t)(p - start);
+                if (*count >= capacity) {
+                    if (capacity > SIZE_MAX / 2) {
+                        for (size_t i = 0; i < *count; i++) {
+                            free(results[i]);
+                        }
+                        free(results);
+                        *count = 0;
+                        return NULL;
+                    }
+                    capacity *= 2;
+                    char **new_results = realloc(results, capacity * sizeof(char *));
+                    if (new_results == NULL) {
+                        for (size_t i = 0; i < *count; i++) {
+                            free(results[i]);
+                        }
+                        free(results);
+                        *count = 0;
+                        return NULL;
+                    }
+                    results = new_results;
+                }
+
+                if (len == SIZE_MAX) {
+                    for (size_t i = 0; i < *count; i++) {
+                        free(results[i]);
+                    }
+                    free(results);
+                    *count = 0;
+                    return NULL;
+                }
+
+                results[*count] = malloc(len + 1);
+                if (results[*count] == NULL) {
+                    for (size_t i = 0; i < *count; i++) {
+                        free(results[i]);
+                    }
+                    free(results);
+                    *count = 0;
+                    return NULL;
+                }
+
+                if (len > 0) {
+                    /* Possible weaknesses found:
+                     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+                     */
+                    strncpy(results[*count], start, len);
+                }
+                results[*count][len] = '\0';
+                (*count)++;
+                p++;
+            }
+        } else {
+            p++;
+        }
+    }
+
+    if (*count == 0) {
+        free(results);
+        return NULL;
+    }
+
+    return results;
+}
+
+void free_quoted_values(char **values, size_t count) {
+    if (values == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(values[i]);
+    }
+    free(values);
+}
+
+int main(void) {
+    const char *input = "The quick \"brown fox\" jumps over the \"lazy dog\" and \"runs away\"";
+    size_t count = 0;
+
+    char **values = extract_quoted_values(input, &count);
+    if (values == NULL) {
+        fprintf(stderr, "Failed to extract values or no values found\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %zu quoted values:\n", count);
+    for (size_t i = 0; i < count; i++) {
+        printf("[%zu]: %s\n", i, values[i]);
+    }
+
+    free_quoted_values(values, count);
+    return EXIT_SUCCESS;
+}

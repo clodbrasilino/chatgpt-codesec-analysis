@@ -1,0 +1,197 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    char *key;
+    char *value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+static size_t safe_string_length(const char *src, size_t max_len)
+{
+    size_t len;
+
+    len = 0;
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *copy_string(const char *src)
+{
+    size_t len;
+    size_t i;
+    char *dest;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = safe_string_length(src, MAX_STRING_LENGTH);
+    dest = malloc(len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < len; i++) {
+        dest[i] = src[i];
+    }
+    dest[len] = '\0';
+    return dest;
+}
+
+Dictionary *dict_create(size_t capacity)
+{
+    Dictionary *dict;
+
+    dict = malloc(sizeof(*dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    if (capacity > 0) {
+        if (capacity > SIZE_MAX / sizeof(*dict->items)) {
+            free(dict);
+            return NULL;
+        }
+        dict->items = malloc(capacity * sizeof(*dict->items));
+        if (dict->items == NULL) {
+            free(dict);
+            return NULL;
+        }
+    } else {
+        dict->items = NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value)
+{
+    char *new_key;
+    char *new_value;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        return -1;
+    }
+    new_key = copy_string(key);
+    if (new_key == NULL) {
+        return -1;
+    }
+    new_value = copy_string(value);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+    dict->items[dict->size].key = new_key;
+    dict->items[dict->size].value = new_value;
+    dict->size++;
+    return 0;
+}
+
+static int is_empty_item(const DictItem *item)
+{
+    if (item == NULL) {
+        return 1;
+    }
+    if (item->value == NULL || item->value[0] == '\0') {
+        return 1;
+    }
+    return 0;
+}
+
+void dict_drop_empty(Dictionary *dict)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (dict == NULL || dict->items == NULL) {
+        return;
+    }
+
+    write_idx = 0;
+    for (read_idx = 0; read_idx < dict->size; read_idx++) {
+        if (is_empty_item(&dict->items[read_idx])) {
+            free(dict->items[read_idx].key);
+            free(dict->items[read_idx].value);
+        } else {
+            if (write_idx != read_idx) {
+                dict->items[write_idx] = dict->items[read_idx];
+            }
+            write_idx++;
+        }
+    }
+    dict->size = write_idx;
+}
+
+void dict_free(Dictionary *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->size; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+void dict_print(const Dictionary *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->size; i++) {
+        printf("'%s': '%s'\n",
+               dict->items[i].key != NULL ? dict->items[i].key : "",
+               dict->items[i].value != NULL ? dict->items[i].value : "");
+    }
+}
+
+int main(void)
+{
+    Dictionary *dict;
+
+    dict = dict_create(8);
+    if (dict == NULL) {
+        fprintf(stderr, "Error: failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(dict, "name", "Alice") != 0 ||
+        dict_add(dict, "email", "") != 0 ||
+        dict_add(dict, "city", "New York") != 0 ||
+        dict_add(dict, "phone", "") != 0 ||
+        dict_add(dict, "country", "USA") != 0) {
+        fprintf(stderr, "Error: failed to add dictionary item\n");
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before:\n");
+    dict_print(dict);
+
+    dict_drop_empty(dict);
+
+    printf("\nAfter:\n");
+    dict_print(dict);
+
+    dict_free(dict);
+    return EXIT_SUCCESS;
+}

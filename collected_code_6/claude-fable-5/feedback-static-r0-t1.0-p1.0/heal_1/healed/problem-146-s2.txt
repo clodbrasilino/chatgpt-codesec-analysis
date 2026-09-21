@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound and cannot read past the end of the buffer even if the string is not null-terminated. The `ascii_sum` function now accepts a `max_len` parameter so it can enforce this bound internally.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined via a named constant (`BUFFER_SIZE`), and all reads/scans are strictly bounded by `sizeof(buffer)`. `fgets` already limits input to the buffer size, and an explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees null termination as defense-in-depth before any string operations occur.
+
+3. The `NULL` check on the input string and the safe cast to `unsigned char` before summing (avoiding sign-extension issues for bytes ≥ 0x80) were preserved from the original.

@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 32
+
+int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT];
+    size_t i;
+    size_t len;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT);
+    if (len == 0 || len >= MAX_INPUT) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+    int result;
+
+    printf("Enter a month name: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        if (len == sizeof(input) - 1) {
+            fprintf(stderr, "Input too long.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = has_28_days(input);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid month name input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days.\n", input);
+    } else {
+        printf("%s does not contain exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char normalized[MAX_INPUT]` in `has_28_days` (CWE-119/CWE-120):** This is a false positive. The function uses `strnlen(month, MAX_INPUT)` and rejects any input where `len >= MAX_INPUT`, guaranteeing that `normalized[len] = '\0'` writes at most to index `MAX_INPUT - 1`. All writes are bounds-checked.
+
+2. **`char input[MAX_INPUT]` in `main` (CWE-119/CWE-120):** Also a false positive. Input is read with `fgets(input, sizeof(input), stdin)`, which limits the read to `sizeof(input) - 1` characters plus the null terminator. The explicit `input[sizeof(input) - 1] = '\0'` is defensive redundancy since `fgets` always null-terminates.
+
+3. **`getchar()` loop (CWE-120/CWE-20):** Safe as written — the loop discards excess characters without storing them in any buffer, so no boundary issue exists. It correctly drains stdin when input exceeds the buffer and reports "Input too long" via the `len == sizeof(input) - 1` check.
+
+Additional good practices already present: `NULL` checks, casting to `unsigned char` before `isalpha`/`tolower` (avoiding undefined behavior for negative `char` values), use of `strnlen` instead of `strlen`, and proper `EXIT_FAILURE`/`EXIT_SUCCESS` return codes. No changes were required beyond retaining the existing mitigations; the Flawfinder hits are informational warnings about static buffers, all of which are properly bounds-checked.

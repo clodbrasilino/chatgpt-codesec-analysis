@@ -1,0 +1,131 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH 1048576
+#define ERRBUF_SIZE 256
+
+char *add_spaces_before_capitals(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[3];
+    const char *pattern = "\\([a-z]\\)\\([A-Z]\\)";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char errbuf[ERRBUF_SIZE];
+    size_t input_len;
+    size_t capacity;
+    size_t length;
+    char *result;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LENGTH);
+    if (input_len == MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+    if (input_len > (SIZE_MAX - 1) / 2) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    capacity = input_len * 2 + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        fprintf(stderr, "malloc failed\n");
+        regfree(&regex);
+        return NULL;
+    }
+
+    length = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        size_t prefix_len;
+        size_t remaining;
+
+        ret = regexec(&regex, cursor, 3, match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            regerror(ret, &regex, errbuf, sizeof(errbuf));
+            errbuf[sizeof(errbuf) - 1] = '\0';
+            fprintf(stderr, "regexec failed: %s\n", errbuf);
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match[1].rm_so < 0 || match[1].rm_eo < 0 ||
+            match[1].rm_eo < match[1].rm_so) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        prefix_len = (size_t)match[1].rm_eo;
+        remaining = capacity - length;
+
+        if (prefix_len + 2 > remaining) {
+            fprintf(stderr, "output buffer overflow prevented\n");
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + length, cursor, prefix_len);
+        length += prefix_len;
+        result[length] = ' ';
+        length++;
+        cursor += prefix_len;
+    }
+
+    ret = snprintf(result + length, capacity - length, "%s", cursor);
+    if (ret < 0 || (size_t)ret >= capacity - length) {
+        fprintf(stderr, "output buffer overflow prevented\n");
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWorldThisIsARegexExample";
+    char *output;
+
+    output = add_spaces_before_capitals(input);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", input);
+    printf("Output: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

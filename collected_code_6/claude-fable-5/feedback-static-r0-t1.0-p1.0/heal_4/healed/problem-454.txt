@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+        {
+            size_t start = i;
+            int has_z = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    has_z = 1;
+                }
+                i++;
+            }
+            if (has_z) {
+                size_t len = i - start;
+
+                if (len >= result_size) {
+                    return 0;
+                }
+                memcpy(result, &text[start], len);
+                result[len] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The lazy dog jumped over the fence";
+    char result[256];
+
+    if (match_word_with_z(text, result, sizeof(result))) {
+        if (printf("Found word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No word containing 'z' found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses:
+
+**1. `memcpy` (CWE-120, risk 2):** This is a false positive in practice — the code already mitigates it correctly. Before the `memcpy` call, the check `if (len >= result_size) return 0;` guarantees that `len` bytes plus the null terminator (`len + 1` total) always fit within the destination buffer of size `result_size`. The destination cannot be overflowed. No change is required; the existing bounds check is the proper fix.
+
+**2. Statically-sized `char result[256]` (CWE-119/CWE-120, risk 2):** Also safely handled. The buffer size is passed via `sizeof(result)` rather than being hardcoded separately, so the size argument always matches the actual buffer. Combined with the length check inside `match_word_with_z`, the array cannot be written out of bounds.
+
+Additional defensive measures already present that support these fixes:
+
+- All `NULL` and zero-size arguments are rejected up front, so the function never dereferences invalid pointers or writes to a zero-length buffer.
+- `isalpha`/`tolower` are called with the argument cast to `unsigned char`, avoiding undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 128.
+- `result[0] = '\0';` ensures the output buffer is always a valid string even on failure paths.
+- The return values of `printf` are checked, and the program returns `EXIT_SUCCESS`/`EXIT_FAILURE` appropriately.
+
+The code is safe as written; the Flawfinder hits are informational and the mitigations (explicit bounds check before copy, size passed via `sizeof`) are already in place.

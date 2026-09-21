@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0')
+    {
+        if (buffer[i] == '\n')
+        {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[256]` as a *potential* overflow risk. In practice, the original code was already largely safe because:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** is the correct bounded input function — it never writes more than `sizeof(buffer) - 1` characters plus the null terminator, so no overflow can occur on input.
+2. **`count_characters` guards against `NULL`** before dereferencing.
+
+The rewrite hardens the code further with defense-in-depth measures:
+
+- **Explicit null termination** (`buffer[sizeof(buffer) - 1] = '\0'`) guarantees the buffer is always a valid C string even if a hostile or nonconforming `stdio` implementation misbehaved, ensuring the subsequent scan loops always terminate.
+- **Bounds check in the newline-stripping loop** (`i < sizeof(buffer)`) so the loop can never read past the array, independent of string termination.
+- **Named constant** (`BUFFER_SIZE`) instead of a magic number, and continued use of `sizeof(buffer)` everywhere so the size can never drift out of sync with the declaration.
+- **`%zu`** remains the correct format specifier for `size_t`, avoiding undefined behavior on platforms where `size_t` differs from `unsigned int`.
+
+The result satisfies the Flawfinder recommendation: bounds checking is performed, all input functions limit length, and the buffer can never be over-read or over-written.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-822-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-822-s3.c:14:52: warning: Either the condition 'length>=256' is redundant or the array 'password[10]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (length < MAX_PASSWORD_LENGTH && password[length] != '\0') {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-822-s3.c:18:16: note: Assuming that condition 'length>=256' is not redundant
+    if (length >= MAX_PASSWORD_LENGTH) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-822-s3.c:14:52: note: Array index out of bounds
+    while (length < MAX_PASSWORD_LENGTH && password[length] != '\0') {
+                                                   ^

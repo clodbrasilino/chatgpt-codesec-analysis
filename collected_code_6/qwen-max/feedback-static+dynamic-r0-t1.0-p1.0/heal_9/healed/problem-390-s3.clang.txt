@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-390-s3.c:52:51: error: invalid operands to binary expression ('void' and 'void *')
+   52 |     if (insert_at_beginning(&head, prefix, "one") == NULL) exit(EXIT_FAILURE);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-390-s3.c:53:51: error: invalid operands to binary expression ('void' and 'void *')
+   53 |     if (insert_at_beginning(&head, prefix, "two") == NULL) exit(EXIT_FAILURE);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-390-s3.c:54:53: error: invalid operands to binary expression ('void' and 'void *')
+   54 |     if (insert_at_beginning(&head, prefix, "three") == NULL) exit(EXIT_FAILURE);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~
+3 errors generated.

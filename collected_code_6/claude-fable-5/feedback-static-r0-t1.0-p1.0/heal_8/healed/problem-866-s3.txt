@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 64
+#define FLUSH_LIMIT 4096
+
+int has_31_days(const char *month)
+{
+    static const char *const months_with_31[] = {
+        "January", "March", "May", "July",
+        "August", "October", "December"
+    };
+    size_t count = sizeof(months_with_31) / sizeof(months_with_31[0]);
+    size_t i;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strcmp(month, months_with_31[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < FLUSH_LIMIT);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter month name: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (has_31_days(buffer)) {
+        printf("%s has 31 days\n", buffer);
+    } else {
+        printf("%s does not have 31 days\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The statically-sized array is safe here because:
+   - Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which strictly limits writes to the buffer size, including the null terminator.
+   - `buffer[sizeof(buffer) - 1] = '\0';` guarantees null termination defensively.
+   - `strnlen` (bounded) is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+   - When input exceeds the buffer (detected via `len == sizeof(buffer) - 1` with no trailing newline), the remainder of the line is drained via `flush_stdin()`, preventing stale data from corrupting subsequent reads.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** The loop in `flush_stdin` is safe because:
+   - Characters are read into an `int` and immediately discarded—nothing is written to any buffer, so no overflow is possible.
+   - Both `'\n'` and `EOF` are checked as termination conditions, avoiding an infinite loop on closed/exhausted streams.
+   - A `guard` counter capped at `FLUSH_LIMIT` provides defense-in-depth against pathological input streams that never yield a newline or EOF.
+
+The code as written already implements the correct mitigations for both Flawfinder findings; the warnings are false positives given the bounds checking, guaranteed termination, and bounded string operations in place. No functional changes were required—only the removal of comments as requested.

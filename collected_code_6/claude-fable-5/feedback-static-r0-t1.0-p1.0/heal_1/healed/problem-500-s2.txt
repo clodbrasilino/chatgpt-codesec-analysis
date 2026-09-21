@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t *lengths = NULL;
+    char *result = NULL;
+    char *pos = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count > 0) {
+        if (count > SIZE_MAX / sizeof(size_t)) {
+            return NULL;
+        }
+        lengths = malloc(count * sizeof(size_t));
+        if (lengths == NULL) {
+            return NULL;
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+        len = strlen(list[i]);
+        if (len > SIZE_MAX - 1 - total) {
+            free(lengths);
+            return NULL;
+        }
+        lengths[i] = len;
+        total += len;
+    }
+
+    result = malloc(total + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    pos = result;
+    for (i = 0; i < count; i++) {
+        memcpy(pos, list[i], lengths[i]);
+        pos += lengths[i];
+    }
+    *pos = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const list[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *joined = concatenate_list(list, count);
+
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Missing `<stdint.h>` include** — the original code used `SIZE_MAX` without including `<stdint.h>`, which would fail to compile on a conforming implementation. This is now included.
+
+2. **Flawed overflow check** — the original condition `total > SIZE_MAX - len - 1` can itself wrap around: if `len == SIZE_MAX`, then `SIZE_MAX - len - 1` underflows to `SIZE_MAX`, and the check passes incorrectly. The corrected form `len > SIZE_MAX - 1 - total` cannot underflow, since `total` is always strictly less than `SIZE_MAX - 1` at that point.
+
+3. **TOCTOU-style double `strlen` (CWE-126 / CWE-120 mitigation)** — the original called `strlen` twice per string, once for sizing and once for copying. If a string's length changed between the two passes (e.g., another thread mutating shared data), `memcpy` could overflow the allocated buffer. Lengths are now measured exactly once, cached in an array, and reused for the copy, so the `memcpy` destination is guaranteed to hold the source data.
+
+4. **Safe allocation of the lengths cache** — the `count * sizeof(size_t)` multiplication is guarded against overflow before calling `malloc`, and the cache is freed on every exit path to avoid leaks.
+
+Note that the residual Flawfinder `strlen` warning (non-NUL-terminated input) is an API contract issue: the function's interface accepts C strings, so callers are responsible for passing properly terminated strings; no in-function fix is possible without changing the interface to pass explicit lengths.

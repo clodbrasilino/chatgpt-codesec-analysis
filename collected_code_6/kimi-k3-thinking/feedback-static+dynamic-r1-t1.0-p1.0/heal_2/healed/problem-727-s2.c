@@ -1,0 +1,174 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void report_regex_error(int errcode, regex_t *preg, const char *context)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, preg, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "%s: regex error code %d\n", context, errcode);
+        return;
+    }
+
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: regex error code %d\n", context, errcode);
+        return;
+    }
+
+    regerror(errcode, preg, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", context, errbuf);
+    free(errbuf);
+}
+
+int remove_non_alnum(const char *input, size_t max_len, char **output)
+{
+    regex_t regex;
+    regmatch_t pmatch[1];
+    char *result;
+    size_t input_len;
+    size_t pos;
+    size_t out_pos;
+    int ret;
+
+    if (input == NULL || output == NULL || max_len == 0) {
+        return -1;
+    }
+
+    *output = NULL;
+
+    ret = regcomp(&regex, "[^[:alnum:]]", REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "regcomp failed");
+        return -1;
+    }
+
+    input_len = strnlen(input, max_len);
+
+    if (input_len == SIZE_MAX || input_len > (size_t)INT_MAX) {
+        fprintf(stderr, "Input length is not supported.\n");
+        regfree(&regex);
+        return -1;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        regfree(&regex);
+        return -1;
+    }
+
+    pos = 0;
+    out_pos = 0;
+
+    while (pos < input_len) {
+        ret = regexec(&regex, input + pos, 1, pmatch, 0);
+
+        if (ret == REG_NOMATCH) {
+            size_t remaining = input_len - pos;
+            size_t dest_avail = input_len - out_pos + 1;
+            int written;
+
+            if (remaining > input_len - out_pos) {
+                fprintf(stderr, "Output buffer overflow prevented.\n");
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            written = snprintf(result + out_pos, dest_avail, "%.*s",
+                               (int)remaining, input + pos);
+            if (written < 0 || (size_t)written != remaining) {
+                fprintf(stderr, "Failed to copy remaining input.\n");
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            out_pos += remaining;
+            break;
+        }
+
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regexec failed");
+            free(result);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (pmatch[0].rm_so < 0 || pmatch[0].rm_eo <= pmatch[0].rm_so ||
+            (size_t)pmatch[0].rm_eo > input_len - pos) {
+            fprintf(stderr, "Invalid regex match offsets.\n");
+            free(result);
+            regfree(&regex);
+            return -1;
+        }
+
+        {
+            size_t copy_len = (size_t)pmatch[0].rm_so;
+            size_t dest_avail = input_len - out_pos + 1;
+            int written;
+
+            if (copy_len > input_len - out_pos) {
+                fprintf(stderr, "Output buffer overflow prevented.\n");
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            written = snprintf(result + out_pos, dest_avail, "%.*s",
+                               (int)copy_len, input + pos);
+            if (written < 0 || (size_t)written != copy_len) {
+                fprintf(stderr, "Failed to copy input segment.\n");
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            out_pos += copy_len;
+        }
+
+        pos += (size_t)pmatch[0].rm_eo;
+    }
+
+    result[out_pos] = '\0';
+    *output = result;
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "Hello, World! 123 @#$%^&* C_Prog-2024";
+    char *cleaned = NULL;
+
+    if (remove_non_alnum(input, MAX_INPUT_LEN, &cleaned) != 0) {
+        fprintf(stderr, "Failed to remove non-alphanumeric characters.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (cleaned == NULL) {
+        fprintf(stderr, "Unexpected NULL result.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Cleaned:  %s\n", cleaned);
+
+    free(cleaned);
+    cleaned = NULL;
+
+    return EXIT_SUCCESS;
+}

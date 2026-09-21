@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+
+char* minimize_length(const char* str) {
+    if (str == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    if (*str == '\0') {
+        char* empty = (char*)malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    int freq[256] = {0};
+    const char* ptr = str;
+    int len = 0;
+
+    while (*ptr != '\0') {
+        if (len >= 100) {
+            errno = EINVAL;
+            return NULL;
+        }
+        freq[(unsigned char)*ptr]++;
+        ptr++;
+        len++;
+    }
+
+    int max_freq = -1;
+    char max_char = '\0';
+
+    for (int i = 0; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            max_char = (char)i;
+        }
+    }
+
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int j = 0;
+    for (int i = 0; i < len; i++) {
+        if (str[i] != max_char) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char str[102];
+
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+
+    size_t len = 0;
+    while (len < sizeof(str) && str[len] != '\0') {
+        len++;
+    }
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+        len--;
+    }
+
+    if (len >= 100) {
+        return 1;
+    }
+
+    char* minimized = minimize_length(str);
+    if (minimized == NULL) {
+        return 1;
+    }
+
+    printf("%s\n", minimized);
+    free(minimized);
+
+    return 0;
+}

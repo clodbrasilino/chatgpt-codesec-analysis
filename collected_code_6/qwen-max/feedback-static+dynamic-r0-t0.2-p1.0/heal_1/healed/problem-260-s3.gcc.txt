@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:35:5: error: 'errno' undeclared (first use in this function)
+   35 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:5:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    4 | #include <limits.h>
+  +++ |+#include <errno.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:35:5: note: each undeclared identifier is reported only once for each function it appears in
+   35 |     errno = 0;
+      |     ^~~~~

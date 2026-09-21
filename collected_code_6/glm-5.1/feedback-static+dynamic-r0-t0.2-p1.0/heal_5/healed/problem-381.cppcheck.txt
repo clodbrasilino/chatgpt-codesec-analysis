@@ -1,0 +1,49 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:111:53: style: Condition 'row_size<copy_size' is always false [knownConditionTrueFalse]
+    memcpy(outer.lists[0].elements, row0, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size' here.
+    size_t copy_size = row_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:106:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:111:53: note: Condition 'row_size<copy_size' is always false
+    memcpy(outer.lists[0].elements, row0, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:114:53: style: Condition 'row_size<copy_size' is always false [knownConditionTrueFalse]
+    memcpy(outer.lists[1].elements, row1, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size' here.
+    size_t copy_size = row_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:106:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:114:53: note: Condition 'row_size<copy_size' is always false
+    memcpy(outer.lists[1].elements, row1, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:117:53: style: Condition 'row_size<copy_size' is always false [knownConditionTrueFalse]
+    memcpy(outer.lists[2].elements, row2, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size' here.
+    size_t copy_size = row_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:106:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:117:53: note: Condition 'row_size<copy_size' is always false
+    memcpy(outer.lists[2].elements, row2, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:120:53: style: Condition 'row_size<copy_size' is always false [knownConditionTrueFalse]
+    memcpy(outer.lists[3].elements, row3, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:98:22: note: copy_size is assigned 'row_size' here.
+    size_t copy_size = row_size;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:106:34: note: Assuming condition is false
+        !outer.lists[2].elements || !outer.lists[3].elements) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-381.c:120:53: note: Condition 'row_size<copy_size' is always false
+    memcpy(outer.lists[3].elements, row3, (row_size < copy_size ? row_size : copy_size) * sizeof(int));
+                                                    ^

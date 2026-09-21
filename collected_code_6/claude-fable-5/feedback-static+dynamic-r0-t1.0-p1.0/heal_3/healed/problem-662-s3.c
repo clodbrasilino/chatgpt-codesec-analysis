@@ -1,0 +1,191 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_KEY_LEN 64
+
+typedef struct DictEntry {
+    char key[MAX_KEY_LEN];
+    int *values;
+    size_t count;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry *head;
+} Dictionary;
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+Dictionary *dict_create(void)
+{
+    Dictionary *dict = malloc(sizeof(Dictionary));
+
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+int dict_insert(Dictionary *dict, const char *key, const int *values, size_t count)
+{
+    DictEntry *entry;
+    size_t key_len;
+
+    if (dict == NULL || key == NULL || values == NULL || count == 0) {
+        return -1;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    key_len = strnlen(key, MAX_KEY_LEN);
+    if (key_len == 0 || key_len >= MAX_KEY_LEN) {
+        return -1;
+    }
+
+    entry = malloc(sizeof(DictEntry));
+    if (entry == NULL) {
+        return -1;
+    }
+
+    entry->values = malloc(count * sizeof(int));
+    if (entry->values == NULL) {
+        free(entry);
+        return -1;
+    }
+
+    memcpy(entry->values, values, count * sizeof(int));
+
+    memcpy(entry->key, key, key_len);
+    entry->key[key_len] = '\0';
+
+    entry->count = count;
+    entry->next = dict->head;
+    dict->head = entry;
+    return 0;
+}
+
+int dict_sort_list(Dictionary *dict, const char *key)
+{
+    DictEntry *current;
+
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        if (strncmp(current->key, key, MAX_KEY_LEN) == 0) {
+            qsort(current->values, current->count, sizeof(int), compare_ints);
+            return 0;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
+void dict_print_list(const Dictionary *dict, const char *key)
+{
+    const DictEntry *current;
+    size_t i;
+
+    if (dict == NULL || key == NULL) {
+        return;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        if (strncmp(current->key, key, MAX_KEY_LEN) == 0) {
+            printf("%s: ", current->key);
+            for (i = 0; i < current->count; i++) {
+                printf("%d ", current->values[i]);
+            }
+            printf("\n");
+            return;
+        }
+        current = current->next;
+    }
+}
+
+void dict_destroy(Dictionary *dict)
+{
+    DictEntry *current;
+    DictEntry *next;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    current = dict->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current->values);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int main(void)
+{
+    Dictionary *dict;
+    int numbers[] = {42, 7, 19, 3, 88, 1};
+    int scores[] = {95, 12, 60, 33};
+
+    dict = dict_create();
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_insert(dict, "numbers", numbers, sizeof(numbers) / sizeof(numbers[0])) != 0) {
+        fprintf(stderr, "Failed to insert numbers\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_insert(dict, "scores", scores, sizeof(scores) / sizeof(scores[0])) != 0) {
+        fprintf(stderr, "Failed to insert scores\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before sorting:\n");
+    dict_print_list(dict, "numbers");
+    dict_print_list(dict, "scores");
+
+    if (dict_sort_list(dict, "numbers") != 0) {
+        fprintf(stderr, "Failed to sort numbers\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_sort_list(dict, "scores") != 0) {
+        fprintf(stderr, "Failed to sort scores\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("After sorting:\n");
+    dict_print_list(dict, "numbers");
+    dict_print_list(dict, "scores");
+
+    dict_destroy(dict);
+    return EXIT_SUCCESS;
+}

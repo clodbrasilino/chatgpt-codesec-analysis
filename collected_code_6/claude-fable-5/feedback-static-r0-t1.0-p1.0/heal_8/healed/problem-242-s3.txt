@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code:**
+
+The original source was already well-defended against the Flawfinder warning, which is a generic heuristic that flags any statically-sized `char` array (CWE-119/CWE-120). The existing mitigations were:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — reads at most `BUFFER_SIZE - 1` bytes and always null-terminates, preventing buffer overflow on input.
+2. **`memset(buffer, 0, sizeof(buffer))`** — guarantees the buffer starts zero-initialized, so no uninitialized reads.
+3. **`buffer[sizeof(buffer) - 1] = '\0'`** — a defensive redundancy ensuring termination even if the buffer contents were somehow corrupted.
+4. **`strcspn(buffer, "\n")`** — safely strips the trailing newline without risking out-of-bounds access (it returns the full string length if no newline exists, and that index is guaranteed valid).
+5. **NULL check** in `count_characters` and a checked return value from `fgets`.
+
+**Hardening added in the rewrite:**
+
+The one theoretical gap was `count_characters`: it scanned for `'\0'` with no upper bound, so if it were ever called with a non-terminated buffer (e.g., after future refactoring), it would read out of bounds. The rewrite adds a `max_len` parameter to enforce bounds checking inside the loop, making the function safe regardless of the caller's termination guarantees. The call site passes `sizeof(buffer)` so the scan can never exceed the array. This fully addresses the CWE-119/CWE-120 concern by making the length computation independent of trusting the terminator.

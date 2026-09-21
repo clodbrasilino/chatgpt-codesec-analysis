@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    size_t len = strlen(str);
+    char *result = (char*)malloc(len + 1);
+    if (result == NULL) return NULL;
+    result[0] = '\0';
+
+    const char *p = str;
+    size_t available_space = len + 1;
+    char *dst = result;
+
+    while (*p) {
+        const char *start = p;
+        while (*p && *p != ' ') p++;
+        size_t token_len = p - start;
+
+        if (token_len != (size_t)k) {
+            size_t space_needed = token_len + ((*p == ' ') ? 1 : 0);
+            if (space_needed <= available_space) {
+                memcpy(dst, start, token_len);
+                dst += token_len;
+                if (*p == ' ') {
+                    *dst++ = ' ';
+                    available_space--;
+                }
+                available_space -= token_len;
+            } else {
+                free(result);
+                return NULL;
+            }
+        }
+        if (*p) p++;
+    }
+
+    *dst = '\0';
+    if (dst > result && *(dst - 1) == ' ') {
+        *(dst - 1) = '\0';
+    }
+
+    return result;
+}
+
+int main() {
+    const char str[] = "this is a test string with some words of different lengths";
+    int k = 2;
+    char *new_str = remove_k_length_words(str, k);
+
+    if (new_str != NULL) {
+        printf("%s\n", new_str);
+        free(new_str);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:35:33: style: Condition 'seq_len>0' is always true [knownConditionTrueFalse]
+                    if (seq_len > 0 && (seq_len + 1) <= (MAX_SEQUENCE_SIZE + 1)) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:28:56: note: Assuming condition 'seq_len>0' is true
+            if (seq_len < MAX_SEQUENCE_SIZE && seq_len > 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:30:30: note: Assuming condition is false
+                if (sequence == NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-16-s2.c:35:33: note: Condition 'seq_len>0' is always true
+                    if (seq_len > 0 && (seq_len + 1) <= (MAX_SEQUENCE_SIZE + 1)) {
+                                ^

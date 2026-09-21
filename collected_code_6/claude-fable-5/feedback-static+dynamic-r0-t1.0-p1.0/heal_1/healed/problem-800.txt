@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+    str[write] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text);
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings here are low-risk (risk level 1) heuristic hits on array indexing inside a loop — they flag *potential* CWE-120 (buffer overflow) and CWE-20 (improper input validation) issues, but the code as written is already safe. Here's why no functional changes were needed:
+
+1. **NULL check** — `str == NULL` is guarded before any dereference.
+
+2. **Loop bounds** — `read` only advances while `str[read] != '\0'`, so it never reads past the string's terminator. Since `str` must be a valid NUL-terminated string (a documented precondition of the function), no out-of-bounds read occurs.
+
+3. **Write safety** — `write <= read` is an invariant of the loop (write only increments when read does), so `str[write]` always writes within already-read, valid bounds. The final `str[write] = '\0'` lands at or before the original terminator's position. The transformation can only shrink the string, never grow it.
+
+4. **`isspace` correctness** — the cast to `(unsigned char)` is already present, avoiding undefined behavior when `char` is signed and holds negative values (a real, commonly missed bug — correctly handled here).
+
+5. **`main` usage** — `text` is a writable array (not a string literal pointer), so in-place modification is legal.
+
+The warnings are false positives; the code follows the standard safe in-place compaction idiom. The only "fix" is verification that the invariants above hold — which they do.

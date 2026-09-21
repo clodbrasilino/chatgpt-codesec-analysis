@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+static bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len = 0U;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    while (len < max_len && number[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        counts[number[i] - '0']++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch = 0;
+
+    while (ch != '\n' && ch != EOF) {
+        ch = getchar();
+    }
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len = 0U;
+
+    if (buffer == NULL || size < 2U) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    while (len < size && buffer[len] != '\0') {
+        len++;
+    }
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == size - 1U) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT] = {0};
+
+    printf("Enter a number: ");
+
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (!read_line(input, sizeof(input))) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and the applied fixes:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** This is a low-risk Flawfinder heuristic. The original code was already safe since `getchar()` returns an `int` (correctly capturing `EOF`) and no buffer is written to inside the loop. The rewrite restructures the `do/while` into a `while` loop with an initialized sentinel, guaranteeing termination on newline or `EOF` with no possibility of unbounded buffer writes.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer usage was already bounded correctly. The fix reinforces this by:
+   - Passing `sizeof(input)` to `read_line`, so the size and buffer can never desynchronize.
+   - Requiring `size >= 2` in `read_line`, rejecting degenerate buffers where `fgets` could not store both a character and a terminator.
+   - Forcing NUL-termination at `buffer[size - 1]` after `fgets`, and bounding all subsequent scans by `size`.
+   - Draining leftover stdin when the line was truncated, preventing stale input from leaking into subsequent reads.
+
+3. **Additional hardening:** The return value of `fflush(stdout)` is now checked rather than ignored, and `digit_frequency_valid` retains its defensive checks (`NULL` pointer, empty string, non-digit rejection via `isdigit` with an `unsigned char` cast to avoid undefined behavior on negative `char` values).
+
+The logic itself — verifying that each digit `d` appears at most `d` times in the input — is unchanged and correct.

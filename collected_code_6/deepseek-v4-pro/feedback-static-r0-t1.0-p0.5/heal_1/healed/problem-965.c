@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    const char *p = input;
+    while (*p != '\0') {
+        len++;
+        p++;
+    }
+
+    size_t max_len = len * 2 + 1;
+    char *result = (char *)malloc(max_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)input[i])) {
+            if (j > 0 && result[j - 1] != '_') {
+                result[j++] = '_';
+            }
+            result[j++] = (char)tolower((unsigned char)input[i]);
+        } else {
+            result[j++] = input[i];
+        }
+    }
+    result[j] = '\0';
+
+    char *shrunk = (char *)realloc(result, j + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "camelCase",
+        "PascalCase",
+        "already_snake",
+        "with123Numbers",
+        "ABC",
+        "",
+        "a",
+        "A",
+        "camelCaseWithCAPS",
+        NULL
+    };
+
+    for (int i = 0; test_cases[i] != NULL; i++) {
+        char *converted = camel_to_snake(test_cases[i]);
+        if (converted != NULL) {
+            printf("%s -> %s\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("%s -> (null)\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

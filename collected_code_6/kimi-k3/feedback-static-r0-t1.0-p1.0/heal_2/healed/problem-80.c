@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
+int tetrahedral_number(uint32_t n, uint64_t *result)
+{
+    uint64_t term1;
+    uint64_t term2;
+    uint64_t term3;
+    uint64_t temp;
+    
+    if (result == NULL)
+    {
+        return -1;
+    }
+    
+    if (n > 1811332U)
+    {
+        return -1;
+    }
+    
+    term1 = (uint64_t)n;
+    term2 = (uint64_t)(n + 1U);
+    term3 = (uint64_t)(n + 2U);
+    
+    if (term1 % 6U == 0U)
+    {
+        term1 = term1 / 6U;
+    }
+    else if (term2 % 6U == 0U)
+    {
+        term2 = term2 / 6U;
+    }
+    else
+    {
+        term3 = term3 / 6U;
+    }
+    
+    temp = term1 * term2;
+    *result = temp * term3;
+    
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[128];
+    char *endptr;
+    unsigned long value;
+    uint32_t n;
+    uint64_t result;
+    int status;
+    
+    printf("Enter a non-negative integer n: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    errno = 0;
+    value = strtoul(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || value > UINT32_MAX)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r')
+    {
+        endptr++;
+    }
+    
+    if (*endptr != '\0')
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    n = (uint32_t)value;
+    
+    status = tetrahedral_number(n, &result);
+    
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: Input too large or invalid\n");
+        return 1;
+    }
+    
+    printf("Tetrahedral number T(%" PRIu32 ") = %" PRIu64 "\n", n, result);
+    
+    return 0;
+}

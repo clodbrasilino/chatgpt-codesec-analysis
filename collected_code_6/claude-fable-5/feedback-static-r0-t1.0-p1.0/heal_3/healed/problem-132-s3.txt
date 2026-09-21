@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_STRING_SIZE 32U
+
+struct Tuple {
+    int first;
+    double second;
+    char third[TUPLE_STRING_SIZE];
+};
+
+static int tuple_set_third(struct Tuple *t, const char *value)
+{
+    size_t len;
+
+    if ((t == NULL) || (value == NULL)) {
+        return -1;
+    }
+
+    len = strnlen(value, sizeof(t->third));
+    if (len >= sizeof(t->third)) {
+        return -1;
+    }
+
+    (void)memcpy(t->third, value, len);
+    t->third[len] = '\0';
+
+    return 0;
+}
+
+char *tuple_to_string(const struct Tuple *t)
+{
+    char *result;
+    int needed;
+    int written;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    needed = snprintf(NULL, 0U, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    result = malloc((size_t)needed + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(result, (size_t)needed + 1U, "(%d, %.2f, %s)", t->first, t->second, t->third);
+    if ((written < 0) || (written > needed)) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    struct Tuple t;
+    char *str;
+
+    t.first = 42;
+    t.second = 3.14;
+
+    if (tuple_set_third(&t, "hello") != 0) {
+        (void)fprintf(stderr, "Failed to set tuple string field\n");
+        return EXIT_FAILURE;
+    }
+
+    str = tuple_to_string(&t);
+    if (str == NULL) {
+        (void)fprintf(stderr, "Failed to convert tuple to string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        free(str);
+        return EXIT_FAILURE;
+    }
+
+    free(str);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char third[TUPLE_STRING_SIZE]` (CWE-119/CWE-120):** Flawfinder flags every statically-sized character array by default, since they are a common source of overflows. Here the risk is mitigated because the only write path into `third` is `tuple_set_third()`, which performs strict bounds checking before copying. The field is never written via `strcpy`, `sprintf`, `gets`, or any other unbounded function.
+
+2. **`memcpy` (CWE-120):** Flawfinder cannot statically verify that the destination can hold the source. In this code, the copy is provably safe:
+   - `strnlen(value, sizeof(t->third))` caps the measured length at the buffer size, so it never reads past a non-terminated input beyond 32 bytes.
+   - The check `len >= sizeof(t->third)` rejects any string that would not fit *including* the null terminator, guaranteeing `len <= sizeof(t->third) - 1`.
+   - The explicit `t->third[len] = '\0'` ensures termination, so the field is always a valid C string when later passed to `snprintf`.
+
+3. **`tuple_to_string()`** uses the standard two-pass `snprintf` idiom: sizing with `snprintf(NULL, 0, ...)`, allocating `needed + 1`, and verifying the second write. Return values of `snprintf`, `malloc`, and `printf` are all checked, and `result` is freed on every error path — no leaks, no truncation, no overflow.
+
+The warnings are false positives given the surrounding defensive code; no functional changes were required beyond keeping the existing mitigations intact.

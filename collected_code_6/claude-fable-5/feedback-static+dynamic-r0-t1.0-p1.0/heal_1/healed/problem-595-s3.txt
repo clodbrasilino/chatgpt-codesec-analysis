@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count01;
+    long count10;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1L;
+    }
+
+    count01 = 0L;
+    count10 = 0L;
+
+    for (i = 0U; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] == '0' && s2[i] == '1') {
+            count01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            count10++;
+        }
+    }
+
+    if (count01 != count10) {
+        return -1L;
+    }
+
+    return count01;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    long result;
+
+    result = min_swaps(a, b);
+
+    if (result < 0L) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %ld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+1. **Primary fix — test case failures:** The failing test cases expected the literal output `'Not Possible'`, but the program printed `"Conversion not possible"`. The sentinel `-1L` return value from `min_swaps()` is fine as an internal contract, but the caller must translate it into the exact expected string. The `printf` in the error branch now emits `"Not Possible"`.
+
+2. **Flawfinder `strlen` warnings (CWE-126):** These are informational (risk 1). Within this translation unit both inputs are string literals, which are guaranteed NUL-terminated, so no over-read is possible. The `NULL` guard before calling `strlen` already prevents the undefined behavior of passing a null pointer. A stricter mitigation would be `strnlen` with a caller-supplied maximum, but that changes the API contract; for the given usage the code is safe as written.
+
+3. **Correctness of the algorithm is preserved:** a swap fixes one `0→1` mismatch and one `1→0` mismatch simultaneously, so conversion is possible only when `count01 == count10`, and the minimum swap count equals `count01`. Input validation rejects non-binary characters and length mismatches, and all `printf` return values are still checked per the original defensive style.

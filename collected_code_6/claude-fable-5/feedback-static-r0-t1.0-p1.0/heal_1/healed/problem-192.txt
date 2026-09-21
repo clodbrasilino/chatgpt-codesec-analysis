@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool has_letter_and_number(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t len;
+
+    printf("Enter a string: ");
+
+    len = getline(&buffer, &bufsize, stdin);
+    if (len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (has_letter_and_number(buffer)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    free(buffer);
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was actually already quite defensively written — `fgets()` was correctly bounded with `sizeof(buffer)`, the newline was stripped safely with `strcspn()`, `NULL` inputs were handled, and characters were properly cast to `unsigned char` before being passed to `isalpha()`/`isdigit()` (a subtle but important detail, since passing a negative `char` value to `ctype` functions is undefined behavior).
+
+The Flawfinder hit on `char buffer[256]` is a low-risk, informational warning about fixed-size buffers in general (CWE-119/CWE-120). The rewrite addresses it by replacing the statically-sized array with `getline()`, which dynamically allocates and grows the buffer as needed, eliminating any fixed-length restriction entirely. This means:
+
+- **No truncation risk** — arbitrarily long input lines are handled correctly.
+- **No overflow possibility** — the allocation is managed by `getline()` itself.
+- **Proper cleanup** — `free()` is called on both success and error paths to avoid leaks.
+
+One portability caveat: `getline()` is POSIX (available since POSIX.1-2008), not standard C. If strict ISO C portability is required (e.g., for Windows/MSVC without POSIX support), the original bounded `fgets()` approach was already an acceptable fix, and the Flawfinder warning could be marked as reviewed/mitigated.

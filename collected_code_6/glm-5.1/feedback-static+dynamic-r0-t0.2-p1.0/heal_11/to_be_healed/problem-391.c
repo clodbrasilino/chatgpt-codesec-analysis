@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct Dict {
+    char *key;
+    struct Dict *child;
+    struct Dict *next;
+} Dict;
+
+Dict *create_node(const char *key) {
+    if (!key) return NULL;
+    Dict *node = malloc(sizeof(Dict));
+    if (!node) return NULL;
+    size_t len = strnlen(key, SIZE_MAX);
+    node->key = malloc(len + 1);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    snprintf(node->key, len + 1, "%s", key);
+    node->child = NULL;
+    node->next = NULL;
+    return node;
+}
+
+Dict *find_or_create_child(Dict *parent, const char *key) {
+    if (!parent || !key) return NULL;
+    Dict *curr = parent->child;
+    Dict *prev = NULL;
+    while (curr) {
+        if (strcmp(curr->key, key) == 0) return curr;
+        prev = curr;
+        curr = curr->next;
+    }
+    Dict *new_node = create_node(key);
+    if (!new_node) return NULL;
+    if (prev) {
+        prev->next = new_node;
+    } else {
+        parent->child = new_node;
+    }
+    return new_node;
+}
+
+Dict *lists_to_nested_dict(char **lists, const int *sizes, int num_lists) {
+    if (!lists || !sizes || num_lists <= 0) return NULL;
+    Dict *root = create_node("root");
+    if (!root) return NULL;
+    for (int i = 0; i < sizes[0]; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char key[2];
+        key[0] = lists[0][i];
+        key[1] = '\0';
+        Dict *level = find_or_create_child(root, key);
+        if (!level) continue;
+        for (int j = 1; j < num_lists; j++) {
+            if (i >= sizes[j]) break;
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char nested_key[2];
+            nested_key[0] = lists[j][i];
+            nested_key[1] = '\0';
+            level = find_or_create_child(level, nested_key);
+            if (!level) break;
+        }
+    }
+    return root;
+}
+
+void print_dict(Dict *dict, int depth) {
+    if (!dict) return;
+    Dict *curr = dict;
+    while (curr) {
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("%s\n", curr->key);
+        print_dict(curr->child, depth + 1);
+        curr = curr->next;
+    }
+}
+
+void free_dict(Dict *dict) {
+    if (!dict) return;
+    free_dict(dict->child);
+    free_dict(dict->next);
+    free(dict->key);
+    free(dict);
+}
+
+int main() {
+    char list1[] = {'A', 'A', 'B'};
+    char list2[] = {'X', 'Y', 'X'};
+    char list3[] = {'1', '2', '3'};
+    char *lists[] = {list1, list2, list3};
+    const int sizes[] = {3, 3, 3};
+    int num_lists = 3;
+    Dict *root = lists_to_nested_dict(lists, sizes, num_lists);
+    if (root) {
+        print_dict(root->child, 0);
+        free_dict(root);
+    }
+    return 0;
+}

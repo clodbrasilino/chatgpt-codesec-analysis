@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a *heuristic* alert — it fires on any statically-sized array because such buffers are frequently misused. In this case, the code already mitigates the risk correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, so no overflow is possible on input.
+2. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0'` is redundant given `fgets` semantics, but harmless and defensively sound.
+3. **Newline stripping:** `strcspn(buffer, "\n")` safely locates the newline (or the terminating NUL) and never indexes out of bounds.
+4. **Bounded scanning:** `all_chars_unique` uses `strnlen(str, max_len)` rather than `strlen`, so even a non-terminated buffer couldn't cause an over-read. It also NULL-checks its argument and casts to `unsigned char` before indexing `seen[]`, avoiding negative-index UB with high-bit characters.
+5. **Return value checked:** the `fgets` result is validated, handling EOF/error cleanly.
+
+Since the identified weakness is already fully addressed by bounds-limited functions (`fgets`, `strnlen`, `strcspn`) and explicit termination, the rewritten code is functionally identical with comments removed — no substantive changes were required.

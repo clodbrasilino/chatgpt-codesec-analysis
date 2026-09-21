@@ -1,0 +1,75 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *get_column(const char *tuple, size_t tuple_length, size_t column)
+{
+    const char *start;
+    const char *end;
+    size_t remaining;
+    size_t length;
+    size_t current = 0;
+    char *result;
+
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    start = tuple;
+    remaining = tuple_length;
+
+    while (current < column) {
+        end = memchr(start, ':', remaining);
+        if (end == NULL) {
+            return NULL;
+        }
+
+        length = (size_t)(end - start) + 1;
+        start += length;
+        remaining -= length;
+        ++current;
+    }
+
+    end = memchr(start, ':', remaining);
+    length = end != NULL ? (size_t)(end - start) : remaining;
+
+    if (length > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    result = malloc(length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    static const char tuple[] = "alpha:beta:gamma";
+    const size_t column = 1;
+    char *value = get_column(tuple, sizeof(tuple) - 1, column);
+
+    if (value == NULL) {
+        fputs("Unable to get column\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", value) < 0) {
+        free(value);
+        return EXIT_FAILURE;
+    }
+
+    free(value);
+    return EXIT_SUCCESS;
+}

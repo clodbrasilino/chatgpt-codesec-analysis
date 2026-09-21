@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c:17:13: style: Array index 'n' is used before limits check. [arrayIndexThenCheck]
+    while (s[n] != '\0' && n < MAX_LPS_LEN) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c:72:10: style: Variable 's' can be declared as const array [constVariable]
+    char s[] = "bbbab";
+         ^

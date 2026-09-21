@@ -1,0 +1,186 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define INPUT_SIZE 1024
+
+static void print_regex_error(int ret, const regex_t *regex, const char *context)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(ret, regex, NULL, 0);
+    errbuf = malloc(needed);
+    if (errbuf != NULL) {
+        regerror(ret, regex, errbuf, needed);
+        fprintf(stderr, "%s: %s\n", context, errbuf);
+        free(errbuf);
+    } else {
+        fprintf(stderr, "%s: unknown error (allocation failed)\n", context);
+    }
+}
+
+int count_matches(const char *pattern, const char *str, int *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+
+    if (pattern == NULL || str == NULL || count == NULL) {
+        return -1;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    cursor = str;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+        (*count)++;
+        if (match.rm_eo <= match.rm_so) {
+            cursor += 1;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int classify_string(const char *str, int *upper, int *lower,
+                    int *digit, int *special)
+{
+    if (str == NULL || upper == NULL || lower == NULL ||
+        digit == NULL || special == NULL) {
+        return -1;
+    }
+
+    if (count_matches("[A-Z]", str, upper) != 0) {
+        return -1;
+    }
+    if (count_matches("[a-z]", str, lower) != 0) {
+        return -1;
+    }
+    if (count_matches("[0-9]", str, digit) != 0) {
+        return -1;
+    }
+    if (count_matches("[^A-Za-z0-9]", str, special) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static char *read_line(FILE *stream)
+{
+    char *buffer;
+    size_t capacity;
+    size_t length;
+    int ch;
+
+    capacity = INPUT_SIZE;
+    length = 0;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity;
+            char *tmp;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            new_capacity = capacity * 2;
+            tmp = realloc(buffer, new_capacity);
+            if (tmp == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = tmp;
+            capacity = new_capacity;
+        }
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *input;
+    int upper = 0;
+    int lower = 0;
+    int digit = 0;
+    int special = 0;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    input = read_line(stdin);
+    if (input == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (classify_string(input, &upper, &lower, &digit, &special) != 0) {
+        fprintf(stderr, "Classification failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase letters: %d\n", upper);
+    printf("Lowercase letters: %d\n", lower);
+    printf("Numeric digits:    %d\n", digit);
+    printf("Special characters: %d\n", special);
+
+    free(input);
+    return EXIT_SUCCESS;
+}
+```
+
+You'll also need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include block:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+```
+
+**Summary of changes addressing the identified weakness (CWE-119/CWE-120):**
+
+1. **Replaced the statically-sized `char input[INPUT_SIZE]` buffer** with a dynamically allocated, growable buffer via a `read_line()` helper. This eliminates the fixed-size buffer flagged by Flawfinder and removes any risk of truncation or improper restriction of input length.
+2. **Bounds checking on every write**: the loop checks `length + 1 >= capacity` before each character is stored, and guards against `size_t` overflow when doubling capacity.
+3. **No unbounded copy functions** are used; input is read character-by-character with `fgetc`, so there is no reliance on `fgets` truncation semantics or manual null-termination fixups.
+4. **Memory is properly released** on every exit path (`free(input)` on both success and failure), preventing leaks introduced by the dynamic allocation.
+5. The newline stripping (`strcspn`) became unnecessary since `read_line()` stops at `'\n'` and never stores it.

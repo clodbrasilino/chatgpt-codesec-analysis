@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-165-s3.c: In function 'count_same_position':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-165-s3.c:18:39: error: 'INT_MAX' undeclared (first use in this function)
+   18 |     for (i = 0; str[i] != '\0' && i < INT_MAX; i++) {
+      |                                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-165-s3.c:7:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    6 | #include <errno.h>
+  +++ |+#include <limits.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-165-s3.c:18:39: note: each undeclared identifier is reported only once for each function it appears in
+   18 |     for (i = 0; str[i] != '\0' && i < INT_MAX; i++) {
+      |                                       ^~~~~~~

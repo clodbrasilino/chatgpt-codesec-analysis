@@ -1,0 +1,87 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buf_size = 0;
+    ssize_t nread;
+    long result;
+
+    printf("Enter a string: ");
+
+    nread = getline(&buffer, &buf_size, stdin);
+    if (nread == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (nread > 0 && buffer[nread - 1] == '\n') {
+        buffer[nread - 1] = '\0';
+        nread--;
+    }
+
+    if ((size_t)nread >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input too long\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    result = ascii_sum(buffer, MAX_INPUT_LEN);
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of changes made:**
+
+The original code was actually already quite defensive, but the Flawfinder warning flagged the statically-sized `char buffer[MAX_INPUT_LEN]` array (CWE-119/CWE-120). The rewrite addresses this and improves robustness:
+
+1. **Eliminated the fixed-size stack buffer** — replaced with `getline()`, which dynamically allocates exactly as much memory as needed. This removes the statically-sized array that Flawfinder flagged, making buffer overflow structurally impossible rather than merely guarded against.
+
+2. **Explicit length enforcement** — input exceeding `MAX_INPUT_LEN - 1` characters is now rejected with a clear "Input too long" error instead of being silently truncated by `fgets`, which is a behavioral improvement (truncation can mask errors or produce misleading sums).
+
+3. **Newline handling** — the original used `strcspn(buffer, "\n")`, which is fine; the rewrite strips the trailing newline directly using the byte count returned by `getline`, avoiding a redundant scan.
+
+4. **Memory hygiene** — `free(buffer)` is called on every exit path, including the case where `getline` fails (POSIX permits it to allocate even on failure), preventing leaks.
+
+5. **Retained the hardened `ascii_sum`** — the NULL check, `strnlen` bound, `len == max_len` unterminated-string guard, and the `(unsigned char)` cast (preventing negative sums on platforms with signed `char`) were all correct in the original and are preserved unchanged.
+
+The `_POSIX_C_SOURCE 200809L` feature-test macro remains necessary, as both `strnlen` and `getline` are POSIX.1-2008 functions.

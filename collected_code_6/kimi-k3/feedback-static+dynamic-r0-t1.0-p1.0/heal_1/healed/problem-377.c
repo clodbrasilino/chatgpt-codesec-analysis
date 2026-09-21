@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_char(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void) {
+    char buffer[256];
+    char target;
+    int scan_result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter character to remove: ");
+    scan_result = scanf(" %c", &target);
+    if (scan_result != 1) {
+        return 1;
+    }
+
+    remove_char(buffer, target);
+
+    printf("Result: %s\n", buffer);
+
+    return 0;
+}

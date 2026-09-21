@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <string.h>
+
+void convertDateFormat(const char *input, char *output, size_t output_size) {
+    if (input == NULL || output == NULL || output_size < 12) return;
+    if (strlen(input) != 10 || input[4] != '-' || input[7] != '-') return;
+    if (snprintf(output, output_size, "%s-%s-%.4s", &input[8], &input[5], input) < 0) return;
+}
+
+int main() {
+    const char input[] = "2023-10-05";
+    char output[12];
+    convertDateFormat(input, output, sizeof(output));
+    printf("%s\n", output);
+    return 0;
+}

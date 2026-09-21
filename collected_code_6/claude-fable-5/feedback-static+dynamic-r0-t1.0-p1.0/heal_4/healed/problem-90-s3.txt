@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    size_t result;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    result = longest_word_length(buffer);
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) on the statically-sized `char buffer[1024]` is a low-risk, largely informational hit. The original code already mitigates the risk correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most 1023 characters plus the null terminator, so no overflow is possible regardless of input length.
+2. **Guaranteed termination:** `fgets` always null-terminates on success, and the explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive belt-and-suspenders that costs nothing.
+3. **Error handling:** The `NULL` return from `fgets` (EOF or read error) is checked before the buffer is used.
+4. **Safe character classification:** The cast to `(unsigned char)` before `isspace()` avoids undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 0x80.
+5. **NULL guard:** `longest_word_length` handles a `NULL` pointer gracefully.
+
+The rewrite keeps this structure intact since the mitigations are already correct; the only cosmetic hardening added is the explicit `(int)` cast on `sizeof(buffer)` to match `fgets`'s `int` parameter (safe here since 1024 fits trivially in `int`). No functional changes were required — the flagged weakness was already properly addressed.

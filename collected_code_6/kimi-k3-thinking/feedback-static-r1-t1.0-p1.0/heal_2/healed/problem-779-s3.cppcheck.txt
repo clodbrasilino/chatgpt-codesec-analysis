@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-779-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-779-s3.c:77:19: style: Condition 'copy_size>dest_capacity' is always false [knownConditionTrueFalse]
+    if (copy_size > dest_capacity ||
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-779-s3.c:75:19: note: dest_capacity is assigned 'src_length*sizeof(*dest->data)' here.
+    dest_capacity = src_length * sizeof(*dest->data);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-779-s3.c:74:15: note: copy_size is assigned 'src_length*sizeof(*dest->data)' here.
+    copy_size = src_length * sizeof(*dest->data);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-779-s3.c:77:19: note: Condition 'copy_size>dest_capacity' is always false
+    if (copy_size > dest_capacity ||
+                  ^

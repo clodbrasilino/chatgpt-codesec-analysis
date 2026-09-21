@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+
+void reverse_characters(char *start, char *end);
+void reverse_words(char *str, size_t max_len);
+
+void reverse_characters(char *start, char *end) {
+    if (start == NULL || end == NULL) {
+        return;
+    }
+
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+void reverse_words(char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        return;
+    }
+
+    reverse_characters(str, str + len - 1);
+
+    char *start = str;
+    char *end = str;
+
+    while (end < str + len) {
+        if (*end == ' ') {
+            if (end > start) {
+                reverse_characters(start, end - 1);
+            }
+            start = end + 1;
+        }
+        end++;
+    }
+
+    if (end > start) {
+        reverse_characters(start, end - 1);
+    }
+}
+
+int main(void) {
+    char text[] = "Acting as an experienced C developer";
+
+    reverse_words(text, sizeof(text));
+    printf("%s\n", text);
+
+    return 0;
+}

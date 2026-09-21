@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long sum_of_cubes(int n) {
+    long long sum = 0;
+    int i;
+    
+    if (n < 1) {
+        return 0;
+    }
+    
+    for (i = 1; i <= n; i++) {
+        long long cube = (long long)i * i * i;
+        if (sum > LLONG_MAX - cube) {
+            return -1;
+        }
+        sum += cube;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_len;
+    char *endptr;
+    long input_val;
+    int n;
+    long long result;
+    
+    errno = 0;
+    line_len = getline(&buffer, &buffer_size, stdin);
+    
+    if (line_len == -1) {
+        if (errno != 0) {
+            fprintf(stderr, "Error reading input\n");
+        } else {
+            fprintf(stderr, "Error reading input\n");
+        }
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    input_val = strtol(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input format\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    if (input_val < 1 || input_val > INT_MAX) {
+        fprintf(stderr, "Input out of valid range\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    
+    free(buffer);
+    
+    n = (int)input_val;
+    result = sum_of_cubes(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Integer overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

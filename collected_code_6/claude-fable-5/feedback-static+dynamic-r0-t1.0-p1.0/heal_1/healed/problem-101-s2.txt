@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int find_kth_element(const int *arr, size_t n, size_t k, int *result)
+{
+    int *copy;
+    size_t total_size;
+
+    if (arr == NULL || result == NULL || n == 0 || k == 0 || k > n) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(*copy)) {
+        return -1;
+    }
+
+    total_size = n * sizeof(*copy);
+
+    copy = malloc(total_size);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, arr, total_size);
+    qsort(copy, n, sizeof(*copy), compare_ints);
+
+    *result = copy[k - 1];
+    free(copy);
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 12, 3, 5, 7, 4, 19, 26 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+    int result = 0;
+
+    if (find_kth_element(arr, n, k, &result) != 0) {
+        fprintf(stderr, "Error: invalid input or allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The %zu-th smallest element is %d\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warning on `memcpy` (CWE-120) is a heuristic flag — it fires on every use of `memcpy` regardless of context. In the original code, the destination buffer was already allocated with exactly `n * sizeof(*copy)` bytes and the copy uses the same size expression, so a classic buffer overflow was not actually possible.
+
+However, there was one genuine latent weakness: the multiplication `n * sizeof(*copy)` could overflow `size_t` for a sufficiently large `n`. On overflow, `malloc` would allocate a small buffer while `memcpy` would attempt the same (wrapped) size — the allocation and copy sizes would still match, but a caller-supplied huge `n` combined with a wrapped allocation is exactly the kind of integer-overflow-to-heap-corruption pattern CWE-120/CWE-190 audits target.
+
+The fix adds an explicit overflow guard (`n > SIZE_MAX / sizeof(*copy)`) before the allocation, computes the size once into `total_size`, and uses that same value for both `malloc` and `memcpy`, guaranteeing the destination can always hold the source data. `<stdint.h>` was added for `SIZE_MAX`. All other defensive checks (NULL pointers, bounds on `k`, allocation failure, `printf` return value) were preserved from the original.

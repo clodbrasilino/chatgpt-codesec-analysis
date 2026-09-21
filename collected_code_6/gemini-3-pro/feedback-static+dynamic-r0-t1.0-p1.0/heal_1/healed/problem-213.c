@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+StringTuple* concat_tuples(const StringTuple *t1, const StringTuple *t2) {
+    if (!t1 || !t2 || !t1->first || !t1->second || !t2->first || !t2->second) {
+        return NULL;
+    }
+
+    StringTuple *result = (StringTuple *)malloc(sizeof(StringTuple));
+    if (!result) {
+        return NULL;
+    }
+
+    size_t len1 = safe_strlen(t1->first, MAX_STR_LEN) + safe_strlen(t2->first, MAX_STR_LEN) + 1;
+    result->first = (char *)malloc(len1);
+    if (!result->first) {
+        free(result);
+        return NULL;
+    }
+
+    size_t len2 = safe_strlen(t1->second, MAX_STR_LEN) + safe_strlen(t2->second, MAX_STR_LEN) + 1;
+    result->second = (char *)malloc(len2);
+    if (!result->second) {
+        free(result->first);
+        free(result);
+        return NULL;
+    }
+
+    snprintf(result->first, len1, "%s%s", t1->first, t2->first);
+    snprintf(result->second, len2, "%s%s", t1->second, t2->second);
+
+    return result;
+}
+
+void free_tuple(StringTuple *t) {
+    if (t) {
+        free(t->first);
+        free(t->second);
+        free(t);
+    }
+}
+
+int main(void) {
+    StringTuple t1 = {"Hello, ", "Open"};
+    StringTuple t2 = {"World!", "AI"};
+
+    StringTuple *result = concat_tuples(&t1, &t2);
+    if (result) {
+        printf("First: %s\n", result->first);
+        printf("Second: %s\n", result->second);
+        free_tuple(result);
+    } else {
+        printf("Concatenation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal == 0) {
+        buffer[index++] = '0';
+        buffer[index] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0) {
+        if (index >= buffer_size - 1) {
+            buffer[0] = '\0';
+            return -1;
+        }
+        buffer[index++] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    char binary[BINARY_BUFFER_SIZE];
+    int result;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+
+    result = scanf("%u", &number);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The warning on the `char binary[...]` declaration is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The mitigations already in place, which I have preserved:
+
+1. **Buffer size derived from type width** — `BINARY_BUFFER_SIZE` is computed as `sizeof(unsigned int) * CHAR_BIT + 1`, guaranteeing enough space for every bit of the largest possible `unsigned int` plus the NUL terminator. It is impossible for a valid input to overflow it.
+
+2. **Size passed explicitly** — `decimal_to_binary()` receives `sizeof(binary)` rather than assuming a length, so the function cannot write beyond the caller's buffer.
+
+3. **Defensive bounds check in the loop** — `if (index >= buffer_size - 1)` aborts the conversion and NUL-terminates the buffer before any out-of-bounds write can occur.
+
+4. **NULL and minimum-size validation** — the function rejects a NULL buffer or a buffer too small to hold even `"0"`.
+
+5. **Input validation** — the `scanf` return value is checked, and `%u` with an `unsigned int` target avoids signed-conversion issues.
+
+6. **Guaranteed termination** — the buffer is always NUL-terminated on every code path before use with `%s`.
+
+The only change made was replacing the initializer `= {0}` with an explicit `memset`, which is functionally equivalent; both ensure the buffer starts zeroed. The Flawfinder finding is a false positive here — the code correctly performs bounds checking and sizes the buffer to the maximum possible output length, which is exactly the remediation the tool recommends.

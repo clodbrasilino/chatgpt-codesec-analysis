@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static void reverse_string(char *str)
+{
+    size_t len;
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    char temp;
+
+    if (str == NULL) {
+        return;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+    if (len < 2) {
+        return;
+    }
+
+    for (i = 0; i < len / 2; i++) {
+        temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+static int reverse_strings(char **strings, size_t count)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            return -1;
+        }
+        reverse_string(strings[i]);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input[] = {"hello", "world", "programming", "reverse"};
+    size_t count = sizeof(input) / sizeof(input[0]);
+    char **strings;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    strings = malloc(count * sizeof(*strings));
+    if (strings == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        strings[i] = malloc(strlen(input[i]) + 1);
+        if (strings[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            while (i > 0) {
+                i--;
+                free(strings[i]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(strings[i], input[i]);
+    }
+
+    if (reverse_strings(strings, count) != 0) {
+        fprintf(stderr, "Failed to reverse strings\n");
+        status = EXIT_FAILURE;
+    } else {
+        for (i = 0; i < count; i++) {
+            if (printf("%s\n", strings[i]) < 0) {
+                fprintf(stderr, "Output error\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return status;
+}

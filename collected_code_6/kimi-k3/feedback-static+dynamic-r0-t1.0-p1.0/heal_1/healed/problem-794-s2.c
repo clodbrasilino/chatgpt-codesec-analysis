@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool match_pattern(const char *str, size_t max_len) {
+    size_t len = 0;
+    size_t i;
+    
+    if (str == NULL) {
+        return false;
+    }
+    
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+        len++;
+    }
+    
+    if (i == max_len && max_len > 0 && str[max_len - 1] != '\0') {
+        return false;
+    }
+    
+    if (len < 3) {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    if (str[len - 1] != 'b') {
+        return false;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "acb",
+        "a123b",
+        "ab",
+        "acbdef",
+        "xyz",
+        "a",
+        "",
+        NULL
+    };
+    size_t i;
+    
+    for (i = 0; test_strings[i] != NULL; i++) {
+        if (match_pattern(test_strings[i], 256)) {
+            printf("\"%s\" matches the pattern\n", test_strings[i]);
+        } else {
+            printf("\"%s\" does not match the pattern\n", test_strings[i]);
+        }
+    }
+    
+    return 0;
+}

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int main(void) {
+    int c;
+    int first = 1;
+    size_t capacity = 256;
+    size_t length = 0;
+    char *word = malloc(capacity);
+
+    if (!word) {
+        return 1;
+    }
+
+    printf("[");
+    
+    while ((c = fgetc(stdin)) != EOF) {
+        if (isspace(c)) {
+            if (length > 0) {
+                word[length] = '\0';
+                if (!first) {
+                    printf(", ");
+                }
+                printf("'%s'", word);
+                first = 0;
+                length = 0;
+            }
+        } else {
+            if (length + 1 >= capacity) {
+                capacity *= 2;
+                char *temp = realloc(word, capacity);
+                if (!temp) {
+                    free(word);
+                    return 1;
+                }
+                word = temp;
+            }
+            word[length++] = (char)c;
+        }
+    }
+    
+    if (length > 0) {
+        word[length] = '\0';
+        if (!first) {
+            printf(", ");
+        }
+        printf("'%s'", word);
+    }
+    
+    printf("]\n");
+
+    free(word);
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:29:32: warning: Either the condition 'key_len<254' is redundant or the array 'key[6]' is accessed at index 253, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (key_len < 254 && key[key_len] != '\0') {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:29:20: note: Assuming that condition 'key_len<254' is not redundant
+    while (key_len < 254 && key[key_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:29:32: note: Array index out of bounds
+    while (key_len < 254 && key[key_len] != '\0') {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:32:12: warning: Either the condition 'key_len<254' is redundant or the array 'key[6]' is accessed at index 254, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (key[key_len] != '\0') return -1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:29:20: note: Assuming that condition 'key_len<254' is not redundant
+    while (key_len < 254 && key[key_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-833-s3.c:32:12: note: Array index out of bounds
+    if (key[key_len] != '\0') return -1;
+           ^

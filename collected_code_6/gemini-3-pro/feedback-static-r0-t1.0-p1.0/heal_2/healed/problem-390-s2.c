@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+size_t secure_strlen(const char *str) {
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+Node* create_node(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    new_node->data = strdup(str);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
+    }
+    
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+void prepend_string_to_list(Node *head, const char *prefix) {
+    if (head == NULL || prefix == NULL) {
+        return;
+    }
+    
+    size_t prefix_len = secure_strlen(prefix);
+    if (prefix_len == 0) {
+        return;
+    }
+    
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data != NULL) {
+            size_t data_len = secure_strlen(current->data);
+            size_t new_size = prefix_len + data_len + 1;
+            char *new_data = (char *)malloc(new_size);
+            if (new_data != NULL) {
+                snprintf(new_data, new_size, "%s%s", prefix, current->data);
+                free(current->data);
+                current->data = new_data;
+            }
+        }
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Node *head = create_node("apple");
+    if (head == NULL) {
+        return 1;
+    }
+    
+    head->next = create_node("banana");
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    
+    head->next->next = create_node("cherry");
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    
+    prepend_string_to_list(head, "fruit_");
+    
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+    
+    free_list(head);
+    return 0;
+}

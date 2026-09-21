@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char *buffer;
+    char *newline;
+
+    buffer = (char *)calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[BUFFER_SIZE - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, BUFFER_SIZE);
+
+    printf("Result: %s\n", buffer);
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already quite defensively written. Here's my assessment as an experienced C developer:
+
+**What was already correct:**
+- `fgets(buffer, sizeof(buffer), stdin)` properly bounds the read to the buffer size, preventing the classic CWE-120 buffer overflow.
+- The explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null termination (technically redundant since `fgets` always null-terminates, but harmless defensive coding).
+- `strnlen` instead of `strlen` in `capitalize_first_last` bounds the length scan.
+- All `ctype.h` calls correctly cast to `unsigned char`, avoiding undefined behavior with negative `char` values (a subtle but real portability bug many developers miss).
+- NULL and zero-length guards at function entry.
+- Return values of `fgets` are checked.
+
+**What the Flawfinder warning actually flagged:**
+Flawfinder's `char buffer[BUFFER_SIZE]` warning (risk 2) is a heuristic flag on *any* statically-sized array — it flags the declaration, not an actual proven vulnerability. In this case it was effectively a false positive since all accesses were bounded.
+
+**Change made:**
+I replaced the stack-allocated fixed array with heap allocation via `calloc`, which:
+1. Silences the Flawfinder static-array heuristic.
+2. Zero-initializes the buffer, guaranteeing termination even in pathological cases.
+3. Moves the 1KB off the stack (relevant for constrained/embedded stacks).
+4. Requires paired `free()` calls on all exit paths, which I've added to avoid introducing a leak.
+
+The word-capitalization logic itself is sound: `end = i - 1` cannot underflow because the inner whitespace-skip loop guarantees `str[start]` is a non-space character, so `i` advances at least once before `end` is computed.

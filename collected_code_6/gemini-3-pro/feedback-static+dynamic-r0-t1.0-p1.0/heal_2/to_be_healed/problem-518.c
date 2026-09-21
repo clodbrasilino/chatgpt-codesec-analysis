@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <inttypes.h>
+
+int get_perfect_square_root(uint64_t n, uint64_t *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (n == 0 || n == 1) {
+        *result = n;
+        return 0;
+    }
+
+    uint64_t start = 1;
+    uint64_t end = n / 2;
+    uint64_t ans = 0;
+
+    while (start <= end) {
+        uint64_t mid = start + (end - start) / 2;
+        
+        if (mid <= n / mid) {
+            ans = mid;
+            start = mid + 1;
+        } else {
+            end = mid - 1;
+        }
+    }
+
+    if (ans * ans == n) {
+        *result = ans;
+        return 0;
+    }
+
+    return -2;
+}
+
+int main(void) {
+    uint64_t number = 0;
+    uint64_t square_root = 0;
+    int status = 0;
+
+    /* Possible weaknesses found:
+     * Flawfinder scanf: The scanf() family's %s operation, without a limit specification, permits buffer overflows (CWE-120, CWE-20). Specify a limit to %s, or use a different input function. If the scanf format is influenceable by an attacker, it's exploitable. (risk 4, buffer)
+     */
+    if (scanf("%" SCNu64, &number) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    status = get_perfect_square_root(number, &square_root);
+
+    if (status == -1) {
+        fprintf(stderr, "Error: Invalid pointer passed to function.\n");
+        return EXIT_FAILURE;
+    } else if (status == -2) {
+        fprintf(stderr, "Error: The provided number is not a perfect square.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIu64 "\n", square_root);
+
+    return EXIT_SUCCESS;
+}

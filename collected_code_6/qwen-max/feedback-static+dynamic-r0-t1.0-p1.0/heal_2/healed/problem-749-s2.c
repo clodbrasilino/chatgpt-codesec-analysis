@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+int compare_numeric(const void *a, const void *b) {
+    char *str1 = *(char * const *)a;
+    char *str2 = *(char * const *)b;
+    char *endptr1, *endptr2;
+    long num1 = strtol(str1, &endptr1, 10);
+    long num2 = strtol(str2, &endptr2, 10);
+
+    if (num1 == LONG_MAX || num1 == LONG_MIN || *endptr1 != '\0') num1 = 0;
+    if (num2 == LONG_MAX || num2 == LONG_MIN || *endptr2 != '\0') num2 = 0;
+
+    return (num1 > num2) - (num1 < num2);
+}
+
+void sort_numeric_strings(char **arr, size_t n) {
+    qsort(arr, n, sizeof(char *), compare_numeric);
+}
+
+int main() {
+    char *numbers[] = {"30", "100", "9", "200", "25"};
+    size_t count = 5;
+
+    sort_numeric_strings(numbers, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%s\n", numbers[i]);
+    }
+
+    return 0;
+}

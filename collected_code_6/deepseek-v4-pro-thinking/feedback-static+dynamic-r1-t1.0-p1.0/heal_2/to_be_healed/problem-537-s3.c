@@ -1,0 +1,58 @@
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
+const char *first_repeated_word(const char *str) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    static char buffer[1024];
+    if (str == NULL) {
+        return "None";
+    }
+    const char *p = str;
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+        const char *start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            p++;
+        }
+        size_t len = (size_t)(p - start);
+        const char *q = str;
+        while (q < start) {
+            while (q < start && isspace((unsigned char)*q)) {
+                q++;
+            }
+            if (q >= start) {
+                break;
+            }
+            const char *wstart = q;
+            while (q < start && !isspace((unsigned char)*q)) {
+                q++;
+            }
+            size_t wlen = (size_t)(q - wstart);
+            if (wlen == len && strncmp(wstart, start, len) == 0) {
+                size_t i;
+                for (i = 0; i < len && i < sizeof(buffer) - 1; i++) {
+                    buffer[i] = start[i];
+                }
+                buffer[i] = '\0';
+                return buffer;
+            }
+        }
+    }
+    return "None";
+}
+
+int main(void) {
+    const char str[] = "cat dog cat dog";
+    const char *word = first_repeated_word(str);
+    printf("%s\n", word);
+    return 0;
+}

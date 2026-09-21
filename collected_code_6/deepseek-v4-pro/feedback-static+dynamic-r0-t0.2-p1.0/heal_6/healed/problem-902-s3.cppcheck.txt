@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-902-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-902-s3.c:46:17: style: Condition 'key_len>0' is always true [knownConditionTrueFalse]
+    if (key_len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-902-s3.c:38:34: note: Assignment 'key_len=strlen(key)+1', assigned value is greater than 0
+    size_t key_len = strlen(key) + 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-902-s3.c:41:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-902-s3.c:46:17: note: Condition 'key_len>0' is always true
+    if (key_len > 0) {
+                ^

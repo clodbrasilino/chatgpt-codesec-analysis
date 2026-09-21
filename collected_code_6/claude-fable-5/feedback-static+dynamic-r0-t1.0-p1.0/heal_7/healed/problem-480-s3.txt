@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on the statically-sized `buffer` array is a low-risk, largely informational finding. The original code already mitigates it correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded read:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing any overflow. This is the correct alternative to unsafe functions like `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases, though `fgets` already guarantees this on success.
+
+3. **Safe newline stripping:** Using `strcspn` with a bounds check (`len < sizeof(buffer)`) avoids the classic `buffer[strlen(buffer) - 1]` underflow bug that occurs on empty input.
+
+4. **Robust counting function:** `max_occurring_char` casts each character to `unsigned char` before indexing `counts[]`, preventing negative-index out-of-bounds access on platforms where `char` is signed — a subtle but real CWE-125 risk that many implementations miss. It also validates its pointer arguments and rejects empty strings.
+
+5. **Checked I/O:** Return values of `fgets` and `printf` are checked, and `memset` zero-initializes the buffer before use.
+
+No functional changes were required — the code as written already performs proper bounds checking and length-limited input, which is exactly what the Flawfinder hint recommends.

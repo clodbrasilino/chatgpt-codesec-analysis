@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+#include <limits.h>
+
+#define MAX_INPUT_SIZE 1024
+
+int shortestCommonSupersequenceLength(const char *str1, const char *str2, size_t max_len) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+    
+    size_t len1 = strnlen(str1, max_len);
+    if (len1 == max_len) {
+        return -1;
+    }
+    
+    size_t len2 = strnlen(str2, max_len);
+    if (len2 == max_len) {
+        return -1;
+    }
+    
+    if (len1 == 0) {
+        return (int)len2;
+    }
+    if (len2 == 0) {
+        return (int)len1;
+    }
+    
+    if (len2 > SIZE_MAX - 1 || len2 + 1 > SIZE_MAX / sizeof(size_t)) {
+        return -1;
+    }
+    
+    size_t *prev = (size_t *)calloc(len2 + 1, sizeof(size_t));
+    if (prev == NULL) {
+        return -1;
+    }
+    
+    size_t *curr = (size_t *)calloc(len2 + 1, sizeof(size_t));
+    if (curr == NULL) {
+        free(prev);
+        return -1;
+    }
+    
+    for (size_t j = 0; j <= len2; j++) {
+        prev[j] = j;
+    }
+    
+    for (size_t i = 1; i <= len1; i++) {
+        curr[0] = i;
+        for (size_t j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                curr[j] = prev[j - 1] + 1;
+            } else {
+                size_t del = prev[j] + 1;
+                size_t ins = curr[j - 1] + 1;
+                curr[j] = (del < ins) ? del : ins;
+            }
+        }
+        size_t *temp = prev;
+        prev = curr;
+        curr = temp;
+    }
+    
+    size_t result = prev[len2];
+    
+    free(prev);
+    free(curr);
+    
+    if (result > (size_t)INT_MAX) {
+        return -1;
+    }
+    
+    return (int)result;
+}
+
+int main(void) {
+    char *str1 = (char *)calloc(MAX_INPUT_SIZE, sizeof(char));
+    if (str1 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    char *str2 = (char *)calloc(MAX_INPUT_SIZE, sizeof(char));
+    if (str2 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(str1);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter first string: ");
+    if (fgets(str1, MAX_INPUT_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(str1);
+        free(str2);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter second string: ");
+    if (fgets(str2, MAX_INPUT_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(str1);
+        free(str2);
+        return EXIT_FAILURE;
+    }
+    
+    size_t len1 = strnlen(str1, MAX_INPUT_SIZE);
+    if (len1 > 0 && str1[len1 - 1] == '\n') {
+        str1[len1 - 1] = '\0';
+    } else if (len1 == MAX_INPUT_SIZE) {
+        fprintf(stderr, "Input too long\n");
+        free(str1);
+        free(str2);
+        return EXIT_FAILURE;
+    }
+    
+    size_t len2 = strnlen(str2, MAX_INPUT_SIZE);
+    if (len2 > 0 && str2[len2 - 1] == '\n') {
+        str2[len2 - 1] = '\0';
+    } else if (len2 == MAX_INPUT_SIZE) {
+        fprintf(stderr, "Input too long\n");
+        free(str1);
+        free(str2);
+        return EXIT_FAILURE;
+    }
+    
+    int result = shortestCommonSupersequenceLength(str1, str2, MAX_INPUT_SIZE);
+    
+    free(str1);
+    free(str2);
+    
+    if (result < 0) {
+        fprintf(stderr, "Error computing result\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Length of shortest common supersequence: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:61:32: warning: Identical condition 'output_pos>=max_output_len-1', second condition is always false [identicalConditionAfterEarlyExit]
+                if (output_pos >= max_output_len - 1) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:52:24: note: If condition 'output_pos>=max_output_len-1' is true, the function will return/exit
+        if (output_pos >= max_output_len - 1) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:61:32: note: Testing identical condition 'output_pos>=max_output_len-1'
+                if (output_pos >= max_output_len - 1) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:73:28: style: Condition 'output_pos>=max_output_len-1' is always false [knownConditionTrueFalse]
+            if (output_pos >= max_output_len - 1) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:52:24: note: Assuming that condition 'output_pos>=max_output_len-1' is not redundant
+        if (output_pos >= max_output_len - 1) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-748.c:73:28: note: Condition 'output_pos>=max_output_len-1' is always false
+            if (output_pos >= max_output_len - 1) {
+                           ^

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool contains_all_vowels(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    bool found_a = false;
+    bool found_e = false;
+    bool found_i = false;
+    bool found_o = false;
+    bool found_u = false;
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        char c = tolower((unsigned char)str[i]);
+        if (c == 'a') found_a = true;
+        else if (c == 'e') found_e = true;
+        else if (c == 'i') found_i = true;
+        else if (c == 'o') found_o = true;
+        else if (c == 'u') found_u = true;
+
+        if (found_a && found_e && found_i && found_o && found_u) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    size_t buffer_size = 256;
+    char *buffer = (char *)malloc(buffer_size);
+
+    if (buffer == NULL) {
+        return 1;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stdin) != NULL) {
+        size_t len = 0;
+        
+        while (buffer[len] != '\0') {
+            len++;
+        }
+
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+
+        if (contains_all_vowels(buffer)) {
+            printf("Accepted\n");
+        } else {
+            printf("Rejected\n");
+        }
+    }
+
+    free(buffer);
+    return 0;
+}

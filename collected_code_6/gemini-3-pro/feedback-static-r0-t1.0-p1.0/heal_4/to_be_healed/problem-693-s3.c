@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int remove_multiple_spaces(char **str) {
+    if (str == NULL || *str == NULL) {
+        return -1;
+    }
+
+    char *read_ptr = *str;
+    char *write_ptr = *str;
+    int in_space = 0;
+
+    while (*read_ptr != '\0') {
+        if (*read_ptr == ' ') {
+            if (!in_space) {
+                *write_ptr++ = *read_ptr;
+                in_space = 1;
+            }
+        } else {
+            *write_ptr++ = *read_ptr;
+            in_space = 0;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+
+    size_t new_len = (size_t)(write_ptr - *str);
+    char *resized = realloc(*str, new_len + 1);
+    if (resized != NULL) {
+        *str = resized;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *initial_text = "This   is  a    test string   with multiple     spaces.";
+    
+    size_t len = 0;
+    
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len<4096' is not redundant
+     *  Either the condition 'len<4096' is redundant or the array 'initial_text[56]' is accessed at index 4095, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Array index out of bounds
+     */
+    while (len < 4096 && initial_text[len] != '\0') {
+        len++;
+    }
+
+    char *text = malloc(len + 1);
+    if (text == NULL) {
+        return 1;
+    }
+
+    snprintf(text, len + 1, "%s", initial_text);
+
+    printf("Original: '%s'\n", text);
+
+    if (remove_multiple_spaces(&text) == 0) {
+        printf("Modified: '%s'\n", text);
+    } else {
+        printf("Error processing string.\n");
+    }
+
+    free(text);
+    return 0;
+}

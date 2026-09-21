@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool isConcatenation(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strnlen(str, max_len);
+    if (len == 0 || len == max_len && str[len] != '\0') {
+        return false;
+    }
+
+    for (size_t i = 1; i <= len / 2; ++i) {
+        if (len % i == 0) {
+            bool match = true;
+            for (size_t j = i; j < len; ++j) {
+                if (str[j] != str[j % i]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test1 = "abcabc";
+    const char *test2 = "ababab";
+    const char *test3 = "abcd";
+    const char *test4 = "";
+    const char *test5 = NULL;
+    
+    size_t max_safe_len = 256;
+
+    printf("%d\n", isConcatenation(test1, max_safe_len));
+    printf("%d\n", isConcatenation(test2, max_safe_len));
+    printf("%d\n", isConcatenation(test3, max_safe_len));
+    printf("%d\n", isConcatenation(test4, max_safe_len));
+    printf("%d\n", isConcatenation(test5, max_safe_len));
+
+    return 0;
+}

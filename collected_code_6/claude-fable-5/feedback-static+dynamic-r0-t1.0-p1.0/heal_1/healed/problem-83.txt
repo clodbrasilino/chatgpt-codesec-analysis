@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char get_char(const char *str, size_t max_len)
+{
+    unsigned long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0 || len >= max_len) {
+        return '\0';
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    return (char)((sum % 26UL) + (unsigned long)'a');
+}
+
+int main(void)
+{
+    const char *input = "abc";
+    char result;
+
+    result = get_char(input, MAX_INPUT_LEN);
+    if (result == '\0') {
+        fprintf(stderr, "Invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %c\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code's only flagged weakness was the use of `strlen` (CWE-126), which performs an unbounded read and will over-read memory if passed a non-NUL-terminated buffer.
+
+Key fixes applied:
+
+1. **Bounded length computation** – `strlen` is replaced with a manual bounded scan (equivalent to `strnlen`, which is POSIX but not guaranteed by C89/C99, so the manual loop keeps the code fully portable). The scan never reads past `max_len` bytes, eliminating the over-read risk.
+
+2. **Explicit maximum length contract** – `get_char` now takes a `max_len` parameter, making the buffer-size expectation part of the API rather than an implicit assumption. `MAX_INPUT_LEN` defines the sanity bound.
+
+3. **Rejection of untermininated input** – if the scan reaches `max_len` without finding a NUL (`len >= max_len`), the input is treated as invalid and `'\0'` is returned, so the caller's existing error path handles it.
+
+4. **Preserved defensive properties of the original** – the `NULL` check, empty-string check, the safe `unsigned char` cast before widening (avoiding sign-extension issues with negative `char` values), and the checked `printf` return value are all retained.

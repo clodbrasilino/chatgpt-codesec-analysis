@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+#define MAX_INPUT_LEN 256
+
+static int compare_numeric(const void *a, const void *b)
+{
+    const char *sa = *(const char *const *)a;
+    const char *sb = *(const char *const *)b;
+    long long va;
+    long long vb;
+    char *end;
+
+    errno = 0;
+    va = strtoll(sa, &end, 10);
+    if (errno != 0 || end == sa) {
+        va = 0;
+    }
+
+    errno = 0;
+    vb = strtoll(sb, &end, 10);
+    if (errno != 0 || end == sb) {
+        vb = 0;
+    }
+
+    if (va < vb) {
+        return -1;
+    }
+    if (va > vb) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_numeric_strings(const char **input, char **output, size_t count)
+{
+    size_t i;
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'len' can be reduced. [variableScope]
+     */
+    size_t len;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (input[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(output[j]);
+                output[j] = NULL;
+            }
+            return -1;
+        }
+
+        len = strnlen(input[i], MAX_INPUT_LEN);
+        if (len >= MAX_INPUT_LEN) {
+            for (j = 0; j < i; j++) {
+                free(output[j]);
+                output[j] = NULL;
+            }
+            return -1;
+        }
+
+        output[i] = malloc(len + 1);
+        if (output[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(output[j]);
+                output[j] = NULL;
+            }
+            return -1;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(output[i], input[i], len);
+        output[i][len] = '\0';
+    }
+
+    qsort(output, count, sizeof(char *), compare_numeric);
+    return 0;
+}
+
+int main(void)
+{
+    const char *numbers[] = { "42", "7", "1000", "-15", "0", "256", "-3" };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    char **sorted;
+    size_t i;
+
+    sorted = malloc(count * sizeof(char *));
+    if (sorted == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sort_numeric_strings(numbers, sorted, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free(sorted);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s\n", sorted[i]) < 0) {
+            for (; i < count; i++) {
+                free(sorted[i]);
+            }
+            free(sorted);
+            return EXIT_FAILURE;
+        }
+        free(sorted[i]);
+        sorted[i] = NULL;
+    }
+
+    free(sorted);
+    return EXIT_SUCCESS;
+}

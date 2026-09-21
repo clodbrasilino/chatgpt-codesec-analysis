@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char max_char = '\0';
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized buffer rather than an actual proven vulnerability. Here's why the code is safe, and what I hardened:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` already limits reads to 255 characters plus the null terminator, so no overflow is possible. This is the correct fix Flawfinder asks for.
+
+2. **Defensive null termination**: I added `buffer[sizeof(buffer) - 1] = '\0'` as belt-and-suspenders hardening. While `fgets` guarantees termination on success, this protects against future refactoring where the read call might change.
+
+3. **Replaced the manual length loop with `strcspn`**: The original hand-rolled `while` loop to find the newline was correct but verbose; `strcspn(buffer, "\n")` finds the first newline (or the terminator) in one bounded call and handles the empty-string case cleanly without the `len > 0` guard.
+
+4. **Signed-char safety preserved**: The cast to `unsigned char` before indexing `counts[]` remains — this is critical, since indexing with a plain `char` that is negative (e.g., high-bit bytes on platforms where `char` is signed) would be undefined behavior and an out-of-bounds read.
+
+5. **All error paths checked**: NULL/empty input, `fgets` failure, and even `printf` failure are handled, which is already stricter than typical code.

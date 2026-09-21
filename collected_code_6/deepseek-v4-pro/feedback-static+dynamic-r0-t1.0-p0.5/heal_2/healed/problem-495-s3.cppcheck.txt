@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-495-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-495-s3.c:77:23: style: The comparison 'remaining > input_len-src_pos' is always false because 'remaining' and 'input_len-src_pos' represent the same value. [knownConditionTrueFalse]
+        if (remaining > input_len - src_pos) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-495-s3.c:71:38: note: 'remaining' is assigned value 'input_len-src_pos' here.
+        size_t remaining = input_len - src_pos;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-495-s3.c:77:23: note: The comparison 'remaining > input_len-src_pos' is always false because 'remaining' and 'input_len-src_pos' represent the same value.
+        if (remaining > input_len - src_pos) {
+                      ^

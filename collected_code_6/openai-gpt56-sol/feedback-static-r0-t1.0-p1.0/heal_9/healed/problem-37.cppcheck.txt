@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-37.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-37.c:143:21: style: Condition 'total_count==0U' is always false [knownConditionTrueFalse]
+    if (total_count == 0U ||
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-37.c:141:33: note: Assignment 'total_count=integer_count+string_count', assigned value is 6
+    total_count = integer_count + string_count;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-37.c:143:21: note: Condition 'total_count==0U' is always false
+    if (total_count == 0U ||
+                    ^

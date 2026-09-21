@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *rows;
+    size_t num_rows;
+} TupleMatrix;
+
+bool tuples_are_similar(const Tuple *a, const Tuple *b) {
+    if (a->size != b->size) {
+        return false;
+    }
+    for (size_t i = 0; i < a->size; ++i) {
+        if (a->elements[i] != b->elements[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+TupleMatrix* remove_similar_rows(const TupleMatrix *matrix) {
+    if (!matrix || !matrix->rows) {
+        return NULL;
+    }
+
+    TupleMatrix *new_matrix = malloc(sizeof(TupleMatrix));
+    if (!new_matrix) {
+        return NULL;
+    }
+
+    new_matrix->rows = malloc(matrix->num_rows * sizeof(Tuple));
+    if (!new_matrix->rows) {
+        free(new_matrix);
+        return NULL;
+    }
+
+    new_matrix->num_rows = 0;
+
+    for (size_t i = 0; i < matrix->num_rows; ++i) {
+        bool is_duplicate = false;
+        for (size_t j = 0; j < new_matrix->num_rows; ++j) {
+            if (tuples_are_similar(&matrix->rows[i], &new_matrix->rows[j])) {
+                is_duplicate = true;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            size_t current_size = matrix->rows[i].size;
+            new_matrix->rows[new_matrix->num_rows].size = current_size;
+            new_matrix->rows[new_matrix->num_rows].elements = malloc(current_size * sizeof(int));
+            
+            if (!new_matrix->rows[new_matrix->num_rows].elements) {
+                for (size_t k = 0; k < new_matrix->num_rows; ++k) {
+                    free(new_matrix->rows[k].elements);
+                }
+                free(new_matrix->rows);
+                free(new_matrix);
+                return NULL;
+            }
+            
+            for (size_t k = 0; k < current_size; ++k) {
+                new_matrix->rows[new_matrix->num_rows].elements[k] = matrix->rows[i].elements[k];
+            }
+            
+            new_matrix->num_rows++;
+        }
+    }
+
+    if (new_matrix->num_rows > 0) {
+        Tuple *resized_rows = realloc(new_matrix->rows, new_matrix->num_rows * sizeof(Tuple));
+        if (resized_rows) {
+            new_matrix->rows = resized_rows;
+        }
+    } else {
+        free(new_matrix->rows);
+        new_matrix->rows = NULL;
+    }
+
+    return new_matrix;
+}
+
+void print_matrix(const TupleMatrix *matrix) {
+    if (!matrix) return;
+    for (size_t i = 0; i < matrix->num_rows; ++i) {
+        printf("(");
+        for (size_t j = 0; j < matrix->rows[i].size; ++j) {
+            printf("%d%s", matrix->rows[i].elements[j], 
+                   (j < matrix->rows[i].size - 1) ? ", " : "");
+        }
+        printf(")\n");
+    }
+}
+
+void free_matrix(TupleMatrix *matrix) {
+    if (matrix) {
+        if (matrix->rows) {
+            for (size_t i = 0; i < matrix->num_rows; ++i) {
+                free(matrix->rows[i].elements);
+            }
+            free(matrix->rows);
+        }
+        free(matrix);
+    }
+}
+
+int main(void) {
+    TupleMatrix matrix;
+    matrix.num_rows = 4;
+    matrix.rows = malloc(4 * sizeof(Tuple));
+    if (!matrix.rows) return 1;
+
+    {
+        const int r0[] = {1, 2, 3};
+        matrix.rows[0].size = 3;
+        matrix.rows[0].elements = malloc(3 * sizeof(int));
+        if (matrix.rows[0].elements) {
+            for (size_t i = 0; i < 3; ++i) {
+                matrix.rows[0].elements[i] = r0[i];
+            }
+        }
+    }
+
+    {
+        const int r1[] = {4, 5, 6};
+        matrix.rows[1].size = 3;
+        matrix.rows[1].elements = malloc(3 * sizeof(int));
+        if (matrix.rows[1].elements) {
+            for (size_t i = 0; i < 3; ++i) {
+                matrix.rows[1].elements[i] = r1[i];
+            }
+        }
+    }
+
+    {
+        const int r2[] = {1, 2, 3};
+        matrix.rows[2].size = 3;
+        matrix.rows[2].elements = malloc(3 * sizeof(int));
+        if (matrix.rows[2].elements) {
+            for (size_t i = 0; i < 3; ++i) {
+                matrix.rows[2].elements[i] = r2[i];
+            }
+        }
+    }
+
+    {
+        const int r3[] = {7, 8};
+        matrix.rows[3].size = 2;
+        matrix.rows[3].elements = malloc(2 * sizeof(int));
+        if (matrix.rows[3].elements) {
+            for (size_t i = 0; i < 2; ++i) {
+                matrix.rows[3].elements[i] = r3[i];
+            }
+        }
+    }
+
+    TupleMatrix *cleaned_matrix = remove_similar_rows(&matrix);
+
+    if (cleaned_matrix) {
+        print_matrix(cleaned_matrix);
+        free_matrix(cleaned_matrix);
+    }
+
+    for (size_t i = 0; i < matrix.num_rows; ++i) {
+        free(matrix.rows[i].elements);
+    }
+    free(matrix.rows);
+
+    return 0;
+}

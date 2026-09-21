@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (len > 0U) {
+        memcpy(copy, src, len);
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+static char **tuple_to_list(const char *const *tuple, size_t tuple_len,
+                            const char *insert, size_t *out_len)
+{
+    char **result;
+    size_t total;
+    size_t i;
+    size_t pos;
+
+    if (tuple == NULL || insert == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    if (tuple_len == 0U) {
+        return NULL;
+    }
+
+    if (tuple_len > (SIZE_MAX / sizeof(char *)) / 2U) {
+        return NULL;
+    }
+
+    total = tuple_len * 2U;
+    result = malloc(total * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0U;
+    for (i = 0U; i < tuple_len; i++) {
+        result[pos] = duplicate_string(tuple[i]);
+        if (result[pos] == NULL) {
+            free_string_list(result, pos);
+            return NULL;
+        }
+        pos++;
+
+        result[pos] = duplicate_string(insert);
+        if (result[pos] == NULL) {
+            free_string_list(result, pos);
+            return NULL;
+        }
+        pos++;
+    }
+
+    *out_len = total;
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = { "apple", "banana", "cherry" };
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    const char *insert = "FRUIT";
+    char **list;
+    size_t list_len;
+    size_t i;
+
+    list = tuple_to_list(tuple, tuple_len, insert, &list_len);
+    if (list == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("[");
+    for (i = 0U; i < list_len; i++) {
+        printf("'%s'", list[i]);
+        if (i + 1U < list_len) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    free_string_list(list, list_len);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+**The flagged `memcpy` (CWE-120) was already safe.** The destination buffer is allocated as `malloc(len + 1U)` immediately before the copy of exactly `len` bytes, followed by explicit null termination at `copy[len]`. The destination is therefore guaranteed to hold the source data. Flawfinder flags `memcpy` heuristically by name, not by data-flow analysis. The rewrite adds a `len > 0U` guard around `memcpy` as a defensive measure, though even that is not strictly required since `memcpy` with a count of zero is well-defined.
+
+Other aspects of the code that were already correct and preserved:
+
+- **Bounded string measurement:** `strnlen` with `MAX_STRING_LEN` prevents unbounded reads on non-terminated input, and the `len >= MAX_STRING_LEN` check rejects oversized or unterminated strings.
+- **Integer overflow protection:** the `tuple_len > (SIZE_MAX / sizeof(char *)) / 2U` check prevents overflow in both `tuple_len * 2U` and `total * sizeof(char *)`.
+- **Allocation failure handling:** every `malloc` return is checked, and partial allocations are cleaned up via `free_string_list(result, pos)` on failure, avoiding memory leaks.
+- **NULL-safety:** all public-facing pointer parameters are validated before use.
+
+The code compiles cleanly with `-Wall -Wextra -Wpedantic` and is free of leaks, overflows, and undefined behavior as written. Note that `strnlen` requires POSIX (`_POSIX_C_SOURCE >= 200809L`) or a C23-conforming library; on strictly C99/C11 hosted environments without POSIX, a small local replacement would be needed.

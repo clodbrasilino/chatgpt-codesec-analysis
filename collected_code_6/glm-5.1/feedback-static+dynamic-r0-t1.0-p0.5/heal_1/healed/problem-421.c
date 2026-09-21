@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_tuple(const char* tuple[], size_t size, const char* delimiter) {
+    if (tuple == NULL || delimiter == NULL || size == 0) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    size_t delimiter_length = strlen(delimiter);
+
+    for (size_t i = 0; i < size; i++) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        total_length += strlen(tuple[i]);
+        if (i < size - 1) {
+            total_length += delimiter_length;
+        }
+    }
+
+    char* result = (char*)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char* ptr = result;
+
+    for (size_t i = 0; i < size; i++) {
+        size_t item_length = strlen(tuple[i]);
+        memcpy(ptr, tuple[i], item_length);
+        ptr += item_length;
+        
+        if (i < size - 1) {
+            memcpy(ptr, delimiter, delimiter_length);
+            ptr += delimiter_length;
+        }
+    }
+
+    *ptr = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* tuple[] = {"apple", "banana", "cherry"};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    const char* delimiter = ", ";
+
+    char* result = concatenate_tuple(tuple, size, delimiter);
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result);
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

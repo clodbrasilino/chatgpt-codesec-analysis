@@ -1,0 +1,34 @@
+```c
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(void) {
+    unsigned int seed;
+    FILE *urandom = fopen("/dev/urandom", "rb");
+    if (urandom) {
+        if (fread(&seed, sizeof(seed), 1, urandom) != 1) {
+            fclose(urandom);
+            return EXIT_FAILURE;
+        }
+        fclose(urandom);
+    } else {
+        return EXIT_FAILURE;
+    }
+    
+    srand(seed);
+    
+    int test_number = rand() % 100;
+    bool result = is_even(test_number);
+    
+    if (result) {
+        return EXIT_SUCCESS;
+    }
+    
+    return EXIT_FAILURE;
+}
+```

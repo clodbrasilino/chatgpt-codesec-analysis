@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 32
+
+int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT];
+    size_t i;
+    size_t len;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT);
+    if (len == 0 || len >= MAX_INPUT) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+    int result;
+
+    printf("Enter a month name: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        if (len == sizeof(input) - 1) {
+            fprintf(stderr, "Input too long.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = has_28_days(input);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid month name input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days.\n", input);
+    } else {
+        printf("%s does not contain exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized arrays):** Both `normalized` and `input` buffers were already bounded correctly, but the rewrite hardens them further — `fgets(input, sizeof(input), ...)` limits the read, and an explicit `input[sizeof(input) - 1] = '\0'` guarantees termination regardless of input state.
+
+2. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen`, which bounds the scan to the buffer size, so a non-terminated string can never cause an over-read.
+
+3. **CWE-120/CWE-20 (`getchar` loop):** The drain loop only discards characters and never writes to a buffer, so no overflow is possible. Additionally, the rewrite detects truncated input (buffer filled without a newline) and rejects it explicitly rather than silently processing a partial string.
+
+4. **Extra hardening:** `has_28_days` now rejects non-alphabetic characters, tightening input validation (CWE-20), and `fflush(stdout)` ensures the prompt is displayed before blocking on input.

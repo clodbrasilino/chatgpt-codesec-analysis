@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:28:27: style: Variable 't.str[str_length]' is reassigned a value before the old one has been used. [redundantAssignment]
+        t.str[str_length] = '\0';
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:26:31: note: t.str[str_length] is assigned
+            t.str[str_length] = '\0';
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:28:27: note: t.str[str_length] is overwritten
+        t.str[str_length] = '\0';
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:42:42: style: The comparison 'alloc_size >= list_len*sizeof(int)' is always true because 'alloc_size' and 'list_len*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (alloc_size > 0 && alloc_size >= list_len * sizeof(int)) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:41:38: note: 'alloc_size' is assigned value 'list_len*sizeof(int)' here.
+        size_t alloc_size = list_len * sizeof(int);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-788.c:42:42: note: The comparison 'alloc_size >= list_len*sizeof(int)' is always true because 'alloc_size' and 'list_len*sizeof(int)' represent the same value.
+        if (alloc_size > 0 && alloc_size >= list_len * sizeof(int)) {
+                                         ^

@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_WORD_LENGTH 256
+
+bool is_word_length_odd(const char *word, size_t max_length)
+{
+    size_t length;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    length = strnlen(word, max_length);
+    return (length % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LENGTH];
+    size_t length;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+    if (length > 0U && buffer[length - 1U] == '\n') {
+        buffer[length - 1U] = '\0';
+    } else if (length == sizeof(buffer) - 1U) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "Error: empty input.\n");
+        return 1;
+    }
+
+    if (is_word_length_odd(buffer, sizeof(buffer))) {
+        printf("The length of the word \"%s\" is odd.\n", buffer);
+    } else {
+        printf("The length of the word \"%s\" is even.\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely defensive, and the Flawfinder hit on `char buffer[MAX_WORD_LENGTH]` was a low-risk (risk 2) informational warning rather than an actual vulnerability. Here's why the code is safe, and what was improved:
+
+**Already mitigated in the original:**
+- `fgets(buffer, sizeof(buffer), stdin)` performs bounds-checked reading — no overflow possible (CWE-120 mitigated).
+- `sizeof(buffer)` is used consistently instead of hardcoded constants, so the size can't drift out of sync with the declaration.
+- `strnlen` is used instead of `strlen`, guaranteeing bounded traversal even if the buffer were somehow unterminated.
+- Explicit `buffer[sizeof(buffer) - 1U] = '\0'` guarantees NUL-termination (defensive, since `fgets` already terminates).
+- `NULL` check in `is_word_length_odd` before dereferencing.
+- Return value of `fgets` is checked for I/O failure/EOF.
+
+**Improvement added:**
+- **Input truncation handling:** if the user enters a word longer than 255 characters, `fgets` leaves the remainder (and the newline) in `stdin`. The rewrite detects the missing newline at maximum length and drains the rest of the line, preventing stale input from leaking into any subsequent reads and ensuring the program's state is consistent. This addresses the residual concern behind the CWE-119/CWE-120 warning: the fixed-size buffer can't overflow, but its restriction must be handled gracefully.
+
+No unsafe functions (`gets`, `strcpy`, `sprintf`, etc.) are present, and all array indexing (`buffer[length - 1U]`) is guarded by a `length > 0U` check, so no out-of-bounds access is possible.

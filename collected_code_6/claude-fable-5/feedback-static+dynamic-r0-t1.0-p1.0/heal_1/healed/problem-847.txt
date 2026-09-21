@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *items;
+    size_t size;
+} List;
+
+typedef struct {
+    List *element;
+} SingletonTuple;
+
+List *copy_list_from_tuple(const SingletonTuple *tuple)
+{
+    List *copy;
+    size_t bytes;
+
+    if (tuple == NULL || tuple->element == NULL) {
+        return NULL;
+    }
+
+    copy = malloc(sizeof(List));
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    copy->size = tuple->element->size;
+
+    if (copy->size == 0) {
+        copy->items = NULL;
+        return copy;
+    }
+
+    if (tuple->element->items == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    if (copy->size > SIZE_MAX / sizeof(int)) {
+        free(copy);
+        return NULL;
+    }
+
+    bytes = copy->size * sizeof(int);
+
+    copy->items = malloc(bytes);
+    if (copy->items == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    memcpy(copy->items, tuple->element->items, bytes);
+
+    return copy;
+}
+
+void free_list(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        free(list);
+    }
+}
+
+int main(void)
+{
+    int data[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(data) / sizeof(data[0]);
+    size_t bytes;
+    size_t i;
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Size overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    bytes = count * sizeof(int);
+
+    List original;
+    original.items = malloc(bytes);
+    if (original.items == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(original.items, data, bytes);
+    original.size = count;
+
+    SingletonTuple tuple;
+    tuple.element = &original;
+
+    List *copied = copy_list_from_tuple(&tuple);
+    if (copied == NULL) {
+        fprintf(stderr, "Copy failed\n");
+        free(original.items);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < original.size; i++) {
+        printf("%d ", original.items[i]);
+    }
+    printf("\n");
+
+    printf("Copied list:   ");
+    for (i = 0; i < copied->size; i++) {
+        printf("%d ", copied->items[i]);
+    }
+    printf("\n");
+
+    free(original.items);
+    free_list(copied);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-120 (memcpy in `copy_list_from_tuple`)**: The original code copied from `tuple->element->items` without verifying the source pointer was non-NULL, and the allocation size `copy->size * sizeof(int)` could overflow `size_t`, causing an undersized allocation followed by an out-of-bounds write. The rewrite adds:
+   - A NULL check on the source buffer (`tuple->element->items`) when `size > 0`, preventing a copy from an invalid source.
+   - An explicit overflow guard (`copy->size > SIZE_MAX / sizeof(int)`) before computing the byte count, guaranteeing the destination allocation matches exactly the number of bytes copied.
+   - A single `bytes` variable used for both `malloc` and `memcpy`, ensuring destination capacity and copy length can never diverge.
+
+2. **CWE-120 (memcpy in `main`)**: Same pattern applied — the byte count is computed once with an overflow check, then used consistently for both allocation and copy, so the destination is provably large enough to hold the source data.
+
+3. **Added `<stdint.h>`** for `SIZE_MAX` to make the overflow checks portable.
+
+The remaining structure (error handling paths, `free_list`, cleanup on failure) was already correct and leak-free, so it is preserved unchanged.

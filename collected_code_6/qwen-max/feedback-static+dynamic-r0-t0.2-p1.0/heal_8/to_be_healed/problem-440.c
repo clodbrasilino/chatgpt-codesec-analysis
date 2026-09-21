@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_ADVERBS 100
+#define MAX_WORD_LENGTH 50
+
+typedef struct {
+    char *word;
+    int start;
+    int end;
+} AdverbInfo;
+
+int is_adverb(const char *word, size_t word_len) {
+    if (word_len < 3) return 0;
+    if (word[word_len - 2] == 'l' && word[word_len - 1] == 'y') return 1;
+    return 0;
+}
+
+int find_adverbs(const char *sentence, AdverbInfo *adverbs, int *count) {
+    const char *delimiters = " ,.!?;:";
+    char *copy = strdup(sentence);
+    if (!copy) return -1;
+
+    *count = 0;
+    char *token = strtok(copy, delimiters);
+    while (token && *count < MAX_ADVERBS) {
+        size_t token_len = strnlen(token, MAX_WORD_LENGTH);
+        if (is_adverb(token, token_len)) {
+            adverbs[*count].start = token - copy + (copy - sentence);
+            adverbs[*count].end = adverbs[*count].start + token_len - 1;
+            adverbs[*count].word = malloc(token_len + 1);
+            if (!adverbs[*count].word) {
+                free(copy);
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(adverbs[*count].word, token, token_len);
+            adverbs[*count].word[token_len] = '\0';
+            (*count)++;
+        }
+        token = strtok(NULL, delimiters);
+    }
+
+    free(copy);
+    return 0;
+}
+
+void free_adverbs(AdverbInfo *adverbs, int count) {
+    for (int i = 0; i < count; i++) {
+        free(adverbs[i].word);
+    }
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away from the scene.";
+    AdverbInfo adverbs[MAX_ADVERBS];
+    int count = 0;
+
+    if (find_adverbs(sentence, adverbs, &count) == 0) {
+        for (int i = 0; i < count; i++) {
+            printf("Adverb: %s, Start: %d, End: %d\n", adverbs[i].word, adverbs[i].start, adverbs[i].end);
+        }
+        free_adverbs(adverbs, count);
+    } else {
+        printf("Error finding adverbs.\n");
+    }
+
+    return 0;
+}

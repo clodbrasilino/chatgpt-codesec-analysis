@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-570-s2.c:6:15: error: static declaration of 'strnlen' follows non-static declaration
+    6 | static size_t strnlen(const char *s, size_t maxlen) {
+      |               ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:164:10: note: previous declaration is here
+  164 | size_t   strnlen(const char *_LIBC_COUNT(__n) __s1, size_t __n) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);
+      |          ^
+1 error generated.

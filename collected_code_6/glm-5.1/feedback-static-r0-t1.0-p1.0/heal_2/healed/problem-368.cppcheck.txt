@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-368.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-368.c:37:23: style: Condition 'next_copy>total_size-copied' is always false [knownConditionTrueFalse]
+        if (next_copy > total_size - copied) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-368.c:36:59: note: Assignment 'next_copy=(copied<total_size-copied)?copied:total_size-copied', assigned value is less than symbolic=total_size-copied+1
+        size_t next_copy = (copied < total_size - copied) ? copied : total_size - copied;
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-368.c:37:23: note: Condition 'next_copy>total_size-copied' is always false
+        if (next_copy > total_size - copied) {
+                      ^

@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder hits in the original source are all *risk level 1* (informational) warnings about raw array indexing inside a loop. On inspection, every one of them is already mitigated by the existing code, so the rewrite above preserves the logic while dropping the annotation comments:
+
+1. **`str[read]` reads** — guarded by `read < max_len && str[read] != '\0'`, so the loop can never read past the caller-supplied bound, and it also stops at the string terminator. Out-of-bounds reads (CWE-125) are prevented.
+
+2. **`str[write]` writes** — guarded by `write < max_len - 1`, which deliberately reserves one byte for the NUL terminator. Since `write <= read` is an invariant (this is an in-place compaction), the write index can never outrun the read index anyway, but the explicit check makes the bound obvious and defends against future refactoring. No buffer overflow (CWE-120).
+
+3. **NULL / zero-length guard** — the early `str == NULL || max_len == 0` return prevents dereferencing a null pointer and prevents `max_len - 1` from underflowing to `SIZE_MAX` (a classic unsigned wraparound trap, CWE-191).
+
+4. **`isspace((unsigned char)str[read])`** — the cast to `unsigned char` is correct and important: passing a negative `char` value (e.g., from extended/UTF-8 bytes) to `isspace` is undefined behavior per the C standard.
+
+5. **Guaranteed termination** — the final block ensures `str` is always NUL-terminated within `max_len`, covering both the normal and truncation paths (CWE-170).
+
+6. **Call site** — `main` passes `sizeof(text)` on a true array (not a decayed pointer), so `max_len` accurately reflects the buffer size, including the terminator.
+
+The code is safe as written; the rewrite is functionally identical with the audit comments removed.

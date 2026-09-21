@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int check_no_profit_no_loss(int cost_price, int selling_price) {
+    if (cost_price < 0 || selling_price < 0) {
+        return -1;
+    }
+    if (cost_price == selling_price) {
+        return 1;
+    }
+    return 0;
+}
+
+int parse_input(const char *str, int *out_value) {
+    char *endptr;
+    errno = 0;
+    long val = strtol(str, &endptr, 10);
+    
+    if (errno == ERANGE || val < INT_MIN || val > INT_MAX || endptr == str || *endptr != '\0') {
+        return 0;
+    }
+    
+    *out_value = (int)val;
+    return 1;
+}
+
+int main(int argc, const char * const argv[]) {
+    int cost_price = 100;
+    int selling_price = 100;
+
+    if (argc >= 3) {
+        if (!parse_input(argv[1], &cost_price) || !parse_input(argv[2], &selling_price)) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+    }
+
+    int result = check_no_profit_no_loss(cost_price, selling_price);
+
+    if (result == 1) {
+        printf("No profit and no loss.\n");
+    } else if (result == 0) {
+        printf("Profit or loss occurred.\n");
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}

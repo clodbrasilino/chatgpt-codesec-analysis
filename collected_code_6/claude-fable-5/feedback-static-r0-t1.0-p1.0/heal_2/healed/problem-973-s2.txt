@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (d > len || (len - d) > len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if (len + 1 > str_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the Flawfinder `memcpy` warnings are heuristic (risk 2) and flag every use of `memcpy` regardless of context. The rewrite addresses them explicitly:
+
+1. **First `memcpy` (`temp`, `str + d`, `len - d`)**: `temp` holds `len + 1` bytes, and since `d < len` after the modulo, `len - d < len + 1`. The added guard `(len - d) > len` makes this invariant explicit and defensive against future refactoring.
+
+2. **Second `memcpy` (`temp + (len - d)`, `str`, `d`)**: Writes exactly `d` bytes starting at offset `len - d`, totaling `len` bytes — within bounds. The `d > len` guard documents this.
+
+3. **Third `memcpy` (`str`, `temp`, `len + 1`)**: The critical fix — an explicit check that `len + 1 <= str_size` guarantees the destination buffer can hold the copy, directly satisfying CWE-120's requirement. (This was implied by `strnlen` returning `len < str_size`, but is now enforced at the point of the write.)
+
+4. **Added `MAX_STR_LEN` sanity bound** on `str_size` to reject absurd sizes, using the previously unused macro.
+
+5. **`malloc` overflow**: `len + 1` cannot overflow since `len < str_size <= MAX_STR_LEN`.
+
+The function remains correct: caller passes `sizeof(str)` so the size contract holds, all error paths free `temp`, and behavior for `d >= len` is handled via modulo.

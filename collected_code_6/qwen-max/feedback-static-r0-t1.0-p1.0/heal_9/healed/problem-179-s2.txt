@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+int* generate_initial_terms(long n, int *len) {
+    char s[21];
+    snprintf(s, sizeof(s), "%ld", n);
+    *len = (int)strnlen(s, sizeof(s));
+    int* terms = (int*)malloc(*len * sizeof(int));
+    if (!terms) {
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < *len; i++) {
+        terms[i] = s[i] - '0';
+    }
+    return terms;
+}
+
+bool is_keith_number(long n) {
+    if (n < 10) {
+        return false;
+    }
+    int len;
+    int* terms = generate_initial_terms(n, &len);
+
+    while (true) {
+        long sum = 0;
+        for (int i = 0; i < len; i++) {
+            sum += terms[i];
+        }
+        if (sum > n) {
+            free(terms);
+            return false;
+        } else if (sum == n) {
+            free(terms);
+            return true;
+        }
+        for (int i = 0; i < len - 1; ++i) {
+            terms[i] = terms[i + 1];
+        }
+        terms[len - 1] = sum;
+    }
+}
+
+int main() {
+    long num;
+    printf("Enter a number: ");
+    if (scanf("%ld", &num) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+    if (is_keith_number(num)) {
+        printf("%ld is a Keith Number.\n", num);
+    } else {
+        printf("%ld is not a Keith Number.\n", num);
+    }
+    return EXIT_SUCCESS;
+}
+```

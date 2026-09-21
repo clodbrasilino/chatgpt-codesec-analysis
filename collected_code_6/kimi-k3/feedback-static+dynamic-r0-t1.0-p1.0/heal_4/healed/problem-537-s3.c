@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define MAX_WORDS 1000
+#define MAX_INPUT_LEN 1000
+
+char* find_first_repeated_word(const char* str, size_t max_len) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char (*words)[MAX_WORD_LEN] = calloc(MAX_WORDS, sizeof(char[MAX_WORD_LEN]));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    char current_word[MAX_WORD_LEN] = {0};
+    size_t word_count = 0;
+    size_t current_len = 0;
+    size_t i = 0;
+
+    while (i < max_len && str[i] != '\0') {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isalpha(c)) {
+            if (current_len < MAX_WORD_LEN - 1) {
+                current_word[current_len++] = (char)tolower(c);
+            }
+        } else {
+            if (current_len > 0) {
+                current_word[current_len] = '\0';
+
+                for (size_t j = 0; j < word_count; j++) {
+                    if (strncmp(words[j], current_word, MAX_WORD_LEN) == 0) {
+                        size_t len = strnlen(current_word, MAX_WORD_LEN);
+                        char* result = malloc(len + 1);
+                        if (result != NULL) {
+                            memcpy(result, current_word, len);
+                            result[len] = '\0';
+                        }
+                        free(words);
+                        return result;
+                    }
+                }
+
+                if (word_count < MAX_WORDS) {
+                    size_t copy_len = strnlen(current_word, MAX_WORD_LEN - 1);
+                    memcpy(words[word_count], current_word, copy_len);
+                    words[word_count][copy_len] = '\0';
+                    word_count++;
+                }
+
+                current_len = 0;
+                current_word[0] = '\0';
+            }
+        }
+        i++;
+    }
+
+    if (current_len > 0) {
+        current_word[current_len] = '\0';
+
+        for (size_t j = 0; j < word_count; j++) {
+            if (strncmp(words[j], current_word, MAX_WORD_LEN) == 0) {
+                size_t len = strnlen(current_word, MAX_WORD_LEN);
+                char* result = malloc(len + 1);
+                if (result != NULL) {
+                    memcpy(result, current_word, len);
+                    result[len] = '\0';
+                }
+                free(words);
+                return result;
+            }
+        }
+    }
+
+    free(words);
+    return NULL;
+}
+
+int main(void) {
+    char input[MAX_INPUT_LEN];
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
+
+        char* result = find_first_repeated_word(input, sizeof(input));
+
+        if (result != NULL) {
+            printf("First repeated word: %s\n", result);
+            free(result);
+        } else {
+            printf("No repeated word found.\n");
+        }
+    }
+
+    return 0;
+}

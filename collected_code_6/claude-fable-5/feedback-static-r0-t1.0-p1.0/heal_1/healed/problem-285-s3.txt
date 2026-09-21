@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TEXT_LEN 4096
+
+int match_a_followed_by_bb(const char *text)
+{
+    size_t i;
+    size_t len;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    len = strnlen(text, MAX_TEXT_LEN);
+
+    for (i = 0; i < len; i++) {
+        if (text[i] == 'a') {
+            size_t count = 0;
+            size_t j = i + 1;
+
+            while (j < len && text[j] == 'b' && count < 3) {
+                count++;
+                j++;
+            }
+
+            if (count >= 2 && count <= 3) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "abb",
+        "abbb",
+        "abbbb",
+        "ab",
+        "aabbc",
+        "xyz",
+        "aabbbbc",
+        ""
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        int result = match_a_followed_by_bb(tests[i]);
+        if (printf("\"%s\" -> %s\n", tests[i], result ? "match" : "no match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the change:**
+
+The Flawfinder warning (CWE-126) concerned `strlen()` potentially over-reading if the input string is not null-terminated. The fix replaces `strlen(text)` with `strnlen(text, MAX_TEXT_LEN)`, which bounds the scan to a defined maximum length (`4096` bytes). This guarantees the read never exceeds a known limit, even if a caller passes a buffer lacking a `\0` terminator, preventing a potential crash or information disclosure from an out-of-bounds read.
+
+A few notes worth keeping in mind:
+
+- `strnlen()` is POSIX (and available in C23 via Annex K variants as `strnlen_s`); if strict C89/C99 portability is required, a small manual bounded loop would be the alternative.
+- The rest of the logic was already safe: the `NULL` check guards against null-pointer dereference, all indexing is bounded by `len`, and `size_t` is used consistently to avoid signed/unsigned issues.
+- The `printf` return value check in `main` correctly handles stream write failures, which is good defensive practice.

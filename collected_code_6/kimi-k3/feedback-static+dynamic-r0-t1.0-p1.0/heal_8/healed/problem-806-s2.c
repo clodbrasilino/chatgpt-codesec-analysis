@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int max_uppercase_run(const char *str)
+{
+    int max_run = 0;
+    int current_run = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (isupper((unsigned char)str[i])) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+    }
+
+    return max_run;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t len;
+
+    len = getline(&buffer, &buffer_size, stdin);
+    if (len != -1) {
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        printf("%d\n", max_uppercase_run(buffer));
+    }
+
+    free(buffer);
+    return 0;
+}

@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_odd_index_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc((len / 2U) + 2U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *original = "abcdefghij";
+    char *filtered;
+
+    filtered = remove_odd_index_chars(original);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", original);
+    printf("Filtered: %s\n", filtered);
+
+    free(filtered);
+    filtered = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the CWE-126 (buffer over-read) risk flagged by Flawfinder. `strnlen` bounds the scan to `MAX_INPUT_LEN` bytes, so a non-NUL-terminated string cannot cause an unbounded over-read.
+
+2. **Added a length sanity check** — If `strnlen` returns the maximum (meaning no terminator was found within the bound, or the string is suspiciously large), the function bails out with `NULL` rather than processing potentially malformed input.
+
+3. **Preserved existing defensive measures** — The original code already handled `NULL` input, checked the `malloc` return value, allocated with headroom (`len / 2 + 2`) to guarantee space for the terminator, freed the buffer, and nulled the dangling pointer. All of that is retained.
+
+One note: `strnlen` is POSIX (and C23); if strict C89/C99 portability is required, an equivalent bounded loop (`memchr(input, '\0', MAX_INPUT_LEN)`) could be substituted.

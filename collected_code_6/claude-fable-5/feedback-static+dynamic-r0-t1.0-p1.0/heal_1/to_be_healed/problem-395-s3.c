@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int first_non_repeated_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (counts[(unsigned char)str[i]] == 1) {
+            *result = str[i];
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "swiss",
+        "aabbcc",
+        "programming",
+        "",
+        "x"
+    };
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+    char result;
+
+    for (i = 0; i < num_tests; i++) {
+        if (first_non_repeated_char(test_strings[i], &result) == 0) {
+            if (printf("First non-repeated character in \"%s\": %c\n",
+                       test_strings[i], result) < 0) {
+                return 1;
+            }
+        } else {
+            if (printf("No non-repeated character found in \"%s\"\n",
+                       test_strings[i]) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}

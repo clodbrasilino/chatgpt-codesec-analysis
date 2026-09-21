@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **shortlist_words(char **words, int word_count, size_t n, int *result_count) {
+    char **result = NULL;
+    int count = 0;
+    int i;
+
+    if (words == NULL || result_count == NULL || word_count < 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    result = malloc(sizeof(char *) * (word_count > 0 ? word_count : 1));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < word_count; i++) {
+        if (words[i] != NULL) {
+            size_t len = strnlen(words[i], n + 2);
+            if (len > n && words[i][len] == '\0') {
+                /* Possible weaknesses found:
+                 * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+                 */
+                size_t word_len = strlen(words[i]);
+                result[count] = malloc(word_len + 1);
+                if (result[count] == NULL) {
+                    int j;
+                    for (j = 0; j < count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *result_count = 0;
+                    return NULL;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[count], words[i], word_len + 1);
+                count++;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = count;
+    return result;
+}
+
+int main(void) {
+    char *words[] = {"apple", "banana", "kiwi", "strawberry", "pear", "grapefruit"};
+    int word_count = sizeof(words) / sizeof(words[0]);
+    size_t n = 5;
+    int result_count = 0;
+    char **result;
+    int i;
+
+    result = shortlist_words(words, word_count, n, &result_count);
+
+    if (result == NULL) {
+        printf("No words longer than %zu characters found.\n", n);
+        return 0;
+    }
+
+    printf("Words longer than %zu characters:\n", n);
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

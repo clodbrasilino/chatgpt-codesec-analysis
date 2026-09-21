@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdlib.h>
+
+bool isIsomorphic(const char *s, const char *t) {
+    if (s == NULL || t == NULL) {
+        return false;
+    }
+
+    const size_t map_size = (size_t)UCHAR_MAX + 1;
+    unsigned char *map_s_t = calloc(map_size, sizeof(unsigned char));
+    unsigned char *map_t_s = calloc(map_size, sizeof(unsigned char));
+
+    if (!map_s_t || !map_t_s) {
+        free(map_s_t);
+        free(map_t_s);
+        return false;
+    }
+
+    bool result = true;
+
+    for (size_t i = 0; ; i++) {
+        unsigned char c1 = (unsigned char)s[i];
+        unsigned char c2 = (unsigned char)t[i];
+
+        if (c1 == '\0' && c2 == '\0') {
+            break;
+        }
+        if (c1 == '\0' || c2 == '\0') {
+            result = false;
+            break;
+        }
+
+        if (map_s_t[c1] == 0 && map_t_s[c2] == 0) {
+            map_s_t[c1] = c2;
+            map_t_s[c2] = c1;
+        } else if (map_s_t[c1] != c2 || map_t_s[c2] != c1) {
+            result = false;
+            break;
+        }
+    }
+
+    free(map_s_t);
+    free(map_t_s);
+    return result;
+}
+
+int main(void) {
+    printf("%d\n", isIsomorphic("egg", "add"));
+    printf("%d\n", isIsomorphic("foo", "bar"));
+    printf("%d\n", isIsomorphic("paper", "title"));
+    printf("%d\n", isIsomorphic("ab", "aa"));
+    printf("%d\n", isIsomorphic("", ""));
+    printf("%d\n", isIsomorphic(NULL, "a"));
+    return 0;
+}
+```

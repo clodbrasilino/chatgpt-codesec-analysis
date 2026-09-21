@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:51:46: error: passing argument 1 of 'concat_adjacent_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+   51 |     char* result1 = concat_adjacent_elements(tuple1, size1);
+      |                                              ^~~~~~
+      |                                              |
+      |                                              char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:5:44: note: expected 'const char **' but argument is of type 'char **'
+    5 | char* concat_adjacent_elements(const char* tuple[], int size) {
+      |                                ~~~~~~~~~~~~^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:60:46: error: passing argument 1 of 'concat_adjacent_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+   60 |     char* result2 = concat_adjacent_elements(tuple2, size2);
+      |                                              ^~~~~~
+      |                                              |
+      |                                              char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:5:44: note: expected 'const char **' but argument is of type 'char **'
+    5 | char* concat_adjacent_elements(const char* tuple[], int size) {
+      |                                ~~~~~~~~~~~~^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:69:46: error: passing argument 1 of 'concat_adjacent_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+   69 |     char* result3 = concat_adjacent_elements(tuple3, size3);
+      |                                              ^~~~~~
+      |                                              |
+      |                                              char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-206-s3.c:5:44: note: expected 'const char **' but argument is of type 'char **'
+    5 | char* concat_adjacent_elements(const char* tuple[], int size) {
+      |                                ~~~~~~~~~~~~^~~~~~~

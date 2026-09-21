@@ -1,0 +1,165 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_ELEMENT_LENGTH 4096U
+
+static void free_string_array(char **strings, size_t count)
+{
+    size_t i;
+
+    if (strings == NULL)
+    {
+        return;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+static size_t bounded_string_length(const char *str, size_t max_len)
+{
+    size_t len = 0U;
+
+    if (str == NULL)
+    {
+        return 0U;
+    }
+
+    while (len < max_len && str[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+static int safe_memcpy(char *dest, size_t dest_size, size_t offset, const char *src, size_t src_len)
+{
+    if (dest == NULL || src == NULL)
+    {
+        return -1;
+    }
+
+    if (offset > dest_size || src_len > dest_size - offset)
+    {
+        return -1;
+    }
+
+    memcpy(dest + offset, src, src_len);
+    return 0;
+}
+
+static char **concat_adjacent_elements(const char *const *elements, size_t count, size_t *out_count)
+{
+    char **result;
+    size_t i;
+
+    if (out_count == NULL)
+    {
+        return NULL;
+    }
+    *out_count = 0U;
+
+    if (elements == NULL || count < 2U)
+    {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        if (elements[i] == NULL)
+        {
+            return NULL;
+        }
+    }
+
+    if ((count - 1U) > (SIZE_MAX / sizeof(*result)))
+    {
+        return NULL;
+    }
+
+    result = malloc((count - 1U) * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0U; i < count - 1U; i++)
+    {
+        size_t left_len = bounded_string_length(elements[i], MAX_ELEMENT_LENGTH + 1U);
+        size_t right_len = bounded_string_length(elements[i + 1U], MAX_ELEMENT_LENGTH + 1U);
+        size_t total_len;
+        size_t alloc_size;
+
+        if (left_len > MAX_ELEMENT_LENGTH || right_len > MAX_ELEMENT_LENGTH)
+        {
+            free_string_array(result, i);
+            return NULL;
+        }
+
+        if (left_len > SIZE_MAX - right_len - 1U)
+        {
+            free_string_array(result, i);
+            return NULL;
+        }
+
+        total_len = left_len + right_len;
+        alloc_size = total_len + 1U;
+
+        result[i] = malloc(alloc_size);
+        if (result[i] == NULL)
+        {
+            free_string_array(result, i);
+            return NULL;
+        }
+
+        if (safe_memcpy(result[i], alloc_size, 0U, elements[i], left_len) != 0)
+        {
+            free_string_array(result, i + 1U);
+            return NULL;
+        }
+
+        if (safe_memcpy(result[i], alloc_size, left_len, elements[i + 1U], right_len) != 0)
+        {
+            free_string_array(result, i + 1U);
+            return NULL;
+        }
+
+        result[i][total_len] = '\0';
+    }
+
+    *out_count = count - 1U;
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"1", "2", "3", "4", "5"};
+    const size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    char **result;
+    size_t result_count = 0U;
+    size_t i;
+
+    result = concat_adjacent_elements(tuple, tuple_size, &result_count);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: failed to concatenate adjacent elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < result_count; i++)
+    {
+        printf("%s\n", result[i]);
+    }
+
+    free_string_array(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421-s2.c: In function 'concatenate_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-421-s2.c:35:13: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   35 |             memcpy_s(ptr, remaining, tuple[i], bytes_to_copy);
+      |             ^~~~~~~~
+      |             memcpy

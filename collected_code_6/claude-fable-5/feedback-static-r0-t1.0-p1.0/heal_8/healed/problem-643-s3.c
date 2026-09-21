@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+
+static int is_word_char(int c)
+{
+    return isalnum((unsigned char)c) || c == '_';
+}
+
+static int word_has_inner_z(const char *word, size_t len)
+{
+    if (word == NULL || len < 3U) {
+        return 0;
+    }
+
+    for (size_t i = 1U; i < len - 1U; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int copy_word(char *dest, size_t dest_size, const char *src, size_t len)
+{
+    if (dest == NULL || src == NULL || dest_size == 0U) {
+        return -1;
+    }
+
+    if (len >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, src, len);
+    dest[len] = '\0';
+
+    return 0;
+}
+
+int match_word_with_inner_z(const char *text, char *result, size_t result_size)
+{
+    if (text == NULL || result == NULL || result_size == 0U) {
+        return -1;
+    }
+
+    result[0] = '\0';
+
+    const size_t text_len = strnlen(text, (size_t)-1 / 2U);
+    size_t i = 0U;
+
+    while (i < text_len) {
+        while (i < text_len && !is_word_char((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t start = i;
+
+        while (i < text_len && is_word_char((unsigned char)text[i])) {
+            i++;
+        }
+
+        const size_t len = i - start;
+
+        if (len > 0U && word_has_inner_z(&text[start], len)) {
+            if (copy_word(result, result_size, &text[start], len) != 0) {
+                return -1;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the lazy dog jumped",
+        "zebra runs fast",
+        "jazz is nice",
+        "amazing puzzle here",
+        "no match at all",
+        "buzz fizz quiz"
+    };
+
+    char *result = calloc(MAX_WORD_LEN, sizeof(char));
+    if (result == NULL) {
+        if (fprintf(stderr, "Memory allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    const size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0U; i < num_tests; i++) {
+        const int status = match_word_with_inner_z(tests[i], result, MAX_WORD_LEN);
+
+        if (status == 1) {
+            if (printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], result) < 0) {
+                free(result);
+                return EXIT_FAILURE;
+            }
+        } else if (status == 0) {
+            if (printf("Input: \"%s\" -> No match\n", tests[i]) < 0) {
+                free(result);
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Error processing input: \"%s\"\n", tests[i]) < 0) {
+                free(result);
+                return EXIT_FAILURE;
+            }
+            free(result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

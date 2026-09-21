@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-570-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-570-s3.c:49:27: style: Condition 'remaining_len>0' is always false [knownConditionTrueFalse]
+        if (remaining_len > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-570-s3.c:56:37: note: Assuming that condition 'word_len>0' is not redundant
+        if (out_idx > 0 || word_len > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-570-s3.c:48:41: note: Assignment 'remaining_len=word_len-(unsigned long)(ptr-list[i])', assigned value is less than 1
+        size_t remaining_len = word_len - (size_t)(ptr - list[i]);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-570-s3.c:49:27: note: Condition 'remaining_len>0' is always false
+        if (remaining_len > 0) {
+                          ^

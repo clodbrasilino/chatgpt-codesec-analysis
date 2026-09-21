@@ -1,0 +1,28 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:27:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |             free_list(list, i);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:33:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   33 |             free_list(list, i);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:38:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |             free_list(list, i);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:45:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   45 |             free_list(list, i);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:53:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   53 |             free_list(list, i + 1);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:60:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   60 |             free_list(list, i + 1);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:68:13: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   68 |             free_list(list, i + 1);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:76:6: error: conflicting types for 'free_list'
+   76 | void free_list(char** list, int size) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-513-s3.c:27:13: note: previous implicit declaration is here
+   27 |             free_list(list, i);
+      |             ^
+8 errors generated.

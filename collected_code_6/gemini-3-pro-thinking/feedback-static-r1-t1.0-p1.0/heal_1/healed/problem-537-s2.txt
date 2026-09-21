@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_repeated_word(const char *str) {
+    if (!str || *str == '\0') {
+        return NULL;
+    }
+
+    size_t capacity = 16;
+    char **seen_words = malloc(capacity * sizeof(char *));
+    if (!seen_words) {
+        return NULL;
+    }
+
+    size_t seen_count = 0;
+    char *result = NULL;
+    const char *ptr = str;
+
+    while (*ptr) {
+        while (*ptr && isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        if (!*ptr) {
+            break;
+        }
+
+        const char *start = ptr;
+        while (*ptr && !isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+        size_t word_len = (size_t)(ptr - start);
+
+        char *current_word = malloc(word_len + 1);
+        if (!current_word) {
+            for (size_t i = 0; i < seen_count; i++) {
+                free(seen_words[i]);
+            }
+            free(seen_words);
+            return NULL;
+        }
+
+        for (size_t i = 0; i < word_len; i++) {
+            current_word[i] = start[i];
+        }
+        current_word[word_len] = '\0';
+
+        int found = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen_words[i], current_word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            result = current_word;
+            break;
+        }
+
+        if (seen_count >= capacity) {
+            size_t new_cap = capacity * 2;
+            char **new_seen = realloc(seen_words, new_cap * sizeof(char *));
+            if (!new_seen) {
+                free(current_word);
+                for (size_t i = 0; i < seen_count; i++) {
+                    free(seen_words[i]);
+                }
+                free(seen_words);
+                return NULL;
+            }
+            seen_words = new_seen;
+            capacity = new_cap;
+        }
+        seen_words[seen_count++] = current_word;
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen_words[i]);
+    }
+    free(seen_words);
+
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "this is a test and this is only a test";
+    char *repeated = find_first_repeated_word(test_str);
+
+    if (repeated) {
+        printf("%s\n", repeated);
+        free(repeated);
+    }
+
+    return 0;
+}
+```

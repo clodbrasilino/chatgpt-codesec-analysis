@@ -1,0 +1,85 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 256U
+
+bool is_word_length_even(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) == 0U;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = fgetc(stdin);
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < SIZE_MAX);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN] = {0};
+    char *newline = NULL;
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_even(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and applied fixes:**
+
+1. **`fgetc` in a loop (CWE-120, CWE-20):** The original loop was already safe since `fgetc` returns an `int` and no data is stored in a buffer — it merely discards characters. As a defensive hardening measure, I added a `guard` counter to guarantee the loop terminates even under pathological stream conditions, satisfying the "check boundaries in loops" advisory.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The original code already mitigated this correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow.
+   - Explicit null termination via `buffer[sizeof(buffer) - 1U] = '\0'` guarantees a terminated string.
+   - `memchr` is bounded by `sizeof(buffer)`, and `strnlen` (rather than `strlen`) bounds the length computation.
+
+   No functional change was needed — the pattern is retained as-is since it represents the correct bounded-I/O idiom.
+
+The remaining code was already robust: it checks `fflush` and `fgets` return values, handles empty input, drains excess input when no newline is found, and uses `NULL`/length guards in `is_word_length_even`. The Flawfinder hits are low-risk informational warnings that the original mitigations already address.

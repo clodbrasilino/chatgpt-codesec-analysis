@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LEN 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[MAX_KEY_LEN];
+    int value;
+} DictEntry;
+
+int compare(const void *a, const void *b) {
+    const DictEntry *entryA = (const DictEntry *)a;
+    const DictEntry *entryB = (const DictEntry *)b;
+    
+    if (entryA->value < entryB->value) return -1;
+    if (entryA->value > entryB->value) return 1;
+    return 0;
+}
+
+void sort_dict(DictEntry *dict, size_t size) {
+    if (dict != NULL && size > 0) {
+        qsort(dict, size, sizeof(DictEntry), compare);
+    }
+}
+
+int main() {
+    DictEntry dict[] = {
+        {"apple", 5},
+        {"banana", 2},
+        {"cherry", 8},
+        {"date", 1}
+    };
+    size_t size = sizeof(dict) / sizeof(dict[0]);
+
+    for (size_t i = 0; i < size; i++) {
+        dict[i].key[MAX_KEY_LEN - 1] = '\0';
+    }
+
+    sort_dict(dict, size);
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%s: %d\n", dict[i].key, dict[i].value);
+    }
+
+    return 0;
+}

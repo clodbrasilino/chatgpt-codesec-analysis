@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char **split_at_lowercase(const char *input, size_t *out_count) {
+    if (!input || !out_count) {
+        if (out_count) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    size_t count = 0;
+    int in_token = 0;
+
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        if (!islower((unsigned char)input[i])) {
+            if (!in_token) {
+                count++;
+                in_token = 1;
+            }
+        } else {
+            in_token = 0;
+        }
+    }
+
+    if (count == 0 || count > SIZE_MAX / sizeof(char *)) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    char **result = malloc(count * sizeof(char *));
+    if (!result) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t current_token = 0;
+    const char *token_start = NULL;
+
+    for (size_t i = 0; ; i++) {
+        if (input[i] != '\0' && !islower((unsigned char)input[i])) {
+            if (!token_start) {
+                token_start = &input[i];
+            }
+        } else {
+            if (token_start) {
+                size_t len = (size_t)(&input[i] - token_start);
+                
+                if (len >= SIZE_MAX - 1) {
+                    goto cleanup;
+                }
+
+                result[current_token] = malloc(len + 1);
+                if (!result[current_token]) {
+                    goto cleanup;
+                }
+
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result[current_token], token_start, len);
+                result[current_token][len] = '\0';
+                current_token++;
+                token_start = NULL;
+            }
+        }
+        if (input[i] == '\0') {
+            break;
+        }
+    }
+
+    *out_count = count;
+    return result;
+
+cleanup:
+    for (size_t j = 0; j < current_token; j++) {
+        free(result[j]);
+    }
+    free(result);
+    *out_count = 0;
+    return NULL;
+}
+
+int main(void) {
+    const char *test_str = "HELLOworldHOWareYOU";
+    size_t count = 0;
+    char **tokens = split_at_lowercase(test_str, &count);
+
+    if (tokens) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", tokens[i]);
+            free(tokens[i]);
+        }
+        free(tokens);
+    }
+
+    return 0;
+}

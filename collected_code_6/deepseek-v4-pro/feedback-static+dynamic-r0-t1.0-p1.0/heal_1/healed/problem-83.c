@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+char sum_characters(const char *str) {
+    char sum = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        sum += *str;
+        str++;
+    }
+    return sum;
+}
+
+int main(void) {
+    const char *input = "Hello";
+    char result = sum_characters(input);
+    printf("Result: %d\n", result);
+    return 0;
+}

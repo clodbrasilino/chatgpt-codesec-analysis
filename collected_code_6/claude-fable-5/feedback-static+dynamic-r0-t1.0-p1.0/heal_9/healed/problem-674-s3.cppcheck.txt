@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:52:19: style: Condition 'alloc_len<len' is always false [knownConditionTrueFalse]
+    if (alloc_len < len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:51:15: note: alloc_len is assigned 'len+1' here.
+    alloc_len = len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:52:19: note: Condition 'alloc_len<len' is always false
+    if (alloc_len < len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:91:25: style: Condition 'result_capacity<input_len' is always false [knownConditionTrueFalse]
+    if (result_capacity < input_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:90:21: note: result_capacity is assigned 'input_len+1' here.
+    result_capacity = input_len + 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-674-s3.c:91:25: note: Condition 'result_capacity<input_len' is always false
+    if (result_capacity < input_len) {
+                        ^

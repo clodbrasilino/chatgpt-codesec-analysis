@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+#define MAX_URL_LEN 2048
+
+struct url_date {
+    int year;
+    int month;
+    int day;
+};
+
+static int extract_substring(const char *source, size_t source_len,
+                             const regmatch_t *match,
+                             char *dest, size_t dest_size)
+{
+    size_t length;
+    size_t i;
+
+    if (source == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+
+    if ((size_t)match->rm_eo > source_len) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        dest[i] = source[(size_t)match->rm_so + i];
+    }
+    dest[length] = '\0';
+    return 0;
+}
+
+static int parse_long_field(const char *str, long min_val, long max_val, long *out)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL || out == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtol(str, &endptr, 10);
+
+    if (errno != 0 || endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    if (value < min_val || value > max_val) {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+int extract_date_from_url(const char *url, struct url_date *result)
+{
+    regex_t regex;
+    regmatch_t matches[5];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char year_str[MAX_FIELD_LEN];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char month_str[MAX_FIELD_LEN];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char day_str[MAX_FIELD_LEN];
+    size_t url_len;
+    int rc;
+    long year_val;
+    long month_val;
+    long day_val;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    memset(year_str, 0, sizeof(year_str));
+    memset(month_str, 0, sizeof(month_str));
+    memset(day_str, 0, sizeof(day_str));
+
+    url_len = strnlen(url, MAX_URL_LEN);
+    if (url_len == 0 || url_len >= MAX_URL_LEN) {
+        return -1;
+    }
+
+    rc = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    rc = regexec(&regex, url, 5, matches, 0);
+    if (rc != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (extract_substring(url, url_len, &matches[1], year_str, sizeof(year_str)) != 0 ||
+        extract_substring(url, url_len, &matches[2], month_str, sizeof(month_str)) != 0 ||
+        extract_substring(url, url_len, &matches[3], day_str, sizeof(day_str)) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+
+    if (parse_long_field(year_str, 1000L, 9999L, &year_val) != 0) {
+        return -1;
+    }
+
+    if (parse_long_field(month_str, 1L, 12L, &month_val) != 0) {
+        return -1;
+    }
+
+    if (parse_long_field(day_str, 1L, 31L, &day_val) != 0) {
+        return -1;
+    }
+
+    result->year = (int)year_val;
+    result->month = (int)month_val;
+    result->day = (int)day_val;
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/article-title",
+        "https://news.site.org/2021/12/03/",
+        "https://example.com/no/date/here",
+        "https://example.com/2024/02/30/leap-check"
+    };
+    size_t count;
+    size_t i;
+    struct url_date date;
+
+    count = sizeof(urls) / sizeof(urls[0]);
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s -> Year: %d, Month: %d, Day: %d\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s -> no valid date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

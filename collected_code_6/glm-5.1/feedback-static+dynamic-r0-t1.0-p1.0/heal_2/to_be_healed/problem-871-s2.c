@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int areRotations(const char *str1, const char *str2) {
+    size_t len1, len2;
+    char *concat;
+    int result;
+    size_t concat_len;
+
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    len1 = strnlen(str1, SIZE_MAX);
+    len2 = strnlen(str2, SIZE_MAX);
+
+    if (len1 != len2) {
+        return 0;
+    }
+
+    if (len1 == 0) {
+        return 1;
+    }
+
+    concat_len = 2 * len1;
+    concat = (char *)malloc(concat_len + 1);
+    if (concat == NULL) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     *  implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+     *  call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  did you mean 'memcpy'?
+     */
+    memcpy_s(concat, concat_len + 1, str1, len1);
+    memcpy_s(concat + len1, len1 + 1, str1, len1);
+    concat[concat_len] = '\0';
+
+    result = strstr(concat, str2) != NULL;
+
+    free(concat);
+
+    return result;
+}
+
+int main(void) {
+    const char *s1 = "abcd";
+    const char *s2 = "cdab";
+    const char *s3 = "acbd";
+
+    if (areRotations(s1, s2)) {
+        printf("%s and %s are rotations of each other.\n", s1, s2);
+    } else {
+        printf("%s and %s are not rotations of each other.\n", s1, s2);
+    }
+
+    if (areRotations(s1, s3)) {
+        printf("%s and %s are rotations of each other.\n", s1, s3);
+    } else {
+        printf("%s and %s are not rotations of each other.\n", s1, s3);
+    }
+
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-662-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-662-s3.c:37:21: warning: Identical condition 'key_len>=1024', second condition is always false [identicalConditionAfterEarlyExit]
+        if (key_len >= 1024) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-662-s3.c:21:17: note: If condition 'key_len>=1024' is true, the function will return/exit
+    if (key_len >= 1024) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-662-s3.c:37:21: note: Testing identical condition 'key_len>=1024'
+        if (key_len >= 1024) {
+                    ^

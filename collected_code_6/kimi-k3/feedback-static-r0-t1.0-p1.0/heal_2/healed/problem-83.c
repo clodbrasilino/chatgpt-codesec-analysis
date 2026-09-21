@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+int find_summed_character(const char *str, size_t max_len, char *result)
+{
+    unsigned long long sum;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || max_len == 0)
+    {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len)
+    {
+        return -1;
+    }
+
+    sum = 0ULL;
+    for (i = 0; i < len; i++)
+    {
+        sum += (unsigned char)str[i];
+        if (sum > (unsigned long long)UCHAR_MAX)
+        {
+            sum %= ((unsigned long long)UCHAR_MAX + 1ULL);
+        }
+    }
+
+    *result = (char)(sum % ((unsigned long long)UCHAR_MAX + 1ULL));
+    return 0;
+}
+
+int main(void)
+{
+    char *buffer;
+    size_t buffer_size = 1024;
+    size_t input_len;
+    char result;
+    int status;
+
+    buffer = (char *)malloc(buffer_size * sizeof(char));
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    input_len = strnlen(buffer, buffer_size);
+    if (input_len == buffer_size)
+    {
+        fprintf(stderr, "Error: input too long\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (strnlen(buffer, buffer_size) == 0)
+    {
+        fprintf(stderr, "Error: invalid or empty input string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    status = find_summed_character(buffer, buffer_size, &result);
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: invalid or empty input string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Resulting character: %c (ASCII: %d)\n", result, (unsigned char)result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

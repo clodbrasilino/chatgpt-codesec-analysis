@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-450-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-450-s3.c:42:23: style: Condition 'copy_size>=dest_size' is always false [knownConditionTrueFalse]
+        if (copy_size >= dest_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-450-s3.c:40:26: note: dest_size is assigned '(unsigned long)size+1' here.
+        size_t dest_size = (size_t)size + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-450-s3.c:41:26: note: copy_size is assigned '(unsigned long)size' here.
+        size_t copy_size = (size_t)size;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-450-s3.c:42:23: note: Condition 'copy_size>=dest_size' is always false
+        if (copy_size >= dest_size) {
+                      ^

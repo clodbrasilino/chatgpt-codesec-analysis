@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-866.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-866.c:17:17: style: Condition 'len+1>32' is always false [knownConditionTrueFalse]
+    if (len + 1 > 32) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-866.c:13:25: note: Assuming that condition 'len>=32' is not redundant
+    if (len == 0 || len >= 32) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-866.c:17:17: note: Condition 'len+1>32' is always false
+    if (len + 1 > 32) {
+                ^

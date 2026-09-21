@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <ctype.h>
+
+static int read_size(size_t *value)
+{
+    char buffer[128];
+
+    if (value == NULL || fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    char *end;
+    errno = 0;
+    uintmax_t parsed = strtoumax(buffer, &end, 10);
+
+    if (errno == ERANGE || end == buffer || parsed > SIZE_MAX) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return 0;
+    }
+
+    *value = (size_t)parsed;
+    return 1;
+}
+
+static int read_int64(int64_t *value)
+{
+    char buffer[128];
+
+    if (value == NULL || fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    char *end;
+    errno = 0;
+    intmax_t parsed = strtoimax(buffer, &end, 10);
+
+    if (errno == ERANGE || end == buffer ||
+        parsed < INT64_MIN || parsed > INT64_MAX) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return 0;
+    }
+
+    *value = (int64_t)parsed;
+    return 1;
+}
+
+static int minimum_to_make_sum_even(const int64_t *array, size_t length,
+                                    int64_t *result)
+{
+    if ((array == NULL && length != 0U) || result == NULL) {
+        return 0;
+    }
+
+    unsigned int parity = 0U;
+
+    for (size_t i = 0; i < length; ++i) {
+        parity ^= (unsigned int)((uint64_t)array[i] & UINT64_C(1));
+    }
+
+    *result = (int64_t)parity;
+    return 1;
+}
+
+int main(void)
+{
+    size_t length;
+
+    if (!read_size(&length) ||
+        length > SIZE_MAX / sizeof(int64_t)) {
+        return EXIT_FAILURE;
+    }
+
+    int64_t *array = NULL;
+
+    if (length != 0U) {
+        array = malloc(length * sizeof *array);
+        if (array == NULL) {
+            return EXIT_FAILURE;
+        }
+
+        for (size_t i = 0; i < length; ++i) {
+            if (!read_int64(&array[i])) {
+                free(array);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    int64_t minimum;
+
+    if (!minimum_to_make_sum_even(array, length, &minimum)) {
+        free(array);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRId64 "\n", minimum) < 0) {
+        free(array);
+        return EXIT_FAILURE;
+    }
+
+    free(array);
+    return EXIT_SUCCESS;
+}

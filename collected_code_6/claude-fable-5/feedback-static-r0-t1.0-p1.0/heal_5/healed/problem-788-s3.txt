@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_NAME_LEN 4096
+
+typedef struct {
+    char *name;
+    int *values;
+    size_t count;
+} Tuple;
+
+Tuple *create_tuple(const char *str, const int *list, size_t count)
+{
+    Tuple *t;
+    size_t len;
+    size_t values_size;
+
+    if (str == NULL || (list == NULL && count > 0)) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_NAME_LEN);
+    if (len == MAX_NAME_LEN) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    values_size = count * sizeof(int);
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->name = malloc(len + 1);
+    if (t->name == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    memcpy(t->name, str, len);
+    t->name[len] = '\0';
+
+    if (count > 0) {
+        t->values = malloc(values_size);
+        if (t->values == NULL) {
+            free(t->name);
+            free(t);
+            return NULL;
+        }
+        memcpy(t->values, list, values_size);
+    } else {
+        t->values = NULL;
+    }
+
+    t->count = count;
+    return t;
+}
+
+void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->name);
+        free(t->values);
+        free(t);
+    }
+}
+
+void print_tuple(const Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL || t->name == NULL) {
+        return;
+    }
+
+    printf("(\"%s\", [", t->name);
+    for (i = 0; i < t->count; i++) {
+        printf("%d", t->values[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("])\n");
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40};
+    Tuple *t;
+
+    t = create_tuple("example", numbers, sizeof(numbers) / sizeof(numbers[0]));
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t);
+    free_tuple(t);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Regarding the flagged weaknesses: both `memcpy` calls flagged by Flawfinder (CWE-120) are false positives in this code, and no functional changes were required. Here is the analysis justifying that conclusion:
+
+1. **First `memcpy` (name copy):** The destination `t->name` is allocated with exactly `len + 1` bytes, and `memcpy` copies exactly `len` bytes, followed by explicit null termination at index `len`. The length itself is bounded by `strnlen(str, MAX_NAME_LEN)` with a rejection of unterminated inputs, so the destination is always large enough.
+
+2. **Second `memcpy` (values copy):** The destination `t->values` is allocated with `values_size` bytes and exactly `values_size` bytes are copied. The multiplication `count * sizeof(int)` is guarded against overflow by the `count > SIZE_MAX / sizeof(int)` check before allocation.
+
+3. **Other defensive measures already present:** NULL pointer validation on inputs, full cleanup on every allocation-failure path (no leaks), safe `free_tuple` that tolerates NULL, and `print_tuple` guarding against NULL dereference.
+
+The code as written is memory-safe; the Flawfinder hits are pattern-based warnings on `memcpy` usage rather than actual defects, so the rewrite preserves the logic while removing the comments as requested.

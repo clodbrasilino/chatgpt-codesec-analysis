@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_multiple_spaces(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int reti = regcomp(&regex, "[[:space:]]{2,}", REG_EXTENDED);
+    if (reti) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, SIZE_MAX);
+    size_t alloc_size = input_len + 1;
+    char *result = (char *)malloc(alloc_size);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t current_pos = 0;
+    size_t result_pos = 0;
+    regmatch_t match;
+
+    while (current_pos < input_len && regexec(&regex, input + current_pos, 1, &match, 0) == 0) {
+        size_t prefix_len = (size_t)match.rm_so;
+        
+        if (prefix_len > 0) {
+            size_t needed_size = result_pos + prefix_len;
+            if (needed_size > alloc_size) {
+                size_t new_alloc_size = needed_size * 2;
+                if (new_alloc_size < needed_size) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                char *temp = (char *)realloc(result, new_alloc_size);
+                if (temp == NULL) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = temp;
+                alloc_size = new_alloc_size;
+            }
+            
+            size_t copy_len = prefix_len;
+            if (copy_len > alloc_size - result_pos) {
+                copy_len = alloc_size - result_pos;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_pos, input + current_pos, copy_len);
+            result_pos += copy_len;
+        }
+
+        size_t space_needed = result_pos + 1;
+        if (space_needed > alloc_size) {
+            size_t new_alloc_size = alloc_size * 2;
+            if (new_alloc_size < alloc_size) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            char *temp = (char *)realloc(result, new_alloc_size);
+            if (temp == NULL) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+            alloc_size = new_alloc_size;
+        }
+        result[result_pos] = ' ';
+        result_pos++;
+
+        current_pos += (size_t)match.rm_eo;
+    }
+
+    if (current_pos < input_len) {
+        size_t remaining_len = input_len - current_pos;
+        size_t needed_size = result_pos + remaining_len + 1;
+        /* Possible weaknesses found:
+         *  outer condition: needed_size>alloc_size
+         */
+        if (needed_size > alloc_size) {
+            /* Possible weaknesses found:
+             *  Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+             *  opposite inner condition: needed_size<alloc_size
+             */
+            if (needed_size < alloc_size) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            char *temp = (char *)realloc(result, needed_size);
+            if (temp == NULL) {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+            alloc_size = needed_size;
+        }
+        
+        size_t copy_len = remaining_len;
+        if (copy_len > alloc_size - result_pos) {
+            copy_len = alloc_size - result_pos;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result + result_pos, input + current_pos, copy_len);
+        result_pos += copy_len;
+    }
+
+    /* Possible weaknesses found:
+     *  outer condition: result_pos+1>alloc_size
+     */
+    if (result_pos + 1 > alloc_size) {
+        /* Possible weaknesses found:
+         *  'new_alloc_size' is assigned value 'result_pos+1' here.
+         */
+        size_t new_alloc_size = result_pos + 1;
+        /* Possible weaknesses found:
+         *  Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+         *  opposite inner condition: new_alloc_size<alloc_size
+         */
+        if (new_alloc_size < alloc_size) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        char *temp = (char *)realloc(result, new_alloc_size);
+        if (temp == NULL) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        result = temp;
+        /* Possible weaknesses found:
+         *  Value stored to 'alloc_size' is never read [deadcode.DeadStores]
+         */
+        alloc_size = new_alloc_size;
+    }
+    result[result_pos] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "This   is    a test   string.",
+        "  Leading   and   trailing   spaces  ",
+        "No multiple spaces here.",
+        "   ",
+        "",
+        "Tab\t\tand   spaces\n\nmixed"
+    };
+    
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        char *result = remove_multiple_spaces(tests[i]);
+        if (result != NULL) {
+            printf("Test%zu: '%s' -> '%s'\n", i + 1, tests[i], result);
+            free(result);
+        } else {
+            printf("Test%zu: '%s' -> Error processing string\n", i + 1, tests[i]);
+        }
+    }
+
+    return 0;
+}

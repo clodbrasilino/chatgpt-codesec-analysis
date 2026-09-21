@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+static int is_leap_year(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+static int is_valid_date(int year, int month, int day) {
+    if (month < 1 || month > 12) return 0;
+    if (day < 1) return 0;
+
+    const int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int max_day = days_in_month[month - 1];
+
+    if (month == 2 && is_leap_year(year)) {
+        max_day = 29;
+    }
+
+    return day <= max_day;
+}
+
+int extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    const char *p = url;
+
+    while (*p != '\0' && *p != '/') p++;
+    while (*p == '/') p++;
+
+    while (*p != '\0') {
+        const char *segment_start = p;
+        while (*p != '\0' && *p != '/') p++;
+
+        size_t seg_len = (size_t)(p - segment_start);
+        if (seg_len > 0 && seg_len <= 4) {
+            char buf[5] = {0};
+            memcpy(buf, segment_start, seg_len);
+            buf[seg_len] = '\0';
+
+            char *endptr;
+            errno = 0;
+            long val = strtol(buf, &endptr, 10);
+
+            if (errno != 0 || endptr == buf || *endptr != '\0') {
+                while (*p == '/') p++;
+                continue;
+            }
+
+            if (val >= 1 && val <= 9999) {
+                *year = (int)val;
+
+                while (*p == '/') p++;
+                const char *month_start = p;
+                while (*p != '\0' && *p != '/') p++;
+                size_t month_len = (size_t)(p - month_start);
+
+                if (month_len == 0 || month_len > 2) return -3;
+
+                char month_buf[3] = {0};
+                memcpy(month_buf, month_start, month_len);
+                month_buf[month_len] = '\0';
+
+                errno = 0;
+                long month_val = strtol(month_buf, &endptr, 10);
+                if (errno != 0 || endptr == month_buf || *endptr != '\0' ||
+                    month_val < 1 || month_val > 12) {
+                    return -5;
+                }
+
+                while (*p == '/') p++;
+                const char *day_start = p;
+                while (*p != '\0' && *p != '/') p++;
+                size_t day_len = (size_t)(p - day_start);
+
+                if (day_len == 0 || day_len > 2) return -3;
+
+                char day_buf[3] = {0};
+                memcpy(day_buf, day_start, day_len);
+                day_buf[day_len] = '\0';
+
+                errno = 0;
+                long day_val = strtol(day_buf, &endptr, 10);
+                if (errno != 0 || endptr == day_buf || *endptr != '\0' ||
+                    day_val < 1 || day_val > 31) {
+                    return -5;
+                }
+
+                *month = (int)month_val;
+                *day = (int)day_val;
+
+                if (!is_valid_date(*year, *month, *day)) {
+                    return -6;
+                }
+
+                return 0;
+            }
+        }
+
+        while (*p == '/') p++;
+    }
+
+    return -3;
+}
+
+int main(void) {
+    const char *test_urls[] = {
+        "https://example.com/2024/03/15/article",
+        "http://test.org/2023/12/01/post",
+        "https://site.com/2022/7/5/news",
+        "https://invalid.com/no/date/here",
+        NULL
+    };
+
+    int year, month, day;
+
+    for (int i = 0; test_urls[i] != NULL; i++) {
+        printf("URL: %s\n", test_urls[i]);
+        int result = extract_date_from_url(test_urls[i], &year, &month, &day);
+        if (result == 0) {
+            printf("Extracted date: %04d-%02d-%02d\n", year, month, day);
+        } else {
+            printf("Failed to extract date (error code: %d)\n", result);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

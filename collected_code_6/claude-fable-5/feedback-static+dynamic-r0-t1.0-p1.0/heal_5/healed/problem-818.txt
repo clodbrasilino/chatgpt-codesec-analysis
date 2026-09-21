@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array. The mitigations in place are:
+
+1. **Bounded input with `fgets`** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the guarantee explicit.
+
+3. **Bounded length check with `strnlen`** — using `strnlen` instead of `strlen` ensures the scan never reads past the buffer, and the `len >= sizeof(buffer)` check detects an improperly terminated string.
+
+4. **Bounded search with `memchr`** — the newline strip uses `memchr` with an explicit length rather than `strchr`, so it cannot read out of bounds.
+
+5. **Safe `ctype` usage** — casting to `(unsigned char)` before calling `islower` avoids undefined behavior on platforms where `char` is signed and the value is negative.
+
+6. **NULL check** in `count_lowercase` guards against misuse of the helper function.
+
+No functional changes were needed; the Flawfinder hit is a false positive given the bounds checking already performed, so the rewrite simply removes the comments as requested.

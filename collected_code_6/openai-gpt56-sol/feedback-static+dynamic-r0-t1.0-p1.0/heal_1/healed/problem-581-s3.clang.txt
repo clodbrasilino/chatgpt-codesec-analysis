@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-581-s3.c:23:47: error: use of undeclared identifier 'DBL_MAX'
+   23 |         (base_side != 0.0 && base_side > sqrt(DBL_MAX)) ||
+      |                                               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-581-s3.c:24:45: error: use of undeclared identifier 'DBL_MAX'
+   24 |         (base_side != 0.0 && slant_height > DBL_MAX / (2.0 * base_side))) {
+      |                                             ^~~~~~~
+2 errors generated.

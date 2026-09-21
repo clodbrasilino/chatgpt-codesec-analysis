@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-73.c: In function 'split_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_8/healed/problem-73.c:35:49: error: subscripted value is neither array nor pointer nor vector
+   35 |                 size_t remaining_len = &input[i][strlen(input + i)];
+      |                                                 ^

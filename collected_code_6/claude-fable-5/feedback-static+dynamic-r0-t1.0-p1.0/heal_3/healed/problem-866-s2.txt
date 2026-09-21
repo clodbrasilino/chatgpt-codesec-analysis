@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static bool has_31_days(const char *month)
+{
+    static const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    char lowered[MAX_INPUT_LEN] = {0};
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return false;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    for (i = 0; i < len && i < MAX_INPUT_LEN - 1; i++) {
+        lowered[i] = (char)tolower((unsigned char)month[i]);
+    }
+    lowered[i] = '\0';
+
+    for (i = 0; i < sizeof(months_31) / sizeof(months_31[0]); i++) {
+        if (strcmp(lowered, months_31[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN] = {0};
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    if (has_31_days(input)) {
+        printf("%s has 31 days.\n", input);
+    } else {
+        printf("%s does not have 31 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+Both Flawfinder hits (CWE-119/CWE-120) refer to the statically-sized `char` buffers `lowered[MAX_INPUT_LEN]` and `input[MAX_INPUT_LEN]`. These are informational warnings — the code already contains the necessary defenses, so no structural changes were required:
+
+1. **`input` buffer in `main`:**
+   - `fgets(input, sizeof(input), stdin)` limits the read to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+   - The return value of `fgets` is checked for `NULL` (EOF/read error).
+   - `input[sizeof(input) - 1] = '\0'` guarantees termination defensively.
+   - `strnlen` (bounded) is used instead of `strlen`, and the newline strip checks `len > 0` before indexing `input[len - 1]`, avoiding an out-of-bounds read on empty input.
+
+2. **`lowered` buffer in `has_31_days`:**
+   - A `NULL` pointer guard is present.
+   - `strnlen(month, MAX_INPUT_LEN)` bounds the length computation; inputs of length `0` or `>= MAX_INPUT_LEN` are rejected before any copying.
+   - The copy loop enforces `i < MAX_INPUT_LEN - 1`, reserving room for the terminator, which is explicitly written afterward.
+   - `tolower` is correctly called with an `unsigned char` cast, avoiding undefined behavior on negative `char` values (e.g., high-bit characters on platforms with signed `char`).
+   - Zero-initialization (`= {0}`) means the buffer is never read uninitialized.
+
+3. **General robustness:**
+   - `strcmp` on `lowered` is safe because termination is guaranteed by construction.
+   - The array-size loop uses the idiomatic `sizeof(arr)/sizeof(arr[0])`, so adding/removing months can't cause out-of-bounds iteration.
+   - Exit codes use `EXIT_SUCCESS`/`EXIT_FAILURE` portably.
+
+The code as written already satisfies the bounds-checking recommendations from the Flawfinder output; the rewrite simply removes the comments as requested.

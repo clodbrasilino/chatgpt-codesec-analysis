@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** extract_strings(const char* const* input, size_t count, size_t size, size_t* output_count) {
+    *output_count = 0;
+    size_t allocated = 0;
+    char** result = NULL;
+    for (size_t i = 0; i < count; ++i) {
+        size_t len = strnlen(input[i], size + 1);
+        if (len <= size && len > 0) {
+            if (*output_count >= allocated) {
+                allocated += 10;
+                char** new_result = (char**)realloc(result, allocated * sizeof(char*));
+                if (!new_result) {
+                    /* Possible weaknesses found:
+                     *  implicit declaration of function 'free_strings' [-Wimplicit-function-declaration]
+                     *  previous implicit declaration is here
+                     *  call to undeclared function 'free_strings'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                     */
+                    free_strings(result, *output_count);
+                    return NULL;
+                }
+                result = new_result;
+            }
+            result[*output_count] = (char*)malloc((len + 1) * sizeof(char));
+            if (!result[*output_count]) {
+                /* Possible weaknesses found:
+                 *  call to undeclared function 'free_strings'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                 */
+                free_strings(result, *output_count);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[*output_count], input[i], len);
+            result[*output_count][len] = '\0';
+            (*output_count)++;
+        }
+    }
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  conflicting types for 'free_strings'
+ */
+void free_strings(char** strings, size_t count) {
+    for (size_t i = 0; i < count; ++i) free(strings[i]);
+    free(strings);
+}
+
+int main() {
+    const char* const input[] = {"hello", "world", "short", "verylongstring", "tiny"};
+    size_t count = sizeof(input) / sizeof(input[0]);
+    size_t size = 5;
+    size_t output_count;
+
+    char** extracted = extract_strings(input, count, size, &output_count);
+    if (extracted) {
+        for (size_t i = 0; i < output_count; ++i) printf("%s\n", extracted[i]);
+        free_strings(extracted, output_count);
+    }
+
+    return 0;
+}

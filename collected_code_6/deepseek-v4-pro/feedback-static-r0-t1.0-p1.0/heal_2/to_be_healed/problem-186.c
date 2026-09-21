@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_literals(const char *input, const char **literals, size_t literal_count, int **matches, size_t *match_count) {
+    if (!input || !literals || !matches || !match_count || literal_count == 0) {
+        return -1;
+    }
+
+    *matches = NULL;
+    *match_count = 0;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    size_t max_matches = input_len + 1;
+    
+    int *result = (int *)malloc(max_matches * sizeof(int));
+    if (!result) {
+        return -1;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < literal_count && count < max_matches; i++) {
+        if (!literals[i]) {
+            free(result);
+            return -1;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t lit_len = strlen(literals[i]);
+        if (lit_len == 0) {
+            free(result);
+            return -1;
+        }
+
+        const char *cursor = input;
+        while (*cursor != '\0' && count < max_matches) {
+            const char *found = strstr(cursor, literals[i]);
+            if (!found) {
+                break;
+            }
+
+            int position = (int)(found - input);
+            
+            int duplicate = 0;
+            for (size_t j = 0; j < count; j++) {
+                if (result[j] == position) {
+                    duplicate = 1;
+                    break;
+                }
+            }
+
+            if (!duplicate) {
+                result[count++] = position;
+            }
+
+            cursor = found + 1;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *matches = NULL;
+        *match_count = 0;
+        return 0;
+    }
+
+    for (size_t i = 0; i < count - 1; i++) {
+        for (size_t j = i + 1; j < count; j++) {
+            if (result[i] > result[j]) {
+                int temp = result[i];
+                result[i] = result[j];
+                result[j] = temp;
+            }
+        }
+    }
+
+    int *resized = (int *)realloc(result, count * sizeof(int));
+    if (!resized) {
+        free(result);
+        return -1;
+    }
+
+    *matches = resized;
+    *match_count = count;
+    return 0;
+}
+
+int main(void) {
+    const char *literals[] = {"foo", "bar", "baz"};
+    int *matches = NULL;
+    size_t match_count = 0;
+    int ret;
+
+    ret = search_literals("foo test bar and baz plus foo", literals, 3, &matches, &match_count);
+    if (ret != 0) {
+        fprintf(stderr, "Error during search\n");
+        return 1;
+    }
+
+    printf("Found %zu matches:\n", match_count);
+    for (size_t i = 0; i < match_count; i++) {
+        printf("  Match at position %d\n", matches[i]);
+    }
+
+    free(matches);
+    return 0;
+}

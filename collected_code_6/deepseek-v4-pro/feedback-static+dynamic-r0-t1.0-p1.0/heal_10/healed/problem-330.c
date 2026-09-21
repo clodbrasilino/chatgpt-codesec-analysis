@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_STRING_LEN 65536
+#define MAX_WORD_LEN 256
+#define PATTERN_BUFFER_SIZE 128
+#define ERROR_BUFFER_SIZE 256
+
+static int validate_pattern_params(int *min_len, int *max_len) {
+    if (*min_len < 0) *min_len = 0;
+    if (*max_len < 0) *max_len = 0;
+    if (*min_len > *max_len) return 0;
+    return 1;
+}
+
+static int build_pattern(char *pattern, size_t pattern_size, int min_len, int max_len) {
+    int ret = snprintf(pattern, pattern_size, "\\b[a-zA-Z]{%d,%d}\\b", min_len, max_len);
+    if (ret < 0 || (size_t)ret >= pattern_size) {
+        return 0;
+    }
+    return 1;
+}
+
+static int compile_regex(regex_t *regex, const char *pattern) {
+    int ret = regcomp(regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERROR_BUFFER_SIZE];
+        regerror(ret, regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regex compilation failed: %s\n", errbuf);
+        return 0;
+    }
+    return 1;
+}
+
+static int is_pointer_in_range(const char *p, const char *str, size_t str_len) {
+    return (p >= str && p < str + str_len);
+}
+
+static int validate_match_bounds(size_t match_so, size_t match_len, 
+                                  size_t p_offset, size_t str_len) {
+    if (match_len == 0 || match_len > MAX_WORD_LEN) return 0;
+    if (match_so > str_len - p_offset) return 0;
+    if (match_len > str_len - p_offset - match_so) return 0;
+    return 1;
+}
+
+static void extract_and_print_word(const char *str, size_t str_len, 
+                                    const char *p, size_t p_offset,
+                                    regmatch_t *match) {
+    size_t len = (size_t)(match->rm_eo - match->rm_so);
+    size_t alloc_size;
+    char *word;
+    size_t remaining;
+    size_t copy_len;
+    
+    if (len == 0 || len > MAX_WORD_LEN) return;
+    
+    if (p_offset > str_len) return;
+    
+    if ((size_t)match->rm_so > str_len - p_offset) return;
+    
+    remaining = str_len - (p_offset + (size_t)match->rm_so);
+    copy_len = (len < remaining) ? len : remaining;
+    
+    if (copy_len == 0 || copy_len > MAX_WORD_LEN) return;
+    
+    alloc_size = copy_len + 1;
+    
+    word = malloc(alloc_size);
+    if (!word) return;
+    
+    memcpy(word, p + match->rm_so, copy_len);
+    word[copy_len] = '\0';
+    printf("%s\n", word);
+    
+    free(word);
+}
+
+static const char *advance_pointer(const char *p, const char *str, size_t str_len,
+                                    regmatch_t *match, size_t p_offset) {
+    if (match->rm_eo > 0) {
+        if (p_offset <= str_len && (size_t)match->rm_eo <= str_len - p_offset) {
+            p += match->rm_eo;
+        } else {
+            p++;
+        }
+    } else {
+        p++;
+    }
+    
+    if (p >= str + str_len) return NULL;
+    return p;
+}
+
+void find_words(const char *str, int min_len, int max_len) {
+    char pattern[PATTERN_BUFFER_SIZE];
+    regex_t regex;
+    regmatch_t match[1];
+    const char *p;
+    size_t str_len;
+    int params_valid;
+
+    if (str == NULL) return;
+
+    params_valid = validate_pattern_params(&min_len, &max_len);
+    if (!params_valid) return;
+
+    str_len = strnlen(str, MAX_STRING_LEN);
+    if (str_len >= MAX_STRING_LEN) return;
+
+    if (!build_pattern(pattern, sizeof(pattern), min_len, max_len)) {
+        fprintf(stderr, "pattern buffer too small\n");
+        return;
+    }
+
+    if (!compile_regex(&regex, pattern)) return;
+
+    p = str;
+    while (regexec(&regex, p, 1, match, 0) == 0) {
+        size_t p_offset;
+        
+        if (!is_pointer_in_range(p, str, str_len)) break;
+
+        p_offset = (size_t)(p - str);
+        
+        if (!validate_match_bounds((size_t)match[0].rm_so,
+                                    (size_t)(match[0].rm_eo - match[0].rm_so),
+                                    p_offset, str_len)) {
+            p++;
+            continue;
+        }
+
+        extract_and_print_word(str, str_len, p, p_offset, &match[0]);
+
+        p = advance_pointer(p, str, str_len, &match[0], p_offset);
+        if (!p) break;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *text = "This is a sample text with words of different sizes: cat, dogs, horse, apple, banana, tree, house";
+    find_words(text, 3, 3);
+    find_words(text, 4, 4);
+    find_words(text, 5, 5);
+    return 0;
+}

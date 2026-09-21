@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-381-s2.c:15:6: error: conflicting types for 'qsort_r'; have 'void(void *, size_t,  size_t,  int (*)(const void *, const void *, void *), void *)' {aka 'void(void *, long unsigned int,  long unsigned int,  int (*)(const void *, const void *, void *), void *)'}
+   15 | void qsort_r(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *arg) {
+      |      ^~~~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-381-s2.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:366:10: note: previous declaration of 'qsort_r' with type 'void(void *, size_t,  size_t,  void *, int (*)(void *, const void *, const void *))' {aka 'void(void *, long unsigned int,  long unsigned int,  void *, int (*)(void *, const void *, const void *))'}
+  366 | void     qsort_r(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width, void *,
+      |          ^~~~~~~

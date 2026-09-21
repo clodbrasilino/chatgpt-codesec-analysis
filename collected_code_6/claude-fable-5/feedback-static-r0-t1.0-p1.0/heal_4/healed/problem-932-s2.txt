@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_duplicates(const char *const *words, size_t count, size_t *out_count)
+{
+    char **result = NULL;
+    size_t result_count = 0;
+    size_t i;
+    size_t j;
+
+    if (words == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        int found = 0;
+        size_t len;
+        size_t copy_size;
+        char *copy;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        len = strnlen(words[i], MAX_WORD_LEN);
+        if (len >= MAX_WORD_LEN) {
+            continue;
+        }
+
+        for (j = 0; j < result_count; j++) {
+            if (strncmp(result[j], words[i], MAX_WORD_LEN) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            if (len > SIZE_MAX - 1) {
+                for (j = 0; j < result_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            copy_size = len + 1;
+
+            copy = malloc(copy_size);
+            if (copy == NULL) {
+                for (j = 0; j < result_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            if (len >= copy_size) {
+                free(copy);
+                for (j = 0; j < result_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            memcpy(copy, words[i], len);
+            copy[len] = '\0';
+            result[result_count] = copy;
+            result_count++;
+        }
+    }
+
+    *out_count = result_count;
+    return result;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *words[] = {
+        "apple", "banana", "apple", "cherry", "banana", "date", "cherry"
+    };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    size_t unique_count = 0;
+    char **unique_words;
+    size_t i;
+
+    unique_words = remove_duplicates(words, count, &unique_count);
+    if (unique_words == NULL) {
+        fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique words:\n");
+    for (i = 0; i < unique_count; i++) {
+        printf("%s\n", unique_words[i]);
+    }
+
+    free_word_list(unique_words, unique_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the applied fix:
+
+**On the flagged `memcpy` (CWE-120):** The original code was already effectively safe — `copy` is allocated with `malloc(len + 1)` and exactly `len` bytes are copied, followed by explicit null termination. The Flawfinder warning is a heuristic hit on the function name, not a real overflow. In the rewrite, I made the invariant *explicit and verifiable* by introducing `copy_size` and adding a runtime guard (`len >= copy_size`) immediately before the `memcpy`. This satisfies the "make sure destination can always hold the source data" recommendation in a way static analyzers and human reviewers can confirm locally, without needing to trace the allocation logic.
+
+**Other defensive properties preserved from the original:**
+- `strnlen` with `MAX_WORD_LEN` bounds prevents unbounded reads on non-terminated input.
+- `strncmp` bounded comparison for the same reason.
+- Overflow check on `count * sizeof(char *)` before `malloc`.
+- Full cleanup of partially built results on every allocation failure path (no leaks).
+- NULL checks on `words`, `out_count`, and individual `words[i]` entries.
+- `free_word_list` tolerates NULL input.
+
+**Notes:** The `len > SIZE_MAX - 1` check is technically dead code since `len < MAX_WORD_LEN` is already guaranteed, but it is harmless belt-and-suspenders and I retained it. The algorithm remains O(n²) on unique words, which is fine for small inputs; a hash set would be appropriate if `count` grows large.

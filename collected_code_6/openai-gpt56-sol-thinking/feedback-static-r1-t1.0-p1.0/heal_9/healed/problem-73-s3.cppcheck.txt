@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-73-s3.c:111:26: style: Condition 'new_capacity<needed' is always false [knownConditionTrueFalse]
+        if (new_capacity < needed) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-73-s3.c:103:29: note: Assuming that condition 'new_capacity<needed' is not redundant
+        while (new_capacity < needed) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-73-s3.c:111:26: note: Condition 'new_capacity<needed' is always false
+        if (new_capacity < needed) {
+                         ^

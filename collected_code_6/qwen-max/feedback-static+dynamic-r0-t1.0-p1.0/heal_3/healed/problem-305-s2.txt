@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int match_words(const char *word1, const char *word2) {
+    return strcmp(word1, word2) == 0;
+}
+
+int main() {
+    const char *words[5] = {"python", "programming", "project", "practice", "passion"};
+    int i, j, found = 0;
+
+    for (i = 0; i < 5; i++) {
+        if (words[i][0] == 'p') {
+            for (j = i + 1; j < 5; j++) {
+                if (words[j][0] == 'p' && match_words(words[i], words[j])) {
+                    printf("Matched: %s and %s\n", words[i], words[j]);
+                    found = 1;
+                }
+            }
+        }
+    }
+
+    if (!found) {
+        printf("No matches found.\n");
+    }
+
+    return 0;
+}
+```
+
+The original code does not contain statically-sized arrays that could lead to buffer overflows. The code uses a fixed-size array of string pointers, which is safe from buffer overflows. Therefore, no changes are needed in this context. The provided code is already safe and correctly written.

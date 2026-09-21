@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[256];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer[256]` was largely a false positive, since the original code already used `fgets(buffer, sizeof(buffer), stdin)`, which correctly bounds the write to the buffer's capacity. However, the rewrite hardens the code further:
+
+1. **Explicit NUL-termination guarantee** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy ensuring the buffer is always a valid C string regardless of `fgets` behavior on unusual streams.
+
+2. **Newline stripping via `strcspn`** — The original code awkwardly special-cased `result == (int)'\n'` in the output logic, which was fragile: if the user typed a string whose first repeated character came *after* an embedded scenario involving the trailing newline, logic could mislead. Stripping the newline at input-sanitization time is the idiomatic, correct approach and simplifies the result check to a single `-1` comparison.
+
+3. **`EXIT_SUCCESS`/`EXIT_FAILURE`** — Portable return codes via `<stdlib.h>` rather than magic numbers.
+
+4. **Preserved safe design in `first_repeated_char`** — The `seen[256]` lookup table indexed by `unsigned char` cast is already safe against negative `char` values and cannot be overflowed, so it required no changes.

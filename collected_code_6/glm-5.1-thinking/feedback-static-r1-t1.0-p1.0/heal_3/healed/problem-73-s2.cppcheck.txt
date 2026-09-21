@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-73-s2.c:93:26: style: Condition 'new_capacity==0' is always false [knownConditionTrueFalse]
+        if (new_capacity == 0) goto cleanup;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-73-s2.c:92:40: note: Assignment 'new_capacity=capacity+1', assigned value is greater than 0
+        size_t new_capacity = capacity + 1;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-73-s2.c:93:26: note: Condition 'new_capacity==0' is always false
+        if (new_capacity == 0) goto cleanup;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-73-s2.c:99:18: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+        capacity = new_capacity;
+                 ^

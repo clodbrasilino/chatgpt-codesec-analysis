@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int replace_spaces(char *str, size_t max_len, char replacement)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (replacement == '\0') {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[] = "Hello world this is a test";
+    char replacement = '_';
+    int result;
+
+    printf("Original string: %s\n", buffer);
+
+    result = replace_spaces(buffer, sizeof(buffer), replacement);
+    if (result != 0) {
+        fprintf(stderr, "Error: failed to replace spaces\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Modified string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Bounded string length check** — Replaced `strlen()` with `strnlen()`, which addresses the CWE-126 (buffer over-read) weakness flagged by Flawfinder. `strnlen()` will never read past `max_len` bytes, so a non-null-terminated buffer cannot cause an over-read.
+
+2. **New `max_len` parameter** — The function now requires the caller to communicate the buffer's size, which is the only reliable way for the callee to enforce bounds. The caller passes `sizeof(buffer)`, which is valid since `buffer` is a true array in `main`'s scope (not a decayed pointer).
+
+3. **Termination validation** — If `strnlen()` returns `max_len`, no null terminator was found within the buffer, so the function rejects the input with `-1` rather than processing a potentially unterminated string.
+
+4. **Existing defensive checks preserved** — The `NULL` pointer check and the rejection of `'\0'` as a replacement character (which would silently truncate the string) remain intact.
+
+One portability note: `strnlen()` is POSIX.1-2008 and C23; if you must target strict C89/C99, you'd replace it with a small manual loop that scans up to `max_len` bytes for the terminator.

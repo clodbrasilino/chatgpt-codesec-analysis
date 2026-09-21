@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-956.c:120:68: style: The comparison 'segment_len <= len-last_end' is always true because 'segment_len' and 'len-last_end' represent the same value. [knownConditionTrueFalse]
+        if (last_end >= 0 && (size_t)last_end < len && segment_len <= len - last_end) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-956.c:104:34: note: 'segment_len' is assigned value 'len-last_end' here.
+        size_t segment_len = len - last_end;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-956.c:120:68: note: The comparison 'segment_len <= len-last_end' is always true because 'segment_len' and 'len-last_end' represent the same value.
+        if (last_end >= 0 && (size_t)last_end < len && segment_len <= len - last_end) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-956.c:101:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = new_capacity;
+                     ^

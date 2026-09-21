@@ -1,0 +1,184 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define INPUT_BUFFER_SIZE 128
+#define MAX_DISCARD_CHARS 4096
+
+static long long max2(long long a, long long b)
+{
+    return (a > b) ? a : b;
+}
+
+static long long maxSum(long long n, long long *memo, long long limit)
+{
+    long long divided;
+
+    if (n <= 0) {
+        return 0;
+    }
+
+    if (n < limit && memo[n] != -1) {
+        return memo[n];
+    }
+
+    divided = maxSum(n / 2, memo, limit) +
+              maxSum(n / 3, memo, limit) +
+              maxSum(n / 4, memo, limit);
+
+    divided = max2(n, divided);
+
+    if (n < limit) {
+        memo[n] = divided;
+    }
+
+    return divided;
+}
+
+static int findMaxSum(long long n, long long *result)
+{
+    long long *memo;
+    long long limit;
+    long long i;
+
+    if (n < 0 || result == NULL) {
+        return -1;
+    }
+
+    if (n >= 999999) {
+        limit = 1000000;
+    } else {
+        limit = n + 1;
+    }
+
+    if (limit <= 0) {
+        return -1;
+    }
+
+    if ((unsigned long long)limit > SIZE_MAX / sizeof(long long)) {
+        return -1;
+    }
+
+    memo = malloc((size_t)limit * sizeof(long long));
+    if (memo == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < limit; i++) {
+        memo[i] = -1;
+    }
+
+    *result = maxSum(n, memo, limit);
+
+    free(memo);
+    return 0;
+}
+
+static void discardRestOfLine(void)
+{
+    int c;
+    size_t count = 0;
+
+    do {
+        c = getchar();
+        count++;
+    } while (c != '\n' && c != EOF && count < MAX_DISCARD_CHARS);
+}
+
+static int readNonNegative(long long *out)
+{
+    char buffer[INPUT_BUFFER_SIZE];
+    char *endptr;
+    long long value;
+
+    if (out == NULL) {
+        return -1;
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        discardRestOfLine();
+        return -1;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtoll(buffer, &endptr, 10);
+
+    if (endptr == buffer) {
+        return -1;
+    }
+
+    if (errno == ERANGE) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    if (value < 0) {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long result;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (readNonNegative(&n) != 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (findMaxSum(n, &result) != 0) {
+        fprintf(stderr, "Computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum for %lld is %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discardRestOfLine`:** This is a false positive as written. The loop never stores the characters read into a buffer — it only consumes them — so there is no buffer to overflow. Additionally, the `count < MAX_DISCARD_CHARS` guard bounds the loop to prevent unbounded reads on a stream that never yields `\n` or `EOF`, mitigating any denial-of-service concern. The fix is already in place.
+
+**2. Flawfinder `char buffer[INPUT_BUFFER_SIZE]` warning (CWE-119/CWE-120) in `readNonNegative`:** Also mitigated. The buffer is:
+- Zero-initialized via `memset` before use.
+- Filled only by `fgets(buffer, sizeof(buffer), stdin)`, which respects the size limit and always NUL-terminates.
+- Defensively re-terminated with `buffer[sizeof(buffer) - 1] = '\0'`.
+- Checked for truncated input (no `\n` and not `EOF`), in which case the remainder of the line is discarded and the input rejected — preventing leftover bytes from corrupting subsequent reads.
+
+**Other defensive measures already present** that are worth noting:
+- `strtoll` is used instead of `atoi`/`sscanf`, with `errno`/`ERANGE` overflow detection and full validation of trailing characters.
+- `findMaxSum` guards the `malloc` size computation against overflow with the `SIZE_MAX / sizeof(long long)` check (CWE-190 prevention), checks for allocation failure, and frees the memo table on all paths.
+- Negative inputs and NULL output pointers are rejected before any allocation.
+
+The code as provided is a correct, hardened implementation; both Flawfinder hits are informational-level findings whose mitigations are already implemented, so the rewrite preserves the logic verbatim with the comments removed.

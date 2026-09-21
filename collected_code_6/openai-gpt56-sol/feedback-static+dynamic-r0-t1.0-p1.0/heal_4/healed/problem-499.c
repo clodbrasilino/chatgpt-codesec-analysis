@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+#include <float.h>
+#include <ctype.h>
+
+static int calculate_diameter(double radius, double *diameter)
+{
+    if (diameter == NULL || !isfinite(radius) ||
+        radius < 0.0 || radius > DBL_MAX / 2.0) {
+        return -1;
+    }
+
+    *diameter = radius * 2.0;
+    return 0;
+}
+
+static int read_radius(double *radius)
+{
+    char *line = NULL;
+    size_t capacity = 0;
+    ssize_t length;
+    char *end;
+
+    if (radius == NULL) {
+        return -1;
+    }
+
+    length = getline(&line, &capacity, stdin);
+    if (length < 0) {
+        free(line);
+        return -1;
+    }
+
+    if (length > 0 && line[length - 1] == '\n') {
+        line[length - 1] = '\0';
+    } else if (!feof(stdin)) {
+        free(line);
+        return -1;
+    }
+
+    errno = 0;
+    end = NULL;
+    *radius = strtod(line, &end);
+
+    if (end == line || errno == ERANGE) {
+        free(line);
+        return -1;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(line);
+        return -1;
+    }
+
+    free(line);
+    return 0;
+}
+
+int main(void)
+{
+    double radius;
+    double diameter;
+
+    if (read_radius(&radius) != 0 ||
+        calculate_diameter(radius, &diameter) != 0) {
+        fprintf(stderr, "Invalid radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.17g\n", diameter) < 0) {
+        fprintf(stderr, "Failed to write the diameter.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

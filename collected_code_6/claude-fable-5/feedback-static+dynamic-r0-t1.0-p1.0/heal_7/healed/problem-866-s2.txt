@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static bool has_31_days(const char *month)
+{
+    static const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    char lowered[MAX_INPUT_LEN] = {0};
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return false;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    for (i = 0; i < len && i < MAX_INPUT_LEN - 1; i++) {
+        lowered[i] = (char)tolower((unsigned char)month[i]);
+    }
+    lowered[i] = '\0';
+
+    for (i = 0; i < sizeof(months_31) / sizeof(months_31[0]); i++) {
+        if (strcmp(lowered, months_31[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN] = {0};
+    size_t len;
+
+    printf("Enter a month name: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        flush_stdin();
+    }
+
+    if (input[0] == '\0') {
+        fprintf(stderr, "No input provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (has_31_days(input)) {
+        printf("%s has 31 days.\n", input);
+    } else {
+        printf("%s does not have 31 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already largely defensive, and the Flawfinder hits are mostly informational (risk 1–2), but here is what was verified or improved:
+
+1. **CWE-119/CWE-120 — statically-sized buffers (`lowered`, `input`):** Both buffers are only ever written through bounded operations. `fgets(input, sizeof(input), stdin)` cannot overflow, and the copy loop into `lowered` is bounded by both `len` and `MAX_INPUT_LEN - 1`, followed by explicit NUL-termination. `strnlen` is used instead of `strlen`, so an unterminated buffer cannot cause an over-read. These are safe as written; the rewrite preserves them.
+
+2. **CWE-120/CWE-20 — `getchar()` drain loop:** The loop only discards characters and writes nothing to a buffer, so no overflow is possible. It was moved into a helper (`flush_stdin`) and is now only invoked when the input was actually truncated (`len == sizeof(input) - 1`), avoiding an unnecessary blocking read when the user simply hit EOF or entered a short line without a newline.
+
+3. **Additional hardening added:**
+   - `fflush(stdout)` after the prompt guarantees the prompt appears before blocking on input (stdout may be fully buffered when redirected).
+   - An empty-input check prevents printing an awkward blank month name and returns a failure status instead.
+   - Redundant `input[sizeof(input) - 1] = '\0'` is kept as belt-and-braces, though `fgets` already guarantees termination.
+
+The logic (case-insensitive comparison via `tolower` with the `unsigned char` cast to avoid UB on negative `char` values) was already correct and remains unchanged.

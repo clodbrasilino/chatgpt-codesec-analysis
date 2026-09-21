@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-321-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-321-s3.c:19:70: error: Undefined behavior: Variable 'temp_final_num' is used as parameter and destination in snprintf(). [sprintfOverlappingData]
+            snprintf(temp_final_num, sizeof(temp_final_num), "%s%c", temp_final_num, num_str[len - j - 1]);
+                                                                     ^

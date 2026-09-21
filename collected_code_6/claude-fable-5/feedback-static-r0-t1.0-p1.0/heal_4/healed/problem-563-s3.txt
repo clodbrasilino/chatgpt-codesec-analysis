@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **Integer overflow guard tightened** — The original check `length >= SIZE_MAX` still allowed `length == SIZE_MAX - 1`... actually it prevented wrap only at the exact boundary. Using `length >= SIZE_MAX - 1` guarantees `length + 1` can never wrap around, making `buffer_size` provably valid.
+
+2. **Removed the dead check** — `if (length >= buffer_size)` was flagged by cppcheck as `knownConditionTrueFalse` because `buffer_size = length + 1` makes it mathematically impossible to be true (given no overflow). Dead defensive code adds noise and false confidence, so it was deleted.
+
+3. **The `memcpy` (CWE-120) finding is a false positive here** — Flawfinder flags `memcpy` unconditionally. The destination is allocated with exactly `length + 1` bytes and exactly `length` bytes are copied, followed by explicit NUL termination within bounds. With the overflow guard in place, this is provably safe, so no change beyond the guard was needed.
+
+4. **`malloc` failure handling retained** — the "assuming condition is false" note is just static-analyzer path annotation; the NULL check is correct and kept.

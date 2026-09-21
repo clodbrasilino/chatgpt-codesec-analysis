@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:48:30: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+                if (copy_len > 0 && out_len + copy_len <= capacity) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:36:29: note: Assuming that condition 'match.rm_so>0' is not redundant
+            if (match.rm_so > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:37:33: note: copy_len is assigned 'match.rm_so' here.
+                size_t copy_len = match.rm_so;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:48:30: note: Condition 'copy_len>0' is always true
+                if (copy_len > 0 && out_len + copy_len <= capacity) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:67:31: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+                if (remaining > 0 && out_len + remaining <= capacity) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:56:27: note: Assuming that condition 'remaining>0' is not redundant
+            if (remaining > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-495-s2.c:67:31: note: Condition 'remaining>0' is always true
+                if (remaining > 0 && out_len + remaining <= capacity) {
+                              ^

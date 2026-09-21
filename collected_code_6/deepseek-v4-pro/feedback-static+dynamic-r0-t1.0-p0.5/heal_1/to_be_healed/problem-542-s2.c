@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void replace_chars_with_colon(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[ ,.]";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    size_t output_pos = 0;
+    size_t input_pos = 0;
+    int result;
+
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        output[0] = '\0';
+        return;
+    }
+
+    while (input_pos < input_len && output_pos < output_size - 1) {
+        result = regexec(&regex, input + input_pos, 1, &match, 0);
+        if (result == 0) {
+            size_t match_start = match.rm_so;
+            size_t match_end = match.rm_eo;
+            size_t copy_len = match_start;
+            
+            if (copy_len > output_size - output_pos - 1) {
+                copy_len = output_size - output_pos - 1;
+            }
+            
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(output + output_pos, input + input_pos, copy_len);
+            output_pos += copy_len;
+            
+            if (output_pos < output_size - 1) {
+                output[output_pos++] = ':';
+            }
+            
+            input_pos += match_end;
+        } else if (result == REG_NOMATCH) {
+            size_t remaining = input_len - input_pos;
+            if (remaining > output_size - output_pos - 1) {
+                remaining = output_size - output_pos - 1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(output + output_pos, input + input_pos, remaining);
+            output_pos += remaining;
+            break;
+        } else {
+            break;
+        }
+    }
+    
+    output[output_pos] = '\0';
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_string = "Hello, world. This is a test";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char result[256];
+    
+    replace_chars_with_colon(test_string, result, sizeof(result));
+    printf("Original: %s\n", test_string);
+    printf("Modified: %s\n", result);
+    
+    return 0;
+}

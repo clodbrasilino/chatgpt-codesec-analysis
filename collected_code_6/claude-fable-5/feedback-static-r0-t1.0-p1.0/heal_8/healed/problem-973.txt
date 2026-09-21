@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    size_t suffix_len;
+    size_t temp_size;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    suffix_len = len - d;
+
+    if (len > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    temp_size = len + 1;
+    if (temp_size > str_size) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (suffix_len > temp_size - 1 ||
+        d > temp_size - 1 - suffix_len ||
+        (d + suffix_len) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, suffix_len);
+    memcpy(temp + suffix_len, str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, temp_size);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why this code is safe:
+
+**Flawfinder's `memcpy` warnings (CWE-120)** are heuristic — the tool flags every `memcpy` call regardless of context. In this code, all three calls are provably safe due to the validation performed before them:
+
+1. **`memcpy(temp, str + d, suffix_len)`** — `temp` has capacity `temp_size = len + 1`. The guard `suffix_len > temp_size - 1` guarantees `suffix_len <= len`, so the write fits. The source read `str + d` for `suffix_len` bytes stays within `str` because `d + suffix_len == len < str_size` is verified.
+
+2. **`memcpy(temp + suffix_len, str, d)`** — the guard `d > temp_size - 1 - suffix_len` ensures `suffix_len + d <= len`, so writing `d` bytes at offset `suffix_len` stays within `temp`. The redundant check `(d + suffix_len) != len` further pins the arithmetic against overflow-based bypasses.
+
+3. **`memcpy(str, temp, temp_size)`** — guarded earlier by `temp_size > str_size`, so `str` (of size `str_size`) can always hold `temp_size` bytes.
+
+Additional defensive measures already present:
+
+- `strnlen` (bounded) instead of `strlen`, with `len >= str_size` rejecting unterminated buffers.
+- `len > SIZE_MAX - 1` prevents integer overflow when computing `temp_size`.
+- `malloc` return value checked; `temp` freed on every path (no leak, no double-free).
+- `d % len` normalizes rotation, avoiding out-of-bounds offsets from large `d`.
+- The caller passes `sizeof(str)` (the true buffer size including the NUL), matching the function's contract.
+
+The code as written already satisfies the CWE-120 mitigations Flawfinder asks for; the rewrite above simply removes the advisory comments since no functional fix is required.

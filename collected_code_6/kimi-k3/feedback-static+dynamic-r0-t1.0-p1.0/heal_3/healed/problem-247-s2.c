@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+char* longestPalindromicSubsequence(const char* str, size_t n) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    if (n == 0) {
+        char* result = (char*)malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+    
+    int** dp = (int**)malloc(n * sizeof(int*));
+    if (dp == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        dp[i] = (int*)calloc(n, sizeof(int));
+        if (dp[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return NULL;
+        }
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        dp[i][i] = 1;
+    }
+    
+    for (size_t len = 2; len <= n; len++) {
+        for (size_t i = 0; i <= n - len; i++) {
+            size_t j = i + len - 1;
+            if (str[i] == str[j]) {
+                dp[i][j] = dp[i + 1][j - 1] + 2;
+            } else {
+                dp[i][j] = (dp[i + 1][j] > dp[i][j - 1]) ? dp[i + 1][j] : dp[i][j - 1];
+            }
+        }
+    }
+    
+    int maxLen = dp[0][n - 1];
+    char* result = (char*)malloc((size_t)(maxLen + 1) * sizeof(char));
+    if (result == NULL) {
+        for (size_t i = 0; i < n; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+    
+    size_t start = 0, end = n - 1;
+    int idx = 0;
+    
+    while (start <= end) {
+        if (start == end) {
+            result[idx++] = str[start];
+            break;
+        }
+        if (str[start] == str[end]) {
+            result[idx++] = str[start];
+            start++;
+            end--;
+        } else if (dp[start + 1][end] > dp[start][end - 1]) {
+            start++;
+        } else {
+            end--;
+        }
+    }
+    
+    for (size_t k = 0; k < n; k++) {
+        free(dp[k]);
+    }
+    free(dp);
+    
+    result[idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    char* input = NULL;
+    size_t input_size = 0;
+    ssize_t len;
+    
+    printf("Enter a string: ");
+    len = getline(&input, &input_size, stdin);
+    if (len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    char* result = longestPalindromicSubsequence(input, (size_t)len);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Longest palindromic subsequence: %s\n", result);
+    printf("Length: %d\n", (int)strlen(result));
+    
+    free(result);
+    free(input);
+    return EXIT_SUCCESS;
+}

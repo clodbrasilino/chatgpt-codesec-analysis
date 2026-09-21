@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+
+int is_concatenation(const char *str, const char *sub) {
+    size_t str_len = 0;
+    size_t sub_len = 0;
+
+    for (str_len = 0; str[str_len] != '\0'; str_len++);
+    for (sub_len = 0; sub[sub_len] != '\0'; sub_len++);
+
+    if (sub_len == 0 || str_len % sub_len != 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < str_len; i += sub_len) {
+        for (size_t j = 0; j < sub_len; j++) {
+            if (str[i + j] != sub[j]) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int main() {
+    const char *test_str = "abcabcabc";
+    const char *sub_str = "abc";
+
+    if (is_concatenation(test_str, sub_str)) {
+        printf("The string is a concatenation of the given substring.\n");
+    } else {
+        printf("The string is not a concatenation of the given substring.\n");
+    }
+
+    return 0;
+}

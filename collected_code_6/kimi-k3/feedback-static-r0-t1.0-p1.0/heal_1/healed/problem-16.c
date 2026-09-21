@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void find_lowercase_underscore_sequences(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t len = strnlen(str, max_len);
+    size_t i = 0;
+    
+    while (i < len) {
+        if (islower((unsigned char)str[i])) {
+            size_t start = i;
+            
+            while (i < len && (islower((unsigned char)str[i]) || str[i] == '_')) {
+                i++;
+            }
+            
+            size_t end = i;
+            
+            if (end > start + 1 && str[end - 1] != '_') {
+                printf("%.*s\n", (int)(end - start), str + start);
+            }
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t len;
+    
+    len = getline(&input, &input_size, stdin);
+    
+    if (len != -1) {
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+            len--;
+        }
+        
+        find_lowercase_underscore_sequences(input, (size_t)len);
+        free(input);
+    }
+    
+    return 0;
+}

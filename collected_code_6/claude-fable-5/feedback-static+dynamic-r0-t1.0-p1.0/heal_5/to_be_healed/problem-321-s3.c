@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static size_t count_digits(size_t n)
+{
+    size_t d = 1;
+
+    while (n >= 10) {
+        n /= 10;
+        d++;
+    }
+    return d;
+}
+
+static size_t write_number(char *dst, size_t avail, size_t n)
+{
+    size_t d = count_digits(n);
+    size_t i = d;
+
+    if (d > avail) {
+        return 0;
+    }
+
+    while (i > 0) {
+        dst[i - 1] = (char)('0' + (n % 10));
+        n /= 10;
+        i--;
+    }
+    return d;
+}
+
+char *find_demlo(const char *str)
+/* Possible weaknesses found:
+ *  to match this '{'
+ */
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    size_t total;
+    size_t written;
+    char *result;
+    const char *end;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    end = memchr(str, '\0', 128);
+    if (end == NULL) {
+        return NULL;
+    }
+
+    len = (size_t)(end - str);
+    if (len == 0 || len > 127) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Unmatched '{'. Configuration: ''. [syntaxError]
+     *  to match this '{'
+     */
+    for (i = 0; i < len; i++) {
+        /* Possible weaknesses found:
+         *  expected expression at end of input
+         *  expected ']'
+         *  expected declaration or statement at end of input
+         *  expected expression
+         *  to match this '['
+         *  expected '}'
+         */
+        if (str[

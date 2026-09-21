@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-936-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-936-s3.c:86:38: style: Condition 'i<out_index' is always true [knownConditionTrueFalse]
+    for (i = 0; i < tuple_count && i < out_index; i++) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-936-s3.c:86:19: note: Assuming that condition 'i<tuple_count' is not redundant
+    for (i = 0; i < tuple_count && i < out_index; i++) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-936-s3.c:78:19: note: Assuming that condition 'out_index!=tuple_count' is not redundant
+    if (out_index != tuple_count) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-936-s3.c:86:38: note: Condition 'i<out_index' is always true
+    for (i = 0; i < tuple_count && i < out_index; i++) {
+                                     ^

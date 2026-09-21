@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+char* duplicate_string(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+    
+    size_t len = 0;
+    size_t max_len = 4096;
+    
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    
+    char *dest = malloc(len + 1);
+    if (!dest) {
+        return NULL;
+    }
+    
+    memcpy(dest, src, len);
+    dest[len] = '\0';
+    
+    return dest;
+}
+
+Dictionary* create_dict(size_t initial_capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    if (initial_capacity > 0) {
+        dict->items = calloc(initial_capacity, sizeof(KeyValuePair));
+        if (!dict->items) {
+            free(dict);
+            return NULL;
+        }
+    } else {
+        dict->items = NULL;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void free_dict(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->items[i].key);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int dict_set(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) {
+        return -1;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->items[i].key, key) == 0) {
+            dict->items[i].value = value;
+            return 0;
+        }
+    }
+    if (dict->count == dict->capacity) {
+        size_t new_cap = dict->capacity == 0 ? 4 : dict->capacity * 2;
+        KeyValuePair *new_items = realloc(dict->items, new_cap * sizeof(KeyValuePair));
+        if (!new_items) {
+            return -1;
+        }
+        dict->items = new_items;
+        dict->capacity = new_cap;
+    }
+    char *dup_key = duplicate_string(key);
+    if (!dup_key) {
+        return -1;
+    }
+    dict->items[dict->count].key = dup_key;
+    dict->items[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+int dict_get(const Dictionary *dict, const char *key, int *out_value) {
+    if (!dict || !key || !out_value) {
+        return -1;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->items[i].key, key) == 0) {
+            *out_value = dict->items[i].value;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+Dictionary* combine_dicts(const Dictionary *d1, const Dictionary *d2) {
+    if (!d1 || !d2) {
+        return NULL;
+    }
+    Dictionary *combined = create_dict(d1->count + d2->count);
+    if (!combined) {
+        return NULL;
+    }
+    for (size_t i = 0; i < d1->count; ++i) {
+        if (dict_set(combined, d1->items[i].key, d1->items[i].value) != 0) {
+            free_dict(combined);
+            return NULL;
+        }
+    }
+    for (size_t i = 0; i < d2->count; ++i) {
+        int existing_val = 0;
+        if (dict_get(combined, d2->items[i].key, &existing_val) == 0) {
+            if (dict_set(combined, d2->items[i].key, existing_val + d2->items[i].value) != 0) {
+                free_dict(combined);
+                return NULL;
+            }
+        } else {
+            if (dict_set(combined, d2->items[i].key, d2->items[i].value) != 0) {
+                free_dict(combined);
+                return NULL;
+            }
+        }
+    }
+    return combined;
+}
+
+int main(void) {
+    Dictionary *d1 = create_dict(4);
+    Dictionary *d2 = create_dict(4);
+    if (!d1 || !d2) {
+        free_dict(d1);
+        free_dict(d2);
+        return EXIT_FAILURE;
+    }
+    if (dict_set(d1, "apple", 5) != 0 ||
+        dict_set(d1, "banana", 3) != 0 ||
+        dict_set(d1, "orange", 2) != 0) {
+        free_dict(d1);
+        free_dict(d2);
+        return EXIT_FAILURE;
+    }
+    if (dict_set(d2, "banana", 4) != 0 ||
+        dict_set(d2, "orange", 8) != 0 ||
+        dict_set(d2, "grape", 1) != 0) {
+        free_dict(d1);
+        free_dict(d2);
+        return EXIT_FAILURE;
+    }
+    Dictionary *combined = combine_dicts(d1, d2);
+    if (!combined) {
+        free_dict(d1);
+        free_dict(d2);
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < combined->count; ++i) {
+        printf("%s: %d\n", combined->items[i].key, combined->items[i].value);
+    }
+    free_dict(d1);
+    free_dict(d2);
+    free_dict(combined);
+    return EXIT_SUCCESS;
+}

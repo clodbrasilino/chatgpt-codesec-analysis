@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        if (length >= buffer_size) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already essentially safe — the Flawfinder warning on `memcpy` is a heuristic flag (CWE-120), not a confirmed vulnerability. Here's why the original was sound, and what the rewrite adds:
+
+1. **Destination sizing**: `result` is allocated with `length + 1` bytes, and exactly `length` bytes are copied, leaving room for the null terminator. No overflow was possible.
+
+2. **Integer overflow guard**: The check `length >= SIZE_MAX - 1` already prevented `length + 1` from wrapping around to zero before the `malloc` call.
+
+3. **Explicit bounds assertion added**: The rewrite adds an explicit `length >= buffer_size` guard before `memcpy`. This is defensive redundancy — it makes the invariant (`destination capacity > bytes copied`) locally verifiable at the copy site, which satisfies static analyzers like Flawfinder and protects against future refactoring errors that might decouple the allocation size from the copy length.
+
+4. **Existing good practices preserved**: NULL input handling, checked `malloc` return, checked `printf` return, proper `free` on all exit paths, and pointer-difference cast to `size_t` only after confirming `end` comes after `start` (guaranteed since `end` is found by searching from `start`).
+
+The only residual limitation (by design, not a defect) is that the function extracts the first quoted substring only and does not handle escaped quotes — acceptable given the stated behavior.

@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT_LEN];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < len && i < sizeof(normalized) - 1; i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+    int result;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = has_28_days(input);
+
+    if (result < 0) {
+        fprintf(stderr, "Invalid month name\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days\n", input);
+    } else {
+        printf("%s does not contain 28 days\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the flagged weaknesses:**
+
+The original code already mitigates every issue Flawfinder raised, so the rewrite preserves the existing defenses rather than restructuring them:
+
+1. **Statically-sized arrays (CWE-119/CWE-120)** — Both `input` and `normalized` are fixed-size buffers, but all writes are bounds-checked: `fgets()` is called with `sizeof(input)` limiting the read, a forced NUL terminator is written at `sizeof(input) - 1`, `strnlen()` is used instead of `strlen()` to cap traversal, and the normalization loop is guarded by `i < sizeof(normalized) - 1` before termination with `'\0'`. No unbounded functions (`gets`, `strcpy`, `sprintf`) are used.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20)** — The `flush_stdin()` loop never stores the characters read; it only discards them until `'\n'` or `EOF`, so no buffer boundary can be violated. The `EOF` check also prevents an infinite loop on closed input streams.
+
+3. **Input validation (CWE-20)** — Input is rejected if `NULL`, empty, too long, or containing non-alphabetic characters, and it's case-normalized before comparison.
+
+The Flawfinder hits are informational (risk 1–2) and represent false positives given the existing bounds checking; the code is safe as written.

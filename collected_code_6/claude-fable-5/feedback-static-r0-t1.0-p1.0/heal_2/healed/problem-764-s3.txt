@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    count = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (isdigit((unsigned char)str[i])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_numeric(buffer);
+
+    if (printf("Numeric characters: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 weakness effectively:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — bounded read tied directly to the buffer size via `sizeof`, so no overflow is possible even if `BUFFER_SIZE` changes later.
+2. **Explicit null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant with `fgets`, which always null-terminates on success, but harmless).
+3. **`strnlen` instead of `strlen`** — bounded length calculation guarantees no read past the buffer even if termination were somehow lost.
+4. **`isdigit((unsigned char)str[i])`** — correct cast avoids undefined behavior when `char` is signed and holds negative values.
+5. **`memset` initialization** — ensures the buffer starts in a known state.
+6. **Return-value checks** on `fgets` and `printf` — proper error handling throughout.
+
+The statically-sized array warning from Flawfinder is a risk-level-2 heuristic; since every operation on `buffer` is bounds-checked with `sizeof(buffer)`, no code changes were required beyond stripping the comments as requested.

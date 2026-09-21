@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str) {
+    int i, count = 0, len = 0;
+    if (str == NULL) return;
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') count++;
+    }
+
+    int new_length = len + (count * 2);
+    str[new_length] = '\0';
+
+    for (i = len - 1; i >= 0; i--) {
+        if (str[i] == ' ') {
+            str[new_length - 1] = '0';
+            str[new_length - 2] = '2';
+            str[new_length - 3] = '%';
+            new_length -= 3;
+        } else {
+            str[new_length - 1] = str[i];
+            new_length--;
+        }
+    }
+}
+
+int main() {
+    char str1[] = "Mr John Smith    ";
+    replace_spaces(str1);
+    printf("Replaced string: %s\n", str1);
+
+    char str2[] = " Test String with Spaces  ";
+    replace_spaces(str2);
+    printf("Replaced string: %s\n", str2);
+
+    return 0;
+}

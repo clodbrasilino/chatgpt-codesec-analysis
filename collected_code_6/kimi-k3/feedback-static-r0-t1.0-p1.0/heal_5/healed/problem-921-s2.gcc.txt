@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-921-s2.c: In function 'add_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-921-s2.c:74:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   74 |     if (memcpy_s(new_data, copy_size, data, copy_size) != 0) {
+      |         ^~~~~~~~
+      |         memcpy

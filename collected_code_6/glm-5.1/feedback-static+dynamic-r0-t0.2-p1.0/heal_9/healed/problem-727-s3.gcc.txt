@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c: In function 'remove_non_alnum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:26:5: error: unknown type name 'regex_t'
+   26 |     regex_t regex;
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:15: error: implicit declaration of function 'regcomp' [-Wimplicit-function-declaration]
+   27 |     int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:47: error: 'REG_EXTENDED' undeclared (first use in this function)
+   27 |     int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+      |                                               ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:27:47: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:37:9: error: unknown type name 'regmatch_t'
+   37 |         regmatch_t match;
+      |         ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:38:24: error: implicit declaration of function 'regexec' [-Wimplicit-function-declaration]
+   38 |         int exec_ret = regexec(&regex, cursor, 1, &match, 0);
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:41:22: error: request for member 'rm_so' in something not a structure or union
+   41 |             if (match.rm_so > 0) {
+      |                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:42:40: error: request for member 'rm_so' in something not a structure or union
+   42 |                 size_t copy_len = match.rm_so;
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:48:22: error: request for member 'rm_eo' in something not a structure or union
+   48 |             if (match.rm_eo == 0) {
+      |                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:51:32: error: request for member 'rm_eo' in something not a structure or union
+   51 |                 cursor += match.rm_eo;
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-727-s3.c:70:5: error: implicit declaration of function 'regfree'; did you mean 'free'? [-Wimplicit-function-declaration]
+   70 |     regfree(&regex);
+      |     ^~~~~~~
+      |     free

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-871-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-871-s2.c:31:39: style: Condition 'temp_size<2*len1' is always false [knownConditionTrueFalse]
+    if (temp_size < len1 || temp_size < 2 * len1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-871-s2.c:29:22: note: temp_size is assigned '2*len1+1' here.
+    size_t temp_size = 2 * len1 + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-871-s2.c:31:39: note: Condition 'temp_size<2*len1' is always false
+    if (temp_size < len1 || temp_size < 2 * len1) {
+                                      ^

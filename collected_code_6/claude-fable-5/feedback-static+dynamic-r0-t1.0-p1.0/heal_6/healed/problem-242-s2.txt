@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL || max_len == 0)
+    {
+        return;
+    }
+
+    while (i < max_len && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer, sizeof(buffer));
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120). The Flawfinder hit on `char buffer[BUFFER_SIZE]` is a low-risk, informational warning triggered by any statically-sized array — not an actual vulnerability here. The mitigations in place are:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible on input.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this makes termination explicit and protects against future refactoring.
+3. **Bounded traversal:** `strip_newline` takes `max_len` and checks `i < max_len` before dereferencing, preventing out-of-bounds reads even on a non-terminated buffer.
+4. **NULL checks:** Both helper functions guard against `NULL` pointers.
+
+The only improvement added in the rewrite is a `max_len == 0` guard in `strip_newline` to make the function fully robust against degenerate arguments. `count_characters` relies on null termination, which is guaranteed by the explicit termination in `main` before it is called, so it is safe in this call context.

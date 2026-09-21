@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-109-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-109-s2.c:5:31: style: Parameter 'str' can be declared as pointer to const [constParameterPointer]
+int count_odd_rotations(char *str, int max_len) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-109-s2.c:52:12: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+        len--;
+           ^

@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (islower((unsigned char)str[i])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_lowercase(buffer);
+
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and why the fixes are already in place:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[256]` as a *potential* risk, but the original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most 255 characters plus the null terminator, preventing buffer overflow. Using `sizeof(buffer)` rather than a hardcoded literal keeps the bound correct if the array size changes.
+
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant, since `fgets` always null-terminates on success), but harmless and explicit.
+
+3. **Newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline. This is the idiomatic, safe way to do it — it works even when no newline is present (unlike the common unsafe `buffer[strlen(buffer)-1] = '\0'` pattern, which can underflow on an empty string).
+
+4. **Safe `islower` usage:** Casting to `(unsigned char)` before calling `islower` avoids undefined behavior when `char` is signed and holds negative values.
+
+5. **Error handling:** The `fgets` return value is checked, and `NULL` is handled in `count_lowercase`.
+
+The code is therefore already free of the flagged weakness; the rewrite above simply preserves the correct implementation with comments removed as requested.

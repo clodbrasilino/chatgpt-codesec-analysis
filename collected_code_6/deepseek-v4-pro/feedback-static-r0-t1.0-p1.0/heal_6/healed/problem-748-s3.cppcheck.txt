@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:66:52: style: Condition 'current_len+copy_len<=output_len' is always true [knownConditionTrueFalse]
+        if (copy_len > 0 && current_len + copy_len <= output_len) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:48:43: note: Assuming that condition 'current_len+copy_len+2>output_len' is not redundant
+        while (current_len + copy_len + 2 > output_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:66:52: note: Condition 'current_len+copy_len<=output_len' is always true
+        if (copy_len > 0 && current_len + copy_len <= output_len) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748-s3.c:95:20: style: Variable 'output_len' is assigned a value that is never used. [unreadVariable]
+        output_len = new_len;
+                   ^

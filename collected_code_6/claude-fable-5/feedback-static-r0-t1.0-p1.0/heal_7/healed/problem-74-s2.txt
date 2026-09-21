@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_PATTERN_LEN 1024U
+#define MAX_TEXT_LEN 65536U
+#define ALPHABET_SIZE 26U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    size_t plen = strnlen(pattern, MAX_PATTERN_LEN + 1U);
+    if (plen == 0U || plen > MAX_PATTERN_LEN) {
+        return false;
+    }
+
+    size_t tlen = strnlen(text, MAX_TEXT_LEN + 1U);
+    if (tlen > MAX_TEXT_LEN) {
+        return false;
+    }
+
+    if (tlen >= SIZE_MAX) {
+        return false;
+    }
+
+    size_t copy_size = tlen + 1U;
+
+    char *copy = malloc(copy_size);
+    if (copy == NULL) {
+        return false;
+    }
+
+    if (tlen > 0U) {
+        memmove(copy, text, tlen);
+    }
+    copy[tlen] = '\0';
+
+    const char **map = calloc(ALPHABET_SIZE, sizeof(const char *));
+    if (map == NULL) {
+        free(copy);
+        return false;
+    }
+
+    bool result = true;
+    size_t i = 0U;
+    char *saveptr = NULL;
+
+    char *word = strtok_r(copy, " ", &saveptr);
+    while ((word != NULL) && (i < plen)) {
+        char c = pattern[i];
+        if ((c < 'a') || (c > 'z')) {
+            result = false;
+            break;
+        }
+        size_t idx = (size_t)(c - 'a');
+        if (idx >= ALPHABET_SIZE) {
+            result = false;
+            break;
+        }
+        if (map[idx] == NULL) {
+            for (size_t j = 0U; j < ALPHABET_SIZE; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], word) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[idx] = word;
+        } else {
+            if (strcmp(map[idx], word) != 0) {
+                result = false;
+                break;
+            }
+        }
+        i++;
+        word = strtok_r(NULL, " ", &saveptr);
+    }
+
+    if (result && ((word != NULL) || (i != plen))) {
+        result = false;
+    }
+
+    free(map);
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+
+    for (size_t i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        int printed = printf("Pattern \"%s\" with \"%s\": %s\n",
+                             patterns[i], texts[i], ok ? "true" : "false");
+        if (printed < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes and reasoning:**
+
+The original code was already quite defensive, and the Flawfinder warning on the `map` array was largely a false positive — the code already validated `idx` against `ALPHABET_SIZE` before every access. Nevertheless, the rewrite addresses it and tightens things up:
+
+1. **Heap-allocated, zero-initialized `map`**: Replaced the statically-sized stack array flagged by Flawfinder (CWE-119/CWE-120) with `calloc(ALPHABET_SIZE, sizeof(const char *))`. This guarantees zero-initialization (removing the manual NULL-init loop), and eliminates the flagged fixed-size stack buffer entirely. A corresponding `free(map)` was added on all exit paths after allocation, including the early-return path on `calloc` failure where `copy` is also released to avoid a leak.
+
+2. **Retained existing mitigations**: The original protections are preserved — `strnlen` with explicit caps to prevent unbounded reads, `SIZE_MAX` overflow guard before computing `copy_size`, `malloc` failure checks, bounded `memmove` instead of `strcpy`, explicit NUL termination, and the double bounds check (`c` range check plus `idx >= ALPHABET_SIZE`) before indexing `map`.
+
+3. **Correctness preserved**: The word-pattern bijection logic (forward mapping via `map[idx]`, reverse-mapping uniqueness via the inner scan) and the final length-consistency check (`word != NULL || i != plen`) are unchanged, so behavior for the four test cases remains `true`, `false`, `false`, `false`.

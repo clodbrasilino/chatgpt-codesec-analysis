@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+size_t shortest_word_length(const char *str)
+{
+    size_t min_len = 0;
+    size_t current_len = 0;
+    int found = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!isspace((unsigned char)str[i])) {
+            current_len++;
+        } else {
+            if (current_len > 0) {
+                if (!found || current_len < min_len) {
+                    min_len = current_len;
+                    found = 1;
+                }
+                current_len = 0;
+            }
+        }
+    }
+
+    if (current_len > 0) {
+        if (!found || current_len < min_len) {
+            min_len = current_len;
+        }
+    }
+
+    return min_len;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_len;
+    size_t result;
+
+    printf("Enter a sentence: ");
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    if (read_len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (read_len > 0 && buffer[read_len - 1] == '\n') {
+        buffer[read_len - 1] = '\0';
+    }
+
+    result = shortest_word_length(buffer);
+
+    if (result == 0) {
+        printf("No words found in input\n");
+    } else {
+        printf("Length of shortest word: %zu\n", result);
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness (CWE-119/CWE-120):
+
+1. **Replaced the statically-sized buffer** (`char buffer[BUFFER_SIZE]`) with a dynamically allocated buffer managed by `getline()`, which automatically grows the allocation to fit the input. This eliminates the fixed-size restriction entirely, so arbitrarily long input lines cannot be truncated or cause overflow concerns.
+
+2. **Removed the now-unnecessary defensive code**: the manual NUL-termination (`buffer[sizeof(buffer) - 1] = '\0'`) and `strnlen()` call are no longer needed, since `getline()` guarantees NUL-termination and returns the exact byte count read.
+
+3. **Added proper memory cleanup** with `free(buffer)` on both the error path and the success path to prevent memory leaks.
+
+4. The `shortest_word_length()` function was already safe — it performs bounds-respecting iteration on a NUL-terminated string, checks for `NULL`, and correctly casts to `unsigned char` before calling `isspace()` (avoiding undefined behavior with negative `char` values) — so it remains unchanged.
+
+Note: `getline()` is POSIX. If strict ISO C portability is required, the original `fgets()` approach with size-limited reads was already a safe mitigation; the dynamic approach simply removes the fixed-size limitation flagged by the analyzer.

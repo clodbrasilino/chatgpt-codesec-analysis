@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int find_words(const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor = str;
+    int reti;
+
+    if (str == NULL) {
+        fprintf(stderr, "Input string is NULL\n");
+        return 1;
+    }
+
+    reti = regcomp(&regex, "[a-zA-Z]{4,}", REG_EXTENDED);
+    if (reti != 0) {
+        size_t error_size = regerror(reti, &regex, NULL, 0);
+        char *error_buffer = malloc(error_size);
+        if (error_buffer == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            regfree(&regex);
+            return 1;
+        }
+        regerror(reti, &regex, error_buffer, error_size);
+        fprintf(stderr, "Could not compile regex: %s\n", error_buffer);
+        free(error_buffer);
+        regfree(&regex);
+        return 1;
+    }
+
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        if (match.rm_so != -1 && match.rm_eo > match.rm_so) {
+            printf("%.*s\n", (int)(match.rm_eo - match.rm_so), cursor + match.rm_so);
+            cursor += match.rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    const char *text = "This is a simple example string to find words which are at least four characters long";
+    if (find_words(text) != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-906.c:58:19: style: Condition 'y_len+1>(int)sizeof(year_str)' is always false [knownConditionTrueFalse]
+    if (y_len + 1 > (int)sizeof(year_str)) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-906.c:40:15: note: Assuming that condition 'y_len>4' is not redundant
+    if (y_len > 4 || y_len <= 0 || m_len > 2 || m_len <= 0 || d_len > 2 || d_len <= 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-906.c:54:64: note: Assuming condition is false
+    if ((size_t)y_len + (size_t)(url + matches[1].rm_so - url) > strlen(url)) {
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-906.c:58:19: note: Condition 'y_len+1>(int)sizeof(year_str)' is always false
+    if (y_len + 1 > (int)sizeof(year_str)) {
+                  ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:122:16: style: Condition 'source==NULL' is always false [knownConditionTrueFalse]
+    if (source == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:119:26: note: Assignment 'source="Hello, World. This is a test string, with spaces."', assigned value is "Hello, World. This is a test string, with spaces."
+    const char *source = "Hello, World. This is a test string, with spaces.";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:122:16: note: Condition 'source==NULL' is always false
+    if (source == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-542-s3.c:16:12: style: The scope of the variable 'copy_len' can be reduced. [variableScope]
+    size_t copy_len;
+           ^

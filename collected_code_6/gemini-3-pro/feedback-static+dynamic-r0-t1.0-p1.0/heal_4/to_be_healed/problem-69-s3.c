@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected True, got <no output>
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 0 failed: expected False, got <no output>
+  */
+
+bool isSublist(Node* list, Node* sublist) {
+    if (sublist == NULL) {
+        return true;
+    }
+    if (list == NULL) {
+        return false;
+    }
+
+    Node* currentList = list;
+    
+    while (currentList != NULL) {
+        Node* ptr1 = currentList;
+        Node* ptr2 = sublist;
+        
+        while (ptr1 != NULL && ptr2 != NULL && ptr1->data == ptr2->data) {
+            ptr1 = ptr1->next;
+            ptr2 = ptr2->next;
+        }
+        
+        if (ptr2 == NULL) {
+            return true;
+        }
+        
+        currentList = currentList->next;
+    }
+    
+    return false;
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode != NULL) {
+        newNode->data = data;
+        newNode->next = NULL;
+    }
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    if (head == NULL) return;
+    
+    Node* newNode = createNode(data);
+    if (newNode == NULL) return;
+
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void freeList(Node* head) {
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void parseLine(Node** head) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[8192];
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return;
+    }
+    int offset = 0;
+    int num, charsRead;
+    while (sscanf(buffer + offset, "%d%n", &num, &charsRead) == 1) {
+        append(head, num);
+        offset += charsRead;
+    }
+}
+
+int main(void) {
+    Node* list = NULL;
+    Node* sublist = NULL;
+
+    parseLine(&list);
+    parseLine(&sublist);
+
+    if (isSublist(list, sublist)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    freeList(list);
+    freeList(sublist);
+
+    return 0;
+}

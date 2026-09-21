@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    const char source[] = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    size_t buffer_size;
+    char *buffer;
+    int written;
+
+    source_len = strnlen(source, sizeof(source));
+    if (source_len >= sizeof(source)) {
+        fprintf(stderr, "Source string is not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = source_len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, buffer_size, "%s", source);
+    if (written < 0 || (size_t)written >= buffer_size) {
+        fprintf(stderr, "String copy failed or was truncated\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **Removed the always-false condition** (`source_len >= buffer_size`): Since `buffer_size` is assigned `source_len + 1` immediately before, this check could never trigger. Dead code flagged by `knownConditionTrueFalse` was eliminated.
+
+2. **Replaced `memcpy` with `snprintf`**: Flawfinder flagged `memcpy` (CWE-120) because it performs no bounds checking. `snprintf` is bounds-aware — it never writes more than `buffer_size` bytes and always null-terminates, eliminating both the overflow risk and the need for the manual `buffer[source_len] = '\0'` step.
+
+3. **Added truncation/error checking on the copy**: The return value of `snprintf` is validated, so if the destination were ever too small (e.g., after future code changes), the program fails safely instead of operating on truncated data.
+
+4. **Preserved the existing sound defenses**: the `strnlen` termination check, the `malloc` NULL check, the NULL guard in `remove_char`, and the `free` on all exit paths remain intact — no leaks or unchecked allocations.

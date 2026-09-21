@@ -1,0 +1,76 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+bool isValid(const char *s, size_t len) {
+    if (s == NULL) {
+        return false;
+    }
+
+    if (len % 2 != 0) {
+        return false;
+    }
+
+    if (len == 0) {
+        return true;
+    }
+
+    char *stack = malloc(len);
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        char c = s[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            stack[top++] = c;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {
+                free(stack);
+                return false;
+            }
+
+            char expected = stack[--top];
+
+            if ((c == ')' && expected != '(') ||
+                (c == ']' && expected != '[') ||
+                (c == '}' && expected != '{')) {
+                free(stack);
+                return false;
+            }
+        } else {
+            free(stack);
+            return false;
+        }
+    }
+
+    bool valid = (top == 0);
+    free(stack);
+    return valid;
+}
+
+int main(void) {
+    struct test {
+        const char *s;
+        size_t len;
+    };
+    struct test tests[] = {
+        {"()", 2},
+        {"()[]{}", 6},
+        {"(]", 2},
+        {"([)]", 4},
+        {"{[]}", 4},
+        {"(((", 3},
+        {"", 0}
+    };
+    int num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        printf("%s: %s\n", tests[i].s, isValid(tests[i].s, tests[i].len) ? "valid" : "invalid");
+    }
+
+    return 0;
+}

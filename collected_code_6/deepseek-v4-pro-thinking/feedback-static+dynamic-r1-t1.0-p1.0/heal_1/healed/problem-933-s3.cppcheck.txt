@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-933-s3.c:13:17: warning: Either the condition 'length==max_len' is redundant or the array 'input[16]' is accessed at index 4096, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (input[length] != '\0' && length < max_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-933-s3.c:16:16: note: Assuming that condition 'length==max_len' is not redundant
+    if (length == max_len) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-933-s3.c:13:17: note: Array index out of bounds
+    while (input[length] != '\0' && length < max_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-933-s3.c:13:17: style: Array index 'length' is used before limits check. [arrayIndexThenCheck]
+    while (input[length] != '\0' && length < max_len) {
+                ^

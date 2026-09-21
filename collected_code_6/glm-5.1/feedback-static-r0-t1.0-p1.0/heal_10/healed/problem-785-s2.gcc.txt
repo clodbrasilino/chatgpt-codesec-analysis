@@ -1,0 +1,7 @@
+during IPA pass: analyzer
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-785-s2.c: In function 'parse_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-785-s2.c:44:19: internal compiler error: Segmentation fault: 11
+   44 |     char *token = strtok(buffer, "(), ");
+      |                   ^~~~~~~~~~~~~~~~~~~~~~
+Please submit a full bug report, with preprocessed source (by using -freport-bug).
+See <https://github.com/Homebrew/homebrew-core/issues> for instructions.

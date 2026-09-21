@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void count_digits_letters(const char *str, size_t *digits, size_t *letters)
+{
+    size_t i;
+
+    if (str == NULL || digits == NULL || letters == NULL) {
+        return;
+    }
+
+    *digits = 0;
+    *letters = 0;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isdigit(c)) {
+            (*digits)++;
+        } else if (isalpha(c)) {
+            (*letters)++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t digits = 0;
+    size_t letters = 0;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    count_digits_letters(buffer, &digits, &letters);
+
+    printf("Digits: %zu\n", digits);
+    printf("Letters: %zu\n", letters);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already handles the flagged weakness (CWE-119/CWE-120, statically-sized buffer) correctly, so the rewrite preserves those mitigations rather than changing logic:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing overflow. The return value is checked to catch EOF/read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit and safe even if the input path changes.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` instead of `strlen` avoids scanning past the buffer if termination were ever missing.
+
+4. **Safe `ctype` usage** — casting each character to `unsigned char` before `isdigit`/`isalpha` avoids undefined behavior for negative `char` values (e.g., with high-bit characters on platforms where `char` is signed).
+
+5. **NULL-pointer guards** — `count_digits_letters` validates all pointer parameters before dereferencing.
+
+6. **Correct format specifiers** — `%zu` matches `size_t`, avoiding format-string type mismatches.
+
+No functional changes were needed; the code is a sound example of defense-in-depth against the Flawfinder warning.

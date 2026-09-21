@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:43:40: style: Condition 'output_len+remaining<=input_len' is always true [knownConditionTrueFalse]
+            if (output_len + remaining <= input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:38:40: note: Assuming that condition 'output_len+remaining>input_len' is not redundant
+            if (output_len + remaining > input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:43:40: note: Condition 'output_len+remaining<=input_len' is always true
+            if (output_len + remaining <= input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:69:38: style: Condition 'output_len+match.rm_so<=input_len' is always true [knownConditionTrueFalse]
+        if (output_len + match.rm_so <= input_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:64:38: note: Assuming that condition 'output_len+match.rm_so>input_len' is not redundant
+        if (output_len + match.rm_so > input_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:69:38: note: Condition 'output_len+match.rm_so<=input_len' is always true
+        if (output_len + match.rm_so <= input_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:99:24: style: Condition 'output_len+1<=output_size' is always true [knownConditionTrueFalse]
+    if (output_len + 1 <= output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:94:24: note: Assuming that condition 'output_len+1>output_size' is not redundant
+    if (output_len + 1 > output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-631.c:99:24: note: Condition 'output_len+1<=output_size' is always true
+    if (output_len + 1 <= output_size) {
+                       ^

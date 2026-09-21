@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-706.c: In function 'is_subset':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-706.c:42:36: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   42 |     const int *tmp1 = (const int *)memcpy(sorted_arr1, arr1, size1);
+      |                                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-706.c:3:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | #include <stdint.h>

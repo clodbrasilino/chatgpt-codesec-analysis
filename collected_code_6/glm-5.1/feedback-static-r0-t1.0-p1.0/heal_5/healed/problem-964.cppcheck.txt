@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:37:15: style: Condition 'word4!=NULL' is always true [knownConditionTrueFalse]
+    if (word4 != NULL && is_length_even(word4, 8)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:17:25: note: Assignment 'word4="null"', assigned value is "null"
+    const char *word4 = "null";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:37:15: note: Condition 'word4!=NULL' is always true
+    if (word4 != NULL && is_length_even(word4, 8)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:40:39: warning: Either the condition 'word4!=NULL' is redundant or there is possible null pointer dereference: word4. [nullPointerRedundantCheck]
+        printf("%s has odd length\n", word4);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:37:15: note: Assuming that condition 'word4!=NULL' is not redundant
+    if (word4 != NULL && is_length_even(word4, 8)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-964.c:40:39: note: Null pointer dereference
+        printf("%s has odd length\n", word4);
+                                      ^

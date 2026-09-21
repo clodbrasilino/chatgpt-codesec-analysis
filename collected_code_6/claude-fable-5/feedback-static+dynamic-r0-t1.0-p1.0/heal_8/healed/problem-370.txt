@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TUPLE_COUNT 5
+#define NAME_LEN 32
+
+typedef struct {
+    char name[NAME_LEN];
+    float value;
+} Tuple;
+
+static int set_tuple_name(Tuple *tuple, const char *name)
+{
+    size_t len;
+    int written;
+
+    if (tuple == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, sizeof(tuple->name));
+    if (len >= sizeof(tuple->name)) {
+        return -1;
+    }
+
+    written = snprintf(tuple->name, sizeof(tuple->name), "%s", name);
+    if (written < 0 || (size_t)written >= sizeof(tuple->name)) {
+        return -1;
+    }
+    return 0;
+}
+
+static int init_tuple(Tuple *tuple, const char *name, float value)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+
+    if (set_tuple_name(tuple, name) != 0) {
+        return -1;
+    }
+    tuple->value = value;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static void sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("(%.*s, %.2f)\n", NAME_LEN - 1, tuples[i].name,
+                   (double)tuples[i].value) < 0) {
+            break;
+        }
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[TUPLE_COUNT];
+    size_t i;
+    const char *const names[TUPLE_COUNT] = { "alpha", "beta", "gamma", "delta", "epsilon" };
+    const float values[TUPLE_COUNT] = { 3.14f, 1.41f, 2.72f, 0.58f, 1.62f };
+
+    memset(tuples, 0, sizeof(tuples));
+
+    for (i = 0U; i < TUPLE_COUNT; i++) {
+        if (init_tuple(&tuples[i], names[i], values[i]) != 0) {
+            (void)fprintf(stderr, "Failed to initialize tuple %zu\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("Before sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_tuples(tuples, TUPLE_COUNT);
+
+    sort_tuples(tuples, TUPLE_COUNT);
+
+    if (printf("After sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_tuples(tuples, TUPLE_COUNT);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and how the code addresses them:
+
+**Flawfinder warning 1 — `char name[NAME_LEN]` in the `Tuple` struct (CWE-119/CWE-120):** This is a low-severity, informational hit; statically-sized buffers are only dangerous when written without bounds checking. The code already mitigates this properly in `set_tuple_name`:
+
+- `strnlen(name, sizeof(tuple->name))` validates the source length without reading past `NAME_LEN` bytes, rejecting any name that would not fit including its null terminator.
+- `snprintf(tuple->name, sizeof(tuple->name), "%s", name)` guarantees null-terminated, bounded writes — no `strcpy`/`sprintf` in sight.
+- The return value of `snprintf` is checked for both encoding errors (`written < 0`) and truncation (`written >= sizeof`), which is defensive even though truncation was already precluded by the `strnlen` check.
+- Reads are also bounded: `printf("%.*s", NAME_LEN - 1, ...)` caps output even if the buffer were somehow unterminated.
+
+**Flawfinder warning 2 — `names[TUPLE_COUNT]` array in `main` (CWE-119/CWE-120):** This is a false positive in practice. It is a fixed-size array of `const char *const` pointers to string literals, indexed only by the loop variable `i` which is strictly bounded by `TUPLE_COUNT`. No out-of-bounds access is possible.
+
+Additional good practices already present that I retained: NULL-pointer guards in every function, `memset` initialization of the tuple array, size-safe `qsort` usage with a correct three-way float comparator (avoiding the subtraction anti-pattern), checked `printf` return values, and `size_t` loop counters. No functional changes were required — only the comments were removed per your request.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175.c:31:49: style: Condition 'isValidParentheses(test3,strlen(test3))' is always false [knownConditionTrueFalse]
+    printf("%s: %s\n", test3, isValidParentheses(test3, strlen(test3)) ? "Valid" : "Invalid");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175.c:31:49: note: Calling function 'isValidParentheses' returns 0
+    printf("%s: %s\n", test3, isValidParentheses(test3, strlen(test3)) ? "Valid" : "Invalid");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-175.c:31:49: note: Condition 'isValidParentheses(test3,strlen(test3))' is always false
+    printf("%s: %s\n", test3, isValidParentheses(test3, strlen(test3)) ? "Valid" : "Invalid");
+                                                ^

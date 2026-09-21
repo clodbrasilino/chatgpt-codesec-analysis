@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-104-s2.c: In function 'create_list_of_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-104-s2.c:68:28: error: initialization of 'long unsigned int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+   68 |     ListOfLists list = {0, NULL};
+      |                            ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-104-s2.c:68:28: note: (near initialization for 'list.count')

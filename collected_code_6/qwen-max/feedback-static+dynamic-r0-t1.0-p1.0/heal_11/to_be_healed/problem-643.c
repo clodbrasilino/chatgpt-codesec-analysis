@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool contains_z_not_start_end(const char *word, size_t len) {
+    for (size_t i = 1; i < len - 1; ++i) {
+        if (word[i] == 'z' && isalpha((unsigned char)word[i-1]) && isalpha((unsigned char)word[i+1])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    const char *test_words[] = {"zebra", "lazy", "zany", "pizzazz", "amaze", "fizz"};
+    const size_t num_words = sizeof(test_words) / sizeof(test_words[0]);
+    for (size_t i = 0; i < num_words; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len = strlen(test_words[i]);
+        if (len >= 3 && contains_z_not_start_end(test_words[i], len)) {
+            printf("%s: true\n", test_words[i]);
+        } else {
+            printf("%s: false\n", test_words[i]);
+        }
+    }
+    return 0;
+}

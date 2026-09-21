@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-885-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-885-s3.c:34:15: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+        if (i >= len) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-885-s3.c:33:26: note: outer condition: i<len
+    for (size_t i = 0; i < len; i++) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-885-s3.c:34:15: note: opposite inner condition: i>=len
+        if (i >= len) {
+              ^

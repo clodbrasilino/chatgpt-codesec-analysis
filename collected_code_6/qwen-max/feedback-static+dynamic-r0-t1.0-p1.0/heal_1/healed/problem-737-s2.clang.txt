@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-737-s2.c:21:24: error: call to undeclared library function 'malloc' with type 'void *(unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   21 |         char *msgbuf = malloc(MSG_SIZE);
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-737-s2.c:21:24: note: include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-737-s2.c:27:9: error: call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |         free(msgbuf);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-737-s2.c:27:9: note: include the header <stdlib.h> or explicitly provide a declaration for 'free'
+2 errors generated.

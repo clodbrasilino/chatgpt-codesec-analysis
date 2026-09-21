@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdint.h>
+#include <ctype.h>
+
+int **generate_magic_square(int n) {
+    if (n <= 0 || n % 2 == 0) {
+        return NULL;
+    }
+
+    if (n > INT_MAX / n) {
+        return NULL;
+    }
+
+    int **square = (int **)malloc((size_t)n * sizeof(int *));
+    if (square == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        square[i] = (int *)calloc((size_t)n, sizeof(int));
+        if (square[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(square[j]);
+            }
+            free(square);
+            return NULL;
+        }
+    }
+
+    int row = 0;
+    int col = n / 2;
+
+    for (int num = 1; num <= n * n; num++) {
+        square[row][col] = num;
+        int next_row = (row - 1 + n) % n;
+        int next_col = (col + 1) % n;
+
+        if (square[next_row][next_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+
+    return square;
+}
+
+void free_magic_square(int **square, int n) {
+    if (square == NULL || n <= 0) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        free(square[i]);
+        square[i] = NULL;
+    }
+    free(square);
+}
+
+void print_magic_square(int **square, int n) {
+    if (square == NULL || n <= 0) {
+        printf("Invalid magic square\n");
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        if (square[i] == NULL) {
+            printf("Invalid magic square\n");
+            return;
+        }
+        for (int j = 0; j < n; j++) {
+            printf("%4d ", square[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int n = 0;
+    char *line = NULL;
+    size_t line_size = 0;
+    char *endptr = NULL;
+    long val = 0;
+    ssize_t bytes_read = 0;
+
+    printf("Enter odd number for magic square size: ");
+
+    bytes_read = getline(&line, &line_size, stdin);
+    if (bytes_read == -1) {
+        free(line);
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (bytes_read > 0 && line[bytes_read - 1] == '\n') {
+        line[bytes_read - 1] = '\0';
+        bytes_read--;
+    }
+
+    if (bytes_read == 0) {
+        free(line);
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if ((size_t)bytes_read > 255) {
+        free(line);
+        printf("Input too long\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < (size_t)bytes_read; i++) {
+        if (i == 0 && line[i] == '-') {
+            continue;
+        }
+        if (!isdigit((unsigned char)line[i])) {
+            free(line);
+            printf("Invalid input\n");
+            return 1;
+        }
+    }
+
+    errno = 0;
+    val = strtol(line, &endptr, 10);
+
+    if (errno != 0 || endptr == line || *endptr != '\0') {
+        free(line);
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (val <= 0 || val > INT_MAX) {
+        free(line);
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    n = (int)val;
+
+    if (n % 2 == 0) {
+        free(line);
+        printf("Please enter a positive odd number\n");
+        return 1;
+    }
+
+    if (n > INT_MAX / n) {
+        free(line);
+        printf("Size too large\n");
+        return 1;
+    }
+
+    free(line);
+
+    int **magic_square = generate_magic_square(n);
+    if (magic_square == NULL) {
+        printf("Failed to generate magic square\n");
+        return 1;
+    }
+
+    print_magic_square(magic_square, n);
+    free_magic_square(magic_square, n);
+
+    return 0;
+}

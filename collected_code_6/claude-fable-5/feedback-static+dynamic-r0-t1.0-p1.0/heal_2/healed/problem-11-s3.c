@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t tail_len;
+    size_t i;
+
+    if (str == NULL || max_len == 0U) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        str[max_len - 1U] = '\0';
+        len = max_len - 1U;
+    }
+    if (len == 0U) {
+        return;
+    }
+
+    first = memchr(str, (int)(unsigned char)ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = NULL;
+    for (i = len; i > 0U; i--) {
+        if (str[i - 1U] == ch) {
+            last = &str[i - 1U];
+            break;
+        }
+    }
+
+    if (last != NULL && last != first) {
+        tail_len = len - (size_t)(last - str) - 1U;
+        memmove(last, last + 1, tail_len + 1U);
+        len -= 1U;
+    }
+
+    tail_len = len - (size_t)(first - str) - 1U;
+    memmove(first, first + 1, tail_len + 1U);
+}
+
+static void flush_input(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strcspn(buffer, "\n");
+    if (len == strnlen(buffer, sizeof(buffer)) && len == sizeof(buffer) - 1U) {
+        flush_input();
+    }
+    buffer[len] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}

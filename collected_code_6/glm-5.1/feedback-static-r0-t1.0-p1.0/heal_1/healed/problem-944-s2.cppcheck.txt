@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-944-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-944-s2.c:10:16: warning: Either the condition 'i<max_len' is redundant or the array 'str[20]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        if (str[i] == '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-944-s2.c:39:40: note: Calling function 'print_numbers_and_positions', 2nd argument '256' value is 256
+    print_numbers_and_positions(input, 256);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-944-s2.c:9:14: note: Assuming that condition 'i<max_len' is not redundant
+    while (i < max_len) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-944-s2.c:10:16: note: Array index out of bounds
+        if (str[i] == '\0') {
+               ^

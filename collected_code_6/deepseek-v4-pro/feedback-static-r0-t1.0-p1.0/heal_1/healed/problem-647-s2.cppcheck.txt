@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:26:32: style: Condition 'alloc_size<part_len' is always false [knownConditionTrueFalse]
+                if (alloc_size < part_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:25:35: note: alloc_size is assigned 'part_len+1' here.
+                size_t alloc_size = part_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:26:32: note: Condition 'alloc_size<part_len' is always false
+                if (alloc_size < part_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:41:30: style: Condition 'part_len>0' is always true [knownConditionTrueFalse]
+                if (part_len > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:24:26: note: Assuming that condition 'part_len>0' is not redundant
+            if (part_len > 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:34:21: note: Assuming condition is false
+                if (!parts[part_count]) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-647-s2.c:41:30: note: Condition 'part_len>0' is always true
+                if (part_len > 0) {
+                             ^

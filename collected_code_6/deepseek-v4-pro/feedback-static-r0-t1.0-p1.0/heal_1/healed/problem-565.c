@@ -1,0 +1,48 @@
+#include <stdlib.h>
+#include <string.h>
+
+static char **split_string_into_chars(const char *str) {
+    if (!str) return NULL;
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        if (len == SIZE_MAX) return NULL;
+        len++;
+    }
+
+    char **result = (char **)malloc(sizeof(char *) * (len + 1));
+    if (!result) return NULL;
+
+    for (size_t i = 0; i < len; ++i) {
+        result[i] = (char *)malloc(sizeof(char) * 2);
+        if (!result[i]) {
+            for (size_t j = 0; j < i; ++j) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        result[i][0] = str[i];
+        result[i][1] = '\0';
+    }
+    result[len] = NULL;
+    return result;
+}
+
+static void free_split_chars(char **chars) {
+    if (!chars) return;
+    for (size_t i = 0; chars[i] != NULL; ++i) {
+        free(chars[i]);
+    }
+    free(chars);
+}
+
+int main(void) {
+    const char *test_string = "Hello";
+    char **chars = split_string_into_chars(test_string);
+    if (!chars) return 1;
+
+    free_split_chars(chars);
+
+    return 0;
+}

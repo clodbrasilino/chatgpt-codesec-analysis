@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-118-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-118-s2.c:48:28: warning: Either the condition 'len>=65536' is redundant or the array 'p[25]' is accessed at index 65535, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < 65536 && p[len] != '\0') {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-118-s2.c:51:13: note: Assuming that condition 'len>=65536' is not redundant
+    if (len >= 65536 && p[len] != '\0') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-118-s2.c:48:28: note: Array index out of bounds
+    while (len < 65536 && p[len] != '\0') {
+                           ^

@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_parentheses(char *str)
+{
+    if (str == NULL) {
+        return;
+    }
+    char *read_ptr = str;
+    char *write_ptr = str;
+    int depth = 0;
+    while (*read_ptr != '\0') {
+        if (*read_ptr == '(') {
+            depth++;
+        } else if (*read_ptr == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "Hello (World) Test",
+        "No parentheses here",
+        "(Remove)Keep(Remove)",
+        "Nested (Outer (Inner) Outer) End",
+        "Unmatched (Open",
+        "Unmatched )Close(",
+        "Multiple (One) Two (Three) Four"
+    };
+    size_t num_strings = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+    for (i = 0; i < num_strings; i++) {
+        if (test_strings[i] == NULL) {
+            fprintf(stderr, "Null string encountered\n");
+            return EXIT_FAILURE;
+        }
+        size_t len = strnlen(test_strings[i], 1024);
+        char *buffer = (char *)malloc(len + 1);
+        if (buffer == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (len > 0) {
+            /* Possible weaknesses found:
+             *  copy_size is assigned 'len' here.
+             */
+            size_t copy_size = len;
+            if (copy_size > 1023) {
+                copy_size = 1023;
+            }
+            /* Possible weaknesses found:
+             *  Condition 'copy_size>len' is always false [knownConditionTrueFalse]
+             *  Condition 'copy_size>len' is always false
+             */
+            if (copy_size > len) {
+                copy_size = len;
+            }
+            /* Possible weaknesses found:
+             *  Condition 'buffer!=NULL' is always true [knownConditionTrueFalse]
+             */
+            if (buffer != NULL && test_strings[i] != NULL) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(buffer, test_strings[i], copy_size);
+                buffer[copy_size] = '\0';
+            }
+        } else {
+            buffer[0] = '\0';
+        }
+        printf("Original: %s\n", buffer);
+        remove_parentheses(buffer);
+        printf("Modified: %s\n\n", buffer);
+        free(buffer);
+    }
+    return EXIT_SUCCESS;
+}

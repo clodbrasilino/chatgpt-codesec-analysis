@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 100
+#define MAX_MATCH_LENGTH 1024
+
+char** extract_quoted_strings(const char* input, int* match_count) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char** results = NULL;
+    int count = 0;
+    const char* cursor;
+    int status;
+
+    if (input == NULL || match_count == NULL) {
+        if (match_count != NULL) {
+            *match_count = 0;
+        }
+        return NULL;
+    }
+
+    *match_count = 0;
+    cursor = input;
+
+    status = regcomp(&regex, "\"([^\"]*?)\"", REG_EXTENDED);
+    if (status != 0) {
+        return NULL;
+    }
+
+    results = malloc(sizeof(char*) * MAX_MATCHES);
+    if (results == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (count < MAX_MATCHES) {
+        status = regexec(&regex, cursor, 2, matches, 0);
+        if (status != 0) {
+            break;
+        }
+
+        regoff_t match_start = matches[1].rm_so;
+        regoff_t match_end = matches[1].rm_eo;
+        
+        if (match_start < 0 || match_end < 0 || match_end < match_start) {
+            break;
+        }
+
+        size_t length = (size_t)(match_end - match_start);
+        if (length >= MAX_MATCH_LENGTH) {
+            length = MAX_MATCH_LENGTH - 1;
+        }
+
+        /* Possible weaknesses found:
+         *  alloc_size is assigned 'length+1' here.
+         */
+        size_t alloc_size = length + 1;
+
+        results[count] = malloc(alloc_size);
+        /* Possible weaknesses found:
+         *  Assuming condition is false
+         */
+        if (results[count] == NULL) {
+            for (int i = 0; i < count; i++) {
+                free(results[i]);
+            }
+            free(results);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (length > 0) {
+            const char* src_ptr = cursor + match_start;
+            /* Possible weaknesses found:
+             *  copy_len is assigned 'length' here.
+             */
+            size_t copy_len = length;
+            
+            /* Possible weaknesses found:
+             *  Condition 'copy_len>=alloc_size' is always false [knownConditionTrueFalse]
+             *  Condition 'copy_len>=alloc_size' is always false
+             */
+            if (copy_len >= alloc_size) {
+                copy_len = alloc_size - 1;
+            }
+
+            size_t remaining = 0;
+            const char* tmp = src_ptr;
+            while (remaining < copy_len && tmp[remaining] != '\0') {
+                remaining++;
+            }
+            
+            if (remaining < copy_len) {
+                copy_len = remaining;
+            }
+
+            if (copy_len > 0 && copy_len < alloc_size) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(results[count], src_ptr, copy_len);
+                results[count][copy_len] = '\0';
+            } else if (copy_len == 0) {
+                results[count][0] = '\0';
+            }
+        } else {
+            results[count][0] = '\0';
+        }
+
+        count++;
+
+        cursor += matches[0].rm_eo;
+
+        if (matches[0].rm_so == matches[0].rm_eo) {
+            if (*cursor != '\0') {
+                cursor++;
+            } else {
+                break;
+            }
+        }
+
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+
+    if (count == 0) {
+        free(results);
+        return NULL;
+    }
+
+    *match_count = count;
+    return results;
+}
+
+void free_extracted_strings(char** strings, int count) {
+    if (strings == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+
+    free(strings);
+}
+
+int main(void) {
+    const char* test_string = "This is \"first\" and \"second\" and \"third\"";
+    int count = 0;
+    char** extracted = extract_quoted_strings(test_string, &count);
+
+    if (extracted != NULL) {
+        printf("Found %d quoted strings:\n", count);
+        for (int i = 0; i < count; i++) {
+            printf("[%d]: %s\n", i, extracted[i]);
+        }
+        free_extracted_strings(extracted, count);
+    } else {
+        printf("No matches found or error occurred.\n");
+    }
+
+    return 0;
+}

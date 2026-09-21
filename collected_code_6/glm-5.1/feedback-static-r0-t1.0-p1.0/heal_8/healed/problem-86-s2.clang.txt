@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c:25:52: error: call to undeclared function 'centered_hexangular'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   25 |     int len = snprintf(buf, sizeof(buf), "%llu\n", centered_hexangular(n));
+      |                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c:25:52: note: did you mean 'centered_hexagonal'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-86-s2.c:5:20: note: 'centered_hexagonal' declared here
+    5 | unsigned long long centered_hexagonal(unsigned int n) {
+      |                    ^
+1 error generated.

@@ -1,0 +1,72 @@
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *count) {
+    regex_t regex;
+    regmatch_t matches[10];
+    int ret, nmatch = 10, index = 0;
+
+    *count = 0;
+    *result = NULL;
+
+    ret = regcomp(&regex, "[A-Z][^A-Z]*", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while ((ret = regexec(&regex, input + index, nmatch, matches, 0)) == 0) {
+        size_t length = matches[0].rm_eo - matches[0].rm_so;
+        (*result) = realloc(*result, sizeof(char *) * ((*count) + 1));
+        if (*result == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int i = 0; i < *count; i++) {
+                free((*result)[i]);
+            }
+            free(*result);
+            regfree(&regex);
+            return;
+        }
+        (*result)[*count] = malloc((length + 1) * sizeof(char));
+        if ((*result)[*count] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int i = 0; i < *count; i++) {
+                free((*result)[i]);
+            }
+            free(*result);
+            regfree(&regex);
+            return;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy((*result)[*count], input + index + matches[0].rm_so, length);
+        (*result)[*count][length] = '\0';
+        (*count)++;
+        index += matches[0].rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        fprintf(stderr, "Regex match failed\n");
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    char **result = NULL;
+    int count = 0;
+
+    split_string_at_uppercase(input, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

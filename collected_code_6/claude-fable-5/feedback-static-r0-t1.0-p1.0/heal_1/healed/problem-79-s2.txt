@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-126 (strlen over-read)** — Both calls to `strlen` were replaced with `strnlen`, which takes an explicit maximum length. This guarantees the read is bounded even if the buffer were somehow not null-terminated, eliminating the potential over-read.
+
+2. **CWE-119/CWE-120 (statically-sized array)** — The original code was already largely safe because `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size. As a defensive hardening measure, an explicit null terminator is written at `buffer[sizeof(buffer) - 1U]` after the read, guaranteeing termination regardless of the input stream's behavior.
+
+3. **Existing good practices preserved** — The `NULL` check in `is_length_odd`, the `fgets` return-value check, the newline stripping with the `len > 0U` guard, the empty-input check, and the use of `EXIT_SUCCESS`/`EXIT_FAILURE` were all retained, as they already follow defensive coding standards.
+
+The remaining warnings from tools like Flawfinder on `char buffer[MAX_WORD_LEN]` are effectively false positives once bounded I/O (`fgets` with `sizeof`) and bounded string operations (`strnlen`) are used consistently, as they are here.

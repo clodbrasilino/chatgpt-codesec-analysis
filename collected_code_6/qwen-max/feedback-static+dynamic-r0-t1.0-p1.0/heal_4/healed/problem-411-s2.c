@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+char *snake_to_camel(const char *input, char *output, size_t output_size) {
+    memset(output, 0, output_size);
+    regex_t preg;
+    regmatch_t pmatch[2];
+    int nmatch = 2;
+    if (regcomp(&preg, "_([a-z])", REG_EXTENDED|REG_NEWLINE) == 0) {
+        size_t dst = 0;
+        for (int i = 0; input[i] != '\0' && dst < output_size - 1; ++i) {
+            if (regexec(&preg, &input[i], nmatch, pmatch, 0) == 0) {
+                output[dst++] = toupper((unsigned char)input[i + 1]);
+                i += pmatch[0].rm_eo - pmatch[0].rm_so - 1;
+            } else {
+                output[dst++] = input[i];
+            }
+        }
+        regfree(&preg);
+    }
+    return output;
+}
+
+bool test_snake_to_camel(const char *input, const char *expected) {
+    char output[512];
+    char *result = snake_to_camel(input, output, sizeof(output));
+    return strcmp(result, expected) == 0;
+}
+
+int main() {
+    if (!test_snake_to_camel("android_tv", "AndroidTv")) {
+        printf("Test 0 failed\n");
+    }
+    if (!test_snake_to_camel("apple_watch", "AppleWatch")) {
+        printf("Test 1 failed\n");
+    }
+    if (!test_snake_to_camel("google_pixel", "GooglePixel")) {
+        printf("Test 2 failed\n");
+    }
+
+    const char *snake = "this_is_snake_case";
+    char camel[512];
+    char *camel_result = snake_to_camel(snake, camel, sizeof(camel));
+    printf("Camel case: %s\n", camel_result);
+
+    return 0;
+}

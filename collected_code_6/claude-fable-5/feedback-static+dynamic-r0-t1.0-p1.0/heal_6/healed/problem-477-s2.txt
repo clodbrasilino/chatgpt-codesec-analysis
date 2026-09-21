@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** Flawfinder flags all statically-sized arrays as potential overflow sources. This is a heuristic warning, not an actual defect here. The code mitigates it correctly by:
+   - Using `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits reads to `BUFFER_SIZE - 1` characters and always null-terminates within bounds.
+   - Deriving the size via `sizeof(buffer)` rather than repeating the constant, so the bound stays correct if `BUFFER_SIZE` changes.
+   - Adding a defensive `buffer[sizeof(buffer) - 1] = '\0';` (redundant after `fgets`, but harmless belt-and-braces).
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** The warning concerns reading into a buffer inside a loop. Here `getchar()` discards characters into an `int` — nothing is stored in a buffer — and the loop terminates on `'\n'` **and** on `EOF`, avoiding an infinite loop on closed/exhausted input. No fix required.
+
+**Other correctness points worth noting:**
+
+- `tolower()` is called with the argument cast to `unsigned char`, avoiding undefined behavior for negative `char` values (required by the C standard for `<ctype.h>` functions).
+- `strcspn(buffer, "\n")` safely strips the trailing newline whether or not one is present.
+- The `strchr(...) == NULL && !feof(stdin)` check correctly detects a truncated (over-long) line before flushing the remainder of stdin, preventing leftover input from affecting subsequent reads.
+- `string_to_lower` guards against a `NULL` pointer and uses `size_t` for indexing.
+
+The code as written already addresses both Flawfinder findings; the rewrite above is functionally identical with the comments removed.

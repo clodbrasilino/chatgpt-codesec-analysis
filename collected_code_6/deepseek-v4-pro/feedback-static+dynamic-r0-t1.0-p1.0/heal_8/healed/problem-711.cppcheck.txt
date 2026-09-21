@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-711.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-711.c:77:10: style: The scope of the variable 'all_zeros' can be reduced. [variableScope]
+    bool all_zeros = true;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-711.c:77:20: style: Variable 'all_zeros' is assigned a value that is never used. [unreadVariable]
+    bool all_zeros = true;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-711.c:80:23: style: Variable 'all_zeros' is assigned a value that is never used. [unreadVariable]
+            all_zeros = false;
+                      ^

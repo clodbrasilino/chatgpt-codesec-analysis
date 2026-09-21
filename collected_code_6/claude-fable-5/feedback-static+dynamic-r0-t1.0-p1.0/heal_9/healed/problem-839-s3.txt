@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char first[MAX_NAME_LEN];
+    int second;
+} Tuple;
+
+static int set_tuple(Tuple *tuple, const char *name, int value)
+{
+    size_t len;
+
+    if (tuple == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, sizeof(tuple->first));
+    if (len >= sizeof(tuple->first)) {
+        return -1;
+    }
+
+    if (snprintf(tuple->first, sizeof(tuple->first), "%s", name) < 0) {
+        return -1;
+    }
+
+    tuple->second = value;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    return strncmp(ta->first, tb->first, sizeof(ta->first));
+}
+
+static void sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+static int print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("(%.*s, %d)\n", MAX_NAME_LEN, tuples[i].first,
+                   tuples[i].second) < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    static const struct {
+        const char *name;
+        int value;
+    } data[] = {
+        { "banana", 3 },
+        { "apple", 5 },
+        { "cherry", 1 },
+        { "date", 7 },
+        { "apricot", 2 }
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    Tuple tuples[sizeof(data) / sizeof(data[0])];
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        if (set_tuple(&tuples[i], data[i].name, data[i].value) != 0) {
+            (void)fprintf(stderr, "Initialization error\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    sort_tuples(tuples, count);
+
+    if (print_tuples(tuples, count) != 0) {
+        (void)fprintf(stderr, "Output error\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes and rationale:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer `char first[MAX_NAME_LEN]`):** The buffer itself is retained since fixed-size storage is a legitimate design choice, but all writes to it are now strictly bounds-enforced. The `strnlen` check against `sizeof(tuple->first)` guarantees the input (including its terminator) fits before any copy occurs, so the array can never be overrun.
+
+2. **CWE-120 (`memcpy` without overflow check):** The `memcpy` + manual NUL-termination pair was replaced with a single `snprintf(dest, sizeof(dest), "%s", name)` call. `snprintf` is inherently bounds-limited by its size argument and always NUL-terminates, eliminating the class of error the Flawfinder warning flags, and its return value is checked for encoding errors. The prior length validation makes truncation impossible, so the copy is exact.
+
+3. **Retained defensive measures:** NULL-pointer checks in every function, `strnlen`/`strncmp` instead of their unbounded counterparts, `%.*s` precision in `printf` to cap output length, checked return values on all I/O calls, and `count` derived via `sizeof` arithmetic rather than magic numbers — all of which keep the program robust against the identified weakness categories.

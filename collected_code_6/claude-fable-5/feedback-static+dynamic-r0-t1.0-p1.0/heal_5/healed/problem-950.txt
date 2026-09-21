@@ -1,0 +1,147 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <ctype.h>
+
+#define ZODIAC_COUNT 12
+#define MIN_YEAR 1
+#define MAX_YEAR 9999
+#define INPUT_BUFFER_SIZE 64
+
+static const char *get_chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return NULL;
+    }
+    return signs[index];
+}
+
+static int display_zodiac(int year)
+{
+    const char *sign;
+
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+        fprintf(stderr, "Error: year must be between %d and %d.\n", MIN_YEAR, MAX_YEAR);
+        return -1;
+    }
+    sign = get_chinese_zodiac(year);
+    if (sign == NULL) {
+        fprintf(stderr, "Error: could not determine zodiac sign.\n");
+        return -1;
+    }
+    if (printf("%s\n", sign) < 0) {
+        return -1;
+    }
+    if (fflush(stdout) != 0) {
+        return -1;
+    }
+    return 0;
+}
+
+static int parse_year(const char *text, int *out_year)
+{
+    char *endptr;
+    long value;
+
+    if (text == NULL || out_year == NULL) {
+        return -1;
+    }
+    while (isspace((unsigned char)*text)) {
+        text++;
+    }
+    if (*text == '\0') {
+        return -1;
+    }
+    errno = 0;
+    value = strtol(text, &endptr, 10);
+    if (errno == ERANGE || endptr == text) {
+        return -1;
+    }
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    if (*endptr != '\0') {
+        return -1;
+    }
+    if (value < (long)INT_MIN || value > (long)INT_MAX) {
+        return -1;
+    }
+    *out_year = (int)value;
+    return 0;
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+    buffer[size - 1] = '\0';
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+    return 0;
+}
+
+int main(int argc, const char *argv[])
+{
+    int year;
+
+    if (argc > 1 && argv[1] != NULL) {
+        if (parse_year(argv[1], &year) != 0) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        char buffer[INPUT_BUFFER_SIZE];
+
+        if (read_line(buffer, sizeof(buffer)) != 0) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+        if (parse_year(buffer, &year) != 0) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    if (display_zodiac(year) != 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes made:**
+
+1. **Failed test cases (`<no output>`):** The most likely cause was `read_line` mishandling input. In the original, any line that did not end with `\n` (e.g., final line supplied via a pipe or heredoc without a trailing newline) triggered the `getchar()` drain loop unnecessarily, and short EOF-terminated input could stall or misbehave depending on the harness. The rewritten `read_line` only drains the remainder of the line when the buffer was actually filled to capacity (`len == size - 1`), which is the correct condition for detecting truncation. Input ending at EOF without a newline is now accepted cleanly, so years passed via stdin such as `1997` (Ox), `2022` (Tiger), and `2018` (Dog) parse and print correctly.
+
+2. **CWE-119/CWE-120 (statically-sized arrays):** The `signs` array is indexed only after the modulo result is normalized and explicitly bounds-checked. The stdin buffer is always paired with `sizeof(buffer)`, and `read_line` rejects sizes below 2 or above `INT_MAX` before the cast to `int` for `fgets`, eliminating the truncation/overflow concern in that conversion.
+
+3. **CWE-126 (`strlen` over-read):** `fgets` guarantees NUL-termination on success, but the rewrite adds an explicit `buffer[size - 1] = '\0'` before calling `strlen`, guaranteeing termination defensively regardless of the input source.
+
+4. **CWE-120/CWE-20 (`getchar` loop):** The drain loop reads into no buffer at all (it discards characters), so it cannot overflow; it is now only entered when truncation genuinely occurred, and it terminates on both `\n` and `EOF`.
+
+5. **Minor hardening:** `argv[1]` is checked for `NULL` before use, and `parse_year` retains full `strtol` error handling (`ERANGE`, no-digits, trailing garbage, `INT_MIN`/`INT_MAX` range clamping).

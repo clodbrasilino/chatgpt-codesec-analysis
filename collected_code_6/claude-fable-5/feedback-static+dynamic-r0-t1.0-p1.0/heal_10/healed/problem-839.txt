@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char first[MAX_NAME_LEN];
+    int second;
+} Tuple;
+
+static int set_tuple_name(Tuple *tuple, const char *name)
+{
+    size_t len;
+
+    if (tuple == NULL || name == NULL) {
+        return -1;
+    }
+
+    len = strnlen(name, sizeof(tuple->first));
+    if (len >= sizeof(tuple->first)) {
+        return -1;
+    }
+
+    memcpy(tuple->first, name, len);
+    tuple->first[len] = '\0';
+    return 0;
+}
+
+static int init_tuple(Tuple *tuple, const char *name, int value)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+    if (set_tuple_name(tuple, name) != 0) {
+        return -1;
+    }
+    tuple->second = value;
+    return 0;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    return strncmp(ta->first, tb->first, sizeof(ta->first));
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        if (printf("(%.*s, %d)\n", MAX_NAME_LEN, tuples[i].first,
+                   tuples[i].second) < 0) {
+            break;
+        }
+    }
+}
+
+int main(void)
+{
+    static const struct {
+        const char *name;
+        int value;
+    } data[] = {
+        {"banana", 3},
+        {"apple", 5},
+        {"cherry", 1},
+        {"date", 7},
+        {"apricot", 2}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    Tuple tuples[sizeof(data) / sizeof(data[0])];
+    size_t i;
+
+    memset(tuples, 0, sizeof(tuples));
+
+    for (i = 0U; i < count; i++) {
+        if (init_tuple(&tuples[i], data[i].name, data[i].value) != 0) {
+            if (fprintf(stderr, "Failed to initialize tuple\n") < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (sort_tuples(tuples, count) != 0) {
+        if (fprintf(stderr, "Failed to sort tuples\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    print_tuples(tuples, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **Flawfinder `char` warning (CWE-119/CWE-120)** on the statically-sized `first[MAX_NAME_LEN]` array: This is a heuristic flag, not an actual defect. The array is only ever written through `set_tuple_name`, which enforces bounds. Reads are also bounded — `strncmp` and `printf("%.*s", ...)` both limit access to `MAX_NAME_LEN`, so even a hypothetically unterminated buffer could not cause an over-read.
+
+2. **Flawfinder `memcpy` warning (CWE-120)**: The copy is safe because `len` is computed with `strnlen(name, sizeof(tuple->first))` and the code rejects any input where `len >= sizeof(tuple->first)`. This guarantees `len <= MAX_NAME_LEN - 1`, so `memcpy` of `len` bytes plus the explicit NUL terminator at `first[len]` always fits within the destination buffer. Truncation is refused rather than performed silently, which avoids CWE-120 entirely.
+
+Additional defensive properties already present: NULL-pointer checks on all public entry points, `memset` zero-initialization of the tuple array before use, checked return values on `printf`/`fprintf`, and array sizing derived from `sizeof(data)/sizeof(data[0])` so the tuple array can never mismatch the source data count. No changes were required beyond removing the comments.

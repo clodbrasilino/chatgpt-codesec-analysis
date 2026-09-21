@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-772-s3.c:41:39: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                if (j + bytes_to_copy >= len + 1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-772-s3.c:40:40: note: 'bytes_to_copy' is assigned value 'word_length' here.
+                size_t bytes_to_copy = word_length;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-772-s3.c:39:33: note: outer condition: j+word_length<len+1
+            if (j + word_length < len + 1) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-772-s3.c:41:39: note: opposite inner condition: j+bytes_to_copy>=len+1
+                if (j + bytes_to_copy >= len + 1) {
+                                      ^

@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+#define DIGITS_BUF_SIZE 32
+
+static long long next_bigger(long long n)
+{
+    char digits[DIGITS_BUF_SIZE];
+    int len;
+    int i;
+    int j;
+    long long result;
+    char tmp;
+    char *endptr;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    memset(digits, 0, sizeof(digits));
+
+    len = snprintf(digits, sizeof(digits), "%lld", n);
+    if (len < 0 || (size_t)len >= sizeof(digits)) {
+        return -1;
+    }
+
+    i = len - 2;
+    while (i >= 0 && digits[i] >= digits[i + 1]) {
+        i--;
+    }
+    if (i < 0) {
+        return -1;
+    }
+
+    j = len - 1;
+    while (j > i && digits[j] <= digits[i]) {
+        j--;
+    }
+    if (j <= i) {
+        return -1;
+    }
+
+    tmp = digits[i];
+    digits[i] = digits[j];
+    digits[j] = tmp;
+
+    for (int a = i + 1, b = len - 1; a < b; a++, b--) {
+        tmp = digits[a];
+        digits[a] = digits[b];
+        digits[b] = tmp;
+    }
+
+    errno = 0;
+    result = strtoll(digits, &endptr, 10);
+    if (errno == ERANGE || endptr == digits || *endptr != '\0') {
+        return -1;
+    }
+
+    if (result <= n) {
+        return -1;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long inputs[] = {12LL, 513LL, 2017LL, 414LL, 144LL, 9LL, 111LL, 531LL};
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t k;
+
+    for (k = 0; k < count; k++) {
+        long long res = next_bigger(inputs[k]);
+        if (res < 0) {
+            if (printf("next_bigger(%lld) = no bigger number exists\n", inputs[k]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("next_bigger(%lld) = %lld\n", inputs[k], res) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness (CWE-119/CWE-120, statically-sized buffer `digits`):
+
+The Flawfinder warning is a heuristic hit on the fixed-size `char digits[DIGITS_BUF_SIZE]` declaration. On inspection, the original code already mitigates the risk correctly, so the rewrite preserves the same defensive structure:
+
+1. **Bounded write**: `snprintf(digits, sizeof(digits), ...)` is used instead of `sprintf`, guaranteeing no write past the buffer. The return value is checked both for encoding errors (`len < 0`) and truncation (`(size_t)len >= sizeof(digits)`), so a truncated string is never processed.
+
+2. **Adequate sizing**: A `long long` (even 64-bit `LLONG_MAX`, 19 digits plus sign and NUL) needs at most 21 bytes; `DIGITS_BUF_SIZE` of 32 provides comfortable headroom.
+
+3. **Guaranteed NUL termination**: `memset` zeroes the buffer before use, and `snprintf` always NUL-terminates on success, so `strtoll` never reads past the buffer.
+
+4. **Bounded index arithmetic**: All loop indices (`i`, `j`, `a`, `b`) are derived from and bounded by `len`, which was validated against `sizeof(digits)`, so no out-of-bounds reads or writes occur during the permutation logic.
+
+5. **Safe parse-back**: `strtoll` with `errno`/`endptr` validation guards against overflow when converting the permuted digit string back to a number, and the final `result <= n` check ensures logical correctness.
+
+The warning is therefore a false positive; the code is already hardened against buffer overflow, and no functional changes were required.

@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+int first_repeated_char(const char *str)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < BUFFER_SIZE && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < (size_t)INT_MAX);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        flush_stdin();
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Key changes made:**
+
+1. **Fixed `arrayIndexThenCheck`** — In the loop condition of `first_repeated_char`, the bounds check `i < BUFFER_SIZE` is now evaluated **before** the array access `str[i] != '\0'`. Since `&&` short-circuits left to right, the original code dereferenced `str[i]` before verifying `i` was within bounds; the reordering eliminates any possible out-of-bounds read.
+
+2. **`getchar` in a loop (CWE-120/CWE-20)** — Already mitigated by the `guard` counter capping iterations at `INT_MAX`, preventing an unbounded loop; retained as-is since no buffer is written to.
+
+3. **Statically-sized `char buffer` (CWE-119/CWE-120)** — Already properly mitigated: `fgets` limits reads to `sizeof(buffer)`, the buffer is zero-initialized, explicit NUL-termination is enforced at `buffer[sizeof(buffer) - 1]`, and leftover stdin data is flushed when the newline is absent. No changes required.

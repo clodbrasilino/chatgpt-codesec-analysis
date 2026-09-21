@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-645.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-645.c:138:15: style: Condition 'left!=0' is always true [knownConditionTrueFalse]
+         left != 0 && right < INT64_MAX / left)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-645.c:137:15: note: Assuming that condition 'left<0' is not redundant
+        (left < 0 && right < 0 &&
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-645.c:138:15: note: Condition 'left!=0' is always true
+         left != 0 && right < INT64_MAX / left)) {
+              ^

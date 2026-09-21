@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    size_t i;
+    size_t first_idx;
+    size_t last_idx;
+    int found_first;
+    int found_last;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0U || len >= max_len) {
+        if (len >= max_len) {
+            str[max_len - 1U] = '\0';
+            len = max_len - 1U;
+        }
+        if (len == 0U) {
+            return;
+        }
+    }
+
+    found_first = 0;
+    found_last = 0;
+    first_idx = 0U;
+    last_idx = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == ch) {
+            if (found_first == 0) {
+                first_idx = i;
+                found_first = 1;
+            }
+            last_idx = i;
+            found_last = 1;
+        }
+    }
+
+    if (found_first == 0) {
+        return;
+    }
+
+    if (found_last == 1 && last_idx != first_idx) {
+        memmove(&str[last_idx], &str[last_idx + 1U], len - last_idx);
+        len--;
+    }
+
+    memmove(&str[first_idx], &str[first_idx + 1U], len - first_idx);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char ch;
+    int c;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input string\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return EXIT_FAILURE;
+    }
+    ch = (char)c;
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the flagged weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced all `strlen` calls with `strnlen(str, max_len)`, bounded by an explicit `max_len` parameter passed to `remove_first_last`. If the string is somehow not null-terminated within bounds, it is forcibly terminated before further processing.
+
+2. **CWE-126 (`strchr`/`strrchr` over-read):** Replaced both with a single bounded loop over the known, validated length, finding first and last occurrence indices in one pass. This also avoids scanning the string multiple times.
+
+3. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is centralized in a `BUFFER_SIZE` macro, `fgets` is bounded by `sizeof(buffer)`, and the size is explicitly propagated into `remove_first_last` so no callee can exceed the caller's allocation.
+
+4. **CWE-120/CWE-20 (`getchar`):** The single `getchar()` call is not in a loop; its `EOF` return is checked before the value is narrowed to `char`, so no unchecked input reaches the buffer logic.
+
+5. **Index-based `memmove`:** Pointer arithmetic on `first`/`last` was replaced with index arithmetic against the validated length, so the move sizes are derived from bounded values rather than fresh unbounded `strlen` calls.

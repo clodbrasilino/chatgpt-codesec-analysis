@@ -1,0 +1,72 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:90:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'summary'
+   90 | **Analysis summary:**
+      |            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:92:44: error: stray '\342' in program
+   92 | The original code was already largely safe <U+2014> the Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and prevents overflow.
+      |                                            ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:92:75: error: stray '`' in program
+   92 | The original code was already largely safe — the Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and prevents overflow.
+      |                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:92:92: error: stray '`' in program
+   92 | The original code was already largely safe — the Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and prevents overflow.
+      |                                                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:92:222: error: stray '`' in program
+   92 | The original code was already largely safe — the Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and prevents overflow.
+      |                                                                                                                                                                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:92:259: error: stray '`' in program
+   92 | The original code was already largely safe — the Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a heuristic flag on any statically-sized array, not a confirmed vulnerability. The original correctly used `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and prevents overflow.
+      |                                                                                                                                                                                                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:96:34: error: stray '\342' in program
+   96 | 1. **Detecting truncated input** <U+2014> if `fgets` fills the buffer without finding a newline, the input exceeded the buffer capacity. The original silently validated a truncated string, which could misclassify input (e.g., a 300-digit number would be truncated and possibly reported as "valid"). The rewrite rejects oversized input explicitly.
+      |                                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:96:39: error: stray '`' in program
+   96 | 1. **Detecting truncated input** — if `fgets` fills the buffer without finding a newline, the input exceeded the buffer capacity. The original silently validated a truncated string, which could misclassify input (e.g., a 300-digit number would be truncated and possibly reported as "valid"). The rewrite rejects oversized input explicitly.
+      |                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:96:45: error: stray '`' in program
+   96 | 1. **Detecting truncated input** — if `fgets` fills the buffer without finding a newline, the input exceeded the buffer capacity. The original silently validated a truncated string, which could misclassify input (e.g., a 300-digit number would be truncated and possibly reported as "valid"). The rewrite rejects oversized input explicitly.
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:97:42: error: stray '`' in program
+   97 | 2. **Draining leftover stdin bytes** via `flush_stdin()` after truncation, so residual characters don't pollute subsequent reads.
+      |                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:97:56: error: stray '`' in program
+   97 | 2. **Draining leftover stdin bytes** via `flush_stdin()` after truncation, so residual characters don't pollute subsequent reads.
+      |                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:97:102: error: missing terminating ' character
+   97 | 2. **Draining leftover stdin bytes** via `flush_stdin()` after truncation, so residual characters don't pollute subsequent reads.
+      |                                                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:98:24: error: stray '`' in program
+   98 | 3. **Named constant** (`BUFFER_SIZE`) instead of a magic number, keeping the size declaration and usage consistent.
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:98:36: error: stray '`' in program
+   98 | 3. **Named constant** (`BUFFER_SIZE`) instead of a magic number, keeping the size declaration and usage consistent.
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:5: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:16: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:58: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:63: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:95: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:102: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:127: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:133: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:144: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-113-s2.c:100:158: error: stray '`' in program
+  100 | The `is_integer` function was already robust: it handles `NULL`, leading/trailing whitespace, `ERANGE` overflow detection via `errno`, and the `endptr == str` no-conversion case, so it is retained unchanged.
+      |                                                                                                                                                              ^

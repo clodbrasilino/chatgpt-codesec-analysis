@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-703-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-703-s3.c:83:17: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (key_len >= dest_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-703-s3.c:77:17: note: Assuming condition 'key_len>=sizeof(new_entry->key)' is false
+    if (key_len >= sizeof(new_entry->key)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-703-s3.c:83:17: note: Condition 'key_len>=dest_size' is always false
+    if (key_len >= dest_size) {
+                ^

@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+char* find_next_smallest_palindrome(const char* num_str) {
+    if (num_str == NULL) return NULL;
+
+    size_t len = strnlen(num_str, SIZE_MAX);
+    if (len == 0) {
+        char* res = malloc(2);
+        if (!res) return NULL;
+        res[0] = '0';
+        res[1] = '\0';
+        return res;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (num_str[i] < '0' || num_str[i] > '9') return NULL;
+    }
+
+    char* result = malloc(len + 2);
+    if (!result) return NULL;
+
+    bool all_nines = true;
+    for (size_t i = 0; i < len; i++) {
+        if (num_str[i] != '9') {
+            all_nines = false;
+            break;
+        }
+    }
+
+    if (all_nines) {
+        result[0] = '1';
+        for (size_t i = 1; i < len; i++) result[i] = '0';
+        result[len] = '1';
+        result[len + 1] = '\0';
+        return result;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, num_str, len);
+    result[len] = '\0';
+
+    int left = 0;
+    int right = (int)len - 1;
+
+    while (left < right) {
+        if (result[left] < result[right]) {
+            result[right] = result[left];
+            int i = right - 1;
+            while (i >= 0 && result[i] == '9') {
+                result[i] = '0';
+                i--;
+            }
+            if (i >= 0) {
+                result[i]++;
+            }
+        } else {
+            result[right] = result[left];
+        }
+        left++;
+        right--;
+    }
+
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char* const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <number>\n", argv[0]);
+        return 1;
+    }
+
+    char* palindrome = find_next_smallest_palindrome(argv[1]);
+    if (!palindrome) {
+        fprintf(stderr, "Invalid input or memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("%s\n", palindrome);
+    free(palindrome);
+    palindrome = NULL;
+
+    return 0;
+}

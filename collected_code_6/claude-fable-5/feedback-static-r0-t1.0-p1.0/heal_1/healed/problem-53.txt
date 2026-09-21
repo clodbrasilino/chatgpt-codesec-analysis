@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return 0;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (over-read via `strlen`)**: Both calls to `strlen` were replaced with `strnlen`, which takes an explicit maximum length. Even if a non-null-terminated buffer were passed, the read is bounded and cannot run past the buffer's end. The `first_last_equal` function now takes a `max_len` parameter so the bound is enforced at the API level, and it rejects the degenerate case where `len == max_len` (no terminator found within bounds).
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now defined via a named constant (`MAX_INPUT_SIZE`), `fgets` is retained with `sizeof(buffer)` to guarantee bounded input, and an explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees null termination defensively, so all downstream operations are provably within bounds.
+
+3. The `fgets` return value is still checked, preserving the original defensive handling of EOF/read errors.

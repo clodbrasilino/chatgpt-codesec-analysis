@@ -1,0 +1,176 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define KEY_SIZE 32
+
+typedef struct {
+    char key[KEY_SIZE];
+    int *values;
+    size_t count;
+} DictEntry;
+
+static int set_key(DictEntry *entry, const char *key)
+{
+    size_t len;
+
+    if (entry == NULL || key == NULL) {
+        return -1;
+    }
+
+    len = strnlen(key, sizeof(entry->key));
+    if (len >= sizeof(entry->key)) {
+        return -1;
+    }
+
+    memcpy(entry->key, key, len);
+    entry->key[len] = '\0';
+
+    return 0;
+}
+
+static int contains(const int *arr, size_t n, int value)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int *extract_unique_values(const DictEntry *dict, size_t entry_count,
+                                  size_t *unique_count)
+{
+    int *result;
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t found = 0;
+    int *shrunk;
+
+    if (dict == NULL || unique_count == NULL) {
+        return NULL;
+    }
+
+    *unique_count = 0;
+
+    for (i = 0; i < entry_count; i++) {
+        if (dict[i].values == NULL && dict[i].count > 0) {
+            return NULL;
+        }
+        if (dict[i].count > SIZE_MAX - total) {
+            return NULL;
+        }
+        total += dict[i].count;
+    }
+
+    if (total == 0 || total > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    result = malloc(total * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < entry_count; i++) {
+        for (j = 0; j < dict[i].count; j++) {
+            if (found < total && !contains(result, found, dict[i].values[j])) {
+                result[found] = dict[i].values[j];
+                found++;
+            }
+        }
+    }
+
+    if (found == 0) {
+        free(result);
+        return NULL;
+    }
+
+    shrunk = realloc(result, found * sizeof(int));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    *unique_count = found;
+    return result;
+}
+
+int main(void)
+{
+    int values_a[] = {1, 2, 3, 4};
+    int values_b[] = {3, 4, 5, 6};
+    int values_c[] = {5, 6, 7, 8};
+    DictEntry dict[3];
+    int *unique;
+    size_t unique_count = 0;
+    size_t i;
+
+    memset(dict, 0, sizeof(dict));
+
+    if (set_key(&dict[0], "A") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[0].values = values_a;
+    dict[0].count = sizeof(values_a) / sizeof(values_a[0]);
+
+    if (set_key(&dict[1], "B") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[1].values = values_b;
+    dict[1].count = sizeof(values_b) / sizeof(values_b[0]);
+
+    if (set_key(&dict[2], "C") != 0) {
+        fprintf(stderr, "Failed to set key\n");
+        return EXIT_FAILURE;
+    }
+    dict[2].values = values_c;
+    dict[2].count = sizeof(values_c) / sizeof(values_c[0]);
+
+    unique = extract_unique_values(dict, 3, &unique_count);
+    if (unique == NULL) {
+        fprintf(stderr, "Failed to extract unique values\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique values: ");
+    for (i = 0; i < unique_count; i++) {
+        printf("%d ", unique[i]);
+    }
+    printf("\n");
+
+    free(unique);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `char key[KEY_SIZE]` (CWE-119/CWE-120, statically-sized buffer):** This is a heuristic warning triggered by any fixed-size character array. The buffer itself is not a vulnerability — the risk lies in how it is written to. The only write path is `set_key()`, which performs proper bounds checking, so no change to the declaration is needed.
+
+**2. Flawfinder `memcpy` (CWE-120, unchecked copy):** This is a false positive. The copy in `set_key()` is already correctly guarded:
+
+- `strnlen(key, sizeof(entry->key))` bounds the length measurement itself, so even a non-terminated source cannot cause an over-read beyond `KEY_SIZE` bytes.
+- The check `len >= sizeof(entry->key)` rejects any key that would not fit *including* the null terminator, since it requires `len <= KEY_SIZE - 1`.
+- `memcpy(entry->key, key, len)` therefore copies at most `KEY_SIZE - 1` bytes, and `entry->key[len] = '\0'` writes within bounds, guaranteeing null termination.
+
+**Other defensive measures already present** (worth noting in a review):
+
+- **Integer overflow protection:** `dict[i].count > SIZE_MAX - total` guards the summation, and `total > SIZE_MAX / sizeof(int)` guards the multiplication passed to `malloc` — both classic CWE-190 mitigations.
+- **NULL checks** on all pointer parameters before dereferencing.
+- **Correct `realloc` idiom:** the result is assigned to a temporary (`shrunk`) so the original allocation is not leaked if `realloc` fails; on failure the larger-but-valid buffer is still returned.
+- **`found < total` bounds check** in the write loop provides defense-in-depth against out-of-bounds writes into `result`.
+- **Memory hygiene:** `free(result)` on the zero-results path and `free(unique)` in `main` prevent leaks.
+
+Since both Flawfinder findings are properly mitigated by the existing bounds checks, the rewritten code is functionally identical with the comments removed — no substantive changes were required.

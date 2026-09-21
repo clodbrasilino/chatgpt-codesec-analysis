@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-14-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-14-s2.c:79:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-14-s2.c:59:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-14-s2.c:79:13: note: Condition 'len>0' is always true
+    if (len > 0 && input_buffer[len - 1] == '\n') {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-14-s2.c:46:9: style: The scope of the variable 'is_input_truncated' can be reduced. [variableScope]
+    int is_input_truncated = 0;
+        ^

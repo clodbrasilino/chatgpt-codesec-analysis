@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void swap(char *a, char *b) {
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void permute(char *str, size_t left, size_t right) {
+    if (left == right) {
+        printf("%s\n", str);
+    } else {
+        for (size_t i = left; i <= right; i++) {
+            swap((str + left), (str + i));
+            permute(str, left + 1, right);
+            swap((str + left), (str + i));
+        }
+    }
+}
+
+int main(void) {
+    char str[100];
+    size_t len;
+    bool valid_input = false;
+    
+    printf("Enter a string: ");
+    
+    if (fgets(str, sizeof(str), stdin) != NULL) {
+        str[sizeof(str) - 1] = '\0';
+        
+        len = strnlen(str, sizeof(str));
+        
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+            len--;
+        }
+        
+        if (len > 0) {
+            printf("All permutations:\n");
+            permute(str, 0, len - 1);
+            valid_input = true;
+        } else {
+            printf("Empty string provided.\n");
+        }
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    return valid_input ? EXIT_SUCCESS : EXIT_FAILURE;
+}

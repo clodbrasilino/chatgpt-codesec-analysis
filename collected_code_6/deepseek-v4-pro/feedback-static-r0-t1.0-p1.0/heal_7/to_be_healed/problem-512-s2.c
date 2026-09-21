@@ -1,0 +1,403 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING,
+    TYPE_TUPLE
+} ElementType;
+
+typedef struct Element {
+    ElementType type;
+    union {
+        long long int_val;
+        char *str_val;
+        struct Element *tuple_val;
+    } data;
+    size_t tuple_size;
+    struct Element *next;
+} Element;
+
+typedef struct {
+    Element *head;
+    size_t size;
+} Tuple;
+
+typedef struct FrequencyEntry {
+    char *key;
+    long long count;
+    struct FrequencyEntry *next;
+} FrequencyEntry;
+
+typedef struct {
+    FrequencyEntry *head;
+    size_t size;
+} FrequencyMap;
+
+static Tuple *tuple_create(void) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->head = NULL;
+    tuple->size = 0;
+    return tuple;
+}
+
+static Element *element_create_int(long long value) {
+    Element *element = (Element *)malloc(sizeof(Element));
+    if (element == NULL) {
+        return NULL;
+    }
+    element->type = TYPE_INT;
+    element->data.int_val = value;
+    element->tuple_size = 0;
+    element->next = NULL;
+    return element;
+}
+
+static Element *element_create_string(const char *value) {
+    Element *element = NULL;
+    size_t len;
+    
+    if (value == NULL) {
+        return NULL;
+    }
+    
+    len = strnlen(value, 255);
+    if (len >= 255) {
+        return NULL;
+    }
+    
+    element = (Element *)malloc(sizeof(Element));
+    if (element == NULL) {
+        return NULL;
+    }
+    
+    element->data.str_val = (char *)malloc(len + 1);
+    if (element->data.str_val == NULL) {
+        free(element);
+        return NULL;
+    }
+    
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(element->data.str_val, value, len);
+    }
+    element->data.str_val[len] = '\0';
+    element->type = TYPE_STRING;
+    element->tuple_size = 0;
+    element->next = NULL;
+    return element;
+}
+
+static Element *element_create_tuple(Tuple *tuple) {
+    Element *element = NULL;
+    
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    element = (Element *)malloc(sizeof(Element));
+    if (element == NULL) {
+        return NULL;
+    }
+    
+    element->type = TYPE_TUPLE;
+    element->data.tuple_val = tuple->head;
+    element->tuple_size = tuple->size;
+    element->next = NULL;
+    return element;
+}
+
+static void tuple_add_element(Tuple *tuple, Element *element) {
+    if (tuple == NULL || element == NULL) {
+        return;
+    }
+    if (tuple->head == NULL) {
+        tuple->head = element;
+    } else {
+        Element *current = tuple->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = element;
+    }
+    tuple->size++;
+}
+
+static void element_free(Element *element) {
+    if (element == NULL) {
+        return;
+    }
+    if (element->type == TYPE_STRING && element->data.str_val != NULL) {
+        free(element->data.str_val);
+    }
+    free(element);
+}
+
+static void tuple_free_elements(Element *head) {
+    while (head != NULL) {
+        Element *next = head->next;
+        if (head->type == TYPE_TUPLE && head->data.tuple_val != NULL) {
+            tuple_free_elements(head->data.tuple_val);
+        } else if (head->type == TYPE_STRING && head->data.str_val != NULL) {
+            free(head->data.str_val);
+        }
+        free(head);
+        head = next;
+    }
+}
+
+static void tuple_free(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    tuple_free_elements(tuple->head);
+    free(tuple);
+}
+
+static FrequencyMap *frequency_map_create(void) {
+    FrequencyMap *map = (FrequencyMap *)malloc(sizeof(FrequencyMap));
+    if (map == NULL) {
+        return NULL;
+    }
+    map->head = NULL;
+    map->size = 0;
+    return map;
+}
+
+static void frequency_map_increment(FrequencyMap *map, const char *key) {
+    FrequencyEntry *current;
+    FrequencyEntry *entry;
+    size_t len;
+    
+    if (map == NULL || key == NULL) {
+        return;
+    }
+    
+    current = map->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            current->count++;
+            return;
+        }
+        current = current->next;
+    }
+    
+    len = strnlen(key, 255);
+    if (len >= 255) {
+        return;
+    }
+    
+    entry = (FrequencyEntry *)malloc(sizeof(FrequencyEntry));
+    if (entry == NULL) {
+        return;
+    }
+    
+    entry->key = (char *)malloc(len + 1);
+    if (entry->key == NULL) {
+        free(entry);
+        return;
+    }
+    
+    if (len > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(entry->key, key, len);
+    }
+    entry->key[len] = '\0';
+    entry->count = 1;
+    entry->next = map->head;
+    map->head = entry;
+    map->size++;
+}
+
+static void frequency_map_free(FrequencyMap *map) {
+    if (map == NULL) {
+        return;
+    }
+    FrequencyEntry *current = map->head;
+    while (current != NULL) {
+        FrequencyEntry *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    free(map);
+}
+
+static void element_to_string(Element *element, char *buffer, size_t buffer_size) {
+    int written;
+    
+    if (element == NULL || buffer == NULL || buffer_size == 0) {
+        return;
+    }
+    
+    switch (element->type) {
+        case TYPE_INT:
+            written = snprintf(buffer, buffer_size, "%lld", element->data.int_val);
+            if (written < 0 || (size_t)written >= buffer_size) {
+                buffer[buffer_size - 1] = '\0';
+            }
+            break;
+        case TYPE_STRING:
+            if (element->data.str_val != NULL) {
+                written = snprintf(buffer, buffer_size, "%s", element->data.str_val);
+                if (written < 0 || (size_t)written >= buffer_size) {
+                    buffer[buffer_size - 1] = '\0';
+                }
+            } else {
+                buffer[0] = '\0';
+            }
+            break;
+        case TYPE_TUPLE:
+            if (buffer_size >= 6) {
+                /* Possible weaknesses found:
+                 * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). Risk is low because the source is a constant string. (risk 1, buffer)
+                 */
+                strncpy(buffer, "tuple", buffer_size - 1);
+                buffer[buffer_size - 1] = '\0';
+            } else if (buffer_size > 0) {
+                buffer[0] = '\0';
+            }
+            break;
+        default:
+            buffer[0] = '\0';
+            break;
+    }
+}
+
+static void count_element_frequency_recursive(Element *element, FrequencyMap *map) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    
+    if (element == NULL || map == NULL) {
+        return;
+    }
+    
+    buffer[0] = '\0';
+    element_to_string(element, buffer, sizeof(buffer));
+    frequency_map_increment(map, buffer);
+    
+    if (element->type == TYPE_TUPLE && element->data.tuple_val != NULL) {
+        Element *nested_element = element->data.tuple_val;
+        size_t count = element->tuple_size;
+        for (size_t i = 0; i < count && nested_element != NULL; i++) {
+            count_element_frequency_recursive(nested_element, map);
+            nested_element = nested_element->next;
+        }
+    }
+}
+
+static void count_element_frequency(Tuple *tuple, FrequencyMap *map) {
+    if (tuple == NULL || map == NULL) {
+        return;
+    }
+    Element *current = tuple->head;
+    while (current != NULL) {
+        count_element_frequency_recursive(current, map);
+        current = current->next;
+    }
+}
+
+static void print_frequency_map(FrequencyMap *map) {
+    if (map == NULL) {
+        return;
+    }
+    FrequencyEntry *current = map->head;
+    while (current != NULL) {
+        printf("%s: %lld\n", current->key, current->count);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Tuple *tuple = tuple_create();
+    if (tuple == NULL) {
+        return 1;
+    }
+
+    Element *int_element = element_create_int(42);
+    if (int_element == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(tuple, int_element);
+
+    Element *str_element = element_create_string("hello");
+    if (str_element == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(tuple, str_element);
+
+    Element *int_element2 = element_create_int(42);
+    if (int_element2 == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(tuple, int_element2);
+
+    Tuple *nested_tuple = tuple_create();
+    if (nested_tuple == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+
+    Element *nested_int = element_create_int(7);
+    if (nested_int == NULL) {
+        tuple_free(nested_tuple);
+        free(nested_tuple);
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(nested_tuple, nested_int);
+
+    Element *nested_str = element_create_string("world");
+    if (nested_str == NULL) {
+        tuple_free(nested_tuple);
+        free(nested_tuple);
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(nested_tuple, nested_str);
+
+    Element *nested_tuple_element = element_create_tuple(nested_tuple);
+    if (nested_tuple_element == NULL) {
+        tuple_free(nested_tuple);
+        free(nested_tuple);
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(tuple, nested_tuple_element);
+
+    Element *str_element2 = element_create_string("hello");
+    if (str_element2 == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+    tuple_add_element(tuple, str_element2);
+
+    FrequencyMap *map = frequency_map_create();
+    if (map == NULL) {
+        tuple_free(tuple);
+        return 1;
+    }
+
+    count_element_frequency(tuple, map);
+    print_frequency_map(map);
+
+    frequency_map_free(map);
+    tuple_free(tuple);
+    free(nested_tuple);
+
+    return 0;
+}

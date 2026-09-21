@@ -1,0 +1,193 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct StudentEntry {
+    char name[MAX_NAME_LEN];
+    double height;
+    double weight;
+} StudentEntry;
+
+typedef struct StudentDict {
+    StudentEntry *entries;
+    size_t count;
+    size_t capacity;
+} StudentDict;
+
+static StudentDict *dict_create(size_t initial_capacity)
+{
+    StudentDict *dict = NULL;
+
+    if (initial_capacity == 0U) {
+        return NULL;
+    }
+
+    dict = malloc(sizeof(StudentDict));
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    dict->entries = malloc(initial_capacity * sizeof(StudentEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+
+    dict->count = 0U;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+static void dict_destroy(StudentDict *dict)
+{
+    if (dict != NULL) {
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->count = 0U;
+        dict->capacity = 0U;
+        free(dict);
+    }
+}
+
+static int dict_add(StudentDict *dict, const char *name, double height, double weight)
+{
+    size_t name_len = 0U;
+    const char *terminator = NULL;
+
+    if ((dict == NULL) || (name == NULL)) {
+        return -1;
+    }
+
+    terminator = memchr(name, '\0', MAX_NAME_LEN);
+    if (terminator == NULL) {
+        return -1;
+    }
+    name_len = (size_t)(terminator - name);
+
+    if (dict->count == dict->capacity) {
+        StudentEntry *new_entries = NULL;
+        size_t new_capacity = 0U;
+
+        if (dict->capacity > (SIZE_MAX / (2U * sizeof(StudentEntry)))) {
+            return -1;
+        }
+        new_capacity = dict->capacity * 2U;
+        new_entries = realloc(dict->entries, new_capacity * sizeof(StudentEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    memcpy(dict->entries[dict->count].name, name, name_len);
+    dict->entries[dict->count].name[name_len] = '\0';
+    dict->entries[dict->count].height = height;
+    dict->entries[dict->count].weight = weight;
+    dict->count += 1U;
+    return 0;
+}
+
+static StudentDict *filter_students(const StudentDict *dict, double min_height, double min_weight)
+{
+    StudentDict *result = NULL;
+    size_t i = 0U;
+
+    if (dict == NULL) {
+        return NULL;
+    }
+
+    result = dict_create((dict->count > 0U) ? dict->count : 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < dict->count; i++) {
+        if ((dict->entries[i].height >= min_height) &&
+            (dict->entries[i].weight >= min_weight)) {
+            if (dict_add(result, dict->entries[i].name,
+                         dict->entries[i].height,
+                         dict->entries[i].weight) != 0) {
+                dict_destroy(result);
+                return NULL;
+            }
+        }
+    }
+
+    return result;
+}
+
+static void dict_print(const StudentDict *dict)
+{
+    size_t i = 0U;
+
+    if (dict == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < dict->count; i++) {
+        if (printf("%s: height=%.2f, weight=%.2f\n",
+                   dict->entries[i].name,
+                   dict->entries[i].height,
+                   dict->entries[i].weight) < 0) {
+            return;
+        }
+    }
+}
+
+int main(void)
+{
+    StudentDict *students = NULL;
+    StudentDict *filtered = NULL;
+    int status = EXIT_SUCCESS;
+
+    students = dict_create(8U);
+    if (students == NULL) {
+        (void)fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((dict_add(students, "Cierra Vega", 6.2, 70.0) != 0) ||
+        (dict_add(students, "Alden Cantrell", 5.9, 65.0) != 0) ||
+        (dict_add(students, "Kierra Gentry", 6.0, 68.0) != 0) ||
+        (dict_add(students, "Pierre Cox", 5.8, 66.0) != 0)) {
+        (void)fprintf(stderr, "Failed to add student\n");
+        dict_destroy(students);
+        return EXIT_FAILURE;
+    }
+
+    filtered = filter_students(students, 6.0, 70.0);
+    if (filtered == NULL) {
+        (void)fprintf(stderr, "Failed to filter students\n");
+        status = EXIT_FAILURE;
+    } else {
+        if (printf("Students with height >= 6.0 and weight >= 70.0:\n") < 0) {
+            status = EXIT_FAILURE;
+        } else {
+            dict_print(filtered);
+        }
+        dict_destroy(filtered);
+    }
+
+    dict_destroy(students);
+    return status;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Missing `<stdint.h>` include**: The original code used `SIZE_MAX` without including `<stdint.h>`, which would cause a compilation error on conforming implementations. This is now included.
+
+2. **Flawfinder `strlen` (CWE-126, over-read on non-terminated strings)**: Replaced `strlen()` with `memchr(name, '\0', MAX_NAME_LEN)`. This bounds the scan to at most `MAX_NAME_LEN` bytes, so a non-null-terminated input can never cause an over-read. If no terminator is found within the limit, the function rejects the input, which also subsumes the previous `name_len >= MAX_NAME_LEN` check.
+
+3. **Flawfinder `memcpy` (CWE-120, buffer overflow)**: The copy is now provably bounded — `name_len` is guaranteed to be strictly less than `MAX_NAME_LEN` by the `memchr` check, and the null terminator is written explicitly at `name[name_len]`, so the destination buffer of `MAX_NAME_LEN` bytes can never overflow.
+
+4. **cppcheck `variableScope` / `unreadVariable`**: `new_capacity` and `new_entries` are now declared inside the reallocation block where they are actually used, reducing their scope and eliminating the dead initialization on paths that never grow the array.
+
+5. **Flawfinder statically-sized array (CWE-119/CWE-120)**: The fixed-size `name` buffer is retained, but all writes to it are now strictly bounds-checked before copying, mitigating the risk.
+
+The integer-overflow guard before `realloc`, the null-pointer checks, and the cleanup paths in the original code were already sound and are preserved unchanged.

@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t input_len;
+    size_t out_capacity;
+    size_t out_len = 0;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (input_len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+    out_capacity = (input_len * 2U) + 1U;
+
+    output = malloc(out_capacity);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c)) {
+            if (i > 0U) {
+                if (out_len >= (out_capacity - 1U)) {
+                    free(output);
+                    return NULL;
+                }
+                output[out_len] = '_';
+                out_len++;
+            }
+            if (out_len >= (out_capacity - 1U)) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)tolower(c);
+            out_len++;
+        } else {
+            if (out_len >= (out_capacity - 1U)) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)c;
+            out_len++;
+        }
+    }
+
+    if (out_len >= out_capacity) {
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "camelCaseString",
+        "ConvertThisToSnake",
+        "alreadylower",
+        "XMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for input: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the original code's weaknesses and how this rewrite addresses them:**
+
+1. **Failed test cases (no output for `ChromeCast`, `QuadCore`, `GoogleAssistant`)** — the original regex-based approach was fragile: `regexec` offsets are relative to the shifted pointer, and the compounded bounds checks (`out_capacity - 2U` on an unsigned type when capacity could be small) could underflow and cause spurious `NULL` returns. The rewrite eliminates `regex.h` entirely in favor of a single linear scan with `isupper()`, which is deterministic, locale-safe with the `unsigned char` cast, and cannot mis-handle match offsets.
+
+2. **Flawfinder CWE-120 warnings on `memcpy`** — both `memcpy` calls are removed. Every write into `output` is a single-byte store guarded by an explicit `out_len >= (out_capacity - 1U)` check immediately before it, so a buffer overflow is impossible by construction.
+
+3. **Retained hardening** — `strnlen` with `MAX_INPUT_LEN` cap, the `SIZE_MAX` overflow guard on the capacity computation, `malloc` failure handling, and cleanup on every error path are all preserved. The worst-case expansion (underscore before every uppercase character) fits within `2 * input_len + 1` bytes, and the final NUL write is bounds-checked.

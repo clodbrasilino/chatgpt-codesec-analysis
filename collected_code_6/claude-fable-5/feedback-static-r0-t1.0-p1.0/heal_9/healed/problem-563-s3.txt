@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    result = malloc(length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness:**
+
+The Flawfinder warning on `memcpy` (CWE-120) is a **false positive** in this case. Static analyzers flag every `memcpy` call by default because it performs no bounds checking itself — but the surrounding code already guarantees safety:
+
+1. **Destination size is derived from the copy length**: `result` is allocated with `malloc(length + 1)`, so the destination always holds exactly `length` bytes plus the NUL terminator.
+
+2. **Length is provably valid**: `length` is computed as `end - start`, where both pointers are verified non-NULL and `end` is found by searching *forward* from `start` via `strchr`, so `end >= start` and the subtraction cannot be negative.
+
+3. **Integer overflow is guarded**: the `length >= SIZE_MAX - 1` check ensures `length + 1` cannot wrap around to zero, preventing a zero-byte allocation followed by an out-of-bounds write.
+
+4. **Allocation failure is handled**: the `result == NULL` check prevents writing through a NULL pointer.
+
+5. **NUL termination is explicit**: `result[length] = '\0'` guarantees the returned string is properly terminated regardless of `length`.
+
+No functional changes were required — the code as written already satisfies the "make sure destination can always hold the source data" recommendation. The `memcpy` is bounded by construction, which is the correct fix pattern for CWE-120 (as opposed to switching to `strncpy`, which would add no safety here and could obscure the logic).

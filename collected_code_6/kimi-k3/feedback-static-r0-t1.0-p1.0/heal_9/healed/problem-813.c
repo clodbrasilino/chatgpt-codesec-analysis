@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+    
+    size_t length = 0;
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    
+    printf("Enter a string: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+    
+    printf("Length of the string: %zu\n", string_length(buffer));
+    
+    return EXIT_SUCCESS;
+}

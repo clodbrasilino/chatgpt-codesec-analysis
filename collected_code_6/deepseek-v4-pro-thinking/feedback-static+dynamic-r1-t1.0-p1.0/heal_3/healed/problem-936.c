@@ -1,0 +1,65 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *value;
+} Tuple;
+
+void rearrange_tuples(Tuple *tuples, size_t tuple_count, const int *order, size_t order_count) {
+    if (tuples == NULL || order == NULL) {
+        return;
+    }
+
+    size_t pos = 0;
+    for (size_t i = 0; i < order_count && pos < tuple_count; ++i) {
+        for (size_t j = pos; j < tuple_count; ++j) {
+            if (tuples[j].id == order[i]) {
+                if (j != pos) {
+                    Tuple temp = tuples[pos];
+                    tuples[pos] = tuples[j];
+                    tuples[j] = temp;
+                }
+                ++pos;
+                break;
+            }
+        }
+    }
+}
+
+int main(void) {
+    Tuple tuples[4];
+    tuples[0].id = 3;
+    tuples[0].value = malloc(strlen("three") + 1);
+    strcpy(tuples[0].value, "three");
+
+    tuples[1].id = 1;
+    tuples[1].value = malloc(strlen("one") + 1);
+    strcpy(tuples[1].value, "one");
+
+    tuples[2].id = 2;
+    tuples[2].value = malloc(strlen("two") + 1);
+    strcpy(tuples[2].value, "two");
+
+    tuples[3].id = 4;
+    tuples[3].value = malloc(strlen("four") + 1);
+    strcpy(tuples[3].value, "four");
+
+    int order[] = {2, 1, 4, 3};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t order_count = sizeof(order) / sizeof(order[0]);
+
+    rearrange_tuples(tuples, tuple_count, order, order_count);
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        printf("%d: %s\n", tuples[i].id, tuples[i].value);
+    }
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        free(tuples[i].value);
+    }
+
+    return 0;
+}

@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:56:32: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+                if (alloc_size > 0 && raw_len <= alloc_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:48:45: note: Assignment 'alloc_size=raw_len+1', assigned value is greater than 0
+                size_t alloc_size = raw_len + 1;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:50:33: note: Assuming condition is false
+                if (result[idx] == NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:56:32: note: Condition 'alloc_size>0' is always true
+                if (alloc_size > 0 && raw_len <= alloc_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:56:47: style: Condition 'raw_len<=alloc_size' is always true [knownConditionTrueFalse]
+                if (alloc_size > 0 && raw_len <= alloc_size) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:48:35: note: alloc_size is assigned 'raw_len+1' here.
+                size_t alloc_size = raw_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:50:33: note: Assuming condition is false
+                if (result[idx] == NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:56:47: note: Condition 'raw_len<=alloc_size' is always true
+                if (alloc_size > 0 && raw_len <= alloc_size) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:85:56: style: Condition '(unsigned long)match.rm_so<alloc_len' is always true [knownConditionTrueFalse]
+            if (match.rm_so > 0 && (size_t)match.rm_so < alloc_len) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:77:30: note: alloc_len is assigned '(unsigned long)match.rm_so+1' here.
+            size_t alloc_len = (size_t)match.rm_so + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:79:29: note: Assuming condition is false
+            if (result[idx] == NULL) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-73-s2.c:85:56: note: Condition '(unsigned long)match.rm_so<alloc_len' is always true
+            if (match.rm_so > 0 && (size_t)match.rm_so < alloc_len) {
+                                                       ^

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) correctly, so the rewritten version preserves the existing mitigations rather than changing logic:
+
+1. **Bounded input read** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow. The return value is checked for `NULL` to handle EOF/read errors.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit and robust against future refactoring.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+
+4. **Bounds-checked transformation** — `to_upper_case` takes an explicit `max_len` and checks both the length limit and the null terminator in its loop condition, plus a `NULL` pointer guard.
+
+5. **Correct `toupper` usage** — the cast to `(unsigned char)` before calling `toupper` avoids undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 0x80.
+
+6. **Output error handling** — the `printf` return value is checked, which is unusual but harmless and satisfies strict error-handling requirements.
+
+The Flawfinder hit on the statically-sized array is a risk-level-2 informational finding; since every access to `buffer` is bounds-limited by `sizeof(buffer)`, the finding is a false positive in this code as written.

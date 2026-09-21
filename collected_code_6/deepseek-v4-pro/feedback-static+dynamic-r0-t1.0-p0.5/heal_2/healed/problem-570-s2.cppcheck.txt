@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-570-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-570-s2.c:20:55: style: Condition 'word_count>0' is always true [knownConditionTrueFalse]
+            size_t len = strnlen(words[i], word_count > 0 ? (size_t)word_count * 256 : 256);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-570-s2.c:6:76: note: Assuming condition 'word_count<=0' is false
+    if (words == NULL || filter == NULL || new_count == NULL || word_count <= 0) {
+                                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-570-s2.c:12:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-570-s2.c:20:55: note: Condition 'word_count>0' is always true
+            size_t len = strnlen(words[i], word_count > 0 ? (size_t)word_count * 256 : 256);
+                                                      ^

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-349.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-349.c:28:15: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+   28 |     newline = strchr(input, '\n');
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-349.c:2:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | 

@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+int count_vowels(const char *str)
+{
+    int count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (*str != '\0')
+    {
+        int c = tolower((unsigned char)*str);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+        {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+bool read_input(char *buffer, size_t size)
+{
+    if (buffer == NULL || size == 0)
+    {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL)
+    {
+        return false;
+    }
+
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+    else
+    {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (!read_input(buffer, sizeof(buffer)))
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    result = count_vowels(buffer);
+    printf("Number of vowels: %d\n", result);
+
+    return 0;
+}

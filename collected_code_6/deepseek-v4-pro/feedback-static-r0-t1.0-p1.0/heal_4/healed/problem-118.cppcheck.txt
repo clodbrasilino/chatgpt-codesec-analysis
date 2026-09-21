@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-118.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-118.c:30:16: style: Condition 'length>0' is always true [knownConditionTrueFalse]
+    if (length > 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-118.c:21:33: note: Assuming that condition 'length==0' is not redundant
+    if (start == NULL || length == 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-118.c:26:14: note: Assuming condition is false
+    if (word == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-118.c:30:16: note: Condition 'length>0' is always true
+    if (length > 0) {
+               ^

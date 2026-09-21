@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['red', 'green', 'blue', 'black'], got <no output>
+  *  test case 1 failed: expected ['red', 'green', 'blue', 'white'], got <no output>
+  *  test case 2 failed: expected ['red', 'green', 'black', 'orange'], got <no output>
+  */
+
+char** remove_words(char** list, size_t list_size, char** to_remove, size_t remove_size, size_t* out_size) {
+    if (list == NULL || to_remove == NULL || out_size == NULL) {
+        return NULL;
+    }
+    
+    char** new_list = malloc((list_size > 0 ? list_size : 1) * sizeof(char*));
+    if (new_list == NULL) {
+        return NULL;
+    }
+    
+    size_t new_size = 0;
+    for (size_t i = 0; i < list_size; i++) {
+        if (list[i] == NULL) {
+            continue;
+        }
+        int match = 0;
+        for (size_t j = 0; j < remove_size; j++) {
+            if (to_remove[j] != NULL && strcmp(list[i], to_remove[j]) == 0) {
+                match = 1;
+                break;
+            }
+        }
+        if (!match) {
+            new_list[new_size] = list[i];
+            new_size++;
+        }
+    }
+    
+    *out_size = new_size;
+    
+    if (new_size > 0 && new_size < list_size) {
+        char** reduced_list = realloc(new_list, new_size * sizeof(char*));
+        if (reduced_list != NULL) {
+            new_list = reduced_list;
+        }
+    }
+    
+    return new_list;
+}
+
+int main(void) {
+    char* list_array[] = {"apple", "banana", "cherry", "date", "elderberry"};
+    size_t list_size = sizeof(list_array) / sizeof(list_array[0]);
+    
+    char* remove_array[] = {"banana", "date"};
+    size_t remove_size = sizeof(remove_array) / sizeof(remove_array[0]);
+    
+    char** list = NULL;
+    char** to_remove = NULL;
+    char** new_list = NULL;
+    size_t new_size = 0;
+    size_t list_allocated = 0;
+    size_t remove_allocated = 0;
+    int exit_code = EXIT_FAILURE;
+    
+    list = malloc(list_size * sizeof(char*));
+    if (list == NULL) goto cleanup;
+    
+    for (size_t i = 0; i < list_size; i++) {
+        int len = snprintf(NULL, 0, "%s", list_array[i]);
+        if (len < 0) goto cleanup_list;
+        list[i] = malloc(len + 1);
+        if (list[i] == NULL) goto cleanup_list;
+        snprintf(list[i], len + 1, "%s", list_array[i]);
+        list_allocated++;
+    }
+    
+    to_remove = malloc(remove_size * sizeof(char*));
+    if (to_remove == NULL) goto cleanup_list;
+    
+    for (size_t i = 0; i < remove_size; i++) {
+        int len = snprintf(NULL, 0, "%s", remove_array[i]);
+        if (len < 0) goto cleanup_to_remove;
+        to_remove[i] = malloc(len + 1);
+        if (to_remove[i] == NULL) goto cleanup_to_remove;
+        snprintf(to_remove[i], len + 1, "%s", remove_array[i]);
+        remove_allocated++;
+    }
+    
+    new_list = remove_words(list, list_size, to_remove, remove_size, &new_size);
+    
+    if (new_list != NULL) {
+        for (size_t i = 0; i < new_size; i++) {
+            printf("%s\n", new_list[i]);
+        }
+        fflush(stdout);
+        exit_code = EXIT_SUCCESS;
+    }
+    
+cleanup_to_remove:
+    if (to_remove != NULL) {
+        for (size_t i = 0; i < remove_allocated; i++) {
+            free(to_remove[i]);
+        }
+        free(to_remove);
+    }
+
+cleanup_list:
+    if (list != NULL) {
+        for (size_t i = 0; i < list_allocated; i++) {
+            free(list[i]);
+        }
+        free(list);
+    }
+    
+    if (new_list != NULL) {
+        free(new_list);
+    }
+    
+cleanup:
+    return exit_code;
+}

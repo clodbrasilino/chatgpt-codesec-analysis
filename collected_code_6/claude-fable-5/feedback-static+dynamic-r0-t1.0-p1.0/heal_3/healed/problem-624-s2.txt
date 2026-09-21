@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+static size_t safe_strnlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = safe_strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already in good shape regarding the Flawfinder warning (CWE-119/CWE-120). Here's why, and what was adjusted:
+
+1. **Statically-sized buffer (`char buffer[MAX_INPUT_LEN]`)** — The Flawfinder hit is a heuristic on any fixed-size array. The mitigation is already correct: `fgets(buffer, sizeof(buffer), stdin)` performs bounds-limited reading, so no overflow is possible. Using `sizeof(buffer)` rather than the macro directly keeps the size and the buffer declaration coupled, which prevents mismatch bugs during refactoring.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive (fgets already null-terminates on success), but harmless and kept.
+
+3. **Newline stripping via `strcspn`** — Safe and idiomatic; retained.
+
+4. **`strnlen` portability** — `strnlen` is POSIX (and C23), not guaranteed in strict C90/C99 environments. I replaced it with a small internal `safe_strnlen` implementation so the code compiles portably with `-std=c99 -pedantic` without feature-test macros.
+
+5. **Added `max_len == 0` guard** in `string_to_upper` — prevents a degenerate call from reading past a zero-length bound.
+
+6. **`toupper` cast** — The `(unsigned char)` cast before passing to `toupper` is correct and necessary (passing a negative `char` is undefined behavior); retained.
+
+The program is robust against buffer overflow, unterminated strings, NULL input, and EOF/read errors.

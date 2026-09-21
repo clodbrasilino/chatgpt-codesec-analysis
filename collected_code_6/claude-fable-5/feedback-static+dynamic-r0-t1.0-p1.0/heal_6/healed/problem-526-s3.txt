@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weakness and why the code is safe as written:
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[BUFFER_SIZE]` declaration. This is a heuristic warning rather than an actual vulnerability here, because every operation on the buffer is already properly bounded:
+
+1. **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, preventing any overflow on input.
+
+2. **Defensive termination**: `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination even in pathological cases, so subsequent `strchr` and `printf("%s")` calls cannot read out of bounds.
+
+3. **Bounded string measurement**: `capitalize_first_last` uses `strnlen(str, max_len)` instead of `strlen`, so even an unterminated buffer could not cause an out-of-bounds read.
+
+4. **Safe character classification**: All `isspace`/`toupper` calls cast their argument to `unsigned char`, avoiding undefined behavior with negative `char` values on platforms where `char` is signed.
+
+5. **Guarded internals**: The NULL/zero-length checks and the `i >= len` break ensure `end = i - 1` can never underflow, since the inner loop only runs after confirming a non-space character exists at index `i`.
+
+No functional changes were required — the original code already implements the mitigations the warning asks for (bounds checking and length-limited functions).

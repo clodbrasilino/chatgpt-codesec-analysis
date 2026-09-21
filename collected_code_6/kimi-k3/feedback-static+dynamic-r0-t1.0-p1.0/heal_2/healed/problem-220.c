@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void replace_max_n(char *str, size_t n)
+{
+    size_t count = 0;
+    char *p;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    p = str;
+
+    while (*p != '\0' && count < n)
+    {
+        if (*p == ' ' || *p == ',' || *p == '.')
+        {
+            *p = ':';
+            count++;
+        }
+        p++;
+    }
+}
+
+int main(void)
+{
+    char *str = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    size_t n;
+    int scanf_result;
+
+    printf("Enter a string: ");
+    
+    line_length = getline(&str, &buffer_size, stdin);
+    
+    if (line_length == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(str);
+        return 1;
+    }
+
+    if (line_length > 0 && str[line_length - 1] == '\n')
+    {
+        str[line_length - 1] = '\0';
+    }
+
+    printf("Enter maximum number of replacements: ");
+    
+    scanf_result = scanf("%zu", &n);
+    
+    if (scanf_result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        free(str);
+        return 1;
+    }
+
+    replace_max_n(str, n);
+
+    printf("Result: %s\n", str);
+
+    free(str);
+
+    return 0;
+}

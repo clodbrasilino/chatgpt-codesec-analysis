@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str);
+void strip_newline(char *str);
+static void flush_stdin(void);
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < BUFFER_SIZE && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (i < BUFFER_SIZE && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            return;
+        }
+        i++;
+    }
+}
+
+static void flush_stdin(void)
+{
+    size_t guard = 0;
+    const size_t max_flush = 1024 * 1024;
+    int ch;
+
+    while (guard < max_flush)
+    {
+        ch = getchar();
+        if (ch == '\n' || ch == EOF)
+        {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0)
+    {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (memchr(buffer, '\n', sizeof(buffer)) == NULL)
+    {
+        flush_stdin();
+    }
+
+    strip_newline(buffer);
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the identified weaknesses and their mitigations:**
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, statically-sized array):** This warning is mitigated because:
+   - Input is read exclusively via `fgets(buffer, (int)sizeof(buffer), stdin)`, which strictly limits the number of bytes written to the buffer's capacity.
+   - The buffer is zero-initialized with `memset` before use.
+   - Explicit null termination is enforced with `buffer[sizeof(buffer) - 1] = '\0'` as a defensive measure.
+   - All subsequent iteration (`count_characters`, `strip_newline`) is bounded by both `BUFFER_SIZE` and the null terminator, so no read can run past the array even if termination were somehow missing.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20):** This warning is mitigated because:
+   - `getchar()` never writes into any buffer; it only consumes characters to drain leftover input when the line was longer than the buffer.
+   - The loop is bounded by a `guard` counter with a `max_flush` cap (1 MiB), preventing unbounded looping on pathological or non-terminating input streams.
+   - Both `'\n'` and `EOF` are handled as termination conditions, and the return value is correctly stored in an `int` (not `char`) so `EOF` is reliably detected.
+
+The code as written is already defensively sound — the Flawfinder hits are informational (risk levels 1–2) and each is addressed through bounds checking, length-limited I/O functions, guaranteed termination, and loop guards.

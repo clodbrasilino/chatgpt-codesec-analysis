@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already functionally safe from the flagged weaknesses. The Flawfinder warnings (CWE-120 Buffer Copy without Checking Size, CWE-20 Improper Input Validation) are heuristic hits on array indexing inside loops, not confirmed vulnerabilities. Here's why the original was sound, and what the rewrite hardens:
+
+1. **In-place compaction invariant:** `write <= read` always holds, so `str[write]` can never write past where `str[read]` has already validly read. No buffer growth is possible.
+
+2. **NULL check:** Already present, retained.
+
+3. **`isspace` cast:** The `(unsigned char)` cast was correctly present — passing a plain `char` (potentially negative) to `isspace` is undefined behavior. Retained.
+
+4. **Hardening added:** The rewrite passes an explicit buffer size (`max_len`) and bounds the read loop with `read < max_len`. This defends against the one genuine residual risk: a non-NUL-terminated buffer being passed in, which would cause the original `while (str[read] != '\0')` to read out of bounds. This directly addresses the CWE-120/CWE-20 concern about unchecked buffer boundaries in loops.
+
+5. **Guaranteed termination:** The final NUL write is bounds-checked so the function always leaves a properly terminated string within the buffer.

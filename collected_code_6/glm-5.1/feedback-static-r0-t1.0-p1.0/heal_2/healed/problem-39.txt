@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int can_rearrange(const char *str, size_t len) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    if (len <= 1) {
+        return 1;
+    }
+    
+    int freq[256] = {0};
+    size_t max_freq = 0;
+    
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        freq[c]++;
+        if ((size_t)freq[c] > max_freq) {
+            max_freq = (size_t)freq[c];
+        }
+    }
+    
+    if (max_freq > (len + 1) / 2) {
+        return 0;
+    }
+    
+    return 1;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return 1;
+    }
+    
+    size_t len = strnlen(argv[1], 1024);
+    int result = can_rearrange(argv[1], len);
+    printf("%d\n", result);
+    
+    return 0;
+}

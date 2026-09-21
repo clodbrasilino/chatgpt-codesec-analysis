@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    if (len >= buf_size) {
+        fprintf(stderr, "Source length exceeds buffer capacity\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len + 1U > buf_size) {
+        fprintf(stderr, "Copy would exceed destination buffer\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len < buf_size) {
+        memcpy(buffer, source, len);
+        buffer[len] = '\0';
+    } else {
+        fprintf(stderr, "Destination buffer too small for copy\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe; the Flawfinder warning about `memcpy` (CWE-120) is a heuristic flag rather than an actual vulnerability here, because:
+
+1. **Bounded length calculation:** `strnlen(source, buf_size - 1U)` guarantees `len` can never equal or exceed `buf_size`, so `len + 1` bytes (data plus NUL terminator) always fit in the allocation.
+2. **Allocation matches source size:** `buffer = malloc(buf_size)` where `buf_size = sizeof(source)` ensures the destination is exactly large enough for the full source string including its terminator.
+3. **Explicit guard added:** The rewrite wraps the `memcpy` in an explicit `len < buf_size` check immediately before the copy, making the invariant locally verifiable — this satisfies static analyzers and future maintainers, since the safety no longer depends on reasoning about code far from the copy site.
+
+Other good practices already present and preserved: NULL check in `replace_chars`, `malloc` failure handling, checking `printf` return values, freeing the buffer on every exit path, and nulling the pointer after `free` to prevent use-after-free/double-free.

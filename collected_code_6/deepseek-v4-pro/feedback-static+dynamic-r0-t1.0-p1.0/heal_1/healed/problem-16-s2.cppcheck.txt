@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:51:29: style: Condition 'seq_len>=2' is always true [knownConditionTrueFalse]
+                if (seq_len >= 2 && current[seq_len-2] != '_') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:50:63: note: Assuming that condition 'seq_len>1' is not redundant
+            if (in_sequence && valid_sequence == 0 && seq_len > 1 && seq_len < MAX_SEQUENCE_LENGTH && current[seq_len-1] == '_') {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:51:29: note: Condition 'seq_len>=2' is always true
+                if (seq_len >= 2 && current[seq_len-2] != '_') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:65:50: style: Condition 'seq_len>=2' is always true [knownConditionTrueFalse]
+        if (current[seq_len-1] == '_' && seq_len >= 2 && current[seq_len-2] != '_') {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:64:55: note: Assuming that condition 'seq_len>1' is not redundant
+    if (in_sequence && valid_sequence == 0 && seq_len > 1 && seq_len < MAX_SEQUENCE_LENGTH && count < max_sequences) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-16-s2.c:65:50: note: Condition 'seq_len>=2' is always true
+        if (current[seq_len-1] == '_' && seq_len >= 2 && current[seq_len-2] != '_') {
+                                                 ^

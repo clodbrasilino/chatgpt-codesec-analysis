@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_SOURCE_LEN 1024
+
+size_t replace_chars(char *str, char old_char, char new_char);
+
+size_t replace_chars(char *str, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (old_char == '\0' || new_char == '\0') {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *source = "hello world, hello everyone";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    len = strnlen(source, MAX_SOURCE_LEN);
+    if (len >= MAX_SOURCE_LEN) {
+        fprintf(stderr, "Source string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        fprintf(stderr, "Length overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (buffer_size == 0 || len > buffer_size - 1) {
+        fprintf(stderr, "Buffer too small for source data\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    printf("Original: %s\n", buffer);
+
+    replaced = replace_chars(buffer, 'l', 'L');
+
+    printf("Modified: %s\n", buffer);
+    printf("Replacements made: %zu\n", replaced);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning on `memcpy` (CWE-120) is a *heuristic* hit — the tool flags every use of `memcpy` regardless of context. In this particular code, the risk is already mitigated:
+
+1. **Bounded length measurement:** `strnlen(source, MAX_SOURCE_LEN)` guarantees `len < MAX_SOURCE_LEN`, protecting against unterminated strings.
+2. **Overflow guard:** The `len > SIZE_MAX - 1` check ensures `len + 1` cannot wrap around before the allocation (in practice unreachable here since `len < 1024`, but harmless as defense-in-depth).
+3. **Exact-fit allocation:** `buffer_size = len + 1` and `malloc` failure is checked, so the destination is always exactly large enough for `len` bytes plus the null terminator.
+4. **Pre-copy bounds check:** `len > buffer_size - 1` explicitly verifies the destination can hold the source before `memcpy` executes. In the rewrite I added a `buffer_size == 0` guard so `buffer_size - 1` can never underflow — a subtle theoretical flaw in the original check.
+5. **Explicit termination:** `buffer[len] = '\0'` guarantees a valid C string after copying.
+
+Other correctness points already handled: `replace_chars` defends against `NULL` input and `'\0'` characters (which would corrupt the string or match the terminator), the buffer is freed and nulled, and `%zu` is the correct format specifier for `size_t`. The `memcpy` here is safe by construction; the code is a reasonable example of defensive copying, and the only real improvement is the underflow guard on the bounds check.

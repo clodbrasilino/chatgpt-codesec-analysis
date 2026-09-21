@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#define LIST_SIZE 6
+#define MAX_STRING_LENGTH 128
+
+static size_t bounded_strnlen(const char *s, size_t maxlen)
+{
+    size_t len;
+
+    if (s == NULL)
+    {
+        return 0;
+    }
+
+    len = 0;
+    while (len < maxlen && s[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+int convert_to_float_list(const char *list[], size_t size, float results[], size_t results_size, size_t *converted_count)
+{
+    size_t i;
+    size_t count;
+    char *endptr;
+    float value;
+
+    if (list == NULL || results == NULL || converted_count == NULL)
+    {
+        return -1;
+    }
+
+    if (size == 0 || size > results_size)
+    {
+        return -1;
+    }
+
+    count = 0;
+
+    for (i = 0; i < size; i++)
+    {
+        if (list[i] == NULL)
+        {
+            results[i] = 0.0f;
+            continue;
+        }
+
+        if (bounded_strnlen(list[i], MAX_STRING_LENGTH) >= MAX_STRING_LENGTH)
+        {
+            results[i] = 0.0f;
+            continue;
+        }
+
+        errno = 0;
+        endptr = NULL;
+        value = strtof(list[i], &endptr);
+
+        if (endptr != list[i] && *endptr == '\0' && errno != ERANGE)
+        {
+            results[i] = value;
+            count++;
+        }
+        else
+        {
+            results[i] = 0.0f;
+        }
+    }
+
+    *converted_count = count;
+    return 0;
+}
+
+int main(void)
+{
+    const char *list[LIST_SIZE] = {"3.14", "-2.5", "abc", "42", "7.5e2", "hello"};
+    float *results;
+    size_t converted_count;
+    size_t i;
+
+    converted_count = 0;
+
+    results = calloc(LIST_SIZE, sizeof(*results));
+    if (results == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (convert_to_float_list(list, LIST_SIZE, results, LIST_SIZE, &converted_count) != 0)
+    {
+        fprintf(stderr, "Error: invalid arguments\n");
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < LIST_SIZE; i++)
+    {
+        printf("Element %zu: %f\n", i, (double)results[i]);
+    }
+
+    printf("Total converted: %zu\n", converted_count);
+
+    free(results);
+    return EXIT_SUCCESS;
+}

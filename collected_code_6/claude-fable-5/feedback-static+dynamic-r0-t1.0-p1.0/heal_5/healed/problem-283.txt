@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(number, max_len);
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        const int digit = number[i] - '0';
+        if (digit < 0 || digit > 9) {
+            return false;
+        }
+        counts[digit]++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT] = {0};
+    size_t len;
+
+    printf("Enter a number: ");
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else if (len == sizeof(input) - 1U) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already quite defensive — the Flawfinder warning about the statically-sized `char input[MAX_INPUT]` buffer (CWE-119/CWE-120) was largely a false positive, since the code already mitigated it correctly:
+
+1. **`fgets` with `sizeof(input)`** — reads at most `MAX_INPUT - 1` characters plus the null terminator, so no overflow is possible.
+2. **Explicit null termination** — `input[sizeof(input) - 1U] = '\0';` guarantees termination even in edge cases.
+3. **`strnlen` instead of `strlen`** — bounds the length scan to the buffer size.
+4. **Bounds validation in `digit_frequency_valid`** — checks for `NULL`, zero `max_len`, and rejects strings that fill the buffer completely (`len >= max_len`), which also implicitly rejects truncated input.
+5. **Defensive digit range check** — `digit < 0 || digit > 9` is redundant after `isdigit`, but harmless hardening.
+
+**Improvements added in the rewrite:**
+
+- **Zero-initialization of `input`** (`= {0}`) — ensures the buffer never contains indeterminate bytes, satisfying stricter static analyzers.
+- **Stdin flush on truncation** — if the input exactly filled the buffer without a newline, the remainder of the oversized line is drained from `stdin`. This prevents leftover characters from leaking into any subsequent reads and makes truncation handling explicit rather than silent.
+
+The core logic (each digit `d` may appear at most `d` times, so any `0` makes the input invalid) is preserved unchanged.

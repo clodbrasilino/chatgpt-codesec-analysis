@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define IP_MAX_LEN 16
+
+char* remove_leading_zeroes(const char *ip) {
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    char *result = malloc(IP_MAX_LEN);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char *input_copy = malloc(strlen(ip) + 1);
+    if (input_copy == NULL) {
+        free(result);
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(input_copy, ip);
+
+    char *token;
+    char *rest = input_copy;
+    int first = 1;
+    size_t result_len = 0;
+
+    result[0] = '\0';
+
+    while ((token = strsep(&rest, ".")) != NULL && result_len < IP_MAX_LEN - 1) {
+        if (!first) {
+            if (result_len < IP_MAX_LEN - 1) {
+                result[result_len] = '.';
+                result_len++;
+                result[result_len] = '\0';
+            }
+        }
+        first = 0;
+
+        char *start = token;
+        while (*start == '0' && *(start + 1) != '\0') {
+            start++;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t token_len = strlen(start);
+        if (result_len + token_len < IP_MAX_LEN) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_len, start, token_len);
+            result_len += token_len;
+            result[result_len] = '\0';
+        }
+    }
+
+    free(input_copy);
+    return result;
+}
+
+int main(void) {
+    const char *ip1 = "192.168.001.001";
+    const char *ip2 = "010.000.000.001";
+    const char *ip3 = "000.000.000.000";
+    const char *ip4 = "255.255.255.255";
+    const char *ip5 = "001.002.003.004";
+
+    char *result1 = remove_leading_zeroes(ip1);
+    char *result2 = remove_leading_zeroes(ip2);
+    char *result3 = remove_leading_zeroes(ip3);
+    char *result4 = remove_leading_zeroes(ip4);
+    char *result5 = remove_leading_zeroes(ip5);
+
+    if (result1) { printf("%s\n", result1); free(result1); }
+    if (result2) { printf("%s\n", result2); free(result2); }
+    if (result3) { printf("%s\n", result3); free(result3); }
+    if (result4) { printf("%s\n", result4); free(result4); }
+    if (result5) { printf("%s\n", result5); free(result5); }
+
+    return 0;
+}

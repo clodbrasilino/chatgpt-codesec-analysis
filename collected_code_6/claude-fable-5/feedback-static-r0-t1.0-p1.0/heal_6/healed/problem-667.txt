@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+size_t count_vowels(const char *str)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        int c = tolower((unsigned char)str[i]);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t vowels;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    vowels = count_vowels(buffer);
+
+    printf("Number of vowels: %zu\n", vowels);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why the code is safe as written:
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk, informational flag (risk 2). Statically-sized buffers are only dangerous when combined with unbounded write operations such as `gets()`, `strcpy()`, or `scanf("%s", ...)`. This code mitigates the risk correctly:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits the read to `BUFFER_SIZE - 1` characters plus the null terminator, making overflow impossible. Using `sizeof(buffer)` rather than the macro directly ensures the bound stays correct even if the declaration changes.
+
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guards against future refactoring to a function that does not.
+
+3. **Newline stripping via `strcspn`**: `buffer[strcspn(buffer, "\n")] = '\0';` is the idiomatic safe pattern; it works correctly even when no newline is present (it then targets the existing terminator), unlike the common buggy `buffer[strlen(buffer) - 1] = '\0'` which can underflow on an empty string.
+
+4. **Safe character classification**: The cast `(unsigned char)str[i]` before `tolower()` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+5. **Error handling**: Return values of `fflush` and `fgets` are checked, and `EXIT_SUCCESS`/`EXIT_FAILURE` are used for portability.
+
+No changes were required to remediate the warning — the code already applies bounds checking and length-limited functions as the CWE-119/CWE-120 guidance recommends.

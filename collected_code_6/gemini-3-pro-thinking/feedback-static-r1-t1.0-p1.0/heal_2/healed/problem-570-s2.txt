@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+static size_t get_safe_len(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char **filter_strings(char **words, size_t count, const char *target, size_t *out_count) {
+    if (!out_count) {
+        return NULL;
+    }
+    *out_count = 0;
+
+    if (!words || !target || count == 0) {
+        return NULL;
+    }
+
+    char **filtered = malloc(count * sizeof(char *));
+    if (!filtered) {
+        return NULL;
+    }
+
+    size_t kept_count = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (!words[i]) {
+            continue;
+        }
+        if (strstr(words[i], target) == NULL) {
+            size_t len = get_safe_len(words[i], MAX_STRING_LEN);
+            filtered[kept_count] = malloc(len + 1);
+            if (!filtered[kept_count]) {
+                for (size_t j = 0; j < kept_count; j++) {
+                    free(filtered[j]);
+                }
+                free(filtered);
+                return NULL;
+            }
+            
+            memcpy(filtered[kept_count], words[i], len);
+            filtered[kept_count][len] = '\0';
+            kept_count++;
+        }
+    }
+
+    if (kept_count == 0) {
+        free(filtered);
+        return NULL;
+    }
+
+    char **resized = realloc(filtered, kept_count * sizeof(char *));
+    if (!resized) {
+        *out_count = kept_count;
+        return filtered;
+    }
+
+    *out_count = kept_count;
+    return resized;
+}
+
+int main(void) {
+    const char *initial_list[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date",
+        "elderberry",
+        "fig"
+    };
+    size_t initial_count = sizeof(initial_list) / sizeof(initial_list[0]);
+    const char *target = "a";
+    size_t new_count = 0;
+
+    char **mutable_list = malloc(initial_count * sizeof(char *));
+    if (!mutable_list) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < initial_count; i++) {
+        size_t len = get_safe_len(initial_list[i], MAX_STRING_LEN);
+        mutable_list[i] = malloc(len + 1);
+        if (!mutable_list[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(mutable_list[j]);
+            }
+            free(mutable_list);
+            return EXIT_FAILURE;
+        }
+        
+        memcpy(mutable_list[i], initial_list[i], len);
+        mutable_list[i][len] = '\0';
+    }
+
+    char **filtered_list = filter_strings(mutable_list, initial_count, target, &new_count);
+
+    if (filtered_list || new_count == 0) {
+        for (size_t i = 0; i < new_count; i++) {
+            printf("%s\n", filtered_list[i]);
+            free(filtered_list[i]);
+        }
+        free(filtered_list);
+    }
+
+    for (size_t i = 0; i < initial_count; i++) {
+        free(mutable_list[i]);
+    }
+    free(mutable_list);
+
+    return EXIT_SUCCESS;
+}
+```

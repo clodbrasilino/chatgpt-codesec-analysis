@@ -1,0 +1,135 @@
+#include <errno.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROMAN_MAX_VALUE 3999U
+#define ROMAN_MAX_LENGTH 15U
+#define ROMAN_BUFFER_SIZE ((size_t)ROMAN_MAX_LENGTH + 1U)
+
+typedef struct {
+    unsigned int value;
+    const char *symbol;
+    size_t length;
+} RomanMapping;
+
+bool integer_to_roman(unsigned int value, char *output, size_t output_size)
+{
+    static const RomanMapping mappings[] = {
+        {1000U, "M", 1U},
+        {900U, "CM", 2U},
+        {500U, "D", 1U},
+        {400U, "CD", 2U},
+        {100U, "C", 1U},
+        {90U, "XC", 2U},
+        {50U, "L", 1U},
+        {40U, "XL", 2U},
+        {10U, "X", 1U},
+        {9U, "IX", 2U},
+        {5U, "V", 1U},
+        {4U, "IV", 2U},
+        {1U, "I", 1U}
+    };
+
+    const size_t mapping_count = sizeof mappings / sizeof mappings[0];
+    size_t position = 0U;
+
+    if (output == NULL || output_size == 0U) {
+        return false;
+    }
+
+    output[0] = '\0';
+
+    if (value == 0U || value > ROMAN_MAX_VALUE) {
+        return false;
+    }
+
+    for (size_t i = 0U; i < mapping_count; ++i) {
+        while (value >= mappings[i].value) {
+            if (mappings[i].length > output_size - position - 1U) {
+                output[0] = '\0';
+                return false;
+            }
+
+            for (size_t j = 0U; j < mappings[i].length; ++j) {
+                output[position++] = mappings[i].symbol[j];
+            }
+
+            value -= mappings[i].value;
+        }
+    }
+
+    output[position] = '\0';
+    return true;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *argument;
+    char *end;
+    char *roman;
+    unsigned long parsed_value;
+    int result;
+
+    if (argc != 2 || argv == NULL || argv[1] == NULL) {
+        const char *program_name =
+            argc > 0 && argv != NULL && argv[0] != NULL
+                ? argv[0]
+                : "roman";
+
+        fprintf(stderr, "Usage: %s <integer from 1 to 3999>\n",
+                program_name);
+        return EXIT_FAILURE;
+    }
+
+    argument = argv[1];
+
+    if (argument[0] == '\0') {
+        fprintf(stderr,
+                "Invalid integer: expected a value from 1 to 3999\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0U; argument[i] != '\0'; ++i) {
+        if (argument[i] < '0' || argument[i] > '9') {
+            fprintf(stderr,
+                    "Invalid integer: expected a value from 1 to 3999\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    errno = 0;
+    end = NULL;
+    parsed_value = strtoul(argument, &end, 10);
+
+    if (errno == ERANGE ||
+        end == argument ||
+        end == NULL ||
+        *end != '\0' ||
+        parsed_value == 0UL ||
+        parsed_value > (unsigned long)ROMAN_MAX_VALUE) {
+        fprintf(stderr,
+                "Invalid integer: expected a value from 1 to 3999\n");
+        return EXIT_FAILURE;
+    }
+
+    roman = malloc(ROMAN_BUFFER_SIZE);
+    if (roman == NULL) {
+        fprintf(stderr, "Failed to allocate output buffer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!integer_to_roman((unsigned int)parsed_value,
+                          roman,
+                          ROMAN_BUFFER_SIZE)) {
+        fprintf(stderr, "Failed to convert the integer\n");
+        free(roman);
+        return EXIT_FAILURE;
+    }
+
+    result = printf("%s\n", roman);
+    free(roman);
+
+    return result < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+}

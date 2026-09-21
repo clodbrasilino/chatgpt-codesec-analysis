@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal == 0) {
+        buffer[index++] = '0';
+        buffer[index] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0) {
+        if (index >= buffer_size - 1) {
+            buffer[0] = '\0';
+            return -1;
+        }
+        buffer[index++] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    char binary[BINARY_BUFFER_SIZE] = {0};
+    int result;
+
+    printf("Enter a non-negative decimal number: ");
+
+    result = scanf("%u", &number);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why the flagged weakness is already mitigated:
+
+**The Flawfinder warning (CWE-119/CWE-120)** is a generic alert triggered by the mere presence of a statically-sized `char` array. It flags a *potential* risk, not an actual defect. In this code, the risk is fully mitigated:
+
+1. **Buffer sizing is provably correct.** `BINARY_BUFFER_SIZE` is computed as `sizeof(unsigned int) * CHAR_BIT + 1`, which is exactly the maximum number of binary digits an `unsigned int` can produce plus one byte for the null terminator. This is portable across platforms with different `int` widths.
+
+2. **Explicit bounds checking is performed.** Inside `decimal_to_binary`, the check `if (index >= buffer_size - 1)` guarantees no write past `buffer_size - 1`, always reserving space for the terminator. The size is passed via `sizeof(binary)` at the call site, so the function never assumes a size.
+
+3. **Defensive parameter validation.** The function rejects `NULL` buffers and sizes smaller than 2, preventing degenerate writes.
+
+4. **Safe input handling.** `scanf("%u", ...)` writes to a fixed-size scalar, not a string, so there is no unbounded string read; the return value is checked for parse failure.
+
+5. **The zero case and string reversal are both bounded**, with the reversal operating only on indices already validated during the digit-writing loop.
+
+No functional changes were required — the warning is a false positive given the existing bounds checks, and the rewrite preserves the correct, defensive implementation.

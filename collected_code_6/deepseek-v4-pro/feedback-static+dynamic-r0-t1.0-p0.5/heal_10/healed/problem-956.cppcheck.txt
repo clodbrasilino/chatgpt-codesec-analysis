@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-956.c:55:31: style: Condition 'remaining_len>0' is always true [knownConditionTrueFalse]
+            if (remaining_len > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-956.c:48:20: note: Assuming that condition 'offset>=input_len' is not redundant
+        if (offset >= input_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-956.c:54:46: note: Assignment 'remaining_len=input_len-offset', assigned value is greater than 0
+            size_t remaining_len = input_len - offset;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_10/healed/problem-956.c:55:31: note: Condition 'remaining_len>0' is always true
+            if (remaining_len > 0) {
+                              ^

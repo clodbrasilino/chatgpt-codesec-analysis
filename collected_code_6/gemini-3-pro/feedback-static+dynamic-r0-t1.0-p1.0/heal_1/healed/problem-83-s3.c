@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char add_characters(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+
+    int sum = 0;
+
+    while (*str != '\0') {
+        sum += (unsigned char)*str;
+        str++;
+    }
+
+    return (char)(sum % 256);
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    
+    char result = add_characters(test_string);
+    
+    printf("The character made by adding all characters is: '%c' (ASCII: %d)\n", result, (int)(unsigned char)result);
+    
+    return 0;
+}

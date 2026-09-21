@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+static bool is_word_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_word_length_odd(buffer)) {
+        printf("The word length is odd\n");
+    } else {
+        printf("The word length is even\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`char buffer[MAX_WORD_LEN]` (CWE-119/CWE-120, risk 2):** This is a generic warning about statically-sized arrays. The code mitigates it properly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow.
+   - `buffer[sizeof(buffer) - 1U] = '\0'` guarantees null termination defensively.
+   - `strnlen()` is used instead of `strlen()`, bounding all length computations to the buffer size.
+
+2. **`getchar()` in a loop (CWE-120/CWE-20, risk 1):** The warning concerns reading into a buffer inside a loop. Here `getchar()` results are stored only in a single `int` (correctly typed to distinguish `EOF`), never written into a buffer, and the loop terminates on both `'\n'` and `EOF`. This is the standard, safe idiom for draining `stdin` after a truncated `fgets` read.
+
+Both findings are false positives; the code already applies the recommended mitigations (bounds-limited reads, explicit termination, length-bounded string functions, and correct `EOF` handling), so no functional changes were required.

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:55:11: style: Condition 'n==0' is always false [knownConditionTrueFalse]
+    if (n == 0 || n > dataset_len || n > SIZE_MAX / sizeof(int)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:51:16: note: Assignment 'n=4', assigned value is 4
+    size_t n = 4;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:55:11: note: Condition 'n==0' is always false
+    if (n == 0 || n > dataset_len || n > SIZE_MAX / sizeof(int)) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:55:21: style: Condition 'n>dataset_len' is always false [knownConditionTrueFalse]
+    if (n == 0 || n > dataset_len || n > SIZE_MAX / sizeof(int)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:51:16: note: Assignment 'n=4', assigned value is 4
+    size_t n = 4;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-10-s2.c:55:21: note: Condition 'n>dataset_len' is always false
+    if (n == 0 || n > dataset_len || n > SIZE_MAX / sizeof(int)) {
+                    ^

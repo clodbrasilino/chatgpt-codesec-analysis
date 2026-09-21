@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:25:43: warning: Either the condition 'key_len<255' is redundant or the array 'key[6]' is accessed at index 254, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (key_len < MAX_KEY_LENGTH && key[key_len] != '\0') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:25:20: note: Assuming that condition 'key_len<255' is not redundant
+    while (key_len < MAX_KEY_LENGTH && key[key_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:25:43: note: Array index out of bounds
+    while (key_len < MAX_KEY_LENGTH && key[key_len] != '\0') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:28:12: warning: Either the condition 'key_len<255' is redundant or the array 'key[6]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (key[key_len] != '\0') {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:25:20: note: Assuming that condition 'key_len<255' is not redundant
+    while (key_len < MAX_KEY_LENGTH && key[key_len] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-703-s3.c:28:12: note: Array index out of bounds
+    if (key[key_len] != '\0') {
+           ^

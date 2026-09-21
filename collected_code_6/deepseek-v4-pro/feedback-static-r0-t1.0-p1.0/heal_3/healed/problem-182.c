@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdarg.h>
+#include <ctype.h>
+
+typedef struct {
+    int uppercase_count;
+    int lowercase_count;
+    int special_count;
+    int numeric_count;
+} CharCounts;
+
+void count_characters(const char *str, CharCounts *counts) {
+    size_t i;
+    size_t len;
+
+    if (str == NULL || counts == NULL) {
+        fprintf(stderr, "Error: NULL pointer argument\n");
+        exit(EXIT_FAILURE);
+    }
+
+    counts->uppercase_count = 0;
+    counts->lowercase_count = 0;
+    counts->special_count = 0;
+    counts->numeric_count = 0;
+
+    len = strnlen(str, 4096);
+
+    for (i = 0; i < len; i++) {
+        if (isupper((unsigned char)str[i])) {
+            counts->uppercase_count++;
+        } else if (islower((unsigned char)str[i])) {
+            counts->lowercase_count++;
+        } else if (isdigit((unsigned char)str[i])) {
+            counts->numeric_count++;
+        } else {
+            counts->special_count++;
+        }
+    }
+}
+
+int main(void) {
+    const char *test_string = "Hello World! 123";
+    CharCounts counts;
+
+    count_characters(test_string, &counts);
+
+    printf("Input string: %s\n", test_string);
+    printf("Uppercase characters: %d\n", counts.uppercase_count);
+    printf("Lowercase characters: %d\n", counts.lowercase_count);
+    printf("Special characters: %d\n", counts.special_count);
+    printf("Numeric characters: %d\n", counts.numeric_count);
+
+    return 0;
+}

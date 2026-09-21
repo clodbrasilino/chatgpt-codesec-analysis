@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NUM_COLOURS 3
+#define MAX_SELECTION 32
+
+static const char *colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (indices[i] < 0 || indices[i] >= NUM_COLOURS) {
+            exit(EXIT_FAILURE);
+        }
+        if (i > 0) {
+            if (printf(" ") < 0) {
+                exit(EXIT_FAILURE);
+            }
+        }
+        if (printf("%s", colours[indices[i]]) < 0) {
+            exit(EXIT_FAILURE);
+        }
+    }
+    if (printf("\n") < 0) {
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void generate_combinations(int *indices, size_t count, size_t position, int start)
+{
+    int c;
+
+    if (position >= count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    for (c = start; c < NUM_COLOURS; c++) {
+        indices[position] = c;
+        generate_combinations(indices, count, position + 1U, c);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if (count == 0U || count > MAX_SELECTION) {
+        return -1;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    indices = (int *)malloc(count * sizeof(int));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    memset(indices, 0, count * sizeof(int));
+    generate_combinations(indices, count, 0U, 0);
+
+    free(indices);
+    indices = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2U;
+
+    if (printf("Combinations with repetition choosing %zu colour(s) from %d colours:\n",
+               count, NUM_COLOURS) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (choose_colours(count) != 0) {
+        if (fprintf(stderr, "Failed to generate combinations.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: for the `SIZE_MAX` check to compile, add `#include <stdint.h>` to the includes:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+Key hardening applied against the flagged weakness (CWE-119/CWE-120):
+
+1. **Bounds validation before array indexing**: `print_combination` now verifies each index is within `[0, NUM_COLOURS)` before dereferencing `colours[indices[i]]`, preventing any out-of-bounds read of the statically-sized array.
+2. **Defensive recursion guard**: `position >= count` instead of `==` prevents any write past the allocated `indices` buffer even if the invariant were violated.
+3. **Multiplication overflow check**: `count > SIZE_MAX / sizeof(int)` guards the `malloc(count * sizeof(int))` size computation against integer overflow, which could otherwise cause an undersized allocation and subsequent heap overflow.
+4. **Existing protections retained**: the `count == 0 || count > MAX_SELECTION` gate, `malloc` NULL check, `memset` initialization, and pointer nulling after `free` remain in place.

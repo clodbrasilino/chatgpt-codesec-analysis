@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdbool.h>
+
+long long int get_demlo_number(int n) {
+    if (n <= 0) return -1;
+    if (n == 1) return 1;
+
+    char num_str[21];
+    snprintf(num_str, sizeof(num_str), "%d", n);
+    size_t len = strlen(num_str);
+
+    char final_num[42] = "";
+    for (int i = 0; i < len; ++i) {
+        size_t new_len = strlen(final_num);
+        if (new_len + 3 >= sizeof(final_num)) break;
+
+        final_num[new_len] = num_str[i];
+        final_num[new_len + 1] = num_str[i];
+        final_num[new_len + 2] = '\0';
+
+        for (int j = 0; j < i; j++) {
+            new_len = strlen(final_num);
+            if (new_len + 2 >= sizeof(final_num)) break;
+            final_num[new_len] = num_str[len - j - 1];
+            final_num[new_len + 1] = '\0';
+        }
+    }
+
+    return atoll(final_num);
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    long long int result = get_demlo_number(number);
+    if (result != -1) {
+        printf("Demlo number: %lld\n", result);
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}
+```

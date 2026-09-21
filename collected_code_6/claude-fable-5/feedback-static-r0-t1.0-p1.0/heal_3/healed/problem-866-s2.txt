@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static bool has_31_days(const char *month)
+{
+    static const char *months_31[] = {
+        "january", "march", "may", "july",
+        "august", "october", "december"
+    };
+    char lowered[MAX_INPUT_LEN];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return false;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    memset(lowered, 0, sizeof(lowered));
+
+    for (i = 0; i < len && i < sizeof(lowered) - 1; i++) {
+        lowered[i] = (char)tolower((unsigned char)month[i]);
+    }
+    lowered[i] = '\0';
+
+    for (i = 0; i < sizeof(months_31) / sizeof(months_31[0]); i++) {
+        if (strcmp(lowered, months_31[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        discard_remaining_input();
+    }
+
+    if (input[0] == '\0') {
+        fprintf(stderr, "No input provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (has_31_days(input)) {
+        printf("%s has 31 days.\n", input);
+    } else {
+        printf("%s does not have 31 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code was already well-defended against the flagged weaknesses; the rewrite preserves and slightly hardens those mitigations:
+
+- **CWE-119/CWE-120 (statically-sized buffers `lowered` and `input`):** Both buffers are zero-initialized with `memset`, all reads use bounded functions (`fgets` with `sizeof(input)`, `strnlen` with an explicit cap), the copy loop into `lowered` is bounded by both `len` and `sizeof(lowered) - 1`, and explicit NUL termination is guaranteed after every write. Inputs at or beyond `MAX_INPUT_LEN` are rejected rather than truncated silently in `has_31_days`.
+
+- **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop writes nothing to any buffer — it only discards excess characters until newline or `EOF` — so no overflow is possible. It has been factored into `discard_remaining_input()` for clarity, and it terminates deterministically on `EOF`.
+
+- **Additional hardening:** The `tolower` call casts through `unsigned char` to avoid undefined behavior on negative `char` values, `fgets` failure and empty input are handled explicitly, and the `fflush` return value is now checked.

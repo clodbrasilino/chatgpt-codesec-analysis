@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-352.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-352.c:65:121: error: syntax error [syntaxError]
+- `strnlen(str, max_len)` (available via `_POSIX_C_SOURCE 200809L`) is used instead of `strlen`, bounding the scan even if a non-terminated buffer were ever passed.
+                                                                                                                        ^

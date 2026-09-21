@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_LEN 256
+
+static int contains_all_vowels(const char *str, size_t max_len)
+{
+    int found[5] = {0, 0, 0, 0, 0};
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        int c = tolower((unsigned char)str[i]);
+        switch (c) {
+        case 'a':
+            found[0] = 1;
+            break;
+        case 'e':
+            found[1] = 1;
+            break;
+        case 'i':
+            found[2] = 1;
+            break;
+        case 'o':
+            found[3] = 1;
+            break;
+        case 'u':
+            found[4] = 1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return found[0] && found[1] && found[2] && found[3] && found[4];
+}
+
+int main(void)
+{
+    char buffer[MAX_LEN];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (contains_all_vowels(buffer, sizeof(buffer))) {
+        printf("Accepted: the string contains all vowels\n");
+    } else {
+        printf("Rejected: the string does not contain all vowels\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+The Flawfinder warning (CWE-119/CWE-120) is triggered by the mere presence of a statically-sized `char buffer[MAX_LEN]` array, since fixed-size buffers are a common source of overflows. However, the code already mitigates this risk correctly:
+
+1. **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to at most `MAX_LEN - 1` characters plus the null terminator, preventing buffer overflow on input.
+2. **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-braces null termination (technically redundant after a successful `fgets`, but harmless).
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, ensuring the scan never runs past the buffer even if termination were somehow missing.
+4. **Bounded scanning**: `contains_all_vowels` takes an explicit `max_len` parameter and checks both the bound and the null terminator in its loop condition, plus a `NULL` pointer guard.
+5. **Safe character classification**: `tolower((unsigned char)str[i])` correctly casts to `unsigned char`, avoiding undefined behavior with negative `char` values.
+
+Since the warning is a low-risk (risk 2) static-analysis heuristic and all necessary bounds checks are already in place, the code is retained as-is with the comments removed. No functional changes are required.

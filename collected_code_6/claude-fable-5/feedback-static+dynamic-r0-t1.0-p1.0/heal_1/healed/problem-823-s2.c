@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static char *escape_regex(const char *substring)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *escaped;
+
+    if (substring == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(substring, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 2U) / 2U)) {
+        return NULL;
+    }
+
+    escaped = malloc((len * 2U) + 2U);
+    if (escaped == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", substring[i]) != NULL) {
+            escaped[j] = '\\';
+            j++;
+        }
+        escaped[j] = substring[i];
+        j++;
+    }
+    escaped[j] = '\0';
+
+    return escaped;
+}
+
+static int starts_with(const char *str, const char *substring)
+{
+    regex_t regex;
+    char *pattern;
+    char *escaped;
+    size_t escaped_len;
+    size_t pattern_len;
+    int ret;
+    int result;
+
+    if ((str == NULL) || (substring == NULL)) {
+        return -1;
+    }
+
+    if (strnlen(str, MAX_INPUT_LEN) >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    escaped = escape_regex(substring);
+    if (escaped == NULL) {
+        return -1;
+    }
+
+    escaped_len = strnlen(escaped, (MAX_INPUT_LEN * 2U) + 1U);
+    if (escaped_len > (MAX_INPUT_LEN * 2U)) {
+        free(escaped);
+        return -1;
+    }
+
+    pattern_len = escaped_len + 2U;
+    pattern = malloc(pattern_len);
+    if (pattern == NULL) {
+        free(escaped);
+        return -1;
+    }
+
+    ret = snprintf(pattern, pattern_len, "^%s", escaped);
+    free(escaped);
+    if ((ret < 0) || ((size_t)ret >= pattern_len)) {
+        free(pattern);
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    free(pattern);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        result = 1;
+    } else if (ret == REG_NOMATCH) {
+        result = 0;
+    } else {
+        result = -1;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Hello, World!";
+    const char *prefix1 = "Hello";
+    const char *prefix2 = "World";
+    int result;
+
+    result = starts_with(text, prefix1);
+    if (result < 0) {
+        fprintf(stderr, "Error checking prefix \"%s\"\n", prefix1);
+        return EXIT_FAILURE;
+    }
+    printf("\"%s\" starts with \"%s\": %s\n", text, prefix1,
+           (result == 1) ? "true" : "false");
+
+    result = starts_with(text, prefix2);
+    if (result < 0) {
+        fprintf(stderr, "Error checking prefix \"%s\"\n", prefix2);
+        return EXIT_FAILURE;
+    }
+    printf("\"%s\" starts with \"%s\": %s\n", text, prefix2,
+           (result == 1) ? "true" : "false");
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+static size_t safe_strlen(const char *s, size_t maxlen)
+{
+    size_t i = 0;
+    while (i < maxlen && s[i] != '\0')
+        i++;
+    return i;
+}
+
+char *remove_non_alphanumeric(const char *input)
+{
+    size_t len;
+    size_t alnum_count;
+    size_t i;
+    char *result;
+    size_t out;
+
+    if (input == NULL)
+        return NULL;
+
+    len = safe_strlen(input, MAX_STRING_LEN);
+    alnum_count = 0;
+    for (i = 0; i < len; i++) {
+        if (isalnum((unsigned char)input[i]))
+            alnum_count++;
+    }
+
+    result = malloc(alnum_count + 1);
+    if (result == NULL)
+        return NULL;
+
+    out = 0;
+    for (i = 0; i < len; i++) {
+        if (isalnum((unsigned char)input[i])) {
+            result[out++] = input[i];
+        }
+    }
+    result[out] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char *cleaned = remove_non_alphanumeric("Hello, World! 123");
+    if (cleaned != NULL) {
+        puts(cleaned);
+        free(cleaned);
+    }
+    return 0;
+}

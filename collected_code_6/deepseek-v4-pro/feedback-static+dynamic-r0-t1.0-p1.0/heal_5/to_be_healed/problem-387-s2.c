@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+static bool is_valid_hex_digit(char c) {
+    return (c >= '0' && c <= '9') ||
+           (c >= 'A' && c <= 'F') ||
+           (c >= 'a' && c <= 'f');
+}
+
+bool is_hex_even(const char *hex_str) {
+    if (hex_str == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(hex_str, 64);
+    if (len == 0 || len >= 64) {
+        return false;
+    }
+    
+    while (len > 0 && hex_str[len - 1] == '\n') {
+        len--;
+    }
+    
+    if (len == 0) {
+        return false;
+    }
+    
+    size_t last_index = len - 1;
+    
+    if (last_index > 0 && hex_str[0] == '0' && (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        if (len < 3) {
+            return false;
+        }
+        last_index = len - 1;
+    }
+    
+    if (!is_valid_hex_digit(hex_str[last_index])) {
+        return false;
+    }
+    
+    char last_char = hex_str[last_index];
+    
+    switch (last_char) {
+        case '0': case '2': case '4': case '6': case '8':
+        case 'A': case 'C': case 'E':
+        case 'a': case 'c': case 'e':
+            return true;
+        case '1': case '3': case '5': case '7': case '9':
+        case 'B': case 'D': case 'F':
+        case 'b': case 'd': case 'f':
+            return false;
+        default:
+            return false;
+    }
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[64] = {0};
+    
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t input_len = strnlen(input, sizeof(input));
+        if (input_len > 0 && input[input_len - 1] != '\n') {
+            int c;
+            /* Possible weaknesses found:
+             * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            while ((c = getchar()) != '\n' && c != EOF);
+        }
+        if (is_hex_even(input)) {
+            printf("Even\n");
+        } else {
+            printf("Odd\n");
+        }
+    }
+    
+    return 0;
+}

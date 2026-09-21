@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411.c:88:34: style: Condition 'cursor_remaining>0' is always true [knownConditionTrueFalse]
+            if (cursor_remaining > 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411.c:36:29: note: Assuming that condition 'cursor_remaining>0' is not redundant
+    while (cursor_remaining > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411.c:88:34: note: Condition 'cursor_remaining>0' is always true
+            if (cursor_remaining > 0) {
+                                 ^

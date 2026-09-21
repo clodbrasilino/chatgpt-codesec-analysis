@@ -1,0 +1,160 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define INITIAL_CAPACITY 64U
+#define MAX_INPUT_LENGTH 65536U
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static char *read_line(size_t *out_len)
+{
+    char *buf;
+    char *tmp;
+    size_t capacity;
+    size_t len;
+    int ch;
+
+    if (out_len == NULL) {
+        return NULL;
+    }
+
+    capacity = INITIAL_CAPACITY;
+    len = 0U;
+
+    buf = (char *)malloc(capacity);
+    if (buf == NULL) {
+        return NULL;
+    }
+
+    ch = EOF;
+    while ((ch = fgetc(stdin)) != EOF && ch != '\n') {
+        if (len >= MAX_INPUT_LENGTH) {
+            free(buf);
+            return NULL;
+        }
+        if (len + 1U >= capacity) {
+            if (capacity > (SIZE_MAX / 2U)) {
+                free(buf);
+                return NULL;
+            }
+            capacity *= 2U;
+            tmp = (char *)realloc(buf, capacity);
+            if (tmp == NULL) {
+                free(buf);
+                return NULL;
+            }
+            buf = tmp;
+        }
+        buf[len] = (char)ch;
+        len++;
+    }
+
+    if (ch == EOF && len == 0U) {
+        free(buf);
+        return NULL;
+    }
+
+    buf[len] = '\0';
+    *out_len = len;
+    return buf;
+}
+
+static int longest_repeating_subsequence(const char *str, size_t n)
+{
+    size_t i;
+    size_t j;
+    int result;
+    int **dp;
+
+    if (str == NULL || n == 0U) {
+        return 0;
+    }
+
+    if (n >= (SIZE_MAX / sizeof(int *)) - 1U) {
+        return -1;
+    }
+
+    dp = (int **)malloc((n + 1U) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i <= n; i++) {
+        dp[i] = (int *)calloc(n + 1U, sizeof(int));
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1U; i <= n; i++) {
+        for (j = 1U; j <= n; j++) {
+            if ((str[i - 1U] == str[j - 1U]) && (i != j)) {
+                dp[i][j] = dp[i - 1U][j - 1U] + 1;
+            } else {
+                dp[i][j] = max_int(dp[i - 1U][j], dp[i][j - 1U]);
+            }
+        }
+    }
+
+    result = dp[n][n];
+
+    for (i = 0U; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    char *input;
+    size_t len;
+    int result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    len = 0U;
+    input = read_line(&len);
+    if (input == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = longest_repeating_subsequence(input, len);
+    free(input);
+
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of the longest repeating subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Added `#include <stdint.h>`** — the original code used `SIZE_MAX` without including `<stdint.h>`, which is a portability bug (some toolchains expose it transitively, but that cannot be relied upon).
+
+2. **Flawfinder `fgetc` warning (CWE-120, CWE-20)** — the loop already mitigated the risk correctly: it enforces a hard cap (`MAX_INPUT_LENGTH`), checks `len + 1U >= capacity` before every write (reserving room for the NUL terminator), and guards the capacity doubling against `size_t` overflow. This mitigation was retained. Additionally, `ch` is now initialized before the loop so the post-loop `ch == EOF` test never reads an indeterminate value in any refactoring scenario.
+
+3. **Integer-overflow guard in the DP allocation** — added a check that `(n + 1U) * sizeof(int *)` cannot wrap around before calling `malloc`, closing a theoretical CWE-190 → CWE-131 path on inputs near `SIZE_MAX` (defensive, since `MAX_INPUT_LENGTH` already bounds `n`).
+
+The rest of the program was already sound: allocation failures are handled with full cleanup (no leaks on the partial-allocation path in `longest_repeating_subsequence`), the buffer is always NUL-terminated within bounds, and the `-1` error sentinel from the DP function is checked in `main`.

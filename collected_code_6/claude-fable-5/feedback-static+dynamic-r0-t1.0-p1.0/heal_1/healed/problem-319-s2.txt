@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 128U
+#define WORD_LEN 5U
+
+int find_five_letter_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char errbuf[ERRBUF_SIZE];
+    char word[WORD_LEN + 1U];
+    int ret;
+
+    if (text == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1U] = '\0';
+        fprintf(stderr, "Error: regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        size_t len;
+
+        if (match.rm_eo < match.rm_so) {
+            break;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len == WORD_LEN && len < sizeof(word)) {
+            memcpy(word, cursor + match.rm_so, len);
+            word[len] = '\0';
+            printf("%s\n", word);
+        }
+
+        if (match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1U] = '\0';
+        fprintf(stderr, "Error: regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *sample = "The quick brown fox jumps over a lazy dog while birds watch above";
+
+    if (find_five_letter_words(sample) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the applied fixes:**
+
+1. **`errbuf[128]` (CWE-119/CWE-120):** The original code passed `sizeof(errbuf)` to `regerror`, which is correct — `regerror` guarantees truncation and null-termination. As defense-in-depth, I added an explicit null-termination after each `regerror` call and replaced the magic number with a named constant.
+
+2. **`word[6]` (CWE-119/CWE-120):** The buffer size is now derived from a named constant (`WORD_LEN + 1U`), tying the buffer size directly to the copy length so they cannot silently drift apart during maintenance.
+
+3. **`memcpy` (CWE-120):** The original copy was actually safe in practice (5 bytes into a 6-byte buffer, guarded by `len == 5U`), but it copied a hard-coded `5U` rather than the checked length. The rewrite copies `len` and adds an explicit `len < sizeof(word)` bounds check, making the safety invariant verifiable at the copy site itself rather than relying on distant context.
+
+4. **Signed underflow guard:** Added a check for `match.rm_eo < match.rm_so` *before* computing `len`, since casting a negative difference of `regoff_t` values to `size_t` would produce a huge value; the original checked this only after the copy.
+
+The overall logic — iterating matches by advancing the cursor past `rm_eo`, distinguishing `REG_NOMATCH` from real errors, and freeing the regex on all paths — was already sound and is preserved.

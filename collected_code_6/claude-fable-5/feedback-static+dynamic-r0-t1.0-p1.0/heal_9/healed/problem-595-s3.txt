@@ -1,0 +1,162 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+static size_t bounded_len(const char *s, size_t max)
+{
+    size_t n = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    while (n < max && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count01;
+    long count10;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = bounded_len(s1, (size_t)MAX_LEN + 1U);
+    len2 = bounded_len(s2, (size_t)MAX_LEN + 1U);
+
+    if (len1 > (size_t)MAX_LEN || len2 > (size_t)MAX_LEN) {
+        return -1L;
+    }
+
+    if (len1 != len2 || len1 == 0U) {
+        return -1L;
+    }
+
+    count01 = 0L;
+    count10 = 0L;
+
+    for (i = 0U; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] == '0' && s2[i] == '1') {
+            count01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            count10++;
+        }
+    }
+
+    if (((count01 + count10) % 2L) != 0L) {
+        return -1L;
+    }
+
+    return (count01 / 2L) + (count10 / 2L) + ((count01 % 2L) * 2L);
+}
+
+static int read_line(char *buf, size_t size)
+{
+    size_t len;
+
+    if (buf == NULL || size < 2U) {
+        return -1;
+    }
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buf[size - 1U] = '\0';
+
+    len = bounded_len(buf, size);
+
+    if (len == size - 1U && buf[len - 1U] != '\n') {
+        int ch;
+
+        do {
+            ch = fgetc(stdin);
+        } while (ch != '\n' && ch != EOF);
+    }
+
+    while (len > 0U && (buf[len - 1U] == '\n' || buf[len - 1U] == '\r')) {
+        buf[len - 1U] = '\0';
+        len--;
+    }
+
+    if (len == 0U) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char a[MAX_LEN + 2];
+    char b[MAX_LEN + 2];
+    long result;
+    int status;
+    int read_ok;
+
+    memset(a, 0, sizeof(a));
+    memset(b, 0, sizeof(b));
+
+    status = EXIT_SUCCESS;
+    read_ok = 1;
+
+    if (read_line(a, sizeof(a)) != 0) {
+        read_ok = 0;
+    }
+
+    if (read_ok == 1 && read_line(b, sizeof(b)) != 0) {
+        read_ok = 0;
+    }
+
+    if (read_ok == 0) {
+        if (printf("Not Possible\n") < 0) {
+            status = EXIT_FAILURE;
+        }
+        if (fflush(stdout) != 0) {
+            status = EXIT_FAILURE;
+        }
+        return status;
+    }
+
+    result = min_swaps(a, b);
+
+    if (result < 0L) {
+        if (printf("Not Possible\n") < 0) {
+            status = EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%ld\n", result) < 0) {
+            status = EXIT_FAILURE;
+        }
+    }
+
+    if (fflush(stdout) != 0) {
+        status = EXIT_FAILURE;
+    }
+
+    return status;
+}
+```
+
+Key changes made in this revision:
+
+1. **Fixed the failing test cases in `min_swaps` (the core logic flaw):** The original code required `count01 == count10` and returned `count01`, which is the solution for a different problem (swaps within a single string). The correct algorithm for making two binary strings equal via swaps allows pairing two mismatches of the same type with one swap, and a mixed leftover pair costs two swaps. The fix checks whether the total mismatch count `(count01 + count10)` is odd (impossible case, returning `-1` so `main` prints `Not Possible`), and otherwise returns `count01/2 + count10/2 + 2*(count01 % 2)`.
+
+2. **Flawfinder `fgetc` warning (CWE-120/CWE-20):** The drain loop reads into no buffer at all — it only discards excess characters until newline or EOF, so no boundary issue exists. It is retained as-is since it is the correct mitigation against oversized input lines.
+
+3. **Flawfinder statically-sized array warnings (CWE-119/CWE-120):** The buffers `a` and `b` are sized `MAX_LEN + 2` (payload + newline + NUL), all reads go through `fgets` bounded by `sizeof(buf)`, the buffer is always explicitly NUL-terminated, and `bounded_len` never scans past the buffer. These are false positives given the existing bounds discipline, which is preserved.

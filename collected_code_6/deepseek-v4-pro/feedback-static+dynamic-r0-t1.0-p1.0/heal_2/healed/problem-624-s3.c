@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void to_upper_case(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    while (*str) {
+        *str = (char)toupper((unsigned char)*str);
+        str++;
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t read;
+    
+    printf("Enter a string: ");
+    read = getline(&input, &len, stdin);
+    if (read == -1) {
+        free(input);
+        return 1;
+    }
+    
+    if (read > 0 && read <= (ssize_t)(SIZE_MAX - 1)) {
+        if (input[read - 1] == '\n') {
+            input[read - 1] = '\0';
+            read--;
+        }
+        
+        if ((size_t)read < len) {
+            input[read] = '\0';
+        }
+    }
+    
+    to_upper_case(input);
+    
+    printf("Uppercase: %s\n", input);
+    
+    free(input);
+    return 0;
+}

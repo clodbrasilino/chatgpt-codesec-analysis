@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+int find_first_repeated(const char *str, size_t max_len, char *result)
+{
+    int seen[256] = {0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char repeated;
+    int status;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    status = find_first_repeated(buffer, sizeof(buffer), &repeated);
+    if (status == 0) {
+        printf("First repeated character: %c\n", repeated);
+    } else if (status == 1) {
+        printf("No repeated character found\n");
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The key changes address the identified weaknesses:
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced both `strlen` calls with `strnlen`, which takes an explicit maximum length and never reads past the given bound, even if the string is not null-terminated. The function signature of `find_first_repeated` now accepts a `max_len` parameter so the callee cannot over-read regardless of caller behavior, and it returns an error if no terminator is found within the bound.
+
+2. **CWE-119/CWE-120 (statically-sized buffer)**: The buffer size is defined once via `BUFFER_SIZE`, `fgets` is already bounded by `sizeof(buffer)`, and an explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination defensively before any string operations occur.

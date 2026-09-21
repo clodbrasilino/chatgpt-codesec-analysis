@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:105:28: style: Condition 'l<0' is always true [knownConditionTrueFalse]
+                abs_l = (l < 0) ? -l : l;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:98:15: note: Assuming condition 'l<0' is true
+        if (l < 0 && r > 0) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:105:28: note: Condition 'l<0' is always true
+                abs_l = (l < 0) ? -l : l;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:111:28: style: Condition 'r<0' is always false [knownConditionTrueFalse]
+                abs_r = (r < 0) ? -r : r;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:98:24: note: Assuming that condition 'r>0' is not redundant
+        if (l < 0 && r > 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-797-s3.c:111:28: note: Condition 'r<0' is always false
+                abs_r = (r < 0) ? -r : r;
+                           ^

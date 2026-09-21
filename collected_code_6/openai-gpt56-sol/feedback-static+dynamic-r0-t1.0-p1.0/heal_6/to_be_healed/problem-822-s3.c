@@ -1,0 +1,124 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
+enum {
+    MINIMUM_PASSWORD_LENGTH = 8,
+    MAXIMUM_PASSWORD_LENGTH = 128,
+    PASSWORD_BUFFER_SIZE = MAXIMUM_PASSWORD_LENGTH + 2
+};
+
+static bool is_password_valid(const char *password)
+{
+    static const char special_characters[] = "!@#$%^&*()-_=+[]{};:,.?/";
+    bool has_lowercase = false;
+    bool has_uppercase = false;
+    bool has_digit = false;
+    bool has_special = false;
+    size_t length = 0;
+
+    if (password == NULL) {
+        return false;
+    }
+
+    while (length <= MAXIMUM_PASSWORD_LENGTH && password[length] != '\0') {
+        ++length;
+    }
+
+    if (length < MINIMUM_PASSWORD_LENGTH ||
+        length > MAXIMUM_PASSWORD_LENGTH) {
+        return false;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        unsigned char character = (unsigned char)password[i];
+
+        if (character >= (unsigned char)'a' &&
+            character <= (unsigned char)'z') {
+            has_lowercase = true;
+        } else if (character >= (unsigned char)'A' &&
+                   character <= (unsigned char)'Z') {
+            has_uppercase = true;
+        } else if (character >= (unsigned char)'0' &&
+                   character <= (unsigned char)'9') {
+            has_digit = true;
+        } else if (strchr(special_characters, (int)character) != NULL) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_lowercase && has_uppercase && has_digit && has_special;
+}
+
+static bool read_password(char *buffer, size_t buffer_size)
+{
+    size_t length;
+
+    if (buffer == NULL ||
+        buffer_size < 2 ||
+        buffer_size > (size_t)MAXIMUM_PASSWORD_LENGTH + 2U) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)buffer_size, stdin) == NULL) {
+        buffer[0] = '\0';
+        return false;
+    }
+
+    length = strcspn(buffer, "\r\n");
+
+    if (buffer[length] != '\0') {
+        int terminator = (unsigned char)buffer[length];
+
+        buffer[length] = '\0';
+
+        if (terminator == '\r') {
+            /* Possible weaknesses found:
+             * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            int next = fgetc(stdin);
+
+            if (next != '\n' && next != EOF) {
+                ungetc(next, stdin);
+            }
+        }
+
+        return true;
+    }
+
+    if (feof(stdin)) {
+        return true;
+    }
+
+    while (true) {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        int character = fgetc(stdin);
+
+        if (character == '\n' || character == EOF) {
+            break;
+        }
+    }
+
+    buffer[0] = '\0';
+    return true;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char password[PASSWORD_BUFFER_SIZE] = {0};
+
+    if (!read_password(password, sizeof password)) {
+        return 1;
+    }
+
+    puts(is_password_valid(password) ? "true" : "false");
+    return 0;
+}

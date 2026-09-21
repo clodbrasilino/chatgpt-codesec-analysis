@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char year[MAX_FIELD_LEN];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char month[MAX_FIELD_LEN];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char day[MAX_FIELD_LEN];
+} UrlDate;
+
+static int copy_match(const char *source, const regmatch_t *match,
+                      char *dest, size_t dest_size)
+{
+    size_t length;
+
+    if (source == NULL || match == NULL || dest == NULL) {
+        return -1;
+    }
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, source + match->rm_so, length);
+    dest[length] = '\0';
+    return 0;
+}
+
+int extract_date_from_url(const char *url, UrlDate *result)
+{
+    regex_t regex;
+    regmatch_t matches[5];
+    int ret;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    memset(result, 0, sizeof(*result));
+
+    ret = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (ret != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char errbuf[128];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, url, 5, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(url, &matches[1], result->year, sizeof(result->year)) != 0 ||
+        copy_match(url, &matches[2], result->month, sizeof(result->month)) != 0 ||
+        copy_match(url, &matches[3], result->day, sizeof(result->day)) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/some-article",
+        "https://news.site.org/2019/1/9",
+        "https://example.com/no-date-here"
+    };
+    size_t count = sizeof(urls) / sizeof(urls[0]);
+    size_t i;
+    UrlDate date;
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s\n  Year: %s, Month: %s, Day: %s\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s\n  No date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

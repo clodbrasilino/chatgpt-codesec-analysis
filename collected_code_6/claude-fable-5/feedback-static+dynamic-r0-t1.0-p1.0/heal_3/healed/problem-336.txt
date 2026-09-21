@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MONTH_BUF_SIZE 32
+#define INPUT_BUF_SIZE 64
+
+static int has_28_days(const char *month)
+{
+    char normalized[MONTH_BUF_SIZE];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    len = strnlen(month, sizeof(normalized));
+    if (len == 0 || len >= sizeof(normalized)) {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++) {
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE];
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        discard_remaining_input();
+    }
+
+    if (has_28_days(input)) {
+        printf("%s has 28 days.\n", input);
+    } else {
+        printf("%s does not have exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why this version addresses the flagged weaknesses:
+
+**1. `char normalized[MONTH_BUF_SIZE]` in `has_28_days` (CWE-119/CWE-120, risk 2):**
+The buffer is protected against overflow. `strnlen(month, sizeof(normalized))` bounds the length scan to the buffer size, and the check `len >= sizeof(normalized)` rejects any input that would not fit including the null terminator. The copy loop writes at most `len` bytes followed by one terminator at index `len`, which is guaranteed `< MONTH_BUF_SIZE`. No overflow is possible.
+
+**2. `getchar()` in a loop (CWE-120/CWE-20, risk 1):**
+This is a false positive in practice — the loop discards characters without storing them into any buffer, so no boundary can be violated. The loop terminates correctly on both `'\n'` and `EOF`, avoiding an infinite loop if the stream ends without a newline.
+
+**3. `char input[INPUT_BUF_SIZE]` in `main` (CWE-119/CWE-120, risk 2):**
+Input is read with `fgets(input, (int)sizeof(input), stdin)`, which limits writes to the buffer size and always null-terminates on success. The explicit `input[sizeof(input) - 1] = '\0'` is defensive redundancy. Newline stripping uses `strnlen` (bounded), and if the input filled the buffer without a newline, the remainder of the line is drained via `discard_remaining_input()` so leftover bytes cannot pollute later reads.
+
+Additional robustness already present: `tolower()` receives an `unsigned char` cast, avoiding undefined behavior for negative `char` values; `fflush` and `fgets` return values are checked; the program uses `EXIT_SUCCESS`/`EXIT_FAILURE` portably. The flagged items are either mitigated by existing bounds checks or are analyzer false positives, so the code stands as-is with no functional changes required.

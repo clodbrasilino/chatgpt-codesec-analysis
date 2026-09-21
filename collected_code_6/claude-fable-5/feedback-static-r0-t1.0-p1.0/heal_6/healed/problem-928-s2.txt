@@ -1,0 +1,135 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define DATE_LEN 11
+#define INPUT_BUF_SIZE 64
+
+static int is_valid_format(const char *date)
+{
+    size_t i;
+    size_t len;
+
+    if (date == NULL) {
+        return 0;
+    }
+
+    len = strnlen(date, DATE_LEN);
+
+    if (len != DATE_LEN - 1) {
+        return 0;
+    }
+
+    for (i = 0; i < DATE_LEN - 1; i++) {
+        if (i == 4 || i == 7) {
+            if (date[i] != '-') {
+                return 0;
+            }
+        } else {
+            if (!isdigit((unsigned char)date[i])) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+static int is_valid_date(int year, int month, int day)
+{
+    int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (year < 1 || month < 1 || month > 12 || day < 1) {
+        return 0;
+    }
+
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        days_in_month[1] = 29;
+    }
+
+    if (day > days_in_month[month - 1]) {
+        return 0;
+    }
+
+    return 1;
+}
+
+static int convert_date(const char *input, char *output, size_t output_size)
+{
+    int year;
+    int month;
+    int day;
+    int written;
+
+    if (input == NULL || output == NULL || output_size < DATE_LEN) {
+        return -1;
+    }
+
+    if (!is_valid_format(input)) {
+        return -1;
+    }
+
+    if (sscanf(input, "%4d-%2d-%2d", &year, &month, &day) != 3) {
+        return -1;
+    }
+
+    if (!is_valid_date(year, month, day)) {
+        return -1;
+    }
+
+    written = snprintf(output, output_size, "%02d-%02d-%04d", day, month, year);
+    if (written < 0 || (size_t)written >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[INPUT_BUF_SIZE] = {0};
+    char output[DATE_LEN] = {0};
+    size_t len;
+
+    printf("Enter date (yyyy-mm-dd): ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strcspn(input, "\n");
+    if (len < sizeof(input)) {
+        input[len] = '\0';
+    }
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Invalid date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    printf("Converted date: %s\n", output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weaknesses and their mitigations:
+
+**On the Flawfinder warnings (CWE-119/CWE-120):** Both flagged items are informational-level warnings about statically-sized arrays. The original code already handled them safely, and the rewrite preserves and hardens those protections:
+
+1. **`input[INPUT_BUF_SIZE]`** — All writes are bounded: `fgets(input, sizeof(input), stdin)` limits reads to the buffer size and guarantees NUL termination; the explicit `input[sizeof(input) - 1] = '\0'` is defense-in-depth; `strcspn` cannot return a value ≥ `sizeof(input)` on a NUL-terminated buffer, and the guard check ensures no out-of-bounds write regardless. Zero-initialization (`= {0}`) additionally guarantees the buffer never contains uninitialized bytes.
+
+2. **`output[DATE_LEN]`** — `convert_date` validates `output_size >= DATE_LEN` before any write, and `snprintf` bounds the write while the truncation check (`written >= output_size`) rejects any output that would not fit.
+
+**Other safe practices already present and retained:**
+- `strnlen` instead of `strlen` bounds the scan on the input string.
+- `isdigit` receives an `unsigned char` cast, avoiding undefined behavior for negative `char` values.
+- `sscanf` uses width-limited specifiers (`%4d`, `%2d`) and its return value is checked.
+- Full semantic date validation including leap-year handling prevents logically invalid conversions.
+
+The code is safe against buffer overflows; the Flawfinder hits are false positives given the bounds checking in place.

@@ -1,0 +1,121 @@
+## Analysis
+
+The original code is already defensively written. The two Flawfinder hits are low-risk:
+
+1. **`fgetc` in a loop (CWE-120/CWE-20)** — `fgetc` returns an `int`, no buffer is written, and the loop is bounded by `FLUSH_GUARD_LIMIT` and terminates on `\n`/`EOF`. This is a false positive, though the guard counter can be made overflow-proof by checking before incrementing.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — mitigated correctly: `fgets` is given `sizeof(input)`, the buffer is zero-initialized, forcibly NUL-terminated, and all scanning uses bounded iteration (`safe_strlen`, `is_binary_string`). The only nit is the `(int)sizeof(input)` cast — safer to pass the size via a checked conversion, and `fgets` already NUL-terminates, so the explicit termination is belt-and-braces (fine to keep).
+
+Minor improvements applied in the rewrite: guard checked **before** increment to avoid any theoretical wrap, removed the empty `else` branch, kept all bounds checks, and ensured no unbounded string functions are used anywhere.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256U
+#define FLUSH_GUARD_LIMIT 1000000U
+
+static bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    if (i >= max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        if (guard >= (size_t)FLUSH_GUARD_LIMIT) {
+            break;
+        }
+        ch = fgetc(stdin);
+        guard++;
+    } while ((ch != '\n') && (ch != EOF));
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LENGTH];
+    size_t len;
+
+    (void)memset(input, 0, sizeof(input));
+
+    printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = safe_strlen(input, sizeof(input));
+
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(input, sizeof(input))) {
+        printf("The string is a binary string.\n");
+    } else {
+        printf("The string is not a binary string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Summary of Changes
+
+- **`flush_stdin`**: The guard limit is now checked **before** calling `fgetc` and incrementing, guaranteeing the loop can never exceed the limit nor overflow `guard`, fully resolving the CWE-120/CWE-20 concern.
+- **`input` buffer (CWE-119/CWE-120)**: All original mitigations retained — zero-initialization, bounded `fgets`, forced NUL-termination, bounded-length scanning via `safe_strlen`/`is_binary_string`, and overflow-input flushing when the buffer is filled without a newline.
+- Removed the empty `else {}` branch (dead code, MISRA-style noise without value here).
+- No unbounded functions (`strlen`, `strcpy`, `gets`, `scanf %s`) are used anywhere; the code remains free of buffer-overflow vectors.

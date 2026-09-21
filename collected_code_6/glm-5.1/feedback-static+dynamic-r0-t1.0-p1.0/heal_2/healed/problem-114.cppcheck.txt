@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-114.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-114.c:35:21: style: Condition 'tuple_count>0' is always true [knownConditionTrueFalse]
+    if (tuple_count > 0 && memcpy(sorted, tuples, tuple_count * sizeof(Tuple)) != sorted) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-114.c:25:21: note: Assuming that condition 'tuple_count==0' is not redundant
+    if (tuple_count == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-114.c:32:16: note: Assuming condition is false
+    if (sorted == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-114.c:35:21: note: Condition 'tuple_count>0' is always true
+    if (tuple_count > 0 && memcpy(sorted, tuples, tuple_count * sizeof(Tuple)) != sorted) {
+                    ^

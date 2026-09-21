@@ -1,0 +1,74 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total ASCII value: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized buffer. The identified risk is mitigated through several existing defensive measures, which I preserved in the rewrite:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow at the read stage. Using `sizeof(buffer)` rather than a hardcoded value keeps the bound tied to the actual array size.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders step (technically redundant with `fgets`, but harmless and protective against future refactoring).
+
+3. **Length-bounded string operations** — `strnlen` is used instead of `strlen` both in `main` and in `ascii_sum`, so no operation can walk past the buffer even if termination were somehow lost.
+
+4. **NULL check and error signaling** — `ascii_sum` validates its pointer argument and returns `-1` on error, which the caller checks.
+
+5. **Safe character summation** — the cast to `(unsigned char)` before widening to `long` avoids sign-extension issues on platforms where `char` is signed, and `long` prevents overflow (max possible sum is 255 × 255 = 65,025, well within range).
+
+The only addition is the `_POSIX_C_SOURCE` feature-test macro, since `strnlen` is POSIX (not C89/C99 standard) and strict compilation modes may not expose its declaration otherwise. No functional changes were necessary — the code as written already correctly addresses the flagged weakness.

@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+static bool get_safe_length(const char* str, size_t max_len, size_t* out_len) {
+    if (str == NULL || out_len == NULL) {
+        return false;
+    }
+    
+    const char* end = memchr(str, '\0', max_len);
+    if (end == NULL) {
+        return false;
+    }
+    
+    *out_len = (size_t)(end - str);
+    return true;
+}
+
+char* concatenate_strings(const char** list, size_t count, const char* separator) {
+    if (list == NULL || count == 0) {
+        char* empty = malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    size_t total_len = 0;
+    size_t sep_len = 0;
+    
+    if (separator != NULL) {
+        if (!get_safe_length(separator, SIZE_MAX, &sep_len)) {
+            return NULL;
+        }
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            size_t len;
+            if (!get_safe_length(list[i], SIZE_MAX, &len)) {
+                return NULL;
+            }
+            if (len > SIZE_MAX - total_len) {
+                return NULL;
+            }
+            total_len += len;
+        }
+        if (i < count - 1) {
+            if (sep_len > SIZE_MAX - total_len) {
+                return NULL;
+            }
+            total_len += sep_len;
+        }
+    }
+
+    if (total_len == SIZE_MAX) {
+        return NULL;
+    }
+
+    char* result = malloc(total_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t offset = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            size_t len;
+            if (!get_safe_length(list[i], SIZE_MAX - offset, &len)) {
+                free(result);
+                return NULL;
+            }
+            if (len > total_len - offset) {
+                free(result);
+                return NULL;
+            }
+            if (len > 0) {
+                memcpy(result + offset, list[i], len);
+                offset += len;
+            }
+        }
+        if (i < count - 1 && separator != NULL) {
+            if (sep_len > total_len - offset) {
+                free(result);
+                return NULL;
+            }
+            if (sep_len > 0) {
+                memcpy(result + offset, separator, sep_len);
+                offset += sep_len;
+            }
+        }
+    }
+    result[offset] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* words[] = {"Hello", "World", "C", "Programming"};
+    size_t count = sizeof(words) / sizeof(words[0]);
+    
+    char* result = concatenate_strings(words, count, " ");
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%s\n", result);
+    free(result);
+    
+    return EXIT_SUCCESS;
+}
+```

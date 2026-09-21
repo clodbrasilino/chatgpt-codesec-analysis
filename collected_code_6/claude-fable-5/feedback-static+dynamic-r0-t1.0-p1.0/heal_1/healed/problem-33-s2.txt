@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    if (decimal == 0) {
+        buffer[index++] = '0';
+        buffer[index] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0) {
+        if (index >= buffer_size - 1) {
+            buffer[0] = '\0';
+            return -1;
+        }
+        buffer[index++] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    char binary[BINARY_BUFFER_SIZE];
+    int result;
+
+    printf("Enter a non-negative decimal number: ");
+
+    result = scanf("%u", &number);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized array `binary` is largely a false positive in the original code, because:
+
+1. **The buffer is correctly sized**: `sizeof(unsigned int) * CHAR_BIT + 1` guarantees enough space for every bit of an `unsigned int` plus the null terminator, computed portably rather than hardcoded (e.g., `33`).
+2. **Bounds checking exists**: the loop condition `index < buffer_size - 1` prevents writing past the buffer, and `sizeof(binary)` is passed as the size argument.
+3. **Input is safe**: `scanf("%u", ...)` reads into an `unsigned int`, not a string, so there's no unbounded string read.
+
+Improvements made in the rewrite:
+
+- **Truncation is now an error, not silent**: the original code silently truncated the binary output if the buffer were too small, producing an incorrect result. The function now returns a status code and fails explicitly on insufficient space.
+- **Error propagation**: `decimal_to_binary` returns `int` so the caller can detect NULL buffers, undersized buffers, or truncation, and `main` checks this return value.
+- **Named constant** for the buffer size improves maintainability.
+- The reversal loop remains safe because `index >= 1` is guaranteed on every successful path before it executes, so `index - 1` cannot underflow.

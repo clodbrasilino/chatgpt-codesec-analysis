@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_BUFFER_SIZE 256
+
+bool validate_string(const char *str, size_t min_length) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(str, MAX_BUFFER_SIZE);
+    if (len < min_length || len >= MAX_BUFFER_SIZE) {
+        return false;
+    }
+    
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+    
+    return has_upper && has_lower && has_digit;
+}
+
+int main(void) {
+    char buffer[MAX_BUFFER_SIZE];
+    size_t min_len = 8;
+    
+    printf("Enter string to validate: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    size_t len = strnlen(buffer, sizeof(buffer));
+    
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        fprintf(stderr, "Input too long\n");
+        return 1;
+    }
+    
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len == 0) {
+        fprintf(stderr, "Empty input\n");
+        return 1;
+    }
+    
+    if (validate_string(buffer, min_len)) {
+        printf("String is valid\n");
+    } else {
+        printf("String is invalid\n");
+    }
+    
+    return 0;
+}

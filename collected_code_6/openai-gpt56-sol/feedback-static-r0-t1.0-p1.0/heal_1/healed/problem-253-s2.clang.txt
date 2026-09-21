@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-253-s2.c:28:13: warning: Although the value stored to 'line_length' is used in the enclosing expression, the value is never actually read from 'line_length' [deadcode.DeadStores]
+   28 |     while ((line_length = getline(&line, &line_capacity, stdin)) != -1) {
+      |             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

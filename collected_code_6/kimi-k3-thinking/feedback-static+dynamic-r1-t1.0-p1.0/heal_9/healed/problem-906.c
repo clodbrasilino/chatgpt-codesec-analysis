@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define YEAR_REQUIRED_SIZE 5
+#define MONTH_REQUIRED_SIZE 3
+#define DAY_REQUIRED_SIZE 3
+#define YEAR_BUFFER_SIZE 16
+#define MONTH_BUFFER_SIZE 8
+#define DAY_BUFFER_SIZE 8
+#define MAX_MATCHES 4
+
+_Static_assert(YEAR_BUFFER_SIZE >= YEAR_REQUIRED_SIZE,
+               "YEAR_BUFFER_SIZE must hold a 4-digit year plus NUL terminator");
+_Static_assert(MONTH_BUFFER_SIZE >= MONTH_REQUIRED_SIZE,
+               "MONTH_BUFFER_SIZE must hold a 2-digit month plus NUL terminator");
+_Static_assert(DAY_BUFFER_SIZE >= DAY_REQUIRED_SIZE,
+               "DAY_BUFFER_SIZE must hold a 2-digit day plus NUL terminator");
+
+static int copy_bounded(char *dest, size_t dest_size,
+                        const char *src, size_t src_len)
+{
+    size_t i;
+
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    if (src_len >= dest_size) {
+        dest[0] = '\0';
+        return -1;
+    }
+
+    for (i = 0; i < src_len; i++) {
+        dest[i] = src[i];
+    }
+    dest[src_len] = '\0';
+
+    return 0;
+}
+
+int extract_date_from_url(const char *url, char *year, size_t year_size,
+                          char *month, size_t month_size,
+                          char *day, size_t day_size)
+{
+    regex_t regex;
+    regmatch_t matches[MAX_MATCHES];
+    const char *pattern = "([0-9]{4})/([0-9]{2})/([0-9]{2})";
+    int status;
+    size_t len;
+
+    if (url == NULL || year == NULL || month == NULL || day == NULL) {
+        return -1;
+    }
+
+    if (year_size < YEAR_REQUIRED_SIZE || month_size < MONTH_REQUIRED_SIZE ||
+        day_size < DAY_REQUIRED_SIZE) {
+        return -1;
+    }
+
+    year[0] = '\0';
+    month[0] = '\0';
+    day[0] = '\0';
+
+    status = regcomp(&regex, pattern, REG_EXTENDED);
+    if (status != 0) {
+        return -1;
+    }
+
+    status = regexec(&regex, url, MAX_MATCHES, matches, 0);
+    if (status != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[0].rm_so < 0 || matches[0].rm_eo <= matches[0].rm_so ||
+        matches[1].rm_so < 0 || matches[1].rm_eo <= matches[1].rm_so ||
+        matches[2].rm_so < 0 || matches[2].rm_eo <= matches[2].rm_so ||
+        matches[3].rm_so < 0 || matches[3].rm_eo <= matches[3].rm_so) {
+        regfree(&regex);
+        return -1;
+    }
+
+    len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    if (len != YEAR_REQUIRED_SIZE - 1 ||
+        copy_bounded(year, year_size, url + matches[1].rm_so, len) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    if (len != MONTH_REQUIRED_SIZE - 1 ||
+        copy_bounded(month, month_size, url + matches[2].rm_so, len) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+    if (len != DAY_REQUIRED_SIZE - 1 ||
+        copy_bounded(day, day_size, url + matches[3].rm_so, len) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *url = "https://example.com/2024/01/15/article";
+    char *year = NULL;
+    char *month = NULL;
+    char *day = NULL;
+    int result = EXIT_FAILURE;
+
+    year = (char *)calloc(YEAR_BUFFER_SIZE, sizeof(char));
+    month = (char *)calloc(MONTH_BUFFER_SIZE, sizeof(char));
+    day = (char *)calloc(DAY_BUFFER_SIZE, sizeof(char));
+
+    if (year == NULL || month == NULL || day == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        goto cleanup;
+    }
+
+    if (extract_date_from_url(url, year, YEAR_BUFFER_SIZE,
+                              month, MONTH_BUFFER_SIZE,
+                              day, DAY_BUFFER_SIZE) == 0) {
+        printf("Year: %s\n", year);
+        printf("Month: %s\n", month);
+        printf("Day: %s\n", day);
+        result = EXIT_SUCCESS;
+    } else {
+        fprintf(stderr, "Failed to extract date from URL\n");
+    }
+
+cleanup:
+    free(year);
+    free(month);
+    free(day);
+
+    return result;
+}

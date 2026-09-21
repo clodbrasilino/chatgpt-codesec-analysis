@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code as provided already addresses the flagged weakness (CWE-119/CWE-120) correctly, so no functional changes were needed:
+
+- **Bounded input**: `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+- **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this makes the invariant explicit.
+- **Bounded scanning**: `count_characters` takes an explicit `max_len` and checks it before dereferencing, so it never reads past the array even if the terminator were missing. It also handles `NULL` input gracefully.
+- **Initialization**: `memset` zeroes the buffer up front, avoiding any use of uninitialized memory.
+- **Safe newline stripping**: `strcspn` is bounded by the null terminator, which is guaranteed to exist at this point.
+
+The statically-sized array warning from Flawfinder is informational (risk 2) — the pattern is safe as long as every access is bounds-checked, which this code does consistently.

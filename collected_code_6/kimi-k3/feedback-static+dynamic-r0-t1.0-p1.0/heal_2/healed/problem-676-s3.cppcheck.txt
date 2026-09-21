@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:39:54: style: Condition 'out_len+remaining<=output_size' is always true [knownConditionTrueFalse]
+            if (remaining > 0 && out_len + remaining <= output_size) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:35:37: note: Assuming that condition 'out_len+remaining>=output_size' is not redundant
+            if (out_len + remaining >= output_size) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:39:54: note: Condition 'out_len+remaining<=output_size' is always true
+            if (remaining > 0 && out_len + remaining <= output_size) {
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:54:37: style: Condition '(unsigned long)match.rm_so>0' is always true [knownConditionTrueFalse]
+            if ((size_t)match.rm_so > 0 && out_len + (size_t)match.rm_so <= output_size) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:49:25: note: Assuming that condition 'match.rm_so>0' is not redundant
+        if (match.rm_so > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:50:47: note: Assuming condition is false
+            if (out_len + (size_t)match.rm_so >= output_size) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:54:37: note: Condition '(unsigned long)match.rm_so>0' is always true
+            if ((size_t)match.rm_so > 0 && out_len + (size_t)match.rm_so <= output_size) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:54:74: style: Condition 'out_len+(unsigned long)match.rm_so<=output_size' is always true [knownConditionTrueFalse]
+            if ((size_t)match.rm_so > 0 && out_len + (size_t)match.rm_so <= output_size) {
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:50:47: note: Assuming that condition 'out_len+(unsigned long)match.rm_so>=output_size' is not redundant
+            if (out_len + (size_t)match.rm_so >= output_size) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-676-s3.c:54:74: note: Condition 'out_len+(unsigned long)match.rm_so<=output_size' is always true
+            if ((size_t)match.rm_so > 0 && out_len + (size_t)match.rm_so <= output_size) {
+                                                                         ^

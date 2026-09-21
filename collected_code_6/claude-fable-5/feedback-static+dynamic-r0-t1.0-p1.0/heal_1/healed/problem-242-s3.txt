@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already in good shape regarding the Flawfinder warning. The `CWE-119/CWE-120` risk flagged on the statically-sized `char buffer[256]` is a heuristic warning — Flawfinder flags all fixed-size buffers because they *can* be misused. The original code already mitigated the actual risk correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, preventing the classic `gets()`-style overflow. Using `sizeof(buffer)` rather than a hardcoded literal keeps the size and the bound in sync automatically.
+
+2. **NULL check on input:** The return value of `fgets` is checked, so EOF or read errors are handled gracefully instead of operating on indeterminate buffer contents.
+
+3. **Newline stripping via `strcspn`:** Safe even when no newline is present (it returns the index of the terminating null in that case), avoiding the common `strlen(buffer) - 1` underflow bug on empty input.
+
+4. **NULL-safe helper:** `count_characters` guards against a `NULL` pointer before dereferencing.
+
+**Improvements made in the rewrite:**
+
+- **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination even if the buffer contents were ever populated by a less careful mechanism — a cheap belt-and-suspenders measure that satisfies static analyzers.
+- **Named constant:** Replaced the magic number `256` with `BUFFER_SIZE`, making the size intent explicit and centrally adjustable.
+
+The code remains free of unbounded string functions (`strcpy`, `sprintf`, `gets`), uses the correct `%zu` format specifier for `size_t`, and returns standard exit codes.

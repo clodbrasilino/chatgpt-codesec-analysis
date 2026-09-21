@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+double sum_inverse_divisors(unsigned long long n)
+{
+    if (n == 0)
+    {
+        return 0.0;
+    }
+
+    double sum = 0.0;
+    unsigned long long limit = (unsigned long long)sqrt((double)n);
+
+    while ((limit + 1) <= ULLONG_MAX / (limit + 1) && (limit + 1) * (limit + 1) <= n)
+    {
+        limit++;
+    }
+    while (limit > 0 && limit <= ULLONG_MAX / limit && limit * limit > n)
+    {
+        limit--;
+    }
+
+    for (unsigned long long i = 1; i <= limit; i++)
+    {
+        if (n % i == 0)
+        {
+            sum += 1.0 / (double)i;
+            unsigned long long complement = n / i;
+            if (complement != i)
+            {
+                sum += 1.0 / (double)complement;
+            }
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char *endptr = NULL;
+    unsigned long long number = 0;
+    double result = 0.0;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoull(buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == buffer || (*endptr != '\n' && *endptr != '\0'))
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number == 0)
+    {
+        fprintf(stderr, "Number must be greater than zero\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_inverse_divisors(number);
+
+    if (printf("%.10f\n", result) < 0)
+    {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

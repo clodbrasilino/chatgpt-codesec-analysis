@@ -1,0 +1,170 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define INPUT_BUFFER_SIZE 64
+
+static int count_primes(unsigned long n, unsigned long *result)
+{
+    unsigned char *sieve;
+    unsigned long i;
+    unsigned long j;
+    unsigned long count;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n < 3UL) {
+        *result = 0UL;
+        return 0;
+    }
+
+    if (n > (unsigned long)(SIZE_MAX < ULONG_MAX ? SIZE_MAX : ULONG_MAX)) {
+        return -1;
+    }
+
+    sieve = malloc((size_t)n);
+    if (sieve == NULL) {
+        return -1;
+    }
+
+    memset(sieve, 1, (size_t)n);
+    sieve[0] = 0;
+    sieve[1] = 0;
+
+    for (i = 2UL; i <= (n - 1UL) / i; i++) {
+        if (sieve[i] == 1) {
+            for (j = i * i; j < n; j += i) {
+                sieve[j] = 0;
+            }
+        }
+    }
+
+    count = 0UL;
+    for (i = 2UL; i < n; i++) {
+        if (sieve[i] == 1) {
+            count++;
+        }
+    }
+
+    free(sieve);
+    *result = count;
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] != '\n' && !feof(stdin)) {
+        discard_remaining_input();
+        return -1;
+    }
+
+    return 0;
+}
+
+static int parse_unsigned_long(const char *buffer, unsigned long *value)
+{
+    const char *p;
+    char *endptr;
+    unsigned long n;
+
+    if (buffer == NULL || value == NULL) {
+        return -1;
+    }
+
+    p = buffer;
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p == '-' || *p == '\0') {
+        return -1;
+    }
+
+    errno = 0;
+    n = strtoul(p, &endptr, 10);
+    if (endptr == p || errno != 0) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+    if (*endptr != '\0') {
+        return -1;
+    }
+
+    *value = n;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long n;
+    unsigned long result;
+    char buffer[INPUT_BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (parse_unsigned_long(buffer, &n) != 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_primes(n, &result) != 0) {
+        fprintf(stderr, "Failed to count primes\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**Flawfinder `getchar` warning (CWE-120, CWE-20)** in `discard_remaining_input`: This is a false positive. The loop reads and discards characters without storing them into any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, and `ch` is properly declared as `int` (not `char`), which is required to reliably distinguish `EOF` from valid byte values.
+
+**Flawfinder `char buffer[64]` warning (CWE-119/CWE-120)** in `main`: Also mitigated. The buffer is only written through `fgets` via `read_line`, which receives `sizeof(buffer)` and validates it (`size >= 2`, `size <= INT_MAX` before the cast to `int`). `fgets` never writes more than `size - 1` characters plus the terminator, and the code defensively forces `buffer[size - 1] = '\0'`. Oversized input lines are detected (no trailing newline without EOF), drained via `discard_remaining_input`, and rejected rather than silently truncated.
+
+Other defensive measures already present that make the code robust:
+
+- **Integer overflow in the sieve loop**: The condition `i <= (n - 1UL) / i` avoids computing `i * i` in the loop guard, preventing unsigned wraparound for large `n`.
+- **`strtoul` misuse**: Negative inputs are explicitly rejected (since `strtoul` would silently accept `"-5"`), `errno` is checked for `ERANGE`, `endptr == p` catches empty conversions, and trailing garbage is rejected after skipping whitespace.
+- **Allocation safety**: `malloc` return is checked, `n` is validated against `SIZE_MAX` before the `size_t` cast, and `sieve[0]`/`sieve[1]` are only written after guaranteeing `n >= 3`.
+- **`strnlen`** is used instead of `strlen`, bounding the scan to the buffer size.
+
+Since the flagged issues are false positives with mitigations already in place, the rewritten code is functionally identical with the analysis comments removed.

@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+    size_t total_len;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    total_len = strnlen(text, MAX_INPUT_LEN);
+    if (total_len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        size_t errlen = regerror(ret, &regex, NULL, 0);
+        char *errbuf = malloc(errlen);
+        if (errbuf != NULL) {
+            regerror(ret, &regex, errbuf, errlen);
+            fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+            free(errbuf);
+        } else {
+            fprintf(stderr, "Regex compilation failed\n");
+        }
+        return -1;
+    }
+
+    cursor = text;
+    while (regexec(&regex, cursor, 1, &match, 0) == 0) {
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        size_t remaining = strnlen(cursor, MAX_INPUT_LEN);
+        if ((size_t)match.rm_eo > remaining) {
+            break;
+        }
+
+        size_t length = (size_t)(match.rm_eo - match.rm_so);
+        if (length >= MAX_INPUT_LEN) {
+            break;
+        }
+
+        size_t bufsize = length + 1;
+        char *word = malloc(bufsize);
+        if (word == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(word, cursor + match.rm_so, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+
+        free(word);
+
+        cursor += match.rm_eo;
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "The quick brown fox jumps over a lazy dog near it";
+
+    if (find_long_words(input) != 0) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Removed the redundant `length < bufsize` check** — Since `bufsize = length + 1` and overflow is guarded before that assignment, the condition was provably always true (as cppcheck's `knownConditionTrueFalse` flagged). Dead branches add noise and can mask real logic errors.
+
+2. **Tightened the overflow guard** — Replaced `length >= SIZE_MAX - 1` with `length >= MAX_INPUT_LEN`. Since `match.rm_eo` was already validated against `remaining` (bounded by `MAX_INPUT_LEN`), this bound is both tighter and semantically meaningful, and it still guarantees `length + 1` cannot overflow.
+
+3. **The `memcpy` (CWE-120 Flawfinder warning)** — This is a false positive in the original code, but the rewrite keeps it demonstrably safe: the destination is allocated with exactly `length + 1` bytes, exactly `length` bytes are copied, and the terminator is written at index `length`. The source bounds are validated via `match.rm_eo <= remaining` before the copy.
+
+4. **The `malloc` NULL check** — Retained as-is; the static analyzer's "assuming condition is false" note is informational, not a defect. The error path correctly frees the compiled regex before returning.
+
+The remaining structure (bounded `strnlen`, `regfree` on all exit paths, cursor advancement with explicit NUL check to prevent infinite loops on zero-width edge cases) was already sound and is preserved.

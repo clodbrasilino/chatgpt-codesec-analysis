@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-904.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-904.c:60:17: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+   60 |                 memcpy(&random_value, buf2, sizeof(random_value));
+      |                 ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-904.c:9:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+    8 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    9 | 

@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+int remove_chars(char *str, const char *mask);
+static int read_line(char *buf, size_t size, const char *prompt);
+
+int remove_chars(char *str, const char *mask)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (str == NULL || mask == NULL) {
+        return -1;
+    }
+
+    for (i = 0; mask[i] != '\0'; i++) {
+        present[(unsigned char)mask[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (!present[(unsigned char)str[i]]) {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+
+    return 0;
+}
+
+static int read_line(char *buf, size_t size, const char *prompt)
+{
+    size_t len;
+
+    if (buf == NULL || size == 0 || size > (size_t)INT_MAX || prompt == NULL) {
+        return -1;
+    }
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buf[size - 1] = '\0';
+
+    len = strcspn(buf, "\n");
+    if (buf[len] == '\n') {
+        buf[len] = '\0';
+    } else {
+        int c;
+        do {
+            c = getchar();
+        } while (c != '\n' && c != EOF);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    memset(first, 0, sizeof(first));
+    memset(second, 0, sizeof(second));
+
+    if (read_line(first, sizeof(first), "Enter first string: ") != 0) {
+        fprintf(stderr, "Error reading first string\n");
+        return 1;
+    }
+
+    if (read_line(second, sizeof(second), "Enter second string: ") != 0) {
+        fprintf(stderr, "Error reading second string\n");
+        return 1;
+    }
+
+    if (remove_chars(first, second) != 0) {
+        fprintf(stderr, "Error processing strings\n");
+        return 1;
+    }
+
+    printf("Result: %s\n", first);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** This is a false positive. The `getchar()` loop only discards excess input characters until a newline or EOF; nothing is written to any buffer, so no overflow is possible. The loop terminates correctly on both `\n` and `EOF` because `c` is declared as `int`, not `char`.
+
+2. **Statically-sized `char` arrays (CWE-119/CWE-120):** These are also mitigated in the existing design:
+   - `fgets(buf, (int)size, stdin)` limits input to the buffer size, with `sizeof(first)` / `sizeof(second)` passed directly so the size can't drift from the declaration.
+   - `read_line` validates `size == 0` and `size > INT_MAX` before the cast to `int`, preventing truncation or a non-positive size argument to `fgets`.
+   - `buf[size - 1] = '\0'` guarantees null termination defensively.
+   - `remove_chars` casts to `unsigned char` before indexing `present[]`, avoiding negative-index UB on platforms where `char` is signed.
+   - Overflow input is drained from `stdin` so it can't leak into the next read.
+
+The code as written already follows defensive practices; the rewrite simply removes the scanner annotations, since no functional changes were required.

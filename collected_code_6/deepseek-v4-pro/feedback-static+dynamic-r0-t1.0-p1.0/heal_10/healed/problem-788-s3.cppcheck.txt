@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-788-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-788-s3.c:38:24: style: Condition 'str_alloc_size<str_len' is always false [knownConditionTrueFalse]
+    if (str_alloc_size < str_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-788-s3.c:37:27: note: str_alloc_size is assigned 'str_len+1' here.
+    size_t str_alloc_size = str_len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-788-s3.c:38:24: note: Condition 'str_alloc_size<str_len' is always false
+    if (str_alloc_size < str_len) {
+                       ^

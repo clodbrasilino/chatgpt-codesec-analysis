@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). Here's why the code is safe:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing overflow. This is the correct alternative to unsafe functions like `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guards against any edge case and satisfies static analyzers.
+
+3. **Bounds-checked iteration**: The newline-stripping loop checks `i < sizeof(buffer)` before dereferencing, so it can never read past the array.
+
+4. **NULL-safe helper**: `string_length()` guards against a `NULL` pointer before dereferencing, and only iterates until `'\0'`, which is guaranteed to exist within the buffer.
+
+5. **Correct format specifier**: `%zu` is the proper specifier for `size_t`, avoiding undefined behavior from format-string mismatches.
+
+The Flawfinder warning is a heuristic hit on the mere presence of a fixed-size `char` array — it flags the pattern, not an actual defect. Since all reads and writes are bounds-checked and the buffer is always null-terminated, no functional changes were required; only the comments were removed as requested.

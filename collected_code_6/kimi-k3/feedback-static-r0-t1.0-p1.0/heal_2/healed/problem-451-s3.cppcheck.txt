@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c:44:26: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+            if (copy_len > 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c:35:22: note: Assuming that condition 'remaining>0' is not redundant
+    while (remaining > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c:39:39: note: Assuming condition is false
+            if (result_len + copy_len > input_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c:38:22: note: copy_len is assigned 'remaining' here.
+            copy_len = remaining;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-451-s3.c:44:26: note: Condition 'copy_len>0' is always true
+            if (copy_len > 0) {
+                         ^

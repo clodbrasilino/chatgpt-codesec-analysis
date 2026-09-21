@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+static char *safe_strdup(const char *src) {
+    size_t len;
+    char *dst;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, 4096);
+    if (len == 4096) {
+        return NULL;
+    }
+
+    dst = malloc(len + 1);
+    if (dst == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(dst, src);
+    return dst;
+}
+
+int dict_init(Dictionary *dict, size_t initial_capacity) {
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+
+    dict->entries = calloc(initial_capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+
+    return 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    dict->entries[dict->size].key = safe_strdup(key);
+    if (dict->entries[dict->size].key == NULL) {
+        return -1;
+    }
+
+    dict->entries[dict->size].value = safe_strdup(value);
+    if (dict->entries[dict->size].value == NULL) {
+        free(dict->entries[dict->size].key);
+        dict->entries[dict->size].key = NULL;
+        return -1;
+    }
+
+    dict->size++;
+    return 0;
+}
+
+const char *dict_get_key_by_index(const Dictionary *dict, size_t index) {
+    if (dict == NULL || index >= dict->size) {
+        return NULL;
+    }
+    return dict->entries[index].key;
+}
+
+const char *dict_get_value_by_index(const Dictionary *dict, size_t index) {
+    if (dict == NULL || index >= dict->size) {
+        return NULL;
+    }
+    return dict->entries[index].value;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int main(void) {
+    Dictionary dict;
+
+    if (dict_init(&dict, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(&dict, "name", "John") != 0 ||
+        dict_add(&dict, "age", "30") != 0 ||
+        dict_add(&dict, "city", "New York") != 0) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_free(&dict);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < dict.size; i++) {
+        const char *key = dict_get_key_by_index(&dict, i);
+        const char *value = dict_get_value_by_index(&dict, i);
+        if (key != NULL && value != NULL) {
+            printf("Index %zu: %s = %s\n", i, key, value);
+        }
+    }
+
+    dict_free(&dict);
+    return EXIT_SUCCESS;
+}

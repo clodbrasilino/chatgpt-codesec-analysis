@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if (i > 0U) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN + 2U];
+    char *result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    while ((len > 0U) && ((buffer[len - 1U] == '\n') || (buffer[len - 1U] == '\r'))) {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    result = camel_to_snake(buffer);
+    if (result == NULL) {
+        (void)fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Root cause of the failing test cases (no output):** In the original code, `camel_to_snake` rejected any input where `strnlen(input, MAX_INPUT_LEN) >= MAX_INPUT_LEN`. Since `buffer` in `main` was exactly `MAX_INPUT_LEN` bytes, an input line filling the buffer (or edge conditions around the boundary) caused the function to return `NULL`, printing "Conversion failed" to `stderr` and producing no output on `stdout`. The rewrite removes the overly strict rejection: `strnlen` already bounds the length safely, so a string at the maximum length is simply processed rather than refused. The overflow guard against `SIZE_MAX` is retained for the `malloc` size computation.
+
+2. **Buffer sizing (CWE-119/CWE-120 flagged by Flawfinder):** The stack buffer is now `MAX_INPUT_LEN + 2U` so that a full `MAX_INPUT_LEN`-character line plus the newline and NUL terminator fit, ensuring `fgets` never silently truncates a maximum-length input. All reads remain bounded via `fgets` with `sizeof(buffer)` and `strnlen`, so no unbounded copies occur.
+
+3. **Retained safe practices:** `isupper`/`tolower` are still called with values cast through `unsigned char` (avoiding UB for negative `char` values), allocation failures are checked, `printf` return value is checked, and memory is freed on all paths.
+
+4. **Added `fflush(stdout)` check** to guarantee output is actually delivered before exit, which also guards against silent loss of output in piped/test-harness environments.

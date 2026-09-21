@@ -1,0 +1,154 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+static int buf_append(char **buf, size_t *len, size_t *cap, const char *src, size_t n)
+{
+    if (buf == NULL || len == NULL || cap == NULL || src == NULL) {
+        return -1;
+    }
+    if (n > SIZE_MAX - *len - 1) {
+        return -1;
+    }
+    if (*len + n + 1 > *cap) {
+        size_t ncap = (*cap == 0) ? 64 : *cap;
+        while (*len + n + 1 > ncap) {
+            if (ncap > SIZE_MAX / 2) {
+                return -1;
+            }
+            ncap *= 2;
+        }
+        char *tmp = realloc(*buf, ncap);
+        if (tmp == NULL) {
+            return -1;
+        }
+        *buf = tmp;
+        *cap = ncap;
+    }
+    if (*buf == NULL || *len + n + 1 > *cap) {
+        return -1;
+    }
+    memcpy(*buf + *len, src, n);
+    *len += n;
+    (*buf)[*len] = '\0';
+    return 0;
+}
+
+static int parse_number(const char *s, size_t nlen, long long *out_value)
+{
+    if (s == NULL || out_value == NULL || nlen == 0) {
+        return -1;
+    }
+    long long value = 0;
+    size_t j;
+    for (j = 0; j < nlen; j++) {
+        int digit = s[j] - '0';
+        if (digit < 0 || digit > 9) {
+            return -1;
+        }
+        if (value > (LLONG_MAX - digit) / 10) {
+            return -1;
+        }
+        value = value * 10 + digit;
+    }
+    *out_value = value;
+    return 0;
+}
+
+char *increment_numerics(const char *input, long k)
+{
+    if (input == NULL) {
+        return NULL;
+    }
+    char *out = NULL;
+    size_t len = 0;
+    size_t cap = 0;
+    size_t i = 0;
+    while (input[i] != '\0') {
+        if (isdigit((unsigned char)input[i])) {
+            size_t start = i;
+            while (isdigit((unsigned char)input[i])) {
+                i++;
+            }
+            size_t nlen = i - start;
+            long long value = 0;
+            if (parse_number(input + start, nlen, &value) != 0) {
+                free(out);
+                return NULL;
+            }
+            if ((k > 0 && value > LLONG_MAX - k) ||
+                (k < 0 && value < LLONG_MIN - k)) {
+                free(out);
+                return NULL;
+            }
+            value += k;
+            char numbuf[32];
+            int written = snprintf(numbuf, sizeof numbuf, "%lld", value);
+            if (written < 0 || (size_t)written >= sizeof numbuf) {
+                free(out);
+                return NULL;
+            }
+            if (buf_append(&out, &len, &cap, numbuf, (size_t)written) != 0) {
+                free(out);
+                return NULL;
+            }
+        } else {
+            if (buf_append(&out, &len, &cap, &input[i], 1) != 0) {
+                free(out);
+                return NULL;
+            }
+            i++;
+        }
+    }
+    if (out == NULL) {
+        out = malloc(1);
+        if (out == NULL) {
+            return NULL;
+        }
+        out[0] = '\0';
+    }
+    return out;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "item 12 costs 45 dollars",
+        "abc100def200",
+        "no numbers here",
+        "0 boundary 999"
+    };
+    long k = 5;
+    size_t count = sizeof tests / sizeof tests[0];
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        char *result = increment_numerics(tests[i], k);
+        if (result == NULL) {
+            if (fprintf(stderr, "Failed to process: %s\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+        if (printf("Input : %s\nOutput: %s\n\n", tests[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+    return EXIT_SUCCESS;
+}
+```
+
+Regarding the two flagged weaknesses, both were already properly mitigated in the original code, so no functional changes were required:
+
+1. **`memcpy` in `buf_append` (CWE-120)**: The destination buffer is guaranteed to hold the source data. Before the copy, the function checks for size overflow (`n > SIZE_MAX - *len - 1`), grows the buffer via `realloc` when needed, and performs a final defensive check (`*buf == NULL || *len + n + 1 > *cap`) immediately before `memcpy`. This is a false positive.
+
+2. **Statically-sized `char numbuf[32]` (CWE-119/CWE-120)**: The buffer is written only via `snprintf` with `sizeof numbuf` as the bound, and the return value is validated (`written < 0 || (size_t)written >= sizeof numbuf`) to detect truncation or encoding errors. A 32-byte buffer is also more than sufficient for any `long long` value (max 20 digits plus sign and NUL). This is likewise a false positive.
+
+Additional robustness already present and preserved: overflow-safe number parsing in `parse_number`, overflow checks before `value += k`, `unsigned char` casts for `isdigit`, consistent memory cleanup on all error paths, and checked return values for `printf`/`fprintf`.

@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int run_test(const char *input)
+{
+    char *output;
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return -1;
+    }
+    free(output);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *test2 = "abc(def(ghi)jkl)mno";
+    const char *test3 = "no parentheses here";
+
+    if (run_test(test1) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (buffer over-read via `strlen`)**: Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, so a non-NUL-terminated input can no longer cause an unbounded over-read. The scan loop is then strictly bounded by that same `len`, guaranteeing `result` is always written within its allocation and properly NUL-terminated — this eliminates the garbage output (`���`) seen in the failed test cases, which is symptomatic of reading past a missing terminator.
+
+2. **Refactored duplicated test logic** in `main` into a `run_test` helper, keeping the same error-handling semantics (allocation failure reported to `stderr`, `printf` failures checked, memory always freed on every path).
+
+3. **Preserved correct behavior** for unbalanced parentheses: unmatched `)` characters are dropped (depth never goes negative), and text after an unmatched `(` is suppressed, matching the original design.

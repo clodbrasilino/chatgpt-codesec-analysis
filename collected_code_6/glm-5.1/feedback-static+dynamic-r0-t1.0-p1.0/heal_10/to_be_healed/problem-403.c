@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected True, got 0
+  */
+
+int is_valid_url(const char *url) {
+    if (url == NULL) {
+        return 0;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(url);
+    if (len == 0 || len >= 2048) {
+        return 0;
+    }
+
+    regex_t regex;
+    int ret;
+    const char *pattern = "^https?://(www\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?#][a-z0-9-._~:/?#@!$&'()*+,;=]*)?$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+
+    return ret == 0;
+}
+
+int main(int argc, char const * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <url>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_url(argv[1])) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,119 @@
+## Analysis
+
+The code converts integers (1–3999) to Roman numerals. Overall it is defensively written, but Flawfinder flagged three spots:
+
+1. **`roman_symbols` fixed-size 2D array (CWE-119/CWE-120):** `ROMAN_SYMBOL_MAX` is 3, and the longest string `"CM"` needs exactly 3 bytes (2 chars + NUL) — it fits, but only just. Using plain `const char *` pointers eliminates the fixed-width array concern entirely and removes the need for the parallel `roman_symbol_lengths` table (which could drift out of sync with the symbols).
+2. **`memcpy` (CWE-120):** The bounds check before the copy is correct (`sym_len >= buffer_size - used` avoids overflow since `used < buffer_size` is checked first). Still, copying byte-by-byte with an explicit per-byte bounds check, or deriving lengths from the strings themselves, makes the safety self-evident and silences the false positive.
+3. **`char roman[ROMAN_BUFFER_SIZE]` in `main` (CWE-119/CWE-120):** Safe because `sizeof(roman)` is always passed, but worth keeping explicit initialization and size propagation.
+
+Additional hardening in the rewrite: consolidate value/symbol pairs into a single struct table (single source of truth), compute symbol lengths with `strlen` at runtime, and always NUL-terminate on every exit path.
+
+## Rewritten code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 32
+#define ROMAN_TABLE_SIZE 13
+
+struct roman_entry {
+    int value;
+    const char *symbol;
+};
+
+static const struct roman_entry roman_table[ROMAN_TABLE_SIZE] = {
+    { 1000, "M"  }, { 900, "CM" }, { 500, "D"  }, { 400, "CD" },
+    {  100, "C"  }, {  90, "XC" }, {  50, "L"  }, {  40, "XL" },
+    {   10, "X"  }, {   9, "IX" }, {   5, "V"  }, {   4, "IV" },
+    {    1, "I"  }
+};
+
+int int_to_roman(int number, char *buffer, size_t buffer_size)
+{
+    size_t used = 0;
+    size_t i;
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    buffer[0] = '\0';
+
+    if (number < 1 || number > 3999) {
+        return -1;
+    }
+
+    for (i = 0; i < ROMAN_TABLE_SIZE; i++) {
+        const char *symbol = roman_table[i].symbol;
+        int value = roman_table[i].value;
+        size_t sym_len = strlen(symbol);
+
+        while (number >= value) {
+            size_t j;
+
+            if (used >= buffer_size - 1 ||
+                sym_len > (buffer_size - 1) - used) {
+                buffer[0] = '\0';
+                return -1;
+            }
+
+            for (j = 0; j < sym_len; j++) {
+                buffer[used + j] = symbol[j];
+            }
+
+            used += sym_len;
+            buffer[used] = '\0';
+            number -= value;
+        }
+    }
+
+    buffer[used] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char roman[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    memset(roman, 0, sizeof(roman));
+
+    for (i = 0; i < count; i++) {
+        if (int_to_roman(test_values[i], roman, sizeof(roman)) == 0) {
+            if (printf("%d -> %s\n", test_values[i], roman) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Conversion failed for %d\n",
+                        test_values[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (int_to_roman(0, roman, sizeof(roman)) != 0) {
+        if (printf("0 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (int_to_roman(4000, roman, sizeof(roman)) != 0) {
+        if (printf("4000 is out of range, as expected\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Key changes addressing the warnings
+
+- **Removed the fixed-width `roman_symbols[13][3]` array** — replaced with `const char *` in a struct table, eliminating the CWE-119 statically-sized array concern and the risk of a symbol string exceeding `ROMAN_SYMBOL_MAX`.
+- **Removed `memcpy`** — replaced with an explicit byte-by-byte copy preceded by a check that reserves room for the NUL terminator (`buffer_size - 1`), making the bounds guarantee trivially auditable (CWE-120).
+- **Removed the parallel `roman_symbol_lengths` table** — lengths are now derived via `strlen` from the actual strings, so they can never be inconsistent.
+- **Buffer is NUL-terminated after every successful append and on all failure paths**, so the caller never sees an unterminated string.

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len) {
+        return -1;
+    }
+
+    if (len + 1 > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if ((len - d) > len || d > len || ((len - d) + d) != len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The three Flawfinder `memcpy` warnings (CWE-120) are false positives in this code. Each copy is provably safe:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` was allocated with `len + 1` bytes, and `len - d < len + 1` is guaranteed since `d >= 1` after the `d == 0` early return. The source read of `len - d` bytes starting at `str + d` stays within the validated string bounds.
+
+2. **`memcpy(temp + (len - d), str, d)`** — Total bytes written to `temp` are `(len - d) + d = len`, which fits within the `len + 1` allocation, with the explicit arithmetic check `((len - d) + d) != len` guarding against any overflow anomaly.
+
+3. **`memcpy(str, temp, len + 1)`** — Guarded by the explicit `len + 1 > str_size` check, so the destination buffer is guaranteed to hold `len + 1` bytes. Since `len < str_size <= MAX_STR_LEN`, the `len + 1` computation cannot overflow `size_t`.
+
+Additional defensive properties already present: `strnlen` bounds the length scan, `malloc` failure is handled, `temp` is freed on all paths, and the result is properly NUL-terminated. No functional changes were required — the warnings are advisory and the existing guards satisfy them.

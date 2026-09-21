@@ -1,0 +1,101 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    BALANCE_ERROR = -1,
+    BALANCE_UNBALANCED = 0,
+    BALANCE_BALANCED = 1
+} BalanceResult;
+
+static BalanceResult check_balanced(const char *expression)
+{
+    char *stack = NULL;
+    size_t capacity = 0;
+    size_t top = 0;
+    BalanceResult result = BALANCE_BALANCED;
+
+    if (expression == NULL) {
+        return BALANCE_ERROR;
+    }
+
+    for (const char *current = expression; *current != '\0'; ++current) {
+        if (*current == '(' || *current == '[' || *current == '{') {
+            if (top == capacity) {
+                size_t new_capacity;
+                char *new_stack;
+
+                if (capacity == 0) {
+                    new_capacity = 16;
+                } else {
+                    if (capacity > SIZE_MAX / 2) {
+                        result = BALANCE_ERROR;
+                        break;
+                    }
+
+                    new_capacity = capacity * 2;
+                }
+
+                new_stack = realloc(stack, new_capacity);
+                if (new_stack == NULL) {
+                    result = BALANCE_ERROR;
+                    break;
+                }
+
+                stack = new_stack;
+                capacity = new_capacity;
+            }
+
+            stack[top++] = *current;
+        } else if (*current == ')' || *current == ']' || *current == '}') {
+            char opening;
+
+            if (top == 0) {
+                result = BALANCE_UNBALANCED;
+                break;
+            }
+
+            opening = stack[--top];
+
+            if ((*current == ')' && opening != '(') ||
+                (*current == ']' && opening != '[') ||
+                (*current == '}' && opening != '{')) {
+                result = BALANCE_UNBALANCED;
+                break;
+            }
+        }
+    }
+
+    if (result == BALANCE_BALANCED && top != 0) {
+        result = BALANCE_UNBALANCED;
+    }
+
+    free(stack);
+    return result;
+}
+
+int main(int argc, char **argv)
+{
+    const char *program_name;
+    BalanceResult result;
+
+    program_name = argc > 0 && argv != NULL && argv[0] != NULL
+                       ? argv[0]
+                       : "program";
+
+    if (argc != 2 || argv == NULL || argv[1] == NULL) {
+        fprintf(stderr, "Usage: %s \"expression\"\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    result = check_balanced(argv[1]);
+
+    if (result == BALANCE_ERROR) {
+        fputs("Unable to check the expression.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    puts(result == BALANCE_BALANCED ? "Balanced" : "Not balanced");
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+void remove_multiple_spaces(char *str, size_t max_len)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    int prev_space = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (read_idx < max_len && str[read_idx] != '\0') {
+        if (str[read_idx] == ' ') {
+            if (!prev_space) {
+                str[write_idx] = str[read_idx];
+                write_idx++;
+            }
+            prev_space = 1;
+        } else {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+            prev_space = 0;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    remove_multiple_spaces(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is now defined as a named constant (`BUFFER_SIZE`), and all input is bounded via `fgets(buffer, sizeof(buffer), stdin)`, which guarantees no write past the end of the array. Additionally, `remove_multiple_spaces` now accepts a `max_len` parameter and performs explicit bounds checking (`read_idx < max_len`) so it can never read or write beyond the caller's buffer, even if handed a malformed string.
+
+2. **CWE-126 (over-read from non-terminated string):** Two defenses were added:
+   - An explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees NUL termination regardless of input.
+   - `strlen` was replaced with `strnlen(buffer, sizeof(buffer))`, which is bounded and cannot over-read even if the string were somehow not terminated.
+
+3. **Existing safe practices preserved:** Return values of `fgets` and `printf` are still checked, the trailing newline is stripped safely with a length guard (`len > 0`), and the `NULL` pointer check in `remove_multiple_spaces` is retained. The in-place compaction algorithm remains correct since `write_idx <= read_idx` at all times, so no additional buffer is needed.

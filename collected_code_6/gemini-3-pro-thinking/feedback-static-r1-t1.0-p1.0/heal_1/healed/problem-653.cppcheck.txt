@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-653.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-653.c:86:15: style: Array index 'key_len' is used before limits check. [arrayIndexThenCheck]
+    while (key[key_len] != '\0' && key_len < 4096) {
+              ^

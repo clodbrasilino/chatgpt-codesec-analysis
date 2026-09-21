@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-900-s2.c: In function 'starts_with_number':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-900-s2.c:11:78: error: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   11 |     if (strncasecmp(str, num_str, num_len) == 0 && (str[num_len] == '\0' || !isdigit((unsigned char)str[num_len]))) {
+      |                                                                              ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-900-s2.c:6:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    5 | #include <errno.h>
+  +++ |+#include <ctype.h>
+    6 | 

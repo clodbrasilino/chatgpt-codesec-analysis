@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_STR_LEN 1048576
+
+char *remove_non_alnum(const char *str) {
+    regex_t regex;
+    int ret;
+    char *result;
+    size_t len;
+    size_t result_idx = 0;
+    size_t offset = 0;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_STR_LEN);
+    if (len == MAX_STR_LEN) {
+        return NULL;
+    }
+
+    size_t result_size = len + 1;
+    result = malloc(result_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[a-zA-Z0-9]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    while (offset < len) {
+        regmatch_t match;
+        ret = regexec(&regex, str + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+
+        if (match.rm_so == -1) {
+            break;
+        }
+
+        size_t match_len = match.rm_eo - match.rm_so;
+        
+        if (result_idx + match_len < result_size) {
+            memcpy(result + result_idx, str + offset + match.rm_so, match_len);
+            result_idx += match_len;
+        } else {
+            break;
+        }
+
+        offset += match.rm_eo;
+        if (match_len == 0) {
+            offset++;
+        }
+    }
+
+    result[result_idx] = '\0';
+    regfree(&regex);
+
+    char *trimmed = realloc(result, result_idx + 1);
+    if (trimmed != NULL) {
+        return trimmed;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    const char *input = "Hello, World! 123 @#";
+    char *output = remove_non_alnum(input);
+    
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    
+    return 0;
+}
+```

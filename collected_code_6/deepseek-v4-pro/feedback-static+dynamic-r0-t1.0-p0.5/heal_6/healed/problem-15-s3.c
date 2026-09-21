@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define INITIAL_CAPACITY 10
+
+static void free_parts(char **parts, int count) {
+    if (parts == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(parts[i]);
+    }
+    free(parts);
+}
+
+char **split_at_lowercase(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, SIZE_MAX);
+
+    size_t capacity = INITIAL_CAPACITY;
+    char **result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t segment_start = 0;
+    int segment_count = 0;
+
+    for (size_t i = 0; i <= len; i++) {
+        if (i == len || islower((unsigned char)str[i])) {
+            size_t segment_len = i - segment_start;
+            if (segment_len > 0) {
+                if ((size_t)segment_count >= capacity) {
+                    size_t new_capacity = capacity * 2;
+                    if (new_capacity > SIZE_MAX / sizeof(char *)) {
+                        free_parts(result, segment_count);
+                        return NULL;
+                    }
+                    char **temp = realloc(result, new_capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        free_parts(result, segment_count);
+                        return NULL;
+                    }
+                    result = temp;
+                    capacity = new_capacity;
+                }
+
+                result[segment_count] = malloc(segment_len + 1);
+                if (result[segment_count] == NULL) {
+                    free_parts(result, segment_count);
+                    return NULL;
+                }
+
+                memmove(result[segment_count], str + segment_start, segment_len);
+                result[segment_count][segment_len] = '\0';
+                segment_count++;
+            }
+            segment_start = i + 1;
+        }
+    }
+
+    if (segment_count == 0) {
+        free(result);
+        *count = 0;
+        return NULL;
+    }
+
+    *count = segment_count;
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "HelloWorldThisIsATest";
+    int count = 0;
+    char **parts = split_at_lowercase(test_str, &count);
+
+    if (parts != NULL) {
+        printf("Split into %d parts:\n", count);
+        for (int i = 0; i < count; i++) {
+            printf("[%d]: %s\n", i, parts[i]);
+        }
+        free_parts(parts, count);
+    } else {
+        printf("No lowercase letters found or error occurred.\n");
+    }
+
+    const char *test_str2 = "ALLUPPERCASE";
+    count = 0;
+    parts = split_at_lowercase(test_str2, &count);
+
+    if (parts != NULL) {
+        printf("Split into %d parts:\n", count);
+        for (int i = 0; i < count; i++) {
+            printf("[%d]: %s\n", i, parts[i]);
+        }
+        free_parts(parts, count);
+    } else {
+        printf("No lowercase letters found or error occurred.\n");
+    }
+
+    const char *test_str3 = "abcDefGhi";
+    count = 0;
+    parts = split_at_lowercase(test_str3, &count);
+
+    if (parts != NULL) {
+        printf("Split into %d parts:\n", count);
+        for (int i = 0; i < count; i++) {
+            printf("[%d]: %s\n", i, parts[i]);
+        }
+        free_parts(parts, count);
+    } else {
+        printf("No lowercase letters found or error occurred.\n");
+    }
+
+    return 0;
+}

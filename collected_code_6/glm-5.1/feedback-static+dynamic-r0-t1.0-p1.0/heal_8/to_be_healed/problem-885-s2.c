@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_CHARS 256
+
+bool areIsomorphic(const char *s, const char *t) {
+    if (s == NULL || t == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (strlen(s) != strlen(t)) {
+        return false;
+    }
+
+    int map_st[MAX_CHARS];
+    int map_ts[MAX_CHARS];
+
+    for (int i = 0; i < MAX_CHARS; i++) {
+        map_st[i] = -1;
+        map_ts[i] = -1;
+    }
+
+    for (size_t i = 0; s[i] != '\0'; i++) {
+        unsigned char c1 = (unsigned char)s[i];
+        unsigned char c2 = (unsigned char)t[i];
+
+        if (map_st[c1] == -1 && map_ts[c2] == -1) {
+            map_st[c1] = c2;
+            map_ts[c2] = c1;
+        } else {
+            if (map_st[c1] != c2 || map_ts[c2] != c1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char * const argv[const]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string1> <string2>\n", argv[0]);
+        return 1;
+    }
+
+    bool result = areIsomorphic(argv[1], argv[2]);
+    
+    printf("%s\n", result ? "Isomorphic" : "Not Isomorphic");
+
+    return 0;
+}

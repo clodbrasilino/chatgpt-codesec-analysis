@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024
+
+static long min_swaps_for_balancing(const char *str, size_t len);
+static int validate_input(const char *str, size_t len);
+
+static int validate_input(const char *str, size_t len)
+{
+    size_t i;
+    size_t open_count = 0;
+    size_t close_count = 0;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (len == 0U || (len % 2U) != 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == '[') {
+            open_count++;
+        } else if (str[i] == ']') {
+            close_count++;
+        } else {
+            return -1;
+        }
+    }
+
+    if (open_count != close_count) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static long min_swaps_for_balancing(const char *str, size_t len)
+{
+    size_t i;
+    long open_seen = 0L;
+    long close_seen = 0L;
+    long imbalance = 0L;
+    long swaps = 0L;
+
+    for (i = 0U; i < len; i++) {
+        if (str[i] == '[') {
+            open_seen++;
+            if (imbalance > 0L) {
+                swaps += imbalance;
+                imbalance--;
+            }
+        } else {
+            close_seen++;
+            imbalance = close_seen - open_seen;
+        }
+    }
+
+    return swaps;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[MAX_INPUT_LEN];
+    size_t len;
+    long result;
+    char *newline;
+
+    (void)memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline == NULL) {
+        len = strnlen(buffer, sizeof(buffer) - 1U);
+        if (len == sizeof(buffer) - 1U) {
+            (void)fprintf(stderr, "Error: input too long\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        *newline = '\0';
+        len = (size_t)(newline - buffer);
+    }
+
+    if (validate_input(buffer, len) != 0) {
+        (void)fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    result = min_swaps_for_balancing(buffer, len);
+
+    if (printf("Minimum number of swaps: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static size_t count_digits(size_t n)
+{
+    size_t d = 1;
+
+    while (n >= 10) {
+        n /= 10;
+        d++;
+    }
+    return d;
+}
+
+char *find_demlo(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t pos;
+    size_t total;
+    char *result;
+    int written;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, 128);
+    if (len == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '1') {
+            return NULL;
+        }
+    }
+
+    total = 0;
+    for (i = 1; i <= len; i++) {
+        total += 2 * count_digits(i);
+    }
+    total -= count_digits(len);
+
+    result = malloc(total + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    pos = 0;
+    for (i = 1; i <= len; i++) {
+        written = snprintf(result + pos, total + 1 - pos, "%zu", i);
+        if (written < 0 || (size_t)written >= total + 1 - pos) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+    }
+
+    for (i = len; i-- > 1;) {
+        written = snprintf(result + pos, total + 1 - pos, "%zu", i);
+        if (written < 0 || (size_t)written > total - pos) {
+            free(result);
+            return NULL;
+        }
+        pos += (size_t)written;
+    }
+    result[pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char input[128];
+    char *demlo;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    demlo = find_demlo(input);
+    if (demlo == NULL) {
+        fprintf(stderr, "Invalid input: must be a repunit of ones\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", demlo);
+    free(demlo);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes from the original:
+
+1. **Fixed the failing test cases (`<no output>`)**: The tests expected the bare Demlo number (e.g. `12345654321`), but the program printed a prompt (`Enter a repunit number...`) and prefixed the result with `Demlo number: `. Both the prompt and the prefix were removed so stdout contains only the computed value.
+
+2. **CWE-126 (over-read via `strlen`)**: Replaced `strlen` with `strnlen(str, 128)`, bounding the scan to the maximum possible input size, so a non-terminated buffer cannot cause an unbounded read.
+
+3. **Unsigned underflow hazard in the reverse loop**: The original `for (i = len - 1; i >= 1; i--)` on a `size_t` relied on an `if (i == 1) break;` escape hatch to avoid wrap-around, and would misbehave conceptually for `len == 0`/`len == 1` edge handling. Rewritten as the idiomatic `for (i = len; i-- > 1;)`, which is safe for all values of `len` and needs no break.
+
+4. **Truncation checks on `snprintf`**: The original only checked `written < 0`. Now the return value is also compared against the remaining buffer space, so silent truncation (which would corrupt `pos` accounting) is detected and treated as an error, addressing the CWE-119/CWE-120 buffer concerns.
+
+5. **Input buffer handling**: `fgets` with `sizeof(input)` already bounds the read correctly; combined with the `strnlen` bound this fully mitigates the flagged static-buffer risk.

@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_BITS 64
+
+int decimal_to_binary(unsigned long long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i = 0;
+    char temp[MAX_BITS + 1];
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+
+    if (decimal == 0) {
+        if (buffer_size < 2) {
+            return -1;
+        }
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0 && index < MAX_BITS) {
+        temp[index] = (char)('0' + (decimal % 2ULL));
+        decimal /= 2ULL;
+        index++;
+    }
+
+    if (decimal > 0) {
+        return -1;
+    }
+
+    if (buffer_size < index + 1) {
+        return -1;
+    }
+
+    for (i = 0; i < index; i++) {
+        buffer[i] = temp[index - 1 - i];
+    }
+    buffer[index] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long number = 0;
+    char binary[MAX_BITS + 1];
+    int scan_result = 0;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%llu", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**Buffer `temp` in `decimal_to_binary` (CWE-119/CWE-120):** The Flawfinder warning is a static-analysis heuristic triggered by any fixed-size array. In practice, this buffer is properly protected:
+- It is sized `MAX_BITS + 1` (65 bytes), enough for the maximum 64 binary digits of an `unsigned long long` plus a terminator.
+- The write loop is bounded by `index < MAX_BITS`, so writes can never exceed the array.
+- It is zero-initialized with `memset` using `sizeof(temp)`.
+
+**Buffer `binary` in `main`:** Also safe as written:
+- Its actual size is passed via `sizeof(binary)` to `decimal_to_binary`, which validates `buffer_size < index + 1` before writing.
+- `NULL` and zero-size inputs are rejected.
+- The zero case is handled with an explicit capacity check before writing two bytes.
+
+**Other defensive measures already present:**
+- The `scanf` return value is checked, rejecting malformed input.
+- The reverse-copy loop indices are derived from `index`, which is provably `<= MAX_BITS`, so `buffer[index] = '\0'` stays in bounds given the prior size check.
+- No unbounded string functions (`strcpy`, `sprintf`, `gets`) are used.
+
+The warnings are therefore false positives; the code follows the recommended mitigations (bounds checking, size-aware operations, sizes larger than the maximum possible content), so the rewrite preserves the original logic with the advisory comments removed.

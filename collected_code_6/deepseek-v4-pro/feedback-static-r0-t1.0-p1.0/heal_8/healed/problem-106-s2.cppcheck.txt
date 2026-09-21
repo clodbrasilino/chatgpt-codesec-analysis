@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c:185:26: style: Condition 'tuple_offset>total_size' is always false [knownConditionTrueFalse]
+        if (tuple_offset > total_size || src2_size > total_size - tuple_offset) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c:173:23: note: Assuming that condition 'src1_size>total_size' is not redundant
+        if (src1_size > total_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c:172:19: note: src1_size is assigned 'tuples->tuples[i].length*sizeof(int)' here.
+        src1_size = tuples->tuples[i].length * sizeof(int);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c:183:49: note: Assignment 'tuple_offset=tuples->tuples[i].length*sizeof(int)', assigned value is less than symbolic=total_size+1
+        tuple_offset = tuples->tuples[i].length * sizeof(int);
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-106-s2.c:185:26: note: Condition 'tuple_offset>total_size' is always false
+        if (tuple_offset > total_size || src2_size > total_size - tuple_offset) {
+                         ^

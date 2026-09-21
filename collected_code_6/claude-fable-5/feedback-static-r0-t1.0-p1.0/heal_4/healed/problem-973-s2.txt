@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len || len + 1 > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if ((len - d) > len || d > len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if (len + 1 > str_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the Flawfinder warnings on the three `memcpy` calls are false positives in practice. Here's why each copy is safe:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` holds `len + 1` bytes; `len - d < len`, and the source range `str + d` through `str + len` is within the validated string bounds since `strnlen` confirmed `len < str_size`.
+
+2. **`memcpy(temp + (len - d), str, d)`** — writes `d` bytes starting at offset `len - d`, so the total written is exactly `len` bytes into a `len + 1` buffer. No overflow possible.
+
+3. **`memcpy(str, temp, len + 1)`** — guarded by the explicit `len + 1 > str_size` check before the copy path is reached.
+
+Key defensive measures retained and reinforced in the rewrite:
+
+- **`strnlen` instead of `strlen`** — bounds the scan to `str_size`, preventing reads past the buffer on unterminated input; the `len >= str_size` check rejects unterminated strings.
+- **`MAX_STR_LEN` cap** — prevents pathological sizes and makes `len + 1` overflow impossible on any realistic platform.
+- **Modulo normalization of `d`** — ensures the rotation amount never exceeds the string length, eliminating out-of-bounds source pointers.
+- **Re-validation of invariants immediately before each `memcpy`** — I added redundant pre-copy guards (with `free(temp)` on the failure paths to avoid leaks), which explicitly document to static analyzers that destination capacity is verified before copying, addressing CWE-120 concerns.
+- **`malloc` failure check** and proper cleanup on all exit paths — no memory leaks or NULL dereferences.
+- **`main` checks return values** of both `left_rotate` and `printf`, using `EXIT_SUCCESS`/`EXIT_FAILURE` portably.
+
+The redundant checks cost a few branch instructions but make the safety invariants locally verifiable at each copy site rather than relying on reasoning about distant validation code — a good trade-off for security-critical review contexts.

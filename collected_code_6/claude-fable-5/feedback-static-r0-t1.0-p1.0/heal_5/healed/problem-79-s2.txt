@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning (CWE-119/CWE-120) flags the statically-sized `char buffer[MAX_WORD_LEN]` as a *potential* risk, but the original code already mitigates it correctly. The rewritten code preserves those mitigations:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1U] = '\0';` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless and explicit).
+3. **Bounded length checks:** `strnlen()` with an explicit maximum is used instead of `strlen()`, so even a non-terminated string cannot cause an out-of-bounds read.
+4. **Safe newline stripping:** the `len > 0U` guard prevents an underflow when indexing `buffer[len - 1U]`.
+5. **NULL and empty-input handling:** `is_length_odd()` checks for `NULL`, and `main` rejects empty input and `fgets` failures with proper error paths returning `EXIT_FAILURE`.
+
+The code is already conformant with the recommended fixes (bounds checking and length-limited functions), so no functional changes were required — only the comments were removed as requested.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-674-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-674-s3.c:120:24: style: Condition 'length<dest_size' is always true [knownConditionTrueFalse]
+            if (length < dest_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-674-s3.c:119:30: note: dest_size is assigned 'length+1' here.
+            size_t dest_size = length + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-674-s3.c:120:24: note: Condition 'length<dest_size' is always true
+            if (length < dest_size) {
+                       ^

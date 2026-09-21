@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:85:30: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+                if (copy_len > 0 && copy_len <= word_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:83:26: note: Assuming that condition 'word_len>0' is not redundant
+            if (word_len > 0 && word_len < MAX_WORD_LEN) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:84:33: note: copy_len is assigned 'word_len' here.
+                size_t copy_len = word_len;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:85:30: note: Condition 'copy_len>0' is always true
+                if (copy_len > 0 && copy_len <= word_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:85:46: style: The comparison 'copy_len <= word_len' is always true because 'copy_len' and 'word_len' represent the same value. [knownConditionTrueFalse]
+                if (copy_len > 0 && copy_len <= word_len) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:84:35: note: 'copy_len' is assigned value 'word_len' here.
+                size_t copy_len = word_len;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-330.c:85:46: note: The comparison 'copy_len <= word_len' is always true because 'copy_len' and 'word_len' represent the same value.
+                if (copy_len > 0 && copy_len <= word_len) {
+                                             ^

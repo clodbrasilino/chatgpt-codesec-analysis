@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already largely safe with respect to the Flawfinder warning (CWE-119/CWE-120). Here's why, and what was improved:
+
+1. **Buffer overflow protection (CWE-120):** The original code correctly used `fgets(buffer, sizeof(buffer), stdin)`, which limits input to the buffer size. This is the proper mitigation for the statically-sized array warning — `fgets` never writes more than `sizeof(buffer)` bytes including the null terminator. The Flawfinder hit on `char buffer[256]` is a low-confidence heuristic (risk 2) that flags all fixed-size buffers; the bounds-checked read already neutralizes it.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant since `fgets` always null-terminates on success, but it's harmless defense-in-depth and was retained.
+
+3. **Improvement — trailing newline handling:** `fgets` retains the `'\n'` in the buffer if the input fits. While a newline isn't a lowercase letter (so the count was unaffected), stripping it is good hygiene and prevents subtle bugs if the buffer is later reused. Note the safe idiom `len > 0 && buffer[len - 1] == '\n'` — this avoids an out-of-bounds read on an empty string, which the naive `strcspn`-free approaches sometimes get wrong.
+
+4. **Correct `ctype` usage preserved:** The cast `(unsigned char)*str` before calling `islower()` is essential and was kept — passing a negative `char` value (possible on platforms where `char` is signed, e.g., with high-bit characters) invokes undefined behavior per the C standard.
+
+5. **NULL check and error handling:** The `NULL` guard in `count_lowercase` and the check of `fgets`'s return value (handles EOF/read errors) were both retained, with a nonzero exit status on failure.

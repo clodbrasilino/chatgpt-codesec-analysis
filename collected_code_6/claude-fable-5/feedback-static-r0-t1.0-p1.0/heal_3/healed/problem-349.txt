@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    if (i == max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely safe despite the Flawfinder warning, which flags any statically-sized `char` array as a *potential* CWE-119/CWE-120 issue. Flawfinder is a pattern-matching tool, so it cannot verify that bounds checking is actually performed — it simply reports the declaration for human review.
+
+Mitigations present and retained:
+
+- **`fgets(buffer, sizeof(buffer), stdin)`** — length-limited read, preventing buffer overflow (the classic `gets()` vulnerability is avoided).
+- **Explicit null termination** at `buffer[sizeof(buffer) - 1]` — defensive, guaranteeing the buffer is a valid C string regardless of input.
+- **`strnlen()` instead of `strlen()`** — bounded scan that cannot run past the buffer even if termination were somehow missing.
+- **`is_binary_string()` takes a `max_len` parameter** and rejects strings that fill the entire buffer without a terminator, plus `NULL` and empty-string checks.
+
+Improvements added in the rewrite:
+
+- **`fflush(stdout)`** after the prompt, since the prompt lacks a newline and may otherwise not appear before blocking on input.
+- **Stdin draining** when the input line exceeds `BUFFER_SIZE - 1` characters, so leftover bytes don't silently remain in the input stream (important if the program were extended to read again).
+- **`EXIT_SUCCESS` / `EXIT_FAILURE`** from `<stdlib.h>` for portable return codes.
+
+The fixed-size buffer itself is acceptable here because every operation on it is bounds-checked; the Flawfinder hit is a false positive once these mitigations are verified.

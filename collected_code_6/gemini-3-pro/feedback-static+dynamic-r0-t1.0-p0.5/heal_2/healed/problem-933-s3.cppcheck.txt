@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-933-s3.c:12:22: warning: Either the condition 'len==4096' is redundant or the array 'camel_case[23]' is accessed at index 4096, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (camel_case[len] != '\0' && len < MAX_STR_LEN) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-933-s3.c:16:13: note: Assuming that condition 'len==4096' is not redundant
+    if (len == MAX_STR_LEN) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-933-s3.c:12:22: note: Array index out of bounds
+    while (camel_case[len] != '\0' && len < MAX_STR_LEN) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-933-s3.c:12:22: style: Array index 'len' is used before limits check. [arrayIndexThenCheck]
+    while (camel_case[len] != '\0' && len < MAX_STR_LEN) {
+                     ^

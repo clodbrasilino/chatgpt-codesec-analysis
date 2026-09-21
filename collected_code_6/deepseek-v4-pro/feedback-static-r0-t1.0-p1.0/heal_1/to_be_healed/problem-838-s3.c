@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <string.h>
+
+/* Possible weaknesses found:
+ *  Parameter 's2' can be declared as pointer to const [constParameterPointer]
+ */
+int minSwaps(char *s1, char *s2) {
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int len = strlen(s1);
+    int count1 = 0, count2 = 0;
+    /* Possible weaknesses found:
+     *  Variable 'diff' is assigned a value that is never used. [unreadVariable]
+     */
+    int diff = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (s1[i] == '1') count1++;
+        if (s2[i] == '1') count2++;
+    }
+
+    if (count1 != count2) {
+        return -1;
+    }
+
+    int pos1 = 0, pos2 = 0;
+    for (int i = 0; i < len; i++) {
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') pos1++;
+            else pos2++;
+        }
+    }
+
+    if (pos1 % 2 == 0 && pos2 % 2 == 0) {
+        return pos1 / 2 + pos2 / 2;
+    } else if (pos1 % 2 == 1 && pos2 % 2 == 1) {
+        return pos1 / 2 + pos2 / 2 + 2;
+    }
+
+    return -1;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char s1[100], s2[100];
+
+    printf("Enter first binary string: ");
+    /* Possible weaknesses found:
+     * Flawfinder scanf: It's unclear if the %s limit in the format string is small enough (CWE-120). Check that the limit is sufficiently small, or use a different input function. (risk 1, buffer)
+     */
+    scanf("%99s", s1);
+    printf("Enter second binary string: ");
+    /* Possible weaknesses found:
+     * Flawfinder scanf: It's unclear if the %s limit in the format string is small enough (CWE-120). Check that the limit is sufficiently small, or use a different input function. (risk 1, buffer)
+     */
+    scanf("%99s", s2);
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (strlen(s1) != strlen(s2)) {
+        printf("-1\n");
+        return 0;
+    }
+
+    int result = minSwaps(s1, s2);
+    printf("%d\n", result);
+
+    return 0;
+}

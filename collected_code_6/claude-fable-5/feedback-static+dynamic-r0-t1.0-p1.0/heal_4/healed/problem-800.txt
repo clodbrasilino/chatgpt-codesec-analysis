@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+    str[write] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text);
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings flagged in the original source are all **false positives** in this particular implementation, and the code above retains the same logic because it is already safe. Here's why:
+
+1. **CWE-120 (Buffer Overflow) — not applicable.** The function operates strictly in-place. The `write` index can never exceed the `read` index, so `str[write]` never writes beyond a position already validated by the read loop. The final `str[write] = '\0'` writes at most to the position of the original terminator.
+
+2. **CWE-20 (Improper Input Validation) — mitigated.** The function guards against `NULL` input before dereferencing, and the loop terminates on the NUL byte, so it never reads past the end of a properly terminated C string. The caller's responsibility to pass a NUL-terminated string is an inherent contract of C string handling.
+
+3. **`isspace` undefined behavior — already handled.** The cast to `(unsigned char)` before passing to `isspace()` is critical and correct: passing a raw `char` that happens to be negative (e.g., extended Latin-1 characters on platforms where `char` is signed) would invoke undefined behavior per the C standard.
+
+4. **`main` usage is safe.** The buffer `text[]` is a writable array (not a string literal pointer), correctly sized by the initializer, and NUL-terminated automatically.
+
+No functional changes were required — the original code was well-written; the static analyzer flags were advisory (risk level 1, the lowest) prompting manual review rather than indicating actual defects.

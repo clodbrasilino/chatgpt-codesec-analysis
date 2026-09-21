@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-885-s2.c: In function 'are_isomorphic':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-885-s2.c:12:36: error: 'UCHAR_MAX' undeclared (first use in this function)
+   12 |     size_t alphabet_size = (size_t)UCHAR_MAX + 1U;
+      |                                    ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-885-s2.c:5:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-885-s2.c:12:36: note: each undeclared identifier is reported only once for each function it appears in
+   12 |     size_t alphabet_size = (size_t)UCHAR_MAX + 1U;
+      |                                    ^~~~~~~~~

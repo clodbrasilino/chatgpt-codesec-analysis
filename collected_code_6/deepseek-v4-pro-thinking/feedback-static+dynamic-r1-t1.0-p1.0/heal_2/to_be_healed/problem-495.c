@@ -1,0 +1,91 @@
+#define _POSIX_C_SOURCE 200809L
+#include <sys/types.h>
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_lowercase_substrings(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return;
+    }
+
+    char *src = str;
+    char *dst = result;
+    size_t remaining = len;
+    regmatch_t match;
+
+    while (regexec(&regex, src, 1, &match, 0) == 0) {
+        size_t unmatched = match.rm_so;
+        if (unmatched > remaining) {
+            break;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dst, src, unmatched);
+        dst += unmatched;
+        remaining -= unmatched;
+        src += match.rm_eo;
+
+        if (match.rm_eo == 0) {
+            if (*src != '\0') {
+                if (remaining > 0) {
+                    *dst++ = *src++;
+                    remaining--;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t rest_len = strlen(src);
+    size_t copy_len = (rest_len < remaining) ? rest_len : remaining;
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dst, src, copy_len);
+    dst[copy_len] = '\0';
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t res_len = strlen(result);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(str, result, res_len);
+    str[res_len] = '\0';
+
+    free(result);
+    regfree(&regex);
+}
+
+int main(void) {
+    char str[] = "HelloWorld abc DEF123ghi xyz";
+    remove_lowercase_substrings(str);
+    printf("%s\n", str);
+    return 0;
+}

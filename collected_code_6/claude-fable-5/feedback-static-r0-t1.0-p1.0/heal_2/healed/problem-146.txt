@@ -1,0 +1,57 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    long result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: the original code was already well-defended against the flagged weakness (CWE-119/CWE-120). The statically-sized `buffer` is only ever written via `fgets(buffer, sizeof(buffer), stdin)`, which enforces bounds and guarantees null termination, so no overflow is possible. The `strcspn` call safely strips the trailing newline without risking out-of-bounds access. `ascii_sum` uses `strnlen` with an explicit maximum, rejects `NULL` pointers, and treats an unterminated string as an error, so it cannot read past the buffer. Casting each character through `unsigned char` avoids sign-extension issues on platforms where `char` is signed. The only changes made were adding the `_POSIX_C_SOURCE` feature-test macro (since `strnlen` is POSIX, not C89/C99), guarding against `max_len == 0`, and removing comments as requested.

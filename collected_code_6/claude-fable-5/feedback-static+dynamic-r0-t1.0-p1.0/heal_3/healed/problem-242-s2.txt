@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (i < max_len && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer, sizeof(buffer));
+
+    length = count_characters(buffer);
+
+    printf("%zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a heuristic flag on any statically-sized buffer rather than an actual confirmed vulnerability. The mitigations in place are:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — bounded read using `sizeof(buffer)` rather than a hardcoded constant, so the buffer and its limit can never drift apart. `fgets` writes at most `BUFFER_SIZE - 1` characters plus a null terminator, so no overflow is possible.
+
+2. **Explicit termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy; `fgets` already guarantees null termination on success, but this costs nothing and protects against future refactoring (e.g., someone swapping in `read()`).
+
+3. **Bounded helper functions** — `strip_newline` takes an explicit `max_len` and checks it in the loop condition, and both helpers guard against `NULL` input.
+
+4. **Return value checking** — the `fgets` result is checked for `NULL`, handling EOF and read errors gracefully with a nonzero exit code.
+
+No functional changes were required — the code as written already satisfies the fix; only the comments were removed per the request.

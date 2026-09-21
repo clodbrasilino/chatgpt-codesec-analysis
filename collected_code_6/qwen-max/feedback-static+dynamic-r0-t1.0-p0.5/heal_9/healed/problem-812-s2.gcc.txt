@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-812-s2.c: In function 'abbreviate_road':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-812-s2.c:9:42: error: 'ptrdiff_t' undeclared (first use in this function)
+    9 |             if (len + 2 < (size_t)(-1 - (ptrdiff_t)(pos - str))) {
+      |                                          ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-812-s2.c:3:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    2 | #include <string.h>
+  +++ |+#include <stddef.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-812-s2.c:9:42: note: each undeclared identifier is reported only once for each function it appears in
+    9 |             if (len + 2 < (size_t)(-1 - (ptrdiff_t)(pos - str))) {
+      |                                          ^~~~~~~~~

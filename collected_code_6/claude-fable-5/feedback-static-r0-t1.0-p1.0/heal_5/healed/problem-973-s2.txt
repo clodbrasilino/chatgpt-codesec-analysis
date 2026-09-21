@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes:**
+
+1. **Removed redundant always-false conditions** — the checks `d > len`, `(len - d) > len`, and `len + 1 > str_size` were flagged by cppcheck as `knownConditionTrueFalse`. They are provably impossible at those points:
+   - `d = d % len` guarantees `d < len`, so `d > len` and `(len - d) > len` (unsigned underflow check) can never trigger.
+   - `len = strnlen(str, str_size)` combined with the `len >= str_size` early return guarantees `len + 1 <= str_size`.
+
+2. **The Flawfinder `memcpy` warnings (CWE-120)** are informational-level findings. All three copies are provably safe:
+   - `temp` is allocated with exactly `len + 1` bytes; the two copies into it total `(len - d) + d = len` bytes, plus one byte for the terminator.
+   - The final copy of `len + 1` bytes into `str` is bounded by the earlier `len >= str_size` guard, ensuring `str` can hold it.
+
+3. **Retained all genuinely necessary validation**: NULL check, size bounds against `MAX_STR_LEN`, unterminated-buffer detection via `strnlen`, empty-string and zero-rotation short circuits, and the `malloc` failure check with proper cleanup.
+
+The result is functionally identical, passes the same safety guarantees, and no longer contains dead code that static analyzers flag as logic smell.

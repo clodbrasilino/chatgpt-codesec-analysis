@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-771-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-771-s2.c:47:18: error: implicit declaration of function 'strnlen_s'; did you mean 'strnlen'? [-Wimplicit-function-declaration]
+   47 |     size_t len = strnlen_s(argv[1], 1024);
+      |                  ^~~~~~~~~
+      |                  strnlen

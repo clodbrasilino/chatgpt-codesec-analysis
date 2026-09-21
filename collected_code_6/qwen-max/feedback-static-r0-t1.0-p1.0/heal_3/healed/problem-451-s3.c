@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_whitespace(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+
+    if (regcomp(&regex, "\\s", REG_EXTENDED|REG_NEWLINE)) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    const char *p = input;
+    size_t len = 0;
+
+    while ((ret = regexec(&regex, p, 1, &match, 0)) == 0) {
+        size_t copy_len = match.rm_so - (p - input);
+        if (len + copy_len >= output_size - 1) {
+            break;
+        }
+        strncpy(output + len, p, copy_len);
+        len += copy_len;
+        p += match.rm_eo;
+    }
+
+    size_t remaining = output_size - 1 - len;
+    if (remaining > 0) {
+        strncat(output + len, p, remaining - 1);
+        output[output_size - 1] = '\0';
+    } else {
+        output[output_size - 1] = '\0';
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = " This is a test string with  spaces. ";
+    char output[50];
+
+    remove_whitespace(input, output, sizeof(output));
+    printf("Result: '%s'\n", output);
+
+    return 0;
+}

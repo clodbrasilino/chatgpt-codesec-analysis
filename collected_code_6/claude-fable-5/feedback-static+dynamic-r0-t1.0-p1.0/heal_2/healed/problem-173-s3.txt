@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+    size_t input_len;
+    int written;
+
+    input_len = strnlen(input, sizeof(buffer));
+    if (input_len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", input);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy input safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code already addressed the flagged weakness (CWE-119/CWE-120) correctly, so the rewrite preserves those mitigations:
+
+- **Bounded length check**: `strnlen(input, sizeof(buffer))` ensures the input length is measured with an upper bound, and the explicit `input_len >= sizeof(buffer)` check rejects oversized input before any copy occurs, leaving room for the null terminator.
+- **Safe copy**: `snprintf(buffer, sizeof(buffer), "%s", input)` is used instead of `strcpy`/`sprintf`, guaranteeing no write past the end of `buffer`, with its return value validated for both encoding errors (`written < 0`) and truncation (`written >= sizeof(buffer)`).
+- **In-place filtering is overflow-safe**: `remove_non_alnum` only ever writes at or before the read position (`write_idx <= read_idx`), so it can never exceed the original string length, and it null-terminates the result. The `NULL` guard prevents dereferencing a null pointer.
+- **Correct `ctype` usage**: the cast to `unsigned char` before `isalnum()` avoids undefined behavior for negative `char` values on platforms where `char` is signed.

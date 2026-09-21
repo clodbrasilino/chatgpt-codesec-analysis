@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(char *str, size_t max_len);
+
+char *remove_non_alnum(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+
+    write = 0;
+    for (read = 0; read < len; read++) {
+        if (isalnum((unsigned char)str[read])) {
+            if (write >= max_len - 1) {
+                return NULL;
+            }
+            str[write] = str[read];
+            write++;
+        }
+    }
+
+    if (write >= max_len) {
+        return NULL;
+    }
+    str[write] = '\0';
+
+    return str;
+}
+
+int main(void)
+{
+    char input[] = "Hello, World! 123 #$%^ test_case-42";
+    char *result;
+
+    if (sizeof(input) > MAX_INPUT_LEN) {
+        if (fprintf(stderr, "Error: input exceeds maximum length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    result = remove_non_alnum(input, sizeof(input));
+    if (result == NULL) {
+        if (fprintf(stderr, "Error: invalid input string\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings flagged in the original source are risk-level-1 informational hits on array indexing (`str[read]`, `str[write]`) — Flawfinder flags any buffer access inside a loop as a potential CWE-120 (buffer overflow) / CWE-20 (improper input validation) candidate. On review, the code already mitigates all of them:
+
+1. **NULL and zero-length guard** — `str == NULL || max_len == 0` is rejected before any access.
+2. **Bounded length computation** — `strnlen(str, max_len)` never reads past `max_len`, and unterminated buffers (`len >= max_len`) are rejected, preventing out-of-bounds reads in the loop.
+3. **Read bound** — the loop condition `read < len` keeps every `str[read]` access within the validated region.
+4. **Write bound** — `write >= max_len - 1` is checked *before* each write, guaranteeing room remains for the NUL terminator; the final `write >= max_len` check is defensive redundancy.
+5. **`isalnum` correctness** — the argument is cast to `unsigned char`, avoiding undefined behavior for negative `char` values (a common real defect Flawfinder does not catch).
+6. **Compaction is in-place and shrinking** — `write <= read` always holds, so writes can never outrun reads.
+
+Since the boundary checks the warnings ask for are already present, the rewrite is functionally identical with the annotation comments removed. Note that `strnlen` is POSIX/C23; on strictly C99 non-POSIX toolchains you would substitute a manual bounded scan or `memchr(str, '\0', max_len)`.

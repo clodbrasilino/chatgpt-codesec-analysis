@@ -1,0 +1,193 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define INITIAL_CAPACITY 100
+#define MAX_CAPACITY 500000
+#define MAX_TEXT_LEN 1000000
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[MAX_WORD_LEN];
+    int count;
+} WordCount;
+
+typedef struct {
+    WordCount *items;
+    int size;
+    int capacity;
+} WordCountList;
+
+void init_list(WordCountList *list) {
+    if (list == NULL) {
+        return;
+    }
+    list->capacity = INITIAL_CAPACITY;
+    list->size = 0;
+    list->items = malloc(sizeof(WordCount) * (size_t)list->capacity);
+    if (list->items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void free_list(WordCountList *list) {
+    if (list != NULL) {
+        free(list->items);
+        list->items = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int find_word(WordCountList *list, const char *word) {
+    if (list == NULL || word == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < list->size; i++) {
+        if (strcmp(list->items[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_word(WordCountList *list, const char *word) {
+    if (list == NULL || word == NULL) {
+        return;
+    }
+    
+    size_t word_len = strnlen(word, MAX_WORD_LEN);
+    if (word_len >= MAX_WORD_LEN) {
+        return;
+    }
+    
+    if (word_len == 0) {
+        return;
+    }
+    
+    int index = find_word(list, word);
+    if (index != -1) {
+        list->items[index].count++;
+        return;
+    }
+    
+    if (list->size >= list->capacity) {
+        if (list->capacity >= MAX_CAPACITY) {
+            fprintf(stderr, "Capacity limit exceeded\n");
+            free_list(list);
+            exit(EXIT_FAILURE);
+        }
+        size_t new_capacity = (size_t)list->capacity * 2;
+        if (new_capacity > (size_t)MAX_CAPACITY) {
+            new_capacity = (size_t)MAX_CAPACITY;
+        }
+        WordCount *new_items = realloc(list->items, sizeof(WordCount) * new_capacity);
+        if (new_items == NULL) {
+            fprintf(stderr, "Memory reallocation failed\n");
+            free_list(list);
+            exit(EXIT_FAILURE);
+        }
+        list->items = new_items;
+        list->capacity = (int)new_capacity;
+    }
+    
+    size_t copy_len = word_len < (MAX_WORD_LEN - 1) ? word_len : (MAX_WORD_LEN - 1);
+    if (copy_len >= MAX_WORD_LEN) {
+        return;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(list->items[list->size].word, word, copy_len);
+    list->items[list->size].word[copy_len] = '\0';
+    list->items[list->size].count = 1;
+    list->size++;
+}
+
+void process_text(WordCountList *list, const char *text) {
+    if (text == NULL || list == NULL) {
+        return;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[MAX_WORD_LEN];
+    int word_len = 0;
+    size_t i = 0;
+    size_t text_len = strnlen(text, MAX_TEXT_LEN);
+    if (text_len > MAX_TEXT_LEN) {
+        text_len = MAX_TEXT_LEN;
+    }
+    
+    while (i < text_len && text[i] != '\0') {
+        if (isalpha((unsigned char)text[i])) {
+            if (word_len < MAX_WORD_LEN - 1) {
+                word[word_len++] = tolower((unsigned char)text[i]);
+            }
+        } else {
+            if (word_len > 0) {
+                word[word_len] = '\0';
+                add_word(list, word);
+                word_len = 0;
+            }
+        }
+        i++;
+    }
+    
+    if (word_len > 0) {
+        if (word_len < MAX_WORD_LEN) {
+            word[word_len] = '\0';
+            add_word(list, word);
+        }
+    }
+}
+
+int compare_counts(const void *a, const void *b) {
+    const WordCount *wc_a = (const WordCount *)a;
+    const WordCount *wc_b = (const WordCount *)b;
+    return wc_b->count - wc_a->count;
+}
+
+void find_most_common(const char *text) {
+    if (text == NULL) {
+        printf("No words found in the text.\n");
+        return;
+    }
+    
+    WordCountList list;
+    init_list(&list);
+    
+    process_text(&list, text);
+    
+    if (list.size == 0) {
+        printf("No words found in the text.\n");
+        free_list(&list);
+        return;
+    }
+    
+    qsort(list.items, (size_t)list.size, sizeof(WordCount), compare_counts);
+    
+    int max_count = list.items[0].count;
+    
+    printf("Most common word(s) with count %d:\n", max_count);
+    for (int i = 0; i < list.size && list.items[i].count == max_count; i++) {
+        printf("  %s: %d\n", list.items[i].word, list.items[i].count);
+    }
+    
+    free_list(&list);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog barks, and the fox runs away. The quick fox is very quick.";
+    
+    printf("Text: %s\n\n", text);
+    find_most_common(text);
+    
+    return 0;
+}

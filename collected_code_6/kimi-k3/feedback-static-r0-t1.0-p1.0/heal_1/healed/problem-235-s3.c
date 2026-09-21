@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint32_t set_even_bits(uint32_t num) {
+    uint32_t even_bits_mask = 0x55555555U;
+    return num | even_bits_mask;
+}
+
+int main(void) {
+    uint32_t number;
+    int scan_result;
+
+    printf("Enter a number (uint32_t): ");
+    scan_result = scanf("%" SCNu32, &number);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    uint32_t result = set_even_bits(number);
+
+    printf("Original number: %" PRIu32 "\n", number);
+    printf("Number after setting even bits: %" PRIu32 "\n", result);
+
+    return 0;
+}

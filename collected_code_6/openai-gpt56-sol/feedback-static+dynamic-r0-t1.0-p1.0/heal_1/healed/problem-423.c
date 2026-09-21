@@ -1,0 +1,223 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <ctype.h>
+
+static int read_int64(int64_t *value)
+{
+    char buffer[128];
+    char *end;
+    int ch;
+
+    if (value == NULL || fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    if (buffer[0] != '\0' && buffer[sizeof buffer - 2] != '\n') {
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        return 0;
+    }
+
+    errno = 0;
+    *value = strtoimax(buffer, &end, 10);
+
+    if (end == buffer || errno == ERANGE) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    return *end == '\0';
+}
+
+static int read_size_pair(size_t *rows, size_t *cols)
+{
+    char buffer[256];
+    char *end;
+    uintmax_t first;
+    uintmax_t second;
+    int ch;
+
+    if (rows == NULL || cols == NULL ||
+        fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    if (buffer[0] != '\0' && buffer[sizeof buffer - 2] != '\n') {
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        return 0;
+    }
+
+    errno = 0;
+    first = strtoumax(buffer, &end, 10);
+    if (end == buffer || errno == ERANGE || first == 0 || first > SIZE_MAX) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    errno = 0;
+    {
+        char *second_start = end;
+        second = strtoumax(second_start, &end, 10);
+        if (end == second_start || errno == ERANGE ||
+            second == 0 || second > SIZE_MAX) {
+            return 0;
+        }
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return 0;
+    }
+
+    *rows = (size_t)first;
+    *cols = (size_t)second;
+    return 1;
+}
+
+static int add_int64(int64_t a, int64_t b, int64_t *result)
+{
+    if (result == NULL ||
+        (b > 0 && a > INT64_MAX - b) ||
+        (b < 0 && a < INT64_MIN - b)) {
+        return 0;
+    }
+
+    *result = a + b;
+    return 1;
+}
+
+static int gold_mine_max(const int64_t *mine, size_t rows, size_t cols,
+                         int64_t *result)
+{
+    int64_t *next;
+    int64_t *current;
+    size_t row;
+    size_t col;
+
+    if (mine == NULL || result == NULL || rows == 0 || cols == 0 ||
+        rows > SIZE_MAX / sizeof *next) {
+        return 0;
+    }
+
+    next = malloc(rows * sizeof *next);
+    current = malloc(rows * sizeof *current);
+
+    if (next == NULL || current == NULL) {
+        free(next);
+        free(current);
+        return 0;
+    }
+
+    for (row = 0; row < rows; ++row) {
+        next[row] = mine[row * cols + cols - 1];
+    }
+
+    for (col = cols - 1; col > 0; --col) {
+        size_t current_col = col - 1;
+
+        for (row = 0; row < rows; ++row) {
+            int64_t best = next[row];
+
+            if (row > 0 && next[row - 1] > best) {
+                best = next[row - 1];
+            }
+
+            if (row + 1 < rows && next[row + 1] > best) {
+                best = next[row + 1];
+            }
+
+            if (!add_int64(mine[row * cols + current_col],
+                           best, &current[row])) {
+                free(next);
+                free(current);
+                return 0;
+            }
+        }
+
+        {
+            int64_t *temporary = next;
+            next = current;
+            current = temporary;
+        }
+    }
+
+    *result = next[0];
+
+    for (row = 1; row < rows; ++row) {
+        if (next[row] > *result) {
+            *result = next[row];
+        }
+    }
+
+    free(next);
+    free(current);
+    return 1;
+}
+
+int main(void)
+{
+    size_t rows;
+    size_t cols;
+    size_t count;
+    size_t i;
+    int64_t *mine;
+    int64_t result;
+
+    if (!read_size_pair(&rows, &cols)) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (rows > SIZE_MAX / cols) {
+        fputs("Input is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    count = rows * cols;
+
+    if (count > SIZE_MAX / sizeof *mine) {
+        fputs("Input is too large\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    mine = malloc(count * sizeof *mine);
+    if (mine == NULL) {
+        fputs("Memory allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; ++i) {
+        if (!read_int64(&mine[i])) {
+            fputs("Invalid input\n", stderr);
+            free(mine);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (!gold_mine_max(mine, rows, cols, &result)) {
+        fputs("Unable to compute result\n", stderr);
+        free(mine);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRId64 "\n", result) < 0) {
+        free(mine);
+        return EXIT_FAILURE;
+    }
+
+    free(mine);
+    return EXIT_SUCCESS;
+}

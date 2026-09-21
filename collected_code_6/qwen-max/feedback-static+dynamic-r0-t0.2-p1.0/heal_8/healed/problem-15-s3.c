@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** split_string_at_lowercase(const char *input, int *count) {
+    *count = 0;
+    if (!input) return NULL;
+
+    const char *p = input;
+    while (*p) {
+        if (islower((unsigned char)*p)) (*count)++;
+        p++;
+    }
+
+    char **result = (char **)malloc((*count + 1) * sizeof(char *));
+    if (!result) return NULL;
+
+    *count = 0;
+    p = input;
+    while (*p) {
+        if (islower((unsigned char)*p)) {
+            const char *start = p + 1;
+            while (*p && !islower((unsigned char)*p)) p++;
+            size_t len = p - start;
+            result[*count] = (char *)malloc(len + 1);
+            if (!result[*count]) {
+                for (int i = 0; i < *count; i++) free(result[i]);
+                free(result);
+                return NULL;
+            }
+            memcpy(result[*count], start, len);
+            result[*count][len] = '\0';
+            (*count)++;
+        } else {
+            p++;
+        }
+    }
+    result[*count] = NULL;
+    return result;
+}
+
+void free_split_strings(char **strings) {
+    if (!strings) return;
+    for (int i = 0; strings[i]; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    int count;
+    char **result = split_string_at_lowercase(input, &count);
+
+    if (result) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_strings(result);
+    }
+
+    return 0;
+}

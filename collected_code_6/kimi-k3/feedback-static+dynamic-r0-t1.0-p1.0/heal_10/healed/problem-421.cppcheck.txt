@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:98:31: style: Condition 'remaining<delimiter_length' is always false [knownConditionTrueFalse]
+                if (remaining < delimiter_length) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:93:27: note: Assuming that condition 'remaining<delimiter_length' is not redundant
+            if (remaining < delimiter_length) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:98:31: note: Condition 'remaining<delimiter_length' is always false
+                if (remaining < delimiter_length) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:113:27: style: Condition 'remaining<element_length' is always false [knownConditionTrueFalse]
+            if (remaining < element_length) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:108:23: note: Assuming that condition 'remaining<element_length' is not redundant
+        if (remaining < element_length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421.c:113:27: note: Condition 'remaining<element_length' is always false
+            if (remaining < element_length) {
+                          ^

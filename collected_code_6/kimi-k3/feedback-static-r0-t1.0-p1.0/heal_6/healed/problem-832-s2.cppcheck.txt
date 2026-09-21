@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:41:17: style: Condition 'len==0' is always false [knownConditionTrueFalse]
+        if (len == 0 || len >= SIZE_MAX - 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:36:63: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo <= match.rm_so) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:40:22: note: Assignment 'len=(unsigned long)(match.rm_eo-match.rm_so)', assigned value is greater than 0
+        size_t len = (size_t)(match.rm_eo - match.rm_so);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:41:17: note: Condition 'len==0' is always false
+        if (len == 0 || len >= SIZE_MAX - 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:52:17: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len > 0 && len <= strlen(cursor + match.rm_so)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:41:17: note: Assuming that condition 'len==0' is not redundant
+        if (len == 0 || len >= SIZE_MAX - 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:47:21: note: Assuming condition is false
+        if (num_str == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-832-s2.c:52:17: note: Condition 'len>0' is always true
+        if (len > 0 && len <= strlen(cursor + match.rm_so)) {
+                ^

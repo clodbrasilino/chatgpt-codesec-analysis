@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** shortlist_words(char** words, int num_words, int n, int* returned_count) {
+    if (words == NULL || num_words <= 0 || returned_count == NULL) {
+        if (returned_count != NULL) {
+            *returned_count = 0;
+        }
+        return NULL;
+    }
+
+    int capacity = num_words;
+    char** shortlisted = (char**)malloc(capacity * sizeof(char*));
+    if (shortlisted == NULL) {
+        *returned_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < num_words; i++) {
+        if (words[i] != NULL) {
+            size_t len = 0;
+            while (len <= (size_t)n && words[i][len] != '\0') {
+                len++;
+            }
+            
+            if (len > (size_t)n) {
+                size_t actual_len = len;
+                while (words[i][actual_len] != '\0') {
+                    actual_len++;
+                }
+                
+                shortlisted[count] = (char*)malloc(actual_len + 1);
+                if (shortlisted[count] == NULL) {
+                    for (int j = 0; j < count; j++) {
+                        free(shortlisted[j]);
+                    }
+                    free(shortlisted);
+                    *returned_count = 0;
+                    return NULL;
+                }
+                
+                for (size_t k = 0; k <= actual_len; k++) {
+                    shortlisted[count][k] = words[i][k];
+                }
+                
+                count++;
+            }
+        }
+    }
+
+    char** tmp = (char**)realloc(shortlisted, count * sizeof(char*));
+    if (tmp != NULL || count == 0) {
+        shortlisted = tmp;
+    }
+    
+    *returned_count = count;
+    return shortlisted;
+}
+
+int main(void) {
+    char* word_list[] = {"apple", "dog", "elephant", "cat", "banana", "ant"};
+    int num_words = sizeof(word_list) / sizeof(word_list[0]);
+    int n = 3;
+    int count = 0;
+
+    char** result = shortlist_words(word_list, num_words, n, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

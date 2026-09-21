@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* replace_char(char* str, char old_char, char new_char) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char* current = str;
+    while (*current != '\0') {
+        if (*current == old_char) {
+            *current = new_char;
+        }
+        current++;
+    }
+    return str;
+}
+
+int main(void) {
+    char* buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    char old_char, new_char;
+
+    printf("Enter a string: ");
+    line_length = getline(&buffer, &buffer_size, stdin);
+    if (line_length == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+
+    if (line_length > 0 && buffer[line_length - 1] == '\n') {
+        buffer[line_length - 1] = '\0';
+    }
+
+    printf("Enter character to replace: ");
+    if (scanf(" %c", &old_char) != 1) {
+        fprintf(stderr, "Error reading old character\n");
+        free(buffer);
+        return 1;
+    }
+
+    printf("Enter replacement character: ");
+    if (scanf(" %c", &new_char) != 1) {
+        fprintf(stderr, "Error reading new character\n");
+        free(buffer);
+        return 1;
+    }
+
+    char* result = replace_char(buffer, old_char, new_char);
+    if (result == NULL) {
+        fprintf(stderr, "Error: NULL string\n");
+        free(buffer);
+        return 1;
+    }
+
+    printf("Result: %s\n", result);
+
+    free(buffer);
+    return 0;
+}

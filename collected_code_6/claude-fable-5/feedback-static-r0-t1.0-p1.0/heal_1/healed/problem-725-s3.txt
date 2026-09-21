@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+
+char *extract_quoted_value(const char *input)
+{
+    regex_t regex;
+    regmatch_t matches[2];
+    char *result = NULL;
+    int ret;
+    size_t input_len;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+
+    ret = regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_SIZE];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    ret = regexec(&regex, input, 2, matches, 0);
+    if (ret == 0) {
+        if (matches[1].rm_so >= 0 &&
+            matches[1].rm_eo >= matches[1].rm_so &&
+            (size_t)matches[1].rm_eo <= input_len) {
+
+            size_t len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+
+            if (len < SIZE_MAX) {
+                result = malloc(len + 1);
+                if (result != NULL) {
+                    memcpy(result, input + matches[1].rm_so, len);
+                    result[len] = '\0';
+                } else {
+                    fprintf(stderr, "Memory allocation failed\n");
+                }
+            }
+        }
+    } else if (ret != REG_NOMATCH) {
+        char errbuf[ERRBUF_SIZE];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_string = "The value is \"hello world\" in this string";
+    char *value;
+
+    value = extract_quoted_value(test_string);
+    if (value != NULL) {
+        printf("Extracted value: %s\n", value);
+        free(value);
+    } else {
+        printf("No quoted value found\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll also want `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdint.h>
+```
+
+**Analysis summary of the changes:**
+
+1. **`char errbuf[256]` (CWE-119/CWE-120):** The original code was already safe since `regerror` receives `sizeof(errbuf)` and guarantees NUL-termination. To satisfy the static analyzer defensively, the buffer is now zero-initialized at the first byte and explicitly NUL-terminated after the call, guaranteeing a valid string even if `regerror` misbehaves.
+
+2. **`memcpy` (CWE-120):** The destination is allocated as `len + 1`, so the copy of `len` bytes was already bounded. The rewrite hardens this by validating that `rm_eo` does not exceed the actual input length (protecting against a hypothetically corrupt `regmatch_t`) and guards the `len + 1` allocation against integer overflow via the `SIZE_MAX` check.
+
+3. **General robustness:** `rm_so >= 0` is checked explicitly before casting offsets to `size_t`, avoiding signed-to-unsigned conversion issues, and memory ownership remains clear — the caller frees the returned buffer, and `regfree` is always reached on every path after successful compilation.

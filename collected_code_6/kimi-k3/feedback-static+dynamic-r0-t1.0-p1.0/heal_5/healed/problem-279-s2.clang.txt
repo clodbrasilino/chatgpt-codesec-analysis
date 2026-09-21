@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-279-s2.c:24:47: error: call to undeclared library function 'strchr' with type 'char *(const char *, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   24 |     if (buffer[sizeof(buffer) - 1] != '\0' && strchr(buffer, '\n') == NULL) {
+      |                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-279-s2.c:24:47: note: include the header <string.h> or explicitly provide a declaration for 'strchr'
+1 error generated.

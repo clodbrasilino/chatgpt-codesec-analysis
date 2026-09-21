@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *concatenate(const char *const elements[], size_t count)
+{
+    if (count != 0 && elements == NULL) {
+        return NULL;
+    }
+
+    size_t total_length = 0;
+    size_t *lengths = NULL;
+
+    if (count != 0) {
+        if (count > SIZE_MAX / sizeof(*lengths)) {
+            return NULL;
+        }
+
+        lengths = malloc(count * sizeof(*lengths));
+        if (lengths == NULL) {
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (elements[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = strlen(elements[i]);
+
+        if (lengths[i] > SIZE_MAX - total_length - 1) {
+            free(lengths);
+            return NULL;
+        }
+
+        total_length += lengths[i];
+    }
+
+    char *result = malloc(total_length + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    char *destination = result;
+    size_t remaining = total_length;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (lengths[i] > remaining) {
+            free(result);
+            free(lengths);
+            return NULL;
+        }
+
+        if (lengths[i] != 0) {
+            memcpy(destination, elements[i], lengths[i]);
+            destination += lengths[i];
+            remaining -= lengths[i];
+        }
+    }
+
+    *destination = '\0';
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *elements[] = {"Hello", ", ", "world", "!"};
+    const size_t count = sizeof(elements) / sizeof(elements[0]);
+
+    char *result = concatenate(elements, count);
+    if (result == NULL) {
+        fputs("Failed to concatenate elements.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (puts(result) == EOF) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int find_equilibrium_index(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    long long total_sum = 0;
+    for (int i = 0; i < n; i++) {
+        total_sum += arr[i];
+    }
+
+    long long left_sum = 0;
+    for (int i = 0; i < n; i++) {
+        long long right_sum = total_sum - left_sum - arr[i];
+        if (left_sum == right_sum) {
+            return i;
+        }
+        left_sum += arr[i];
+    }
+
+    return -1;
+}
+
+int main(int argc, char const * const * argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <num1> <num2> ...\n", argv[0]);
+        return 1;
+    }
+
+    int n = argc - 1;
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        char *endptr;
+        errno = 0;
+        long val = strtol(argv[i + 1], &endptr, 10);
+        if (errno != 0 || endptr == argv[i + 1] || *endptr != '\0' || val < INT_MIN || val > INT_MAX) {
+            free(arr);
+            return 1;
+        }
+        arr[i] = (int)val;
+    }
+
+    int eq_idx = find_equilibrium_index(arr, n);
+    printf("%d\n", eq_idx);
+
+    free(arr);
+
+    return 0;
+}

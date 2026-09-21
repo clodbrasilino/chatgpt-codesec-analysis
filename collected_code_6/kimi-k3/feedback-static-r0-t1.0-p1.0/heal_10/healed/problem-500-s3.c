@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+#define MAX_STRING_LENGTH 1024
+
+char* concatenate_list(const char **list, size_t count) {
+    size_t total_length = 0;
+    size_t i;
+    char *result;
+    size_t offset = 0;
+    size_t *lengths = NULL;
+
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    lengths = (size_t*)calloc(count, sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+        lengths[i] = strnlen(list[i], MAX_STRING_LENGTH);
+        if (lengths[i] == MAX_STRING_LENGTH && list[i][MAX_STRING_LENGTH - 1] != '\0') {
+            free(lengths);
+            return NULL;
+        }
+        if (lengths[i] > SIZE_MAX - total_length - 1) {
+            free(lengths);
+            return NULL;
+        }
+        total_length += lengths[i];
+    }
+
+    result = (char*)malloc(total_length + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (lengths[i] > 0) {
+            if (lengths[i] > total_length - offset) {
+                free(result);
+                free(lengths);
+                return NULL;
+            }
+            memcpy(result + offset, list[i], lengths[i]);
+            offset += lengths[i];
+        }
+    }
+    result[total_length] = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void) {
+    const char *list[] = {"Hello", " ", "World", "!"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *concatenated;
+
+    concatenated = concatenate_list(list, count);
+    if (concatenated == NULL) {
+        fprintf(stderr, "Error: Failed to concatenate strings\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", concatenated);
+
+    free(concatenated);
+
+    return EXIT_SUCCESS;
+}

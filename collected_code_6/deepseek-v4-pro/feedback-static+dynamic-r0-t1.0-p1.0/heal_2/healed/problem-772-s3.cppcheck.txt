@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:50:21: style: Condition 'result_size>0' is always true [knownConditionTrueFalse]
+    if (result_size > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:42:21: note: Assuming that condition 'result_size==0' is not redundant
+    if (result_size == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:50:21: note: Condition 'result_size>0' is always true
+    if (result_size > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:62:16: style: Variable 'word_start' is reassigned a value before the old one has been used. [redundantAssignment]
+    word_start = 0;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:25:28: note: word_start is assigned
+                word_start = i;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-772-s3.c:62:16: note: word_start is overwritten
+    word_start = 0;
+               ^

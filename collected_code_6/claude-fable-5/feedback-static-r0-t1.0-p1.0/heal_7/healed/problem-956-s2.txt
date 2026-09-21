@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void free_partial(char **tokens, size_t count)
+{
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+char **split_at_uppercase(const char *input, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **result = NULL;
+    char **temp = NULL;
+    size_t capacity = 8;
+    size_t n = 0;
+    const char *cursor = NULL;
+    size_t remaining;
+    int rc;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    cursor = input;
+
+    rc = regcomp(&regex, "[A-Z][^A-Z]*|^[^A-Z]+", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (*cursor != '\0' && remaining > 0) {
+        rc = regexec(&regex, cursor, 1, &match, 0);
+        if (rc != 0) {
+            break;
+        }
+
+        if (match.rm_so != 0 || match.rm_eo <= 0) {
+            break;
+        }
+
+        size_t len = (size_t)match.rm_eo;
+
+        if (len > remaining || len >= MAX_INPUT_LEN || len > SIZE_MAX - 1) {
+            break;
+        }
+
+        char *token = malloc(len + 1);
+        if (token == NULL) {
+            free_partial(result, n);
+            regfree(&regex);
+            return NULL;
+        }
+
+        memcpy(token, cursor, len);
+        token[len] = '\0';
+
+        if (n >= capacity) {
+            if (capacity > SIZE_MAX / (2 * sizeof(char *))) {
+                free(token);
+                free_partial(result, n);
+                regfree(&regex);
+                return NULL;
+            }
+            capacity *= 2;
+            temp = realloc(result, capacity * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                free_partial(result, n);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+        }
+
+        result[n] = token;
+        n++;
+        cursor += len;
+        remaining -= len;
+    }
+
+    regfree(&regex);
+    *count = n;
+    return result;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    if (tokens == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "helloWorldThisIsATestString";
+    size_t count = 0;
+    char **tokens = split_at_uppercase(text, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", text);
+    for (size_t i = 0; i < count; i++) {
+        printf("Token %zu: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The flagged weakness was the `memcpy` call (CWE-120, buffer overflow risk). In the original code, this was actually already largely mitigated, but the rewrite hardens it further:
+
+1. **Destination sizing guarantee** — The destination `token` is allocated with `malloc(len + 1)`, exactly sized to hold `len` copied bytes plus the NUL terminator. The `memcpy` copies precisely `len` bytes, so the destination can always hold the source data.
+
+2. **Source bounds validation** — Before the copy, `len` is validated against `remaining` (the number of bytes left in the input) and against `MAX_INPUT_LEN`. Since `remaining` is derived from `strnlen(input, MAX_INPUT_LEN)` and decremented consistently as the cursor advances, `memcpy` can never read past the end of the input buffer.
+
+3. **Integer overflow guard on `len + 1`** — Added an explicit `len > SIZE_MAX - 1` check so the `malloc(len + 1)` allocation size cannot wrap around (defensive; unreachable in practice given the `MAX_INPUT_LEN` bound, but it satisfies static analyzers).
+
+4. **Loop condition hardening** — Added `remaining > 0` to the loop condition so the cursor and the byte counter can never diverge in a way that permits an out-of-bounds regex scan.
+
+5. **Existing safeguards preserved** — The `SIZE_MAX / (2 * sizeof(char *))` check prevents overflow when doubling capacity, `realloc` uses a temporary pointer to avoid leaking on failure, and all error paths correctly free the token, the partial result array, and the compiled regex.
+
+The remaining `memcpy` warning from Flawfinder is a false positive after these checks — the invariant `len <= remaining && destination size == len + 1` holds at every call site.

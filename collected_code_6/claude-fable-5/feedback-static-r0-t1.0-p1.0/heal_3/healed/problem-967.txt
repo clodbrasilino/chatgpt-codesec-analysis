@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_LEN 256
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+
+    return i;
+}
+
+int contains_all_vowels(const char *str, size_t max_len)
+{
+    int found[5] = {0, 0, 0, 0, 0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = bounded_length(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        int c = tolower((unsigned char)str[i]);
+        switch (c) {
+        case 'a':
+            found[0] = 1;
+            break;
+        case 'e':
+            found[1] = 1;
+            break;
+        case 'i':
+            found[2] = 1;
+            break;
+        case 'o':
+            found[3] = 1;
+            break;
+        case 'u':
+            found[4] = 1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return found[0] && found[1] && found[2] && found[3] && found[4];
+}
+
+int main(void)
+{
+    char buffer[MAX_LEN];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = bounded_length(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (contains_all_vowels(buffer, sizeof(buffer))) {
+        printf("Accepted: the string contains all vowels\n");
+    } else {
+        printf("Rejected: the string does not contain all vowels\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120):
+
+1. **`fgets` with `sizeof(buffer)`** — bounds the read correctly, unlike `gets` or unbounded `scanf("%s", ...)`. This is the primary mitigation for the Flawfinder warning on the statically-sized `buffer`.
+2. **Forced null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant with `fgets`, which always null-terminates on success, but harmless and protects against future refactoring).
+3. **`bounded_length` instead of `strlen`** — guarantees no read past the buffer even if termination were somehow lost; I added a `NULL` guard there for extra robustness.
+4. **`tolower((unsigned char)str[i])`** — correctly avoids undefined behavior from passing negative `char` values to `ctype.h` functions.
+5. **Safe newline stripping** — the `len > 0` check prevents `buffer[-1]` underflow on empty input.
+
+The only functional addition in the rewrite is `fflush(stdout)` after the unterminated prompt, ensuring it appears before blocking on `stdin` when output is fully buffered (e.g., piped). The Flawfinder hit is a risk-level-2 informational finding on any fixed-size buffer; with `fgets` bounded by `sizeof(buffer)`, no overflow is possible, so no structural change was required.

@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool has_letter_and_number(const char *str, size_t max_len)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0U; i < max_len && str[i] != '\0'; i++) {
+        unsigned char ch = (unsigned char)str[i];
+        if (isalpha(ch)) {
+            has_letter = true;
+        } else if (isdigit(ch)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0U;
+    ssize_t read_len;
+    size_t len;
+
+    read_len = getline(&buffer, &buffer_size, stdin);
+    if (read_len < 0) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    len = (size_t)read_len;
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    }
+
+    if (has_letter_and_number(buffer, len + 1U)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Eliminated the statically-sized buffer (CWE-119/CWE-120):** The Flawfinder warning flagged `char buffer[BUFFER_SIZE]` as a potential overflow risk. I replaced it with `getline()`, which dynamically allocates and resizes the buffer as needed, removing any fixed-length restriction and the possibility of truncation or overflow entirely.
+
+2. **Removed the now-unnecessary `BUFFER_SIZE` macro and `memset`:** Since `getline()` handles allocation and null-termination, zero-initializing a fixed array is no longer required.
+
+3. **Length handling via return value:** `getline()` returns the exact number of bytes read, so `strnlen()` is no longer needed. The newline is stripped using the known length, and the length is passed explicitly to `has_letter_and_number()` to preserve bounded iteration.
+
+4. **Memory hygiene:** `free(buffer)` is called on both the error path and the success path, preventing memory leaks (CWE-401). Note that `free()` is safe on the error path even if `getline()` allocated memory before failing.
+
+5. **Retained defensive checks:** The `NULL` check, `unsigned char` cast before `isalpha`/`isdigit` (avoiding undefined behavior for negative `char` values), and bounded loop in `has_letter_and_number()` were kept, as they were already correct.
+
+One portability note: `getline()` is POSIX, not ISO C. If strict C-standard portability is required, the original `fgets()` approach with careful bounds checking (as in the original code) is the correct alternative, since the original was already functionally safe despite the static-analysis flag.

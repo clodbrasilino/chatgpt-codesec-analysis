@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-128.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-128.c:21:25: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (len > n) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-128.c:20:21: note: outer condition: len>n
+            if (len > n && words[i][len] != '\0') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-128.c:21:25: note: identical inner condition: len>n
+                if (len > n) {
+                        ^

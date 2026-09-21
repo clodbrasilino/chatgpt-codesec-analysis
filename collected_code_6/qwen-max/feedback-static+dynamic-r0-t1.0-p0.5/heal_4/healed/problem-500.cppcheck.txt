@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:14:37: style: Condition 'ptr[len]!='\0'' is always true [knownConditionTrueFalse]
+        while (ptr[len] && ptr[len] != '\0') len++;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:16:41: style: Condition 'len==1' is always true [knownConditionTrueFalse]
+        if (len > 0 && (len > 1 || (len == 1 && ptr[0] != '\0'))) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:16:17: note: Assuming that condition 'len>0' is not redundant
+        if (len > 0 && (len > 1 || (len == 1 && ptr[0] != '\0'))) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:16:29: note: Assuming that condition 'len>1' is not redundant
+        if (len > 0 && (len > 1 || (len == 1 && ptr[0] != '\0'))) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:16:41: note: Condition 'len==1' is always true
+        if (len > 0 && (len > 1 || (len == 1 && ptr[0] != '\0'))) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-500.c:32:37: style: Condition 'ptr[len]!='\0'' is always true [knownConditionTrueFalse]
+        while (ptr[len] && ptr[len] != '\0') len++;
+                                    ^

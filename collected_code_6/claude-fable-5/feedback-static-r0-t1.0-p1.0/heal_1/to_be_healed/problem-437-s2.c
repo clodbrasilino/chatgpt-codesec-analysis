@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_odd_characters(const char *input)
+{
+    size_t length;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    length = strlen(input);
+    result = (char *)malloc((length / 2U) + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 1U; i < length; i += 2U) {
+        result[j] = input[i];
+        j++;
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = { "python", "program", "language" };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *output = remove_odd_characters(test_strings[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("Input: %s -> Output: %s\n", test_strings[i], output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}

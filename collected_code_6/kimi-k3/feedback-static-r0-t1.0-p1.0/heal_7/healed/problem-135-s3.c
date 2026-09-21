@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long hexagonal_number(int n)
+{
+    return (long)n * (2L * n - 1L);
+}
+
+int main(void)
+{
+    char input[64];
+    char *end;
+    long value;
+    int n;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(input, &end, 10);
+
+    if (errno != 0 || end == input || (*end != '\n' && *end != '\0')) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (value < 1 || value > INT_MAX) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)value;
+
+    if (n > 30349) {
+        fprintf(stderr, "Result would overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%ld\n", hexagonal_number(n));
+
+    return EXIT_SUCCESS;
+}

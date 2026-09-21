@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:53:44: style: Condition 'result_index+match_start<=input_len' is always true [knownConditionTrueFalse]
+            if (result_index + match_start <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:48:44: note: Assuming that condition 'result_index+match_start>input_len' is not redundant
+            if (result_index + match_start > input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:53:44: note: Condition 'result_index+match_start<=input_len' is always true
+            if (result_index + match_start <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:76:44: style: Condition 'result_index+input_remaining<=input_len' is always true [knownConditionTrueFalse]
+        if (result_index + input_remaining <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:71:44: note: Assuming that condition 'result_index+input_remaining>input_len' is not redundant
+        if (result_index + input_remaining > input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-727-s2.c:76:44: note: Condition 'result_index+input_remaining<=input_len' is always true
+        if (result_index + input_remaining <= input_len) {
+                                           ^

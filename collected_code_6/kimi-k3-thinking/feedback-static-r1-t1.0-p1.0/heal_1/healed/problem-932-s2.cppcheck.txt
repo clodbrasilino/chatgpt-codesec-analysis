@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-932-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-932-s2.c:83:21: style: Condition 'input_count==0' is always false [knownConditionTrueFalse]
+    if (input_count == 0 || input_count > SIZE_MAX / sizeof(*words)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-932-s2.c:77:40: note: Assignment 'input_count=sizeof(input)/sizeof(input[0])', assigned value is 6
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-932-s2.c:83:21: note: Condition 'input_count==0' is always false
+    if (input_count == 0 || input_count > SIZE_MAX / sizeof(*words)) {
+                    ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-570-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-570-s3.c:40:28: style: Condition 'source_length+1U>capacity' is always false [knownConditionTrueFalse]
+    if (source_length + 1U > capacity) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-570-s3.c:34:14: note: capacity is assigned 'source_length+1U' here.
+    capacity = source_length + 1U;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-570-s3.c:36:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-570-s3.c:40:28: note: Condition 'source_length+1U>capacity' is always false
+    if (source_length + 1U > capacity) {
+                           ^

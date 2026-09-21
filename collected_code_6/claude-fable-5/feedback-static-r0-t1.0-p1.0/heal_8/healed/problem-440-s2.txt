@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 64
+#define MAX_SENTENCE_LEN 4096
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t position;
+} AdverbInfo;
+
+size_t find_adverbs(const char *sentence, AdverbInfo *results, size_t max_results)
+{
+    size_t count = 0;
+    size_t i = 0;
+    size_t len;
+
+    if (sentence == NULL || results == NULL || max_results == 0) {
+        return 0;
+    }
+
+    len = strnlen(sentence, MAX_SENTENCE_LEN);
+
+    while (i < len && count < max_results) {
+        while (i < len && !isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        if (i < len) {
+            size_t start = i;
+            size_t word_len;
+
+            while (i < len && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+
+            word_len = i - start;
+
+            if (word_len >= 3 && word_len <= sizeof(results[count].word) - 1) {
+                if (tolower((unsigned char)sentence[i - 2]) == 'l' &&
+                    tolower((unsigned char)sentence[i - 1]) == 'y') {
+                    memcpy(results[count].word, &sentence[start], word_len);
+                    results[count].word[word_len] = '\0';
+                    results[count].position = start;
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *sentence = "She quickly and quietly walked home, then suddenly stopped.";
+    AdverbInfo *results;
+    size_t count;
+    const size_t max_results = 32;
+
+    results = calloc(max_results, sizeof(AdverbInfo));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    count = find_adverbs(sentence, results, max_results);
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (size_t i = 0; i < count; i++) {
+            printf("  \"%s\" at position %zu\n", results[i].word, results[i].position);
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warnings, which are largely false positives triggered by pattern matching rather than actual data-flow analysis:
+
+1. **CWE-119/CWE-120 (static buffer `word[MAX_WORD_LEN]`):** Flawfinder flags any fixed-size `char` array. The real question is whether writes to it are bounded — they are, since `word_len` is validated before any copy.
+
+2. **CWE-120 (`memcpy`):** The original had a redundant double check: `word_len < sizeof(results[count].word)` followed by `word_len <= sizeof(results[count].word) - 1`. These are mathematically identical conditions, so I collapsed them into a single guard (`word_len <= sizeof(...) - 1`), which guarantees room for `word_len` bytes plus the NUL terminator. The `memcpy` is therefore provably safe.
+
+Other defensive measures already present and preserved:
+
+- `strnlen` with `MAX_SENTENCE_LEN` cap prevents unbounded scanning of a non-terminated input.
+- All `ctype.h` calls cast to `unsigned char`, avoiding UB on platforms with signed `char` when passed negative values.
+- NULL and zero-size parameter validation at function entry.
+- `count < max_results` bounds the writes into the `results` array.
+- `calloc` return checked; memory freed before exit.
+
+The code is safe as written; the rewrite simply removes the redundant length check and the comments per your request.

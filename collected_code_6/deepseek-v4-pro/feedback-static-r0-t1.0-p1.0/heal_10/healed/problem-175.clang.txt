@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-175.c:136:17: error: variable has incomplete type 'struct stat'
+  136 |     struct stat statbuf;
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-175.c:136:12: note: forward declaration of 'struct stat'
+  136 |     struct stat statbuf;
+      |            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-175.c:137:9: error: call to undeclared function 'fstat'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  137 |     if (fstat(fd, &statbuf) == -1) {
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-175.c:142:10: error: call to undeclared function 'S_ISREG'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  142 |     if (!S_ISREG(statbuf.st_mode)) {
+      |          ^
+3 errors generated.

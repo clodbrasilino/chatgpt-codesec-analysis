@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+The code was already well-protected against the identified weakness (CWE-119/CWE-120). The statically-sized buffer is handled safely because:
+
+1. **Bounded write**: `snprintf` with `sizeof(buffer)` guarantees no write beyond the buffer's bounds, and always null-terminates the output.
+2. **Truncation detection**: The return value is checked both for encoding errors (`result < 0`) and truncation (`result >= sizeof(buffer)`), so silent data loss is caught and reported.
+3. **Initialization**: `memset` zeroes the buffer before use, eliminating any risk of reading uninitialized memory.
+4. **No unbounded functions**: There is no use of `strcpy`, `sprintf`, `gets`, or similar functions that ignore buffer size.
+
+No functional changes were required — the Flawfinder hit on the statically-sized array is a low-risk informational finding, and the existing bounds checking fully mitigates it.

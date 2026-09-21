@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_valid_parentheses(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t capacity = 16;
+    char *stack = malloc(capacity * sizeof(char));
+    if (stack == NULL) {
+        return false;
+    }
+
+    size_t top = 0;
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        char c = str[i];
+        if (c == '(' || c == '{' || c == '[') {
+            if (top == capacity) {
+                size_t new_capacity = capacity * 2;
+                if (new_capacity < capacity) {
+                    free(stack);
+                    return false;
+                }
+                char *new_stack = realloc(stack, new_capacity * sizeof(char));
+                if (new_stack == NULL) {
+                    free(stack);
+                    return false;
+                }
+                stack = new_stack;
+                capacity = new_capacity;
+            }
+            stack[top++] = c;
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (top == 0) {
+                free(stack);
+                return false;
+            }
+            char popped = stack[--top];
+            if ((c == ')' && popped != '(') ||
+                (c == '}' && popped != '{') ||
+                (c == ']' && popped != '[')) {
+                free(stack);
+                return false;
+            }
+        }
+    }
+
+    bool is_valid = (top == 0);
+    free(stack);
+    return is_valid;
+}
+
+int main(void) {
+    printf("%d\n", is_valid_parentheses("()[]{}"));
+    printf("%d\n", is_valid_parentheses("([{}])"));
+    printf("%d\n", is_valid_parentheses("(]"));
+    printf("%d\n", is_valid_parentheses("([)]"));
+    printf("%d\n", is_valid_parentheses(""));
+    printf("%d\n", is_valid_parentheses(NULL));
+    return 0;
+}

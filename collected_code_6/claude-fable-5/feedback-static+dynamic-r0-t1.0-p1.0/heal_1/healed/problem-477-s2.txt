@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(buffer, '\n') == NULL && !feof(stdin)) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+            ;
+        }
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code was already largely safe with respect to the Flawfinder warning: `fgets` is bounded by `sizeof(buffer)`, guaranteeing null-termination and no overflow, and `tolower` is correctly called with an `unsigned char` cast to avoid undefined behavior on negative `char` values.
+
+The rewritten version hardens it further:
+
+- **Named constant** (`BUFFER_SIZE`) instead of a magic number, making the size restriction explicit and maintainable, addressing the CWE-119/CWE-120 concern about improperly restricted static arrays.
+- **Input truncation handling**: if the user enters more than 255 characters, the excess remains in `stdin`. The added drain loop detects a missing newline and flushes the leftover input, preventing stale data from affecting subsequent reads (a common source of logic bugs when static buffers truncate input).
+- **`EXIT_SUCCESS`/`EXIT_FAILURE`** from `<stdlib.h>` for portable, self-documenting return codes.
+- The `strcspn` idiom safely strips the trailing newline even when no newline is present (it indexes the terminating null in that case), so no change was needed there.

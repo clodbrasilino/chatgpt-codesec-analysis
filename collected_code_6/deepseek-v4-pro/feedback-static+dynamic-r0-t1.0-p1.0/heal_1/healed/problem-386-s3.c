@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+
+int minSwapsForBalance(char *str) {
+    int balance = 0;
+    int swaps = 0;
+    int start = 0;
+    size_t len = strnlen(str, 4096);
+    
+    if (len == 0 || len == 4096) {
+        return 0;
+    }
+    
+    int end = (int)len - 1;
+
+    while (start < end) {
+        if (str[start] == '[') {
+            balance++;
+        } else {
+            balance--;
+        }
+
+        if (balance < 0) {
+            while (start < end && str[end] != '[') {
+                end--;
+            }
+            char temp = str[start];
+            str[start] = str[end];
+            str[end] = temp;
+            swaps++;
+            balance = 1;
+            end--;
+        }
+        start++;
+    }
+
+    return swaps;
+}
+
+int main(void) {
+    char test1[] = "]][[";
+    char test2[] = "[]][][";
+    char test3[] = "[[][]]";
+    char test4[] = "][";
+
+    printf("Minimum swaps for \"%s\": %d\n", test1, minSwapsForBalance(test1));
+    printf("Minimum swaps for \"%s\": %d\n", test2, minSwapsForBalance(test2));
+    printf("Minimum swaps for \"%s\": %d\n", test3, minSwapsForBalance(test3));
+    printf("Minimum swaps for \"%s\": %d\n", test4, minSwapsForBalance(test4));
+
+    return 0;
+}

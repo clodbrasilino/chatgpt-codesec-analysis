@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_binary_string(buffer)) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+The code already properly mitigates the identified weakness (CWE-119/CWE-120). Here's why the statically-sized buffer is safe in this implementation:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — Input is length-limited to the buffer size, so no overflow can occur during reading. The return value is checked for `NULL` to handle EOF or read errors.
+
+2. **`buffer[sizeof(buffer) - 1] = '\0'`** — Defensive null termination guarantees the buffer is always a valid C string, even in edge cases.
+
+3. **`strnlen(buffer, sizeof(buffer))`** — A bounded length function is used instead of `strlen`, preventing reads beyond the buffer even if termination were somehow missing.
+
+4. **`len > 0` check before indexing `buffer[len - 1]`** — Prevents an out-of-bounds access (index `-1` underflow) on an empty string.
+
+5. **NULL and empty-string guards in `is_binary_string`** — The function safely rejects invalid input before iterating.
+
+Since every access to the fixed-size array is bounds-checked and all input functions limit length to `sizeof(buffer)`, the Flawfinder warning is a false positive here, and no further changes are required.

@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+#define DIGITS_BUF_SIZE 32
+
+static long long next_bigger(long long n)
+{
+    char digits[DIGITS_BUF_SIZE];
+    int len;
+    int i;
+    int j;
+    long long result;
+    char tmp;
+    char *endptr;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    memset(digits, 0, sizeof(digits));
+
+    len = snprintf(digits, sizeof(digits), "%lld", n);
+    if (len < 0 || (size_t)len >= sizeof(digits)) {
+        return -1;
+    }
+
+    i = len - 2;
+    while (i >= 0 && digits[i] >= digits[i + 1]) {
+        i--;
+    }
+    if (i < 0) {
+        return -1;
+    }
+
+    j = len - 1;
+    while (j > i && digits[j] <= digits[i]) {
+        j--;
+    }
+    if (j <= i || j >= len) {
+        return -1;
+    }
+
+    tmp = digits[i];
+    digits[i] = digits[j];
+    digits[j] = tmp;
+
+    for (int a = i + 1, b = len - 1; a < b && a >= 0 && b < len; a++, b--) {
+        tmp = digits[a];
+        digits[a] = digits[b];
+        digits[b] = tmp;
+    }
+
+    if ((size_t)len < sizeof(digits)) {
+        digits[len] = '\0';
+    } else {
+        return -1;
+    }
+
+    errno = 0;
+    result = strtoll(digits, &endptr, 10);
+    if (errno == ERANGE || endptr == digits || *endptr != '\0') {
+        return -1;
+    }
+
+    if (result <= n) {
+        return -1;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long inputs[] = {12LL, 513LL, 2017LL, 414LL, 144LL, 9LL, 111LL, 531LL};
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+    size_t k;
+
+    for (k = 0; k < count; k++) {
+        long long res = next_bigger(inputs[k]);
+        if (res < 0) {
+            if (printf("next_bigger(%lld) = no bigger number exists\n", inputs[k]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("next_bigger(%lld) = %lld\n", inputs[k], res) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes made:**
+
+1. **Buffer overflow protection (CWE-119/CWE-120):** The original code was already largely safe against the Flawfinder-reported weakness — the `digits` buffer is fixed at 32 bytes, which comfortably holds any `long long` (max 20 characters including sign, plus null terminator). The `snprintf` return value is properly checked against the buffer size, guaranteeing no truncation goes unnoticed.
+
+2. **Added explicit index bounds checks:** The rewrite adds `j >= len` validation after the second scan and defensive bounds guards (`a >= 0 && b < len`) in the reversal loop, ensuring all array accesses provably stay within `digits[0..len-1]` even if logic assumptions were violated.
+
+3. **Added semantic correctness check:** A `result <= n` guard was added after `strtoll`, ensuring the function's contract (returning a strictly *bigger* number) is enforced defensively.
+
+4. **Retained good existing practices:** `memset` initialization, `errno`-based `strtoll` validation, `endptr` verification, and checked `printf` return values in `main` were all preserved, as they represent sound defensive C programming.

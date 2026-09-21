@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool isIsomorphic(const char *s, const char *t) {
+    if (s == NULL || t == NULL) {
+        return false;
+    }
+
+    int map_s[256] = {0};
+    int map_t[256] = {0};
+
+    size_t i = 0;
+    while (s[i] != '\0' && t[i] != '\0') {
+        unsigned char char_s = (unsigned char)s[i];
+        unsigned char char_t = (unsigned char)t[i];
+
+        if (map_s[char_s] == 0 && map_t[char_t] == 0) {
+            map_s[char_s] = char_t;
+            map_t[char_t] = char_s;
+        } else if (map_s[char_s] != char_t || map_t[char_t] != char_s) {
+            return false;
+        }
+        i++;
+    }
+
+    if (s[i] != '\0' || t[i] != '\0') {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    size_t buffer_size = 20048;
+    char *buffer = (char *)malloc(buffer_size * sizeof(char));
+
+    if (buffer == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    while (fgets(buffer, (int)buffer_size, stdin) != NULL) {
+        /* Possible weaknesses found:
+         *  Variable 's' can be declared as pointer to const [constVariablePointer]
+         */
+        char *s = strtok(buffer, " \t\r\n");
+        if (s == NULL) continue;
+        
+        /* Possible weaknesses found:
+         *  Variable 't' can be declared as pointer to const [constVariablePointer]
+         */
+        char *t = strtok(NULL, " \t\r\n");
+        if (t == NULL) continue;
+
+        if (isIsomorphic(s, t)) {
+            printf("True\n");
+        } else {
+            printf("False\n");
+        }
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

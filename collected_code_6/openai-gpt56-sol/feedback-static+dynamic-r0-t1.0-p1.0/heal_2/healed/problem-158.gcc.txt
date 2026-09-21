@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c: In function 'read_int64':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:23:5: error: 'errno' undeclared (first use in this function)
+   23 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:5:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    4 | #include <stdlib.h>
+  +++ |+#include <errno.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:23:5: note: each undeclared identifier is reported only once for each function it appears in
+   23 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:26:18: error: 'ERANGE' undeclared (first use in this function)
+   26 |     if (errno == ERANGE || parsed < INT64_MIN || parsed > INT64_MAX ||
+      |                  ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c: In function 'read_size':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:53:5: error: 'errno' undeclared (first use in this function)
+   53 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:53:5: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-158.c:56:18: error: 'ERANGE' undeclared (first use in this function)
+   56 |     if (errno == ERANGE || end == buffer || parsed == 0 ||
+      |                  ^~~~~~

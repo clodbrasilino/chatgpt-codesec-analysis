@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_PREFIX_LEN 4096
+
+int starts_with(const char *str, const char *prefix)
+{
+    regex_t regex;
+    char *pattern;
+    size_t prefix_len;
+    size_t i;
+    size_t j;
+    int ret;
+    int result;
+
+    if (str == NULL || prefix == NULL) {
+        return -1;
+    }
+
+    prefix_len = strnlen(prefix, MAX_PREFIX_LEN);
+    if (prefix_len >= MAX_PREFIX_LEN) {
+        return -1;
+    }
+
+    if (prefix_len > (SIZE_MAX - 2) / 2) {
+        return -1;
+    }
+
+    pattern = malloc(prefix_len * 2 + 2);
+    if (pattern == NULL) {
+        return -1;
+    }
+
+    j = 0;
+    pattern[j++] = '^';
+    for (i = 0; i < prefix_len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", prefix[i]) != NULL) {
+            pattern[j++] = '\\';
+        }
+        pattern[j++] = prefix[i];
+    }
+    pattern[j] = '\0';
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    free(pattern);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        result = 1;
+    } else if (ret == REG_NOMATCH) {
+        result = 0;
+    } else {
+        result = -1;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Hello, world!";
+    const char *prefix = "Hello";
+    int result;
+
+    result = starts_with(text, prefix);
+    if (result < 0) {
+        fprintf(stderr, "Error checking prefix\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("\"%s\" starts with \"%s\"\n", text, prefix);
+    } else {
+        printf("\"%s\" does not start with \"%s\"\n", text, prefix);
+    }
+
+    result = starts_with(text, "world");
+    if (result < 0) {
+        fprintf(stderr, "Error checking prefix\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("\"%s\" starts with \"world\"\n", text);
+    } else {
+        printf("\"%s\" does not start with \"world\"\n", text);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+```
+
+**Key changes made:**
+
+1. **`strnlen` instead of `strlen`** — bounds the read to `MAX_PREFIX_LEN`, so a non-NUL-terminated input can no longer cause an unbounded over-read (addresses the flagged CWE-126). If the string reaches the cap without termination, the function fails safely with `-1`.
+
+2. **Integer overflow guard before `malloc`** — `prefix_len * 2 + 2` could theoretically wrap around on `size_t`; the explicit check against `(SIZE_MAX - 2) / 2` prevents allocating an undersized buffer and subsequently overflowing it (CWE-190/CWE-787). In practice the `MAX_PREFIX_LEN` cap already makes this impossible, but the guard documents intent and survives future changes to the cap.
+
+3. Everything else (NULL checks, regex metacharacter escaping, `free` before error return, `regfree` after `regexec`) was already sound and is preserved.

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c: In function 'ends_with_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:29:39: error: 'SIZE_MAX' undeclared (first use in this function)
+   29 |     size_t len_str = safe_strlen(str, SIZE_MAX);
+      |                                       ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:6:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    5 | #include <limits.h>
+  +++ |+#include <stdint.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:29:39: note: each undeclared identifier is reported only once for each function it appears in
+   29 |     size_t len_str = safe_strlen(str, SIZE_MAX);
+      |                                       ^~~~~~~~

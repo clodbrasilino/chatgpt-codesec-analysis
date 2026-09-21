@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-774.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-774.c:26:52: style: Condition 'email[len]!='\n'' is always true [knownConditionTrueFalse]
+        if (len >= sizeof(email) - 1 && email[len] != '\n') {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-774.c:25:22: note: Assignment 'email[len]='\0'', assigned value is 0
+        email[len] = '\0';
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-774.c:26:52: note: Condition 'email[len]!='\n'' is always true
+        if (len >= sizeof(email) - 1 && email[len] != '\n') {
+                                                   ^

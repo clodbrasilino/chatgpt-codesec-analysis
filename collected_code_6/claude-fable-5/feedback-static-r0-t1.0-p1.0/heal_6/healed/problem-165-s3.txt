@@ -1,0 +1,73 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on the statically-sized `char buffer[MAX_INPUT_SIZE]` is a low-risk, informational finding. The original code already mitigates the concern correctly, so the rewrite preserves those defenses:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive redundancy; `fgets` already null-terminates, but this makes the invariant explicit.
+3. **Bounded string operations** — `strnlen(str, max_len)` instead of `strlen` ensures the length computation never reads past the buffer, even if a non-terminated string were passed.
+4. **NULL check** — `count_matching_positions` guards against a NULL pointer before dereferencing.
+5. **Safe newline stripping** — `strcspn` returns an index within bounds even when no newline is present, so the assignment cannot write out of bounds.
+6. **Initialization** — `memset` zeroes the buffer, eliminating any use of uninitialized memory.
+
+No functional changes were required; the code as written already addresses the flagged weakness through bounds-checked I/O and length-limited string functions.

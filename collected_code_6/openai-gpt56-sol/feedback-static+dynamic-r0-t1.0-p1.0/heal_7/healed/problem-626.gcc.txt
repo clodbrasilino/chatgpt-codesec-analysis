@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-626.c: In function 'largest_inscribed_triangle':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-626.c:16:23: error: 'DBL_MAX' undeclared (first use in this function)
+   16 |     if (radius > sqrt(DBL_MAX)) {
+      |                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-626.c:7:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    6 | #include <stdlib.h>
+  +++ |+#include <float.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-626.c:16:23: note: each undeclared identifier is reported only once for each function it appears in
+   16 |     if (radius > sqrt(DBL_MAX)) {
+      |                       ^~~~~~~

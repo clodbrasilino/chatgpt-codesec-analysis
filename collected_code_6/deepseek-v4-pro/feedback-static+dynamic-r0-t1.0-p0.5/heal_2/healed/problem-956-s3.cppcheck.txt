@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:13:17: warning: Either the condition 'input_len>1000000' is redundant or the array 'input[22]' is accessed at index 1000000, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (input[input_len] != '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:15:23: note: Assuming that condition 'input_len>1000000' is not redundant
+        if (input_len > 1000000) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:13:17: note: Array index out of bounds
+    while (input[input_len] != '\0') {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:61:21: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+            if (len > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:34:31: note: Assuming that condition 'i>start' is not redundant
+        if (is_uppercase && i > start) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:50:25: note: Assignment 'len=i-start', assigned value is greater than 0
+            int len = i - start;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:52:17: note: Assuming condition is false
+            if (!segment) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:61:21: note: Condition 'len>0' is always true
+            if (len > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:98:17: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:71:15: note: Assuming that condition 'start<input_len' is not redundant
+    if (start < input_len) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:87:29: note: Assignment 'len=input_len-start', assigned value is greater than 0
+        int len = input_len - start;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:89:13: note: Assuming condition is false
+        if (!segment) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:98:17: note: Condition 'len>0' is always true
+        if (len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-956-s3.c:84:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = new_capacity;
+                     ^

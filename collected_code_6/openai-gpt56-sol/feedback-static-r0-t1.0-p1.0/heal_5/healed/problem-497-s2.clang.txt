@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:24:24: error: use of undeclared identifier 'DBL_MAX'
+   24 |         (radius > sqrt(DBL_MAX / pi) ||
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:25:34: error: use of undeclared identifier 'DBL_MAX'
+   25 |          radius + slant_height > DBL_MAX / (pi * radius))) {
+      |                                  ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:57:14: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   57 |     length = strlen(buffer);
+      |              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:57:14: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+3 errors generated.

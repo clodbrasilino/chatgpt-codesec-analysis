@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+#include <limits.h>
+
+char **split_string(const char *str, size_t str_len, const char *pattern, int *count) {
+    regex_t regex;
+    regmatch_t match;
+    char **result = NULL;
+    char **temp = NULL;
+    size_t cursor = 0;
+    size_t capacity = 10;
+    size_t size = 0;
+    size_t start = 0;
+    size_t end;
+    size_t len;
+
+    if (str == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return NULL;
+    }
+
+    result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (cursor < str_len) {
+        if (regexec(&regex, str + cursor, 1, &match, 0) == 0) {
+            end = start + (size_t)match.rm_so;
+            
+            if (end > start) {
+                if (size >= capacity) {
+                    if (capacity > SIZE_MAX / 2) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    capacity *= 2;
+                    temp = realloc(result, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    result = temp;
+                }
+
+                len = end - start;
+                if (len <= str_len - start) {
+                    result[size] = malloc(len + 1);
+                    if (result[size] == NULL) {
+                        for (size_t i = 0; i < size; i++) {
+                            free(result[i]);
+                        }
+                        free(result);
+                        regfree(&regex);
+                        return NULL;
+                    }
+
+                    memcpy(result[size], str + start, len);
+                    result[size][len] = '\0';
+                    size++;
+                }
+            }
+
+            start = start + (size_t)match.rm_eo;
+            cursor = start;
+        } else {
+            break;
+        }
+    }
+
+    if (cursor < str_len) {
+        len = str_len - cursor;
+        
+        if (size >= capacity) {
+            if (capacity == SIZE_MAX) {
+                for (size_t i = 0; i < size; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            capacity++;
+            temp = realloc(result, capacity * sizeof(char *));
+            if (temp == NULL) {
+                for (size_t i = 0; i < size; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+            result = temp;
+        }
+
+        result[size] = malloc(len + 1);
+        if (result[size] == NULL) {
+            for (size_t i = 0; i < size; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (len > 0) {
+            memcpy(result[size], str + cursor, len);
+        }
+        result[size][len] = '\0';
+        size++;
+    }
+
+    regfree(&regex);
+    
+    if (size > INT_MAX) {
+        for (size_t i = 0; i < size; i++) {
+            free(result[i]);
+        }
+        free(result);
+        return NULL;
+    }
+    
+    *count = (int)size;
+    return result;
+}
+
+void free_split_result(char **result, int count) {
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            free(result[i]);
+        }
+        free(result);
+    }
+}
+
+int main(void) {
+    const char *input = "apple,banana;orange:grape|mango";
+    const char *pattern = "[,;:|]";
+    int count = 0;
+    size_t input_len = strlen(input);
+    char **tokens = split_string(input, input_len, pattern, &count);
+
+    if (tokens != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", tokens[i]);
+        }
+        free_split_result(tokens, count);
+    }
+
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *camel_to_snake(const char *camel, size_t len) {
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    if (len > (SIZE_MAX - 1) / 2) {
+        return NULL;
+    }
+
+    size_t max_len = len * 2 + 1;
+    char *snake = malloc(max_len);
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)camel[i])) {
+            if (i > 0) {
+                snake[j++] = '_';
+            }
+            snake[j++] = tolower((unsigned char)camel[i]);
+        } else {
+            snake[j++] = camel[i];
+        }
+    }
+    snake[j] = '\0';
+
+    char *shrunk = realloc(snake, j + 1);
+    if (shrunk != NULL) {
+        return shrunk;
+    }
+
+    return snake;
+}
+
+int main(void) {
+    const char *inputs[] = {"camelCaseString", "AnotherExample", "single", "Mixed123Case", "A"};
+    const size_t inputs_len[] = {
+        sizeof("camelCaseString") - 1,
+        sizeof("AnotherExample") - 1,
+        sizeof("single") - 1,
+        sizeof("Mixed123Case") - 1,
+        sizeof("A") - 1
+    };
+    size_t count = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        char *result = camel_to_snake(inputs[i], inputs_len[i]);
+        if (result != NULL) {
+            printf("%s -> %s\n", inputs[i], result);
+            free(result);
+        } else {
+            fprintf(stderr, "Failed to convert %s\n", inputs[i]);
+        }
+    }
+
+    return 0;
+}

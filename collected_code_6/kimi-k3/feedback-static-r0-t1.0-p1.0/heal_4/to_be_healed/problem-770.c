@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+unsigned long long sum_fourth_power_odd(int n)
+{
+    unsigned long long sum = 0ULL;
+    int i;
+    
+    if (n <= 0) {
+        return 0ULL;
+    }
+    
+    for (i = 0; i < n; i++) {
+        unsigned long long odd = (unsigned long long)(2 * i + 1);
+        unsigned long long fourth = odd * odd * odd * odd;
+        
+        if (ULLONG_MAX - sum < fourth) {
+            return 0ULL;
+        }
+        sum += fourth;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    char *endptr;
+    long val;
+    int n;
+    unsigned long long result;
+    size_t len;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(buffer);
+    
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n' && !feof(stdin)) {
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 0 || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    
+    result = sum_fourth_power_odd(n);
+    
+    if (result == 0ULL && n > 0) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

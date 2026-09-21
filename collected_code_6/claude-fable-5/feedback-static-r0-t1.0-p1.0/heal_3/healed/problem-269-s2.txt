@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+    int extra;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 255) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    do {
+        extra = getchar();
+    } while (extra != '\n' && extra != EOF);
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **Redundant `continue` (cppcheck `redundantContinue`)** — The original `while` loop used an empty body containing only `continue`, which is dead weight since it's the last statement in the loop. I replaced it with a `do { } while` construct that reads and tests cleanly without any placeholder statement.
+
+2. **Flawfinder `getchar` warnings (CWE-120, CWE-20)** — These are risk-level-1 informational hits. The original code already mitigated them correctly:
+   - The result of `getchar()` is stored in an `int` (not `char`), so `EOF` is reliably detectable.
+   - `EOF` is explicitly checked before use.
+   - The value is range-validated (`0`–`255`) before being cast to `char`.
+   - No buffer is written to in the drain loop, so there is no buffer-overflow surface. These defenses are preserved in the rewrite.
+
+3. **Other notes** — The `(unsigned char)` cast in `get_ascii_value` correctly avoids implementation-defined behavior for negative `char` values, and `isprint()` receives an `int` already validated to be in `unsigned char` range, satisfying its contract (passing out-of-range values to `isprint` is undefined behavior). Both were sound and retained.

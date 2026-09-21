@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **concatenate_adjacent(const char *const *tuples, size_t count, size_t *out_count) {
+    if (!tuples || !out_count) {
+        if (out_count) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    if (count < 2) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t new_count = count - 1;
+    char **result = malloc(new_count * sizeof(char *));
+    if (!result) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < new_count; i++) {
+        if (!tuples[i] || !tuples[i + 1]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *out_count = 0;
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len1 = strlen(tuples[i]);
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len2 = strlen(tuples[i + 1]);
+        
+        result[i] = malloc(len1 + len2 + 1);
+        if (!result[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *out_count = 0;
+            return NULL;
+        }
+        
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result[i], tuples[i], len1);
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result[i] + len1, tuples[i + 1], len2 + 1);
+    }
+
+    *out_count = new_count;
+    return result;
+}
+
+int main(void) {
+    const char *const tuples[] = {"alpha", "beta", "gamma", "delta", "epsilon"};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t out_count = 0;
+
+    char **result = concatenate_adjacent(tuples, count, &out_count);
+
+    if (result) {
+        for (size_t i = 0; i < out_count; i++) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

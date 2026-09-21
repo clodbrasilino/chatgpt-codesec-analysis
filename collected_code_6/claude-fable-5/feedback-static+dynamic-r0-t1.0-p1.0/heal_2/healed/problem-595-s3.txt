@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+long min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count01;
+    long count10;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1L;
+    }
+
+    len1 = strnlen(s1, MAX_LEN);
+    len2 = strnlen(s2, MAX_LEN);
+
+    if (len1 != len2 || len1 == 0U) {
+        return -1L;
+    }
+
+    count01 = 0L;
+    count10 = 0L;
+
+    for (i = 0U; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1L;
+        }
+        if (s1[i] == '0' && s2[i] == '1') {
+            count01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            count10++;
+        }
+    }
+
+    if (count01 != count10) {
+        return -1L;
+    }
+
+    return count01;
+}
+
+static int read_line(char *buf, size_t size)
+{
+    size_t len;
+
+    if (buf == NULL || size == 0U) {
+        return -1;
+    }
+
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    len = strnlen(buf, size);
+    while (len > 0U && (buf[len - 1U] == '\n' || buf[len - 1U] == '\r')) {
+        buf[len - 1U] = '\0';
+        len--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char a[MAX_LEN + 2];
+    char b[MAX_LEN + 2];
+    long result;
+
+    if (read_line(a, sizeof(a)) != 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (read_line(b, sizeof(b)) != 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    result = min_swaps(a, b);
+
+    if (result < 0L) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%ld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Input via stdin instead of hardcoded values** — the failing test cases (`expected 1, got <no output>`, `expected 'Not Possible', got <no output>`) indicate the test harness feeds input through stdin, but the original program ignored it and always ran the same hardcoded pair. Reading both strings with a bounded `read_line` helper fixes all three failures.
+
+2. **Output format** — test case 0 expected `1`, not `Minimum swaps required: 1`, so the extra prefix text was removed.
+
+3. **CWE-126 mitigation (Flawfinder `strlen` warnings)** — replaced `strlen` with `strnlen` bounded by `MAX_LEN`, and all input is acquired via `fgets`, which guarantees NUL-termination within the buffer, eliminating the possibility of an over-read on a non-terminated string.
+
+4. **Robust input handling** — newline/carriage-return stripping, NULL/size checks in `read_line`, graceful `Not Possible` output when input is missing or malformed, and all `printf` return values remain checked as in the original.

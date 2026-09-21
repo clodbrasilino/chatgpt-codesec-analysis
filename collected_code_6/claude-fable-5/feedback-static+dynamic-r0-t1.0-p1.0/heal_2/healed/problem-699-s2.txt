@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strnlen(s1, MAX_LEN);
+    len2 = strnlen(s2, MAX_LEN);
+
+    if (len1 >= MAX_LEN || len2 >= MAX_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+static void strip_newline(char *s)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = strnlen(s, MAX_LEN);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+int main(void)
+{
+    char str1[MAX_LEN];
+    char str2[MAX_LEN];
+    int result;
+
+    if (fgets(str1, sizeof(str1), stdin) == NULL) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (fgets(str2, sizeof(str2), stdin) == NULL) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    strip_newline(str1);
+    strip_newline(str2);
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code had two core defects that explain all three failed test cases:
+
+1. **Hardcoded input** — `str1` and `str2` were fixed as `"1101"` and `"0011"`, so the program ignored any test input entirely. Test cases 0 and 2 (expecting `1` and `3`) could never pass because the program always computed the same result regardless of input. The fix reads both strings from `stdin` using `fgets` with bounded buffers, then strips trailing newline/carriage-return characters.
+
+2. **Output format mismatch** — the program printed `"Minimum swaps required: %d\n"` while the test harness expected the bare number (e.g., `3`). This explains the `<no output>` / expected-value mismatch even for the case that would have matched logically. The fix prints just the integer followed by a newline, and keeps the exact string `Not Possible` for the failure path.
+
+The `min_swaps` function itself was left intact — its logic is sound: it validates for `NULL`, over-length inputs, unequal lengths, and non-binary characters, and correctly determines that a swap-based transformation is only possible when the `1→0` and `0→1` mismatch counts are equal (each swap resolves one of each), returning that count as the minimum. Note that with the original hardcoded inputs (`diff10 = 2`, `diff01 = 1`), the correct answer is indeed `Not Possible`, consistent with test case 1's expectation. All `printf` return values remain checked, and `fgets` failures degrade gracefully.

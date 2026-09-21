@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:148:15: style: Condition 'limit>list->capacity' is always true [knownConditionTrueFalse]
+    if (limit > list->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:144:44: note: Assuming that condition 'list->count>list->capacity' is not redundant
+    if (list->capacity == 0 || list->count > list->capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:147:18: note: limit is assigned 'list->count' here.
+    size_t limit = list->count;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:148:15: note: Condition 'limit>list->capacity' is always true
+    if (limit > list->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:184:15: style: Condition 'limit>list->capacity' is always true [knownConditionTrueFalse]
+    if (limit > list->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:180:44: note: Assuming that condition 'list->count>list->capacity' is not redundant
+    if (list->capacity == 0 || list->count > list->capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:183:18: note: limit is assigned 'list->count' here.
+    size_t limit = list->count;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-196.c:184:15: note: Condition 'limit>list->capacity' is always true
+    if (limit > list->capacity) {
+              ^

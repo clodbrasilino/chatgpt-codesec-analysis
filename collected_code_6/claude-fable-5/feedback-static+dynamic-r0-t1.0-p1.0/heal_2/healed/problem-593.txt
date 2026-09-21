@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_IP_LEN 64U
+
+char *remove_leading_zeroes(const char *ip)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (ip == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(ip, MAX_IP_LEN);
+    if (len >= MAX_IP_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i <= len) {
+        size_t start;
+        size_t end;
+        size_t k;
+
+        start = i;
+        while ((i < len) && (ip[i] != '.')) {
+            i++;
+        }
+        end = i;
+
+        k = start;
+        while ((end > start) && (k < end - 1U) && (ip[k] == '0')) {
+            k++;
+        }
+        if (start == end) {
+            k = start;
+        }
+
+        while (k < end) {
+            result[j] = ip[k];
+            j++;
+            k++;
+        }
+
+        if (i < len) {
+            result[j] = '.';
+            j++;
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "192.168.001.010",
+        "010.000.000.001",
+        "255.255.255.255",
+        "001.002.003.004",
+        "0.0.0.0"
+    };
+    size_t count;
+    size_t idx;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (idx = 0; idx < count; idx++) {
+        char *cleaned;
+
+        cleaned = remove_leading_zeroes(tests[idx]);
+        if (cleaned == NULL) {
+            (void)fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[idx], cleaned) < 0) {
+            free(cleaned);
+            return EXIT_FAILURE;
+        }
+        free(cleaned);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-126 (over-read on non-terminated strings):** Replaced `strlen` with `strnlen` bounded by `MAX_IP_LEN`. Since valid IPv4 dotted-quad strings can never exceed 15 characters, a 64-byte bound is generous while guaranteeing the scan never reads past a fixed limit even if the input lacks a `\0` terminator. If the bound is hit (`len >= MAX_IP_LEN`), the input is rejected as untrusted/malformed rather than processed.
+
+2. **Defensive reordering of the underflow-prone check:** In the zero-skipping loop, `(end > start)` is now evaluated *before* `(k < end - 1U)`. In the original, if `end` were `0`, the expression `end - 1U` would wrap to `SIZE_MAX` before the guard was consulted. Short-circuit evaluation now prevents the unsigned wraparound comparison from ever being reached when the segment is empty.
+
+3. Everything else (allocation sizing, NULL checks, error handling in `main`, freeing on all paths) was already correct and is preserved: `malloc(len + 1U)` cannot overflow given the enforced length bound, and `result[j]` can never exceed `len` since the output is never longer than the input.

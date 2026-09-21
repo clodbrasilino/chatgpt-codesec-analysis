@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define INITIAL_SIZE 1024
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[i] != '\0') {
+        if (isspace((unsigned char)str[i])) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        i++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = INITIAL_SIZE;
+    size_t length = 0;
+    char *buffer;
+    int ch;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            char *new_buffer;
+            if (capacity > (size_t)-1 / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            new_buffer = realloc(buffer, capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *buffer;
+    size_t result;
+
+    if (printf("Enter a sentence: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    buffer = read_line(stdin);
+    if (buffer == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = longest_word_length(buffer);
+    free(buffer);
+
+    if (printf("Length of the longest word: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder-flagged weakness (CWE-120 buffer overflow, CWE-20 improper input validation on the `fgetc` loop). The key protections, which I have preserved and slightly strengthened, are:
+
+1. **Bounds checking in the read loop** — the condition `length + 1 >= capacity` guarantees room for both the next character and the terminating NUL before any write occurs, eliminating the classic `fgetc`-in-a-loop overflow.
+
+2. **Integer overflow guard on growth** — `capacity > (size_t)-1 / 2` prevents `capacity *= 2` from wrapping around to a small value, which would otherwise cause an undersized allocation followed by out-of-bounds writes.
+
+3. **Safe `realloc` pattern** — the result is assigned to a temporary pointer first, so the original buffer is freed (not leaked) on allocation failure.
+
+4. **Cast to `unsigned char` for `isspace`** — avoids undefined behavior when `char` is signed and holds a negative value.
+
+5. **EOF vs. empty-line distinction** — `length == 0 && ch == EOF` correctly returns NULL only on true end-of-input, while an empty line still yields a valid empty string.
+
+The only addition I made was a defensive `NULL` check on the `stream` parameter in `read_line`, consistent with the existing null-check style in `longest_word_length`. All return values of I/O functions (`printf`, `fflush`) are checked, and every allocation path either succeeds or cleanly frees resources before returning an error.

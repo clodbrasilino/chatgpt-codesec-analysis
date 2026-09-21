@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk, informational finding. The original code already implements all the necessary mitigations, so the rewritten code preserves them:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed null-termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, which always null-terminates, but harmless and robust against future refactoring).
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+4. **NULL check**: `count_position_matches` guards against a `NULL` pointer before dereferencing.
+5. **Bounded loop**: The loop condition `i < len && i < 26` ensures indexing never exceeds the string length or the alphabet range, and the `(char)` casts avoid implementation-defined signed-char comparison surprises.
+6. **Return-value checking**: The `fgets` result is verified, handling EOF/error conditions gracefully.
+7. **Initialized memory**: `memset` zeroes the buffer before use, eliminating any uninitialized-read risk.
+
+No actual vulnerability exists; the finding is a false positive triggered by the mere presence of a fixed-size `char` array, and the code as written correctly enforces bounds at every access point.

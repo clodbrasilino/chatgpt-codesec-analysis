@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-406.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-406.c:36:11: error: implicit declaration of function 'strtoull'; did you mean 'strcoll'? [-Wimplicit-function-declaration]
+   36 |     num = strtoull(input, &endptr, 10);
+      |           ^~~~~~~~
+      |           strcoll

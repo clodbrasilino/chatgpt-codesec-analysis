@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:19:5: error: use of undeclared identifier 'ptrdiff_t'
+   19 |     ptrdiff_t capacity = 10;
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:20:22: error: use of undeclared identifier 'capacity'
+   20 |     results = malloc(capacity * sizeof(char *));
+      |                      ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:31:31: error: use of undeclared identifier 'capacity'
+   31 |         if (*count >= (size_t)capacity) {
+      |                               ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:32:13: error: use of undeclared identifier 'capacity'
+   32 |             capacity *= 2;
+      |             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:33:44: error: use of undeclared identifier 'capacity'
+   33 |             char **temp = realloc(results, capacity * sizeof(char *));
+      |                                            ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:45:9: error: use of undeclared identifier 'ptrdiff_t'
+   45 |         ptrdiff_t len = matches[1].rm_eo - matches[1].rm_so;
+      |         ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:46:13: error: use of undeclared identifier 'len'
+   46 |         if (len < 0) {
+      |             ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-725-s2.c:50:31: error: use of undeclared identifier 'len'
+   50 |         size_t ulen = (size_t)len;
+      |                               ^~~
+8 errors generated.

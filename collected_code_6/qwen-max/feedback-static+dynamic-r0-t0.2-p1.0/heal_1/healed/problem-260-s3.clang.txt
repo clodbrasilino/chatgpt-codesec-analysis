@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:35:5: error: use of undeclared identifier 'errno'
+   35 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:37:9: error: use of undeclared identifier 'errno'
+   37 |     if (errno != 0 || endptr == argv[1] || *endptr != '\0' || n <= 0 || n > LONG_MAX) {
+      |         ^~~~~
+2 errors generated.

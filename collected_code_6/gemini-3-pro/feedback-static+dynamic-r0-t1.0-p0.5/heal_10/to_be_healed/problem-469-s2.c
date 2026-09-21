@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int read_int(int *val) {
+    int c;
+    int sign = 1;
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && !isdigit(c) && c != '-');
+    if (c == EOF) return 0;
+    if (c == '-') {
+        sign = -1;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        c = getchar();
+        if (c == EOF || !isdigit(c)) return 0;
+    }
+    long long temp = c - '0';
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && isdigit(c)) {
+        temp = temp * 10 + (c - '0');
+        if (temp > 2147483647LL) {
+            temp = 2147483647LL;
+        }
+    }
+    *val = (int)(temp * sign);
+    return 1;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 10, got 5
+  *  test case 1 failed: expected 7, got 0
+  *  test case 2 failed: expected 2, got 0
+  */
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        long long max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += (long long)prices[i] - prices[i - 1];
+            }
+        }
+        return (int)max_profit;
+    }
+
+    long long* buy = (long long*)malloc((k + 1) * sizeof(long long));
+    long long* sell = (long long*)malloc((k + 1) * sizeof(long long));
+
+    if (!buy || !sell) {
+        if (buy) free(buy);
+        if (sell) free(sell);
+        return 0;
+    }
+
+    for (int i = 0; i <= k; i++) {
+        buy[i] = -(long long)prices[0];
+        sell[i] = 0;
+    }
+
+    for (int i = 1; i < pricesSize; i++) {
+        for (int j = 1; j <= k; j++) {
+            long long current_buy = sell[j - 1] - prices[i];
+            if (buy[j] < current_buy) {
+                buy[j] = current_buy;
+            }
+            long long current_sell = buy[j] + prices[i];
+            if (sell[j] < current_sell) {
+                sell[j] = current_sell;
+            }
+        }
+    }
+
+    int result = (int)sell[k];
+
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void) {
+    int k;
+    if (!read_int(&k)) {
+        return 0;
+    }
+
+    int capacity = 1000;
+    int pricesSize = 0;
+    int* prices = (int*)malloc(capacity * sizeof(int));
+    if (!prices) {
+        return 0;
+    }
+
+    int temp;
+    while (read_int(&temp)) {
+        prices[pricesSize++] = temp;
+        if (pricesSize >= capacity) {
+            capacity *= 2;
+            int *new_prices = (int*)realloc(prices, capacity * sizeof(int));
+            if (!new_prices) {
+                free(prices);
+                return 0;
+            }
+            prices = new_prices;
+        }
+    }
+
+    printf("%d\n", maxProfit(k, prices, pricesSize));
+
+    free(prices);
+    return 0;
+}

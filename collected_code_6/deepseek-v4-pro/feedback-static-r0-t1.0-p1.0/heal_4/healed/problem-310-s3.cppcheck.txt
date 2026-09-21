@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:83:27: style: Condition 'remaining>0' is always true [knownConditionTrueFalse]
+            if (remaining > 0 && remaining <= copy_len - (size_t)(p - copy)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:82:82: note: Assignment 'remaining=safe_strlen(p+1,copy_len-(unsigned long)(p-copy))+1', assigned value is greater than 0
+            size_t remaining = safe_strlen(p + 1, copy_len - (size_t)(p - copy)) + 1;
+                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:83:27: note: Condition 'remaining>0' is always true
+            if (remaining > 0 && remaining <= copy_len - (size_t)(p - copy)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:131:38: style: Condition 'item_len+1<=item_len' is always false [knownConditionTrueFalse]
+                    if (item_len + 1 <= item_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:119:34: note: Assuming that condition 'item_len+1<=item_len' is not redundant
+                if (item_len + 1 <= item_len) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:125:46: note: Assuming condition is false
+                if (tuple.items[tuple.count] == NULL) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:131:38: note: Condition 'item_len+1<=item_len' is always false
+                    if (item_len + 1 <= item_len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:187:30: style: Condition 'item_len+1<=item_len' is always false [knownConditionTrueFalse]
+            if (item_len + 1 <= item_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:175:26: note: Assuming that condition 'item_len+1<=item_len' is not redundant
+        if (item_len + 1 <= item_len) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:181:38: note: Assuming condition is false
+        if (tuple.items[tuple.count] == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:187:30: note: Condition 'item_len+1<=item_len' is always false
+            if (item_len + 1 <= item_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-310-s3.c:172:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = new_capacity;
+                     ^

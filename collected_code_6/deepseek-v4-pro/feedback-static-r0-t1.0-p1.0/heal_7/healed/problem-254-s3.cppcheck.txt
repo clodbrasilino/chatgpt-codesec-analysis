@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-254-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-254-s3.c:52:42: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+                            if (copy_len > 0 && copy_len < MAX_WORD_LEN) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-254-s3.c:46:34: note: Assuming condition 'copy_len>0' is true
+                    if (copy_len > 0 && word_start + copy_len <= len) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-254-s3.c:52:42: note: Condition 'copy_len>0' is always true
+                            if (copy_len > 0 && copy_len < MAX_WORD_LEN) {
+                                         ^

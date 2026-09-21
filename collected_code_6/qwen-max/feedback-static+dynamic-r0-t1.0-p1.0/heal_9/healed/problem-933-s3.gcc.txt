@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-933-s3.c: In function 'camel_to_snake':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-933-s3.c:39:54: error: passing argument 5 of 'regexec' makes integer from pointer without a cast [-Wint-conversion]
+   39 |         size_t len = regexec(&reg, tmp, 1, pmatches, replacement, tmp_result, n * 2 + 1);
+      |                                                      ^~~~~~~~~~~
+      |                                                      |
+      |                                                      const char *
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-933-s3.c:4:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:219:73: note: expected 'int' but argument is of type 'const char *'
+  219 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                                                                         ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-933-s3.c:39:22: error: too many arguments to function 'regexec'; expected 5, have 7
+   39 |         size_t len = regexec(&reg, tmp, 1, pmatches, replacement, tmp_result, n * 2 + 1);
+      |                      ^~~~~~~                                      ~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:218:9: note: declared here
+  218 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |         ^~~~~~~

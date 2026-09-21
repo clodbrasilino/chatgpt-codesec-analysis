@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+static char *concat_strings(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    size_t total_len;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strnlen(a, MAX_STRING_LEN);
+    len_b = strnlen(b, MAX_STRING_LEN);
+
+    if (len_a >= MAX_STRING_LEN || len_b >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    if (len_a > SIZE_MAX - len_b - 1U) {
+        return NULL;
+    }
+
+    total_len = len_a + len_b + 1U;
+
+    result = malloc(total_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (len_a > 0U) {
+        if (len_a >= total_len) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result, a, len_a);
+    }
+
+    if (len_b > 0U) {
+        if (len_b >= total_len - len_a) {
+            free(result);
+            return NULL;
+        }
+        memcpy(result + len_a, b, len_b);
+    }
+
+    result[len_a + len_b] = '\0';
+
+    return result;
+}
+
+static int concat_tuples(const StringTuple *t1, const StringTuple *t2, StringTuple *out)
+{
+    if (t1 == NULL || t2 == NULL || out == NULL) {
+        return -1;
+    }
+
+    out->first = NULL;
+    out->second = NULL;
+
+    out->first = concat_strings(t1->first, t2->first);
+    if (out->first == NULL) {
+        return -1;
+    }
+
+    out->second = concat_strings(t1->second, t2->second);
+    if (out->second == NULL) {
+        free(out->first);
+        out->first = NULL;
+        return -1;
+    }
+
+    return 0;
+}
+
+static void free_tuple(StringTuple *t)
+{
+    if (t != NULL) {
+        free(t->first);
+        free(t->second);
+        t->first = NULL;
+        t->second = NULL;
+    }
+}
+
+int main(void)
+{
+    StringTuple t1;
+    StringTuple t2;
+    StringTuple result;
+
+    t1.first = "Hello, ";
+    t1.second = "Good ";
+    t2.first = "World!";
+    t2.second = "Morning!";
+
+    if (concat_tuples(&t1, &t2, &result) != 0) {
+        fprintf(stderr, "Error: tuple concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("(%s, %s)\n", result.first, result.second) < 0) {
+        free_tuple(&result);
+        return EXIT_FAILURE;
+    }
+
+    free_tuple(&result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already essentially safe — the Flawfinder warnings on `memcpy` (CWE-120) were largely false positives, since the code correctly:
+
+1. Validated inputs against `NULL`
+2. Bounded string lengths via `strnlen` with `MAX_STRING_LEN`
+3. Checked for integer overflow before `malloc`
+4. Allocated exactly `len_a + len_b + 1` bytes and copied exactly `len_a` and `len_b` bytes
+
+The rewrite hardens the two flagged `memcpy` calls by adding explicit destination-capacity checks immediately before each copy (`len_a >= total_len` and `len_b >= total_len - len_a`), which serves as a defense-in-depth guard and satisfies static analyzers that the destination can always hold the source data. Zero-length copies are also skipped entirely. All other correctness properties — error propagation in `concat_tuples`, cleanup on partial failure, idempotent `free_tuple`, and checked `printf` — are preserved from the original.

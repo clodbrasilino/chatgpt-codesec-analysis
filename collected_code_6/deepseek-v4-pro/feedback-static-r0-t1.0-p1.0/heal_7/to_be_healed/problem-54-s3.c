@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int counting_sort(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    int max_val = arr[0];
+    int min_val = arr[0];
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max_val) {
+            max_val = arr[i];
+        }
+        if (arr[i] < min_val) {
+            min_val = arr[i];
+        }
+    }
+
+    int range = max_val - min_val + 1;
+    int *count = (int *)calloc((size_t)range, sizeof(int));
+    if (count == NULL) {
+        return -1;
+    }
+
+    int *output = (int *)malloc((size_t)n * sizeof(int));
+    if (output == NULL) {
+        free(count);
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        count[arr[i] - min_val]++;
+    }
+
+    for (int i = 1; i < range; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[arr[i] - min_val] - 1] = arr[i];
+        count[arr[i] - min_val]--;
+    }
+
+    /* Possible weaknesses found:
+     *  'copy_size' is assigned value '(unsigned long)n*sizeof(int)' here.
+     */
+    size_t copy_size = (size_t)n * sizeof(int);
+    /* Possible weaknesses found:
+     *  Condition 'output!=NULL' is always true [knownConditionTrueFalse]
+     *  The comparison 'copy_size <= (unsigned long)n*sizeof(int)' is always true because 'copy_size' and '(unsigned long)n*sizeof(int)' represent the same value.
+     *  The comparison 'copy_size <= (unsigned long)n*sizeof(int)' is always true because 'copy_size' and '(unsigned long)n*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+     */
+    if (copy_size <= (size_t)n * sizeof(int) && output != NULL && arr != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(arr, output, copy_size);
+    }
+
+    free(output);
+    free(count);
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1, 5, -2, 0};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+
+    counting_sort(arr, n);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

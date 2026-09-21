@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096U
+
+char *remove_odd_characters(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len >= MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) != 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "abcdefg";
+    char *output;
+
+    output = remove_odd_characters(test);
+    if (output == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This directly addresses the CWE-126 (buffer over-read) concern flagged by Flawfinder. `strnlen` bounds the scan to `MAX_INPUT_LENGTH` bytes, so an unterminated string cannot cause an unbounded over-read.
+
+2. **Added a sanity bound (`MAX_INPUT_LENGTH`)** — If `strnlen` returns the maximum, the string is either too long or not properly terminated within the bound, so the function safely rejects it by returning `NULL` rather than processing potentially truncated/invalid data.
+
+3. **Preserved existing defensive measures** — The original code already handled `NULL` input, checked `malloc` failure, checked `printf` return values, and freed memory on all paths; these were kept intact.
+
+Note: `strnlen` is POSIX / C23. If strict C99 portability is required, a small manual bounded-scan loop can replace it with identical semantics.

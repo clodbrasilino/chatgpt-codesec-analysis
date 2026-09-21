@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330-s3.c:55:40: style: Condition 'len+1>0' is always true [knownConditionTrueFalse]
+            size_t safe_len = (len + 1 > 0) ? len : 0;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330-s3.c:54:17: note: Assuming that condition 'len>0' is not redundant
+        if (len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-330-s3.c:55:40: note: Condition 'len+1>0' is always true
+            size_t safe_len = (len + 1 > 0) ? len : 0;
+                                       ^

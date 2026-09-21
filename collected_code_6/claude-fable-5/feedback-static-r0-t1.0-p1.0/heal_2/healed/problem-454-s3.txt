@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size);
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+
+        {
+            size_t start = i;
+            int found = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    found = 1;
+                }
+                i++;
+            }
+
+            if (found) {
+                size_t len = i - start;
+                if (len >= result_size) {
+                    return -1;
+                }
+                memcpy(result, &text[start], len);
+                result[len] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentences[] = {
+        "The lazy dog sleeps all day.",
+        "A quick brown fox jumps.",
+        "Zebras graze in the savanna."
+    };
+    char word[256];
+    size_t i;
+
+    for (i = 0; i < sizeof(sentences) / sizeof(sentences[0]); i++) {
+        int status = match_word_with_z(sentences[i], word, sizeof(word));
+        if (status < 0) {
+            fprintf(stderr, "Error processing input: %s\n", sentences[i]);
+            return EXIT_FAILURE;
+        }
+        if (status == 1) {
+            if (printf("Input: \"%s\" -> matched word: \"%s\"\n", sentences[i], word) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Input: \"%s\" -> no word containing 'z' found\n", sentences[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **Flawfinder `memcpy` warning (CWE-120):** This is a false positive in the original code. The copy is guarded by `if (len >= result_size) return -1;`, which guarantees the destination can hold `len` bytes plus the null terminator. The rewrite retains this guard, so the `memcpy` is provably safe. I also added `result[0] = '\0';` as defensive hardening so the output buffer is never left uninitialized on the `0` (no match) return path.
+
+2. **Flawfinder `char word[256]` warning (CWE-119/CWE-120):** Also a false positive. The buffer size is always communicated to the callee via `sizeof(word)`, and the callee performs explicit bounds checking before any write. No fixed-length assumption leaks into the copy logic.
+
+Both warnings are heuristic pattern matches by Flawfinder rather than real vulnerabilities; the code already followed the recommended mitigations (length-limited copy with explicit destination-size checks). The rewrite preserves those mitigations and adds buffer initialization as an extra safeguard.

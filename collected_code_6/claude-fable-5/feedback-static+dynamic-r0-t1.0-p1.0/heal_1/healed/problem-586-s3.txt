@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t head_bytes;
+    size_t tail_bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    head_bytes = k * sizeof(int);
+    tail_bytes = (n - k) * sizeof(int);
+
+    temp = malloc(head_bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, head_bytes);
+    memmove(arr, arr + k, tail_bytes);
+    memcpy(arr + (n - k), temp, head_bytes);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warnings on `memcpy` (CWE-120) are informational — the tool cannot statically verify that the destination buffers are large enough. The fixes applied:
+
+1. **Integer overflow guard**: Added `n > SIZE_MAX / sizeof(int)` check. Without it, `k * sizeof(int)` or `(n - k) * sizeof(int)` could wrap around on a malicious/huge `n`, causing `malloc` to allocate a buffer smaller than the amount copied — a genuine heap overflow path. Since `k < n` after the modulo, bounding `n` bounds both byte counts.
+
+2. **Explicit size computation**: `head_bytes` and `tail_bytes` are computed once and reused, guaranteeing the size passed to `malloc` is identical to the size passed to both `memcpy` calls into/out of `temp`. This makes the destination-capacity invariant locally verifiable, which satisfies the intent of the CWE-120 warning.
+
+3. The existing invariants remain sound: `temp` holds exactly `k` ints (both `memcpy` calls use `head_bytes`), and the `memmove`/final `memcpy` together write exactly `n` ints into `arr`, which the caller guarantees holds `n` elements.
+
+The remaining "risk" is contractual — `n` must truthfully describe `arr`'s capacity, which is the standard idiom for pointer+length APIs in C and cannot be checked inside the function itself.

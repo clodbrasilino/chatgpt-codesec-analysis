@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+char *string_to_upper(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer, sizeof(buffer));
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen()` with `strnlen()`, and added a `max_len` parameter to `string_to_upper()`. This guarantees the scan never reads past the caller-supplied bound, even if the string is not NUL-terminated. If no terminator is found within `max_len`, the function fails safely by returning `NULL` instead of processing unbounded memory.
+
+2. **CWE-119/CWE-120 (statically-sized buffer):** The buffer size is now defined via a single `BUFFER_SIZE` constant, `fgets()` is bounded with `sizeof(buffer)`, and an explicit `buffer[sizeof(buffer) - 1] = '\0';` defensively guarantees NUL-termination before any string operation touches the buffer. The buffer's capacity is also passed to `string_to_upper()` so all downstream operations remain bounds-checked.
+
+3. **Robustness:** The `max_len == 0` guard prevents degenerate calls, and all failure paths report errors and exit with `EXIT_FAILURE`.

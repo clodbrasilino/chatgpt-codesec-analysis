@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+double cube_surface_area(double side_length) {
+    if (side_length <= 0) {
+        return -1.0;
+    }
+    return 6.0 * side_length * side_length;
+}
+
+static bool is_whitespace_only(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return true;
+    }
+    while (*str != '\0') {
+        if (!isspace((unsigned char)*str)) {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+static void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
+    clearerr(stdin);
+}
+
+int main(void) {
+    double input;
+    char buffer[BUFFER_SIZE];
+    char *endptr;
+    size_t len;
+    bool newline_found;
+
+    printf("Enter cube side length: ");
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        if (ferror(stdin)) {
+            fprintf(stderr, "Error reading input\n");
+            clearerr(stdin);
+        }
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    newline_found = false;
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        newline_found = true;
+        len--;
+    }
+
+    if (!newline_found && len >= sizeof(buffer) - 1) {
+        clear_input_buffer();
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len == 0 || is_whitespace_only(buffer)) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtod(buffer, &endptr);
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Number out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr != '\0') {
+        if (*endptr != ' ' && *endptr != '\t') {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    double area = cube_surface_area(input);
+
+    if (area < 0) {
+        fprintf(stderr, "Side length must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area: %.2f\n", area);
+    return EXIT_SUCCESS;
+}

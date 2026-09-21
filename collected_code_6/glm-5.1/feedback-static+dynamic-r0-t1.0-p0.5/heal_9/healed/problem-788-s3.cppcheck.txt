@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-788-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-788-s3.c:28:21: style: Same expression on both sides of '<='. [duplicateExpression]
+    if (str_len + 1 <= str_len + 1) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-788-s3.c:45:36: style: Same expression on both sides of '<='. [duplicateExpression]
+        if (list_len * sizeof(int) <= list_len * sizeof(int)) {
+                                   ^

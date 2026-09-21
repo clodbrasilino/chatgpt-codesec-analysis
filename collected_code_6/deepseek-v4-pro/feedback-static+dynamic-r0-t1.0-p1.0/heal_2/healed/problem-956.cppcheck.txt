@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-956.c:131:29: style: Condition 'segment_len<0' is always false [knownConditionTrueFalse]
+            if (segment_len < 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-956.c:103:18: note: Assuming that condition 'last_end<len' is not redundant
+    if (last_end < len) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-956.c:130:35: note: Assignment 'segment_len=len-last_end', assigned value is greater than 0
+            int segment_len = len - last_end;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-956.c:131:29: note: Condition 'segment_len<0' is always false
+            if (segment_len < 0) {
+                            ^

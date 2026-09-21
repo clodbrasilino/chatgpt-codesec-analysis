@@ -1,0 +1,405 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <inttypes.h>
+#include <ctype.h>
+#include <string.h>
+
+typedef struct {
+    uint64_t key;
+    uint64_t value;
+    bool occupied;
+} MemoEntry;
+
+typedef struct {
+    MemoEntry *entries;
+    size_t capacity;
+    size_t size;
+} Memo;
+
+static size_t hash_value(uint64_t value, size_t capacity)
+{
+    value ^= value >> 30;
+    value *= UINT64_C(0xbf58476d1ce4e5b9);
+    value ^= value >> 27;
+    value *= UINT64_C(0x94d049bb133111eb);
+    value ^= value >> 31;
+
+    return (size_t)value & (capacity - 1U);
+}
+
+static bool memo_initialize(Memo *memo)
+{
+    const size_t initial_capacity = 1024U;
+
+    if (memo == NULL) {
+        return false;
+    }
+
+    memo->entries = NULL;
+    memo->capacity = 0U;
+    memo->size = 0U;
+
+    if (initial_capacity > SIZE_MAX / sizeof(*memo->entries)) {
+        return false;
+    }
+
+    memo->entries = calloc(initial_capacity, sizeof(*memo->entries));
+    if (memo->entries == NULL) {
+        return false;
+    }
+
+    memo->capacity = initial_capacity;
+    return true;
+}
+
+static void memo_destroy(Memo *memo)
+{
+    if (memo == NULL) {
+        return;
+    }
+
+    free(memo->entries);
+    memo->entries = NULL;
+    memo->capacity = 0U;
+    memo->size = 0U;
+}
+
+static bool memo_get(const Memo *memo, uint64_t key, uint64_t *value)
+{
+    size_t index;
+    size_t start;
+
+    if (memo == NULL || memo->entries == NULL ||
+        memo->capacity == 0U || value == NULL) {
+        return false;
+    }
+
+    index = hash_value(key, memo->capacity);
+    start = index;
+
+    do {
+        const MemoEntry *entry = &memo->entries[index];
+
+        if (!entry->occupied) {
+            return false;
+        }
+
+        if (entry->key == key) {
+            *value = entry->value;
+            return true;
+        }
+
+        index = (index + 1U) & (memo->capacity - 1U);
+    } while (index != start);
+
+    return false;
+}
+
+static bool memo_insert_unchecked(Memo *memo, uint64_t key, uint64_t value)
+{
+    size_t index;
+    size_t start;
+
+    if (memo == NULL || memo->entries == NULL || memo->capacity == 0U) {
+        return false;
+    }
+
+    index = hash_value(key, memo->capacity);
+    start = index;
+
+    do {
+        MemoEntry *entry = &memo->entries[index];
+
+        if (!entry->occupied) {
+            entry->key = key;
+            entry->value = value;
+            entry->occupied = true;
+            ++memo->size;
+            return true;
+        }
+
+        if (entry->key == key) {
+            entry->value = value;
+            return true;
+        }
+
+        index = (index + 1U) & (memo->capacity - 1U);
+    } while (index != start);
+
+    return false;
+}
+
+static bool memo_grow(Memo *memo)
+{
+    MemoEntry *new_entries;
+    MemoEntry *old_entries;
+    size_t old_capacity;
+    size_t old_size;
+    size_t new_capacity;
+    size_t index;
+
+    if (memo == NULL || memo->entries == NULL ||
+        memo->capacity == 0U || memo->capacity > SIZE_MAX / 2U) {
+        return false;
+    }
+
+    new_capacity = memo->capacity * 2U;
+
+    if (new_capacity > SIZE_MAX / sizeof(*new_entries)) {
+        return false;
+    }
+
+    new_entries = calloc(new_capacity, sizeof(*new_entries));
+    if (new_entries == NULL) {
+        return false;
+    }
+
+    old_entries = memo->entries;
+    old_capacity = memo->capacity;
+    old_size = memo->size;
+
+    memo->entries = new_entries;
+    memo->capacity = new_capacity;
+    memo->size = 0U;
+
+    for (index = 0U; index < old_capacity; ++index) {
+        if (old_entries[index].occupied &&
+            !memo_insert_unchecked(memo,
+                                   old_entries[index].key,
+                                   old_entries[index].value)) {
+            free(new_entries);
+            memo->entries = old_entries;
+            memo->capacity = old_capacity;
+            memo->size = old_size;
+            return false;
+        }
+    }
+
+    free(old_entries);
+    return true;
+}
+
+static bool memo_put(Memo *memo, uint64_t key, uint64_t value)
+{
+    uint64_t existing_value;
+
+    if (memo == NULL || memo->entries == NULL || memo->capacity == 0U) {
+        return false;
+    }
+
+    if (memo_get(memo, key, &existing_value)) {
+        return memo_insert_unchecked(memo, key, value);
+    }
+
+    if (memo->size >= memo->capacity / 2U && !memo_grow(memo)) {
+        return false;
+    }
+
+    return memo_insert_unchecked(memo, key, value);
+}
+
+static bool maximum_sum_recursive(uint64_t n, Memo *memo, uint64_t *result)
+{
+    static const uint64_t divisors[] = {
+        UINT64_C(2),
+        UINT64_C(3),
+        UINT64_C(4),
+        UINT64_C(5)
+    };
+    uint64_t sum = UINT64_C(0);
+    size_t index;
+
+    if (memo == NULL || result == NULL) {
+        return false;
+    }
+
+    if (n == UINT64_C(0)) {
+        *result = UINT64_C(0);
+        return true;
+    }
+
+    if (memo_get(memo, n, result)) {
+        return true;
+    }
+
+    for (index = 0U; index < sizeof(divisors) / sizeof(divisors[0]); ++index) {
+        uint64_t term;
+
+        if (!maximum_sum_recursive(n / divisors[index], memo, &term)) {
+            return false;
+        }
+
+        if (term > UINT64_MAX - sum) {
+            return false;
+        }
+
+        sum += term;
+    }
+
+    *result = sum > n ? sum : n;
+
+    if (!memo_put(memo, n, *result)) {
+        return false;
+    }
+
+    return true;
+}
+
+static bool maximum_sum(uint64_t n, uint64_t *result)
+{
+    Memo memo;
+    uint64_t computed;
+    bool success;
+
+    if (result == NULL) {
+        return false;
+    }
+
+    if (!memo_initialize(&memo)) {
+        return false;
+    }
+
+    success = maximum_sum_recursive(n, &memo, &computed);
+    memo_destroy(&memo);
+
+    if (!success) {
+        return false;
+    }
+
+    *result = computed;
+    return true;
+}
+
+static bool is_decimal_digit(unsigned char character)
+{
+    return character >= (unsigned char)'0' &&
+           character <= (unsigned char)'9';
+}
+
+static bool read_input(uint64_t *value)
+{
+    enum ParseState {
+        PARSE_LEADING,
+        PARSE_AFTER_SIGN,
+        PARSE_DIGITS,
+        PARSE_TRAILING,
+        PARSE_INVALID
+    };
+
+    char input[256];
+    enum ParseState state = PARSE_LEADING;
+    uint64_t parsed = UINT64_C(0);
+    size_t length;
+    size_t index;
+
+    if (value == NULL) {
+        return false;
+    }
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return false;
+    }
+
+    if (ferror(stdin) != 0) {
+        return false;
+    }
+
+    length = strlen(input);
+
+    if (length > 0U && input[length - 1U] == '\n') {
+        --length;
+    } else if (feof(stdin) == 0) {
+        return false;
+    }
+
+    for (index = 0U; index < length; ++index) {
+        unsigned char current = (unsigned char)input[index];
+
+        switch (state) {
+        case PARSE_LEADING:
+            if (isspace(current) != 0) {
+                break;
+            }
+
+            if (current == (unsigned char)'+') {
+                state = PARSE_AFTER_SIGN;
+                break;
+            }
+
+            if (is_decimal_digit(current)) {
+                parsed = (uint64_t)(current - (unsigned char)'0');
+                state = PARSE_DIGITS;
+            } else {
+                state = PARSE_INVALID;
+            }
+            break;
+
+        case PARSE_AFTER_SIGN:
+            if (is_decimal_digit(current)) {
+                parsed = (uint64_t)(current - (unsigned char)'0');
+                state = PARSE_DIGITS;
+            } else {
+                state = PARSE_INVALID;
+            }
+            break;
+
+        case PARSE_DIGITS:
+            if (is_decimal_digit(current)) {
+                uint64_t digit =
+                    (uint64_t)(current - (unsigned char)'0');
+
+                if (parsed > (UINT64_MAX - digit) / UINT64_C(10)) {
+                    state = PARSE_INVALID;
+                } else {
+                    parsed = parsed * UINT64_C(10) + digit;
+                }
+            } else if (isspace(current) != 0) {
+                state = PARSE_TRAILING;
+            } else {
+                state = PARSE_INVALID;
+            }
+            break;
+
+        case PARSE_TRAILING:
+            if (isspace(current) == 0) {
+                state = PARSE_INVALID;
+            }
+            break;
+
+        case PARSE_INVALID:
+            break;
+        }
+    }
+
+    if (state != PARSE_DIGITS && state != PARSE_TRAILING) {
+        return false;
+    }
+
+    *value = parsed;
+    return true;
+}
+
+int main(void)
+{
+    uint64_t n;
+    uint64_t result;
+
+    if (!read_input(&n)) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!maximum_sum(n, &result)) {
+        fputs("Unable to calculate result\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRIu64 "\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

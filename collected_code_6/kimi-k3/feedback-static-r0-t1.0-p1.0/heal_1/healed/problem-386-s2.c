@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s, size_t len) {
+    if (s == NULL) {
+        return -1;
+    }
+    int balance = 0;
+    int swaps = 0;
+    if (len % 2 != 0) {
+        return -1;
+    }
+    for (size_t i = 0; i < len; i++) {
+        if (s[i] == '[') {
+            balance++;
+        } else if (s[i] == ']') {
+            balance--;
+        } else {
+            return -1;
+        }
+        if (balance < 0) {
+            swaps++;
+            balance = 1;
+        }
+    }
+    if (balance != 0) {
+        return -1;
+    }
+    return swaps;
+}
+
+int main(void) {
+    const char s[] = "]]][[[";
+    size_t len = sizeof(s) - 1;
+    int result = min_swaps(s, len);
+    if (result == -1) {
+        printf("Invalid input or cannot be balanced\n");
+    } else {
+        printf("Minimum swaps required: %d\n", result);
+    }
+    return 0;
+}

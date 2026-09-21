@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_lowercase(const char *input, char *output, size_t output_size);
+
+int remove_lowercase(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t out_len = 0;
+    int rc;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return -1;
+    }
+
+    rc = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    cursor = input;
+    while (*cursor != '\0') {
+        rc = regexec(&regex, cursor, 1, &match, 0);
+        if (rc == REG_NOMATCH) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t remaining = strlen(cursor);
+            if (out_len + remaining >= output_size) {
+                regfree(&regex);
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(output + out_len, cursor, remaining);
+            out_len += remaining;
+            break;
+        }
+        if (rc != 0) {
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so > 0) {
+            size_t prefix_len = (size_t)match.rm_so;
+            if (out_len + prefix_len >= output_size) {
+                regfree(&regex);
+                return -1;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(output + out_len, cursor, prefix_len);
+            out_len += prefix_len;
+        }
+        cursor += match.rm_eo;
+    }
+
+    output[out_len] = '\0';
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "HelloWORLDfooBAR",
+        "abcDEFghiJKL",
+        "ALLUPPERCASE",
+        "alllowercase",
+        "Mix123edCaseWith456numbers"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t buf_size = strlen(test_strings[i]) + 1;
+        char *result = malloc(buf_size);
+        if (result == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (remove_lowercase(test_strings[i], result, buf_size) == 0) {
+            printf("Input:  \"%s\"\n", test_strings[i]);
+            printf("Output: \"%s\"\n\n", result);
+        } else {
+            fprintf(stderr, "Failed to process string: %s\n", test_strings[i]);
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}

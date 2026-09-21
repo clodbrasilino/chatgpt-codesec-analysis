@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t n = 0;
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+    return n;
+}
+
+char *replace_spaces(const char *input)
+{
+    size_t len;
+    size_t space_count = 0;
+    size_t i;
+    size_t j = 0;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = bounded_strlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (input[i] == ' ') {
+            space_count++;
+        }
+    }
+
+    if (space_count > (SIZE_MAX - len - 1) / 2) {
+        return NULL;
+    }
+
+    result = malloc(len + (space_count * 2) + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (input[i] == ' ') {
+            result[j] = '%';
+            result[j + 1] = '2';
+            result[j + 2] = '0';
+            j += 3;
+        } else {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    char *converted;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    converted = replace_spaces(input);
+    if (converted == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", converted) < 0) {
+        free(converted);
+        return EXIT_FAILURE;
+    }
+
+    free(converted);
+    converted = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key weakness was that the program never read the test input from `stdin` — it only processed a hard-coded string and printed it with `Original:`/`Converted:` prefixes, so the test harness saw no matching output. The rewrite reads a line from standard input, strips the trailing newline, and prints only the converted string. Additionally, the out-of-bounds read in the length-validation check (`input[len]` when `len == MAX_INPUT_LEN`) was removed by rejecting inputs at or beyond the maximum length outright.

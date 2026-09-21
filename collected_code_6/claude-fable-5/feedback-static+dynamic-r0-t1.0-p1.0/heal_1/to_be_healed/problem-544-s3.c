@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count)
+{
+    size_t buffer_size;
+    size_t offset;
+    size_t i;
+    char *result;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'written' can be reduced. [variableScope]
+     */
+    int written;
+
+    if (tuples == NULL || count == 0) {
+        result = malloc(1);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    buffer_size = count * 2u * 32u + 1u;
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    offset = 0;
+    for (i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder snprintf: If format strings can be influenced by an attacker, they can be exploited, and note that sprintf variations do not always \0-terminate (CWE-134). Use a constant for the format specification. (risk 4, format)
+         */
+        written = snprintf(result + offset, buffer_size - offset,
+                           (i == 0) ? "%d %d" : " %d %d",
+                           tuples[i].first, tuples[i].second);
+        if (written < 0 || (size_t)written >= buffer_size - offset) {
+            free(result);
+            return NULL;
+        }
+        offset += (size_t)written;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {7, 8}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    char *flattened;
+
+    flattened = flatten_tuple_list(tuples, count);
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten tuple list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", flattened) < 0) {
+        free(flattened);
+        return EXIT_FAILURE;
+    }
+
+    free(flattened);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k);
+void print_array(const int *arr, size_t n);
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t temp_size;
+    size_t move_size;
+    size_t total_size;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(*arr)) {
+        return -1;
+    }
+
+    total_size = n * sizeof(*arr);
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    if (k > SIZE_MAX / sizeof(*temp)) {
+        return -1;
+    }
+
+    temp_size = k * sizeof(*temp);
+
+    if (n - k > SIZE_MAX / sizeof(*arr)) {
+        return -1;
+    }
+
+    move_size = (n - k) * sizeof(*arr);
+
+    if (temp_size > total_size || move_size > total_size) {
+        return -1;
+    }
+
+    if (temp_size > SIZE_MAX - move_size) {
+        return -1;
+    }
+
+    if (temp_size + move_size != total_size) {
+        return -1;
+    }
+
+    temp = malloc(temp_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, temp_size);
+    memmove(arr, arr + k, move_size);
+    memcpy(arr + (n - k), temp, temp_size);
+
+    free(temp);
+    return 0;
+}
+
+void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+
+    printf("Original array: ");
+    print_array(arr, n);
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Error: rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Array after splitting at %zu and adding first part to end: ", k);
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder `memcpy` warnings (CWE-120), which are largely false positives here. The key safety properties are:
+
+1. **First `memcpy(temp, arr, temp_size)`**: `temp` is allocated with exactly `temp_size` bytes, and `temp_size ≤ total_size` guarantees the source read stays within `arr`'s bounds since `k < n` after the modulo.
+
+2. **`memmove(arr, arr + k, move_size)`**: `move_size = (n - k) * sizeof(int)` correctly bounds the overlapping copy; `memmove` is the right choice here since regions overlap.
+
+3. **Second `memcpy(arr + (n - k), temp, temp_size)`**: The destination offset `(n - k)` plus `k` elements equals exactly `n`, verified by the `temp_size + move_size == total_size` invariant check.
+
+**Improvements made in the rewrite:**
+
+- Added an overflow guard on `(n - k) * sizeof(*arr)` before computing `move_size` (defensive, though unreachable given the earlier `n` check).
+- Added an explicit `temp_size > SIZE_MAX - move_size` check before the addition in the invariant comparison, eliminating any theoretical unsigned wraparound before the equality test.
+- Added `n == 0` short-circuit in `print_array` for consistency.
+
+The rotation logic itself is correct: for `k = 2` on `{12, 10, 5, 6, 52, 36}`, the output is `{5, 6, 52, 36, 12, 10}` — a left rotation by `k` positions, matching the "split at k and append first part" semantics.

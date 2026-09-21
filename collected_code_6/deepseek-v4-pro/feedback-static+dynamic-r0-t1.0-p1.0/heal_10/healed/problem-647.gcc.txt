@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-647.c: In function 'split_at_uppercase':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-647.c:43:30: error: 'INT_MAX' undeclared (first use in this function)
+   43 |             if (max_parts == INT_MAX) {
+      |                              ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-647.c:5:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <ctype.h>
+  +++ |+#include <limits.h>
+    5 | #include <stdint.h>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-647.c:43:30: note: each undeclared identifier is reported only once for each function it appears in
+   43 |             if (max_parts == INT_MAX) {
+      |                              ^~~~~~~

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_odd_index_chars(char *str, size_t len) {
+    char *result = malloc((len / 2 + 1) * sizeof(char));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+    int i, j = 0;
+    for (i = 0; i < len; i++) {
+        if (i % 2 == 0) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+    memmove(str, result, j + 1);
+    free(result);
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
+        size_t len = strnlen(input, 100);
+        if (len > 0 && len < 100) {
+            remove_odd_index_chars(input, len);
+            printf("Modified string: %s\n", input);
+        } else {
+            printf("Empty string or too long.\n");
+        }
+    } else {
+        printf("Failed to read input.\n");
+    }
+    return 0;
+}

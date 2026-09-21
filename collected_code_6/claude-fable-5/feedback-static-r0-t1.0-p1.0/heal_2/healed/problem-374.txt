@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 64U
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        if (permute(str, left + 1, right) != 0) {
+            swap_chars(&str[left], &str[i]);
+            return -1;
+        }
+        swap_chars(&str[left], &str[i]);
+    }
+
+    return 0;
+}
+
+static int print_permutations(const char *input)
+{
+    size_t len;
+    size_t alloc_size;
+    char *copy;
+    int result;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN + 1);
+    if (len > MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    alloc_size = len + 1;
+    if (alloc_size < len) {
+        return -1;
+    }
+
+    copy = malloc(alloc_size);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, input, len);
+    copy[len] = '\0';
+
+    result = permute(copy, 0, len - 1);
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "abc";
+
+    if (print_permutations(test) != 0) {
+        fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended; the Flawfinder hit on `memcpy` (CWE-120) was a low-confidence heuristic warning rather than a genuine defect. The rewrite addresses it fully:
+
+1. **Bounded length measurement** — `strnlen(input, MAX_INPUT_LEN + 1)` guarantees `len` never exceeds `MAX_INPUT_LEN + 1`, and the subsequent check rejects over-length inputs, so the source read is bounded.
+
+2. **Destination sized from the same `len`** — the buffer is allocated as `len + 1`, and `memcpy` copies exactly `len` bytes followed by explicit NUL termination at `copy[len]`. Destination capacity provably covers the copy, satisfying the CWE-120 concern.
+
+3. **Integer-overflow guard added** — `alloc_size < len` catches the theoretical `SIZE_MAX` wraparound on `len + 1`. Unreachable given the 64-byte cap, but it makes the allocation defensively self-contained if `MAX_INPUT_LEN` is ever changed.
+
+4. **Existing correctness preserved** — the `len == 0` early return prevents `len - 1` underflow in the `permute` call, `puts` failure propagates an error with proper unwinding of swaps, and the allocation is freed on all paths (no leaks, verified against both success and failure branches).
+
+The only residual limitation is algorithmic, not a security issue: recursion depth equals string length (max 64 frames, safe), but output volume grows factorially, so `MAX_INPUT_LEN` of 64 is practically bounded by runtime rather than memory.

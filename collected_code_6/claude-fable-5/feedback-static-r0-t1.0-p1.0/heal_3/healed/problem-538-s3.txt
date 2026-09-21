@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+static char *safe_string_dup(const char *src) {
+    size_t len;
+    char *dst;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN && src[MAX_STRING_LEN - 1] != '\0') {
+        len = MAX_STRING_LEN - 1;
+    }
+
+    dst = malloc(len + 1);
+    if (dst == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        memcpy(dst, src, len);
+    }
+    dst[len] = '\0';
+    return dst;
+}
+
+Tuple *list_to_tuple(const char **list, size_t count) {
+    Tuple *t = NULL;
+
+    if (list == NULL && count > 0) {
+        return NULL;
+    }
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->count = count;
+    t->items = NULL;
+
+    if (count > 0) {
+        if (count > SIZE_MAX / sizeof(char *)) {
+            free(t);
+            return NULL;
+        }
+
+        t->items = calloc(count, sizeof(char *));
+        if (t->items == NULL) {
+            free(t);
+            return NULL;
+        }
+
+        for (size_t i = 0; i < count; i++) {
+            if (list[i] == NULL) {
+                t->items[i] = NULL;
+                continue;
+            }
+
+            t->items[i] = safe_string_dup(list[i]);
+            if (t->items[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(t->items[j]);
+                }
+                free(t->items);
+                free(t);
+                return NULL;
+            }
+        }
+    }
+
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    if (t->items != NULL) {
+        for (size_t i = 0; i < t->count; i++) {
+            free(t->items[i]);
+        }
+        free(t->items);
+    }
+    free(t);
+}
+
+void print_tuple(const Tuple *t) {
+    if (t == NULL) {
+        printf("()\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->count; i++) {
+        if (t->items[i] != NULL) {
+            printf("'%s'", t->items[i]);
+        } else {
+            printf("NULL");
+        }
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    const char *list[] = {"apple", "banana", "cherry"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    Tuple *t = list_to_tuple(list, count);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t);
+    free_tuple(t);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note the include of `<stdint.h>` is required for `SIZE_MAX` — here is the corrected include block:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+Key changes made to address the identified weakness:
+
+1. **CWE-120 (memcpy buffer overflow)**: The original code was already safe since `dst` is allocated with `len + 1` bytes and exactly `len` bytes are copied. However, I hardened it further by explicitly bounding `len` to `MAX_STRING_LEN - 1` when the source is not null-terminated within the limit, guaranteeing truncation is handled deterministically and the destination always holds the copied data plus the terminator.
+
+2. **Integer overflow guard in `calloc` sizing**: Added a `count > SIZE_MAX / sizeof(char *)` check before allocation as defense-in-depth (though `calloc` itself checks for multiplication overflow per the C standard).
+
+3. **Zero-length copy guard**: Skipped `memcpy` entirely when `len == 0`, avoiding any edge-case concerns with degenerate copies.

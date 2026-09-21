@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c:73:24: style: Condition 'alloc_size>=src_size' is always true [knownConditionTrueFalse]
+        if (alloc_size >= src_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c:72:25: note: src_size is assigned '(unsigned long)size*sizeof(int)' here.
+        size_t src_size = (size_t)size * sizeof(int);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c:65:23: note: alloc_size is assigned '(unsigned long)size*sizeof(int)' here.
+    size_t alloc_size = (size_t)size * sizeof(int);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c:66:20: note: Assuming condition is false
+    if (alloc_size == 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-114-s3.c:73:24: note: Condition 'alloc_size>=src_size' is always true
+        if (alloc_size >= src_size) {
+                       ^

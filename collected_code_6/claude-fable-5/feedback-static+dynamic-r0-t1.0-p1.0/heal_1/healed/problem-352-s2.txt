@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **CWE-126 (over-read via `strlen`)**: The original code called `strlen()` on the input, which would over-read if the string were not NUL-terminated. The rewritten `all_chars_unique()` now takes an explicit `max_len` bound and iterates only while `i < max_len && str[i] != '\0'`. This guarantees the loop can never read past the caller-provided buffer size, even if the terminator is missing.
+
+2. **CWE-119/CWE-120 (statically-sized buffer)**: The fixed-size buffer remains (it's appropriate here), but the risks are mitigated:
+   - `fgets(buffer, sizeof(buffer), stdin)` already limits the read to the buffer size and NUL-terminates on success.
+   - As defense-in-depth, `buffer[sizeof(buffer) - 1] = '\0'` explicitly guarantees termination before any string operation runs.
+   - The buffer size is passed to `all_chars_unique()` so the callee never assumes anything about the buffer it wasn't told.
+
+3. **Additional hardening**: The magic number `256` is replaced with a `BUFFER_SIZE` macro so the size is defined in exactly one place, and the `sizeof` expressions keep the bounds automatically consistent if the size ever changes.

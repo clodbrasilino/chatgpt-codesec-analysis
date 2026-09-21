@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-593.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-593.c:75:62: style: Condition 'null_result==NULL' is always true [knownConditionTrueFalse]
+    printf("NULL input handled correctly: %s\n", null_result == NULL ? "yes" : "no");
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-593.c:74:55: note: Calling function 'remove_leading_zeroes_ip' returns 0
+    const char *null_result = remove_leading_zeroes_ip(NULL);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-593.c:74:55: note: Assignment 'null_result=remove_leading_zeroes_ip(NULL)', assigned value is 0
+    const char *null_result = remove_leading_zeroes_ip(NULL);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-593.c:75:62: note: Condition 'null_result==NULL' is always true
+    printf("NULL input handled correctly: %s\n", null_result == NULL ? "yes" : "no");
+                                                             ^

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c:62:25: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+                if (len > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c:38:21: note: Assuming that condition 'len>0' is not redundant
+            if (len > 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c:54:35: note: Assuming condition is false
+                if (result[index] == NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c:62:25: note: Condition 'len>0' is always true
+                if (len > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_3/healed/problem-956.c:51:30: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+                    capacity = (int)new_capacity;
+                             ^

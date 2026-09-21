@@ -1,0 +1,113 @@
+#include <ctype.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int sum_odd_factors(uint64_t number, uint64_t *result)
+{
+    uint64_t sum = 1;
+
+    if (number == 0 || result == NULL) {
+        return 0;
+    }
+
+    while ((number & UINT64_C(1)) == 0) {
+        number >>= 1;
+    }
+
+    for (uint64_t factor = 3; factor <= number / factor; factor += 2) {
+        uint64_t term = 1;
+        uint64_t power = 1;
+
+        while (number % factor == 0) {
+            number /= factor;
+
+            if (power > UINT64_MAX / factor) {
+                return 0;
+            }
+            power *= factor;
+
+            if (term > UINT64_MAX - power) {
+                return 0;
+            }
+            term += power;
+        }
+
+        if (sum > UINT64_MAX / term) {
+            return 0;
+        }
+        sum *= term;
+    }
+
+    if (number > 1) {
+        if (number == UINT64_MAX) {
+            return 0;
+        }
+
+        uint64_t term = number + 1;
+
+        if (sum > UINT64_MAX / term) {
+            return 0;
+        }
+        sum *= term;
+    }
+
+    *result = sum;
+    return 1;
+}
+
+int main(void)
+{
+    char input[256];
+    char *end;
+    uintmax_t parsed;
+    uint64_t result;
+
+    if (fgets(input, sizeof input, stdin) == NULL) {
+        fputs("Failed to read input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(input, '\n') == NULL && !feof(stdin)) {
+        int character;
+
+        do {
+            character = fgetc(stdin);
+        } while (character != '\n' && character != EOF);
+
+        fputs("Input is too large.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    end = NULL;
+    parsed = strtoumax(input, &end, 10);
+
+    if (errno == ERANGE || end == input || parsed == 0 ||
+        parsed > UINT64_MAX) {
+        fputs("Invalid input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        fputs("Invalid input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!sum_odd_factors((uint64_t)parsed, &result)) {
+        fputs("The sum cannot be represented as uint64_t.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRIu64 "\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

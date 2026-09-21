@@ -1,0 +1,62 @@
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_PASSWORD_LENGTH 256
+
+bool is_valid_password(const char *password, size_t size) {
+    if (password == NULL || size == 0) {
+        return false;
+    }
+
+    size_t length = 0;
+    while (length < size && password[length] != '\0') {
+        ++length;
+    }
+
+    if (length == size) {
+        return false;
+    }
+
+    if (length < 8 || length >= MAX_PASSWORD_LENGTH) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    for (size_t i = 0; i < length; ++i) {
+        unsigned char ch = (unsigned char)password[i];
+
+        if (isspace(ch)) {
+            return false;
+        }
+
+        if (isupper(ch)) {
+            has_upper = true;
+        } else if (islower(ch)) {
+            has_lower = true;
+        } else if (isdigit(ch)) {
+            has_digit = true;
+        } else if (ispunct(ch)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void) {
+    const char test_password[] = "Passw0rd!";
+    if (is_valid_password(test_password, sizeof(test_password))) {
+        printf("Valid password\n");
+    } else {
+        printf("Invalid password\n");
+    }
+    return 0;
+}

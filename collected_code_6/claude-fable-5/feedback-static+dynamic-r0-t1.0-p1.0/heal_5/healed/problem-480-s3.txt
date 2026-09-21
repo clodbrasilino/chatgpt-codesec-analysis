@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char max_char = '\0';
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    buffer[len] = '\0';
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return 1;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer[256]`:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders step (technically redundant since `fgets` always null-terminates on success, but harmless).
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` returns an index that is always within bounds, so `buffer[len] = '\0'` cannot write out of range.
+4. **Safe indexing in the counter:** casting each character to `unsigned char` before indexing `counts[]` prevents negative-index undefined behavior on platforms where `char` is signed — a subtle but important correctness point.
+5. **NULL/empty checks and checked return values** (`fgets`, `printf`, the helper function) round out the robustness.
+
+The Flawfinder hit is a false positive here; the code follows the recommended mitigations (bounds-limited functions and explicit termination), so no functional changes were required.

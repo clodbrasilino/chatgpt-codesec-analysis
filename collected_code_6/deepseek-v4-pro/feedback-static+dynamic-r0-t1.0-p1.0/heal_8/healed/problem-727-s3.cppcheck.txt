@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-727-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-727-s3.c:21:21: style: The comparison 'new_cap < needed' is always false because 'new_cap' and 'needed' represent the same value. [knownConditionTrueFalse]
+        if (new_cap < needed) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-727-s3.c:20:26: note: 'new_cap' is assigned value 'needed' here.
+        size_t new_cap = needed;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-727-s3.c:21:21: note: The comparison 'new_cap < needed' is always false because 'new_cap' and 'needed' represent the same value.
+        if (new_cap < needed) {
+                    ^

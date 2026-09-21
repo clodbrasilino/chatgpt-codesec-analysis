@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-196.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-196.c:147:15: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+        if (i >= list->capacity) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-196.c:146:45: note: outer condition: i<list->capacity
+    for (size_t i = 0; i < list->count && i < list->capacity; i++) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-196.c:147:15: note: opposite inner condition: i>=list->capacity
+        if (i >= list->capacity) {
+              ^

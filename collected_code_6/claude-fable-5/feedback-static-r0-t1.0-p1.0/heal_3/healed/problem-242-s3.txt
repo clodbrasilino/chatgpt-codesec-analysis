@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). The Flawfinder warning is a heuristic hit on the `char buffer[BUFFER_SIZE]` declaration itself, not an actual vulnerability. Here's why the code is safe as written:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most `BUFFER_SIZE - 1` characters plus the null terminator — no unbounded `gets()` or `scanf("%s", ...)` in sight.
+
+2. **Return value checked**: The `fgets` result is validated against `NULL`, correctly handling EOF and read errors.
+
+3. **Defensive null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant (since `fgets` always null-terminates, and `memset` zeroed the buffer), but it's harmless belt-and-suspenders hardening.
+
+4. **Newline stripping via `strcspn`**: This is the idiomatic, safe way to remove the trailing newline. It also gracefully handles the case where no newline exists (input truncated), since `strcspn` returns the string length and writing `'\0'` there is a no-op within bounds.
+
+5. **NULL guard in `count_characters`**: Defensive check prevents dereferencing a null pointer, and `size_t` is the correct return type for lengths.
+
+6. **`sizeof(buffer)` used consistently**: Rather than repeating the `BUFFER_SIZE` macro, size expressions derive from the array itself, so the code stays correct even if the declaration changes.
+
+No functional changes were required — only the comments were removed per the request. If you wanted to harden further, you could detect truncated input (no newline found and buffer full) and warn the user, but that's a usability improvement, not a security fix.

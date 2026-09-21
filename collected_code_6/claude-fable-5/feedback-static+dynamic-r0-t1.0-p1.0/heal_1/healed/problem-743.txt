@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int rotate_right(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t i;
+    size_t bytes;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    if (n > SIZE_MAX / sizeof(*temp)) {
+        return -1;
+    }
+
+    bytes = n * sizeof(*temp);
+
+    temp = malloc(bytes);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        temp[(i + k) % n] = arr[i];
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = temp[i];
+    }
+
+    free(temp);
+
+    return 0;
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+
+    printf("Original array: ");
+    print_array(arr, n);
+
+    if (rotate_right(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated array:  ");
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness:
+
+1. **Replaced `memcpy` with an explicit element-by-element copy loop** — this eliminates the flagged CWE-120 risk entirely, since each write is bounded by the same `n` used for allocation, making the size relationship between source and destination structurally guaranteed rather than implicit.
+
+2. **Added an overflow check on `n * sizeof(*temp)`** using `SIZE_MAX` before the multiplication — on the off chance `n` were attacker-controlled and huge, an unchecked multiplication could wrap around, causing `malloc` to allocate a smaller buffer than the loops assume, which would be the actual exploitable path behind the buffer-overflow warning.
+
+3. **Removed the `<string.h>` include** since `memcpy` is no longer used, and added `<stdint.h>` for `SIZE_MAX`.
+
+The rest of the logic (NULL checks, `k % n` normalization, allocation failure handling, and cleanup via `free`) was already sound and remains unchanged.

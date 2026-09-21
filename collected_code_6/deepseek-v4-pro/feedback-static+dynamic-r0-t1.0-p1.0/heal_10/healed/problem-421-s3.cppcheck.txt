@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:83:35: style: Condition 'offset+elem_len<=buffer_size' is always true [knownConditionTrueFalse]
+            if (offset + elem_len <= buffer_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:76:31: note: Assuming that condition 'offset+elem_len>buffer_size' is not redundant
+        if (offset + elem_len > buffer_size) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:83:35: note: Condition 'offset+elem_len<=buffer_size' is always true
+            if (offset + elem_len <= buffer_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:101:44: style: Condition 'offset+delimiter_len<=buffer_size' is always true [knownConditionTrueFalse]
+                if (offset + delimiter_len <= buffer_size) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:94:40: note: Assuming that condition 'offset+delimiter_len>buffer_size' is not redundant
+            if (offset + delimiter_len > buffer_size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-421-s3.c:101:44: note: Condition 'offset+delimiter_len<=buffer_size' is always true
+                if (offset + delimiter_len <= buffer_size) {
+                                           ^

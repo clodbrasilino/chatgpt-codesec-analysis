@@ -1,0 +1,167 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define HEX_BUFFER_SIZE 66
+#define MAX_DISCARD_CHARS 1024
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t len = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (len < max_len && str[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+static bool is_valid_hex(const char *str, size_t max_len)
+{
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL || max_len == 0)
+    {
+        return false;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == 0 || len >= max_len)
+    {
+        return false;
+    }
+
+    if (len > 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+    {
+        i = 2;
+    }
+
+    if (len <= i)
+    {
+        return false;
+    }
+
+    for (; i < len; i++)
+    {
+        if (isxdigit((unsigned char)str[i]) == 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool is_hex_even(const char *str, size_t max_len)
+{
+    size_t len;
+    int last;
+
+    if (str == NULL || max_len == 0)
+    {
+        return false;
+    }
+
+    len = bounded_strlen(str, max_len);
+    if (len == 0 || len >= max_len)
+    {
+        return false;
+    }
+
+    last = (unsigned char)str[len - 1];
+
+    return strchr("02468aceACE", last) != NULL;
+}
+
+static void discard_remaining_input(void)
+{
+    size_t discarded = 0;
+
+    while (discarded < MAX_DISCARD_CHARS)
+    {
+        int ch = getchar();
+
+        if (ch == '\n' || ch == EOF)
+        {
+            break;
+        }
+
+        discarded++;
+    }
+}
+
+int main(void)
+{
+    char *hex_input = NULL;
+    size_t input_len;
+
+    hex_input = malloc(HEX_BUFFER_SIZE);
+    if (hex_input == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(hex_input, HEX_BUFFER_SIZE, stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input.\n");
+        free(hex_input);
+        return 1;
+    }
+
+    input_len = bounded_strlen(hex_input, HEX_BUFFER_SIZE);
+
+    if ((input_len == 0 || hex_input[input_len - 1] != '\n') && !feof(stdin))
+    {
+        discard_remaining_input();
+        fprintf(stderr, "Error: input exceeds maximum length.\n");
+        free(hex_input);
+        return 1;
+    }
+
+    if (input_len > 0 && hex_input[input_len - 1] == '\n')
+    {
+        hex_input[input_len - 1] = '\0';
+    }
+
+    if (!is_valid_hex(hex_input, HEX_BUFFER_SIZE))
+    {
+        fprintf(stderr, "Error: invalid hexadecimal number.\n");
+        free(hex_input);
+        return 1;
+    }
+
+    if (is_hex_even(hex_input, HEX_BUFFER_SIZE))
+    {
+        printf("%s is an even number.\n", hex_input);
+    }
+    else
+    {
+        printf("%s is an odd number.\n", hex_input);
+    }
+
+    free(hex_input);
+    return 0;
+}
+```
+
+**Key fixes applied:**
+
+1. **Variable scope reduction (`variableScope`)**: In `discard_remaining_input()`, the `ch` variable is now declared inside the `while` loop body (`int ch = getchar();`), limiting its scope to where it is actually used rather than spanning the entire function.
+
+2. **Bounded `getchar()` loop (CWE-120 / CWE-20)**: The loop retains its strict upper bound (`discarded < MAX_DISCARD_CHARS`) and terminates on `'\n'` or `EOF`, ensuring input consumption cannot run unbounded. Combined with the fixed-size `fgets()` read into a properly sized heap buffer (`HEX_BUFFER_SIZE`), buffer boundaries are fully respected.
+
+The rest of the program already follows safe practices: all string traversals use `bounded_strlen()` to avoid over-reading, `isxdigit()` receives an `unsigned char` cast to avoid UB with negative `char` values, allocation is checked, memory is freed on every exit path, and `strchr()` operates on a string literal so no buffer issues arise.

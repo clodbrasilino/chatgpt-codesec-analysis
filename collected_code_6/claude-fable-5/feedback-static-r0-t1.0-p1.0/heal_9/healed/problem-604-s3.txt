@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT 256
+
+static void reverse_range(char *str, size_t start, size_t end)
+{
+    while (start < end) {
+        char tmp = str[start];
+        str[start] = str[end];
+        str[end] = tmp;
+        start++;
+        end--;
+    }
+}
+
+int reverse_words(char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+    if (len == 0) {
+        return 0;
+    }
+
+    reverse_range(str, 0, len - 1);
+
+    i = 0;
+    while (i < len) {
+        while (i < len && str[i] == ' ') {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        size_t word_start = i;
+        while (i < len && str[i] != ' ') {
+            i++;
+        }
+        reverse_range(str, word_start, i - 1);
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = fgetc(stdin);
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char *input;
+    char *newline;
+
+    input = calloc(MAX_INPUT, sizeof(char));
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(input, MAX_INPUT, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    input[MAX_INPUT - 1] = '\0';
+
+    newline = strchr(input, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        discard_remaining_input();
+    }
+
+    if (reverse_words(input, MAX_INPUT) != 0) {
+        fprintf(stderr, "Error reversing words\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("Reversed: %s\n", input);
+
+    free(input);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The Flawfinder warning flagged `fgetc` used in a loop (CWE-120, CWE-20). In the original code, `fgetc` never writes to any buffer — its return value is only compared against `'\n'` and `EOF` — so there was no actual buffer overflow risk. The warning is a false positive in terms of memory safety.
+
+However, the original mitigation (`MAX_DISCARD` cap) introduced a subtle correctness bug: if a line longer than 4096 characters was entered, the loop would exit early, leaving stale input in `stdin`. In this program that's harmless since no further reads occur, but it's a latent trap if the code is extended. The rewrite removes the artificial cap and drains until `'\n'` or `EOF`, which is the canonical, terminating, and safe idiom — the loop is guaranteed to end because `EOF` is eventually returned on stream exhaustion, and no unbounded memory is ever written.
+
+Other defensive measures already present and preserved:
+
+- `fgets` bounded by `MAX_INPUT` prevents overflow on read.
+- Explicit `input[MAX_INPUT - 1] = '\0'` guarantees termination (redundant with `fgets` semantics, but harmless belt-and-braces).
+- `strnlen` with a bound in `reverse_words` avoids reading past the buffer even if handed a non-terminated string, rejecting it with `-1`.
+- NULL checks on `calloc` and `fgets` return values, with proper `free` on every exit path — no leaks, no use-after-free, no double-free.

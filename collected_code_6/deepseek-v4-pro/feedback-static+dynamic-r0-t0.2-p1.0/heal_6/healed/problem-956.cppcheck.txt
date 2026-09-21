@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:60:33: style: Condition 'segment_len>0' is always true [knownConditionTrueFalse]
+                if (segment_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:57:27: note: Assuming that condition 'match_pos>start' is not redundant
+            if (match_pos > start || (match_pos == start && match_pos == 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:58:48: note: Assignment 'segment_len=match_pos-start', assigned value is greater than 0
+                size_t segment_len = match_pos - start;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:60:33: note: Condition 'segment_len>0' is always true
+                if (segment_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:119:25: style: Condition 'segment_len>0' is always true [knownConditionTrueFalse]
+        if (segment_len > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:116:15: note: Assuming that condition 'start<len' is not redundant
+    if (start < len) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:117:34: note: Assignment 'segment_len=len-start', assigned value is greater than 0
+        size_t segment_len = len - start;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:119:25: note: Condition 'segment_len>0' is always true
+        if (segment_len > 0) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-956.c:141:26: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+                capacity = new_capacity;
+                         ^

@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t i;
+    size_t out_pos;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    for (i = 0U; i < len; i++) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next && isalpha((unsigned char)input[i])) {
+                result[out_pos] = (char)toupper((unsigned char)input[i]);
+            } else {
+                result[out_pos] = input[i];
+            }
+            out_pos++;
+            capitalize_next = 0;
+        }
+    }
+
+    result[out_pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "android_tv",
+        "google_pixel",
+        "apple_watch",
+        "hello_world_example",
+        "convert_this_snake_case",
+        "single",
+        "a_b_c_d"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *camel = snake_to_camel(tests[i]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", tests[i], camel) < 0) {
+            free(camel);
+            return EXIT_FAILURE;
+        }
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Fixed the failing test cases**: The test comments indicated expected outputs of `AndroidTv`, `GooglePixel`, and `AppleWatch`, but the corresponding inputs (`android_tv`, `google_pixel`, `apple_watch`) were missing from the test array. They have been added, which is why the original runs produced `<no output>` for those cases.
+
+2. **Mitigated the Flawfinder CWE-126 warning**: Replaced the unbounded `strlen` call with `strnlen` capped at `MAX_INPUT_LEN`. If the input is not properly null-terminated within that bound, the function safely rejects it by returning `NULL` instead of over-reading memory.
+
+3. **Preserved the existing defensive practices**: `NULL` input checks, `malloc` failure handling, `unsigned char` casts for the `ctype.h` functions (avoiding undefined behavior on negative `char` values), checked `printf` return values, and `free` on all exit paths remain intact.

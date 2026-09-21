@@ -1,0 +1,203 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+#define HASH_SIZE 10007
+
+typedef struct WordNode {
+    char *word;
+    int count;
+    struct WordNode *next;
+} WordNode;
+
+typedef struct {
+    WordNode *buckets[HASH_SIZE];
+} HashTable;
+
+unsigned int hash(const char *word);
+HashTable* createTable(void);
+int insertWord(HashTable *table, const char *word);
+void freeTable(HashTable *table);
+void strToLower(char *str);
+int compareNodes(const void *a, const void *b);
+void findMostCommonWords(HashTable *table, int limit);
+int processWord(HashTable *table, char *word, int len);
+
+unsigned int hash(const char *word) {
+    unsigned int hashValue = 0;
+    while (*word) {
+        hashValue = (hashValue << 5) + *word++;
+    }
+    return hashValue % HASH_SIZE;
+}
+
+HashTable* createTable(void) {
+    HashTable *table = (HashTable*)malloc(sizeof(HashTable));
+    if (!table) return NULL;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        table->buckets[i] = NULL;
+    }
+    return table;
+}
+
+int insertWord(HashTable *table, const char *word) {
+    if (!table || !word) return 0;
+    unsigned int index = hash(word);
+    WordNode *node = table->buckets[index];
+
+    while (node) {
+        if (strcmp(node->word, word) == 0) {
+            node->count++;
+            return 1;
+        }
+        node = node->next;
+    }
+
+    WordNode *newNode = (WordNode*)malloc(sizeof(WordNode));
+    if (!newNode) return 0;
+
+    size_t len = 0;
+    while (len < MAX_WORD_LEN && word[len] != '\0') {
+        len++;
+    }
+
+    newNode->word = (char*)malloc(len + 1);
+    if (!newNode->word) {
+        free(newNode);
+        return 0;
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        newNode->word[i] = word[i];
+    }
+    newNode->word[len] = '\0';
+    
+    newNode->count = 1;
+    newNode->next = table->buckets[index];
+    table->buckets[index] = newNode;
+    return 1;
+}
+
+void freeTable(HashTable *table) {
+    if (!table) return;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        WordNode *node = table->buckets[i];
+        while (node) {
+            WordNode *temp = node;
+            node = node->next;
+            free(temp->word);
+            free(temp);
+        }
+    }
+    free(table);
+}
+
+void strToLower(char *str) {
+    if (!str) return;
+    for (; *str; ++str) {
+        *str = tolower((unsigned char)*str);
+    }
+}
+
+int compareNodes(const void *a, const void *b) {
+    const WordNode *nodeA = *(const WordNode **)a;
+    const WordNode *nodeB = *(const WordNode **)b;
+    if (nodeB->count > nodeA->count) return 1;
+    if (nodeB->count < nodeA->count) return -1;
+    return 0;
+}
+
+void findMostCommonWords(HashTable *table, int limit) {
+    if (!table || limit <= 0) return;
+
+    WordNode **allNodes = NULL;
+    int nodeCount = 0;
+    int capacity = 1024;
+
+    allNodes = (WordNode**)malloc(capacity * sizeof(WordNode*));
+    if (!allNodes) return;
+
+    for (int i = 0; i < HASH_SIZE; i++) {
+        WordNode *node = table->buckets[i];
+        while (node) {
+            if (nodeCount >= capacity) {
+                capacity *= 2;
+                WordNode **newNodes = (WordNode**)realloc(allNodes, capacity * sizeof(WordNode*));
+                if (!newNodes) {
+                    free(allNodes);
+                    return;
+                }
+                allNodes = newNodes;
+            }
+            allNodes[nodeCount++] = node;
+            node = node->next;
+        }
+    }
+
+    qsort(allNodes, nodeCount, sizeof(WordNode*), compareNodes);
+
+    int printCount = (limit < nodeCount) ? limit : nodeCount;
+    for (int i = 0; i < printCount; i++) {
+        printf("%s: %d\n", allNodes[i]->word, allNodes[i]->count);
+    }
+
+    free(allNodes);
+}
+
+int processWord(HashTable *table, char *word, int len) {
+    while (len > 0 && ispunct((unsigned char)word[len - 1])) {
+        word[len - 1] = '\0';
+        len--;
+    }
+    if (len > 0) {
+        strToLower(word);
+        if (!insertWord(table, word)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(int argc, char *argv[]) {
+    HashTable *table = createTable();
+    if (!table) return 1;
+
+    char *word = (char*)malloc(MAX_WORD_LEN);
+    if (!word) {
+        freeTable(table);
+        return 1;
+    }
+
+    int c;
+    size_t len = 0;
+    
+    while ((c = fgetc(stdin)) != EOF) {
+        if (isspace(c)) {
+            if (len > 0) {
+                word[len] = '\0';
+                processWord(table, word, (int)len);
+                len = 0;
+            }
+        } else {
+            if (len < (size_t)(MAX_WORD_LEN - 1)) {
+                word[len++] = (char)c;
+            }
+        }
+    }
+    
+    if (len > 0) {
+        word[len] = '\0';
+        processWord(table, word, (int)len);
+    }
+
+    findMostCommonWords(table, 10);
+    
+    free(word);
+    freeTable(table);
+
+    return 0;
+}
+```

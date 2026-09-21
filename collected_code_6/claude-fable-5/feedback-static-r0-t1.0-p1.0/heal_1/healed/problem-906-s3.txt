@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+
+struct url_date {
+    int year;
+    int month;
+    int day;
+};
+
+static int extract_substring(const char *source, const regmatch_t *match,
+                             char *dest, size_t dest_size)
+{
+    size_t length;
+    size_t source_len;
+
+    if (source == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+
+    source_len = strlen(source);
+    if ((size_t)match->rm_eo > source_len) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, source + match->rm_so, length);
+    dest[length] = '\0';
+    return 0;
+}
+
+int extract_date_from_url(const char *url, struct url_date *result)
+{
+    regex_t regex;
+    regmatch_t matches[5];
+    char year_str[MAX_FIELD_LEN] = {0};
+    char month_str[MAX_FIELD_LEN] = {0};
+    char day_str[MAX_FIELD_LEN] = {0};
+    int rc;
+    long year_val;
+    long month_val;
+    long day_val;
+    char *endptr;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    rc = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    rc = regexec(&regex, url, 5, matches, 0);
+    if (rc != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (extract_substring(url, &matches[1], year_str, sizeof(year_str)) != 0 ||
+        extract_substring(url, &matches[2], month_str, sizeof(month_str)) != 0 ||
+        extract_substring(url, &matches[3], day_str, sizeof(day_str)) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+
+    endptr = NULL;
+    year_val = strtol(year_str, &endptr, 10);
+    if (endptr == year_str || *endptr != '\0') {
+        return -1;
+    }
+
+    endptr = NULL;
+    month_val = strtol(month_str, &endptr, 10);
+    if (endptr == month_str || *endptr != '\0') {
+        return -1;
+    }
+
+    endptr = NULL;
+    day_val = strtol(day_str, &endptr, 10);
+    if (endptr == day_str || *endptr != '\0') {
+        return -1;
+    }
+
+    if (year_val < 1000L || year_val > 9999L) {
+        return -1;
+    }
+    if (month_val < 1L || month_val > 12L) {
+        return -1;
+    }
+    if (day_val < 1L || day_val > 31L) {
+        return -1;
+    }
+
+    result->year = (int)year_val;
+    result->month = (int)month_val;
+    result->day = (int)day_val;
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/article-title",
+        "https://news.site.org/2021/12/03/",
+        "https://example.com/no/date/here",
+        "https://example.com/2024/02/30/leap-check"
+    };
+    size_t count;
+    size_t i;
+    struct url_date date;
+
+    count = sizeof(urls) / sizeof(urls[0]);
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s -> Year: %d, Month: %d, Day: %d\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s -> no valid date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already largely defensive, and the Flawfinder hits were mostly informational. Here is what each flagged item amounted to and how the rewrite hardens it:
+
+1. **`memcpy` (CWE-120):** The original already computed `length` from the match offsets and verified `length >= dest_size` before copying, so no overflow was possible from the destination side. The rewrite adds two extra guards: a `dest_size == 0` check (prevents `dest[length] = '\0'` writing to a zero-length buffer) and a validation that `match->rm_eo` does not exceed `strlen(source)`, which protects against reading past the source buffer if a caller ever passes inconsistent match data.
+
+2. **Statically-sized `char` arrays (CWE-119/CWE-120):** `MAX_FIELD_LEN` of 8 is provably sufficient — the regex constrains the year to exactly 4 digits and month/day to 1–2 digits, and `extract_substring` enforces the bound at runtime regardless. The rewrite zero-initializes the buffers so they are never read in an indeterminate state on any error path.
+
+Other notable qualities preserved from the original: `regfree` is called on every exit path after a successful `regcomp` (no resource leak), `strtol` results are validated via `endptr`, and range checks reject out-of-domain values. Note the semantic limitation that `2024/02/30` still passes (day ≤ 31 is checked, but not calendar validity per month) — that is a functional gap, not a security weakness.

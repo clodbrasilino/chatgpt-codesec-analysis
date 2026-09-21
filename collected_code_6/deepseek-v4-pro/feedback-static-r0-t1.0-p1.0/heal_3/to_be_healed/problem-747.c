@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int max3(int a, int b, int c) {
+    int max = a > b ? a : b;
+    return max > c ? max : c;
+}
+
+static size_t safe_strlen(const char* str) {
+    if (str == NULL) return 0;
+    size_t len = 0;
+    while (len < 4096 && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char* lcs_three(const char* s1, const char* s2, const char* s3) {
+    if (s1 == NULL || s2 == NULL || s3 == NULL) return NULL;
+    
+    int len1 = (int)safe_strlen(s1);
+    int len2 = (int)safe_strlen(s2);
+    int len3 = (int)safe_strlen(s3);
+    
+    int*** dp = (int***)malloc((len1 + 1) * sizeof(int**));
+    if (dp == NULL) return NULL;
+    
+    for (int i_idx = 0; i_idx <= len1; i_idx++) {
+        dp[i_idx] = (int**)malloc((len2 + 1) * sizeof(int*));
+        if (dp[i_idx] == NULL) {
+            for (int cleanup_i = 0; cleanup_i < i_idx; cleanup_i++) {
+                for (int cleanup_j = 0; cleanup_j <= len2; cleanup_j++) {
+                    free(dp[cleanup_i][cleanup_j]);
+                }
+                free(dp[cleanup_i]);
+            }
+            free(dp);
+            return NULL;
+        }
+        for (int j_idx = 0; j_idx <= len2; j_idx++) {
+            dp[i_idx][j_idx] = (int*)calloc(len3 + 1, sizeof(int));
+            if (dp[i_idx][j_idx] == NULL) {
+                for (int cleanup_j2 = 0; cleanup_j2 < j_idx; cleanup_j2++) {
+                    free(dp[i_idx][cleanup_j2]);
+                }
+                for (int cleanup_i2 = 0; cleanup_i2 <= i_idx; cleanup_i2++) {
+                    if (cleanup_i2 == i_idx) {
+                        free(dp[cleanup_i2]);
+                        break;
+                    }
+                    for (int cleanup_j3 = 0; cleanup_j3 <= len2; cleanup_j3++) {
+                        free(dp[cleanup_i2][cleanup_j3]);
+                    }
+                    free(dp[cleanup_i2]);
+                }
+                free(dp);
+                return NULL;
+            }
+        }
+    }
+    
+    for (int i_val = 1; i_val <= len1; i_val++) {
+        for (int j_val = 1; j_val <= len2; j_val++) {
+            for (int k_val = 1; k_val <= len3; k_val++) {
+                if (s1[i_val-1] == s2[j_val-1] && s2[j_val-1] == s3[k_val-1]) {
+                    dp[i_val][j_val][k_val] = dp[i_val-1][j_val-1][k_val-1] + 1;
+                } else {
+                    dp[i_val][j_val][k_val] = max3(dp[i_val-1][j_val][k_val], dp[i_val][j_val-1][k_val], dp[i_val][j_val][k_val-1]);
+                }
+            }
+        }
+    }
+    
+    int lcs_len = dp[len1][len2][len3];
+    char* result = (char*)malloc((lcs_len + 1) * sizeof(char));
+    if (result == NULL) {
+        for (int free_i = 0; free_i <= len1; free_i++) {
+            for (int free_j = 0; free_j <= len2; free_j++) {
+                free(dp[free_i][free_j]);
+            }
+            free(dp[free_i]);
+        }
+        free(dp);
+        return NULL;
+    }
+    
+    int i_pos = len1, j_pos = len2, k_pos = len3;
+    int index = lcs_len;
+    result[index] = '\0';
+    
+    while (i_pos > 0 && j_pos > 0 && k_pos > 0) {
+        if (s1[i_pos-1] == s2[j_pos-1] && s2[j_pos-1] == s3[k_pos-1]) {
+            result[--index] = s1[i_pos-1];
+            i_pos--; j_pos--; k_pos--;
+        } else if (dp[i_pos-1][j_pos][k_pos] >= dp[i_pos][j_pos-1][k_pos] && dp[i_pos-1][j_pos][k_pos] >= dp[i_pos][j_pos][k_pos-1]) {
+            i_pos--;
+        } else if (dp[i_pos][j_pos-1][k_pos] >= dp[i_pos-1][j_pos][k_pos] && dp[i_pos][j_pos-1][k_pos] >= dp[i_pos][j_pos][k_pos-1]) {
+            j_pos--;
+        } else {
+            k_pos--;
+        }
+    }
+    
+    for (int free_i = 0; free_i <= len1; free_i++) {
+        for (int free_j = 0; free_j <= len2; free_j++) {
+            free(dp[free_i][free_j]);
+        }
+        free(dp[free_i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 's1' can be declared as const array [constVariable]
+     */
+    char s1[] = "ABCDEF";
+    /* Possible weaknesses found:
+     *  Variable 's2' can be declared as const array [constVariable]
+     */
+    char s2[] = "ACDEF";
+    /* Possible weaknesses found:
+     *  Variable 's3' can be declared as const array [constVariable]
+     */
+    char s3[] = "ABDF";
+    
+    char* result = lcs_three(s1, s2, s3);
+    
+    if (result != NULL) {
+        printf("LCS of three strings: %s\n", result);
+        printf("Length: %zu\n", safe_strlen(result));
+        free(result);
+    } else {
+        printf("No common subsequence found\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:18: style: Condition 'year_len>=5' is always false [knownConditionTrueFalse]
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:52:18: note: Assuming that condition 'year_len!=4' is not redundant
+    if (year_len != 4 || month_len < 1 || month_len > 2 || day_len < 1 || day_len > 2) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:18: note: Condition 'year_len>=5' is always false
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:36: style: Condition 'month_len>=3' is always false [knownConditionTrueFalse]
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:52:53: note: Assuming that condition 'month_len>2' is not redundant
+    if (year_len != 4 || month_len < 1 || month_len > 2 || day_len < 1 || day_len > 2) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:36: note: Condition 'month_len>=3' is always false
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:52: style: Condition 'day_len>=3' is always false [knownConditionTrueFalse]
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:52:83: note: Assuming that condition 'day_len>2' is not redundant
+    if (year_len != 4 || month_len < 1 || month_len > 2 || day_len < 1 || day_len > 2) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:57:52: note: Condition 'day_len>=3' is always false
+    if (year_len >= 5 || month_len >= 3 || day_len >= 3) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:66:33: style: Condition 'year_len<4' is always false [knownConditionTrueFalse]
+    size_t year_copy = year_len < 4 ? year_len : 4;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:52:18: note: Assuming that condition 'year_len!=4' is not redundant
+    if (year_len != 4 || month_len < 1 || month_len > 2 || day_len < 1 || day_len > 2) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-906-s3.c:66:33: note: Condition 'year_len<4' is always false
+    size_t year_copy = year_len < 4 ? year_len : 4;
+                                ^

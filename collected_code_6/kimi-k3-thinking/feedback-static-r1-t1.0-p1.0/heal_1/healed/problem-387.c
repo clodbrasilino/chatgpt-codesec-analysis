@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 128
+
+static int hex_digit_value(char c)
+{
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    return -1;
+}
+
+static size_t bounded_length(const char *s, size_t max_len)
+{
+    const char *nul = memchr(s, '\0', max_len);
+
+    if (nul == NULL) {
+        return max_len;
+    }
+    return (size_t)(nul - s);
+}
+
+static int is_hex_even(const char *hex, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t start = 0;
+    int last;
+
+    if (hex == NULL) {
+        return -1;
+    }
+
+    len = bounded_length(hex, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    if (len > 2 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) {
+        start = 2;
+    }
+
+    if (len - start == 0) {
+        return -1;
+    }
+
+    for (i = start; i < len; i++) {
+        if (hex_digit_value(hex[i]) < 0) {
+            return -1;
+        }
+    }
+
+    last = hex_digit_value(hex[len - 1]);
+    return (last % 2 == 0) ? 1 : 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    int result;
+    int ch;
+
+    printf("Enter a hexadecimal number: ");
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return 1;
+    }
+
+    len = bounded_length(buffer, sizeof buffer);
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            while ((ch = getchar()) != '\n' && ch != EOF) {
+            }
+            fprintf(stderr, "Error: input too long\n");
+            return 1;
+        }
+    }
+
+    result = is_hex_even(buffer, sizeof buffer);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid hexadecimal number\n");
+        return 1;
+    }
+
+    printf("The hexadecimal number is %s\n", result == 1 ? "even" : "odd");
+
+    return 0;
+}

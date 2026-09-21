@@ -1,0 +1,122 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool is_vowel(unsigned char character)
+{
+    return character == 'a' || character == 'e' ||
+           character == 'i' || character == 'o' ||
+           character == 'u' || character == 'A' ||
+           character == 'E' || character == 'I' ||
+           character == 'O' || character == 'U';
+}
+
+static size_t string_length(const char *string)
+{
+    const char *end = string;
+
+    while (*end != '\0') {
+        ++end;
+    }
+
+    return (size_t)(end - string);
+}
+
+static char *duplicate_string(const char *source, size_t length)
+{
+    char *destination;
+    size_t index;
+
+    if (source == NULL || length == SIZE_MAX) {
+        return NULL;
+    }
+
+    destination = malloc(length + 1);
+    if (destination == NULL) {
+        return NULL;
+    }
+
+    for (index = 0; index < length; ++index) {
+        destination[index] = source[index];
+    }
+
+    destination[length] = '\0';
+    return destination;
+}
+
+static void reverse_vowels(char *string, size_t length)
+{
+    size_t left = 0;
+    size_t right = length;
+
+    if (string == NULL) {
+        return;
+    }
+
+    while (left < right) {
+        while (left < right &&
+               !is_vowel((unsigned char)string[left])) {
+            ++left;
+        }
+
+        while (left < right) {
+            --right;
+
+            if (is_vowel((unsigned char)string[right])) {
+                break;
+            }
+        }
+
+        if (left < right) {
+            char temporary = string[left];
+            string[left] = string[right];
+            string[right] = temporary;
+            ++left;
+        }
+    }
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char *argv[const])
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'program_name' can be reduced. [variableScope]
+     */
+    const char *program_name;
+    size_t length;
+    char *string;
+
+    if (argc != 2) {
+        program_name = argc > 0 && argv[0] != NULL ? argv[0] : "program";
+
+        if (fprintf(stderr, "Usage: %s <string>\n", program_name) < 0) {
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    length = string_length(argv[1]);
+    string = duplicate_string(argv[1], length);
+
+    if (string == NULL) {
+        if (fputs("Memory allocation failed.\n", stderr) == EOF) {
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    reverse_vowels(string, length);
+
+    if (puts(string) == EOF) {
+        free(string);
+        return EXIT_FAILURE;
+    }
+
+    free(string);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static int count_odd_rotations(const char *s, size_t s_len, size_t *count)
+{
+    size_t i, odd_count = 0;
+
+    if (s == NULL || count == NULL)
+        return -1;
+
+    if (s_len == 0)
+    {
+        *count = 0;
+        return 0;
+    }
+
+    for (i = 0; i < s_len; i++)
+    {
+        if (s[i] != '0' && s[i] != '1')
+            return -1;
+        if (s[i] == '1')
+            odd_count++;
+    }
+
+    *count = odd_count;
+    return 0;
+}
+
+static int read_line(char *buf, size_t buf_size, size_t *out_len)
+{
+    size_t len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'c' can be reduced. [variableScope]
+     */
+    int c;
+
+    if (buf == NULL || buf_size == 0 || out_len == NULL)
+        return -1;
+
+    if (fgets(buf, buf_size, stdin) == NULL)
+        return -1;
+
+    len = strnlen(buf, buf_size);
+
+    if (len == buf_size)
+    {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF)
+            ;
+        return -2;
+    }
+
+    if (len > 0 && buf[len - 1] == '\n')
+    {
+        buf[len - 1] = '\0';
+        len--;
+    }
+
+    *out_len = len;
+    return 0;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[MAX_INPUT_SIZE + 2];
+    size_t count = 0;
+    size_t len = 0;
+    int result;
+
+    result = read_line(buffer, sizeof(buffer), &len);
+
+    if (result == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == -2)
+    {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_odd_rotations(buffer, len, &count) != 0)
+    {
+        fprintf(stderr, "Invalid binary string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%zu\n", count);
+    return EXIT_SUCCESS;
+}

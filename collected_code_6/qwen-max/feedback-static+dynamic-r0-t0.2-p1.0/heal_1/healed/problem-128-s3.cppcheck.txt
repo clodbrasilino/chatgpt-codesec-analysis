@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-128-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-128-s3.c:12:44: style: Condition 'words[i][length]=='\0'' is always true [knownConditionTrueFalse]
+        if (length > n && words[i][length] == '\0') {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-128-s3.c:11:23: note: length is assigned 'strlen(words[i])' here.
+        size_t length = strlen(words[i]);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-128-s3.c:11:31: note: Return index of string to the first element that is 0
+        size_t length = strlen(words[i]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-128-s3.c:12:44: note: Condition 'words[i][length]=='\0'' is always true
+        if (length > n && words[i][length] == '\0') {
+                                           ^

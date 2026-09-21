@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-277.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-277.c:73:17: warning: Identical condition 'key_len>=max_key_size', second condition is always false [identicalConditionAfterEarlyExit]
+    if (key_len >= max_key_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-277.c:49:17: note: If condition 'key_len>=max_key_size' is true, the function will return/exit
+    if (key_len >= max_key_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-277.c:73:17: note: Testing identical condition 'key_len>=max_key_size'
+    if (key_len >= max_key_size) {
+                ^

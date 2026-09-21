@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** extract_strings(char** input_list, int list_size, size_t target_length, int* out_count) {
+    if (input_list == NULL || out_count == NULL || list_size <= 0) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL) {
+            size_t len = 0;
+            while (input_list[i][len] != '\0' && len <= target_length) {
+                len++;
+            }
+            if (len == target_length && input_list[i][len] == '\0') {
+                count++;
+            }
+        }
+    }
+
+    *out_count = count;
+    if (count == 0) {
+        return NULL;
+    }
+
+    char** result = (char**)malloc(count * sizeof(char*));
+    if (result == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (input_list[i] != NULL) {
+            size_t len = 0;
+            while (input_list[i][len] != '\0' && len <= target_length) {
+                len++;
+            }
+            if (len == target_length && input_list[i][len] == '\0') {
+                result[index] = strdup(input_list[i]);
+                if (result[index] == NULL) {
+                    for (int j = 0; j < index; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    *out_count = 0;
+                    return NULL;
+                }
+                index++;
+            }
+        }
+    }
+
+    return result;
+}
+
+int main(int argc, char* argv[]) {
+    char** input_strings;
+    int list_size;
+    size_t target_length;
+
+    if (argc > 2) {
+        /* Possible weaknesses found:
+         * Flawfinder atoi: Unless checked, the resulting number can exceed the expected range (CWE-190). If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended). (risk 2, integer)
+         */
+        target_length = (size_t)atoi(argv[1]);
+        list_size = argc - 2;
+        input_strings = &argv[2];
+    } else {
+        /* Possible weaknesses found:
+         *  Variable created here.
+         */
+        char* default_strings[] = {
+            "practice",
+            "solution",
+            "Python",
+            "exercises",
+            "apple",
+            "bat"
+        };
+        /* Possible weaknesses found:
+         *  Array decayed to pointer here.
+         */
+        list_size = sizeof(default_strings) / sizeof(default_strings[0]);
+        target_length = 8;
+        input_strings = default_strings;
+    }
+
+    int extracted_count = 0;
+    /* Possible weaknesses found:
+     *  Using pointer to local variable 'default_strings' that is out of scope. [invalidLifetime]
+     *  Using pointer to local variable 'default_strings' that is out of scope.
+     */
+    char** extracted = extract_strings(input_strings, list_size, target_length, &extracted_count);
+
+    if (extracted != NULL && extracted_count > 0) {
+        printf("[");
+        for (int i = 0; i < extracted_count; i++) {
+            printf("'%s'", extracted[i]);
+            if (i < extracted_count - 1) {
+                printf(", ");
+            }
+            free(extracted[i]);
+        }
+        printf("]\n");
+        free(extracted);
+    } else {
+        printf("[]\n");
+    }
+
+    return 0;
+}

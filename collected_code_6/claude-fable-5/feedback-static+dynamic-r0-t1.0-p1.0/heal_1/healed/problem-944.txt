@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+int print_numbers_with_positions(const char *str)
+{
+    size_t i;
+    size_t len;
+    size_t start;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH && str[len - 1] != '\0') {
+        return -1;
+    }
+
+    i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            if (printf("Number: %.*s, Position: %zu\n",
+                       (int)(i - start), &str[start], start) < 0) {
+                return -1;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "abc123def45gh6";
+
+    if (print_numbers_with_positions(input) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code's only flagged weakness was the use of `strlen` (CWE-126), which performs an unbounded read and can over-read past the buffer if the input string is not NUL-terminated.
+
+The rewrite replaces `strlen` with `strnlen`, which bounds the scan to `MAX_INPUT_LENGTH` bytes. An additional check verifies whether the bound was hit without finding a terminator — in that case the function safely rejects the input rather than processing a potentially unterminated buffer.
+
+Everything else in the original was already defensively written and is preserved:
+
+- **NULL check** on `str` before any dereference.
+- **`(unsigned char)` casts** before `isdigit()`, avoiding undefined behavior for negative `char` values (required by the C standard for `<ctype.h>` functions).
+- **Bounded inner loop** (`i < len`) preventing overrun while scanning digit runs.
+- **`%.*s` with an explicit length** so `printf` never reads beyond the digit substring.
+- **Return-value checking** on `printf`, propagating I/O errors to the caller, which `main` then reports via `stderr` and `EXIT_FAILURE`.
+
+Note that `strnlen` is POSIX (and C23's `strnlen_s` equivalent exists in Annex K); if strict C99 portability were required, a manual bounded loop would be the fallback.

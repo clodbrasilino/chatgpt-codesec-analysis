@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void minStringLength(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int freq[256] = {0};
+    int maxFreq = 0;
+    char charToRemove = '\0';
+    int n = 0;
+
+    while (str[n] != '\0') {
+        unsigned char c = (unsigned char)str[n];
+        freq[c]++;
+        if (freq[c] > maxFreq) {
+            maxFreq = freq[c];
+            charToRemove = str[n];
+        }
+        n++;
+    }
+
+    if (n == 0) {
+        return;
+    }
+
+    int dest = 0;
+    for (int src = 0; src < n; src++) {
+        if (str[src] != charToRemove) {
+            str[dest++] = str[src];
+        }
+    }
+    str[dest] = '\0';
+}
+
+int main(void) {
+    size_t bufferSize = 256;
+    char *str = (char *)malloc(bufferSize);
+    if (str == NULL) {
+        return 1;
+    }
+
+    if (fgets(str, bufferSize, stdin) != NULL) {
+        int len = 0;
+        while (str[len] != '\0') {
+            len++;
+        }
+        
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+        }
+
+        minStringLength(str);
+        printf("%s\n", str);
+    }
+
+    free(str);
+    return 0;
+}
+```

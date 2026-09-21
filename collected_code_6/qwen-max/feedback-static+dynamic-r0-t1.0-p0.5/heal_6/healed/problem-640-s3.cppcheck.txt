@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-640-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-640-s3.c:19:48: style: Condition 'i==len' is always true [knownConditionTrueFalse]
+        } else if (depth == 0 && (i < len || i == len)) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-640-s3.c:19:37: note: Assuming that condition 'i<len' is not redundant
+        } else if (depth == 0 && (i < len || i == len)) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-640-s3.c:14:26: note: Assuming that condition 'i<=len' is not redundant
+    for (size_t i = 0; i <= len; ++i) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_6/healed/problem-640-s3.c:19:48: note: Condition 'i==len' is always true
+        } else if (depth == 0 && (i < len || i == len)) {
+                                               ^

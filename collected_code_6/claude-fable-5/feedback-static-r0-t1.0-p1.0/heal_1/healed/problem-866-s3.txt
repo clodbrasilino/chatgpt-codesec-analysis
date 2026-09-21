@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 64
+
+int has_31_days(const char *month)
+{
+    const char *months_with_31[] = {
+        "January", "March", "May", "July",
+        "August", "October", "December"
+    };
+    size_t count = sizeof(months_with_31) / sizeof(months_with_31[0]);
+    size_t i;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strcmp(month, months_with_31[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter month name: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (has_31_days(buffer)) {
+        printf("%s has 31 days\n", buffer);
+    } else {
+        printf("%s does not have 31 days\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already largely safe, and both Flawfinder findings were low-risk advisories rather than actual vulnerabilities:
+
+1. **CWE-119/CWE-120 (statically-sized `char buffer[64]`)** — The original code already mitigated this correctly by using `fgets(buffer, sizeof(buffer), stdin)`, which bounds the read to the buffer size. In the rewrite, the buffer size is defined as a named constant (`BUFFER_SIZE`) for maintainability, and `sizeof(buffer)` is consistently used so the bound can never drift out of sync with the declaration.
+
+2. **CWE-126 (`strlen` on a possibly non-terminated string)** — `fgets` always NUL-terminates on success, so the original was safe in practice. The rewrite adds defense-in-depth: an explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination regardless of input source, and `strnlen` with an explicit bound replaces `strlen`, ensuring no over-read is possible even if the termination guarantee were ever violated by future code changes.
+
+Other aspects worth noting: the `has_31_days` function correctly guards against `NULL`, uses `strcmp` on known string literals (safe), and computes the array length with the standard `sizeof` idiom. Return values of `fgets` are checked, and `EXIT_SUCCESS`/`EXIT_FAILURE` are used properly.

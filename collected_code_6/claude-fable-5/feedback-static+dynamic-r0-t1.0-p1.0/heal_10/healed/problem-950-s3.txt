@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+#define ZODIAC_COUNT 12
+#define INPUT_BUFFER_SIZE 64
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+static int parse_year(const char *text, int *out_year)
+{
+    char *endptr;
+    long value;
+
+    if (text == NULL || out_year == NULL) {
+        return 0;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtol(text, &endptr, 10);
+
+    if (errno != 0 || endptr == text) {
+        return 0;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' ||
+           *endptr == '\n' || *endptr == '\r') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    if (value < (long)INT_MIN || value > (long)INT_MAX) {
+        return 0;
+    }
+
+    *out_year = (int)value;
+    return 1;
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return 0;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return 0;
+    }
+
+    buffer[size - 1] = '\0';
+    len = strnlen(buffer, size);
+
+    if (len == size - 1 && buffer[len - 1] != '\n') {
+        int ch;
+        do {
+            ch = getchar();
+        } while (ch != '\n' && ch != EOF);
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(int argc, char const *argv[])
+{
+    int year;
+
+    year = 0;
+
+    if (argc > 1) {
+        if (!parse_year(argv[1], &year)) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        char buffer[INPUT_BUFFER_SIZE];
+
+        memset(buffer, 0, sizeof(buffer));
+
+        if (!read_line(buffer, sizeof(buffer))) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+        if (!parse_year(buffer, &year)) {
+            fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%s\n", chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened; the Flawfinder hits were largely false positives, but the rewrite adds defense-in-depth:
+
+1. **`char` array warnings (CWE-119/CWE-120):** Both flagged arrays were safe. The `signs` array is `static const` with all accesses bounds-checked (`index` is normalized and range-verified before indexing). The input `buffer` is zeroed with `memset` and only written via `fgets` bounded by `sizeof(buffer)`. The rewrite adds an explicit NUL terminator (`buffer[size - 1] = '\0'`) after `fgets` as belt-and-suspenders before `strnlen`, guaranteeing termination regardless of stream state.
+
+2. **`getchar` in a loop (CWE-120/CWE-20):** This is a false positive — the loop only *discards* excess characters to drain stdin after a truncated line; nothing is written to any buffer. It is retained as-is since it's the correct idiom for flushing oversized input.
+
+3. **Additional hardening in the rewrite:**
+   - `read_line` now rejects `size < 2` (prevents `len - 1` underflow when `size == 1`, where `len` would be 0) and sizes exceeding `INT_MAX` before the cast to `int` for `fgets`.
+   - The `INT_MIN`/`INT_MAX` range check uses explicit `long` casts, silencing tautological-comparison warnings on LP32 platforms where `long == int` while remaining correct on LP64.
+   - `year` is initialized at declaration to avoid any path reading an indeterminate value.
+   - `parse_year` retains full `strtol` error handling: `errno` check for `ERANGE`, `endptr == text` check for no-digit input, and trailing-whitespace-only validation to reject inputs like `"1999abc"`.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-604-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-604-s2.c:70:23: style: Condition 'copy_size<=input_len' is always true [knownConditionTrueFalse]
+        if (copy_size <= input_len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-604-s2.c:67:47: note: Assignment 'copy_size=result_len<input_len?result_len:input_len', assigned value is less than symbolic=input_len+1
+    size_t copy_size = result_len < input_len ? result_len : input_len;
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-604-s2.c:70:23: note: Condition 'copy_size<=input_len' is always true
+        if (copy_size <= input_len) {
+                      ^

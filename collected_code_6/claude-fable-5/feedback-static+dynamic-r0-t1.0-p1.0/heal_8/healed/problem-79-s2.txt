@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_WORD_LEN 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+
+    return i;
+}
+
+static bool is_length_odd(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = bounded_strlen(word, max_len);
+    return (len % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < (size_t)INT_MAX);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a word: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and how the identified weaknesses are handled:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The original code was already safe — `getchar()` returns an `int` and the loop terminates on `'\n'`, `EOF`, or a guard counter reaching `INT_MAX`, so it cannot loop infinitely or overflow anything. This defensive pattern is preserved in the rewrite.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer is safely bounded because:
+   - `fgets()` is used with `sizeof(buffer)`, preventing overflow on input.
+   - The buffer is zero-initialized with `memset` and explicitly null-terminated at the last index as a belt-and-braces measure.
+   - Length calculations use a bounded length function rather than unbounded `strlen`.
+   - Truncated input (no newline found and buffer full) triggers `discard_remaining_input()` to flush stdin, preventing stale data from affecting later reads.
+
+3. **Portability improvement:** The original used `strnlen()`, which is POSIX rather than strict C99. The rewrite replaces it with a small `bounded_strlen()` helper so the program compiles cleanly under strict ISO C without feature-test macros, while retaining the bounds-checking behavior.
+
+All array accesses (`buffer[len - 1U]`) are guarded by prior length checks (`len > 0U`), so no out-of-bounds access is possible.

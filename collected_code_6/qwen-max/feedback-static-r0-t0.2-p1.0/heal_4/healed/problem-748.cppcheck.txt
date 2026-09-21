@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-748.c:19:16: style: Local variable 'len' shadows outer argument [shadowArgument]
+        size_t len = end - (str + match[0].rm_eo);
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-748.c:6:38: note: Shadowed declaration
+void insert_spaces(char *str, size_t len) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-748.c:19:16: note: Shadow variable
+        size_t len = end - (str + match[0].rm_eo);
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-748.c:16:11: style: Variable 'end' can be declared as pointer to const [constVariablePointer]
+    char *end = str + len;
+          ^

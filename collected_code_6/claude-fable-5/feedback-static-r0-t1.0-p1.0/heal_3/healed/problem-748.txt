@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static int safe_copy(char *dest, size_t dest_capacity, size_t dest_offset,
+                     const char *src, size_t count)
+{
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+    if (dest_offset > dest_capacity) {
+        return -1;
+    }
+    if (count > (dest_capacity - dest_offset)) {
+        return -1;
+    }
+    memcpy(dest + dest_offset, src, count);
+    return 0;
+}
+
+char *add_spaces(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t capacity;
+    size_t out;
+    size_t offset;
+    int rc;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    rc = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    capacity = (2U * len) + 1U;
+    result = malloc(capacity);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    out = 0U;
+    offset = 0U;
+    while ((offset < len) &&
+           (regexec(&regex, input + offset, 1U, &match, 0) == 0)) {
+        size_t start = offset + (size_t)match.rm_so;
+        size_t chunk = (size_t)match.rm_so;
+
+        if ((out + chunk + 2U) > capacity) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (safe_copy(result, capacity, out, input + offset, chunk) != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        out += chunk;
+
+        if ((start > 0U) && (input[start - 1U] != ' ')) {
+            result[out] = ' ';
+            out++;
+        }
+
+        result[out] = input[start];
+        out++;
+        offset = start + 1U;
+    }
+
+    if ((out + (len - offset) + 1U) > capacity) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    if (safe_copy(result, capacity, out, input + offset, len - offset) != 0) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+    out += len - offset;
+    result[out] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "HelloWorldThisIsATestString";
+    char *spaced;
+
+    spaced = add_spaces(text);
+    if (spaced == NULL) {
+        fprintf(stderr, "Failed to process input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input : %s\n", text);
+    printf("Output: %s\n", spaced);
+
+    free(spaced);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why the code is safe as written:
+
+**CWE-120 (`memcpy` buffer overflow) — already mitigated.** The Flawfinder warning on `memcpy` is a pattern-based hit, not a confirmed vulnerability. The `safe_copy` wrapper validates every precondition before the copy executes:
+
+1. **NULL checks** on both `dest` and `src` prevent undefined behavior from invalid pointers.
+2. **`dest_offset > dest_capacity`** guards against an out-of-range starting position, which also prevents the subtraction on the next line from underflowing.
+3. **`count > (dest_capacity - dest_offset)`** guarantees the copy fits within the remaining space. Because the previous check ensures the subtraction cannot wrap, this comparison is sound for all `size_t` inputs.
+
+**Additional defenses already present in the caller:**
+
+- `strnlen` with `MAX_INPUT_LEN` bounds the input length, and lengths at or beyond the cap are rejected — no unbounded `strlen` on untrusted input.
+- The output buffer capacity `(2 * len) + 1` cannot overflow since `len < 4096`, and it is the worst-case size (a space before every character plus the NUL terminator).
+- Every write of a single byte (`result[out] = ...`) is preceded by the `(out + chunk + 2U) > capacity` check, which reserves room for both the optional space and the matched character.
+- The final tail copy re-checks capacity including the terminator before writing.
+- All error paths correctly release both the `malloc` allocation and the compiled regex (`regfree`), so there are no memory or resource leaks (CWE-401/CWE-772).
+- The caller frees the returned buffer exactly once — no double-free or use-after-free.
+
+The code is unchanged apart from removing comments, as the identified weakness was already properly addressed by the existing bounds-checking logic.

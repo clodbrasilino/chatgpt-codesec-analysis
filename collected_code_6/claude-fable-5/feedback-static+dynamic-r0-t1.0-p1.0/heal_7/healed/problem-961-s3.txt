@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 63
+
+static int roman_char_value(char c)
+{
+    switch (toupper((unsigned char)c)) {
+    case 'I': return 1;
+    case 'V': return 5;
+    case 'X': return 10;
+    case 'L': return 50;
+    case 'C': return 100;
+    case 'D': return 500;
+    case 'M': return 1000;
+    default:  return -1;
+    }
+}
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (s[i] == '\0') {
+            return i;
+        }
+    }
+    return max_len;
+}
+
+static int roman_to_int(const char *s, size_t max_len, int *result)
+{
+    size_t len;
+    size_t i;
+    int total = 0;
+
+    if (s == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = bounded_strlen(s, max_len);
+    if (len == 0 || len >= max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        int current = roman_char_value(s[i]);
+        if (current < 0) {
+            return -1;
+        }
+
+        if (i + 1 < len) {
+            int next = roman_char_value(s[i + 1]);
+            if (next < 0) {
+                return -1;
+            }
+            if (current < next) {
+                int diff = next - current;
+                if (total > INT_MAX - diff) {
+                    return -1;
+                }
+                total += diff;
+                i++;
+                continue;
+            }
+        }
+
+        if (total > INT_MAX - current) {
+            return -1;
+        }
+        total += current;
+    }
+
+    *result = total;
+    return 0;
+}
+
+static int flush_stdin(void)
+{
+    int c;
+    size_t guard = 0;
+    const size_t guard_limit = (size_t)INT_MAX;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+        guard++;
+        if (guard >= guard_limit) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN + 1];
+    int value = 0;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a Roman numeral: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+        if (flush_stdin() != 0) {
+            fprintf(stderr, "Error clearing input\n");
+            return EXIT_FAILURE;
+        }
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (roman_to_int(buffer, sizeof(buffer), &value) != 0) {
+        fprintf(stderr, "Invalid Roman numeral: %s\n", buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s = %d\n", buffer, value);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **Flawfinder `char buffer` warning (CWE-119/CWE-120)** — The statically-sized array is already properly protected:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, never overflowing.
+   - The buffer is zero-initialized with `memset` and explicitly null-terminated at `sizeof(buffer) - 1` as a defensive measure.
+   - All string operations (`bounded_strlen`, `roman_to_int`) take an explicit `max_len` bound, so no unbounded traversal is possible.
+   - Oversized input is detected (last byte filled without a trailing newline) and rejected, with the remaining stdin data drained safely.
+
+2. **Flawfinder `getchar` in a loop (CWE-120/CWE-20)** — The `flush_stdin` loop is safe:
+   - It reads into a plain `int`, never a buffer, so no overflow is possible.
+   - It terminates on both `'\n'` and `EOF`, avoiding infinite loops on closed streams.
+   - A `guard` counter bounds the total iterations to `INT_MAX`, protecting against pathological/never-ending input streams (defense against resource exhaustion).
+
+3. **Additional hardening already present:**
+   - `roman_char_value` casts to `unsigned char` before `toupper`, avoiding undefined behavior on negative `char` values.
+   - Integer overflow checks (`total > INT_MAX - current`) prevent signed overflow (CWE-190) even on adversarial input like `"MMMM...M"`.
+   - All pointer parameters are NULL-checked before use.
+   - Error paths return distinct diagnostics and non-zero exit codes.
+
+The original code was already correctly written with the mitigations in place; the Flawfinder hits are informational (risk 1–2) and represent false positives given the bounds checking present. The rewritten version preserves all safeguards with the comments removed.

@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_TEXT_LEN 4096
+
+static size_t bounded_strlen(const char *s, size_t maxlen)
+{
+    size_t n = 0;
+
+    while (n < maxlen && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+static int find_upper_lower_sequences(const char *text)
+{
+    size_t i;
+    size_t len;
+    int found;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(text, MAX_TEXT_LEN);
+    found = 0;
+    i = 0;
+
+    while (i < len) {
+        if (isupper((unsigned char)text[i]) &&
+            (i + 1U) < len &&
+            islower((unsigned char)text[i + 1U])) {
+            size_t start = i;
+            size_t j = i + 1U;
+
+            while (j < len && islower((unsigned char)text[j])) {
+                j++;
+            }
+
+            {
+                size_t match_len = j - start;
+
+                if (match_len > 0U && match_len <= (size_t)INT_MAX) {
+                    if (printf("Found: %.*s\n",
+                               (int)match_len, &text[start]) < 0) {
+                        return -1;
+                    }
+                    found++;
+                }
+            }
+            i = j;
+        } else {
+            i++;
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *samples[] = {
+        "Hello World this is a Test of Sequences",
+        "ABC noUpper Xy z Qwerty",
+        "nothing here",
+        "Single"
+    };
+    size_t count;
+    size_t k;
+
+    count = sizeof(samples) / sizeof(samples[0]);
+
+    for (k = 0; k < count; k++) {
+        int result;
+
+        if (printf("Input: %s\n", samples[k]) < 0) {
+            return EXIT_FAILURE;
+        }
+
+        result = find_upper_lower_sequences(samples[k]);
+
+        if (result < 0) {
+            if (fprintf(stderr, "Error processing input\n") < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+
+        if (result == 0) {
+            if (printf("No matches found\n") < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+
+        if (printf("\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: add `#include <limits.h>` for `INT_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+```
+
+**Key changes made to address the flagged weaknesses:**
+
+1. **CWE-119/CWE-120 (statically-sized array `match`)** — The fixed-size stack buffer was eliminated entirely. Since the matched substring was only used for printing, there is no need to copy it at all.
+
+2. **CWE-120 (`memcpy` without overflow guarantee)** — The `memcpy` call is removed. Instead, `printf("%.*s", ...)` prints directly from the source text with an explicit precision bound, so no destination buffer can ever be overflowed. A `match_len <= INT_MAX` check guards the `size_t` → `int` conversion required by the `%.*s` precision argument.
+
+The original code was actually defensively written (it checked `match_len < sizeof(match)` before copying), but removing the intermediate buffer eliminates the weakness class altogether rather than merely mitigating it, which also silences the static-analyzer findings.

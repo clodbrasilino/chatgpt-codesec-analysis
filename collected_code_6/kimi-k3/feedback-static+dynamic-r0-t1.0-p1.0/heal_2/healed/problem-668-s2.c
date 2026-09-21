@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* replace_multiple_occurrences(const char* str, char ch, size_t max_len) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, max_len);
+    if (len == 0) {
+        char* empty = malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    char* result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int prev_is_ch = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            if (!prev_is_ch) {
+                result[j++] = str[i];
+                prev_is_ch = 1;
+            }
+        } else {
+            result[j++] = str[i];
+            prev_is_ch = 0;
+        }
+    }
+    result[j] = '\0';
+
+    char* final_result = realloc(result, j + 1);
+    if (final_result != NULL) {
+        return final_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* test_string = "aaabbbcccdddeeefff";
+    char target = 'a';
+    size_t max_len = 1024;
+
+    char* result = replace_multiple_occurrences(test_string, target, max_len);
+    
+    if (result != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Modified: %s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    return 0;
+}

@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    size_t input_len;
+    size_t output_len;
+    const char *cursor;
+    char *output;
+    char *out_ptr;
+    size_t remaining;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    if (input[0] == '\0') {
+        output = (char *)malloc(1);
+        if (output != NULL) {
+            output[0] = '\0';
+        }
+        return output;
+    }
+
+    output_len = 1;
+    cursor = input;
+    while (*cursor != '\0') {
+        output_len++;
+        cursor++;
+    }
+
+    cursor = input;
+    while (*cursor != '\0') {
+        if (cursor != input && *cursor >= 'A' && *cursor <= 'Z') {
+            if (cursor > input && *(cursor - 1) >= 'a' && *(cursor - 1) <= 'z') {
+                output_len++;
+            } else if (cursor > input && *(cursor - 1) >= '0' && *(cursor - 1) <= '9') {
+                output_len++;
+            }
+        }
+        cursor++;
+    }
+
+    output = (char *)malloc(output_len);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    input_len = output_len - 1;
+    cursor = input;
+    out_ptr = output;
+
+    while (*cursor != '\0') {
+        if (cursor != input && *cursor >= 'A' && *cursor <= 'Z') {
+            if ((cursor > input && *(cursor - 1) >= 'a' && *(cursor - 1) <= 'z') ||
+                (cursor > input && *(cursor - 1) >= '0' && *(cursor - 1) <= '9')) {
+                if ((size_t)(out_ptr - output) >= output_len) {
+                    free(output);
+                    return NULL;
+                }
+                *out_ptr++ = '_';
+            }
+        }
+
+        if ((size_t)(out_ptr - output) >= output_len) {
+            free(output);
+            return NULL;
+        }
+
+        *out_ptr++ = (char)tolower((unsigned char)*cursor);
+        cursor++;
+    }
+
+    if ((size_t)(out_ptr - output) >= output_len) {
+        free(output);
+        return NULL;
+    }
+
+    *out_ptr = '\0';
+
+    return output;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "camelCase",
+        "helloWorld",
+        "thisIsATest",
+        "already_snake",
+        "mixedCase_WithSnake",
+        "UPPERCASE",
+        "camel123Case",
+        "c",
+        "",
+        "aBcDeFg"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result != NULL) {
+            printf("%s -> %s\n", tests[i], result);
+            free(result);
+        } else {
+            printf("%s -> (conversion failed)\n", tests[i]);
+        }
+    }
+
+    return 0;
+}

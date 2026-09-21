@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-352.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-352.c:38:10: warning: Either the condition 'test3' is redundant or there is possible null pointer dereference: test3_str. [nullPointerRedundantCheck]
+    char test3_str[] = "world";
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-352.c:44:24: note: Assuming that condition 'test3' is not redundant
+    printf("%s: %d\n", test3 ? test3 : "NULL", are_characters_unique(test3));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-352.c:39:25: note: Assignment to 'test3=test3_str'
+    const char *test3 = test3_str;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-352.c:38:10: note: Null pointer dereference
+    char test3_str[] = "world";
+         ^

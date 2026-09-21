@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int calculate_perimeter(int length, int width) {
+    return 2 * (length + width);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char * const argv[const]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <length> <width>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long length = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || length <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    long width = strtol(argv[2], &endptr, 10);
+    if (*endptr != '\0' || width <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (length > INT_MAX / 2 || width > INT_MAX / 2 || length + width > INT_MAX / 2) {
+        return EXIT_FAILURE;
+    }
+
+    int result = calculate_perimeter((int)length, (int)width);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

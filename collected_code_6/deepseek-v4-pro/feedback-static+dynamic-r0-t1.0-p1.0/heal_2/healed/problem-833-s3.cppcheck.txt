@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-833-s3.c:87:31: error: Array 'key[4]' accessed at index 1024, which is out of bounds. [arrayIndexOutOfBounds]
+    if (key_len == 1024 && key[1024] != '\0') {
+                              ^

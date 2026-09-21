@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:70:58: style: Condition 'sequences[*count].sequence!=NULL' is always true [knownConditionTrueFalse]
+            if (length > 0 && sequences[*count].sequence != NULL) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:51:44: note: Assuming condition 'sequences[*count].sequence==NULL' is false
+            if (sequences[*count].sequence == NULL) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:60:28: note: Assuming condition is false
+            if (i + length > len) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:70:58: note: Condition 'sequences[*count].sequence!=NULL' is always true
+            if (length > 0 && sequences[*count].sequence != NULL) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:73:35: style: Condition 'bytes_to_copy>=space_available' is always false [knownConditionTrueFalse]
+                if (bytes_to_copy >= space_available) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:71:40: note: space_available is assigned 'length+1' here.
+                size_t space_available = length + 1;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:72:38: note: bytes_to_copy is assigned 'length' here.
+                size_t bytes_to_copy = length;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-917-s2.c:73:35: note: Condition 'bytes_to_copy>=space_available' is always false
+                if (bytes_to_copy >= space_available) {
+                                  ^

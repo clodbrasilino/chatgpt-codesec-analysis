@@ -1,0 +1,101 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        discard_remaining_input();
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and their mitigations:**
+
+1. **Statically-sized buffer (CWE-119/CWE-120, risk 2):** The `char buffer[BUFFER_SIZE]` warning is a heuristic flag on any fixed-size array. The code already mitigates it correctly:
+   - Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the buffer bound and always null-terminates within the limit.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in pathological cases.
+   - All subsequent length operations use `strnlen` with an explicit bound rather than unbounded `strlen`, so an unterminated string can never cause an over-read.
+   - `sort_string` validates its arguments (`NULL` check, zero-length check) and rejects strings that fill the entire buffer without a terminator (`len == max_len`).
+
+2. **`getchar` in a loop (CWE-120/CWE-20, risk 1):** This is a low-risk informational flag. The loop only *discards* excess input one character at a time and never writes to any buffer, so no overflow is possible. I extracted it into `discard_remaining_input()` for clarity, terminating on both `'\n'` and `EOF` to avoid an infinite loop on closed streams.
+
+3. **Additional robustness already present:** `compare_chars` casts through `unsigned char`, which is the correct, portable way to compare characters in `qsort` (avoiding signed-char overflow/ordering issues), and the return value of `fflush` is checked. I added `_POSIX_C_SOURCE 200809L` since `strnlen` is POSIX, ensuring the prototype is visible and avoiding implicit-declaration undefined behavior on strict compilers.
+
+The original code was already well-hardened; the flagged items were false positives properly handled by bounds-checked I/O and length-limited string functions.

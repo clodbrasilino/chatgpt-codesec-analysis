@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:105:38: style: Condition 'delimiter_length>remaining' is always false [knownConditionTrueFalse]
+                if (delimiter_length > remaining) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:96:27: note: Assuming that condition 'remaining<delimiter_length' is not redundant
+            if (remaining < delimiter_length) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:101:29: note: Assuming condition is false
+                if (current > result + total_length - delimiter_length) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:105:38: note: Condition 'delimiter_length>remaining' is always false
+                if (delimiter_length > remaining) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:124:32: style: Condition 'element_length>remaining' is always false [knownConditionTrueFalse]
+            if (element_length > remaining) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:115:23: note: Assuming that condition 'remaining<element_length' is not redundant
+        if (remaining < element_length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:120:25: note: Assuming condition is false
+            if (current > result + total_length - element_length) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-421.c:124:32: note: Condition 'element_length>remaining' is always false
+            if (element_length > remaining) {
+                               ^

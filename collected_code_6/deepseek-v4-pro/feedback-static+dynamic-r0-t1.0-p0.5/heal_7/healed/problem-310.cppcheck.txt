@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-310.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-310.c:71:23: style: Condition 'token_len==0' is always true [knownConditionTrueFalse]
+        if (token_len == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-310.c:65:20: note: Assuming that condition 'end>token' is not redundant
+        while (end > token && *(end - 1) == ' ') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-310.c:69:21: note: Assignment 'token_len=(unsigned long)(end-token)', assigned value is less than 1
+        token_len = (size_t)(end - token);
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-310.c:71:23: note: Condition 'token_len==0' is always true
+        if (token_len == 0) {
+                      ^

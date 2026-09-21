@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-679.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_4/healed/problem-679.c:104:29: style: Redundant condition: key_len==SIZE_MAX. 'key_len==SIZE_MAX || (key_len==SIZE_MAX && *p!='\0')' is equivalent to 'key_len==SIZE_MAX' [redundantCondition]
+    if (key_len == SIZE_MAX || (key_len == SIZE_MAX && *p != '\0')) {
+                            ^

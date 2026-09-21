@@ -1,0 +1,114 @@
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int parity(unsigned long long number)
+{
+    unsigned int result = 0U;
+
+    while (number != 0ULL) {
+        result ^= 1U;
+        number &= number - 1ULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t length = 0U;
+    size_t capacity = 64U;
+    char *end;
+    unsigned long long number;
+    int ch;
+
+    input = malloc(capacity);
+    if (input == NULL) {
+        fputs("Failed to allocate memory.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        char *resized;
+        /* Possible weaknesses found:
+         *  The scope of the variable 'new_capacity' can be reduced. [variableScope]
+         */
+        size_t new_capacity;
+
+        if (length == SIZE_MAX - 1U) {
+            free(input);
+            fputs("Input is too long.\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1U >= capacity) {
+            if (capacity > SIZE_MAX / 2U) {
+                free(input);
+                fputs("Input is too long.\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            new_capacity = capacity * 2U;
+            resized = realloc(input, new_capacity);
+            if (resized == NULL) {
+                free(input);
+                fputs("Failed to allocate memory.\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            input = resized;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)ch;
+    }
+
+    if (ch == EOF && ferror(stdin)) {
+        free(input);
+        fputs("Failed to read input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (length == 0U && ch == EOF) {
+        free(input);
+        fputs("Invalid number.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    input[length] = '\0';
+
+    errno = 0;
+    number = strtoull(input, &end, 0);
+
+    if (end == input || errno == ERANGE) {
+        free(input);
+        fputs("Invalid number.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\r' ||
+           *end == '\f' || *end == '\v') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(input);
+        fputs("Invalid trailing characters.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+
+    if (printf("%u\n", parity(number)) < 0) {
+        fputs("Failed to write output.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

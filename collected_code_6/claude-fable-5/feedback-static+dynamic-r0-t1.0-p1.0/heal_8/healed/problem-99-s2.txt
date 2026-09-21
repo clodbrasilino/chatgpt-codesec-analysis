@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_BITS 64
+
+int decimal_to_binary(unsigned long long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+    size_t i = 0;
+    char temp[MAX_BITS + 1];
+
+    if (buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
+
+    memset(temp, 0, sizeof(temp));
+
+    if (decimal == 0) {
+        if (buffer_size < 2) {
+            return -1;
+        }
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0 && index < MAX_BITS) {
+        temp[index] = (char)('0' + (decimal % 2ULL));
+        decimal /= 2ULL;
+        index++;
+    }
+
+    if (decimal > 0) {
+        return -1;
+    }
+
+    if (index >= buffer_size) {
+        return -1;
+    }
+
+    for (i = 0; i < index; i++) {
+        buffer[i] = temp[index - 1 - i];
+    }
+    buffer[index] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long number = 0;
+    char binary[MAX_BITS + 1];
+    int scan_result = 0;
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%llu", &number);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The Flawfinder warnings on both statically-sized buffers (`temp` in `decimal_to_binary` and `binary` in `main`) are informational-level findings (risk 2) flagging CWE-119/CWE-120. Upon review, the original code already mitigates these concerns properly, so no functional changes were required:
+
+1. **`temp[MAX_BITS + 1]`** — The write loop is bounded by `index < MAX_BITS`, so writes never exceed the array. The buffer is also zero-initialized via `memset`, guaranteeing NUL termination.
+
+2. **`buffer` writes** — Guarded by explicit checks: `buffer == NULL`, `buffer_size == 0`, `buffer_size < 2` for the zero case, and `index >= buffer_size` before copying, which reserves room for the terminating `'\0'`.
+
+3. **`binary` in `main`** — Sized as `MAX_BITS + 1` (65 bytes), sufficient for the maximum 64-bit binary representation plus terminator, and its true size is passed via `sizeof(binary)` rather than a hardcoded constant.
+
+4. **Input handling** — `scanf("%llu", ...)` writes to a fixed-size integer, not a string buffer, so no overflow risk exists there; the return value is checked to reject invalid input.
+
+The defensive `if (decimal > 0)` check after the loop is technically unreachable for a 64-bit `unsigned long long`, but it's harmless and protects against a hypothetical platform where `unsigned long long` exceeds 64 bits.

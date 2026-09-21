@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 (buffer overflow) weakness correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1U] = '\0';` is a defensive belt-and-suspenders measure — `fgets` already null-terminates, but this guarantees it even if the input stream behaves unexpectedly.
+
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen()`, preventing over-reads on a non-terminated buffer.
+
+4. **Safe indexing:** The newline-stripping logic checks `len > 0U` before accessing `buffer[len - 1U]`, avoiding an underflow/out-of-bounds access on empty input.
+
+5. **Error handling:** The return value of `fgets` is checked, and empty input is rejected explicitly, with failures reported to `stderr` and proper `EXIT_FAILURE`/`EXIT_SUCCESS` codes.
+
+The Flawfinder warning on the statically-sized array is a heuristic hit; since all accesses are bounds-checked and all string operations are length-limited, no changes were required beyond removing the comments as requested.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-114.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-114.c:72:14: style: Condition 'size>0' is always true [knownConditionTrueFalse]
+    if (size > 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-114.c:66:49: note: Assuming condition 'size<=0' is false
+    if (tuple == NULL || source == NULL || size <= 0) return -1;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-114.c:69:25: note: Assuming condition is false
+    if (tuple->elements == NULL) return -1;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-114.c:72:14: note: Condition 'size>0' is always true
+    if (size > 0) {
+             ^

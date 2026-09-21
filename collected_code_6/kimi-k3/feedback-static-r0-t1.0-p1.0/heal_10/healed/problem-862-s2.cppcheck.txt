@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862-s2.c:118:18: warning: Identical condition 'word_len+1<=word_len', second condition is always false [identicalConditionAfterEarlyExit]
+    if (word_len >= word_len + 1) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862-s2.c:109:22: note: If condition 'word_len+1<=word_len' is true, the function will return/exit
+    if (word_len + 1 <= word_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-862-s2.c:118:18: note: Testing identical condition 'word_len+1<=word_len'
+    if (word_len >= word_len + 1) {
+                 ^

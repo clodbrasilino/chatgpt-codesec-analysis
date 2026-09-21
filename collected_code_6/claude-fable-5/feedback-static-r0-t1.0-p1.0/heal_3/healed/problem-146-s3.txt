@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total ASCII value: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder-flagged weakness (CWE-119/CWE-120, statically-sized `char` buffer). The fixes present and preserved in the rewrite:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow.
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless and protects against future refactoring).
+3. **Bounded length calculation** — length scanning never reads past `sizeof(buffer)`, avoiding over-reads on non-terminated data.
+4. **Safe character summation** — the cast to `unsigned char` before widening to `long` prevents sign-extension issues on platforms where `char` is signed (e.g., a byte of `0xFF` sums as 255, not -1).
+5. **NULL check** in `ascii_sum` with a distinct error return, checked by the caller.
+6. **Error handling** on `fgets` failure (EOF/read error) with a nonzero exit status.
+
+One change I made: I replaced `strnlen` with a local `bounded_strlen` implementation. `strnlen` is POSIX (and C23), not guaranteed by C99/C11 without feature-test macros, so the local version maximizes portability while keeping identical bounds-safe semantics.

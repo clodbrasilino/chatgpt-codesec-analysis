@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str, char new_char) {
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = new_char;
+        }
+    }
+}
+
+int main() {
+    char input[100];
+    char replacement;
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin)) {
+        input[strcspn(input, "\n")] = '\0';
+    }
+
+    printf("Enter the character to replace spaces with: ");
+    scanf(" %c", &replacement);
+
+    while (getchar() != '\n' && getchar() != EOF);
+
+    replace_spaces(input, replacement);
+
+    printf("Modified string: %s\n", input);
+
+    return 0;
+}
+```
+
+The code provided is already relatively safe and does not contain the identified weaknesses. The `input` array is properly bounded using `fgets` and `sizeof(input)`, and the `scanf` for reading the replacement character is correctly formatted to avoid issues. The `while (getchar() != '\n' && getchar() != EOF);` loop is used to clear the input buffer, which is a common practice and does not introduce any significant security risks in this context. Therefore, no changes are necessary for the provided code.

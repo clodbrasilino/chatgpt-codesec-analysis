@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_STR_LEN 4096
+
+struct IntList {
+    int *data;
+    size_t size;
+};
+
+struct Tuple {
+    char *str;
+    struct IntList list;
+};
+
+char* duplicate_string(const char *src) {
+    size_t len = 0;
+    char *dest;
+    size_t i;
+
+    if (!src) {
+        return NULL;
+    }
+
+    while (len < MAX_STR_LEN && src[len] != '\0') {
+        len++;
+    }
+
+    dest = (char *)malloc(len + 1);
+    if (!dest) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        dest[i] = src[i];
+    }
+    dest[len] = '\0';
+
+    return dest;
+}
+
+struct Tuple* create_tuple(const char *str, const int *list_data, size_t list_size) {
+    struct Tuple *tuple;
+
+    if (!str || (!list_data && list_size > 0)) {
+        return NULL;
+    }
+
+    if (list_size > ((size_t)-1) / sizeof(int)) {
+        return NULL;
+    }
+
+    tuple = (struct Tuple *)malloc(sizeof(struct Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->str = duplicate_string(str);
+    if (!tuple->str) {
+        free(tuple);
+        return NULL;
+    }
+
+    tuple->list.size = list_size;
+    if (list_size > 0) {
+        size_t i;
+        
+        tuple->list.data = (int *)malloc(list_size * sizeof(int));
+        if (!tuple->list.data) {
+            free(tuple->str);
+            free(tuple);
+            return NULL;
+        }
+        
+        for (i = 0; i < list_size; i++) {
+            tuple->list.data[i] = list_data[i];
+        }
+    } else {
+        tuple->list.data = NULL;
+    }
+
+    return tuple;
+}
+
+void free_tuple(struct Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    if (tuple->str) {
+        free(tuple->str);
+    }
+    if (tuple->list.data) {
+        free(tuple->list.data);
+    }
+    free(tuple);
+}
+
+int main(void) {
+    const char *sample_string = "TupleString";
+    int sample_list[] = {10, 20, 30, 40, 50};
+    size_t list_size = sizeof(sample_list) / sizeof(sample_list[0]);
+    struct Tuple *my_tuple;
+    size_t i;
+
+    my_tuple = create_tuple(sample_string, sample_list, list_size);
+    if (!my_tuple) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("String: %s\n", my_tuple->str);
+    printf("List: ");
+    for (i = 0; i < my_tuple->list.size; i++) {
+        printf("%d ", my_tuple->list.data[i]);
+    }
+    printf("\n");
+
+    free_tuple(my_tuple);
+
+    return EXIT_SUCCESS;
+}

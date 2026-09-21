@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code as provided already mitigates the flagged weakness (CWE-119/CWE-120) correctly, so no functional changes were needed — only the comments were removed. Here is why the buffer handling is safe:
+
+**Bounds-checked input:** `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, preventing the classic `gets()`-style overflow that Flawfinder warns about with statically-sized arrays.
+
+**Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0';` is technically redundant after `fgets`, but it's a cheap belt-and-suspenders guarantee that all subsequent string operations see a terminated string.
+
+**Length-limited scanning:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even if termination were somehow lost, the scan cannot run past the buffer.
+
+**Validation in `sort_string`:** The function checks for `NULL`, a zero `max_len`, and rejects unterminated input (`len >= max_len`) before calling `qsort`, so it never sorts beyond the buffer's bounds.
+
+**Correct newline stripping:** The `len > 0` guard prevents an out-of-bounds read at `buffer[len - 1]` on empty input.
+
+One minor portability note: `strnlen` is POSIX / C23 rather than C89/C99, so if you need strict older-standard conformance you may want to define `_POSIX_C_SOURCE 200809L` before the includes or provide a fallback implementation.

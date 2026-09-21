@@ -1,0 +1,133 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+#define ERRBUF_SIZE 128
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_SIZE];
+    size_t needed;
+
+    memset(errbuf, 0, sizeof(errbuf));
+    needed = regerror(errcode, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+
+    if (needed > sizeof(errbuf) - 1) {
+        fprintf(stderr, "%s failed: %s (message truncated)\n", context, errbuf);
+    } else {
+        fprintf(stderr, "%s failed: %s\n", context, errbuf);
+    }
+}
+
+static int swap_whitespace_underscore(char *str, size_t max_len)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t offset = 0;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        fprintf(stderr, "Input string is not null-terminated within %zu bytes\n", max_len);
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[ _]", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp");
+        regfree(&regex);
+        return -1;
+    }
+
+    while (offset < len) {
+        ret = regexec(&regex, str + offset, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "regexec");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0) {
+            break;
+        }
+
+        if ((size_t)match.rm_so >= len - offset) {
+            break;
+        }
+
+        if (str[offset + (size_t)match.rm_so] == ' ') {
+            str[offset + (size_t)match.rm_so] = '_';
+        } else {
+            str[offset + (size_t)match.rm_so] = ' ';
+        }
+
+        offset += (size_t)match.rm_so + 1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    static const char input[] = "Hello world_this is_a test_string";
+    char *copy;
+    size_t input_len;
+    size_t copy_size;
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    copy_size = input_len + 1;
+    if (copy_size < input_len) {
+        fprintf(stderr, "Size calculation overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    copy = malloc(copy_size);
+    if (copy == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(copy, input, input_len);
+    copy[input_len] = '\0';
+
+    printf("Original: %s\n", copy);
+
+    if (swap_whitespace_underscore(copy, copy_size) != 0) {
+        fprintf(stderr, "Failed to process string\n");
+        free(copy);
+        return EXIT_FAILURE;
+    }
+
+    printf("Modified: %s\n", copy);
+
+    free(copy);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`errbuf` statically-sized array (CWE-119/CWE-120):** The buffer is zeroed with `memset` before use, `regerror` is called with `sizeof(errbuf) - 1` to reserve space for the null terminator, and the terminator is explicitly forced at `errbuf[sizeof(errbuf) - 1]`. The return value of `regerror` (the required size) is checked against the buffer capacity so truncation is detected and reported rather than silently ignored. No overflow is possible here.
+
+2. **`memcpy` (CWE-120):** The destination `copy` is allocated with exactly `input_len + 1` bytes, and exactly `input_len` bytes are copied, followed by explicit null termination. Since `input_len` is bounded by `strnlen(input, MAX_INPUT_LEN)` and validated before allocation, the destination always holds the source data. I additionally added an integer-overflow guard on `copy_size` for defensive completeness (harmless here since `input_len < MAX_INPUT_LEN`, but good practice if the bound ever changes).
+
+Other defensive properties already present and preserved: `strnlen` instead of `strlen` to bound scanning, null-pointer and zero-length checks in `swap_whitespace_underscore`, validation of `rm_so` against the remaining string length before indexing, `regfree` on every exit path after successful `regcomp`, and `free(copy)` on both success and failure paths so there are no memory leaks. Both Flawfinder hits are effectively false positives given these mitigations.

@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int is_hex_even(const char *hex_str) {
+    if (hex_str == NULL || *hex_str == '\0') {
+        return -1;
+    }
+
+    size_t i = 0;
+    if (hex_str[0] == '0' && (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        i = 2;
+    }
+
+    if (hex_str[i] == '\0') {
+        return -1;
+    }
+
+    char last_char = '\0';
+    for (; hex_str[i] != '\0'; i++) {
+        if (!isxdigit((unsigned char)hex_str[i])) {
+            return -1;
+        }
+        last_char = hex_str[i];
+    }
+
+    last_char = tolower((unsigned char)last_char);
+    int last_digit;
+
+    if (isdigit((unsigned char)last_char)) {
+        last_digit = last_char - '0';
+    } else {
+        last_digit = last_char - 'a' + 10;
+    }
+
+    return (last_digit % 2 == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *hex_numbers[] = {"0x1A", "1B", "0x1234", "invalid", "0x", NULL};
+    size_t num_tests = sizeof(hex_numbers) / sizeof(hex_numbers[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        if (hex_numbers[i] == NULL) {
+            continue;
+        }
+        int result = is_hex_even(hex_numbers[i]);
+        if (result == 1) {
+            printf("%s is even\n", hex_numbers[i]);
+        } else if (result == 0) {
+            printf("%s is odd\n", hex_numbers[i]);
+        } else {
+            printf("%s is invalid\n", hex_numbers[i]);
+        }
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+void camel_to_snake(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t matches[2];
+    if (regcomp(&regex, "([a-z])([A-Z])", REG_EXTENDED) != 0) {
+        fprintf(stderr, "Failed to compile regex\n");
+        exit(1);
+    }
+
+    size_t input_len = strnlen(input, 1024);
+    if (input_len == 0 || input_len >= 1024) {
+        fprintf(stderr, "Input string is too long or empty\n");
+        exit(1);
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy(output, input, output_size - 1);
+    output[output_size - 1] = '\0';
+
+    int nmatches = 1;
+    while (nmatches > 0) {
+        nmatches = regexec(&regex, output, 2, matches, 0);
+        if (nmatches > 0) {
+            output[matches[1].rm_so + 1] = '_';
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            memmove(&output[matches[1].rm_so + 2], &output[matches[1].rm_so + 1], strlen(&output[matches[1].rm_so + 1]));
+            output[matches[1].rm_eo] = tolower(output[matches[1].rm_eo]);
+            output[matches[1].rm_eo + 1] = tolower(output[matches[1].rm_eo + 1]);
+        }
+    }
+
+    for (size_t i = 0; i < output_size && output[i] != '\0'; ++i) {
+        output[i] = tolower(output[i]);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "camelCaseExample";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char output[1024];
+    camel_to_snake(input, output, sizeof(output));
+    printf("%s\n", output);
+    return 0;
+}

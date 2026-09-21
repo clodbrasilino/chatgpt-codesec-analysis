@@ -1,0 +1,2 @@
+problem-107-s3.c:24:49:medium:UBSan: shift exponent 64 is too large for 64-bit type 'unsigned long long' (AFL crash: id:000001,sig:06,src:000008,time:4908,execs:3291,op:havoc,rep:4)
+problem-107-s3.c:37:0:error:Fuzzing found a crash (signal 6) on input id:000000,sig:06,src:000008,time:4490,execs:3029,op:havoc,rep:2; likely memory-safety defect

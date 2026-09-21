@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t nth_tetrahedral_number(uint64_t n) {
+    uint64_t result = (n * (n + 1) * (n + 2)) / 6;
+    return result;
+}
+
+int main() {
+    uint64_t n;
+    printf("Enter the value of n: ");
+    if (scanf("%" SCNu64, &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    printf("The %" PRIu64 "th tetrahedral number is: %" PRIu64 "\n", n, nth_tetrahedral_number(n));
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-780-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-780-s2.c:35:19: warning: Identical condition 'src_size>dest_size', second condition is always false [identicalConditionAfterEarlyExit]
+    if (dest_size < src_size) return 0;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-780-s2.c:34:18: note: If condition 'src_size>dest_size' is true, the function will return/exit
+    if (src_size > dest_size) return 0;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-780-s2.c:35:19: note: Testing identical condition 'src_size>dest_size'
+    if (dest_size < src_size) return 0;
+                  ^

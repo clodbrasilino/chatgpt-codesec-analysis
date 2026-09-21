@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_non_alnum(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    char *result;
+    size_t len;
+    size_t pos;
+    size_t chunk;
+    size_t remaining;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^[:alnum:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    pos = 0;
+    cursor = input;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            remaining = len - (size_t)(cursor - input);
+            chunk = strnlen(cursor, remaining);
+            if (chunk > len || pos > len - chunk) {
+                regfree(&regex);
+                free(result);
+                return NULL;
+            }
+            memcpy(result + pos, cursor, chunk);
+            pos += chunk;
+            break;
+        }
+        if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        chunk = (size_t)match.rm_so;
+        if (chunk > len || pos > len - chunk) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        }
+        memcpy(result + pos, cursor, chunk);
+        pos += chunk;
+        cursor += match.rm_eo;
+    }
+
+    result[pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "Hello, World! 123 @#$ abc_def";
+    char *cleaned;
+
+    cleaned = remove_non_alnum(test);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", test) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+    if (printf("Cleaned:  %s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already largely safe, and the Flawfinder warnings on `memcpy` were essentially false positives — bounds checks existed before both calls. However, the rewrite hardens those checks further:
+
+1. **Overflow-safe bounds checks:** The original condition `pos + chunk > len` could theoretically wrap around if `pos + chunk` overflowed `size_t` (not realistically reachable here given `MAX_INPUT_LEN`, but defense-in-depth matters). The rewritten form `chunk > len || pos > len - chunk` is mathematically equivalent for valid values but immune to unsigned integer wraparound (CWE-190 leading to CWE-120).
+
+2. **Validation of regex match offsets:** Added an explicit check that `match.rm_so >= 0` and `match.rm_eo >= match.rm_so` before casting to `size_t`. Casting a negative `regoff_t` to `size_t` would produce a huge value and could defeat the bounds check.
+
+3. **Guaranteed destination capacity:** `result` is allocated with `len + 1` bytes, `pos` never exceeds `len`, so `result[pos] = '\0'` is always in-bounds — the invariant maintained by every check before each `memcpy`.
+
+4. **Consistent resource cleanup:** Every error path frees both the regex (`regfree`) and the buffer (`free`), avoiding memory/resource leaks (CWE-401/CWE-772), preserved from the original.
+
+The remaining `memcpy` calls are safe by construction: destination capacity (`len + 1`), current position (`pos`), and copy size (`chunk`) are all verified before each copy.

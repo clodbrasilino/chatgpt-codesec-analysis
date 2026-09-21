@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    size_t first_part;
+    size_t second_part;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size) {
+        return -1;
+    }
+
+    if (d > len) {
+        return -1;
+    }
+
+    first_part = len - d;
+    second_part = d;
+
+    if (first_part > len || second_part > len ||
+        first_part + second_part != len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (first_part > 0) {
+        memcpy(temp, str + d, first_part);
+    }
+
+    if (second_part > 0) {
+        memcpy(temp + first_part, str, second_part);
+    }
+
+    temp[len] = '\0';
+
+    if (len + 1 <= buf_size) {
+        memcpy(str, temp, len + 1);
+    } else {
+        free(temp);
+        return -1;
+    }
+
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **First `memcpy` (CWE-120):** The copy length `first_part` (`len - d`) is explicitly computed and validated against `len` before use, and the destination `temp` is guaranteed to hold `len + 1` bytes, so `first_part` bytes always fit. A zero-length guard avoids unnecessary calls.
+
+2. **Second `memcpy` (CWE-120):** The invariant `first_part + second_part == len` is verified explicitly, guaranteeing that writing `second_part` bytes at offset `first_part` stays within the `len + 1` byte allocation.
+
+3. **Third `memcpy` (CWE-120):** An explicit re-check that `len + 1 <= buf_size` is performed immediately before copying back into the caller's buffer, ensuring the destination can always hold the source data even if the earlier logic were modified.
+
+The code retains all defensive checks (NULL pointer, buffer size limits, unterminated-string detection via `strnlen`, malloc failure handling) and properly frees the temporary buffer on all paths.

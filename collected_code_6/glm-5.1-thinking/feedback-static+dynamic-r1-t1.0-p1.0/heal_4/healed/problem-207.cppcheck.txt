@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-207.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-207.c:15:14: style: Condition 'size==0' is always false [knownConditionTrueFalse]
+    if (size == 0 || size > SIZE_MAX / sizeof(int) / size) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-207.c:14:29: note: Assignment 'size=(unsigned long)n+1', assigned value is greater than 0
+    size_t size = (size_t)n + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-207.c:15:14: note: Condition 'size==0' is always false
+    if (size == 0 || size > SIZE_MAX / sizeof(int) / size) {
+             ^

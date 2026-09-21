@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-933.c:83:18: warning: Value stored to 'c' during its initialization is never read [deadcode.DeadStores]
+   83 |             char c = remaining[matches[1].rm_eo - 1];
+      |                  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-933.c:92:18: warning: Value stored to 'c' during its initialization is never read [deadcode.DeadStores]
+   92 |             char c = remaining[matches[1].rm_so + match_start > 0 ? matches[1].rm_so + match_start + 1 : 0];
+      |                  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.

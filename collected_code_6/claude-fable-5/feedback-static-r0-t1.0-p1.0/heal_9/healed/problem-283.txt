@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+static bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len = 0U;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    while (len < max_len && number[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        counts[number[i] - '0']++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch = 0;
+    size_t guard = 0U;
+
+    while (ch != '\n' && ch != EOF && guard < 4096U) {
+        ch = getchar();
+        guard++;
+    }
+}
+
+static bool read_line(char *buffer, size_t size)
+{
+    size_t len = 0U;
+
+    if (buffer == NULL || size < 2U) {
+        return false;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return false;
+    }
+
+    buffer[size - 1U] = '\0';
+
+    while (len < size && buffer[len] != '\0') {
+        len++;
+    }
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == size - 1U) {
+        discard_remaining_input();
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a number: ");
+
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (!read_line(input, sizeof(input))) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+The flagged weaknesses were already mitigated, so the code stands as-is with the comments removed. Here's why each Flawfinder finding is a false positive in this implementation:
+
+**`getchar` in a loop (CWE-120, CWE-20):** The `discard_remaining_input` function reads into no buffer at all — it only discards characters. It also has three termination conditions: newline, `EOF`, and a `guard` counter capped at 4096 iterations, so it cannot loop unboundedly even on a stream that never yields `EOF`.
+
+**Statically-sized `char` array (CWE-119/CWE-120):** The `input[MAX_INPUT]` buffer is protected on every path:
+- It's zero-initialized with `memset` before use.
+- All reads go through `fgets(buffer, (int)size, stdin)`, which enforces the bound.
+- `buffer[size - 1U] = '\0'` guarantees NUL-termination regardless of what `fgets` did.
+- Length scanning in both `read_line` and `digit_frequency_valid` is bounded by `size`/`max_len`, never relying on unbounded `strlen`.
+- Overlong input lines are detected (`len == size - 1U` without a trailing newline) and the excess is drained from stdin, preventing stale data from leaking into subsequent reads.
+
+Additional defensive measures already present that are worth noting: `isdigit` receives an `unsigned char` cast (avoiding UB on negative `char` values), `digit_frequency_valid` rejects `NULL`, empty strings, and unterminated buffers, and the array index `number[i] - '0'` is only computed after `isdigit` confirms it's in range 0–9, so `counts[]` can never be indexed out of bounds.

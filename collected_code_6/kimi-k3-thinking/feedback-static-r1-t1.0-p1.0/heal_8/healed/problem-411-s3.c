@@ -1,0 +1,87 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *snake_to_camel(const char *input, size_t input_len)
+{
+    char *result;
+    size_t i;
+    size_t j;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    if (input_len > MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+
+    while (i < input_len) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (c == '_' && i + 1 < input_len &&
+            isalnum((unsigned char)input[i + 1])) {
+            i++;
+            if (j >= input_len) {
+                free(result);
+                return NULL;
+            }
+            result[j++] = (char)toupper((unsigned char)input[i]);
+            i++;
+        } else {
+            if (j >= input_len) {
+                free(result);
+                return NULL;
+            }
+            result[j++] = (char)c;
+            i++;
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "already",
+        NULL
+    };
+    size_t t;
+
+    for (t = 0; tests[t] != NULL; t++) {
+        size_t len = strnlen(tests[t], MAX_INPUT_LEN + 1);
+        char *camel;
+
+        if (len > MAX_INPUT_LEN) {
+            fprintf(stderr, "Input too long or not null-terminated\n");
+            return EXIT_FAILURE;
+        }
+
+        camel = snake_to_camel(tests[t], len);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[t]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[t], camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

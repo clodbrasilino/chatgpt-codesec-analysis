@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-254-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-254-s3.c:16:12: portability: %n in format string (no. 2) requires 'int *' but the argument type is 'ptrdiff_t {aka signed int}'. [invalidScanfArgType_int]
+    while (sscanf(ptr, "%63s%n", token, &ptr - input) == 1) {
+           ^

@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and why this version is safe:**
+
+The Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a heuristic flag on the array declaration itself, not an actual vulnerability in this code. The rewritten code retains all the mitigations that address it:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to `BUFFER_SIZE - 1` characters plus the null terminator, so no overflow is possible on input.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after a successful `fgets`, but harmless and protects against future refactoring).
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` always returns an index within the string bounds, so the newline removal cannot write out of bounds.
+
+4. **Bounds-checked scanning:** `all_chars_unique` takes an explicit `max_len` and checks both the length limit and the null terminator, plus a `NULL` pointer guard.
+
+5. **Signed-char safety:** The cast to `unsigned char` before indexing `seen[]` prevents negative array indices on platforms where `char` is signed, and the table is sized `UCHAR_MAX + 1` to cover all byte values.
+
+No functional changes were required — the original code already correctly mitigated the flagged weakness.

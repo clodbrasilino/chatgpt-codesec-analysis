@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:108:40: style: Condition 'copy_size<=t1.size' is always false [knownConditionTrueFalse]
+        if (copy_size > 0 && copy_size <= t1.size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:107:26: note: copy_size is assigned '(t1.size<arr1_size)?t1.size:arr1_size' here.
+        size_t copy_size = (t1.size < arr1_size) ? t1.size : arr1_size;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:108:40: note: Condition 'copy_size<=t1.size' is always false
+        if (copy_size > 0 && copy_size <= t1.size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:117:40: style: Condition 'copy_size<=t2.size' is always false [knownConditionTrueFalse]
+        if (copy_size > 0 && copy_size <= t2.size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:116:26: note: copy_size is assigned '(t2.size<arr2_size)?t2.size:arr2_size' here.
+        size_t copy_size = (t2.size < arr2_size) ? t2.size : arr2_size;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-560.c:117:40: note: Condition 'copy_size<=t2.size' is always false
+        if (copy_size > 0 && copy_size <= t2.size) {
+                                       ^

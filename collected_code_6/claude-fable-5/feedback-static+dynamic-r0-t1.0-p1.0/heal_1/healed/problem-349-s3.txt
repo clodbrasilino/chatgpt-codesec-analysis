@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256U
+
+static bool is_binary_string(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0U; str[i] != '\0'; i++) {
+        if ((str[i] != '0') && (str[i] != '1')) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LENGTH];
+    size_t len;
+    int ch;
+
+    (void)memset(input, 0, sizeof(input));
+
+    printf("Enter a string: ");
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = safe_strlen(input, sizeof(input));
+
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        do {
+            ch = getchar();
+        } while ((ch != '\n') && (ch != EOF));
+    }
+
+    if (is_binary_string(input)) {
+        printf("The string is a binary string.\n");
+    } else {
+        printf("The string is not a binary string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of the applied fixes:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The buffer is zero-initialized with `memset` before use, `fgets` is bounded by `sizeof(input)`, and an explicit null terminator is forced at `input[sizeof(input) - 1U]` as defense-in-depth. If the input line exceeded the buffer, the remainder of `stdin` is drained so no truncated data lingers for subsequent reads.
+
+2. **CWE-126 (unbounded `strlen` over-read):** Replaced `strlen` with a bounded `safe_strlen` helper that never reads past `sizeof(input)`, guaranteeing no over-read even if the buffer were somehow not null-terminated.
+
+3. Functions are declared `static` to limit linkage scope, and the `fgets` size argument is explicitly cast to `int` to match its prototype cleanly.

@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the code and the identified weakness:**
+
+The Flawfinder warning flagged the statically-sized `char buffer[BUFFER_SIZE]` as a potential CWE-119/CWE-120 (buffer overflow) risk. However, this is a low-risk informational finding, and the code already mitigates it properly:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow on read. The return value is checked for read failure.
+
+2. **Guaranteed null-termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets` combined with `memset`, but harmless), ensuring the string is always terminated.
+
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` safely locates the newline (or the terminating null if absent), so the assignment never writes out of bounds.
+
+4. **Bounded string operations** — `toggle_case` uses `strnlen(str, max_len)` rather than `strlen`, guarding against non-terminated strings, and includes a `NULL` pointer check.
+
+5. **Correct `ctype.h` usage** — characters are cast to `unsigned char` before being passed to `isupper`/`islower`/`toupper`/`tolower`, avoiding undefined behavior with negative `char` values.
+
+6. **Checked output** — the `printf` return value is verified.
+
+No functional changes were required; the code is already hardened against the flagged weakness, so the rewrite simply removes the comments as requested.

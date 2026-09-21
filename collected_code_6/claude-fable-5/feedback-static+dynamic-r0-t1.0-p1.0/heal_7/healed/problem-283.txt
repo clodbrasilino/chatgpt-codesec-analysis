@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(number, max_len);
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        const int digit = number[i] - '0';
+        if (digit < 0 || digit > 9) {
+            return false;
+        }
+        counts[digit]++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT] = {0};
+    size_t len;
+
+    printf("Enter a number: ");
+    fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else if (len == sizeof(input) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20, risk 1):** This is a false positive in this context. `discard_remaining_input()` reads and discards characters without storing them into any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, and `ch` is declared as `int` (not `char`), which is required to reliably distinguish `EOF` from valid character values. No change needed.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120, risk 2):** Also mitigated in the existing code:
+   - `fgets(input, (int)sizeof(input), stdin)` bounds the read to the buffer size, so no overflow can occur.
+   - Explicit null termination at `input[sizeof(input) - 1U]` is defensive redundancy (fgets already guarantees termination on success).
+   - `strnlen` is used instead of `strlen`, bounding all length computations.
+   - Overlong input lines are detected (`len == sizeof(input) - 1U` with no newline) and the excess is drained from `stdin`, preventing stale data from leaking into subsequent reads.
+
+3. **Additional robustness already present:** `isdigit` is called with the argument cast to `unsigned char`, avoiding undefined behavior for negative `char` values; `digit_frequency_valid` validates its pointer and length parameters and rejects unterminated input (`len >= max_len`).
+
+The code as written already contains the fixes the Flawfinder hits call for, so the rewrite preserves the logic with the comments removed.

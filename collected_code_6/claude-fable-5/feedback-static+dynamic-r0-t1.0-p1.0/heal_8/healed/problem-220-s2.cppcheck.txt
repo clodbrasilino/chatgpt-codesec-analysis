@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-220-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-220-s2.c:51:13: style: Condition 'len<buf_size' is always true [knownConditionTrueFalse]
+    if (len < buf_size) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-220-s2.c:40:18: note: Assuming that condition 'len+1U>buf_size' is not redundant
+    if (len + 1U > buf_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-220-s2.c:46:16: note: Assuming condition is false
+    if (buffer == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-220-s2.c:51:13: note: Condition 'len<buf_size' is always true
+    if (len < buf_size) {
+            ^

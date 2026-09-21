@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the original code and the flagged weakness:
+
+**The Flawfinder warning (CWE-119/CWE-120)** is a static-analysis heuristic that flags *any* fixed-size `char` array, since such buffers are a common source of overflows. In this case, the warning is already fully mitigated:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates, so no overflow can occur on input. The `sizeof(buffer)` idiom (rather than repeating the macro) keeps the size argument correct even if the declaration changes.
+
+2. **Defensive termination**: `buffer[sizeof(buffer) - 1] = '\0';` is redundant given `fgets` semantics, but harmless — a belt-and-suspenders guarantee of termination.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, ensuring the scan never runs past the buffer even if termination were somehow lost.
+
+4. **Safe character classification**: The cast `(unsigned char)*str` before `isdigit()` avoids undefined behavior when `char` is signed and holds negative values (e.g., high-bit characters in some locales).
+
+5. **NULL check** in `count_numeric` guards against misuse, and the return value of `fgets` is checked for EOF/error.
+
+The code as written is already the fix — no changes were required beyond removing the comments.

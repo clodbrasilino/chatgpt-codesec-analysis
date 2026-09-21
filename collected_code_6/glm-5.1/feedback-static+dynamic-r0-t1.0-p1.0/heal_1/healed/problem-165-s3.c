@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int count_matching_chars(const char *str, size_t max_len) {
+    if (str == NULL) {
+        return 0;
+    }
+    int count = 0;
+    size_t i = 0;
+    while (i < max_len && str[i] != '\0') {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            if (str[i] - 'a' == (int)i) {
+                count++;
+            }
+        } else if (str[i] >= 'A' && str[i] <= 'Z') {
+            if (str[i] - 'A' == (int)i) {
+                count++;
+            }
+        }
+        i++;
+    }
+    return count;
+}
+
+int main(void) {
+    const char *test_str = "AbCdEfGhIjKlMnOpQrStUvWxYz";
+    int result = count_matching_chars(test_str, 256);
+    printf("%d\n", result);
+    return 0;
+}

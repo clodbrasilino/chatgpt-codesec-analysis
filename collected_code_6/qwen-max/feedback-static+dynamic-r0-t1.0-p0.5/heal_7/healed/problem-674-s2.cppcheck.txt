@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674-s2.c:57:58: style: Unsigned expression 'input_len-(result_len+token_len+1)' can't be negative so it is unnecessary to test it. [unsignedPositive]
+            if (input_len - (result_len + token_len + 1) >= 0) {
+                                                         ^

@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* input, size_t max_len) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, max_len);
+    char* result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int capitalize_next = 1;
+
+    while (i < len) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+            i++;
+        } else {
+            if (capitalize_next) {
+                result[j++] = (char)toupper((unsigned char)input[i]);
+                capitalize_next = 0;
+            } else {
+                result[j++] = input[i];
+            }
+            i++;
+        }
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char* input = "hello_world_this_is_c";
+    size_t max_len = 256;
+    char* output = snake_to_camel(input, max_len);
+
+    if (output == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+    free(output);
+    return EXIT_SUCCESS;
+}

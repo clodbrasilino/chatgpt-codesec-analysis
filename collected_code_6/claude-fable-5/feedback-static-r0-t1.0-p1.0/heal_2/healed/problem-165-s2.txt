@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120), and the rewrite preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; `fgets` already null-terminates, but this makes the invariant explicit.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` instead of `strlen()` guarantees no read past the buffer even if termination were somehow missing.
+
+4. **Safe newline stripping** — the `len > 0` check prevents an out-of-bounds access at `buffer[-1]` on empty input.
+
+5. **NULL check and bounded iteration** in `count_position_matches` — the function validates its pointer argument and caps iteration at both `len` and 26, so it never reads beyond the string or the alphabet range.
+
+6. **Error handling** — `fgets` failure (EOF or read error) is detected and reported via `stderr` with `EXIT_FAILURE`.
+
+The Flawfinder hit on the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk informational finding; since every access is bounds-checked via `sizeof(buffer)` and length-limited functions, no further changes are required.

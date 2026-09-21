@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SOURCE_LEN 1024
+
+size_t replace_chars(char *str, char old_char, char new_char);
+
+size_t replace_chars(char *str, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (old_char == '\0' || new_char == '\0') {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *source = "hello world, hello everyone";
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    size_t replaced;
+
+    len = strnlen(source, MAX_SOURCE_LEN);
+    if (len >= MAX_SOURCE_LEN) {
+        fprintf(stderr, "Source string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len >= buffer_size) {
+        fprintf(stderr, "Buffer too small for source data\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    printf("Original: %s\n", buffer);
+
+    replaced = replace_chars(buffer, 'l', 'L');
+
+    printf("Modified: %s\n", buffer);
+    printf("Replacements made: %zu\n", replaced);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the fix applied:
+
+**Original weakness (CWE-120):** Flawfinder flagged the `memcpy` call because `memcpy` performs no bounds checking on its own. It's a "risk 2" (low-confidence) finding — in practice the original code was already safe, since `buffer_size = len + 1` guarantees the destination can hold `len` bytes plus the null terminator.
+
+**Fix applied:** An explicit guard (`if (len >= buffer_size)`) was added immediately before the `memcpy`. This makes the safety invariant *provable at the copy site* rather than relying on the allocation logic several lines earlier. If future refactoring ever changes the allocation size independently of the copy length, the check fails safely (with cleanup via `free`) instead of overflowing the heap buffer.
+
+**Other defensive measures already present and preserved:**
+- `strnlen` with `MAX_SOURCE_LEN` bounds the length computation, protecting against unterminated strings (relevant if `source` ever comes from untrusted input).
+- `malloc` return value is checked before use.
+- Manual null termination (`buffer[len] = '\0'`) since `memcpy` doesn't terminate strings.
+- `replace_chars` validates against `NULL` pointers and rejects `'\0'` as a search/replace character, preventing termination corruption.
+- `free` followed by `buffer = NULL` avoids dangling-pointer reuse.

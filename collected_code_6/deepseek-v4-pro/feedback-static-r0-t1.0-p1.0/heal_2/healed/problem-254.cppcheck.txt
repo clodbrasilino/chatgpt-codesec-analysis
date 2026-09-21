@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c:19:12: warning: Uninitialized variable: word [uninitvar]
+    return word[0] == 'a' || word[0] == 'e' ||
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c:40:20: note: Assuming condition is false
+        if (isalpha((unsigned char)*p)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c:87:43: note: Calling function 'starts_with_vowel', 1st argument 'word' value is <Uninit>
+    if (word_len > 0 && starts_with_vowel(word)) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c:19:12: note: Uninitialized variable: word
+    return word[0] == 'a' || word[0] == 'e' ||
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-254.c:106:22: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+            capacity = new_capacity;
+                     ^

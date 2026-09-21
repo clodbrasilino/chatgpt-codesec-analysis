@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:132:25: style: Condition 'match_start>match_end' is always true [knownConditionTrueFalse]
+        if (match_start > match_end || match_end > remaining) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:123:25: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+            match.rm_eo <= match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:129:21: note: match_start is assigned '(unsigned long)match.rm_so' here.
+        match_start = (size_t)match.rm_so;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:130:21: note: Assignment 'match_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=match_start
+        match_end = (size_t)match.rm_eo;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:132:25: note: Condition 'match_start>match_end' is always true
+        if (match_start > match_end || match_end > remaining) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-73.c:118:20: style: Variable 'offset' is assigned a value that is never used. [unreadVariable]
+            offset = input_length;
+                   ^

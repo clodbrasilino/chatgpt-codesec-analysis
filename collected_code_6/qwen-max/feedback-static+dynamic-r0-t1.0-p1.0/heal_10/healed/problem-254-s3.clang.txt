@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:14:29: error: expected ')'
+   14 |     while (sscanf(ptr, " %" STR(63) "s", token) == 1) {
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:14:18: note: to match this '('
+   14 |     while (sscanf(ptr, " %" STR(63) "s", token) == 1) {
+      |                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:15:28: error: use of undeclared identifier 'token'
+   15 |         ptr += strspn(ptr, token) + 1;
+      |                            ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:17:13: error: use of undeclared identifier 'token'
+   17 |         if (token[0] == 'a' || token[0] == 'e') {
+      |             ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:17:32: error: use of undeclared identifier 'token'
+   17 |         if (token[0] == 'a' || token[0] == 'e') {
+      |                                ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:24:34: error: use of undeclared identifier 'token'
+   24 |             size_t len = strnlen(token, 64);
+      |                                  ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-254-s3.c:27:39: error: use of undeclared identifier 'token'
+   27 |             memcpy(words[wordsCount], token, len);
+      |                                       ^~~~~
+6 errors generated.

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+void print_numbers_with_positions(const char *str);
+
+void print_numbers_with_positions(const char *str)
+{
+    size_t i;
+    size_t len;
+    size_t start;
+
+    if (str == NULL) {
+        fprintf(stderr, "Error: NULL string provided\n");
+        return;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    i = 0;
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            start = i;
+            while (i < len && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            printf("Number: ");
+            if (fwrite(&str[start], sizeof(char), i - start, stdout) != (i - start)) {
+                fprintf(stderr, "Error: failed to write output\n");
+                return;
+            }
+            printf(", Position: %zu\n", start);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void)
+{
+    const char *input = "abc123def45gh6789xyz0";
+
+    printf("Input string: %s\n", input);
+    print_numbers_with_positions(input);
+
+    return 0;
+}

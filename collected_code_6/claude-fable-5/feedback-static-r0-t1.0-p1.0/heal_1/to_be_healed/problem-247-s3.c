@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *longest_palindromic_subsequence(const char *s)
+{
+    size_t n;
+    size_t i;
+    size_t j;
+    size_t len;
+    size_t left;
+    size_t right;
+    int **dp;
+    int total;
+    char *result;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    n = strlen(s);
+    if (n == 0U) {
+        result = malloc(1U);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    dp = malloc(n * sizeof *dp);
+    if (dp == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i] = calloc(n, sizeof **dp);
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return NULL;
+        }
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i][i] = 1;
+    }
+
+    for (len = 2U; len <= n; len++) {
+        for (i = 0U; i + len - 1U < n; i++) {
+            j = i + len - 1U;
+            if (s[i] == s[j]) {
+                if (len == 2U) {
+                    dp[i][j] = 2;
+                } else {
+                    dp[i][j] = dp[i + 1U][j - 1U] + 2;
+                }
+            } else {
+                if (dp[i + 1U][j] > dp[i][j - 1U]) {
+                    dp[i][j] = dp[i + 1U][j];
+                } else {
+                    dp[i][j] = dp[i][j - 1U];
+                }
+            }
+        }
+    }
+
+    total = dp[0][n - 1U];
+    result = malloc((size_t)total + 1U);
+    if (result == NULL) {
+        for (i = 0U; i < n; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+
+    i = 0U;
+    j = n - 1U;
+    left = 0U;
+    right = (size_t)total - 1U;
+
+    while (i < j) {
+        if (s[i] == s[j]) {
+            result[left] = s[i];
+            result[right] = s[j];
+            left++;
+            right--;
+            i++;
+            j--;
+        } else if (dp[i + 1U][j] >= dp[i][j - 1U]) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+
+    if (i == j) {
+        result[left] = s[i];
+    }
+
+    result[total] = '\0';
+
+    for (i = 0U; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "character";
+    char *lps;
+
+    lps = longest_palindromic_subsequence(input);
+    if (lps == NULL) {
+        if (fprintf(stderr, "Failed to compute longest palindromic subsequence\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input: %s\n", input) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+    if (printf("Longest palindromic subsequence: %s\n", lps) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    if (printf("Length: %zu\n", strlen(lps)) < 0) {
+        free(lps);
+        return EXIT_FAILURE;
+    }
+
+    free(lps);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <float.h>
+
+double rhombus_area(double diagonal1, double diagonal2) {
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+int main(void) {
+    double d1, d2, area;
+    char *line = NULL;
+    size_t len = 0;
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    ssize_t read;
+    char *endptr;
+
+    printf("Enter first diagonal: ");
+    read = getline(&line, &len, stdin);
+    if (read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    if (read > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t line_len = strlen(line);
+        if (line_len > 0 && line[line_len - 1] == '\n') {
+            line[line_len - 1] = '\0';
+            read--;
+        }
+    }
+
+    if (read == 0 || line[0] == '\0') {
+        fprintf(stderr, "Invalid input for first diagonal\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    d1 = strtod(line, &endptr);
+    if (endptr == line || *endptr != '\0' || errno == ERANGE || d1 <= 0.0 || d1 > DBL_MAX / 2.0) {
+        fprintf(stderr, "Invalid input for first diagonal\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second diagonal: ");
+    read = getline(&line, &len, stdin);
+    if (read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder read: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    if (read > 0) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t line_len = strlen(line);
+        if (line_len > 0 && line[line_len - 1] == '\n') {
+            line[line_len - 1] = '\0';
+            read--;
+        }
+    }
+
+    if (read == 0 || line[0] == '\0') {
+        fprintf(stderr, "Invalid input for second diagonal\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    d2 = strtod(line, &endptr);
+    if (endptr == line || *endptr != '\0' || errno == ERANGE || d2 <= 0.0 || d2 > DBL_MAX / 2.0) {
+        fprintf(stderr, "Invalid input for second diagonal\n");
+        free(line);
+        return EXIT_FAILURE;
+    }
+
+    free(line);
+
+    area = rhombus_area(d1, d2);
+    printf("Area of rhombus: %.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

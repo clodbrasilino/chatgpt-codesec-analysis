@@ -1,0 +1,68 @@
+#if defined(__linux__) || defined(__APPLE__) || defined(__POSIX_VERSION)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_STRING_LEN 4096
+
+bool is_reverse(const char *str1, const char *str2) {
+    if (!str1 || !str2) return false;
+    
+    size_t len1 = strnlen(str1, MAX_STRING_LEN);
+    size_t len2 = strnlen(str2, MAX_STRING_LEN);
+    
+    if (len1 != len2 || len1 == 0 || len1 == MAX_STRING_LEN) return false;
+    
+    for (size_t i = 0; i < len1; i++) {
+        if (str1[i] != str2[len1 - 1 - i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int count_reverse_pairs(const char **string_list, size_t list_size) {
+    if (!string_list || list_size == 0) return 0;
+    
+    int count = 0;
+    
+    for (size_t i = 0; i < list_size; i++) {
+        if (!string_list[i]) continue;
+        for (size_t j = i + 1; j < list_size; j++) {
+            if (!string_list[j]) continue;
+            if (is_reverse(string_list[i], string_list[j])) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *strings[] = {
+        "hello",
+        "world",
+        "olleh",
+        "dlrow",
+        "test",
+        "tset",
+        "abc",
+        "cba",
+        "same",
+        "emas"
+    };
+    
+    size_t num_strings = sizeof(strings) / sizeof(strings[0]);
+    
+    int pairs = count_reverse_pairs(strings, num_strings);
+    
+    printf("Number of reverse pairs: %d\n", pairs);
+    
+    return 0;
+}

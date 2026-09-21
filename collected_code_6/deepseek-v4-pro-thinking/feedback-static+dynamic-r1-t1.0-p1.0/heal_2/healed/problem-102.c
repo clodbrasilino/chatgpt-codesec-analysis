@@ -1,0 +1,83 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SAFE_STRLEN 65536
+
+static size_t safe_strlen(const char *str)
+{
+    if (str == NULL) return 0;
+    size_t len = 0;
+    while (len < MAX_SAFE_STRLEN && str[len] != '\0') {
+        len++;
+    }
+    if (len == MAX_SAFE_STRLEN) return 0;
+    return len;
+}
+
+char *snake_to_camel(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = safe_strlen(str);
+    if (len == 0 && str[0] != '\0') {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t out = 0;
+    int capitalize_next = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (c == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                result[out++] = (char)toupper(c);
+                capitalize_next = 0;
+            } else {
+                result[out++] = (char)tolower(c);
+            }
+        }
+    }
+
+    result[out] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "snake_case_string",
+        "hello_world",
+        "this_is_a_longer_snake_case_example",
+        "",
+        "foo__bar",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "mixed_CASE_string",
+        NULL
+    };
+
+    for (int i = 0; tests[i] != NULL; i++) {
+        char *camel = snake_to_camel(tests[i]);
+
+        if (camel == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+
+        printf("%s -> %s\n", tests[i], camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

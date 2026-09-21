@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+bool is_length_odd(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, MAX_WORD_LEN);
+    return (len % 2U) != 0U;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN];
+    size_t len;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer)) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning about the statically-sized `char buffer[MAX_WORD_LEN]` (CWE-119/CWE-120) is a low-risk, informational finding, and the original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to `sizeof(buffer) - 1` characters plus the null terminator, preventing buffer overflow on input.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1U] = '\0'` is a defensive belt-and-suspenders measure (technically redundant after a successful `fgets`, but harmless and robust against future refactoring).
+3. **Bounded length queries:** `strnlen` is used instead of `strlen` in both `main` and `is_length_odd`, so even a non-terminated string could not cause an out-of-bounds read.
+4. **Safe newline stripping:** The `len > 0U` check guards against underflow when indexing `buffer[len - 1U]`.
+5. **NULL and error handling:** The `fgets` return value is checked, `is_length_odd` guards against `NULL`, and empty input is rejected with a proper `EXIT_FAILURE`.
+
+No functional changes were required; the code as written already satisfies the bounds-checking recommendations flagged by the static analyzer.

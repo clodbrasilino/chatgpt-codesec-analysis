@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* intToRoman(int num) {
+    if (num <= 0 || num > 3999) {
+        return NULL;
+    }
+
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char* const symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    
+    char* roman = (char*)malloc(16 * sizeof(char));
+    if (!roman) {
+        return NULL;
+    }
+
+    int i = 0;
+    char* ptr = roman;
+    size_t remaining = 16;
+
+    while (num > 0) {
+        while (num >= values[i]) {
+            num -= values[i];
+            size_t len = strlen(symbols[i]);
+            if (len < remaining) {
+                memcpy(ptr, symbols[i], len);
+                ptr += len;
+                remaining -= len;
+            }
+        }
+        i++;
+    }
+    *ptr = '\0';
+
+    return roman;
+}
+
+int main() {
+    int testCases[] = {3, 4, 9, 58, 1994, 0, 4000};
+    int numTestCases = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (int i = 0; i < numTestCases; i++) {
+        char* roman = intToRoman(testCases[i]);
+        if (roman) {
+            printf("%d -> %s\n", testCases[i], roman);
+            free(roman);
+        } else {
+            printf("%d -> Invalid input or allocation error\n", testCases[i]);
+        }
+    }
+
+    return 0;
+}

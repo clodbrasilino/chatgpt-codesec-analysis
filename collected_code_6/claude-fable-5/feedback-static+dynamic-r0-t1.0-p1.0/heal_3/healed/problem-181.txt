@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    char *prefix = NULL;
+    size_t prefix_len = 0;
+    size_t alloc_size = 0;
+    size_t i;
+
+    if (strs == NULL || count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    prefix_len = strnlen(strs[0], MAX_STRING_LEN);
+    if (prefix_len == MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    for (i = 1; i < count; i++) {
+        size_t j = 0;
+        size_t len = strnlen(strs[i], MAX_STRING_LEN);
+        if (len == MAX_STRING_LEN) {
+            return NULL;
+        }
+        while (j < prefix_len && j < len && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0) {
+            break;
+        }
+    }
+
+    if (prefix_len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    alloc_size = prefix_len + 1;
+
+    prefix = malloc(alloc_size);
+    if (prefix == NULL) {
+        return NULL;
+    }
+
+    if (prefix_len > 0) {
+        memcpy(prefix, strs[0], prefix_len);
+    }
+    prefix[prefix_len] = '\0';
+
+    return prefix;
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "flowering",
+        "flower",
+        "flow",
+        "flourish"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *result;
+
+    result = longest_common_prefix(strings, count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to compute longest common prefix\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes:**
+
+1. **Removed `if (alloc_size < prefix_len)` check** — Since `prefix_len` is strictly less than `MAX_STRING_LEN` (4096) at that point, `prefix_len + 1` can never overflow a `size_t`. The static analyzer correctly flagged this condition as always false (`knownConditionTrueFalse`), making it dead code.
+
+2. **Removed `prefix_len < alloc_size` from the copy guard** — Because `alloc_size = prefix_len + 1` is guaranteed with no overflow possible, this condition is always true. Keeping only `prefix_len > 0` preserves the meaningful check while eliminating the dead condition.
+
+3. **The `memcpy` (CWE-120 / Flawfinder risk 2) is safe as written** — The destination buffer is `alloc_size = prefix_len + 1` bytes, and exactly `prefix_len` bytes are copied, leaving room for the NUL terminator written afterward. The source `strs[0]` is guaranteed to be at least `prefix_len` bytes long since `prefix_len` was derived from `strnlen(strs[0], ...)` and only ever shrinks. No code change was needed beyond removing the redundant guard; the bounds are provably correct.
+
+4. **The `malloc` NULL check is retained** — The "Assuming condition is false" note is just the analyzer's path assumption, not a defect; checking allocation failure is correct practice.
+
+The resulting code has identical behavior, no dead branches, and provably bounded buffer operations.

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 (buffer overflow) weakness correctly. The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a static-analysis heuristic triggered by any fixed-size array declaration, not an actual defect. The code is safe because:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters and always null-terminates, preventing overflow.
+2. **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0'` is redundant with `fgets` semantics but harmless as a belt-and-suspenders measure.
+3. **Bounded length check:** `strnlen(buffer, sizeof(buffer))` avoids reading past the buffer even if termination were somehow missing.
+4. **Safe character classification:** casting to `(unsigned char)` before `islower()` avoids undefined behavior when `char` is signed and holds negative values.
+5. **NULL guard** in `count_lowercase` prevents dereferencing a null pointer.
+
+One portability consideration: `strnlen` is POSIX (and C23), so on strict pre-C23 ANSI toolchains you may need `_POSIX_C_SOURCE` defined or a fallback; since `fgets` guarantees termination here, plain `strlen` would also be safe, but `strnlen` is the more defensive choice and was retained.

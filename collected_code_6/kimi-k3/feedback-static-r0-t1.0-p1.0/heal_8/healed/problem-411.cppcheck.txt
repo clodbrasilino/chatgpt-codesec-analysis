@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:68:47: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                    if (result_len + copy_len >= result_capacity) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:67:39: note: 'copy_len' is assigned value 'prefix_len' here.
+                    size_t copy_len = prefix_len;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:66:45: note: outer condition: result_len+prefix_len<result_capacity
+                if (result_len + prefix_len < result_capacity) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:68:47: note: opposite inner condition: result_len+copy_len>=result_capacity
+                    if (result_len + copy_len >= result_capacity) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:109:47: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                    if (result_len + copy_len >= result_capacity) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:108:39: note: 'copy_len' is assigned value 'remaining' here.
+                    size_t copy_len = remaining;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:107:44: note: outer condition: result_len+remaining<result_capacity
+                if (result_len + remaining < result_capacity) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-411.c:109:47: note: opposite inner condition: result_len+copy_len>=result_capacity
+                    if (result_len + copy_len >= result_capacity) {
+                                              ^

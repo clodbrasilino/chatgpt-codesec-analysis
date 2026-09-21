@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[256];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1) {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+1. **Flawfinder warning (CWE-119/CWE-120)** — This is a false positive in practice. The original code already used `fgets(buffer, sizeof(buffer), stdin)`, which strictly bounds input to the buffer size and always NUL-terminates. No overflow is possible. The pattern is retained as-is since it is the correct, safe idiom.
+
+2. **Newline handling improvement** — The original code left the trailing `\n` from `fgets` in the buffer and worked around it with a post-hoc check (`result == (int)'\n'`). This was fragile: an input like `"a\na"` isn't possible from a single `fgets`, but the special-casing obscured intent. The rewrite strips the newline up front using `strcspn(buffer, "\n")`, which is safe even if no newline is present (it indexes the terminating NUL). This removes the awkward result check entirely.
+
+3. **Retained defensive measures** — The `NULL` check in `first_repeated_char`, the cast to `unsigned char` before indexing `seen[]` (avoiding undefined behavior with negative `char` values on platforms where `char` is signed), and the `fgets` return-value check are all correct and preserved.
+
+The code is now free of the flagged weakness, handles edge cases (empty input, EOF, long input truncated safely) and remains fully portable C99.

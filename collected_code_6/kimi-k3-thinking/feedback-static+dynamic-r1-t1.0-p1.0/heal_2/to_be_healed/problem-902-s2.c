@@ -1,0 +1,195 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
+
+#define MAX_KEY_LENGTH 1024
+
+typedef struct {
+    char *key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+static Dictionary *dict_create(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    if (capacity == 0) {
+        capacity = 1;
+    }
+    if (capacity > SIZE_MAX / sizeof(Entry)) {
+        free(dict);
+        return NULL;
+    }
+    dict->entries = malloc(capacity * sizeof(Entry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+static void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->entries[i].key);
+        }
+        free(dict->entries);
+    }
+    free(dict);
+}
+
+static Entry *dict_find(Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        if (strncmp(dict->entries[i].key, key, MAX_KEY_LENGTH) == 0) {
+            return &dict->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static int dict_insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        if (dict->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        size_t new_capacity = dict->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Entry)) {
+            return -1;
+        }
+        Entry *new_entries = realloc(dict->entries, new_capacity * sizeof(Entry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    size_t key_len = strnlen(key, MAX_KEY_LENGTH);
+    if (key_len == MAX_KEY_LENGTH) {
+        return -1;
+    }
+    char *key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(key_copy, key, key_len);
+    key_copy[key_len] = '\0';
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary *dict_combine(const Dictionary *a, const Dictionary *b) {
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+    if (a->size > SIZE_MAX - b->size) {
+        return NULL;
+    }
+    if (a->size + b->size > SIZE_MAX / sizeof(Entry)) {
+        return NULL;
+    }
+    Dictionary *result = dict_create(a->size + b->size);
+    if (result == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (dict_insert(result, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_free(result);
+            return NULL;
+        }
+    }
+    for (size_t i = 0; i < b->size; i++) {
+        Entry *existing = dict_find(result, b->entries[i].key);
+        if (existing != NULL) {
+            if ((b->entries[i].value > 0 && existing->value > INT_MAX - b->entries[i].value) ||
+                (b->entries[i].value < 0 && existing->value < INT_MIN - b->entries[i].value)) {
+                dict_free(result);
+                return NULL;
+            }
+            existing->value += b->entries[i].value;
+        } else {
+            if (dict_insert(result, b->entries[i].key, b->entries[i].value) != 0) {
+                dict_free(result);
+                return NULL;
+            }
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    Dictionary *dict1 = dict_create(4);
+    if (dict1 == NULL) {
+        fprintf(stderr, "Failed to create dictionary 1\n");
+        return EXIT_FAILURE;
+    }
+    Dictionary *dict2 = dict_create(4);
+    if (dict2 == NULL) {
+        fprintf(stderr, "Failed to create dictionary 2\n");
+        dict_free(dict1);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_insert(dict1, "apple", 5) != 0 ||
+        dict_insert(dict1, "banana", 3) != 0 ||
+        dict_insert(dict1, "cherry", 8) != 0) {
+        fprintf(stderr, "Failed to populate dictionary 1\n");
+        dict_free(dict1);
+        dict_free(dict2);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_insert(dict2, "banana", 2) != 0 ||
+        dict_insert(dict2, "cherry", 4) != 0 ||
+        dict_insert(dict2, "date", 7) != 0) {
+        fprintf(stderr, "Failed to populate dictionary 2\n");
+        dict_free(dict1);
+        dict_free(dict2);
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *combined = dict_combine(dict1, dict2);
+    if (combined == NULL) {
+        fprintf(stderr, "Failed to combine dictionaries\n");
+        dict_free(dict1);
+        dict_free(dict2);
+        return EXIT_FAILURE;
+    }
+
+    printf("Combined dictionary:\n");
+    for (size_t i = 0; i < combined->size; i++) {
+        printf("%s: %d\n", combined->entries[i].key, combined->entries[i].value);
+    }
+
+    dict_free(dict1);
+    dict_free(dict2);
+    dict_free(combined);
+
+    return EXIT_SUCCESS;
+}

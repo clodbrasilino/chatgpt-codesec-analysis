@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    const char source[] = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    size_t buffer_size;
+    char *buffer;
+
+    source_len = strnlen(source, sizeof(source));
+    if (source_len >= sizeof(source)) {
+        fprintf(stderr, "Source string is not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = source_len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (source_len >= buffer_size) {
+        fprintf(stderr, "Destination buffer too small\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, source_len);
+    buffer[source_len] = '\0';
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen` with `strnlen(source, sizeof(source))`, which bounds the scan to the known size of the array. Since `source` is a local array with a known compile-time size, this guarantees the length computation can never read past the buffer, even if the string were somehow not null-terminated. An explicit check verifies a terminator was actually found within bounds.
+
+2. **CWE-120 (unchecked memcpy):** The destination size is now tracked explicitly in `buffer_size`, and a guard verifies `source_len < buffer_size` before calling `memcpy`, making the invariant that the destination can hold the source data (plus the null terminator) explicit and verifiable rather than implicit.
+
+3. **Resource safety:** The buffer is freed on the error path added for the bounds check, avoiding a memory leak.
+
+Note that `strnlen` is POSIX / C23; if strict C89/C99 portability is required, an equivalent bounded loop or `memchr(source, '\0', sizeof(source))` could be used instead.

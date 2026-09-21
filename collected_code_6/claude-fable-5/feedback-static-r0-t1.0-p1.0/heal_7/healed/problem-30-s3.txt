@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+unsigned long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long freq[256] = {0};
+    unsigned long total = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        total += (freq[i] * (freq[i] + 1)) / 2;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%lu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The warning on `char buffer[BUFFER_SIZE]` is a generic heuristic flag for statically-sized arrays, not an actual vulnerability here. The mitigations already in place:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant since `fgets` always null-terminates on success, but harmless).
+3. **Bounded length calculation:** `strnlen` with an explicit maximum is used instead of `strlen`, so even a non-terminated buffer couldn't cause an out-of-bounds read.
+4. **Safe indexing:** the cast to `(unsigned char)` before indexing `freq[]` prevents negative-index access on platforms where `char` is signed — a subtle but important detail that's already handled correctly.
+5. **NULL check** in `count_substrings` guards against invalid pointers.
+
+The only addition in the rewrite is `memset(buffer, 0, sizeof(buffer))` to ensure the buffer is fully initialized before use, which satisfies stricter static analyzers and avoids any reliance on `fgets` behavior in edge cases. No integer overflow is practically reachable in `freq[i] * (freq[i] + 1) / 2` since `freq[i]` is capped at 1023 by the buffer size.

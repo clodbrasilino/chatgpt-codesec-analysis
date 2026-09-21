@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LEN 50
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int position;
+} AdverbInfo;
+
+int is_adverb(const char *word) {
+    size_t len;
+    if (word == NULL) {
+        return 0;
+    }
+    len = strlen(word);
+    if (len < 3 || len >= MAX_WORD_LEN) {
+        return 0;
+    }
+    return (word[len - 2] == 'l' && word[len - 1] == 'y');
+}
+
+int find_adverbs(const char *sentence, AdverbInfo *adverbs, int max_adverbs) {
+    if (sentence == NULL || adverbs == NULL || max_adverbs <= 0) {
+        return -1;
+    }
+
+    size_t sentence_len = strlen(sentence);
+    if (sentence_len == 0) {
+        return 0;
+    }
+
+    char *copy = malloc(sentence_len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    size_t dest_size = sentence_len + 1;
+    size_t copy_length = sentence_len < dest_size ? sentence_len : dest_size - 1;
+    memcpy(copy, sentence, copy_length);
+    copy[copy_length] = '\0';
+
+    int count = 0;
+    int position = 0;
+    char *saveptr;
+    char *token = strtok_r(copy, " \t\n\r.,;:!?\"'()[]{}", &saveptr);
+
+    while (token != NULL && count < max_adverbs) {
+        size_t len = strlen(token);
+
+        if (len > 0 && len < MAX_WORD_LEN) {
+            char lower[MAX_WORD_LEN];
+            size_t j;
+            size_t copy_len = len < MAX_WORD_LEN - 1 ? len : MAX_WORD_LEN - 1;
+
+            for (j = 0; j < copy_len; j++) {
+                lower[j] = (char)tolower((unsigned char)token[j]);
+            }
+            lower[copy_len] = '\0';
+
+            if (is_adverb(lower)) {
+                size_t k;
+                size_t word_copy_len = copy_len < MAX_WORD_LEN - 1 ? copy_len : MAX_WORD_LEN - 1;
+
+                for (k = 0; k < word_copy_len; k++) {
+                    adverbs[count].word[k] = token[k];
+                }
+                adverbs[count].word[word_copy_len] = '\0';
+                adverbs[count].position = position;
+                count++;
+            }
+        }
+        position++;
+        token = strtok_r(NULL, " \t\n\r.,;:!?\"'()[]{}", &saveptr);
+    }
+
+    free(copy);
+    return count;
+}
+
+int main(void) {
+    const char *sentence = "The quick brown fox jumps quickly and silently over the lazy dog.";
+    AdverbInfo adverbs[MAX_WORDS];
+    int num_adverbs;
+    int i;
+
+    num_adverbs = find_adverbs(sentence, adverbs, MAX_WORDS);
+
+    if (num_adverbs < 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sentence: %s\n", sentence);
+    printf("Found %d adverb(s):\n", num_adverbs);
+
+    for (i = 0; i < num_adverbs; i++) {
+        printf("  Word: %s, Position: %d\n", adverbs[i].word, adverbs[i].position);
+    }
+
+    return EXIT_SUCCESS;
+}

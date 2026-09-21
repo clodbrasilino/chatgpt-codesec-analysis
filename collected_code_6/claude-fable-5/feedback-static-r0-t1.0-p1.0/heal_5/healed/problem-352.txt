@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a low-risk, informational hit (risk 2). Statically-sized buffers are only dangerous when writes to them are unbounded. In this code, the weakness is already fully mitigated:
+
+1. **Bounded read** — `fgets(buffer, sizeof(buffer), stdin)` limits input to at most `sizeof(buffer) - 1` characters plus the null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than the macro directly means the bound stays correct even if the declaration changes.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy; `fgets` already null-terminates, but this makes the invariant explicit and protects against future refactoring to a non-terminating read function.
+
+3. **Newline stripping via `strcspn`** — safe even when no newline is present, since `strcspn` returns the index of the terminator in that case, and that index is always within bounds.
+
+4. **Defensive callee** — `all_chars_unique` checks for `NULL`, takes an explicit `max_len` so it never scans past the buffer, and casts to `unsigned char` before indexing `seen[256]`, avoiding negative-index UB on platforms where `char` is signed.
+
+No code changes were required to fix the reported weakness; the original mitigations are correct and complete.

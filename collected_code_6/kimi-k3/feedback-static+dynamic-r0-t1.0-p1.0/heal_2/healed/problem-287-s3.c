@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+unsigned long long sum_of_squares_even(int n)
+{
+    unsigned long long sum = 0;
+    int i;
+
+    for (i = 1; i <= n; i++) {
+        unsigned long long even = (unsigned long long)i * 2;
+        sum += even * even;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char input[64];
+    char *endptr;
+    long value;
+    int n;
+    size_t len;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(input);
+    if (len > 0 && input[len - 1] != '\n' && !feof(stdin)) {
+        fprintf(stderr, "Invalid input: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(input, &endptr, 10);
+
+    if (errno == ERANGE || value > INT_MAX || value < 0) {
+        fprintf(stderr, "Invalid input: out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == input) {
+        fprintf(stderr, "Invalid input: not a number\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input: trailing characters\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)value;
+    printf("%llu\n", sum_of_squares_even(n));
+
+    return EXIT_SUCCESS;
+}

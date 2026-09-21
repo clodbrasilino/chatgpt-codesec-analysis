@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *empty_string(void) {
+    char *result = malloc(1);
+    if (result) result[0] = '\0';
+    return result;
+}
+
+static void free_dp(unsigned short **dp, int rows) {
+    for (int i = 0; i < rows; i++) free(dp[i]);
+    free(dp);
+}
+
+char *longest_palindromic_subsequence(const char *str) {
+    if (!str) return NULL;
+
+    size_t str_len = strnlen(str, (size_t)-1);
+    if (str_len > (size_t)((unsigned int)-1 >> 1)) return NULL;
+
+    int n = (int)str_len;
+    if (n == 0) return empty_string();
+
+    unsigned short **dp = malloc((size_t)n * sizeof(*dp));
+    if (!dp) return NULL;
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = calloc((size_t)n, sizeof(**dp));
+        if (!dp[i]) {
+            free_dp(dp, i);
+            return NULL;
+        }
+    }
+
+    for (int i = 0; i < n; i++) dp[i][i] = 1;
+
+    for (int len = 2; len <= n; len++) {
+        for (int i = 0; i <= n - len; i++) {
+            int j = i + len - 1;
+            if (str[i] == str[j] && len == 2)
+                dp[i][j] = 2;
+            else if (str[i] == str[j])
+                dp[i][j] = dp[i + 1][j - 1] + 2;
+            else
+                dp[i][j] = (dp[i + 1][j] > dp[i][j - 1]) ? dp[i + 1][j] : dp[i][j - 1];
+        }
+    }
+
+    int result_len = dp[0][n - 1];
+    char *result = malloc((size_t)result_len + 1);
+    if (!result) {
+        free_dp(dp, n);
+        return NULL;
+    }
+
+    int i = 0, j = n - 1, pos = 0, rev = result_len - 1;
+    while (i <= j) {
+        if (str[i] == str[j]) {
+            result[pos++] = str[i];
+            if (i != j) result[rev--] = str[j];
+            i++;
+            j--;
+        } else if (dp[i + 1][j] > dp[i][j - 1]) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+    result[result_len] = '\0';
+
+    free_dp(dp, n);
+    return result;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "character",
+        "civic",
+        "babad",
+        "forgeeksskeegfor",
+        "bbabcbcab",
+        ""
+    };
+    int num_tests = (int)(sizeof(tests) / sizeof(tests[0]));
+
+    for (int t = 0; t < num_tests; t++) {
+        char *lps = longest_palindromic_subsequence(tests[t]);
+        if (lps) {
+            printf("Input: \"%s\"\nLongest palindromic subsequence: \"%s\"\n\n", tests[t], lps);
+            free(lps);
+        } else {
+            printf("Input: \"%s\"\nMemory allocation failed or empty string.\n\n", tests[t]);
+        }
+    }
+
+    return 0;
+}

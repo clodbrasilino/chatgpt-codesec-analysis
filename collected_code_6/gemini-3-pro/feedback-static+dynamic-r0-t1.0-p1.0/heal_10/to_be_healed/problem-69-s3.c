@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected False, got <no output>
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 1 failed: expected True, got <no output>
+  */
+
+bool isSublist(Node* list, Node* sublist) {
+    if (sublist == NULL) {
+        return true;
+    }
+    if (list == NULL) {
+        return false;
+    }
+
+    Node* currentList = list;
+    
+    while (currentList != NULL) {
+        Node* ptr1 = currentList;
+        Node* ptr2 = sublist;
+        
+        while (ptr1 != NULL && ptr2 != NULL && ptr1->data == ptr2->data) {
+            ptr1 = ptr1->next;
+            ptr2 = ptr2->next;
+        }
+        
+        if (ptr2 == NULL) {
+            return true;
+        }
+        
+        currentList = currentList->next;
+    }
+    
+    return false;
+}
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode != NULL) {
+        newNode->data = data;
+        newNode->next = NULL;
+    }
+    return newNode;
+}
+
+void append(Node** head, Node** tail, int data) {
+    Node* newNode = createNode(data);
+    if (newNode == NULL) return;
+
+    if (*head == NULL) {
+        *head = newNode;
+        *tail = newNode;
+    } else {
+        (*tail)->next = newNode;
+        *tail = newNode;
+    }
+}
+
+void freeList(Node* head) {
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void parseLine(Node** head) {
+    int ch;
+    long long num = 0;
+    int sign = 1;
+    bool in_num = false;
+    Node* tail = NULL;
+
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = getchar()) != EOF && ch != '\n') {
+        if (ch == '-') {
+            sign = -1;
+        } else if (isdigit(ch)) {
+            if (num <= (9223372036854775807LL - 9) / 10) {
+                num = num * 10 + (ch - '0');
+            }
+            in_num = true;
+        } else {
+            if (in_num) {
+                append(head, &tail, (int)(num * sign));
+                in_num = false;
+                num = 0;
+                sign = 1;
+            }
+        }
+    }
+    if (in_num) {
+        append(head, &tail, (int)(num * sign));
+    }
+}
+
+int main(void) {
+    Node* list = NULL;
+    Node* sublist = NULL;
+
+    parseLine(&list);
+    parseLine(&sublist);
+
+    if (isSublist(list, sublist)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    freeList(list);
+    freeList(sublist);
+
+    return 0;
+}

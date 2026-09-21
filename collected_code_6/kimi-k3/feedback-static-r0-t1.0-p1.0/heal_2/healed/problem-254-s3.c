@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void findWordsStartingWithAE(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    char buffer[256];
+    size_t i = 0;
+    int inWord = 0;
+    int truncated = 0;
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (inWord) {
+                buffer[i] = '\0';
+                if (!truncated && (buffer[0] == 'a' || buffer[0] == 'e')) {
+                    printf("%s\n", buffer);
+                }
+                i = 0;
+                inWord = 0;
+                truncated = 0;
+            }
+        } else {
+            if (i < sizeof(buffer) - 1) {
+                buffer[i++] = tolower((unsigned char)*str);
+            } else {
+                truncated = 1;
+            }
+            inWord = 1;
+        }
+        str++;
+    }
+
+    if (inWord && i > 0) {
+        buffer[i] = '\0';
+        if (!truncated && (buffer[0] == 'a' || buffer[0] == 'e')) {
+            printf("%s\n", buffer);
+        }
+    }
+}
+
+int main(void) {
+    const char *input = "Apple banana elephant orange avocado egg";
+    findWordsStartingWithAE(input);
+    return 0;
+}

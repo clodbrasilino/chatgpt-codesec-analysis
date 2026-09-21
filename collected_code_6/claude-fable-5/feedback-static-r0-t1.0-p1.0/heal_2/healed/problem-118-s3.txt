@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    char data;
+    struct node *next;
+};
+
+static struct node *create_node(char c)
+{
+    struct node *n = malloc(sizeof(struct node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->data = c;
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static struct node *string_to_list(const char *str)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        struct node *n = create_node(str[i]);
+        if (n == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = n;
+            tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+    }
+
+    return head;
+}
+
+static void print_list(const struct node *head)
+{
+    const struct node *cur = head;
+    while (cur != NULL) {
+        if (printf("%c -> ", cur->data) < 0) {
+            return;
+        }
+        cur = cur->next;
+    }
+    if (printf("NULL\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    const char *input = "hello";
+    struct node *list = string_to_list(input);
+
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **`knownConditionTrueFalse` warning:** The original condition `list == NULL && input[0] != '\0'` contained a subexpression that the static analyzer could prove always true, because `input` is assigned the string literal `"hello"`, so `input[0]` is `'h'` and can never be `'\0'`. Since the string is known to be non-empty at compile time, an empty-string case cannot produce a legitimate `NULL` return from `string_to_list`. The redundant check was removed, leaving `list == NULL` as the sole failure condition, which now unambiguously indicates an allocation failure.
+
+2. **Assignment value note:** The analyzer's note about `input = "hello"` is informational — it is what enables the constant-propagation proof above. Simplifying the condition resolves the downstream diagnostic while preserving identical runtime behavior.
+
+The rest of the code was already sound: allocation failures are handled with full cleanup of the partially built list (no leaks), `free_list` avoids use-after-free by saving the next pointer before `free`, `printf` return values are checked, and ownership is released before program exit.

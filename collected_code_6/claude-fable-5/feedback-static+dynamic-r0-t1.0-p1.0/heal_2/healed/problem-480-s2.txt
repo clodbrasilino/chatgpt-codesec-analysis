@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120). The static buffer `char buffer[256]` is only ever written to via `fgets(buffer, sizeof(buffer), stdin)`, which strictly bounds the write to the buffer size, so no overflow is possible. Key safety properties preserved and confirmed in the rewrite:
+
+1. **Bounded input:** `fgets` with `sizeof(buffer)` guarantees at most 255 characters plus the null terminator are written — this directly addresses the Flawfinder finding.
+2. **Newline stripping:** `strcspn(buffer, "\n")` safely locates the newline (or the terminating NUL if no newline exists), so the index is always within bounds.
+3. **NULL-pointer guards:** `max_occurring_char` validates both pointer arguments before use.
+4. **Signed-char safety:** Characters are cast to `unsigned char` before indexing `counts[]`, preventing negative-index undefined behavior on platforms where `char` is signed.
+5. **Empty-input handling:** The `found` flag ensures an empty string returns an error rather than a garbage result.
+6. **Minor robustness addition:** `fflush(stdout)` was added after the prompt so it reliably appears before blocking on input when stdout is line- or fully-buffered.
+
+No functional changes were required to fix the flagged weakness — the mitigation (length-limited read via `fgets`) was already correctly in place.

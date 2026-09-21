@@ -1,0 +1,125 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+static bool has_valid_digit_frequencies(const char *input)
+{
+    size_t frequencies[10] = {0};
+
+    if (input == NULL || input[0] == '\0') {
+        return false;
+    }
+
+    for (const unsigned char *p = (const unsigned char *)input; *p != '\0'; ++p) {
+        if (*p < (unsigned char)'0' || *p > (unsigned char)'9') {
+            return false;
+        }
+
+        size_t digit = (size_t)(*p - (unsigned char)'0');
+
+        if (frequencies[digit] >= digit) {
+            return false;
+        }
+
+        ++frequencies[digit];
+    }
+
+    return true;
+}
+
+static char *read_line(FILE *stream)
+{
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    buffer[0] = '\0';
+
+    for (;;) {
+        if (capacity - length < 2) {
+            if (capacity >= (size_t)INT_MAX) {
+                free(buffer);
+                return NULL;
+            }
+
+            size_t new_capacity;
+
+            if (capacity > (size_t)INT_MAX / 2) {
+                new_capacity = (size_t)INT_MAX;
+            } else {
+                new_capacity = capacity * 2;
+            }
+
+            char *new_buffer = realloc(buffer, new_capacity);
+
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        size_t available = capacity - length;
+        int read_size = available > (size_t)INT_MAX
+                            ? INT_MAX
+                            : (int)available;
+
+        if (fgets(buffer + length, read_size, stream) == NULL) {
+            if (ferror(stream) || length == 0) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer[length] = '\0';
+            return buffer;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t added = strlen(buffer + length);
+        length += added;
+
+        if (length > 0 && buffer[length - 1] == '\n') {
+            buffer[--length] = '\0';
+
+            if (length > 0 && buffer[length - 1] == '\r') {
+                buffer[--length] = '\0';
+            }
+
+            return buffer;
+        }
+
+        if (feof(stream)) {
+            return buffer;
+        }
+    }
+}
+
+int main(void)
+{
+    char *input = read_line(stdin);
+
+    if (input == NULL) {
+        fputs("Input error\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    puts(has_valid_digit_frequencies(input) ? "true" : "false");
+    free(input);
+
+    return EXIT_SUCCESS;
+}

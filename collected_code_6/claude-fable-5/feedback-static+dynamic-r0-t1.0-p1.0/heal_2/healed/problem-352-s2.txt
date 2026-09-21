@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+The original code already mitigates the flagged CWE-119/CWE-120 concern about the statically-sized `buffer`. Here's why each safeguard matters:
+
+1. **Bounded input with `fgets`**: Reading with `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to at most `BUFFER_SIZE - 1` characters plus the null terminator, preventing a buffer overflow that an unbounded call like `gets()` or `scanf("%s", ...)` would allow.
+
+2. **Explicit null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy — `fgets` already null-terminates on success, but this guarantees termination regardless.
+
+3. **Newline stripping via `strcspn`**: `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline without risk of out-of-bounds access, since `strcspn` returns the string length if no newline exists.
+
+4. **Bounded scanning in `all_chars_unique`**: The function takes a `max_len` parameter and checks `i < max_len` alongside the null-terminator test, so it never reads past the buffer even if the string were somehow unterminated. The cast to `unsigned char` before indexing `seen[]` avoids undefined behavior from negative `char` values on platforms where `char` is signed.
+
+5. **NULL check**: The function safely handles a `NULL` pointer input.
+
+No functional changes were required — the code as written follows sound bounds-checking practices, so the rewrite preserves the logic with the comments removed as requested.

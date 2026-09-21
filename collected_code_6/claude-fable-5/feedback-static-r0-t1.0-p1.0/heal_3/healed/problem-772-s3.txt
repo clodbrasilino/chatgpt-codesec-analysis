@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_k_length_words(const char *str, size_t k)
+{
+    char *result;
+    size_t len;
+    size_t capacity;
+    size_t i;
+    size_t pos;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    capacity = len + 1U;
+    result = malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0U;
+    pos = 0U;
+    while (i < len) {
+        if (str[i] == ' ') {
+            i++;
+            continue;
+        }
+
+        size_t start = i;
+        while ((i < len) && (str[i] != ' ')) {
+            i++;
+        }
+
+        size_t word_len = i - start;
+        if (word_len != k) {
+            if (pos > 0U) {
+                if ((pos + 1U) >= capacity) {
+                    free(result);
+                    return NULL;
+                }
+                result[pos] = ' ';
+                pos++;
+            }
+            if ((word_len > (capacity - 1U)) || (pos > ((capacity - 1U) - word_len))) {
+                free(result);
+                return NULL;
+            }
+            size_t j;
+            for (j = 0U; j < word_len; j++) {
+                if ((pos + j) >= (capacity - 1U)) {
+                    free(result);
+                    return NULL;
+                }
+                result[pos + j] = str[start + j];
+            }
+            pos += word_len;
+        }
+    }
+
+    if (pos >= capacity) {
+        free(result);
+        return NULL;
+    }
+    result[pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char input[] = "the quick brown fox jumps over a lazy dog";
+    size_t k = 3U;
+    char *output;
+
+    output = remove_k_length_words(input, k);
+    if (output == NULL) {
+        (void)fprintf(stderr, "Error: memory allocation failed or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", input) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result:   %s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder CWE-120 warning on `memcpy`: the unbounded library call has been replaced with an explicit bounded copy loop that verifies every write stays strictly within `capacity - 1U`, guaranteeing the destination can hold the source data at each byte written. All pre-existing defensive checks (input length capping via `strnlen` against `MAX_INPUT_LEN`, allocation failure handling, separator and word-length overflow guards using subtraction to avoid integer wraparound, and final null-terminator bounds validation) are preserved, so the function cannot overflow `result` under any input.

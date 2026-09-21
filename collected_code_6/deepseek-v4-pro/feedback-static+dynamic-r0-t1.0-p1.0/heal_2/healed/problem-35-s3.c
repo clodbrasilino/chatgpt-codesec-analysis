@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+unsigned long long rectangular_number(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n > INT_MAX / 2 - 1) {
+        fprintf(stderr, "Error: n too large, overflow would occur\n");
+        exit(EXIT_FAILURE);
+    }
+    return (unsigned long long)n * (n + 1);
+}
+
+int main(void) {
+    int n;
+    char input[32];
+    
+    printf("Enter n: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        fprintf(stderr, "Error: Input too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long val = strtol(input, &endptr, 10);
+    
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+        fprintf(stderr, "Error: Integer out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Error: Invalid integer input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    
+    unsigned long long result = rectangular_number(n);
+    printf("The %d-th rectangular number is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

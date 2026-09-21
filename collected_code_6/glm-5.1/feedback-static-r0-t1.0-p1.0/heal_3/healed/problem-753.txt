@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    double value;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    double val_a = ((Tuple *)a)->value;
+    double val_b = ((Tuple *)b)->value;
+    if (val_a < val_b) return -1;
+    if (val_a > val_b) return 1;
+    return 0;
+}
+
+Tuple *find_min_k_tuples(Tuple *list, size_t list_size, size_t k, size_t *out_size) {
+    if (list == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (k == 0 || list_size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t actual_k = (k < list_size) ? k : list_size;
+
+    if (list_size > SIZE_MAX / sizeof(Tuple)) {
+        return NULL;
+    }
+
+    Tuple *sorted_list = (Tuple *)malloc(list_size * sizeof(Tuple));
+    if (sorted_list == NULL) {
+        return NULL;
+    }
+
+    errno_t err1 = memcpy_s(sorted_list, list_size * sizeof(Tuple), list, list_size * sizeof(Tuple));
+    if (err1 != 0) {
+        free(sorted_list);
+        return NULL;
+    }
+
+    qsort(sorted_list, list_size, sizeof(Tuple), compare_tuples);
+
+    Tuple *result = (Tuple *)malloc(actual_k * sizeof(Tuple));
+    if (result == NULL) {
+        free(sorted_list);
+        return NULL;
+    }
+
+    errno_t err2 = memcpy_s(result, actual_k * sizeof(Tuple), sorted_list, actual_k * sizeof(Tuple));
+    if (err2 != 0) {
+        free(sorted_list);
+        free(result);
+        return NULL;
+    }
+
+    free(sorted_list);
+    *out_size = actual_k;
+
+    return result;
+}
+
+int main() {
+    Tuple list[] = {
+        {1, 9.8},
+        {2, 2.1},
+        {3, 5.5},
+        {4, 1.2},
+        {5, 7.3}
+    };
+
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    size_t k = 3;
+    size_t result_size = 0;
+
+    Tuple *min_k = find_min_k_tuples(list, list_size, k, &result_size);
+
+    if (min_k != NULL) {
+        for (size_t i = 0; i < result_size; ++i) {
+            printf("ID: %d, Value: %.2f\n", min_k[i].id, min_k[i].value);
+        }
+        free(min_k);
+    }
+
+    return 0;
+}

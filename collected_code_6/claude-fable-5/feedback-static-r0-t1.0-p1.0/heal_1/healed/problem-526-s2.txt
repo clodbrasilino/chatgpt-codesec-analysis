@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void capitalize_first_last(char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strlen(str);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+
+            end = i - 1;
+
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    static const char input[] = "hello world this is a test";
+    size_t buf_size;
+    char *buffer;
+
+    buf_size = sizeof(input);
+    buffer = malloc(buf_size);
+
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, input, buf_size);
+    buffer[buf_size - 1] = '\0';
+
+    capitalize_first_last(buffer);
+
+    if (printf("Original: %s\n", input) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **Variable scope reduction (`start`, `end`)** — Both variables are now declared inside a block within the `while` loop, limiting their scope to exactly where they are used. This addresses the `[variableScope]` warnings and reduces the chance of accidental misuse elsewhere in the function.
+
+2. **`strlen` on `input` (CWE-126)** — The input is now a `static const char[]` array, so `sizeof(input)` is used instead of `strlen(input) + 1`. This computes the buffer size at compile time and completely eliminates the reliance on runtime null-termination scanning for the allocation size.
+
+3. **`memcpy` overflow concern (CWE-120)** — The destination buffer is allocated with exactly `sizeof(input)` bytes and the copy length matches, so the destination is guaranteed to hold the source. As a defensive measure, an explicit `buffer[buf_size - 1] = '\0';` guarantees null-termination before the buffer is passed to `capitalize_first_last` and `printf`, which also mitigates the `strlen` over-read risk (CWE-126) inside `capitalize_first_last`.
+
+4. **Remaining `strlen` in `capitalize_first_last`** — This is retained since the function's contract requires a null-terminated string, and the caller now guarantees termination explicitly. The `NULL` check remains as a guard.
+
+The rest of the code (allocation failure handling, `printf` return-value checks, `free` on all exit paths) was already sound and is preserved.

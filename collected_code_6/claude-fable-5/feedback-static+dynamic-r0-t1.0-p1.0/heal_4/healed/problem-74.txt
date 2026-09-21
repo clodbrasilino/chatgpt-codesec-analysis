@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_LEN 4096U
+#define MAP_SIZE 256U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    bool result = true;
+    size_t plen;
+    size_t tlen;
+    size_t i = 0U;
+    size_t j;
+    char *copy = NULL;
+    char *token = NULL;
+    char *saveptr = NULL;
+    const char *map[MAP_SIZE];
+
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    for (j = 0U; j < MAP_SIZE; j++) {
+        map[j] = NULL;
+    }
+
+    plen = strnlen(pattern, MAX_LEN);
+    tlen = strnlen(text, MAX_LEN);
+
+    if (plen == 0U || tlen == 0U || plen >= MAX_LEN || tlen >= MAX_LEN) {
+        return false;
+    }
+
+    copy = malloc(tlen + 1U);
+    if (copy == NULL) {
+        return false;
+    }
+
+    memcpy(copy, text, tlen);
+    copy[tlen] = '\0';
+
+    token = strtok_r(copy, " ", &saveptr);
+    while (token != NULL) {
+        if (i >= plen) {
+            result = false;
+            break;
+        }
+        unsigned char c = (unsigned char)pattern[i];
+        if (map[c] != NULL) {
+            if (strcmp(map[c], token) != 0) {
+                result = false;
+                break;
+            }
+        } else {
+            for (j = 0U; j < MAP_SIZE; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], token) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[c] = token;
+        }
+        i++;
+        token = strtok_r(NULL, " ", &saveptr);
+    }
+
+    if (result && (i != plen)) {
+        result = false;
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        if (printf("Pattern \"%s\" with \"%s\": %s\n",
+                   patterns[i], texts[i],
+                   ok ? "matches" : "does not match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized array `map`)** — This is a false positive. The array is indexed exclusively via `(unsigned char)pattern[i]`, which is guaranteed to be in range `[0, 255]`, and `MAP_SIZE` is `256U`. No out-of-bounds access is possible, so the array is retained as-is.
+
+2. **CWE-120 (`memcpy` buffer overflow)** — The copy is safe by construction: the destination is allocated with `malloc(tlen + 1U)` and exactly `tlen` bytes are copied, with explicit null termination afterward. `tlen` is bounded by `strnlen(text, MAX_LEN)` and rejected if it reaches `MAX_LEN`, so the destination always holds the source data.
+
+3. **Redundant condition `tlen > 0U` (knownConditionTrueFalse)** — Removed. The earlier guard `if (plen == 0U || tlen == 0U || ...) return false;` already guarantees `tlen > 0U` at that point, so the wrapping `if` was dead logic and has been eliminated.
+
+4. **Remaining defensive checks kept intentionally** — The `malloc` NULL check and the `pattern`/`text` NULL checks are correct defensive practice, not weaknesses, and remain. `strtok_r` (reentrant) is used rather than `strtok`, and `strnlen` bounds all length computations, preventing unbounded reads on non-terminated input.

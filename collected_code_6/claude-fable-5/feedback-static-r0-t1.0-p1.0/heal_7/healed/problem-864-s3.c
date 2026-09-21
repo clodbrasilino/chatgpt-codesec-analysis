@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+#define MAX_STRING_LENGTH 4096U
+#define MAX_WORDS 7U
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    size_t len = 0U;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    while ((len < max_len) && (str[len] != '\0')) {
+        len++;
+    }
+
+    return len;
+}
+
+static bool is_palindrome(const char *str)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = bounded_length(str, MAX_STRING_LENGTH);
+    if ((len == 0U) || (len >= MAX_STRING_LENGTH)) {
+        return false;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        if (tolower((unsigned char)str[left]) != tolower((unsigned char)str[right])) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+
+    return true;
+}
+
+static size_t find_palindromes(const char *const *strings, size_t count,
+                               const char **results, size_t results_capacity)
+{
+    size_t found;
+
+    if ((strings == NULL) || (results == NULL) || (results_capacity == 0U)) {
+        return 0U;
+    }
+
+    found = 0U;
+    for (size_t i = 0U; i < count; i++) {
+        if (found >= results_capacity) {
+            break;
+        }
+        if (is_palindrome(strings[i])) {
+            results[found] = strings[i];
+            found++;
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    static const char *const words[MAX_WORDS] = {
+        "racecar",
+        "hello",
+        "Level",
+        "world",
+        "noon",
+        "example",
+        "madam"
+    };
+    const size_t word_count = sizeof(words) / sizeof(words[0]);
+    const char *palindromes[MAX_WORDS] = { NULL };
+    const size_t palindromes_capacity = sizeof(palindromes) / sizeof(palindromes[0]);
+    size_t found;
+
+    if (word_count > palindromes_capacity) {
+        return 1;
+    }
+
+    found = find_palindromes(words, word_count, palindromes, palindromes_capacity);
+
+    if (found > palindromes_capacity) {
+        return 1;
+    }
+
+    if (found == 0U) {
+        if (puts("No palindromes found.") == EOF) {
+            return 1;
+        }
+    } else {
+        if (printf("Found %zu palindrome(s):\n", found) < 0) {
+            return 1;
+        }
+        for (size_t i = 0U; i < found; i++) {
+            if (palindromes[i] == NULL) {
+                return 1;
+            }
+            if (printf("%s\n", palindromes[i]) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}

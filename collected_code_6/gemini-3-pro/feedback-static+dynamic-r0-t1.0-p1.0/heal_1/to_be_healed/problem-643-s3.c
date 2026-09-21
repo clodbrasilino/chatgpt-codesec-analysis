@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_z_inside_word(const char *word) {
+    if (word == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(word);
+    if (len < 3) {
+        return false;
+    }
+
+    for (size_t i = 1; i < len - 1; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_words[] = {
+        "pizza",
+        "zebra",
+        "buzz",
+        "lazy",
+        "z",
+        "az",
+        "za",
+        "hazard",
+        NULL
+    };
+
+    for (size_t i = 0; test_words[i] != NULL; i++) {
+        const char *word = test_words[i];
+        bool result = match_z_inside_word(word);
+        printf("%s: %s\n", word, result ? "Match" : "No match");
+    }
+
+    return 0;
+}

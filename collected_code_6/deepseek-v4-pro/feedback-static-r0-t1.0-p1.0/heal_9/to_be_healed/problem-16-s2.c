@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_SEQUENCES 100
+#define MAX_SEQUENCE_LENGTH 256
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str != NULL) {
+        while (len < max_len && str[len] != '\0') {
+            len++;
+        }
+    }
+    return len;
+}
+
+static int is_valid_underscore_sequence(const char *seq, size_t len) {
+    if (len < 2 || len >= MAX_SEQUENCE_LENGTH) {
+        return 0;
+    }
+    
+    if (seq[len - 1] != '_') {
+        return 0;
+    }
+    
+    if (seq[len - 2] == '_') {
+        return 0;
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        if (i == len - 1) {
+            if (seq[i] != '_') {
+                return 0;
+            }
+        } else {
+            if (!islower((unsigned char)seq[i])) {
+                return 0;
+            }
+        }
+    }
+    
+    return 1;
+}
+
+static void copy_sequence(char *dest, const char *src, size_t src_len, size_t dest_size) {
+    size_t copy_len;
+    
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return;
+    }
+    
+    if (src_len < dest_size - 1) {
+        copy_len = src_len;
+    } else {
+        copy_len = dest_size - 1;
+    }
+    
+    if (copy_len > 0) {
+        if (copy_len >= dest_size) {
+            return;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(dest, src, copy_len);
+    }
+    dest[copy_len] = '\0';
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int find_lowercase_underscore_sequences(const char *input, char (*sequences)[MAX_SEQUENCE_LENGTH], size_t max_sequences) {
+    size_t count = 0;
+    size_t seq_len = 0;
+    int in_sequence = 0;
+    int expecting_underscore = 0;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char current[MAX_SEQUENCE_LENGTH];
+    
+    if (input == NULL || sequences == NULL || max_sequences == 0) {
+        return -1;
+    }
+    
+    if (max_sequences > MAX_SEQUENCES) {
+        max_sequences = MAX_SEQUENCES;
+    }
+    
+    memset(current, 0, sizeof(current));
+    
+    for (size_t i = 0; input[i] != '\0' && count < max_sequences; i++) {
+        unsigned char ch = (unsigned char)input[i];
+        
+        if (islower(ch)) {
+            if (!in_sequence) {
+                seq_len = 0;
+                in_sequence = 1;
+                expecting_underscore = 0;
+            }
+            if (expecting_underscore) {
+                in_sequence = 0;
+                seq_len = 0;
+                expecting_underscore = 0;
+                continue;
+            }
+            if (seq_len < MAX_SEQUENCE_LENGTH - 1) {
+                current[seq_len++] = ch;
+            } else {
+                in_sequence = 0;
+                seq_len = 0;
+                expecting_underscore = 0;
+            }
+        } else if (ch == '_') {
+            if (in_sequence && !expecting_underscore && seq_len > 0) {
+                if (seq_len < MAX_SEQUENCE_LENGTH - 1) {
+                    current[seq_len++] = ch;
+                    expecting_underscore = 1;
+                } else {
+                    in_sequence = 0;
+                    seq_len = 0;
+                    expecting_underscore = 0;
+                }
+            } else {
+                in_sequence = 0;
+                seq_len = 0;
+                expecting_underscore = 0;
+            }
+        } else {
+            if (in_sequence && expecting_underscore && is_valid_underscore_sequence(current, seq_len)) {
+                copy_sequence(sequences[count], current, seq_len, MAX_SEQUENCE_LENGTH);
+                count++;
+            }
+            in_sequence = 0;
+            seq_len = 0;
+            expecting_underscore = 0;
+        }
+    }
+    
+    if (in_sequence && expecting_underscore && 
+        is_valid_underscore_sequence(current, seq_len) && 
+        count < max_sequences) {
+        copy_sequence(sequences[count], current, seq_len, MAX_SEQUENCE_LENGTH);
+        count++;
+    }
+    
+    return (int)count;
+}
+
+int main(void) {
+    const char *test_string = "hello_world test_123 abc_def_ghi not_valid_  single_ a_b_c  correct_seq another_test_here";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char (*sequences)[MAX_SEQUENCE_LENGTH] = NULL;
+    int result;
+    size_t alloc_size;
+    
+    if (MAX_SEQUENCES == 0 || MAX_SEQUENCE_LENGTH == 0) {
+        fprintf(stderr, "Error: Invalid buffer dimensions\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (SIZE_MAX / MAX_SEQUENCE_LENGTH < (size_t)MAX_SEQUENCES) {
+        fprintf(stderr, "Error: Allocation size overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    alloc_size = (size_t)MAX_SEQUENCES * MAX_SEQUENCE_LENGTH;
+    sequences = malloc(alloc_size);
+    
+    if (sequences == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    memset(sequences, 0, alloc_size);
+    
+    result = find_lowercase_underscore_sequences(test_string, sequences, MAX_SEQUENCES);
+    
+    if (result < 0) {
+        fprintf(stderr, "Error: Invalid parameters\n");
+        free(sequences);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Found %d sequences:\n", result);
+    for (int i = 0; i < result; i++) {
+        sequences[i][MAX_SEQUENCE_LENGTH - 1] = '\0';
+        printf("  %s\n", sequences[i]);
+    }
+    
+    free(sequences);
+    return EXIT_SUCCESS;
+}

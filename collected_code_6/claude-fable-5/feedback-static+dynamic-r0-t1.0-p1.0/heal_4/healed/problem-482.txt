@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_LEN 128
+#define MAX_INPUT_LEN 4096
+
+int find_sequences(const char *input);
+static void print_regex_error(int code, const regex_t *regex, const char *prefix);
+
+static void print_regex_error(int code, const regex_t *regex, const char *prefix)
+{
+    char errbuf[ERRBUF_LEN];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "Error: %s: %s\n", prefix, errbuf);
+}
+
+int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    size_t remaining;
+    int ret;
+    int found;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN && input[MAX_INPUT_LEN - 1] != '\0') {
+        fprintf(stderr, "Error: input string too long or not terminated\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "failed to compile regex");
+        return -1;
+    }
+
+    found = 0;
+    cursor = input;
+
+    while (remaining > 0 && *cursor != '\0') {
+        size_t length;
+        char *buffer;
+
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        if ((size_t)match.rm_eo > remaining) {
+            fprintf(stderr, "Error: match offsets exceed input bounds\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        length = (size_t)(match.rm_eo - match.rm_so);
+
+        if (length > remaining - (size_t)match.rm_so) {
+            fprintf(stderr, "Error: match length exceeds remaining input\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        buffer = malloc(length + 1);
+        if (buffer == NULL) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(buffer, cursor + match.rm_so, length);
+        buffer[length] = '\0';
+        printf("Found match: %s\n", buffer);
+        free(buffer);
+
+        if (found == INT_MAX) {
+            fprintf(stderr, "Error: match count overflow\n");
+            regfree(&regex);
+            return -1;
+        }
+        found++;
+
+        if (match.rm_eo == 0) {
+            cursor++;
+            remaining--;
+        } else {
+            cursor += match.rm_eo;
+            remaining -= (size_t)match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+
+    if (found == 0) {
+        printf("No matches found.\n");
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *test_string = "HelloWorld this Is a TestString with Mixed caseWords";
+    int result;
+
+    printf("Input: %s\n", test_string);
+
+    result = find_sequences(test_string);
+    if (result < 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total matches: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: the code above uses `INT_MAX`, so `#include <limits.h>` must be added to the includes:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <regex.h>
+```
+
+**Summary of the hardening changes made against the flagged weaknesses:**
+
+1. **CWE-119/CWE-120 (statically-sized `errbuf`)** — retained the `memset`, passed `sizeof(errbuf) - 1` to `regerror`, and forced NUL termination, so the buffer can never overflow or be read unterminated.
+
+2. **CWE-126 (`strlen` over-read)** — replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, with an explicit rejection of unterminated or oversized input before any processing begins.
+
+3. **CWE-120 (`memcpy`)** — the destination is allocated as exactly `length + 1`, and an additional bounds check (`length > remaining - match.rm_so`) guarantees the source read stays within the validated input region before the copy occurs.
+
+4. **Defensive extras** — loop condition now also checks `remaining > 0`, and an `INT_MAX` guard prevents signed overflow of the match counter.

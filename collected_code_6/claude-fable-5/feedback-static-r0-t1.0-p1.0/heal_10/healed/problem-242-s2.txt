@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and how the weaknesses are addressed:**
+
+The Flawfinder warning about the statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120) is a low-risk, informational hit. The code already mitigates the associated risks correctly:
+
+1. **Bounded input** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing a classic `gets()`-style overflow. Using `sizeof(buffer)` rather than a hardcoded constant keeps the size expression tied to the actual array, avoiding mismatch bugs if `BUFFER_SIZE` changes.
+
+2. **Guaranteed null termination** — Although `fgets` always null-terminates on success, the explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive hardening against any non-conforming implementations or later refactoring to other input functions.
+
+3. **Initialized memory** — `memset(buffer, 0, sizeof(buffer))` ensures no uninitialized reads occur even if input handling changes.
+
+4. **Bounded string traversal** — `count_characters()` takes an explicit `max_len` parameter and checks `count < max_len` before dereferencing, so it can never read past the buffer even if a non-terminated string were passed. It also handles `NULL` input gracefully.
+
+5. **Newline stripping via `strcspn`** — This is safe against the edge case where the first character is `'\0'` (unlike the common `buffer[strlen(buffer)-1]` idiom, which underflows on an empty string).
+
+6. **Correct format specifier** — `%zu` is used for `size_t`, avoiding undefined behavior from format-string/type mismatches.
+
+The error path checks the return value of `fgets` and reports failure via `stderr` with a non-zero exit code, which is proper error handling for EOF or read errors. No changes were required beyond removing comments; the code is already a correct, hardened implementation.

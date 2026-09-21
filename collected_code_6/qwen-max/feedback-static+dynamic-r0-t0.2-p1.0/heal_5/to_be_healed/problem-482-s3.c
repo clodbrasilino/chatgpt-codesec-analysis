@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_sequences(const char *input) {
+    regex_t regex;
+    if (regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED|REG_NEWLINE)) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    regmatch_t pmatch[1];
+    const size_t nmatch = 1;
+
+    for (const char *ptr = input; *ptr; ) {
+        int reti = regexec(&regex, ptr, nmatch, pmatch, 0);
+        if (reti == 0) {
+            for (size_t i = 0; i < nmatch; i++) {
+                if (pmatch[i].rm_so == -1)
+                    break;
+                printf("%.*s\n", (int)(pmatch[i].rm_eo - pmatch[i].rm_so), ptr + pmatch[i].rm_so);
+            }
+            ptr += pmatch[0].rm_eo;
+        } else if (reti == REG_NOMATCH) {
+            break;
+        } else {
+            /* Possible weaknesses found:
+             * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+             */
+            char msgbuf[100];
+            regerror(reti, &regex, msgbuf, sizeof(msgbuf));
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            if (strlen(msgbuf) < sizeof(msgbuf)) {
+                fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+            } else {
+                fprintf(stderr, "Regex match failed: Error message too long\n");
+            }
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "Hello World This Is A Test";
+    find_sequences(input);
+    return 0;
+}

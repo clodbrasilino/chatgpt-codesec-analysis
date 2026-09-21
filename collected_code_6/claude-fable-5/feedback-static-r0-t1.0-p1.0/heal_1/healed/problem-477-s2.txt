@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void string_to_lower(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char *buffer;
+
+    buffer = malloc(BUFFER_SIZE);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    string_to_lower(buffer);
+
+    printf("Lowercase: %s\n", buffer);
+
+    free(buffer);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already quite well-written from a security standpoint:
+
+1. **`fgets` with `sizeof(buffer)`** — input is bounds-checked, preventing buffer overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **`tolower` with `(unsigned char)` cast** — correctly avoids undefined behavior when `char` is signed and holds negative values.
+3. **`strcspn` newline stripping** — safe even when no newline is present (unlike the common `buffer[strlen(buffer)-1]` bug that can index out of bounds on empty input).
+4. **NULL check in `string_to_lower`** — defensive against invalid input.
+5. **Return value of `fgets` checked** — handles EOF/read errors gracefully.
+
+The Flawfinder warning (CWE-119/CWE-120, risk 2) about the statically-sized array is a heuristic flag rather than an actual vulnerability, since all accesses were already bounds-limited. In the rewrite, the fixed-size stack array was replaced with a heap allocation whose size constant (`BUFFER_SIZE`) is used consistently for both allocation and the `fgets` length limit, guaranteeing the size and the bound can never drift apart. The allocation result is checked, and the buffer is freed on every exit path to avoid leaks.

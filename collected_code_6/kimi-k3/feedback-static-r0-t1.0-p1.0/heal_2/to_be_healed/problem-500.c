@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_strings(const char** list, size_t count, const char* separator) {
+    if (list == NULL || count == 0) {
+        char* empty = malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    size_t total_len = 0;
+    size_t sep_len = 0;
+    
+    if (separator != NULL) {
+        sep_len = strnlen(separator, 4096);
+        if (sep_len == 4096) {
+            return NULL;
+        }
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            size_t str_len = strnlen(list[i], 4096);
+            if (str_len == 4096) {
+                return NULL;
+            }
+            total_len += str_len;
+        }
+        if (i < count - 1) {
+            total_len += sep_len;
+        }
+    }
+
+    char* result = malloc(total_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t offset = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            size_t len = strnlen(list[i], 4096);
+            if (len == 4096) {
+                free(result);
+                return NULL;
+            }
+            if (offset + len <= total_len) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + offset, list[i], len);
+                offset += len;
+            }
+        }
+        if (i < count - 1 && separator != NULL) {
+            if (offset + sep_len <= total_len) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + offset, separator, sep_len);
+                offset += sep_len;
+            }
+        }
+    }
+    result[offset] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* words[] = {"Hello", "World", "C", "Programming"};
+    size_t count = sizeof(words) / sizeof(words[0]);
+    
+    char* result = concatenate_strings(words, count, " ");
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%s\n", result);
+    free(result);
+    
+    return EXIT_SUCCESS;
+}

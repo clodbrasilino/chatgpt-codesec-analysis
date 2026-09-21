@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:83:20: style: Condition 'alloc_size==0' is always false [knownConditionTrueFalse]
+    if (alloc_size == 0 || alloc_size > 65536) return -1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:82:29: note: Assignment 'alloc_size=len+1', assigned value is greater than 0
+    size_t alloc_size = len + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:83:20: note: Condition 'alloc_size==0' is always false
+    if (alloc_size == 0 || alloc_size > 65536) return -1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:83:39: style: Condition 'alloc_size>65536' is always false [knownConditionTrueFalse]
+    if (alloc_size == 0 || alloc_size > 65536) return -1;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:80:13: note: Assuming that condition 'len>=65535' is not redundant
+    if (len >= 65535) return -1;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:82:29: note: Assignment 'alloc_size=len+1', assigned value is less than 65536
+    size_t alloc_size = len + 1;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-533-s2.c:83:39: note: Condition 'alloc_size>65536' is always false
+    if (alloc_size == 0 || alloc_size > 65536) return -1;
+                                      ^

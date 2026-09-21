@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int remove_multiple_spaces(char **str) {
+    if (str == NULL || *str == NULL) {
+        return -1;
+    }
+
+    size_t i, j = 0;
+    int space_found = 0;
+    char *original = *str;
+    
+    size_t len = 0;
+    while (original[len] != '\0') {
+        len++;
+    }
+
+    char *new_str = malloc(len + 1);
+    if (new_str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (original[i] == ' ') {
+            if (!space_found) {
+                new_str[j++] = ' ';
+                space_found = 1;
+            }
+        } else {
+            new_str[j++] = original[i];
+            space_found = 0;
+        }
+    }
+    
+    new_str[j] = '\0';
+
+    free(*str);
+    *str = new_str;
+
+    return 0;
+}
+
+int main(void) {
+    const char *initial = "This   is  a    test string   with multiple     spaces.";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char *text = malloc(strlen(initial) + 1);
+    if (text == NULL) {
+        return 1;
+    }
+    
+    size_t k;
+    for (k = 0; initial[k] != '\0'; k++) {
+        text[k] = initial[k];
+    }
+    text[k] = '\0';
+
+    printf("Original: '%s'\n", text);
+
+    if (remove_multiple_spaces(&text) == 0) {
+        printf("Modified: '%s'\n", text);
+    } else {
+        printf("Error processing string.\n");
+    }
+
+    free(text);
+    return 0;
+}

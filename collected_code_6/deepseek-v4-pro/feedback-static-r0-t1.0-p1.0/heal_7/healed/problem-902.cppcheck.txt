@@ -1,0 +1,34 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:55:20: style: Condition 'alloc_size<key_len' is always false [knownConditionTrueFalse]
+    if (alloc_size < key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:53:23: note: alloc_size is assigned 'key_len+1' here.
+    size_t alloc_size = key_len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:55:20: note: Condition 'alloc_size<key_len' is always false
+    if (alloc_size < key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:66:20: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0 && key_len < alloc_size) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:53:33: note: Assignment 'alloc_size=key_len+1', assigned value is greater than 0
+    size_t alloc_size = key_len + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:61:24: note: Assuming condition is false
+    if (new_entry->key == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:66:20: note: Condition 'alloc_size>0' is always true
+    if (alloc_size > 0 && key_len < alloc_size) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:66:35: style: Condition 'key_len<alloc_size' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0 && key_len < alloc_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:53:23: note: alloc_size is assigned 'key_len+1' here.
+    size_t alloc_size = key_len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:61:24: note: Assuming condition is false
+    if (new_entry->key == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-902.c:66:35: note: Condition 'key_len<alloc_size' is always true
+    if (alloc_size > 0 && key_len < alloc_size) {
+                                  ^

@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    char *result;
+    size_t length;
+    size_t buffer_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+    if (length >= SIZE_MAX) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    result = (char *)malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "He said \"hello world\" to everyone.";
+    char *extracted;
+
+    extracted = extract_quoted(text);
+    if (extracted == NULL) {
+        fprintf(stderr, "No quoted value found or allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Removed the redundant dead-code check** (`length >= buffer_size`): Since `buffer_size = length + 1` and the overflow case is already excluded, this condition could never be true — exactly what cppcheck's `knownConditionTrueFalse` flagged. Dead defensive code adds noise and false confidence, so it was eliminated.
+
+2. **Strengthened the overflow guard**: Changed `length == SIZE_MAX` to `length >= SIZE_MAX`. Functionally equivalent for `size_t`, but the `>=` form expresses intent more robustly and guarantees `length + 1` cannot wrap to zero, which would otherwise cause `malloc(0)` followed by an out-of-bounds `memcpy`.
+
+3. **Addressed the Flawfinder `memcpy` warning (CWE-120)**: The copy is provably safe because the destination is allocated with `length + 1` bytes and exactly `length` bytes are copied, with overflow of the addition ruled out beforehand. Additionally, `memcpy` is now skipped entirely when `length == 0`, avoiding any edge-case concerns with zero-length copies and empty quoted strings (`""`).
+
+4. **Preserved correct behavior**: `malloc` failure is still handled, the result is always NUL-terminated, and `main` retains proper error handling for both extraction failure and `printf` failure, freeing memory on all paths — no leaks, no double frees.

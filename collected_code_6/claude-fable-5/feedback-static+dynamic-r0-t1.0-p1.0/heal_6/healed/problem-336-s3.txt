@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 32
+
+static int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT_LEN];
+    size_t len;
+    size_t i;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT_LEN);
+    if (len == 0 || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < len && i < sizeof(normalized) - 1; i++) {
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+    int result;
+
+    memset(input, 0, sizeof(input));
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        flush_stdin();
+    }
+
+    result = has_28_days(input);
+
+    if (result < 0) {
+        fprintf(stderr, "Invalid month name\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days\n", input);
+    } else {
+        printf("%s does not contain 28 days\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged weaknesses, so the rewrite preserves those defenses:
+
+1. **`char normalized[MAX_INPUT_LEN]` (CWE-119/CWE-120):** Mitigated by using `strnlen` with an explicit bound, rejecting inputs at or beyond `MAX_INPUT_LEN`, bounding the copy loop with `i < sizeof(normalized) - 1`, and explicitly null-terminating. No unbounded `strcpy`/`strcat` is used.
+
+2. **`getchar` in a loop (CWE-120/CWE-20):** Safe here because `flush_stdin` discards characters without storing them into any buffer — there is no buffer to overflow. The loop terminates correctly on both `'\n'` and `EOF`, avoiding an infinite loop on closed input streams.
+
+3. **`char input[MAX_INPUT_LEN]` (CWE-119/CWE-120):** Mitigated by `fgets` with `sizeof(input)` limiting the read, a defensive forced null terminator at the last byte, `strnlen` instead of `strlen`, and flushing residual stdin data when the input line exceeded the buffer (preventing stale data from affecting subsequent reads).
+
+Additional good practices retained: `tolower` receives an `unsigned char` cast (avoiding UB for negative `char` values), `NULL` checks, checked `fflush` return value, `stderr` for error output, and `EXIT_SUCCESS`/`EXIT_FAILURE` return codes.

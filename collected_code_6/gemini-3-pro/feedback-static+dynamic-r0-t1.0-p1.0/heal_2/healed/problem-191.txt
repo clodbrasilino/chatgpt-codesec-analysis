@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int case_insensitive_match(const char *str, const char *target) {
+    while (*str && *target) {
+        if (tolower((unsigned char)*str) != tolower((unsigned char)*target)) {
+            return 0;
+        }
+        str++;
+        target++;
+    }
+    return *str == *target;
+}
+
+int has_30_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+
+    if (case_insensitive_match(month, "april") ||
+        case_insensitive_match(month, "june") ||
+        case_insensitive_match(month, "september") ||
+        case_insensitive_match(month, "november")) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *test_months[] = {"April", "February", "September", "january", "JUNE", NULL};
+    
+    for (int i = 0; test_months[i] != NULL; i++) {
+        if (has_30_days(test_months[i])) {
+            printf("%s has 30 days.\n", test_months[i]);
+        } else {
+            printf("%s does not have exactly 30 days.\n", test_months[i]);
+        }
+    }
+
+    return 0;
+}
+```

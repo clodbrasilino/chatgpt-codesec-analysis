@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) return NULL;
+
+    size_t len = 0;
+    const char *p = input;
+    while (*p) {
+        if (isupper(*p)) break; // Prevent over-reading the string
+        ++len;
+        ++p;
+    }
+
+    char *output = (char *)malloc((len + 2) * sizeof(char));
+    if (output == NULL) return NULL;
+
+    int j = 0;
+    for (int i = 0; i < len; ++i) {
+        if (isupper(input[i])) {
+            if (i > 0 && input[i - 1] != '_') {
+                output[j++] = '_';
+            }
+            output[j++] = tolower(input[i]);
+        } else {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main() {
+    const char *input = "ThisIsCamelCase";
+    char *result = camel_to_snake(input);
+
+    if (result != NULL) {
+        printf("Converted: %s\n", result);
+        free(result);
+    } else {
+        printf("Conversion failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:54:33: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                    if (len + 1 <= len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:53:29: note: outer condition: len+1>len
+                if (len + 1 > len) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:54:33: note: opposite inner condition: len+1<=len
+                    if (len + 1 <= len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:101:33: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                    if (len + 1 <= len) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:100:29: note: outer condition: len+1>len
+                if (len + 1 > len) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-956.c:101:33: note: opposite inner condition: len+1<=len
+                    if (len + 1 <= len) {
+                                ^

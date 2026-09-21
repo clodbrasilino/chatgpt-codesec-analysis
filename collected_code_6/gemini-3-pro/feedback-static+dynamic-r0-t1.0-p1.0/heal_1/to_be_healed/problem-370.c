@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    float value;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[20];
+} Tuple;
+
+int compareTuples(const void *a, const void *b) {
+    float valA = ((Tuple *)a)->value;
+    float valB = ((Tuple *)b)->value;
+
+    if (valA < valB) {
+        return -1;
+    } else if (valA > valB) {
+        return 1;
+    }
+    return 0;
+}
+
+void sortTuples(Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compareTuples);
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 5.5f, "Apple"},
+        {2, 2.2f, "Banana"},
+        {3, 9.9f, "Cherry"},
+        {4, 1.1f, "Date"},
+        {5, 4.4f, "Elderberry"}
+    };
+
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    sortTuples(tuples, count);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("ID: %d, Value: %.2f, Name: %s\n", tuples[i].id, tuples[i].value, tuples[i].name);
+    }
+
+    return 0;
+}

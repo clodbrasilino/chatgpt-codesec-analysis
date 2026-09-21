@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+#define ERR_INVALID_UNITS -1
+#define ERR_INVALID_TYPE -2
+
+double calculate_bill(long units, char customer_type) {
+    double amount = 0.0;
+
+    if (units < 0) {
+        return ERR_INVALID_UNITS;
+    }
+
+    if (customer_type != 'R' && customer_type != 'C' && customer_type != 'I') {
+        return ERR_INVALID_TYPE;
+    }
+
+    switch (customer_type) {
+        case 'R':
+            if (units <= 100) {
+                amount = (double)units * 2.50;
+            } else if (units <= 300) {
+                amount = 100.0 * 2.50 + (double)(units - 100) * 4.00;
+            } else {
+                amount = 100.0 * 2.50 + 200.0 * 4.00 + (double)(units - 300) * 5.00;
+            }
+            break;
+
+        case 'C':
+            if (units <= 200) {
+                amount = (double)units * 4.00;
+            } else if (units <= 500) {
+                amount = 200.0 * 4.00 + (double)(units - 200) * 6.00;
+            } else {
+                amount = 200.0 * 4.00 + 300.0 * 6.00 + (double)(units - 500) * 8.00;
+            }
+            break;
+
+        case 'I':
+            if (units <= 500) {
+                amount = (double)units * 6.00;
+            } else {
+                amount = 500.0 * 6.00 + (double)(units - 500) * 10.00;
+            }
+            break;
+
+        default:
+            return ERR_INVALID_TYPE;
+    }
+
+    if (amount < 50.0) {
+        amount = 50.0;
+    }
+
+    return amount;
+}
+
+int main(void) {
+    char buffer[256];
+    char *endptr;
+    char customer_type;
+    long units;
+    double bill;
+
+    printf("Enter customer type (R=Residential, C=Commercial, I=Industrial): ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+
+    if (len != 1) {
+        fprintf(stderr, "Invalid customer type input\n");
+        return EXIT_FAILURE;
+    }
+    customer_type = buffer[0];
+
+    if (customer_type != 'R' && customer_type != 'C' && customer_type != 'I') {
+        fprintf(stderr, "Invalid customer type\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter units consumed: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+
+    errno = 0;
+    units = strtol(buffer, &endptr, 10);
+
+    if (errno == ERANGE || units > INT_MAX || units < 0) {
+        fprintf(stderr, "Invalid units input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer || *endptr != '\0') {
+        fprintf(stderr, "Invalid units input\n");
+        return EXIT_FAILURE;
+    }
+
+    bill = calculate_bill(units, customer_type);
+
+    if (bill == ERR_INVALID_UNITS) {
+        fprintf(stderr, "Units cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (bill == ERR_INVALID_TYPE) {
+        fprintf(stderr, "Invalid customer type\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Electricity Bill: $%.2f\n", bill);
+
+    return EXIT_SUCCESS;
+}

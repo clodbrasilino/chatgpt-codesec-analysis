@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:54:22: style: The comparison 'copy_len > word_len' is always false because 'copy_len' and 'word_len' represent the same value. [knownConditionTrueFalse]
+        if (copy_len > word_len) copy_len = word_len;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:53:27: note: 'copy_len' is assigned value 'word_len' here.
+        size_t copy_len = word_len;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:54:22: note: The comparison 'copy_len > word_len' is always false because 'copy_len' and 'word_len' represent the same value.
+        if (copy_len > word_len) copy_len = word_len;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:90:26: style: The comparison 'copy_len > word_len' is always false because 'copy_len' and 'word_len' represent the same value. [knownConditionTrueFalse]
+            if (copy_len > word_len) copy_len = word_len;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:89:31: note: 'copy_len' is assigned value 'word_len' here.
+            size_t copy_len = word_len;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-674-s2.c:90:26: note: The comparison 'copy_len > word_len' is always false because 'copy_len' and 'word_len' represent the same value.
+            if (copy_len > word_len) copy_len = word_len;
+                         ^

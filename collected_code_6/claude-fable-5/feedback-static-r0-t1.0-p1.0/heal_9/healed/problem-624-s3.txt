@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void to_upper_case(char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    to_upper_case(buffer, sizeof(buffer));
+
+    if (printf("Upper case: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120). The flagged `char buffer[BUFFER_SIZE]` is a static analysis heuristic — Flawfinder flags all statically-sized character arrays regardless of how they're used. The code correctly mitigates the risk through several defensive measures:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive belt-and-suspenders — `fgets` already null-terminates, but this protects against future refactoring.
+3. **Safe length calculation:** `strnlen` with an explicit bound is used instead of `strlen`, so even a non-terminated buffer can't cause an out-of-bounds read.
+4. **Bounded transformation:** `to_upper_case` takes an explicit `max_len` parameter and checks both the bound and the terminator, plus a `NULL` guard.
+5. **Correct `toupper` usage:** the cast to `unsigned char` before calling `toupper` avoids undefined behavior for negative `char` values (e.g., high-bit characters on platforms where `char` is signed).
+6. **Error handling:** return values of `fgets` and `printf` are checked, with diagnostics sent to `stderr`.
+
+No functional changes were required — the rewrite simply removes the analyzer comment, as the identified weakness is a false positive already mitigated by the existing bounds checking.
+
+One portability note: `strnlen` is POSIX / C23. If strict C99/C11 portability is required, compile with `_POSIX_C_SOURCE >= 200809L` defined, or replace it with a small local implementation.

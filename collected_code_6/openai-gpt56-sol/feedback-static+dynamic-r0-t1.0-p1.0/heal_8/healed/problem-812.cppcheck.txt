@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-812.c:38:18: style: Condition 'decrease==0' is always false [knownConditionTrueFalse]
+    if (decrease == 0 || occurrences > input_len / decrease) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-812.c:12:40: note: Assignment 'decrease=target_len-replacement_len', assigned value is 1
+    const size_t decrease = target_len - replacement_len;
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-812.c:38:18: note: Condition 'decrease==0' is always false
+    if (decrease == 0 || occurrences > input_len / decrease) {
+                 ^

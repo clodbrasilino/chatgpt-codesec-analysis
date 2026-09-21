@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-689-s3.c: In function 'read_uintmax':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-689-s3.c:24:14: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   24 |     length = strlen(buffer);
+      |              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-689-s3.c:8:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    7 | #include <limits.h>
+  +++ |+#include <string.h>
+    8 | 

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:24: error: Using argument year that points at uninitialized variable year [ctuuninitvar]
+    int *results[3] = {year, month, day};
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:55:39: note: Calling function extract_date_from_url, 2nd argument is uninitialized
+    int result = extract_date_from_url(url, &year, &month, &day);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:24: note: Using argument year
+    int *results[3] = {year, month, day};
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:30: error: Using argument month that points at uninitialized variable month [ctuuninitvar]
+    int *results[3] = {year, month, day};
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:55:39: note: Calling function extract_date_from_url, 3rd argument is uninitialized
+    int result = extract_date_from_url(url, &year, &month, &day);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:30: note: Using argument month
+    int *results[3] = {year, month, day};
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:37: error: Using argument day that points at uninitialized variable day [ctuuninitvar]
+    int *results[3] = {year, month, day};
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:55:39: note: Calling function extract_date_from_url, 4th argument is uninitialized
+    int result = extract_date_from_url(url, &year, &month, &day);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-906-s2.c:12:37: note: Using argument day
+    int *results[3] = {year, month, day};
+                                    ^

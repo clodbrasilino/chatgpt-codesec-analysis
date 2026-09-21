@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int count_substrings(const char *str, size_t len) {
+    int count = 0;
+    int *prefix_sum = (int *)malloc((len + 1) * sizeof(int));
+    
+    if (prefix_sum == NULL) {
+        return 0;
+    }
+    
+    prefix_sum[0] = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            prefix_sum[i + 1] = prefix_sum[i] + (str[i] - '0');
+        } else {
+            free(prefix_sum);
+            return 0;
+        }
+    }
+    
+    for (size_t i = 0; i < len; i++) {
+        for (size_t j = i + 1; j <= len; j++) {
+            size_t sub_len = j - i;
+            int sub_sum = prefix_sum[j] - prefix_sum[i];
+            if (sub_sum == (int)sub_len) {
+                count++;
+            }
+        }
+    }
+    
+    free(prefix_sum);
+    return count;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <numeric_string>\n", argv[0]);
+        return 1;
+    }
+    
+    size_t len = strnlen(argv[1], 1024 * 1024);
+    int result = count_substrings(argv[1], len);
+    printf("%d\n", result);
+    
+    return 0;
+}

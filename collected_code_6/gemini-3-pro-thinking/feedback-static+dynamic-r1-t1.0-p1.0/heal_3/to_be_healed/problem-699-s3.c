@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <inttypes.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'Not Possible', got <no output>
+  *  test case 2 failed: expected 3, got <no output>
+  *  test case 0 failed: expected 1, got <no output>
+  */
+
+int64_t min_swaps(const char *s1, const char *s2) {
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    int64_t mismatch_01 = 0;
+    int64_t mismatch_10 = 0;
+    size_t i = 0;
+
+    while (s1[i] != '\0' && s2[i] != '\0') {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        
+        if (s1[i] == '0' && s2[i] == '1') {
+            mismatch_01++;
+        } else if (s1[i] == '1' && s2[i] == '0') {
+            mismatch_10++;
+        }
+        i++;
+    }
+
+    if (s1[i] != '\0' || s2[i] != '\0') {
+        return -1;
+    }
+
+    if (mismatch_01 != mismatch_10) {
+        return -1;
+    }
+
+    return mismatch_01;
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+char s1_buf[2000005];
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+char s2_buf[2000005];
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder scanf: It's unclear if the %s limit in the format string is small enough (CWE-120). Check that the limit is sufficiently small, or use a different input function. (risk 1, buffer)
+     */
+    if (scanf("%2000004s", s1_buf) == 1 && scanf("%2000004s", s2_buf) == 1) {
+        int64_t swaps = min_swaps(s1_buf, s2_buf);
+        
+        if (swaps != -1) {
+            printf("%" PRId64 "\n", swaps);
+        } else {
+            printf("Not Possible\n");
+        }
+    }
+
+    return 0;
+}

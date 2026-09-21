@@ -1,0 +1,40 @@
+```c
+#if defined(__linux__) || defined(__APPLE__)
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#include <stdio.h>
+#include <string.h>
+
+void swap(char *x, char *y) {
+    char temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+void permute(char *str, int l, int r) {
+    if (str == NULL) {
+        return;
+    }
+
+    if (l == r) {
+        printf("%s\n", str);
+    } else {
+        for (int i = l; i <= r; i++) {
+            swap((str + l), (str + i));
+            permute(str, l + 1, r);
+            swap((str + l), (str + i));
+        }
+    }
+}
+
+int main(void) {
+    char str[] = "ABC";
+    int n = strnlen(str, sizeof(str));
+    if (n > 0) {
+        permute(str, 0, n - 1);
+    }
+    
+    return 0;
+}
+```

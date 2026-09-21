@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NUM_COLOURS 3
+#define MAX_SELECTION 16
+
+static const char *colours[NUM_COLOURS] = { "Red", "Green", "Blue" };
+
+static void print_combination(const int *indices, size_t count)
+{
+    size_t i;
+
+    if (indices == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        if ((indices[i] >= 0) && (indices[i] < NUM_COLOURS)) {
+            printf("%s", colours[indices[i]]);
+        }
+        if (i + 1U < count) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+static void generate_combinations(int *indices, size_t depth, size_t count, int start)
+{
+    int i;
+
+    if (indices == NULL) {
+        return;
+    }
+
+    if (depth == count) {
+        print_combination(indices, count);
+        return;
+    }
+
+    if (depth >= count) {
+        return;
+    }
+
+    for (i = start; i < NUM_COLOURS; i++) {
+        indices[depth] = i;
+        generate_combinations(indices, depth + 1U, count, i);
+    }
+}
+
+static int choose_colours(size_t count)
+{
+    int *indices;
+
+    if ((count == 0U) || (count > MAX_SELECTION)) {
+        return -1;
+    }
+
+    if (count > (SIZE_MAX / sizeof(int))) {
+        return -1;
+    }
+
+    indices = (int *)malloc(count * sizeof(int));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    (void)memset(indices, 0, count * sizeof(int));
+    generate_combinations(indices, 0U, count, 0);
+    free(indices);
+    indices = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 2U;
+    int result;
+
+    printf("Combinations with repetition choosing %zu colour(s) from %d colours:\n",
+           count, NUM_COLOURS);
+
+    result = choose_colours(count);
+    if (result != 0) {
+        fprintf(stderr, "Error: could not generate combinations.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: the rewritten version adds `#include <stdint.h>` requirement for `SIZE_MAX` — here it is available via `<stdlib.h>` on many platforms, but to be strictly portable the include list should be:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+Key hardening changes made against the flagged weakness (CWE-119/CWE-120):
+
+1. **Bounds check on array indexing** — `print_combination` now validates each index against `0 <= index < NUM_COLOURS` before using it to access the statically-sized `colours` array, preventing any out-of-bounds read even if state were corrupted.
+2. **Depth guard in recursion** — `generate_combinations` explicitly rejects `depth >= count` before writing `indices[depth]`, guaranteeing no write past the allocated buffer.
+3. **NULL pointer checks** — both helper functions defensively reject `NULL` buffers.
+4. **Integer overflow check on allocation size** — `count * sizeof(int)` is verified against `SIZE_MAX` before `malloc`, eliminating a potential wrap-around that could cause an undersized allocation followed by a heap overflow.
+5. **Existing safeguards retained** — the `count` range check (`0 < count <= MAX_SELECTION`), zero-initialization of the buffer, and pointer nulling after `free` remain in place.

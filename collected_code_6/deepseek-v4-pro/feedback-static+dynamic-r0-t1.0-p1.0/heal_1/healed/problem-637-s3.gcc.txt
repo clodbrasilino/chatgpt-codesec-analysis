@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-637-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-637-s3.c:39:42: error: 'HUGE_VAL' undeclared (first use in this function)
+   39 |     if (errno == ERANGE || cost_price == HUGE_VAL || cost_price == -HUGE_VAL) {
+      |                                          ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-637-s3.c:39:42: note: each undeclared identifier is reported only once for each function it appears in

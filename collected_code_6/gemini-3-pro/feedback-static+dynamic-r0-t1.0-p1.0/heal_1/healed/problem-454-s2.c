@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool matches_z_word(const char *word) {
+    if (word == NULL || word[0] == '\0') {
+        return false;
+    }
+
+    bool has_z = false;
+    for (size_t i = 0; word[i] != '\0'; ++i) {
+        if (!isalpha((unsigned char)word[i])) {
+            return false;
+        }
+        if (word[i] == 'z' || word[i] == 'Z') {
+            has_z = true;
+        }
+    }
+
+    return has_z;
+}
+
+int main(void) {
+    const char *test_words[] = {
+        "apple",
+        "zebra",
+        "hello",
+        "buzz",
+        "pizza",
+        "z123",
+        NULL
+    };
+
+    for (size_t i = 0; test_words[i] != NULL; ++i) {
+        if (matches_z_word(test_words[i])) {
+            printf("%s\n", test_words[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:80:42: style: Condition 'copy_len<=token_len' is always false [knownConditionTrueFalse]
+            if (copy_len > 0 && copy_len <= token_len && (token_start + copy_len) <= end) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:79:29: note: copy_len is assigned 'token_len<src_size?token_len:src_size' here.
+            size_t copy_len = token_len < src_size ? token_len : src_size;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:80:42: note: Condition 'copy_len<=token_len' is always false
+            if (copy_len > 0 && copy_len <= token_len && (token_start + copy_len) <= end) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:134:38: style: Condition 'copy_len<=remaining_len' is always false [knownConditionTrueFalse]
+        if (copy_len > 0 && copy_len <= remaining_len && (cursor + copy_len) <= end) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:133:25: note: copy_len is assigned 'remaining_len<src_size?remaining_len:src_size' here.
+        size_t copy_len = remaining_len < src_size ? remaining_len : src_size;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-73.c:134:38: note: Condition 'copy_len<=remaining_len' is always false
+        if (copy_len > 0 && copy_len <= remaining_len && (cursor + copy_len) <= end) {
+                                     ^

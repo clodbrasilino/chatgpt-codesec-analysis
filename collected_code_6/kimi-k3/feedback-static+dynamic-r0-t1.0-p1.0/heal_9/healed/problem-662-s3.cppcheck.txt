@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:58:21: style: Condition 'src_len>=dest_size' is always false [knownConditionTrueFalse]
+        if (src_len >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:52:17: note: Assuming that condition 'src_len>=dest_size' is not redundant
+    if (src_len >= dest_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:58:21: note: Condition 'src_len>=dest_size' is always false
+        if (src_len >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:162:23: style: Condition 'copy_size<=alloc_size' is always true [knownConditionTrueFalse]
+        if (copy_size <= alloc_size && copy_size > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:154:23: note: Assuming that condition 'copy_size>alloc_size' is not redundant
+        if (copy_size > alloc_size || copy_size == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:162:23: note: Condition 'copy_size<=alloc_size' is always true
+        if (copy_size <= alloc_size && copy_size > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:162:50: style: Condition 'copy_size>0' is always true [knownConditionTrueFalse]
+        if (copy_size <= alloc_size && copy_size > 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:154:49: note: Assuming that condition 'copy_size==0' is not redundant
+        if (copy_size > alloc_size || copy_size == 0) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-662-s3.c:162:50: note: Condition 'copy_size>0' is always true
+        if (copy_size <= alloc_size && copy_size > 0) {
+                                                 ^

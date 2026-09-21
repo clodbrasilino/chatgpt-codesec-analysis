@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_chars_with_colon(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = 0;
+    while (input[input_len] != '\0') {
+        input_len++;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t dst_idx = 0;
+
+    for (size_t i = 0; i < input_len; i++) {
+        char c = input[i];
+        if (c == ' ' || c == ',' || c == '.') {
+            result[dst_idx++] = ':';
+        } else {
+            result[dst_idx++] = c;
+        }
+    }
+
+    result[dst_idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "Hello, world. This is a test",
+        "NoSpecialCharsHere",
+        "   ,,,...   ",
+        "",
+        "Mixed, spaces. and, punctuation.",
+        NULL
+    };
+
+    for (int i = 0; test_strings[i] != NULL; i++) {
+        char *replaced = replace_chars_with_colon(test_strings[i]);
+        if (replaced != NULL) {
+            printf("Original: \"%s\"\n", test_strings[i]);
+            printf("Replaced: \"%s\"\n\n", replaced);
+            free(replaced);
+        } else {
+            printf("Error processing string: \"%s\"\n\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}
+```

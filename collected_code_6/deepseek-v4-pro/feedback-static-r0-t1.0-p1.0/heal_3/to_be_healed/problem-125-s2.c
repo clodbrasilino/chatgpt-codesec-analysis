@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+int maxDifference(const char *str) {
+    int max_diff = INT_MIN;
+    int current_diff = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        int value = (str[i] == '0') ? 1 : -1;
+        current_diff += value;
+        
+        if (current_diff > max_diff) {
+            max_diff = current_diff;
+        }
+        
+        if (current_diff < 0) {
+            current_diff = 0;
+        }
+    }
+    
+    return max_diff;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary_str[1001];
+    
+    printf("Enter a binary string: ");
+    if (fgets(binary_str, sizeof(binary_str), stdin) == NULL) {
+        printf("Error reading input\n");
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(binary_str);
+    if (len > 0 && binary_str[len - 1] == '\n') {
+        binary_str[len - 1] = '\0';
+    } else {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
+    
+    if (binary_str[0] == '\0') {
+        printf("Empty string\n");
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(binary_str);
+    if (input_len >= 1000) {
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    for (size_t i = 0; binary_str[i] != '\0'; i++) {
+        if (binary_str[i] != '0' && binary_str[i] != '1') {
+            printf("Invalid input: string must contain only 0s and 1s\n");
+            return 1;
+        }
+    }
+    
+    int result = maxDifference(binary_str);
+    printf("Maximum difference (0s - 1s): %d\n", result);
+    
+    return 0;
+}

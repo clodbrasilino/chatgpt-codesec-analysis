@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <float.h>
+
+double rhombus_area(double diagonal1, double diagonal2) {
+    if (diagonal1 <= 0 || diagonal2 <= 0) {
+        return -1.0;
+    }
+    if (diagonal1 > DBL_MAX / diagonal2) {
+        return -1.0;
+    }
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+int main(void) {
+    double d1;
+    double d2;
+    double area;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[64];
+    char *endptr;
+    size_t len;
+
+    printf("Enter length of first diagonal: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    if (len > 0 && input[len - 1] != '\n') {
+        int ch;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF);
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    errno = 0;
+    d1 = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (errno == ERANGE || d1 <= 0) {
+        fprintf(stderr, "Value out of range or not positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter length of second diagonal: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    if (len > 0 && input[len - 1] != '\n') {
+        int ch;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((ch = getchar()) != '\n' && ch != EOF);
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    errno = 0;
+    d2 = strtod(input, &endptr);
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (errno == ERANGE || d2 <= 0) {
+        fprintf(stderr, "Value out of range or not positive\n");
+        return EXIT_FAILURE;
+    }
+
+    area = rhombus_area(d1, d2);
+    if (area < 0) {
+        fprintf(stderr, "Diagonals must be positive numbers or values too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Area of rhombus: %.2f\n", area);
+    return EXIT_SUCCESS;
+}

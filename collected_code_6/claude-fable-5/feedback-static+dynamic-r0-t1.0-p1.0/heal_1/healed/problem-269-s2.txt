@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already in good shape regarding the flagged weakness. Here's my assessment as to why:
+
+1. **CWE-120 (Buffer Overflow) / CWE-20 (Improper Input Validation) via `getchar()`**: Flawfinder flags `getchar()` generically because it's dangerous *when used in a loop* that writes into a fixed-size buffer without bounds checking. In this program, `getchar()` is called exactly once, its result is stored in an `int` (correctly, since `getchar()` returns `int` to accommodate `EOF`), and no buffer is involved at all. The risk is not applicable here — this is a false positive typical of pattern-based static analyzers.
+
+2. **EOF handling**: Already correct. `input` is declared as `int`, and the `EOF` comparison happens before any narrowing cast to `char`. Comparing a `char` against `EOF` would be a real bug on platforms where `char` is unsigned; this code avoids it.
+
+3. **Signedness safety**: The cast chain `(int)(unsigned char)c` in `get_ascii_value()` correctly avoids negative values for characters ≥ 128 on platforms where `char` is signed. This is the same idiom required when passing characters to `<ctype.h>` functions.
+
+4. **Minor improvement added**: `fflush(stdout)` after the prompt guarantees the prompt is visible before blocking on input, since stdout may be fully buffered when not attached to a terminal (e.g., piped output).
+
+No functional changes were required to remediate the flagged CWEs — the finding is a low-risk (risk 1) advisory that doesn't apply to a single, non-looped `getchar()` call.

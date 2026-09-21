@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:44:20: style: Condition 'alloc_size<=len1' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len1) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:37:23: note: alloc_size is assigned 'len1+1' here.
+    size_t alloc_size = len1 + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:40:19: note: Assuming condition is false
+    if (temp_str2 == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:44:20: note: Condition 'alloc_size<=len1' is always false
+    if (alloc_size <= len1) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:49:20: style: Condition 'alloc_size<=len1' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len1) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:44:20: note: Assuming condition 'alloc_size<=len1' is false
+    if (alloc_size <= len1) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-595-s3.c:49:20: note: Condition 'alloc_size<=len1' is always false
+    if (alloc_size <= len1) {
+                   ^

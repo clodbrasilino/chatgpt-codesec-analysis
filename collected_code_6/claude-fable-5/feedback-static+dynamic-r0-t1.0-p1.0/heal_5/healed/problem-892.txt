@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+void remove_multiple_spaces(char *str, size_t max_len)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    int prev_space = 0;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    while (read_idx < max_len && str[read_idx] != '\0') {
+        if (str[read_idx] == ' ') {
+            if (!prev_space) {
+                str[write_idx] = str[read_idx];
+                write_idx++;
+            }
+            prev_space = 1;
+        } else {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+            prev_space = 0;
+        }
+        read_idx++;
+    }
+
+    if (write_idx >= max_len) {
+        write_idx = max_len - 1;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char *buffer;
+    size_t len;
+
+    buffer = calloc(BUFFER_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return 1;
+    }
+
+    buffer[BUFFER_SIZE - 1] = '\0';
+
+    len = strnlen(buffer, BUFFER_SIZE);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    remove_multiple_spaces(buffer, BUFFER_SIZE);
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        free(buffer);
+        return 1;
+    }
+
+    free(buffer);
+    return 0;
+}
+```
+
+**Analysis of the original code and applied changes:**
+
+The original code was already quite defensive, but the Flawfinder warning pointed at the statically-sized stack array (CWE-119/CWE-120). Here is my assessment as a reviewer:
+
+1. **Original mitigations already in place (and preserved):**
+   - `fgets` is bounded by the buffer size, preventing classic `gets`-style overflows.
+   - Explicit NUL termination at the last byte guarantees termination even in edge cases.
+   - `strnlen` instead of `strlen` bounds the length scan.
+   - `remove_multiple_spaces` validates its arguments (`NULL` check, `max_len == 0` check), bounds both the read loop and the final NUL write, and can never write past `max_len - 1`. Since `write_idx <= read_idx` always holds, in-place compaction is safe.
+
+2. **Change made to address the Flawfinder finding:** The fixed-size stack buffer was replaced with a heap allocation via `calloc`, which:
+   - Removes 1 KB from the stack frame, eliminating stack-smashing exposure for this buffer.
+   - Zero-initializes memory, avoiding any use of uninitialized bytes.
+   - Adds an explicit allocation-failure check, with `free` on every exit path to prevent leaks.
+
+3. **Remaining notes:** The algorithm itself is O(n), in-place, and correct — leading/trailing single spaces are preserved by design; only *consecutive* spaces are collapsed. Tabs and other whitespace are intentionally not treated as spaces; if that is desired, `isspace()` from `<ctype.h>` could be substituted.

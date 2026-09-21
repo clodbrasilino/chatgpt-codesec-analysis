@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+#include <limits.h>
+#include <errno.h>
+
+#define BUFFER_SIZE 1024
+
+int total_ascii_value(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    int total = 0;
+    size_t i = 0;
+    
+    while (i < BUFFER_SIZE && str[i] != '\0') {
+        total += (unsigned char)str[i];
+        i++;
+    }
+    
+    return total;
+}
+
+int main(void) {
+    char str[BUFFER_SIZE] = {0};
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+    
+    if (str[0] == '\0') {
+        return 1;
+    }
+    
+    size_t len = strnlen(str, sizeof(str));
+    if (len > 0 && len < sizeof(str) && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+        len--;
+    } else if (len == sizeof(str) && str[len - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            continue;
+        }
+        str[sizeof(str) - 1] = '\0';
+    }
+    
+    int result = total_ascii_value(str);
+    printf("Total ASCII value: %d\n", result);
+    
+    return 0;
+}
+```

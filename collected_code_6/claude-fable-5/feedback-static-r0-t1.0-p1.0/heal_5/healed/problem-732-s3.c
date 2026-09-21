@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STR_LEN 4096
+
+void replace_with_colon(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+        }
+    }
+}
+
+int main(void)
+{
+    const char original[] = "Hello, world. This is a test.";
+    char *buffer;
+    size_t len;
+    size_t size;
+    int written;
+
+    len = strnlen(original, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len > SIZE_MAX - 1) {
+        fprintf(stderr, "Length overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    size = len + 1;
+
+    buffer = malloc(size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, size, "%s", original);
+    if (written < 0 || (size_t)written >= size) {
+        fprintf(stderr, "String copy failed or truncated\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    replace_with_colon(buffer, size);
+
+    if (printf("Original: %s\n", original) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}

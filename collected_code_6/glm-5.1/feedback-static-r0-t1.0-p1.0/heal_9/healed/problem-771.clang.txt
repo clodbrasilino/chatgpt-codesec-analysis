@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c:61:5: error: expected ']'
+   61 |     memcpy(safe_arg, argv[1, safe_arg_size);
+      |     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:234:21: note: expanded from macro 'memcpy'
+  234 | #define memcpy(...) __memcpy_chk_func (__VA_ARGS__)
+      |                     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h:127:67: note: expanded from macro '__memcpy_chk_func'
+  127 |                 __builtin___memcpy_chk (dest, __VA_ARGS__, __darwin_obsz0 (dest))
+      |                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-771.c:61:26: note: to match this '['
+   61 |     memcpy(safe_arg, argv[1, safe_arg_size);
+      |                          ^
+1 error generated.

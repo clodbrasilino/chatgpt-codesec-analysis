@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely defensive; the rewrite retains those mitigations and tightens one detail:
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The Flawfinder warning on `char buffer[BUFFER_SIZE]` is mitigated because all writes are bounded — `fgets(buffer, sizeof(buffer), stdin)` never writes beyond the array, and the explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in pathological cases. `strnlen` (rather than `strlen`) bounds the length scan as well.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop itself writes nothing to memory, so there is no overflow risk; it correctly checks for both `'\n'` and `EOF` to avoid an infinite loop on closed input. It's now isolated in `flush_stdin()` and — a subtle improvement — only invoked when the buffer was actually filled (`len == sizeof(buffer) - 1` with no newline). The original version would block waiting for input even when `fgets` returned a short, newline-free line (e.g., final line of a redirected file without a trailing newline).
+
+3. **`isdigit` cast:** The `(unsigned char)` cast before `isdigit` is preserved — passing a raw `char` that may be negative is undefined behavior per the C standard.

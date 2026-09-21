@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-181.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-181.c:41:22: style: Condition 'copy_len>prefix_len' is always true [knownConditionTrueFalse]
+        if (copy_len > prefix_len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-181.c:40:25: note: copy_len is assigned 'prefix_len<src_len?prefix_len:src_len' here.
+        size_t copy_len = prefix_len < src_len ? prefix_len : src_len;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-181.c:41:22: note: Condition 'copy_len>prefix_len' is always true
+        if (copy_len > prefix_len) {
+                     ^

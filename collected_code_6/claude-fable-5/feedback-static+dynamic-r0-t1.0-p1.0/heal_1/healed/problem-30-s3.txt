@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 1024
+
+unsigned long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long freq[256] = {0};
+    unsigned long total = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++)
+    {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++)
+    {
+        total += (freq[i] * (freq[i] + 1)) / 2;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    unsigned long result;
+    size_t len;
+    char *newline;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = memchr(buffer, '\n', sizeof(buffer));
+    if (newline != NULL)
+    {
+        *newline = '\0';
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer))
+    {
+        fprintf(stderr, "Input too long\n");
+        return 1;
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%lu\n", result) < 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound and cannot over-read past the buffer even if the string is not null-terminated. The `count_substrings` function now accepts a `max_len` parameter so it can enforce this bound internally.
+
+2. **CWE-119/CWE-120 (statically-sized buffer)**: 
+   - The buffer size is defined via a named constant (`MAX_INPUT_SIZE`) for maintainability.
+   - The buffer is zero-initialized with `memset` before use, guaranteeing null termination regardless of input behavior.
+   - An explicit `buffer[sizeof(buffer) - 1] = '\0'` defensively guarantees termination after `fgets`.
+   - `fgets` is retained with `sizeof(buffer)` as the length limit, which already performs bounds-checked reads.
+   - A length validation check rejects input at or beyond capacity.
+
+3. **Newline stripping**: Replaced the `strlen`-based trailing-newline removal with `memchr`, which is bounded by the buffer size and cannot over-read.
+
+The core counting logic is preserved: the cast to `unsigned char` when indexing `freq` remains correct and prevents negative-index undefined behavior on platforms where `char` is signed.

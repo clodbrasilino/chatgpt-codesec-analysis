@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int extra;
+
+    do {
+        extra = getchar();
+    } while (extra != '\n' && extra != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 255) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder hits on `getchar()` (CWE-120, CWE-20) are low-risk (risk 1) advisory warnings. They are effectively false positives here because `getchar()` returns a single `int` and never writes into a caller-supplied buffer — there is no buffer to overflow. The warning exists because `getchar()` in loops is *often* used to fill buffers without bounds checking, which is not the case in this program.
+
+That said, the rewritten version improves on the original in a few genuine ways:
+
+1. **`isprint()` argument safety** — passing a value to `isprint()` that isn't representable as `unsigned char` (or `EOF`) is undefined behavior. The cast to `(unsigned char)` guarantees a valid argument regardless of platform `char` signedness. The original passed the raw `int`, which happened to be safe only because of the preceding range check.
+
+2. **Newline edge case** — the original's drain loop ran unconditionally. If the user's first keypress was Enter (`input == '\n'`), the loop would block waiting for *more* input. The rewrite skips draining in that case.
+
+3. **Input draining extracted into `flush_stdin()`** — the unbounded `do/while` loop that triggered the second Flawfinder warning terminates on both `'\n'` and `EOF`, so it cannot loop infinitely on closed streams; isolating it makes that invariant easier to audit.
+
+4. The range check `input < 0 || input > 255` is retained for defense-in-depth, though after the `EOF` check `getchar()` already guarantees a value in `unsigned char` range on conforming implementations.

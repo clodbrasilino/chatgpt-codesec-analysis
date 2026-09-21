@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:49:23: style: Condition 'remaining<len' is always true [knownConditionTrueFalse]
+        if (remaining < len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:48:26: note: remaining is assigned 'len-1' here.
+        size_t remaining = len - 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:49:23: note: Condition 'remaining<len' is always true
+        if (remaining < len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:114:25: style: Condition 'len<64' is always true [knownConditionTrueFalse]
+                if (len < 64) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:84:13: note: Assuming that condition 'len>=64' is not redundant
+    if (len >= 64) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:101:19: note: Assuming condition is false
+            if (i == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:113:17: note: len is decremented', new value is 63
+                len--;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-909.c:114:25: note: Condition 'len<64' is always true
+                if (len < 64) {
+                        ^

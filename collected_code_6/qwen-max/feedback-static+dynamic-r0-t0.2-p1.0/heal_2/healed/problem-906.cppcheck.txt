@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-906.c:35:30: style: Condition 'i<(n<4?n:4)' is always false [knownConditionTrueFalse]
+        for (size_t i = 0; i < (n < 4 ? n : 4); ++i) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-906.c:41:30: style: Condition 'i<(n<2?n:2)' is always false [knownConditionTrueFalse]
+        for (size_t i = 0; i < (n < 2 ? n : 2); ++i) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-906.c:47:30: style: Condition 'i<(n<2?n:2)' is always false [knownConditionTrueFalse]
+        for (size_t i = 0; i < (n < 2 ? n : 2); ++i) {
+                             ^

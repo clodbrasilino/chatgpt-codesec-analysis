@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LENGTH 4096
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static int safe_memcpy(char *dest, size_t dest_size, const char *src, size_t copy_len)
+{
+    size_t k;
+
+    if (dest == NULL || src == NULL) {
+        return -1;
+    }
+
+    if (dest_size == 0 || copy_len > dest_size) {
+        return -1;
+    }
+
+    for (k = 0; k < copy_len; k++) {
+        dest[k] = src[k];
+    }
+
+    return 0;
+}
+
+char **remove_duplicate_words(const char *const *words, size_t count, size_t *result_count)
+{
+    char **result;
+    size_t i;
+    size_t j;
+    size_t len;
+    size_t unique_count = 0;
+    int is_duplicate;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+    *result_count = 0;
+
+    if (words == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        len = bounded_strlen(words[i], MAX_WORD_LENGTH + 1);
+        if (len > MAX_WORD_LENGTH) {
+            continue;
+        }
+
+        is_duplicate = 0;
+        for (j = 0; j < unique_count; j++) {
+            if (strcmp(result[j], words[i]) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            if (len == SIZE_MAX) {
+                for (j = 0; j < unique_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            result[unique_count] = malloc(len + 1);
+            if (result[unique_count] == NULL) {
+                for (j = 0; j < unique_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            if (safe_memcpy(result[unique_count], len + 1, words[i], len) != 0) {
+                free(result[unique_count]);
+                for (j = 0; j < unique_count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            result[unique_count][len] = '\0';
+            unique_count++;
+        }
+    }
+
+    *result_count = unique_count;
+    return result;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *words[] = {"apple", "banana", "apple", "cherry", "banana", "date", "cherry"};
+    size_t count = sizeof(words) / sizeof(words[0]);
+    size_t result_count = 0;
+    size_t i;
+    char **unique_words;
+
+    unique_words = remove_duplicate_words(words, count, &result_count);
+    if (unique_words == NULL) {
+        fprintf(stderr, "Error: failed to process word list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", unique_words[i]);
+    }
+
+    free_word_list(unique_words, result_count);
+
+    return EXIT_SUCCESS;
+}

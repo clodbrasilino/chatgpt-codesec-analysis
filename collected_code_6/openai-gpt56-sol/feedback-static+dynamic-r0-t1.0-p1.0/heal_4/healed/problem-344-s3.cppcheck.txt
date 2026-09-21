@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-344-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-344-s3.c:42:28: warning: Either the condition 'first_root!=0' is redundant or there is division by zero at line 42. [zerodivcond]
+    if (first_root < lower / first_root ||
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-344-s3.c:43:21: note: Assuming that condition 'first_root!=0' is not redundant
+        (first_root != 0 && lower % first_root != 0)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-344-s3.c:42:28: note: Division by zero
+    if (first_root < lower / first_root ||
+                           ^

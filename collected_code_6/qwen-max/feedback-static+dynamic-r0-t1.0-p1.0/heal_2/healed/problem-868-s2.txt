@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int lengthOfLastWord(const char *s) {
+    int length = 0;
+    const char *p = s + strlen(s) - 1;
+    while (p >= s && isspace((unsigned char)*p)) p--;
+    while (p >= s && !isspace((unsigned char)*p)) {
+        length++;
+        p--;
+    }
+    return length;
+}
+
+int main() {
+    const char *str = "Find the length of this    ";
+    int last_word_length = lengthOfLastWord(str);
+    printf("Length of the last word: %d\n", last_word_length);
+    return 0;
+}
+```

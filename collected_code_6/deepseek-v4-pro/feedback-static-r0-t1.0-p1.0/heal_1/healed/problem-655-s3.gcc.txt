@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-655-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-655-s3.c:20:37: error: passing argument 3 of 'fgets' from incompatible pointer type [-Wincompatible-pointer-types]
+   20 |     if (fgets(input, sizeof(input), input) == NULL) {
+      |                                     ^~~~~
+      |                                     |
+      |                                     char *
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-655-s3.c:1:
+/usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:248:82: note: expected 'FILE *' but argument is of type 'char *'
+  248 | char *_LIBC_CSTR        fgets(char * __restrict _LIBC_COUNT(__size), int __size, FILE *);
+      |                                                                                  ^~~~~~

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s3.c:113:24: style: Condition 'errbuf_len>0' is always true [knownConditionTrueFalse]
+        if (errbuf_len > 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s3.c:112:35: note: Assignment 'errbuf_len=sizeof(errbuf)', assigned value is 1024
+        size_t errbuf_len = sizeof(errbuf);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-584-s3.c:113:24: note: Condition 'errbuf_len>0' is always true
+        if (errbuf_len > 0) {
+                       ^

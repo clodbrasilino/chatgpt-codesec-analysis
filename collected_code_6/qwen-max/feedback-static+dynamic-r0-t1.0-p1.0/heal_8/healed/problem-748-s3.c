@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int add_spaces_between_capital_words(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    if (regcomp(&regex, "([A-Z])", REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    size_t len = strnlen(str, 1024);
+    char *new_str = malloc(len * 2 + 1);
+    if (!new_str) {
+        return -1;
+    }
+    new_str[0] = '\0';
+    char *src = str;
+    char *dest = new_str;
+
+    while (regexec(&regex, src, 1, pmatch, 0) == 0) {
+        size_t distance = pmatch[0].rm_so;
+        memmove(dest, src, distance);
+        dest += distance;
+        *dest++ = ' ';
+        src += distance + 1;
+    }
+    size_t remaining_len = len - (src - str);
+    strncpy(dest, src, remaining_len);
+    dest[remaining_len] = '\0';
+
+    size_t new_len = strlen(new_str);
+    if (new_len > len) {
+        *str = '\0';
+        str = realloc(new_str, new_len + 1);
+    } else {
+        memcpy(str, new_str, new_len + 1);
+        free(new_str);
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main() {
+    char *str = strdup("HelloWorldThisIsATest");
+    if (add_spaces_between_capital_words(str) != -1) {
+        printf("%s\n", str);
+    } else {
+        perror("Regex error");
+        exit(EXIT_FAILURE);
+    }
+    free(str);
+    return 0;
+}

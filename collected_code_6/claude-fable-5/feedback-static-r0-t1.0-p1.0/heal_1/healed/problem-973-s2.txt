@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read):** Replaced `strlen()` with `strnlen()`, bounded by an explicit buffer size parameter (`str_size`) passed by the caller. If no null terminator is found within the buffer (`len >= str_size`), the function fails safely instead of over-reading.
+
+2. **CWE-120 (memcpy buffer overflows):** The three `memcpy` calls were already logically safe (destination `temp` is exactly `len + 1` bytes, and copies total exactly `len` bytes; the final copy back writes `len + 1` bytes into a buffer verified to hold at least that much). By validating `len < str_size` up front, the final `memcpy(str, temp, len + 1)` is now provably within bounds of the caller's buffer, turning an implicit assumption into an enforced contract.
+
+3. **API hardening:** The function signature now takes `str_size` (`sizeof(str)` at the call site), so buffer capacity is known rather than assumed — the root-cause fix for both warning classes.

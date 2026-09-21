@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    bool result = true;
+    size_t plen;
+    size_t tlen;
+    size_t i = 0;
+    size_t j;
+    char *copy = NULL;
+    char *token = NULL;
+    const char *map[256] = { NULL };
+
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    plen = strnlen(pattern, MAX_INPUT_LEN);
+    tlen = strnlen(text, MAX_INPUT_LEN);
+
+    if (plen >= MAX_INPUT_LEN || tlen >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    copy = malloc(tlen + 1U);
+    if (copy == NULL) {
+        return false;
+    }
+
+    memcpy(copy, text, tlen);
+    copy[tlen] = '\0';
+
+    token = strtok(copy, " ");
+    while (token != NULL) {
+        if (i >= plen) {
+            result = false;
+            break;
+        }
+        unsigned char c = (unsigned char)pattern[i];
+        if (map[c] != NULL) {
+            if (strcmp(map[c], token) != 0) {
+                result = false;
+                break;
+            }
+        } else {
+            for (j = 0U; j < 256U; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], token) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[c] = token;
+        }
+        i++;
+        token = strtok(NULL, " ");
+    }
+
+    if (result && (i != plen)) {
+        result = false;
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        if (printf("Pattern \"%s\" with \"%s\": %s\n",
+                   patterns[i], texts[i], ok ? "matches" : "does not match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **`strlen` over-read (CWE-126):** Replaced both `strlen` calls with `strnlen` bounded by `MAX_INPUT_LEN`, guaranteeing the scan terminates even on non-terminated input, with explicit rejection of inputs at or beyond the limit.
+
+2. **`strcpy` buffer overflow (CWE-120):** Replaced with `memcpy` using the already-validated length, followed by explicit null termination. The destination buffer is allocated to exactly `tlen + 1`, so the copy is provably in-bounds.
+
+3. **Statically-sized `map` array (CWE-119/CWE-120):** The array remains 256 entries, but indexing is safe because the index is always cast to `unsigned char` (range 0–255). Changed the element type to `const char *` since the map only stores read-only references into `copy`, tightening const-correctness.
+
+The core algorithm (bijective word-pattern matching à la LeetCode 290) is unchanged and remains correct: it verifies both directions of the mapping and rejects length mismatches between pattern and token count.

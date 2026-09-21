@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+static int is_palindrome(unsigned long long n)
+{
+    char buf[32];
+    int len;
+    int i;
+    int j;
+
+    len = snprintf(buf, sizeof buf, "%llu", n);
+    if (len < 0 || (size_t)len >= sizeof buf) {
+        return 0;
+    }
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return 0;
+        }
+        i++;
+        j--;
+    }
+    return 1;
+}
+
+static int next_smallest_palindrome(unsigned long long n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    while (n < ULLONG_MAX) {
+        n++;
+        if (is_palindrome(n)) {
+            *result = n;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int main(void)
+{
+    char line[64];
+    char *endptr;
+    unsigned long long n;
+    unsigned long long result;
+    size_t i;
+
+    printf("Enter a non-negative number: ");
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(line, sizeof line, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(line, '\n') == NULL && !feof(stdin)) {
+        fprintf(stderr, "Error: input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    i = 0;
+    while (line[i] != '\0' && isspace((unsigned char)line[i])) {
+        i++;
+    }
+    if (line[i] == '-' || line[i] == '+' || !isdigit((unsigned char)line[i])) {
+        fprintf(stderr, "Error: input must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    n = strtoull(&line[i], &endptr, 10);
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: number out of range\n");
+        return EXIT_FAILURE;
+    }
+    if (endptr == &line[i]) {
+        fprintf(stderr, "Error: no digits found\n");
+        return EXIT_FAILURE;
+    }
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            fprintf(stderr, "Error: trailing characters in input\n");
+            return EXIT_FAILURE;
+        }
+        endptr++;
+    }
+
+    if (next_smallest_palindrome(n, &result) != 0) {
+        fprintf(stderr, "Error: no palindrome found within range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Next smallest palindrome: %llu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and how the code addresses them:
+
+**Buffer 1: `char buf[32]` in `is_palindrome` (CWE-119/CWE-120)**
+The Flawfinder warning is a false positive here, but the code defends against it correctly. The maximum value of `unsigned long long` is 18446744073709551615 (20 digits), so 32 bytes is more than sufficient. More importantly, `snprintf` with `sizeof buf` guarantees no overflow, and the return value is checked for both encoding errors (`len < 0`) and truncation (`(size_t)len >= sizeof buf`), so the subsequent indexing with `len - 1` never reads out of bounds.
+
+**Buffer 2: `char line[64]` in `main` (CWE-119/CWE-120)**
+Input is read with `fgets(line, sizeof line, stdin)`, which strictly bounds the write and always NUL-terminates. No overflow is possible. I added one improvement: a check via `strchr(line, '\n')` combined with `feof` to detect when the user's input exceeded the buffer, so oversized input is rejected explicitly rather than silently truncated and partially parsed.
+
+**Other robustness already present in the code:**
+- All `isspace`/`isdigit` calls cast to `unsigned char`, avoiding undefined behavior with negative `char` values.
+- `strtoull` is properly guarded: `errno` reset before the call, `ERANGE` checked, empty-conversion checked via `endptr`, and trailing non-whitespace rejected.
+- Explicit rejection of `-` and `+` prefixes prevents `strtoull`'s surprising acceptance of negative numbers (which it silently wraps).
+- `next_smallest_palindrome` validates its output pointer and terminates at `ULLONG_MAX`, preventing infinite loops from unsigned wraparound.
+
+The code was already well-hardened; the rewrite preserves that and adds the truncated-input detection.

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-849-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-849-s3.c:50:11: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   50 |     len = strlen(input);
+      |           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-849-s3.c:5:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    4 | #include <errno.h>
+  +++ |+#include <string.h>
+    5 | 

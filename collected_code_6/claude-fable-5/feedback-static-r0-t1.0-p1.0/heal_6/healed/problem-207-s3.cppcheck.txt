@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-207-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-207-s3.c:40:45: style: Same expression on both sides of '||' because 'n>=(SIZE_MAX/sizeof(int*))-1' and 'n>=(SIZE_MAX/sizeof(int))-1' represent the same value. [knownConditionTrueFalse]
+    if (n >= (SIZE_MAX / sizeof(int *)) - 1 || n >= (SIZE_MAX / sizeof(int)) - 1) {
+                                            ^

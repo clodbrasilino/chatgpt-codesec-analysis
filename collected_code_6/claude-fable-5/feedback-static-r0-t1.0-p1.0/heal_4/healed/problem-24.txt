@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define INPUT_SIZE 128U
+
+int binary_to_decimal(const char *binary, size_t max_len, unsigned long *result)
+{
+    size_t len;
+    size_t i;
+    unsigned long value = 0UL;
+
+    if (binary == NULL || result == NULL || max_len == 0U) {
+        return -1;
+    }
+
+    len = strnlen(binary, max_len);
+    if (len == 0U || len >= max_len || len > (sizeof(unsigned long) * 8U)) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        if (value > (ULONG_MAX >> 1)) {
+            return -1;
+        }
+        value = (value << 1) | (unsigned long)(binary[i] - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+    return ch;
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    unsigned long decimal = 0UL;
+    size_t len;
+
+    printf("Enter a binary number: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        (void)discard_remaining_input();
+        fprintf(stderr, "Error: input too long.\n");
+        return 1;
+    }
+
+    if (binary_to_decimal(input, sizeof(input), &decimal) != 0) {
+        fprintf(stderr, "Error: invalid binary number.\n");
+        return 1;
+    }
+
+    printf("Decimal equivalent: %lu\n", decimal);
+    return 0;
+}
+```
+
+The rewritten code preserves all the existing mitigations and hardens the remaining flagged areas:
+
+**Addressing the `char input[INPUT_SIZE]` buffer weakness (CWE-119/CWE-120):**
+- `fgets` is called with `(int)sizeof(input)`, guaranteeing no write beyond the buffer.
+- Explicit null termination at `input[sizeof(input) - 1U]` provides defense-in-depth.
+- `strnlen` is used instead of `strlen`, bounding all length computations to the buffer size.
+- `binary_to_decimal` receives `max_len` and validates `len >= max_len` to reject unterminated input, checks every character strictly against `'0'`/`'1'`, and guards against `unsigned long` overflow via the `ULONG_MAX >> 1` check before each shift.
+
+**Addressing the `getchar` loop weakness (CWE-120/CWE-20):**
+- The drain loop never writes to any buffer; it only consumes and discards characters. It has been extracted into `discard_remaining_input()`, which terminates deterministically on `'\n'` or `EOF`, so no unbounded recursion or buffer write is possible.
+
+**Additional robustness added:**
+- The return value of `fflush(stdout)` is now checked rather than ignored.
+- Truncated input (line longer than the buffer) is detected and rejected with an error rather than silently processing a partial value, and the excess input is drained so stdin is left in a consistent state.

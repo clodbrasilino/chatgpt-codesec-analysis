@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_INPUT_SIZE 256
+
+int count_matching_positions(const char *str, size_t max_len)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer, sizeof(buffer));
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced `strlen()` with `strnlen()`, which takes a maximum length parameter and will never read beyond that bound, even if the string is not null-terminated. The function signature was updated to accept the buffer's maximum size.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: 
+   - The buffer size is defined as a named constant (`MAX_INPUT_SIZE`) for maintainability.
+   - The buffer is zero-initialized with `memset()` to guarantee it starts null-terminated.
+   - An explicit `buffer[sizeof(buffer) - 1] = '\0'` defensively guarantees null-termination after reading input, regardless of what `fgets` did.
+   - `fgets` with `sizeof(buffer)` was already correct and is retained, as it bounds the read.
+
+The original code was already fairly safe (fgets bounds the input and null-terminates), so these changes are defense-in-depth hardening that satisfies static analyzers like Flawfinder while making the invariants explicit rather than implicit.

@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:32:15: style: Condition 'test1!=NULL' is always true [knownConditionTrueFalse]
+    if (test1 != NULL && are_characters_unique(test1, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:27:25: note: Assignment 'test1="abcdef"', assigned value is "abcdef"
+    const char *test1 = "abcdef";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:32:15: note: Condition 'test1!=NULL' is always true
+    if (test1 != NULL && are_characters_unique(test1, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:38:15: style: Condition 'test2!=NULL' is always true [knownConditionTrueFalse]
+    if (test2 != NULL && are_characters_unique(test2, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:28:25: note: Assignment 'test2="hello"', assigned value is "hello"
+    const char *test2 = "hello";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:38:15: note: Condition 'test2!=NULL' is always true
+    if (test2 != NULL && are_characters_unique(test2, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:44:15: style: Condition 'test3!=NULL' is always true [knownConditionTrueFalse]
+    if (test3 != NULL && are_characters_unique(test3, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:29:25: note: Assignment 'test3=""', assigned value is ""
+    const char *test3 = "";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:44:15: note: Condition 'test3!=NULL' is always true
+    if (test3 != NULL && are_characters_unique(test3, 256)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:50:30: style: Condition 'are_characters_unique(test4,256)' is always false [knownConditionTrueFalse]
+    if (are_characters_unique(test4, 256)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:50:30: note: Calling function 'are_characters_unique' returns 0
+    if (are_characters_unique(test4, 256)) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-352-s3.c:50:30: note: Condition 'are_characters_unique(test4,256)' is always false
+    if (are_characters_unique(test4, 256)) {
+                             ^

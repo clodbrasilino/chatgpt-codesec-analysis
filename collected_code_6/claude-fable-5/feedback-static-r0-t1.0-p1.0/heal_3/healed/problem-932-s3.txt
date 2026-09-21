@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_duplicates(const char **words, size_t count, size_t *out_count)
+{
+    char **result = NULL;
+    size_t unique = 0;
+    size_t i;
+    size_t j;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (words == NULL || count == 0) {
+        return NULL;
+    }
+
+    result = calloc(count, sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        int found = 0;
+        size_t len;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        len = strnlen(words[i], MAX_WORD_LEN);
+        if (len >= MAX_WORD_LEN) {
+            continue;
+        }
+
+        for (j = 0; j < unique; j++) {
+            if (strncmp(result[j], words[i], MAX_WORD_LEN) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            size_t alloc_size = len + 1;
+
+            result[unique] = malloc(alloc_size);
+            if (result[unique] == NULL) {
+                for (j = 0; j < unique; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            memcpy(result[unique], words[i], len);
+            result[unique][len] = '\0';
+            unique++;
+        }
+    }
+
+    *out_count = unique;
+    return result;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *input[] = {
+        "apple", "banana", "apple", "cherry", "banana", "date", "apple"
+    };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = remove_duplicates(input, input_count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Unique words:\n");
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_word_list(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Summary of the fixes applied:
+
+1. **Variable scope (`variableScope`)**: `alloc_size` is now declared inside the `if (!found)` block where it is actually used, reducing its scope to the minimum necessary.
+
+2. **Known condition (`knownConditionTrueFalse`)**: The `if (alloc_size < len)` overflow check was removed. Since `len` is bounded by `strnlen(words[i], MAX_WORD_LEN)` and the code skips any word where `len >= MAX_WORD_LEN`, `len + 1` can never wrap around `SIZE_MAX`, making the check provably dead code.
+
+3. **memcpy buffer overflow (CWE-120)**: The `memcpy` is safe as written — the destination is allocated with exactly `len + 1` bytes, exactly `len` bytes are copied, and the terminator is written at index `len`. No functional change was needed; the bounds are guaranteed by construction.

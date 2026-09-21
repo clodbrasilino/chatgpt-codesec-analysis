@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024
+
+void remove_char(char *str, char c)
+{
+    char *src;
+    char *dst;
+
+    if (str == NULL) {
+        return;
+    }
+
+    src = str;
+    dst = str;
+
+    while (*src != '\0') {
+        if (*src != c) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main(void)
+{
+    const char *original = "hello world, hello everyone";
+    char target = 'l';
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+    int written;
+
+    len = strnlen(original, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, buffer_size, "%s", original);
+    if (written < 0 || (size_t)written >= buffer_size) {
+        fprintf(stderr, "Failed to copy input string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **Removed the always-false condition** (`len >= buffer_size`): Since `buffer_size` is assigned `len + 1` immediately before, the check was dead code flagged by cppcheck's `knownConditionTrueFalse`. Eliminating it removes the misleading impression of a runtime safety check that can never trigger.
+
+2. **Replaced `memcpy` with `snprintf`**: Flawfinder flagged `memcpy` (CWE-120) because it performs no bounds checking against the destination. `snprintf(buffer, buffer_size, "%s", original)` is bounds-aware, guarantees null termination, and its return value is checked to confirm no truncation occurred. This also removes the manual `buffer[len] = '\0';` step, reducing the chance of an off-by-one error in future maintenance.
+
+3. **Retained the defensive practices already present**: the `strnlen` guard against unterminated/oversized input, the `malloc` failure check, the `NULL` guard in `remove_char`, and nulling the pointer after `free` to prevent accidental use-after-free.
+
+The `remove_char` function itself is safe as written — it only shrinks the string in place, so no buffer bounds are exceeded.

@@ -1,0 +1,73 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_non_alnum(char *str)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read_idx = 0;
+    write_idx = 0;
+
+    while (str[read_idx] != '\0') {
+        if (isalnum((unsigned char)str[read_idx])) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+    const char *input = "Hello, World! 123 #$% foo_bar";
+    size_t input_len;
+    int written;
+
+    input_len = strnlen(input, sizeof(buffer));
+    if (input_len >= sizeof(buffer)) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", input);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy input safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: %s\n", buffer);
+
+    remove_non_alnum(buffer);
+
+    printf("After:  %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer[256]` through several defensive measures, all of which are preserved:
+
+1. **Bounded length check**: `strnlen(input, sizeof(buffer))` avoids scanning beyond the buffer size and rejects inputs that would not fit, including the null terminator (`input_len >= sizeof(buffer)`).
+
+2. **Safe copy**: `snprintf(buffer, sizeof(buffer), "%s", input)` guarantees null termination and never writes past the buffer boundary. The return value is validated for both encoding errors (`written < 0`) and truncation (`(size_t)written >= sizeof(buffer)`).
+
+3. **Safe in-place filtering**: `remove_non_alnum` uses a read/write two-index compaction pattern — `write_idx` can never exceed `read_idx`, so no out-of-bounds writes are possible. It also guards against `NULL` and correctly casts to `unsigned char` before calling `isalnum`, avoiding undefined behavior with negative `char` values.
+
+4. **Guaranteed termination**: The final `str[write_idx] = '\0'` is always in bounds because `write_idx <= read_idx <= strlen(str)`.
+
+The code is already conformant with secure coding practices; no functional changes were required — only the removal of comments as requested.

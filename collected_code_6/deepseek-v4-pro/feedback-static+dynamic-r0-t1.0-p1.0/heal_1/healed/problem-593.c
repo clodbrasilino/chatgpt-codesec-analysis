@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
+
+void remove_leading_zeroes(char *ip) {
+    if (ip == NULL || *ip == '\0') {
+        return;
+    }
+
+    char result[INET_ADDRSTRLEN];
+    result[0] = '\0';
+
+    char *token;
+    char *saveptr;
+    char temp[strlen(ip) + 1];
+    strncpy(temp, ip, sizeof(temp) - 1);
+    temp[sizeof(temp) - 1] = '\0';
+
+    token = strtok_r(temp, ".", &saveptr);
+    int first = 1;
+
+    while (token != NULL) {
+        char *start = token;
+        while (*start == '0' && *(start + 1) != '\0') {
+            start++;
+        }
+
+        if (!first) {
+            if (strlen(result) + 1 < sizeof(result)) {
+                strncat(result, ".", sizeof(result) - strlen(result) - 1);
+            }
+        }
+
+        if (strlen(result) + strlen(start) < sizeof(result)) {
+            strncat(result, start, sizeof(result) - strlen(result) - 1);
+        }
+
+        first = 0;
+        token = strtok_r(NULL, ".", &saveptr);
+    }
+
+    strncpy(ip, result, strlen(ip));
+    ip[strlen(ip)] = '\0';
+}
+
+int main(void) {
+    char ip1[] = "192.168.001.001";
+    char ip2[] = "010.000.000.001";
+    char ip3[] = "000.000.000.000";
+    char ip4[] = "255.255.255.255";
+    char ip5[] = "001.002.003.004";
+
+    remove_leading_zeroes(ip1);
+    remove_leading_zeroes(ip2);
+    remove_leading_zeroes(ip3);
+    remove_leading_zeroes(ip4);
+    remove_leading_zeroes(ip5);
+
+    printf("%s\n", ip1);
+    printf("%s\n", ip2);
+    printf("%s\n", ip3);
+    printf("%s\n", ip4);
+    printf("%s\n", ip5);
+
+    return 0;
+}

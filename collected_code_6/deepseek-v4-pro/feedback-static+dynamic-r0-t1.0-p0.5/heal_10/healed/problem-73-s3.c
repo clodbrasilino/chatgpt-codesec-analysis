@@ -1,0 +1,225 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+#include <stdint.h>
+
+static void cleanup_tokens_array(char **tokens, int count) {
+    if (tokens == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+static char **resize_token_array(char **tokens, int *capacity, int count) {
+    int new_capacity;
+    
+    if (*capacity > INT_MAX / 2) {
+        return NULL;
+    }
+    
+    new_capacity = *capacity * 2;
+    
+    if (new_capacity <= *capacity) {
+        return NULL;
+    }
+    
+    if ((size_t)new_capacity > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+    
+    char **new_tokens = (char **)realloc(tokens, (size_t)new_capacity * sizeof(char *));
+    if (new_tokens == NULL) {
+        return NULL;
+    }
+    
+    *capacity = new_capacity;
+    return new_tokens;
+}
+
+static int add_token(char ***tokens, int *count, int *capacity, const char *start, size_t length) {
+    char **token_array = *tokens;
+    
+    if (*count >= *capacity) {
+        token_array = resize_token_array(token_array, capacity, *count);
+        if (token_array == NULL) {
+            return -1;
+        }
+        *tokens = token_array;
+    }
+    
+    if (length >= SIZE_MAX) {
+        return -1;
+    }
+    
+    token_array[*count] = (char *)malloc(length + 1);
+    if (token_array[*count] == NULL) {
+        return -1;
+    }
+    
+    if (length > 0) {
+        memcpy(token_array[*count], start, length);
+    }
+    token_array[*count][length] = '\0';
+    (*count)++;
+    
+    return 0;
+}
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    if (len >= max_len) {
+        return 0;
+    }
+    return len;
+}
+
+char **split_string(const char *input, const char *delimiter_pattern, int *token_count) {
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    int count = 0;
+    int capacity = 10;
+    const char *cursor = input;
+    const char *token_start = input;
+    int compile_result;
+    size_t input_length;
+
+    if (input == NULL || delimiter_pattern == NULL || token_count == NULL) {
+        return NULL;
+    }
+
+    input_length = safe_strlen(input, SIZE_MAX);
+    if (input_length == 0 && input[0] != '\0') {
+        return NULL;
+    }
+
+    compile_result = regcomp(&regex, delimiter_pattern, REG_EXTENDED);
+    if (compile_result != 0) {
+        return NULL;
+    }
+
+    tokens = (char **)malloc((size_t)capacity * sizeof(char *));
+    if (tokens == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (*cursor != '\0') {
+        int exec_result = regexec(&regex, cursor, 1, &match, 0);
+        if (exec_result == 0) {
+            size_t token_length;
+            if (match.rm_so < 0) {
+                cursor++;
+                continue;
+            }
+
+            if (cursor + match.rm_so < token_start || cursor + match.rm_so > input + input_length) {
+                cleanup_tokens_array(tokens, count);
+                regfree(&regex);
+                return NULL;
+            }
+            
+            token_length = (size_t)(cursor + match.rm_so - token_start);
+            
+            if (token_length > 0) {
+                if (token_length > input_length) {
+                    cleanup_tokens_array(tokens, count);
+                    regfree(&regex);
+                    return NULL;
+                }
+                if (add_token(&tokens, &count, &capacity, token_start, token_length) != 0) {
+                    cleanup_tokens_array(tokens, count);
+                    regfree(&regex);
+                    return NULL;
+                }
+            }
+            
+            cursor += match.rm_eo;
+            if (match.rm_eo == 0) {
+                cursor++;
+            }
+            token_start = cursor;
+        } else if (exec_result == REG_NOMATCH) {
+            break;
+        } else {
+            cleanup_tokens_array(tokens, count);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    if (*token_start != '\0') {
+        if (token_start < input || token_start > input + input_length) {
+            cleanup_tokens_array(tokens, count);
+            regfree(&regex);
+            return NULL;
+        }
+        size_t remaining_length = (size_t)(input + input_length - token_start);
+        if (remaining_length > 0) {
+            if (remaining_length > input_length) {
+                cleanup_tokens_array(tokens, count);
+                regfree(&regex);
+                return NULL;
+            }
+            if (add_token(&tokens, &count, &capacity, token_start, remaining_length) != 0) {
+                cleanup_tokens_array(tokens, count);
+                regfree(&regex);
+                return NULL;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(tokens);
+        tokens = NULL;
+    } else {
+        char **new_tokens = (char **)realloc(tokens, (size_t)count * sizeof(char *));
+        if (new_tokens != NULL) {
+            tokens = new_tokens;
+        }
+    }
+
+    *token_count = count;
+    regfree(&regex);
+    return tokens;
+}
+
+void free_tokens(char **tokens, int token_count) {
+    if (tokens == NULL) {
+        return;
+    }
+    for (int i = 0; i < token_count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void) {
+    const char *input = "Hello,world;this:is|a test";
+    const char *pattern = "[,;:| ]+";
+    int token_count = 0;
+    char **tokens = split_string(input, pattern, &token_count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    for (int i = 0; i < token_count; i++) {
+        printf("Token %d: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, token_count);
+    return 0;
+}

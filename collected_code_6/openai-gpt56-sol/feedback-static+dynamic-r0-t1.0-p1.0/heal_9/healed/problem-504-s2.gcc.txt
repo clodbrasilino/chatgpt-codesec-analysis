@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-504-s2.c: In function 'read_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-504-s2.c:90:33: error: 'INT_MAX' undeclared (first use in this function)
+   90 |         if (available > (size_t)INT_MAX) {
+      |                                 ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-504-s2.c:8:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    7 | #include <string.h>
+  +++ |+#include <limits.h>
+    8 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-504-s2.c:90:33: note: each undeclared identifier is reported only once for each function it appears in
+   90 |         if (available > (size_t)INT_MAX) {
+      |                                 ^~~~~~~

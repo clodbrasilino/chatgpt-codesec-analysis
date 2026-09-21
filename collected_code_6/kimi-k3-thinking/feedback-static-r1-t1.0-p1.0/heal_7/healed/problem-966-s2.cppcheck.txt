@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c:64:19: style: Condition 'src_bytes>dst_bytes' is always false [knownConditionTrueFalse]
+    if (src_bytes > dst_bytes) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c:59:22: note: dst_bytes is assigned 'size*sizeof(int)' here.
+    size_t dst_bytes = size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c:61:16: note: Assuming condition is false
+    if (t.data == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c:58:22: note: src_bytes is assigned 'size*sizeof(int)' here.
+    size_t src_bytes = size * sizeof(int);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_7/healed/problem-966-s2.c:64:19: note: Condition 'src_bytes>dst_bytes' is always false
+    if (src_bytes > dst_bytes) {
+                  ^

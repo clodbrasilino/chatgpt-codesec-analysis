@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-187-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-187-s3.c:12:16: style: Array index 'len1' is used before limits check. [arrayIndexThenCheck]
+    while (str1[len1] != '\0' && len1 < MAX_STR_LEN) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-187-s3.c:17:16: style: Array index 'len2' is used before limits check. [arrayIndexThenCheck]
+    while (str2[len2] != '\0' && len2 < MAX_STR_LEN) {
+               ^

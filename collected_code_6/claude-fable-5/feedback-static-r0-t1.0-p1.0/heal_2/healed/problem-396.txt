@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "%s: unknown regex error\n", context);
+        return;
+    }
+
+    errbuf = calloc(needed, sizeof(char));
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: memory allocation failed while reporting error\n", context);
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", context, errbuf);
+    free(errbuf);
+}
+
+int starts_and_ends_same(const char *str)
+{
+    regex_t regex;
+    int ret;
+    int result;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not null-terminated\n");
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    if (len == 1) {
+        return 1;
+    }
+
+    ret = regcomp(&regex, "^\\(.\\).*\\1$", 0);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    } else if (ret == REG_NOMATCH) {
+        result = 0;
+    } else {
+        print_regex_error(ret, &regex, "Regex execution failed");
+        result = -1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {"abcba", "hello", "a", "xyzx", "test", ""};
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int res = starts_and_ends_same(tests[i]);
+        if (res < 0) {
+            fprintf(stderr, "Error processing string: \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (res == 1) {
+            printf("\"%s\": starts and ends with the same character\n", tests[i]);
+        } else {
+            printf("\"%s\": does not start and end with the same character\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder warning (CWE-119/CWE-120) in `print_regex_error`: instead of a fixed statically-sized `errbuf[128]` that could truncate messages or invite sizing mistakes, the code now calls `regerror` with a `NULL` buffer first to query the exact required size, dynamically allocates a zero-initialized buffer of that size, writes the message with an explicit bound, guarantees null-termination, and frees the buffer. Allocation failure is handled gracefully. The rest of the logic — input validation with `strnlen` against `MAX_INPUT_LEN`, edge cases for empty and single-character strings, proper `regfree` cleanup on all paths, and distinct handling of `REG_NOMATCH` versus real execution errors — was already sound and is preserved unchanged.

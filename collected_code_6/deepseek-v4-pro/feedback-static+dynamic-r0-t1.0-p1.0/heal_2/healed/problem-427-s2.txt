@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUFFER_SIZE 11
+
+int convert_date_format(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    int retval;
+    
+    if (output == NULL || input == NULL) {
+        return -1;
+    }
+    
+    if (output_size < DATE_BUFFER_SIZE) {
+        return -1;
+    }
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return -1;
+    }
+    
+    if (regexec(&regex, input, 4, matches, 0) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    if (matches[1].rm_so == -1 || matches[2].rm_so == -1 || matches[3].rm_so == -1) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    int year_len = (int)(matches[1].rm_eo - matches[1].rm_so);
+    int month_len = (int)(matches[2].rm_eo - matches[2].rm_so);
+    int day_len = (int)(matches[3].rm_eo - matches[3].rm_so);
+    
+    if (year_len < 0 || month_len < 0 || day_len < 0) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    int total_len = day_len + 1 + month_len + 1 + year_len;
+    if ((size_t)total_len >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    int written = snprintf(output, output_size, "%.*s-%.*s-%.*s",
+             day_len, input + matches[3].rm_so,
+             month_len, input + matches[2].rm_so,
+             year_len, input + matches[1].rm_so);
+    
+    if (written < 0 || (size_t)written >= output_size) {
+        regfree(&regex);
+        return -1;
+    }
+    
+    regfree(&regex);
+    retval = 0;
+    return retval;
+}
+
+int main(void) {
+    const char *input_date = "2024-03-15";
+    char output_date[DATE_BUFFER_SIZE];
+    memset(output_date, 0, sizeof(output_date));
+    
+    if (convert_date_format(input_date, output_date, sizeof(output_date)) == 0) {
+        printf("%s\n", output_date);
+    } else {
+        fprintf(stderr, "Invalid date format\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

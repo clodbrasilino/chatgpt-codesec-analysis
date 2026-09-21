@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-885-s3.c:38:47: error: call to undeclared library function 'calloc' with type 'void *(unsigned long, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |     unsigned char *map_s_t = (unsigned char *)calloc(UCHAR_MAX + 1, sizeof(unsigned char));
+      |                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-885-s3.c:38:47: note: include the header <stdlib.h> or explicitly provide a declaration for 'calloc'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-885-s3.c:42:9: error: call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   42 |         free(map_s_t);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-885-s3.c:42:9: note: include the header <stdlib.h> or explicitly provide a declaration for 'free'
+2 errors generated.

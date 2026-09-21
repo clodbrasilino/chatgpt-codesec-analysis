@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-127.c: In function 'parse_int64_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-127.c:49:9: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+   49 |     if (strchr(line, '\n') == NULL && !feof(stdin)) {
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-127.c:7:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    6 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    7 | 

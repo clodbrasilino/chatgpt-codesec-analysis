@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static void capitalize_first_last(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    i = 0;
+
+    while (i < len) {
+        while (i < len && isspace((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t end;
+
+            while (i < len && !isspace((unsigned char)str[i])) {
+                i++;
+            }
+            end = i - 1;
+            str[start] = (char)toupper((unsigned char)str[start]);
+            str[end] = (char)toupper((unsigned char)str[end]);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    capitalize_first_last(buffer, sizeof(buffer));
+
+    if (printf("Result: %s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged CWE-119/CWE-120 weakness (statically-sized array `buffer`) correctly:
+
+1. **`fgets(buffer, (int)sizeof(buffer), stdin)`** — input is bounded to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **`buffer[sizeof(buffer) - 1] = '\0';`** — defensive null-termination guarantee, though `fgets` already ensures this on success.
+3. **`strnlen(str, max_len)`** — bounded length calculation in `capitalize_first_last`, so the function never reads past the buffer even if passed a non-terminated string.
+4. **`isspace((unsigned char)str[i])` / `toupper((unsigned char)...)`** — correct casting avoids undefined behavior when `char` is signed and holds negative values.
+5. **Return-value checks** on `printf`, `fflush`, and `fgets` handle I/O failures gracefully.
+
+The Flawfinder hit is a low-risk (risk 2) informational warning triggered simply by the presence of a fixed-size `char` array; since all reads and writes are properly bounds-checked, no functional changes were required — the code is retained as-is with comments removed per the request.

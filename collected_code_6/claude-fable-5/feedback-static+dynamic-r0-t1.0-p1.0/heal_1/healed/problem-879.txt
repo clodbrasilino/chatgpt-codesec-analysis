@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+static int match_pattern(const char *text)
+{
+    regex_t regex;
+    int ret;
+    char error_buffer[256];
+
+    ret = regcomp(&regex, "a.*b$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        regerror(ret, &regex, error_buffer, sizeof(error_buffer));
+        error_buffer[sizeof(error_buffer) - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", error_buffer);
+        regfree(&regex);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+
+    if (ret == 0) {
+        regfree(&regex);
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 0;
+    } else {
+        regerror(ret, &regex, error_buffer, sizeof(error_buffer));
+        error_buffer[sizeof(error_buffer) - 1] = '\0';
+        fprintf(stderr, "Regex execution failed: %s\n", error_buffer);
+        regfree(&regex);
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "acb",
+        "ab",
+        "axyzb",
+        "a123b",
+        "bca",
+        "abc",
+        "b",
+        "a"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_pattern(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\" matches\n", tests[i]);
+        } else {
+            printf("\"%s\" does not match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key fixes applied:
+
+1. **Use-after-free bug (the most serious issue):** In the original code's `regexec` error path, `regfree(&regex)` was called *before* `regerror(ret, &regex, ...)`, meaning `regerror` operated on a freed regex object — undefined behavior. The rewrite calls `regerror` before `regfree` in every path.
+
+2. **Missing `regfree` on compilation failure path:** Although POSIX doesn't strictly require it, explicitly freeing keeps the cleanup consistent and safe across implementations.
+
+3. **Buffer concern (CWE-119/CWE-120):** The `error_buffer` usage was already bounded via `sizeof(error_buffer)` passed to `regerror`, which guarantees truncation rather than overflow. As defensive hardening, the buffer is explicitly NUL-terminated after each `regerror` call.
+
+4. **Variable scope (`variableScope` warning):** `result` is now declared inside the loop body, limiting its scope to where it is actually used.
+
+5. **Internal linkage:** `match_pattern` is declared `static` since it is not used outside this translation unit.

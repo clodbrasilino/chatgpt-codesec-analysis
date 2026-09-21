@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int match_word_with_z(const char *text, char *result, size_t result_size);
+
+int match_word_with_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        if (text[i] == '\0') {
+            break;
+        }
+
+        {
+            size_t start = i;
+            int found = 0;
+
+            while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+                if (tolower((unsigned char)text[i]) == 'z') {
+                    found = 1;
+                }
+                i++;
+            }
+
+            if (found) {
+                size_t len = i - start;
+                if (len >= result_size) {
+                    return -1;
+                }
+                memcpy(result, &text[start], len);
+                result[len] = '\0';
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentences[] = {
+        "The lazy dog sleeps all day.",
+        "A quick brown fox jumps.",
+        "Zebras graze in the savanna."
+    };
+    char word[256];
+    size_t i;
+
+    for (i = 0; i < sizeof(sentences) / sizeof(sentences[0]); i++) {
+        int status = match_word_with_z(sentences[i], word, sizeof(word));
+        if (status < 0) {
+            fprintf(stderr, "Error processing input: %s\n", sentences[i]);
+            return EXIT_FAILURE;
+        }
+        if (status == 1) {
+            if (printf("Input: \"%s\" -> matched word: \"%s\"\n", sentences[i], word) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Input: \"%s\" -> no word containing 'z' found\n", sentences[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of fixes applied:**
+
+1. **`variableScope` (`start`, `found`, `len` in `match_word_with_z`)** — Moved declarations into the inner block where they're actually used, minimizing their scope as cppcheck recommends.
+
+2. **`variableScope` (`status` in `main`)** — Declared inside the `for` loop body since it's only needed per iteration.
+
+3. **Flawfinder `memcpy` (CWE-120)** — This was already a false positive: the guard `if (len >= result_size) return -1;` guarantees the destination can hold `len` bytes plus the NUL terminator. The check is retained.
+
+4. **Flawfinder `char word[256]` (CWE-119/CWE-120)** — Also mitigated by design: the buffer size is always passed via `sizeof(word)` and enforced inside the function, so no overflow is possible.

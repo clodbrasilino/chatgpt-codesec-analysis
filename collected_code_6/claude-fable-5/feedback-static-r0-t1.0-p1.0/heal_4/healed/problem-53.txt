@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning about the statically-sized `buffer` array is a *low-risk informational flag* rather than an actual vulnerability in this code, because the original source already implements all the necessary mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size and guarantees null termination on success, preventing a classic `gets()`-style overflow.
+
+2. **Defensive null termination** — `buffer[sizeof(buffer) - 1] = '\0';` acts as a belt-and-suspenders guarantee that the buffer is always a valid C string before any string operations run.
+
+3. **Length-limited string functions** — `strnlen()` is used instead of `strlen()`, both in `main` and inside `first_last_equal()`, so even a hypothetically unterminated buffer cannot cause a read past the array bounds.
+
+4. **Safe helper contract** — `first_last_equal()` validates against `NULL`, zero-length limits, empty strings, and the `len == max_len` edge case (which would indicate a possibly unterminated string), before indexing `str[0]` and `str[len - 1]`.
+
+5. **Error handling** — the `fgets` return value is checked, so a read failure or immediate EOF cannot lead to processing uninitialized buffer contents.
+
+Since the bounds checking, length-limited functions, and termination guarantees requested by the Flawfinder hint are already present, the rewrite preserves the logic as-is with the comments removed — no functional changes are required to remediate the flagged weakness.

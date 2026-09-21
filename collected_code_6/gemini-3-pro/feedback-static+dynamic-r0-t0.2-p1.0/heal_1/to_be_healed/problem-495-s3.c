@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_lowercase_substrings(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret;
+    regmatch_t pmatch[1];
+
+    ret = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
+        size_t match_start = pmatch[0].rm_so;
+        size_t match_end = pmatch[0].rm_eo;
+        /* Possible weaknesses found:
+         *  Value stored to 'match_len' during its initialization is never read [deadcode.DeadStores]
+         *  Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+         */
+        size_t match_len = match_end - match_start;
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t str_len = strlen(str);
+
+        memmove(str + match_start, str + match_end, str_len - match_end + 1);
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    char test_str1[] = "Hello world! This IS A Test.";
+    char test_str2[] = "ALLCAPS";
+    char test_str3[] = "alllower";
+    char test_str4[] = "M1x3d C4S3s";
+
+    remove_lowercase_substrings(test_str1);
+    printf("%s\n", test_str1);
+
+    remove_lowercase_substrings(test_str2);
+    printf("%s\n", test_str2);
+
+    remove_lowercase_substrings(test_str3);
+    printf("%s\n", test_str3);
+
+    remove_lowercase_substrings(test_str4);
+    printf("%s\n", test_str4);
+
+    return 0;
+}

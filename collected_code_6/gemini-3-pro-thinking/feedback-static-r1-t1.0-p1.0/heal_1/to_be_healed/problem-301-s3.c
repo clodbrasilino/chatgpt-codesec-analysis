@@ -1,0 +1,217 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    DICT_INT,
+    DICT_STR,
+    DICT_DICT
+} ValueType;
+
+struct DictNode;
+
+typedef struct DictEntry {
+    char *key;
+    ValueType type;
+    union {
+        int int_val;
+        char *str_val;
+        struct DictNode *dict_val;
+    } value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct DictNode {
+    DictEntry *head;
+} DictNode;
+
+char* safe_strdup(const char *src) {
+    size_t len;
+    char *dest;
+
+    if (!src) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(src) + 1;
+    dest = (char*)malloc(len);
+    if (!dest) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dest, src, len);
+    return dest;
+}
+
+DictNode* create_dict(void) {
+    DictNode *node = (DictNode*)malloc(sizeof(DictNode));
+    if (!node) {
+        return NULL;
+    }
+    node->head = NULL;
+    return node;
+}
+
+void free_dict(DictNode *dict) {
+    DictEntry *current;
+    DictEntry *next;
+
+    if (!dict) {
+        return;
+    }
+
+    current = dict->head;
+    while (current) {
+        next = current->next;
+        free(current->key);
+        if (current->type == DICT_STR) {
+            free(current->value.str_val);
+        } else if (current->type == DICT_DICT) {
+            free_dict(current->value.dict_val);
+        }
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int add_dict_entry(DictNode *dict, const char *key, DictNode *child) {
+    DictEntry *entry;
+
+    if (!dict || !key || !child) {
+        return -1;
+    }
+
+    entry = (DictEntry*)malloc(sizeof(DictEntry));
+    if (!entry) {
+        return -1;
+    }
+
+    entry->key = safe_strdup(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+
+    entry->type = DICT_DICT;
+    entry->value.dict_val = child;
+    entry->next = dict->head;
+    dict->head = entry;
+    
+    return 0;
+}
+
+int add_int_entry(DictNode *dict, const char *key, int val) {
+    DictEntry *entry;
+
+    if (!dict || !key) {
+        return -1;
+    }
+
+    entry = (DictEntry*)malloc(sizeof(DictEntry));
+    if (!entry) {
+        return -1;
+    }
+
+    entry->key = safe_strdup(key);
+    if (!entry->key) {
+        free(entry);
+        return -1;
+    }
+
+    entry->type = DICT_INT;
+    entry->value.int_val = val;
+    entry->next = dict->head;
+    dict->head = entry;
+    
+    return 0;
+}
+
+size_t get_dictionary_depth(const DictNode *dict) {
+    size_t max_depth;
+    size_t child_depth;
+    DictEntry *current;
+
+    if (!dict) {
+        return 0;
+    }
+
+    max_depth = 1;
+    current = dict->head;
+
+    while (current) {
+        if (current->type == DICT_DICT) {
+            child_depth = get_dictionary_depth(current->value.dict_val);
+            if (child_depth + 1 > max_depth) {
+                max_depth = child_depth + 1;
+            }
+        }
+        current = current->next;
+    }
+
+    return max_depth;
+}
+
+int main(void) {
+    DictNode *root;
+    DictNode *child1;
+    DictNode *child2;
+    DictNode *child3;
+    size_t depth;
+
+    root = create_dict();
+    if (!root) {
+        return EXIT_FAILURE;
+    }
+
+    child1 = create_dict();
+    if (child1) {
+        if (add_int_entry(child1, "val1", 10) != 0) {
+            free_dict(child1);
+            child1 = NULL;
+        }
+    }
+
+    child2 = create_dict();
+    child3 = create_dict();
+
+    if (child3) {
+        if (add_int_entry(child3, "val2", 20) != 0) {
+            free_dict(child3);
+            child3 = NULL;
+        }
+    }
+
+    if (child2 && child3) {
+        if (add_dict_entry(child2, "nested", child3) != 0) {
+            free_dict(child3);
+        }
+    } else if (child3) {
+        free_dict(child3);
+    }
+
+    if (child1) {
+        if (add_dict_entry(root, "child1", child1) != 0) {
+            free_dict(child1);
+        }
+    }
+
+    if (child2) {
+        if (add_dict_entry(root, "child2", child2) != 0) {
+            free_dict(child2);
+        }
+    }
+
+    depth = get_dictionary_depth(root);
+    printf("Dictionary depth: %zu\n", depth);
+
+    free_dict(root);
+
+    return EXIT_SUCCESS;
+}

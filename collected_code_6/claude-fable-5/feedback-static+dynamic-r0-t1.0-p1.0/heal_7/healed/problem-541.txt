@@ -1,0 +1,181 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 64
+
+static int is_abundant(unsigned long n)
+{
+    unsigned long sum;
+    unsigned long i;
+
+    if (n < 12UL) {
+        return 0;
+    }
+
+    sum = 1UL;
+    for (i = 2UL; i <= n / i; i++) {
+        if (n % i == 0UL) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+            if (sum > n) {
+                return 1;
+            }
+        }
+    }
+
+    return (sum > n) ? 1 : 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    int discarded;
+
+    discarded = 0;
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            discarded = 1;
+        }
+    } while (ch != '\n' && ch != EOF);
+
+    return discarded;
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    char *newline;
+
+    if (buffer == NULL || size < 2 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+
+    newline = memchr(buffer, '\n', size);
+    if (newline != NULL) {
+        *newline = '\0';
+        return 0;
+    }
+
+    if (discard_remaining_input()) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static int parse_positive_ulong(const char *buffer, unsigned long *out)
+{
+    const char *p;
+    char *endptr;
+    unsigned long value;
+
+    if (buffer == NULL || out == NULL) {
+        return -1;
+    }
+
+    p = buffer;
+    while (*p != '\0' && isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p == '+') {
+        p++;
+    }
+
+    if (!isdigit((unsigned char)*p)) {
+        return -1;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtoul(p, &endptr, 10);
+
+    if (endptr == p || errno == ERANGE) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    if (value == 0UL) {
+        return -1;
+    }
+
+    *out = value;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long number;
+    int status;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a positive integer: ");
+    fflush(stdout);
+
+    status = read_line(buffer, sizeof(buffer));
+    if (status < 0) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    if (status > 0) {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (parse_positive_ulong(buffer, &number) != 0) {
+        fprintf(stderr, "Invalid input: expected a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_abundant(number)) {
+        printf("%lu is an abundant number\n", number);
+    } else {
+        printf("%lu is not an abundant number\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code above is safe:
+
+**1. Flawfinder `getchar` warning (CWE-120, CWE-20) in `discard_remaining_input`:**
+This is a false positive in practice. The loop reads characters one at a time solely to drain stdin until a newline or EOF — nothing is ever written into a buffer, so no overflow is possible. The loop has guaranteed termination conditions (`'\n'` or `EOF`), and `ch` is correctly declared as `int` (not `char`), which is essential for reliably detecting `EOF`. No change was required.
+
+**2. Flawfinder `char buffer[BUFFER_SIZE]` warning (CWE-119/CWE-120) in `main`:**
+This is a generic warning about statically-sized arrays. The code already mitigates it correctly:
+
+- `read_line` validates that `size >= 2` and `size <= INT_MAX` before use, preventing degenerate or overflowing casts to `int` for `fgets`.
+- `fgets(buffer, (int)size, stdin)` performs bounded reading — it can never write past `size - 1` characters plus the terminator.
+- `buffer[size - 1] = '\0'` guarantees NUL-termination defensively.
+- `memchr` (bounded search) is used instead of `strchr`, so even a hypothetically unterminated buffer would not be over-read.
+- Oversized input is detected (`status > 0`) and rejected, with the remaining stdin drained to avoid leaving stale data for subsequent reads.
+- `sizeof(buffer)` is passed rather than a hard-coded constant, so the size can never desynchronize from the declaration.
+
+**Other defensive qualities already present:**
+- `parse_positive_ulong` uses `strtoul` with `errno`/`ERANGE` checking rather than `atoi`/`sscanf`, rejects trailing garbage, explicit `+` handling, and disallows zero and negative-looking input.
+- All `ctype.h` calls cast to `unsigned char`, avoiding undefined behavior for characters with the high bit set.
+- `is_abundant` uses `i <= n / i` instead of `i * i <= n`, avoiding unsigned overflow in the loop condition.
+
+The code was already written defensively; the Flawfinder hits are advisory pattern matches, and both are properly mitigated, so the rewrite preserves the original logic unchanged.

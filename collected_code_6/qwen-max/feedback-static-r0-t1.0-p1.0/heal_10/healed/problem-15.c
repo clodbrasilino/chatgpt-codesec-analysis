@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char **split_string(const char *input, int *count) {
+    size_t length = 0;
+    for (const char *p = input; *p != '\0'; ++p, ++length);
+    char **result = (char **)malloc((length / 2 + 2) * sizeof(char *));
+    if (result == NULL) return NULL;
+    *count = 0;
+
+    const char *start = input;
+    for (size_t i = 0; i <= length; ++i) {
+        if (i == length || !islower((unsigned char)input[i])) {
+            if (start < &input[i]) {
+                size_t segment_length = i - (start - input);
+                result[*count] = (char *)malloc((segment_length + 1) * sizeof(char));
+                if (result[*count] == NULL) {
+                    for (int j = 0; j < *count; ++j) free(result[j]);
+                    free(result);
+                    return NULL;
+                }
+                memcpy(result[*count], start, segment_length);
+                result[*count][segment_length] = '\0';
+                (*count)++;
+            }
+            start = &input[i] + 1;
+        }
+    }
+
+    return result;
+}
+
+void free_split_strings(char **strings, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    const char *input = "aBCdEfGHiJKL";
+    int count;
+    char **result = split_string(input, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; ++i) {
+            printf("%s\n", result[i]);
+        }
+        free_split_strings(result, count);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

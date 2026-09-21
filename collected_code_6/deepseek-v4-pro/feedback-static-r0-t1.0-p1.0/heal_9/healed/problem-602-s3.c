@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+char first_repeated_char(const char *str)
+{
+    int count[UCHAR_MAX + 1] = {0};
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    for (size_t i = 0; i < UCHAR_MAX + 1 && str[i] != '\0'; i++) {
+        unsigned char uc = (unsigned char)str[i];
+        count[uc]++;
+        if (count[uc] == 2) {
+            return str[i];
+        }
+    }
+
+    return '\0';
+}
+
+int main(void)
+{
+    char *str = NULL;
+    size_t size = 0;
+    ssize_t len;
+    char result;
+
+    printf("Enter a string: ");
+    len = getline(&str, &size, stdin);
+    if (len == -1) {
+        free(str);
+        return 1;
+    }
+
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+
+    result = first_repeated_char(str);
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    free(str);
+    return 0;
+}

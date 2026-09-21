@@ -1,0 +1,71 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the flagged weakness (CWE-119/CWE-120, statically-sized buffer) correctly:
+
+- **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+- **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant since `fgets` always NUL-terminates on success, but harmless and makes intent explicit).
+- **Bounded string operations:** `toggle_case()` uses `strnlen(str, max_len)` rather than `strlen()`, so it never walks past the buffer even if a non-terminated string were passed. The NULL and zero-length guards prevent invalid dereferences.
+- **Correct `ctype` usage:** casting to `unsigned char` before calling `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+- **Error handling:** both input (`fgets` returning NULL on EOF/error) and output (`printf` returning a negative value) failures are checked, with distinct exit statuses.
+- **Newline stripping:** `strchr` + assignment safely removes the trailing newline without any out-of-bounds access.
+
+No functional changes were required — the code as written is a sound fix for the Flawfinder warning, so the rewrite is identical minus the comments.

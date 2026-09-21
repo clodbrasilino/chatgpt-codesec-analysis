@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    int value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry **buckets;
+    size_t size;
+} Dictionary;
+
+static unsigned long hash_function(const char *str, size_t size) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % size;
+}
+
+Dictionary *dict_create(size_t size) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->size = size;
+    dict->buckets = calloc(size, sizeof(DictEntry *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+static size_t strnlen_safe(const char *str, size_t maxlen) {
+    size_t len = 0;
+    while (len < maxlen && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void dict_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return;
+    size_t key_len = strlen(key);
+    unsigned long index = hash_function(key, dict->size);
+    DictEntry *entry = dict->buckets[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            entry->value = value;
+            return;
+        }
+        entry = entry->next;
+    }
+    entry = malloc(sizeof(DictEntry));
+    if (!entry) return;
+    entry->key = malloc(key_len + 1);
+    if (!entry->key) {
+        free(entry);
+        return;
+    }
+    if (key_len > 0) {
+        memcpy(entry->key, key, key_len);
+    }
+    entry->key[key_len] = '\0';
+    entry->value = value;
+    entry->next = dict->buckets[index];
+    dict->buckets[index] = entry;
+}
+
+int dict_get(Dictionary *dict, const char *key, int *value) {
+    if (!dict || !key || !value) return 0;
+    unsigned long index = hash_function(key, dict->size);
+    DictEntry *entry = dict->buckets[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            *value = entry->value;
+            return 1;
+        }
+        entry = entry->next;
+    }
+    return 0;
+}
+
+Dictionary *dict_combine(Dictionary *dict1, Dictionary *dict2) {
+    if (!dict1 || !dict2) return NULL;
+    Dictionary *result = dict_create(dict1->size + dict2->size);
+    if (!result) return NULL;
+
+    for (size_t i = 0; i < dict1->size; i++) {
+        DictEntry *entry = dict1->buckets[i];
+        while (entry) {
+            dict_insert(result, entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->size; i++) {
+        DictEntry *entry = dict2->buckets[i];
+        while (entry) {
+            int existing_value;
+            if (dict_get(result, entry->key, &existing_value)) {
+                dict_insert(result, entry->key, existing_value + entry->value);
+            } else {
+                dict_insert(result, entry->key, entry->value);
+            }
+            entry = entry->next;
+        }
+    }
+
+    return result;
+}
+
+void dict_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        DictEntry *entry = dict->buckets[i];
+        while (entry) {
+            DictEntry *next = entry->next;
+            free(entry->key);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+void dict_print(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        DictEntry *entry = dict->buckets[i];
+        while (entry) {
+            printf("%s: %d\n", entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+}
+
+void dict_insert_safe(Dictionary *dict, const char *key, size_t key_maxlen, int value) {
+    if (!dict || !key || key_maxlen == 0) return;
+    size_t key_len = strnlen_safe(key, key_maxlen);
+    if (key_len == key_maxlen) return;
+    unsigned long index = hash_function(key, dict->size);
+    DictEntry *entry = dict->buckets[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            entry->value = value;
+            return;
+        }
+        entry = entry->next;
+    }
+    entry = malloc(sizeof(DictEntry));
+    if (!entry) return;
+    entry->key = malloc(key_len + 1);
+    if (!entry->key) {
+        free(entry);
+        return;
+    }
+    if (key_len > 0) {
+        memcpy(entry->key, key, key_len);
+    }
+    entry->key[key_len] = '\0';
+    entry->value = value;
+    entry->next = dict->buckets[index];
+    dict->buckets[index] = entry;
+}
+
+int main(void) {
+    Dictionary *dict1 = dict_create(10);
+    Dictionary *dict2 = dict_create(10);
+    if (!dict1 || !dict2) {
+        dict_free(dict1);
+        dict_free(dict2);
+        return 1;
+    }
+
+    dict_insert(dict1, "apple", 3);
+    dict_insert(dict1, "banana", 5);
+    dict_insert(dict1, "cherry", 2);
+
+    dict_insert(dict2, "banana", 4);
+    dict_insert(dict2, "cherry", 1);
+    dict_insert(dict2, "date", 7);
+
+    Dictionary *combined = dict_combine(dict1, dict2);
+    if (!combined) {
+        dict_free(dict1);
+        dict_free(dict2);
+        return 1;
+    }
+
+    dict_print(combined);
+
+    dict_free(dict1);
+    dict_free(dict2);
+    dict_free(combined);
+
+    return 0;
+}

@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 4096
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+static int sort_sublists(char ***lists, const size_t *sizes, size_t list_count)
+{
+    size_t i;
+
+    if (lists == NULL || sizes == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (lists[i] == NULL) {
+            return -1;
+        }
+        if (sizes[i] > 1) {
+            qsort(lists[i], sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+
+    return 0;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, src, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_lists(char ***lists, const size_t *sizes, size_t list_count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || sizes == NULL) {
+        return;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (lists[i] != NULL) {
+            for (j = 0; j < sizes[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const char *const data[3][3] = {
+        { "banana", "apple", "cherry" },
+        { "zebra", "mango", "kiwi" },
+        { "orange", "grape", "lemon" }
+    };
+    static const size_t sizes[3] = { 3, 3, 3 };
+    const size_t list_count = 3;
+    char ***lists;
+    size_t i;
+    size_t j;
+
+    lists = calloc(list_count, sizeof(char **));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        lists[i] = calloc(sizes[i], sizeof(char *));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_lists(lists, sizes, list_count);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < sizes[i]; j++) {
+            lists[i][j] = duplicate_string(data[i][j]);
+            if (lists[i][j] == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                free_lists(lists, sizes, list_count);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (sort_sublists(lists, sizes, list_count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_lists(lists, sizes, list_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        printf("Sublist %zu:", i);
+        for (j = 0; j < sizes[i]; j++) {
+            printf(" %s", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, sizes, list_count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **`strlen` over-read (CWE-126):** Replaced with `strnlen(src, MAX_STRING_LEN)`, which bounds the scan and safely handles strings that are not properly null-terminated within the limit. Strings at or beyond the limit are rejected.
+
+2. **`memcpy` overflow (CWE-120):** The destination buffer is now allocated as `len + 1` where `len` is the bounded length, and exactly `len` bytes are copied, with the null terminator written explicitly. Destination capacity is guaranteed to match the copy size.
+
+3. **Statically-sized array (CWE-119/CWE-120):** The `data` array is now `static const char *const`, preventing accidental modification, and all loops iterating over it remain strictly bounded by `list_count` and `sizes[i]`, which correspond exactly to the array dimensions.
+
+4. **`constVariable` warning:** `sizes` is now declared as a `static const` array, and `list_count` is `const`, matching the `const size_t *` function signatures.
+
+5. **Defensive hardening:** Added a `sizes == NULL` guard in `free_lists` to avoid dereferencing a null pointer when iterating over element counts.

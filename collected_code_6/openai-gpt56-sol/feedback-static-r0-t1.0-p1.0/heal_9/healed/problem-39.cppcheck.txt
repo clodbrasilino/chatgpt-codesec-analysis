@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-39.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-39.c:50:18: style: Condition 'capacity<2' is always false [knownConditionTrueFalse]
+    if (capacity < 2) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-39.c:49:16: note: Assignment 'capacity=(unsigned long)128', assigned value is 128
+    capacity = INITIAL_CAPACITY;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-39.c:50:18: note: Condition 'capacity<2' is always false
+    if (capacity < 2) {
+                 ^

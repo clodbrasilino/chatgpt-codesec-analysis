@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:80:41: style: Condition 'result_index+copy_len<=result_capacity' is always true [knownConditionTrueFalse]
+            if (result_index + copy_len <= result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:74:41: note: Assuming that condition 'result_index+copy_len>result_capacity' is not redundant
+            if (result_index + copy_len > result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:80:41: note: Condition 'result_index+copy_len<=result_capacity' is always true
+            if (result_index + copy_len <= result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:97:42: style: Condition 'result_index+remaining<=result_capacity' is always true [knownConditionTrueFalse]
+            if (result_index + remaining <= result_capacity) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:91:42: note: Assuming that condition 'result_index+remaining>result_capacity' is not redundant
+            if (result_index + remaining > result_capacity) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-748.c:97:42: note: Condition 'result_index+remaining<=result_capacity' is always true
+            if (result_index + remaining <= result_capacity) {
+                                         ^

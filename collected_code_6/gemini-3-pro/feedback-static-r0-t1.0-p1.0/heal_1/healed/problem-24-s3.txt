@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+long long binaryToDecimal(const char *binaryString) {
+    if (binaryString == NULL) {
+        return -1;
+    }
+
+    long long decimalValue = 0;
+    size_t len = 0;
+
+    while (binaryString[len] != '\0') {
+        if (len >= 63) {
+            return -1;
+        }
+        if (binaryString[len] != '0' && binaryString[len] != '1') {
+            return -1;
+        }
+        decimalValue = (decimalValue << 1) | (binaryString[len] - '0');
+        len++;
+    }
+
+    if (len == 0) {
+        return -1;
+    }
+
+    return decimalValue;
+}
+
+int main(void) {
+    size_t bufferSize = 128;
+    char *binaryInput = (char *)malloc(bufferSize);
+
+    if (binaryInput == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(binaryInput, bufferSize, stdin) != NULL) {
+        char *newline = strchr(binaryInput, '\n');
+        if (newline != NULL) {
+            *newline = '\0';
+        }
+
+        long long result = binaryToDecimal(binaryInput);
+
+        if (result != -1) {
+            printf("%lld\n", result);
+        } else {
+            fprintf(stderr, "Invalid input\n");
+            free(binaryInput);
+            return EXIT_FAILURE;
+        }
+    } else {
+        fprintf(stderr, "Error reading input\n");
+        free(binaryInput);
+        return EXIT_FAILURE;
+    }
+
+    free(binaryInput);
+    return EXIT_SUCCESS;
+}
+```

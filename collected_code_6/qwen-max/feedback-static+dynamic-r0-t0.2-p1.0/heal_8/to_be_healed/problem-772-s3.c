@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* remove_k_length_words(const char *str, int k) {
+    size_t len = 0;
+    size_t cap = 0;
+    char *result = NULL;
+    char *token;
+    char *temp = strdup(str);
+
+    if (temp == NULL) {
+        return NULL;
+    }
+
+    for (token = strtok(temp, " "); token != NULL; token = strtok(NULL, " ")) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t token_len = strlen(token);
+        if (token_len != (size_t)k) {
+            if (len + token_len + 1 >= cap) {
+                char *new_result = realloc(result, (len + token_len + 2) * sizeof(char));
+                if (new_result == NULL) {
+                    free(temp);
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+                cap = len + token_len + 2;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + len, token, token_len);
+            len += token_len;
+            result[len++] = ' ';
+        }
+    }
+
+    if (len > 0) {
+        result[len - 1] = '\0';
+    } else {
+        result = realloc(result, 1);
+        if (result != NULL) {
+            *result = '\0';
+        }
+    }
+
+    free(temp);
+    return result;
+}
+
+int main() {
+    const char str[] = "This is a test string with some words of length five";
+    int k = 5;
+    char *new_str = remove_k_length_words(str, k);
+
+    if (new_str != NULL) {
+        printf("%s\n", new_str);
+        free(new_str);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char *name;
+    double price;
+} Item;
+
+typedef struct {
+    Item *items;
+    int size;
+    int capacity;
+} MaxHeap;
+
+MaxHeap* create_heap(int capacity) {
+    if (capacity <= 0) {
+        return NULL;
+    }
+    MaxHeap *heap = (MaxHeap*)malloc(sizeof(MaxHeap));
+    if (!heap) {
+        return NULL;
+    }
+    heap->items = (Item*)malloc(sizeof(Item) * capacity);
+    if (!heap->items) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void free_heap(MaxHeap *heap) {
+    if (heap) {
+        if (heap->items) {
+            free(heap->items);
+        }
+        free(heap);
+    }
+}
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify_down(MaxHeap *heap, int index) {
+    int largest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->items[left].price > heap->items[largest].price) {
+        largest = left;
+    }
+    if (right < heap->size && heap->items[right].price > heap->items[largest].price) {
+        largest = right;
+    }
+    if (largest != index) {
+        swap(&heap->items[index], &heap->items[largest]);
+        heapify_down(heap, largest);
+    }
+}
+
+void heapify_up(MaxHeap *heap, int index) {
+    int parent = (index - 1) / 2;
+    if (index > 0 && heap->items[index].price > heap->items[parent].price) {
+        swap(&heap->items[index], &heap->items[parent]);
+        heapify_up(heap, parent);
+    }
+}
+
+int insert_heap(MaxHeap *heap, Item item) {
+    if (!heap || heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->items[heap->size] = item;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+int replace_max(MaxHeap *heap, Item item) {
+    if (!heap || heap->size == 0) {
+        return -1;
+    }
+    if (item.price < heap->items[0].price) {
+        heap->items[0] = item;
+        heapify_down(heap, 0);
+    }
+    return 0;
+}
+
+Item* find_n_cheapest(const Item *dataset, int dataset_size, int n, int *result_size) {
+    if (!dataset || dataset_size <= 0 || n <= 0 || !result_size) {
+        if (result_size) *result_size = 0;
+        return NULL;
+    }
+
+    int heap_capacity = (n < dataset_size) ? n : dataset_size;
+    MaxHeap *heap = create_heap(heap_capacity);
+    if (!heap) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < heap_capacity; i++) {
+        insert_heap(heap, dataset[i]);
+    }
+
+    for (int i = heap_capacity; i < dataset_size; i++) {
+        replace_max(heap, dataset[i]);
+    }
+
+    Item *result = (Item*)malloc(sizeof(Item) * heap->size);
+    if (!result) {
+        free_heap(heap);
+        *result_size = 0;
+        return NULL;
+    }
+
+    *result_size = heap->size;
+    for (int i = 0; i < heap->size; i++) {
+        result[i] = heap->items[i];
+    }
+
+    free_heap(heap);
+    return result;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {"Item A", 45.99},
+        {"Item B", 12.50},
+        {"Item C", 9.99},
+        {"Item D", 105.00},
+        {"Item E", 3.50},
+        {"Item F", 24.00},
+        {"Item G", 8.75}
+    };
+    int dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+    int result_size = 0;
+
+    Item *cheapest_items = find_n_cheapest(dataset, dataset_size, n, &result_size);
+
+    if (cheapest_items) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%s: $%.2f\n", cheapest_items[i].name, cheapest_items[i].price);
+        }
+        free(cheapest_items);
+    } else {
+        printf("Failed to find cheapest items.\n");
+    }
+
+    return 0;
+}

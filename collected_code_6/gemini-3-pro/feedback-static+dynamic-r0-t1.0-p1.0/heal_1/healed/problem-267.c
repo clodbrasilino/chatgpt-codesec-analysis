@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int sumOfSquaresOfOddNumbers(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    unsigned long long int sum = 0;
+    unsigned long long int currentOdd = 1;
+
+    for (unsigned int i = 0; i < n; i++) {
+        sum += currentOdd * currentOdd;
+        currentOdd += 2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    unsigned int n = 0;
+
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long int result = sumOfSquaresOfOddNumbers(n);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

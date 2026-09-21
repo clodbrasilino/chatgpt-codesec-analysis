@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and the changes made:
+
+**The Flawfinder warnings are false positives here.** Flawfinder flags `getchar()` generically (CWE-120 buffer overflow, CWE-20 improper input validation) because it is often misused in loops that write into fixed-size buffers. In this program:
+
+1. **No buffer is ever written to.** Each character read is either discarded (in `flush_stdin`) or held in a single `int` variable. There is no array to overflow, so CWE-120 does not apply.
+
+2. **The return type is handled correctly.** `input` is declared as `int`, not `char`, which is essential so that `EOF` can be reliably distinguished from valid character values. The original code already got this right, and it is preserved.
+
+3. **Input validation is present.** `EOF` is checked immediately after the read, `isprint()` is called with the value cast to `unsigned char` (required to avoid undefined behavior when passing negative `char` values to `<ctype.h>` functions), and leftover input is drained so it cannot affect later reads.
+
+4. **Defensive details retained:** the `fflush(stdout)` return value is checked, and the `(unsigned char)` cast in `get_ascii_value` guarantees a non-negative result on platforms where `char` is signed.
+
+The only structural change is converting the `while`-with-empty-body drain loop into a `do/while`, which expresses the same bounded, buffer-free consumption of input more explicitly and satisfies static analyzers that dislike empty loop bodies. The code remains safe against buffer overflows because it never stores more than one character at a time.

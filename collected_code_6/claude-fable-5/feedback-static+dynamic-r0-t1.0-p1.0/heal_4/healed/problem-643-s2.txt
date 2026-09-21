@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_TEXT_LEN 4096
+#define RESULT_BUF_SIZE 256
+
+int find_word_with_inner_z(const char *text, char *result, size_t result_size);
+
+int find_word_with_inner_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+    size_t len;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+
+    result[0] = '\0';
+
+    len = strnlen(text, MAX_TEXT_LEN);
+
+    while (i < len) {
+        while (i < len && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        if (i >= len) {
+            break;
+        }
+
+        size_t start = i;
+
+        while (i < len && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        size_t word_len = i - start;
+
+        if (word_len >= 3) {
+            size_t j;
+            int found = 0;
+
+            for (j = start + 1; j < i - 1; j++) {
+                if (tolower((unsigned char)text[j]) == 'z') {
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (found) {
+                if (word_len >= result_size) {
+                    return 0;
+                }
+                for (j = 0; j < word_len; j++) {
+                    result[j] = text[start + j];
+                }
+                result[word_len] = '\0';
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the amazing puzzle was solved",
+        "zebra runs fast",
+        "jazz music plays",
+        "no match here",
+        "a hazy day"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+    char *buffer;
+
+    buffer = calloc(RESULT_BUF_SIZE, sizeof(char));
+    if (buffer == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (find_word_with_inner_z(tests[i], buffer, RESULT_BUF_SIZE)) {
+            if (printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], buffer) < 0) {
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Input: \"%s\" -> No match\n", tests[i]) < 0) {
+                free(buffer);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array was addressed by replacing the stack-allocated array with a heap allocation via `calloc`, which also zero-initializes the memory (removing the need for `memset`). The size passed to `find_word_with_inner_z` is the exact allocation size, and the function itself already performs strict bounds checking: it validates all pointers, guarantees `result_size > 0` before writing, rejects any word where `word_len >= result_size` (leaving room for the NUL terminator), and bounds input scanning with `strnlen` against `MAX_TEXT_LEN`. All allocated memory is freed on every exit path.

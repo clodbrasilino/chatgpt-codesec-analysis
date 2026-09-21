@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-946-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-946-s2.c:94:59: style: Condition 'word_len<dest_size' is always true [knownConditionTrueFalse]
+        memcpy(arr->items[arr->size].word, word, word_len < dest_size ? word_len : dest_size - 1);
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-946-s2.c:93:26: note: dest_size is assigned 'word_len+1' here.
+        size_t dest_size = word_len + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-946-s2.c:94:59: note: Condition 'word_len<dest_size' is always true
+        memcpy(arr->items[arr->size].word, word, word_len < dest_size ? word_len : dest_size - 1);
+                                                          ^

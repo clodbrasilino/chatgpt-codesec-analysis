@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool is_palindrome(int num)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buf[32];
+    int len;
+    int i;
+    int j;
+
+    if (num < 0) {
+        return false;
+    }
+
+    len = snprintf(buf, sizeof(buf), "%d", num);
+    if (len < 0 || (size_t)len >= sizeof(buf)) {
+        return false;
+    }
+
+    i = 0;
+    j = len - 1;
+    while (i < j) {
+        if (buf[i] != buf[j]) {
+            return false;
+        }
+        i++;
+        j--;
+    }
+    return true;
+}
+
+static bool find_largest_palindrome(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    bool found = false;
+    int largest = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (is_palindrome(arr[i])) {
+            if (!found || arr[i] > largest) {
+                largest = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = largest;
+    }
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = { 123, 121, 45654, 78, 909, 2, 10 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int largest;
+
+    if (find_largest_palindrome(numbers, count, &largest)) {
+        if (printf("Largest palindromic number: %d\n", largest) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No palindromic number found.\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

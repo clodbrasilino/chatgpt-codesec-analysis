@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LEN 64
+#define TUPLE_COUNT 3
+
+typedef struct {
+    int id;
+    char name[MAX_NAME_LEN];
+    double value;
+} Tuple;
+
+void clear_tuple(Tuple *t) {
+    if (t != NULL) {
+        t->id = 0;
+        memset(t->name, 0, sizeof(t->name));
+        t->value = 0.0;
+    }
+}
+
+void clear_tuples(Tuple *tuples, size_t count) {
+    if (tuples != NULL && count > 0) {
+        for (size_t i = 0; i < count; i++) {
+            clear_tuple(&tuples[i]);
+        }
+    }
+}
+
+int set_tuple_name(Tuple *t, const char *name) {
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+    
+    size_t name_len = strnlen(name, MAX_NAME_LEN);
+    if (name_len >= MAX_NAME_LEN) {
+        return -1;
+    }
+    
+    int result = snprintf(t->name, sizeof(t->name), "%s", name);
+    if (result < 0 || result >= (int)sizeof(t->name)) {
+        return -1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    Tuple tuples[TUPLE_COUNT];
+    
+    tuples[0].id = 1;
+    if (set_tuple_name(&tuples[0], "First") != 0) {
+        fprintf(stderr, "Error setting name for tuple 0\n");
+        return 1;
+    }
+    tuples[0].value = 10.5;
+    
+    tuples[1].id = 2;
+    if (set_tuple_name(&tuples[1], "Second") != 0) {
+        fprintf(stderr, "Error setting name for tuple 1\n");
+        return 1;
+    }
+    tuples[1].value = 20.75;
+    
+    tuples[2].id = 3;
+    if (set_tuple_name(&tuples[2], "Third") != 0) {
+        fprintf(stderr, "Error setting name for tuple 2\n");
+        return 1;
+    }
+    tuples[2].value = 30.25;
+    
+    printf("Before clearing:\n");
+    for (size_t i = 0; i < TUPLE_COUNT; i++) {
+        printf("Tuple %zu: id=%d, name=%s, value=%.2f\n", 
+               i, tuples[i].id, tuples[i].name, tuples[i].value);
+    }
+    
+    clear_tuples(tuples, TUPLE_COUNT);
+    
+    printf("\nAfter clearing:\n");
+    for (size_t i = 0; i < TUPLE_COUNT; i++) {
+        printf("Tuple %zu: id=%d, name=%s, value=%.2f\n", 
+               i, tuples[i].id, tuples[i].name, tuples[i].value);
+    }
+    
+    return 0;
+}

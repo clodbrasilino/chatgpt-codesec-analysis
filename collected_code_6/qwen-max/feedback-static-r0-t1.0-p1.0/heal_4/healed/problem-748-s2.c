@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void add_spaces_between_capital_words(char **str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    char *ptr = *str;
+    size_t len = strlen(ptr);
+    char *new_str = (char *)malloc(len * 2 + 1);
+    if (new_str == NULL) return;
+    new_str[0] = '\0';
+    int new_index = 0;
+
+    if (regcomp(&regex, "([A-Z][a-z]*)", REG_EXTENDED) != 0) {
+        free(new_str);
+        return;
+    }
+
+    while (regexec(&regex, ptr, 1, pmatch, 0) == 0) {
+        if (pmatch[0].rm_so > 0) {
+            memmove(new_str + new_index, ptr, pmatch[0].rm_so);
+            new_index += pmatch[0].rm_so;
+            new_str[new_index++] = ' ';
+            ptr += pmatch[0].rm_so;
+        }
+        memmove(new_str + new_index, ptr, pmatch[0].rm_eo - pmatch[0].rm_so);
+        new_index += pmatch[0].rm_eo - pmatch[0].rm_so;
+        ptr += pmatch[0].rm_eo - pmatch[0].rm_so;
+    }
+
+    strncpy(new_str + new_index, ptr, len * 2 + 1 - new_index);
+    new_str[len * 2] = '\0';
+
+    regfree(&regex);
+
+    free(*str);
+    *str = new_str;
+}
+
+int main() {
+    char *input = strdup("HelloWorldThisIsATest");
+    if (input != NULL) {
+        add_spaces_between_capital_words(&input);
+        printf("%s\n", input);
+        free(input);
+    }
+    return 0;
+}

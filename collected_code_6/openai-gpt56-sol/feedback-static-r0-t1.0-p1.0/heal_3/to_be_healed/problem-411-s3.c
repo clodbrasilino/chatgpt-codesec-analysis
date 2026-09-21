@@ -1,0 +1,75 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 1048576U
+
+char *snake_to_camel(const char *input, size_t max_length)
+{
+    size_t input_len;
+    size_t src;
+    size_t dst;
+    char *output;
+
+    if (input == NULL || max_length == 0) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, max_length);
+    if (input_len == max_length || input_len == SIZE_MAX) {
+        return NULL;
+    }
+
+    output = malloc(input_len + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    src = 0;
+    dst = 0;
+
+    while (src < input_len) {
+        if (input[src] == '_' &&
+            src + 1 < input_len &&
+            isalnum((unsigned char)input[src + 1])) {
+            output[dst++] = (char)toupper((unsigned char)input[src + 1]);
+            src += 2;
+        } else {
+            output[dst++] = input[src++];
+        }
+    }
+
+    output[dst] = '\0';
+    return output;
+}
+
+int main(int argc, char *argv[])
+{
+    char *camel_case;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'program' can be reduced. [variableScope]
+     */
+    const char *program;
+
+    if (argc != 2) {
+        program = argc > 0 && argv[0] != NULL ? argv[0] : "program";
+        fprintf(stderr, "Usage: %s snake_case_string\n", program);
+        return EXIT_FAILURE;
+    }
+
+    camel_case = snake_to_camel(argv[1], MAX_INPUT_LENGTH);
+    if (camel_case == NULL) {
+        fputs("Conversion failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", camel_case) < 0) {
+        free(camel_case);
+        return EXIT_FAILURE;
+    }
+
+    free(camel_case);
+    return EXIT_SUCCESS;
+}

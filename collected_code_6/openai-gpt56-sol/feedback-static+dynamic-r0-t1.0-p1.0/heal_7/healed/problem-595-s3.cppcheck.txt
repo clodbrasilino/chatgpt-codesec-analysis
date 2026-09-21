@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:99:27: style: Condition 'line[used]=='\0'' is always true [knownConditionTrueFalse]
+    } else if (line[used] == '\0' && used > 0 &&
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:80:20: note: Assuming that condition 'line[used]!='\0'' is not redundant
+    if (line[used] != '\0') {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:99:27: note: Condition 'line[used]=='\0'' is always true
+    } else if (line[used] == '\0' && used > 0 &&
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:99:43: style: Condition 'used>0' is always true [knownConditionTrueFalse]
+    } else if (line[used] == '\0' && used > 0 &&
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:76:14: note: Assuming that condition 'used==0' is not redundant
+    if (used == 0 || used > MAX_LENGTH) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-595-s3.c:99:43: note: Condition 'used>0' is always true
+    } else if (line[used] == '\0' && used > 0 &&
+                                          ^

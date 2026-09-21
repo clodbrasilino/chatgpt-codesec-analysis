@@ -1,0 +1,126 @@
+#include <ctype.h>
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static int largest_inscribed_triangle(double radius, double *area)
+{
+    const double coefficient = 3.0 * sqrt(3.0) / 4.0;
+    double result;
+
+    if (area == NULL || !isfinite(radius) || radius <= 0.0) {
+        return -1;
+    }
+
+    if (radius > sqrt(DBL_MAX / coefficient)) {
+        return -1;
+    }
+
+    result = coefficient * radius * radius;
+
+    if (!isfinite(result)) {
+        return -1;
+    }
+
+    *area = result;
+    return 0;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t capacity = 0;
+    size_t length = 0;
+    char *end;
+    double radius;
+    double area;
+    int ch;
+
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        char *resized;
+        size_t new_capacity;
+
+        if (length == SIZE_MAX - 1) {
+            free(input);
+            fputs("Input is too long.\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        if (length + 1 >= capacity) {
+            if (capacity == 0) {
+                new_capacity = 64;
+            } else {
+                if (capacity > SIZE_MAX / 2) {
+                    free(input);
+                    fputs("Input is too long.\n", stderr);
+                    return EXIT_FAILURE;
+                }
+                new_capacity = capacity * 2;
+            }
+
+            resized = realloc(input, new_capacity);
+            if (resized == NULL) {
+                free(input);
+                fputs("Failed to allocate memory.\n", stderr);
+                return EXIT_FAILURE;
+            }
+
+            input = resized;
+            capacity = new_capacity;
+        }
+
+        input[length++] = (char)ch;
+    }
+
+    if (ferror(stdin)) {
+        free(input);
+        fputs("Failed to read the radius.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (length == 0 && ch == EOF) {
+        free(input);
+        fputs("Failed to read the radius.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (input == NULL) {
+        input = malloc(1);
+        if (input == NULL) {
+            fputs("Failed to allocate memory.\n", stderr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    input[length] = '\0';
+
+    errno = 0;
+    end = NULL;
+    radius = strtod(input, &end);
+
+    if (end == input || errno == ERANGE) {
+        free(input);
+        fputs("Invalid radius.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0' || largest_inscribed_triangle(radius, &area) != 0) {
+        free(input);
+        fputs("Radius must be a finite positive number.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    free(input);
+
+    if (printf("Largest triangle area: %.10g\n", area) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

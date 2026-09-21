@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:103:38: style: Condition 't1.data!=NULL' is always true [knownConditionTrueFalse]
+        if (copy_size > 0 && t1.data != NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:93:17: note: Assuming condition 't1.data==NULL' is false
+    if (t1.data == NULL || t2.data == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:103:38: note: Condition 't1.data!=NULL' is always true
+        if (copy_size > 0 && t1.data != NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:112:38: style: Condition 't2.data!=NULL' is always true [knownConditionTrueFalse]
+        if (copy_size > 0 && t2.data != NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:93:36: note: Assuming condition 't2.data==NULL' is false
+    if (t1.data == NULL || t2.data == NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-560.c:112:38: note: Condition 't2.data!=NULL' is always true
+        if (copy_size > 0 && t2.data != NULL) {
+                                     ^

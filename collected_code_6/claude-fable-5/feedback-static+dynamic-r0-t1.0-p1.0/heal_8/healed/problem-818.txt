@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+The code as written already addresses the flagged weakness (CWE-119/CWE-120) correctly:
+
+- **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow — this is the primary mitigation for the statically-sized array warning.
+- **Guaranteed termination**: `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant after `fgets`, but harmless and protects against future refactoring).
+- **Safe length calculation**: `strnlen` with an explicit bound avoids reading past the buffer even if termination were somehow missing, and the `len >= sizeof(buffer)` check handles that case.
+- **Safe character handling**: the `(unsigned char)` cast before `islower()` avoids undefined behavior for negative `char` values.
+- **Bounded search**: `memchr` with `len` never scans beyond validated data.
+
+No functional changes were required — the Flawfinder hit on the `char buffer[]` declaration is a low-risk heuristic warning, and all accesses to the buffer are already properly bounds-checked.

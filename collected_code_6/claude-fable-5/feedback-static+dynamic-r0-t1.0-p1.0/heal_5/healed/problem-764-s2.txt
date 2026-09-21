@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20)** — This is a false positive in this context. The `flush_stdin()` function reads characters solely to discard them; nothing is stored into a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop if the stream closes.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — The buffer usage is already safe:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow.
+   - `buffer[sizeof(buffer) - 1] = '\0'` is a defensive guarantee of null-termination (redundant with `fgets`, but harmless).
+   - `strnlen` is used instead of `strlen`, bounding the scan to the buffer size.
+   - Leftover input beyond the buffer capacity is drained via `flush_stdin()`, preventing stale data from affecting subsequent reads.
+
+3. **`isdigit` cast** — The cast to `(unsigned char)` is correct and necessary; passing a negative `char` value to `isdigit` is undefined behavior on platforms where `char` is signed.
+
+The code as written already implements the appropriate fixes for both Flawfinder findings, so no functional changes were required.

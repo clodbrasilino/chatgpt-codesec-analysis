@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-454.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-454.c:60:28: warning: Either the condition 'n<max_len' is redundant or the array 's[35]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (n < max_len && s[n] != '\0') {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-454.c:73:37: note: Calling function 'bounded_strlen', 2nd argument '256' value is 256
+    text_len = bounded_strlen(text, MAX_TEXT_LEN);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-454.c:60:14: note: Assuming that condition 'n<max_len' is not redundant
+    while (n < max_len && s[n] != '\0') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-454.c:60:28: note: Array index out of bounds
+    while (n < max_len && s[n] != '\0') {
+                           ^

@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[12] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    const int count = (int)(sizeof(signs) / sizeof(signs[0]));
+    int index;
+
+    index = year % count;
+    if (index < 0) {
+        index += count;
+    }
+    if (index < 0 || index >= count) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe. The Flawfinder warning about the statically-sized array (`signs[12]`) is a generic heuristic — the tool flags any fixed-size buffer as a *potential* CWE-119/CWE-120 issue, but the actual indexing was already bounded correctly:
+
+- `year % 12` yields a value in the range `-11..11` in C99 and later.
+- The `if (index < 0) index += 12;` normalization guarantees a final range of `0..11`, so no out-of-bounds access was possible.
+
+The rewrite hardens the code further by:
+
+1. **Deriving the array size with `sizeof`** instead of hard-coding `12`, eliminating the risk of the modulus and array size drifting apart during future maintenance.
+2. **Adding an explicit defensive bounds check** before indexing, satisfying the "perform bounds checking" recommendation and making the safety invariant locally verifiable rather than dependent on reasoning about the modulo arithmetic.
+3. **Keeping input validation intact** — `scanf` return value is checked, and negative/zero years are rejected, so `year % count` never relies on negative-operand behavior in practice, though it is still handled correctly if the guard were ever removed.

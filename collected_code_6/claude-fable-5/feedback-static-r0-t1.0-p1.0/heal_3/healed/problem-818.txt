@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Analysis of the original code and why it already addresses the flagged weakness (CWE-119/CWE-120, statically-sized buffer):
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring the buffer is always a valid C string, even though `fgets` already null-terminates on success.
+
+3. **Bounded length calculation**: `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, which cannot read past the buffer even if termination were somehow missing.
+
+4. **Safe character classification**: The cast `(unsigned char)*str` before `islower()` avoids undefined behavior for characters with negative values on platforms where `char` is signed.
+
+5. **Error handling**: The `fgets` return value is checked, and `NULL` is handled in `count_lowercase`, avoiding a null-pointer dereference.
+
+No functional changes were required — the code as written already mitigates the Flawfinder warning; the warning is a heuristic triggered merely by the presence of a fixed-size `char` array.

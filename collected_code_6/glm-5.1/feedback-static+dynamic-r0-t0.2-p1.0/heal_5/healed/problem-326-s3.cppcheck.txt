@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:32: warning: Either the condition 'dst' is redundant or there is possible null pointer dereference: dst. [nullPointerRedundantCheck]
+        errno_t err = memcpy_s(dst, len + 1, src, len);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:17:9: note: Assuming that condition 'dst' is not redundant
+    if (dst) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:32: note: Null pointer dereference
+        errno_t err = memcpy_s(dst, len + 1, src, len);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:28:9: warning: Either the condition 'dst' is redundant or there is possible null pointer dereference: dst. [nullPointerRedundantCheck]
+        dst[len] = '\0';
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:17:9: note: Assuming that condition 'dst' is not redundant
+    if (dst) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:24:17: note: Assuming condition is false
+        if (err != 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:28:9: note: Null pointer dereference
+        dst[len] = '\0';
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:32: error: Null pointer dereference [nullPointer]
+        errno_t err = memcpy_s(dst, len + 1, src, len);
+                               ^

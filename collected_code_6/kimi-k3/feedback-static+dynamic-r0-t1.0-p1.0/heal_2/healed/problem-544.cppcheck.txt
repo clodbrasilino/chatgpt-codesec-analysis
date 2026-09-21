@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-544.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-544.c:104:44: warning: Either the condition 'name_len<=49' is redundant or the array 'name[6]' is accessed at index 49, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (name_len <= NAME_MAX_LEN && name[name_len] != '\0') {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-544.c:104:21: note: Assuming that condition 'name_len<=49' is not redundant
+    while (name_len <= NAME_MAX_LEN && name[name_len] != '\0') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-544.c:104:44: note: Array index out of bounds
+    while (name_len <= NAME_MAX_LEN && name[name_len] != '\0') {
+                                           ^

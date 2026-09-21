@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-612-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-612-s3.c:102:9: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+  102 |     if (memcpy_s(lol.lists[0].data, sizeof(arr1), arr1, sizeof(arr1)) != 0) {
+      |         ^~~~~~~~
+      |         memcpy

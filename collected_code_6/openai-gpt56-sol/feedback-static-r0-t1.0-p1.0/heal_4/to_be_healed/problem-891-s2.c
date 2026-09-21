@@ -1,0 +1,144 @@
+#include <errno.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int digit_count(long long value)
+{
+    unsigned int count = 1;
+
+    while (value <= -10 || value >= 10) {
+        value /= 10;
+        ++count;
+    }
+
+    return count;
+}
+
+static bool have_same_digit_count(long long first, long long second)
+{
+    return digit_count(first) == digit_count(second);
+}
+
+static bool discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+
+    return ch == '\n';
+}
+
+static bool read_number(const char *prompt, long long *value)
+{
+    char *buffer;
+    char *end;
+    long long parsed;
+    size_t capacity = 32;
+    size_t length = 0;
+    int ch;
+
+    if (prompt == NULL || value == NULL) {
+        return false;
+    }
+
+    if (fputs(prompt, stdout) == EOF || fflush(stdout) == EOF) {
+        return false;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        discard_remaining_input();
+        return false;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        ch = getchar();
+
+        if (ch == '\n' || ch == EOF) {
+            break;
+        }
+
+        if (length == capacity - 1) {
+            char *new_buffer;
+            size_t new_capacity;
+
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                discard_remaining_input();
+                return false;
+            }
+
+            new_capacity = capacity * 2;
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                discard_remaining_input();
+                return false;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)ch;
+    }
+
+    if (ch == EOF && (ferror(stdin) || length == 0)) {
+        free(buffer);
+        return false;
+    }
+
+    buffer[length] = '\0';
+
+    errno = 0;
+    parsed = strtoll(buffer, &end, 10);
+
+    if (errno == ERANGE || end == buffer) {
+        free(buffer);
+        return false;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\r' ||
+           *end == '\f' || *end == '\v') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        free(buffer);
+        return false;
+    }
+
+    *value = parsed;
+    free(buffer);
+    return true;
+}
+
+int main(void)
+{
+    long long first;
+    long long second;
+
+    if (!read_number("Enter the first number: ", &first) ||
+        !read_number("Enter the second number: ", &second)) {
+        fputs("Invalid input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (have_same_digit_count(first, second)) {
+        puts("The numbers have the same number of digits.");
+    } else {
+        puts("The numbers do not have the same number of digits.");
+    }
+
+    return EXIT_SUCCESS;
+}

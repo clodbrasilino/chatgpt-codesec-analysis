@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:81:41: style: Condition 'result_index+copy_len>result_capacity' is always false [knownConditionTrueFalse]
+            if (result_index + copy_len > result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:75:41: note: Assuming that condition 'result_index+copy_len>=result_capacity' is not redundant
+            if (result_index + copy_len >= result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:81:41: note: Condition 'result_index+copy_len>result_capacity' is always false
+            if (result_index + copy_len > result_capacity) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:102:42: style: Condition 'result_index+remaining>result_capacity' is always false [knownConditionTrueFalse]
+            if (result_index + remaining > result_capacity) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:96:42: note: Assuming that condition 'result_index+remaining>=result_capacity' is not redundant
+            if (result_index + remaining >= result_capacity) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:102:42: note: Condition 'result_index+remaining>result_capacity' is always false
+            if (result_index + remaining > result_capacity) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-748.c:46:12: style: The scope of the variable 'cursor_offset' can be reduced. [variableScope]
+    size_t cursor_offset;
+           ^

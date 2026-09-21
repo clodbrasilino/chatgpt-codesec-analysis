@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c: In function 'strdup_custom':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-326-s3.c:23:23: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   23 |         errno_t err = memcpy_s(dst, len + 1, src, len);
+      |                       ^~~~~~~~
+      |                       memcpy

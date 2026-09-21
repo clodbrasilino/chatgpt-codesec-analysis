@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:149:22: style: Condition 'input_length!=0' is always false [knownConditionTrueFalse]
+    if (input_length != 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:130:27: note: Assignment 'input_length=0', assigned value is 0
+    size_t input_length = 0;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:135:18: note: Assuming condition is false
+    if (argc < 0 || argv == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:149:22: note: Condition 'input_length!=0' is always false
+    if (input_length != 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:160:19: style: Checking if unsigned expression 'i' is less than zero. [unsignedLessThanZero]
+    for (i = 0; i < input_length; ++i) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:130:27: note: Assignment 'input_length=0', assigned value is 0
+    size_t input_length = 0;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:135:18: note: Assuming condition is false
+    if (argc < 0 || argv == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-317-s2.c:160:19: note: Unsigned less than zero
+    for (i = 0; i < input_length; ++i) {
+                  ^

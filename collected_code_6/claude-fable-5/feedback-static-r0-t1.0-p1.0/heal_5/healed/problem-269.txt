@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the flagged weakness. The Flawfinder warning on `getchar()` (CWE-120 buffer overflow, CWE-20 improper input validation) is a low-risk, heuristic-based hit. It matters primarily when `getchar()` is used in a loop writing into a fixed-size buffer without bounds checking — that pattern does not exist here, since only a single character is read into an `int`.
+
+Key correctness points already handled, which I preserved:
+
+1. **`input` declared as `int`, not `char`** — `getchar()` returns `int` so that `EOF` can be distinguished from valid character values. Storing it in a `char` would make the `EOF` comparison unreliable.
+
+2. **Explicit `EOF` check** — satisfies CWE-20 (input validation) by handling read failure or end-of-stream before using the value.
+
+3. **`(unsigned char)` cast before `isprint()`** — passing a negative `char` value to `<ctype.h>` functions is undefined behavior; the cast prevents this.
+
+4. **`(unsigned char)` cast in `get_ascii_value()`** — guarantees a non-negative result even on platforms where plain `char` is signed.
+
+5. **`fflush(stdout)`** — ensures the prompt appears before blocking on input.
+
+No functional changes were required; the code is a correct, minimal fix for the identified findings.

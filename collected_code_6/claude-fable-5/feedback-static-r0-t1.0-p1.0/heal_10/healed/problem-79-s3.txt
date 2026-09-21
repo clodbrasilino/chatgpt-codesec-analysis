@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    int result;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    result = snprintf(buffer, sizeof(buffer), "%s", "Hello, world!");
+    if (result < 0 || (size_t)result >= sizeof(buffer)) {
+        fprintf(stderr, "Error: string truncated or encoding failure\n");
+        return 1;
+    }
+
+    printf("%s\n", buffer);
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original code is already well-hardened against the weakness flagged by Flawfinder (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). Here's why no functional changes were needed:
+
+1. **Bounded write with `snprintf`**: Instead of unsafe functions like `strcpy` or `sprintf`, the code uses `snprintf(buffer, sizeof(buffer), ...)`, which guarantees no more than `sizeof(buffer)` bytes are written, including the null terminator.
+
+2. **Truncation detection**: The return value of `snprintf` is checked correctly. A negative value indicates an encoding error, and a value `>= sizeof(buffer)` indicates the output was truncated. Both cases are handled by reporting an error and exiting with a non-zero status.
+
+3. **Correct signedness handling**: The cast `(size_t)result` is only evaluated after confirming `result >= 0`, avoiding undefined behavior from casting a negative value in the comparison (short-circuit evaluation of `||` ensures this).
+
+4. **Initialization**: `memset` zeroes the buffer before use, ensuring no uninitialized memory is ever read, even though `snprintf` would null-terminate anyway. This is defense-in-depth.
+
+5. **Use of `sizeof(buffer)`**: The buffer size is never hardcoded at the call sites, so changing `BUFFER_SIZE` cannot introduce a mismatch between the allocation and the bounds passed to `snprintf`.
+
+The Flawfinder warning is a heuristic triggered simply by the presence of a fixed-size `char` array; the surrounding code already performs the recommended bounds checking and uses a length-limiting function, so the risk is mitigated.

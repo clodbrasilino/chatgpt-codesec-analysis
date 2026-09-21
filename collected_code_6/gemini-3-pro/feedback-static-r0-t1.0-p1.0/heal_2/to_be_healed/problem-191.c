@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int has_30_days(const char *month) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char lower_month[20];
+    int i = 0;
+
+    if (month == NULL) {
+        return 0;
+    }
+
+    while (i < (int)(sizeof(lower_month) - 1) && month[i] != '\0') {
+        lower_month[i] = tolower((unsigned char)month[i]);
+        i++;
+    }
+    lower_month[i] = '\0';
+
+    if (strcmp(lower_month, "april") == 0 ||
+        strcmp(lower_month, "june") == 0 ||
+        strcmp(lower_month, "september") == 0 ||
+        strcmp(lower_month, "november") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *test_months[] = {"April", "February", "September", "january", "JUNE", NULL};
+    
+    for (int i = 0; test_months[i] != NULL; i++) {
+        if (has_30_days(test_months[i])) {
+            printf("%s has 30 days.\n", test_months[i]);
+        } else {
+            printf("%s does not have exactly 30 days.\n", test_months[i]);
+        }
+    }
+
+    return 0;
+}

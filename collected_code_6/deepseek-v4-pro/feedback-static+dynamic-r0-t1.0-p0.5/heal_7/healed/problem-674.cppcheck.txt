@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:130:56: style: Condition 'output_size>0' is always true [knownConditionTrueFalse]
+                            output_index = output_size > 0 ? output_size - 1 : 0;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:83:56: note: Assuming that condition 'output_size==0' is not redundant
+    if (input == NULL || output == NULL || output_size == 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:130:56: note: Condition 'output_size>0' is always true
+                            output_index = output_size > 0 ? output_size - 1 : 0;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:131:45: style: Condition 'output_size>0' is always true [knownConditionTrueFalse]
+                            if (output_size > 0) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:83:56: note: Assuming that condition 'output_size==0' is not redundant
+    if (input == NULL || output == NULL || output_size == 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:131:45: note: Condition 'output_size>0' is always true
+                            if (output_size > 0) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:164:37: style: Condition 'output_size>0' is always true [knownConditionTrueFalse]
+                    if (output_size > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:83:56: note: Assuming that condition 'output_size==0' is not redundant
+    if (input == NULL || output == NULL || output_size == 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:164:37: note: Condition 'output_size>0' is always true
+                    if (output_size > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:174:28: style: Condition 'output_size>0' is always true [knownConditionTrueFalse]
+    } else if (output_size > 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:83:56: note: Assuming that condition 'output_size==0' is not redundant
+    if (input == NULL || output == NULL || output_size == 0) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-674.c:174:28: note: Condition 'output_size>0' is always true
+    } else if (output_size > 0) {
+                           ^

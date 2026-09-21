@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *snake_to_camel(const char *snake_str, size_t maxlen) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(snake_str, maxlen);
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *camel_str = malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    size_t src_idx = 0;
+    size_t dst_idx = 0;
+
+    while (src_idx < len) {
+        if (snake_str[src_idx] == '_' && src_idx + 1 < len && snake_str[src_idx + 1] >= 'a' && snake_str[src_idx + 1] <= 'z') {
+            src_idx++;
+            camel_str[dst_idx++] = toupper((unsigned char)snake_str[src_idx]);
+        } else {
+            camel_str[dst_idx++] = snake_str[src_idx];
+        }
+        src_idx++;
+    }
+
+    camel_str[dst_idx] = '\0';
+
+    if (dst_idx > 0) {
+        camel_str[0] = toupper((unsigned char)camel_str[0]);
+    }
+
+    return camel_str;
+}
+
+int main(void) {
+    const char input1[] = "convert_snake_to_camel";
+    char *output1 = snake_to_camel(input1, sizeof(input1));
+    if (output1 != NULL) {
+        printf("%s -> %s\n", input1, output1);
+        free(output1);
+    }
+
+    const char input2[] = "alreadycamelcase";
+    char *output2 = snake_to_camel(input2, sizeof(input2));
+    if (output2 != NULL) {
+        printf("%s -> %s\n", input2, output2);
+        free(output2);
+    }
+
+    const char input3[] = "multiple_words_in_string";
+    char *output3 = snake_to_camel(input3, sizeof(input3));
+    if (output3 != NULL) {
+        printf("%s -> %s\n", input3, output3);
+        free(output3);
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-928.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-928.c:7:21: style: Condition 'output_size>10' is always true [knownConditionTrueFalse]
+    if (output_size > 10) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-928.c:5:56: note: Assuming that condition 'output_size<12' is not redundant
+    if (input == NULL || output == NULL || output_size < 12) return;
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-928.c:6:48: note: Assuming condition is false
+    if (strlen(input) != 10 || input[4] != '-' || input[7] != '-') return;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-928.c:7:21: note: Condition 'output_size>10' is always true
+    if (output_size > 10) {
+                    ^

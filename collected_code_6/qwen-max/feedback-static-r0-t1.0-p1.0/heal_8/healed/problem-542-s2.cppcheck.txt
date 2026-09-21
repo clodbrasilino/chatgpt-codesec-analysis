@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-542-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-542-s2.c:13:24: style: Variable 'original_str' is assigned a value that is never used. [unreadVariable]
+    char *original_str = str;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-542-s2.c:20:26: style: Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+        size_t match_len = pmatch[0].rm_eo - pmatch[0].rm_so;
+                         ^

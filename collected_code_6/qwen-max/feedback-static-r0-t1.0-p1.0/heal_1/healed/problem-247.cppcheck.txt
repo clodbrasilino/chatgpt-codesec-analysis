@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c:35:14: style: Local variable 'len' shadows outer argument [shadowArgument]
+    for (int len = 1; len <= (int)len; len++) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c:33:59: note: Shadowed declaration
+int longestPalindromicSubsequence(const char *seq, size_t len) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-247.c:35:14: note: Shadow variable
+    for (int len = 1; len <= (int)len; len++) {
+             ^

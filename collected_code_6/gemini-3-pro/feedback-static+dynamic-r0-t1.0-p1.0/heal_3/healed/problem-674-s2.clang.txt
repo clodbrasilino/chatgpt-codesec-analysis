@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-674-s2.c:119:13: warning: Although the value stored to 'read_len' is used in the enclosing expression, the value is never actually read from 'read_len' [deadcode.DeadStores]
+  119 |     while ((read_len = getline(&buffer, &capacity, stdin)) != -1) {
+      |             ^          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

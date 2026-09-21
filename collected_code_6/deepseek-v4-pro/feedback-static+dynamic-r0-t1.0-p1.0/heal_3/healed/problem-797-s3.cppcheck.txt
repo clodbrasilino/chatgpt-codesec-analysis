@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-797-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-797-s3.c:30:35: style: Condition 'half_n>0' is always true [knownConditionTrueFalse]
+            if (sum < 0 && half_n > 0) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-797-s3.c:25:20: note: Assuming condition 'half_n>0' is true
+        if (half_n > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-797-s3.c:26:19: note: Assuming condition is false
+            if (l > INT64_MAX - r) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-797-s3.c:30:35: note: Condition 'half_n>0' is always true
+            if (sum < 0 && half_n > 0) {
+                                  ^

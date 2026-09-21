@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUF_SIZE 11
+#define YEAR_BUF_SIZE 5
+#define MONTH_BUF_SIZE 3
+#define DAY_BUF_SIZE 3
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+static int copy_match(const char *input, size_t input_len,
+                      const regmatch_t *match, char *dest, size_t dest_size,
+                      size_t expected_len)
+{
+    size_t match_len;
+
+    if (input == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+
+    if ((size_t)match->rm_eo > input_len) {
+        return -1;
+    }
+
+    match_len = (size_t)(match->rm_eo - match->rm_so);
+
+    if (match_len != expected_len || match_len >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, input + match->rm_so, match_len);
+    dest[match_len] = '\0';
+
+    return 0;
+}
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    char year[YEAR_BUF_SIZE];
+    char month[MONTH_BUF_SIZE];
+    char day[DAY_BUF_SIZE];
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUF_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUF_SIZE);
+    if (input_len != DATE_BUF_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(input, input_len, &matches[1], year, sizeof(year),
+                   YEAR_BUF_SIZE - 1) != 0 ||
+        copy_match(input, input_len, &matches[2], month, sizeof(month),
+                   MONTH_BUF_SIZE - 1) != 0 ||
+        copy_match(input, input_len, &matches[3], day, sizeof(day),
+                   DAY_BUF_SIZE - 1) != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUF_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+1. **`memcpy` in `copy_match` (CWE-120)** — This is a false positive. Before the `memcpy` executes, the code validates that `match_len == expected_len` and `match_len < dest_size`, guaranteeing the destination can hold both the copied bytes and the NUL terminator. I additionally added defensive NULL/size checks on the parameters.
+
+2. **Statically-sized arrays `year`, `month`, `day`, `output` (CWE-119/CWE-120)** — Also false positives. Every write into these buffers is bounds-checked:
+   - `copy_match` receives `sizeof(...)` and rejects any match that would not fit.
+   - The regex pattern itself constrains match lengths to exactly 4, 2, and 2 digits.
+   - `snprintf` with `output_size` prevents overflow of `output`, and truncation is detected via the return value check.
+   - Input length is verified with `strnlen` bounded by `DATE_BUF_SIZE`, so unterminated or oversized input is rejected before any processing.
+
+The original code was already well-hardened; the rewrite preserves all guards, adds parameter validation in `copy_match`, and removes the analyzer comments as requested.

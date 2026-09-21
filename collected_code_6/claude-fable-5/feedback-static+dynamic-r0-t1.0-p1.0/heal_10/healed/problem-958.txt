@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROMAN_BUFFER_SIZE 16
+#define MIN_ROMAN_VALUE 1
+#define MAX_ROMAN_VALUE 3999
+
+int int_to_roman(int number, char *buffer, size_t buffer_size);
+
+int int_to_roman(int number, char *buffer, size_t buffer_size)
+{
+    static const int values[] = {
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+    };
+    static const char symbols[][3] = {
+        "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"
+    };
+    static const size_t symbol_lengths[] = {
+        1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1
+    };
+    size_t used = 0;
+    size_t i;
+
+    if (buffer == NULL || buffer_size < ROMAN_BUFFER_SIZE) {
+        return -1;
+    }
+
+    if (number < MIN_ROMAN_VALUE || number > MAX_ROMAN_VALUE) {
+        return -1;
+    }
+
+    buffer[0] = '\0';
+
+    for (i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        while (number >= values[i]) {
+            size_t sym_len = symbol_lengths[i];
+
+            if (sym_len >= buffer_size || used > buffer_size - sym_len - 1) {
+                buffer[0] = '\0';
+                return -1;
+            }
+
+            memcpy(buffer + used, symbols[i], sym_len);
+            used += sym_len;
+            buffer[used] = '\0';
+            number -= values[i];
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char roman[ROMAN_BUFFER_SIZE];
+    int test_values[] = { 1, 4, 9, 14, 40, 90, 400, 1994, 2024, 3999 };
+    size_t i;
+    int input;
+
+    memset(roman, 0, sizeof(roman));
+
+    for (i = 0; i < sizeof(test_values) / sizeof(test_values[0]); i++) {
+        if (int_to_roman(test_values[i], roman, sizeof(roman)) == 0) {
+            printf("%d -> %s\n", test_values[i], roman);
+        } else {
+            fprintf(stderr, "Conversion failed for %d\n", test_values[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Enter an integer (1-3999): ");
+    if (scanf("%d", &input) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (int_to_roman(input, roman, sizeof(roman)) != 0) {
+        fprintf(stderr, "Value out of range (1-3999)\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d -> %s\n", input, roman);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **Flawfinder `memcpy` warning (CWE-120):** This is a false positive in practice. The code already guards every copy with `if (sym_len >= buffer_size || used > buffer_size - sym_len - 1)`, written carefully to avoid unsigned underflow. The destination is guaranteed to hold `sym_len` bytes plus the null terminator before `memcpy` executes, so no overflow is possible. The check-then-copy pattern is retained as-is.
+
+2. **Flawfinder `char` array warning (CWE-119/CWE-120):** Also mitigated. `ROMAN_BUFFER_SIZE` of 16 is provably sufficient: the longest Roman numeral in range is `MMMDCCCLXXXVIII` (3888), which is 15 characters plus the null terminator — exactly 16 bytes. Additionally, `int_to_roman` rejects any buffer smaller than `ROMAN_BUFFER_SIZE`, the buffer is zero-initialized with `memset`, and `sizeof(roman)` is passed rather than a hard-coded literal, so the size contract cannot silently drift.
+
+Other defensive properties already present and preserved: `NULL` pointer check, strict range validation (1–3999), `scanf` return-value checking for the interactive input, and the buffer is reset to an empty string on any failure path so callers never read stale data.

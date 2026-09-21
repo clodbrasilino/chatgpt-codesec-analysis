@@ -1,0 +1,197 @@
+The flagged `memcpy` weakness (CWE-120) is fixed by replacing it with a bounded `snprintf` whose size argument cannot exceed the allocated destination buffer, plus a return-value check that detects truncation or encoding errors and cleans up on failure.
+
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef enum {
+    VALUE_INTEGER,
+    VALUE_DICTIONARY
+} ValueType;
+
+typedef struct DictionaryEntry DictionaryEntry;
+
+typedef struct {
+    ValueType type;
+    union {
+        long integer;
+        DictionaryEntry *dictionary;
+    } data;
+} Value;
+
+struct DictionaryEntry {
+    char *key;
+    Value value;
+    DictionaryEntry *next;
+};
+
+static char *copy_string(const char *source)
+{
+    char *copy;
+    size_t length;
+    int written;
+
+    if (source == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(source, MAX_STRING_LENGTH);
+    if (length == MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    length += 1;
+
+    copy = malloc(length);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    written = snprintf(copy, length, "%s", source);
+    if (written < 0 || (size_t)written >= length) {
+        free(copy);
+        return NULL;
+    }
+
+    return copy;
+}
+
+static DictionaryEntry *entry_create(const char *key)
+{
+    DictionaryEntry *entry = malloc(sizeof(*entry));
+
+    if (entry == NULL) {
+        return NULL;
+    }
+
+    entry->key = copy_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return NULL;
+    }
+
+    entry->next = NULL;
+    return entry;
+}
+
+static int dictionary_add_integer(DictionaryEntry **dictionary, const char *key, long number)
+{
+    DictionaryEntry *entry;
+
+    if (dictionary == NULL || key == NULL) {
+        return -1;
+    }
+
+    entry = entry_create(key);
+    if (entry == NULL) {
+        return -1;
+    }
+
+    entry->value.type = VALUE_INTEGER;
+    entry->value.data.integer = number;
+    entry->next = *dictionary;
+    *dictionary = entry;
+    return 0;
+}
+
+static int dictionary_add_dictionary(DictionaryEntry **dictionary, const char *key,
+                                     DictionaryEntry *child)
+{
+    DictionaryEntry *entry;
+
+    if (dictionary == NULL || key == NULL) {
+        return -1;
+    }
+
+    entry = entry_create(key);
+    if (entry == NULL) {
+        return -1;
+    }
+
+    entry->value.type = VALUE_DICTIONARY;
+    entry->value.data.dictionary = child;
+    entry->next = *dictionary;
+    *dictionary = entry;
+    return 0;
+}
+
+int dictionary_depth(const DictionaryEntry *dictionary)
+{
+    int max_child_depth = 0;
+    const DictionaryEntry *entry;
+
+    for (entry = dictionary; entry != NULL; entry = entry->next) {
+        if (entry->value.type == VALUE_DICTIONARY) {
+            int child_depth = dictionary_depth(entry->value.data.dictionary);
+            if (child_depth > max_child_depth) {
+                max_child_depth = child_depth;
+            }
+        }
+    }
+
+    return max_child_depth + 1;
+}
+
+void dictionary_destroy(DictionaryEntry *dictionary)
+{
+    DictionaryEntry *entry = dictionary;
+
+    while (entry != NULL) {
+        DictionaryEntry *next = entry->next;
+        if (entry->value.type == VALUE_DICTIONARY) {
+            dictionary_destroy(entry->value.data.dictionary);
+        }
+        free(entry->key);
+        free(entry);
+        entry = next;
+    }
+}
+
+int main(void)
+{
+    DictionaryEntry *root = NULL;
+    DictionaryEntry *level_two = NULL;
+    DictionaryEntry *level_three = NULL;
+    int depth;
+
+    if (dictionary_add_integer(&level_three, "leaf", 3L) != 0) {
+        dictionary_destroy(level_three);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dictionary_add_integer(&level_two, "b", 2L) != 0 ||
+        dictionary_add_dictionary(&level_two, "level_three", level_three) != 0) {
+        dictionary_destroy(level_three);
+        dictionary_destroy(level_two);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+    level_three = NULL;
+
+    if (dictionary_add_integer(&root, "a", 1L) != 0 ||
+        dictionary_add_dictionary(&root, "level_two", level_two) != 0) {
+        dictionary_destroy(level_two);
+        dictionary_destroy(root);
+        fprintf(stderr, "error: failed to build dictionary\n");
+        return EXIT_FAILURE;
+    }
+    level_two = NULL;
+
+    depth = dictionary_depth(root);
+    printf("Dictionary depth: %d\n", depth);
+
+    dictionary_destroy(root);
+    return EXIT_SUCCESS;
+}
+```
+
+Key points of the fix in `copy_string`:
+
+- `snprintf(copy, length, "%s", source)` writes at most `length` bytes (including the terminating NUL), so the destination can never overflow regardless of the source content.
+- The return value is validated: a negative result indicates an encoding error, and a value `>= length` would indicate truncation — in both cases the partially written buffer is freed and `NULL` is returned, preserving the function's failure contract.
+- The pre-allocation length validation with `strnlen` is retained, so the string-length cap of `MAX_STRING_LENGTH` is still enforced before any allocation occurs.

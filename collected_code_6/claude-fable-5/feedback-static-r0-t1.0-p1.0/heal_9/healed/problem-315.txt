@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+#define RESULT_SIZE 256
+
+int find_first_max_even_word(const char *sentence, char *result, size_t result_size)
+{
+    size_t i = 0;
+    size_t best_start = 0;
+    size_t best_len = 0;
+    int found = 0;
+    size_t j;
+
+    if (sentence == NULL || result == NULL || result_size == 0U) {
+        return -1;
+    }
+
+    while (sentence[i] != '\0') {
+        while (sentence[i] != '\0' && isspace((unsigned char)sentence[i])) {
+            i++;
+        }
+        if (sentence[i] == '\0') {
+            break;
+        }
+        {
+            size_t start = i;
+            size_t len = 0;
+            while (sentence[i] != '\0' && !isspace((unsigned char)sentence[i])) {
+                i++;
+                len++;
+            }
+            if ((len % 2U) == 0U && len > best_len) {
+                best_len = len;
+                best_start = start;
+                found = 1;
+            }
+        }
+    }
+
+    if (found == 0) {
+        return -1;
+    }
+
+    if (best_len >= result_size) {
+        return -1;
+    }
+
+    for (j = 0; j < best_len && j < result_size - 1U; j++) {
+        result[j] = sentence[best_start + j];
+    }
+    result[j] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char result[RESULT_SIZE];
+    int status;
+
+    memset(buffer, 0, sizeof(buffer));
+    memset(result, 0, sizeof(result));
+
+    printf("Enter a sentence: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Input error\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    status = find_first_max_even_word(buffer, result, sizeof(result));
+    if (status != 0) {
+        printf("No even-length word found\n");
+        return EXIT_SUCCESS;
+    }
+
+    printf("First maximum length even word: %s\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The flawfinder warnings (CWE-119/CWE-120) flagged on `buffer` and `result` are informational-level hits triggered simply by the presence of statically-sized `char` arrays. On review, the original code already implements all the mitigations the warning recommends, so no functional changes are required:
+
+1. **`buffer` is safe** — input is read exclusively via `fgets(buffer, sizeof(buffer), stdin)`, which enforces the length limit. The explicit `buffer[sizeof(buffer) - 1U] = '\0'` termination and `strcspn`-based newline stripping are both bounds-safe.
+
+2. **`result` is safe** — `find_first_max_even_word` receives the capacity via `result_size`, validates it against `NULL`/zero, rejects any word where `best_len >= result_size`, and the copy loop is double-guarded (`j < best_len && j < result_size - 1U`) with guaranteed null termination afterward.
+
+3. **No unsafe APIs** — there are no calls to `strcpy`, `strcat`, `sprintf`, `gets`, or `scanf("%s")` that could overflow either array.
+
+4. **Defensive initialization** — both arrays are zeroed with `memset` before use, so no uninitialized reads are possible even on partial writes.
+
+The warnings are therefore false positives, and the code stands as a correct, bounds-checked implementation.

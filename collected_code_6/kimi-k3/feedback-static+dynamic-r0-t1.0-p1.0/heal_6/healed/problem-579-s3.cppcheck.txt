@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:120:27: style: The comparison 'copy_size <= t1->size*sizeof(int)' is always true because 'copy_size' and 't1->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+            if (copy_size <= t1->size * sizeof(int)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:119:41: note: 'copy_size' is assigned value 't1->size*sizeof(int)' here.
+            size_t copy_size = t1->size * sizeof(int);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:120:27: note: The comparison 'copy_size <= t1->size*sizeof(int)' is always true because 'copy_size' and 't1->size*sizeof(int)' represent the same value.
+            if (copy_size <= t1->size * sizeof(int)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:128:27: style: The comparison 'copy_size <= t2->size*sizeof(int)' is always true because 'copy_size' and 't2->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+            if (copy_size <= t2->size * sizeof(int)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:127:41: note: 'copy_size' is assigned value 't2->size*sizeof(int)' here.
+            size_t copy_size = t2->size * sizeof(int);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:128:27: note: The comparison 'copy_size <= t2->size*sizeof(int)' is always true because 'copy_size' and 't2->size*sizeof(int)' represent the same value.
+            if (copy_size <= t2->size * sizeof(int)) {
+                          ^

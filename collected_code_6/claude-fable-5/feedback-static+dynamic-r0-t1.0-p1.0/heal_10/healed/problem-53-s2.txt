@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    if (len == 0 || buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120), which is a static-analysis heuristic that flags *any* fixed-size `char` array regardless of how it is used. The mitigations already in place are:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits reads to the buffer size, so no overflow is possible on input.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive (technically redundant with `fgets`, but harmless) explicit NUL termination.
+3. **Bounded length calculation:** `strnlen` is used instead of `strlen`, so even a non-terminated buffer cannot cause an out-of-bounds read.
+4. **Defensive API design:** `first_last_equal` validates for `NULL`, zero `max_len`, empty strings, and the `len == max_len` case (unterminated buffer), avoiding any out-of-bounds access before touching `str[0]` or `str[len - 1]`.
+5. **Error handling:** the `fgets` return value is checked, and empty input is handled explicitly.
+
+The only functional change in the rewrite is checking the return value of `fflush(stdout)`, closing a minor unchecked-return-value gap. The Flawfinder finding is a false positive here; the buffer usage is bounds-safe throughout.

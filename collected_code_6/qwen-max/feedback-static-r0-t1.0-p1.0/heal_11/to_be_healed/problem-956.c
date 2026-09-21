@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *size) {
+    regex_t regex;
+    regmatch_t match[1];
+    int count = 0, p = 0;
+
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        count++;
+        p += match[0].rm_eo;
+    }
+    *size = count + 1;
+
+    *result = (char **)malloc((*size) * sizeof(char *));
+    for (int i = 0; i < *size; i++) {
+        (*result)[i] = NULL;
+    }
+
+    p = 0;
+    int i = 0;
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        size_t len = match[0].rm_so - p;
+        (*result)[i] = (char *)malloc((len + 1) * sizeof(char));
+        snprintf((*result)[i], len + 1, "%.*s", (int)len, input + p);
+        p += match[0].rm_eo;
+        i++;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    const char *end = input + strlen(input);
+    size_t len = end - (input + p);
+    (*result)[i] = (char *)malloc((len + 1) * sizeof(char));
+    snprintf((*result)[i], len + 1, "%.*s", (int)len, input + p);
+
+    regfree(&regex);
+}
+
+void free_result(char ***result, int size) {
+    for (int i = 0; i < size; i++) {
+        free((*result)[i]);
+    }
+    free(*result);
+}
+
+int main() {
+    const char *input = "ThisIsAStringToSplitAtUppercaseLetters";
+    char **result = NULL;
+    int size;
+
+    split_string_at_uppercase(input, &result, &size);
+
+    for (int i = 0; i < size; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_result(&result, size);
+    return 0;
+}

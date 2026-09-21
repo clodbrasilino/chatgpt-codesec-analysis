@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-674-s2.c:52:36: error: call to undeclared function 'Max'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   52 |             strncat(result, token, Max(MAX_WORD_LENGTH - 1, sizeof(result) - strlen(result) - 2));
+      |                                    ^
+1 error generated.

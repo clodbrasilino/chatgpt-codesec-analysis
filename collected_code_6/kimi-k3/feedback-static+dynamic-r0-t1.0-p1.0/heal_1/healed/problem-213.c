@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} StringTuple;
+
+StringTuple* concatenate_tuples(const StringTuple *tuple1, const StringTuple *tuple2) {
+    if (tuple1 == NULL || tuple2 == NULL || 
+        tuple1->first == NULL || tuple1->second == NULL ||
+        tuple2->first == NULL || tuple2->second == NULL) {
+        return NULL;
+    }
+
+    size_t len1 = strnlen(tuple1->first, SIZE_MAX / 2);
+    size_t len2 = strnlen(tuple1->second, SIZE_MAX / 2);
+    size_t len3 = strnlen(tuple2->first, SIZE_MAX / 2);
+    size_t len4 = strnlen(tuple2->second, SIZE_MAX / 2);
+
+    if (len1 > SIZE_MAX - len3 - 1 || len2 > SIZE_MAX - len4 - 1) {
+        return NULL;
+    }
+
+    StringTuple *result = malloc(sizeof(StringTuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->first = malloc(len1 + len3 + 1);
+    if (result->first == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->second = malloc(len2 + len4 + 1);
+    if (result->second == NULL) {
+        free(result->first);
+        free(result);
+        return NULL;
+    }
+
+    snprintf(result->first, len1 + len3 + 1, "%s%s", tuple1->first, tuple2->first);
+    snprintf(result->second, len2 + len4 + 1, "%s%s", tuple1->second, tuple2->second);
+
+    return result;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->first);
+        free(tuple->second);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    StringTuple tuple1 = {"Hello", "World"};
+    StringTuple tuple2 = {"Foo", "Bar"};
+    
+    StringTuple *result = concatenate_tuples(&tuple1, &tuple2);
+    
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to concatenate tuples\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("First: %s\n", result->first);
+    printf("Second: %s\n", result->second);
+    
+    free_tuple(result);
+    
+    return EXIT_SUCCESS;
+}

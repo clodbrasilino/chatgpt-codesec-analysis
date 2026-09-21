@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define URL_PATTERN "^(https?|ftp)://[A-Za-z0-9.-]+(\\.[A-Za-z]{2,})(:[0-9]{1,5})?(/[A-Za-z0-9._~:/?#@!$&'()*+,;=%-]*)?$"
+#define MAX_URL_LEN 2048
+
+static void print_regex_error(int errcode, const regex_t *regex)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    if (needed == 0) {
+        fprintf(stderr, "Regex compilation failed: unknown error\n");
+        return;
+    }
+
+    errbuf = calloc(needed, sizeof(char));
+    if (errbuf == NULL) {
+        fprintf(stderr, "Regex compilation failed: unable to allocate error buffer\n");
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+    free(errbuf);
+}
+
+static int compile_url_regex(regex_t *regex)
+{
+    int ret;
+
+    if (regex == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(regex, URL_PATTERN, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        print_regex_error(ret, regex);
+        return -1;
+    }
+    return 0;
+}
+
+static int is_valid_url(const regex_t *regex, const char *url)
+{
+    int ret;
+    size_t len;
+
+    if (regex == NULL || url == NULL) {
+        return 0;
+    }
+
+    len = strnlen(url, MAX_URL_LEN + 1);
+    if (len == 0 || len > MAX_URL_LEN) {
+        return 0;
+    }
+
+    ret = regexec(regex, url, 0, NULL, 0);
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    regex_t regex;
+    const char *test_urls[] = {
+        "https://www.example.com",
+        "http://example.com/path/to/page?query=value",
+        "ftp://files.example.org:2121/downloads",
+        "https://sub.domain.co.uk/index.html",
+        "not_a_url",
+        "http://",
+        "www.example.com",
+        "https://example",
+        ""
+    };
+    size_t count = sizeof(test_urls) / sizeof(test_urls[0]);
+    size_t i;
+
+    if (compile_url_regex(&regex) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        int result = is_valid_url(&regex, test_urls[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error while validating URL: %s\n", test_urls[i]);
+            regfree(&regex);
+            return EXIT_FAILURE;
+        }
+        printf("%-60s : %s\n", test_urls[i], result == 1 ? "VALID" : "INVALID");
+        fflush(stdout);
+    }
+
+    regfree(&regex);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char errbuf[ERRBUF_LEN]` array. While the original code was actually already safe (it passed `sizeof(errbuf) - 1` to `regerror` and null-terminated defensively), the rewrite eliminates the concern entirely by:
+
+1. **Dynamic sizing**: Calling `regerror(errcode, regex, NULL, 0)` first to query the exact buffer size required, then allocating precisely that amount with `calloc` (which also zero-initializes, removing the need for `memset`).
+2. **Guaranteed termination**: Explicitly null-terminating the last byte as defense-in-depth, and handling allocation failure gracefully.
+3. **No truncation risk**: Since the buffer is sized to fit the full error message, no message truncation or bounds issue can occur regardless of the message length.
+
+The rest of the code retains its already-sound defensive practices: `strnlen` with an explicit bound to avoid unbounded reads, NULL-pointer checks in `is_valid_url`, distinct handling of `REG_NOMATCH` versus genuine `regexec` failures, and consistent `regfree` on all exit paths to prevent resource leaks.

@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_whitespace(const char *input, size_t max_length)
+{
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    size_t length = strnlen(input, max_length);
+    char *result = malloc(length + 1);
+
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    size_t write_index = 0;
+
+    for (size_t read_index = 0; read_index < length; read_index++)
+    {
+        if (!isspace((unsigned char)input[read_index]))
+        {
+            result[write_index] = input[read_index];
+            write_index++;
+        }
+    }
+
+    result[write_index] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t buffer_size = 0;
+    ssize_t length;
+
+    printf("Enter a string: ");
+    length = getline(&input, &buffer_size, stdin);
+    if (length == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    char *cleaned = remove_whitespace(input, (size_t)length + 1);
+    if (cleaned == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %s\n", cleaned);
+    free(cleaned);
+    free(input);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_SIZE 1024
+
+unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return 0ULL;
+    }
+
+    len = strnlen(str, max_len);
+
+    return ((unsigned long long)len * (unsigned long long)(len + 1U)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+    char *newline;
+    unsigned long long result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    printf("Number of non-empty substrings: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and why it is already safe:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk, informational flag. The code already mitigates every path where that buffer could be misused:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` never writes more than `MAX_INPUT_SIZE - 1` characters plus a null terminator, so no overflow is possible on input.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy; `fgets` already null-terminates, but this makes the invariant explicit and protects against future refactoring to non-terminating read functions.
+
+3. **Bounded string measurement** — `count_substrings` uses `strnlen(str, max_len)` instead of `strlen`, so even if a non-terminated buffer were ever passed in, the scan cannot run past `max_len` bytes.
+
+4. **NULL check** — the function guards against a `NULL` pointer before dereferencing.
+
+5. **Overflow-safe arithmetic** — the substring count `len * (len + 1) / 2` is computed in `unsigned long long`. With `len ≤ 1023`, the maximum value (~523,776) is nowhere near overflow, and the explicit casts prevent any intermediate truncation.
+
+6. **Error handling** — the `fgets` return value is checked, and failure exits with `EXIT_FAILURE` and a diagnostic on `stderr`.
+
+No functional changes were required — the identified weakness was already fully addressed, so the rewrite simply strips the comments as requested.

@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+int move_numbers_to_end(char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *digits;
+    char *others;
+    size_t dcount;
+    size_t ocount;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len == 0U) {
+        return 0;
+    }
+
+    digits = (char *)malloc(len + 1U);
+    if (digits == NULL) {
+        return -1;
+    }
+
+    others = (char *)malloc(len + 1U);
+    if (others == NULL) {
+        free(digits);
+        return -1;
+    }
+
+    dcount = 0U;
+    ocount = 0U;
+
+    for (i = 0U; i < len; i++) {
+        if (isdigit((unsigned char)str[i]) != 0) {
+            digits[dcount] = str[i];
+            dcount++;
+        } else {
+            others[ocount] = str[i];
+            ocount++;
+        }
+    }
+
+    for (i = 0U; i < ocount; i++) {
+        str[i] = others[i];
+    }
+
+    for (j = 0U; j < dcount; j++) {
+        str[ocount + j] = digits[j];
+    }
+
+    str[len] = '\0';
+
+    free(digits);
+    free(others);
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[] = "a1b2c3d4e5";
+    int result;
+
+    result = move_numbers_to_end(input, sizeof(input));
+    if (result != 0) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", input) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-126 mitigation (`strlen` over-read):** Replaced `strlen()` with `strnlen()`, which bounds the scan to a caller-supplied maximum. If no null terminator is found within `max_len` bytes (`len >= max_len`), the function safely rejects the input with `-1` instead of reading past the buffer.
+
+2. **API change:** The function now takes an explicit `max_len` parameter so the caller communicates the actual buffer size. In `main`, `sizeof(input)` is passed, which is correct since `input` is a true array (not a decayed pointer) at that point.
+
+3. **Everything else preserved:** The original code was already solid in other respects — `malloc` results are checked, `isdigit` receives an `unsigned char` cast (avoiding UB for negative `char` values), memory is freed on all paths, and the output string is explicitly null-terminated. The write of `str[len]` is safe because `len < max_len` is guaranteed by the new bounds check.

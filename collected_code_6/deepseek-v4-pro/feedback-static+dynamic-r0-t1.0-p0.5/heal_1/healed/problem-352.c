@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool all_unique_chars(const char *str) {
+    if (str == NULL) {
+        return true;
+    }
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        for (size_t j = i + 1; str[j] != '\0'; j++) {
+            if (str[i] == str[j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "abcdef";
+    const char *test2 = "hello";
+    const char *test3 = "";
+    const char *test4 = "a";
+    const char *test5 = "abca";
+
+    printf("%s: %s\n", test1, all_unique_chars(test1) ? "unique" : "not unique");
+    printf("%s: %s\n", test2, all_unique_chars(test2) ? "unique" : "not unique");
+    printf("%s: %s\n", test3, all_unique_chars(test3) ? "unique" : "not unique");
+    printf("%s: %s\n", test4, all_unique_chars(test4) ? "unique" : "not unique");
+    printf("%s: %s\n", test5, all_unique_chars(test5) ? "unique" : "not unique");
+
+    return 0;
+}

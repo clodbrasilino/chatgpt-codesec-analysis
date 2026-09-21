@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:52:21: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+        if (key_len >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:51:26: note: dest_size is assigned 'key_len+1' here.
+        size_t dest_size = key_len + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:52:21: note: Condition 'key_len>=dest_size' is always false
+        if (key_len >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:107:25: style: Condition 'key_len>=dest_size' is always false [knownConditionTrueFalse]
+            if (key_len >= dest_size) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:106:30: note: dest_size is assigned 'key_len+1' here.
+            size_t dest_size = key_len + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-833.c:107:25: note: Condition 'key_len>=dest_size' is always false
+            if (key_len >= dest_size) {
+                        ^

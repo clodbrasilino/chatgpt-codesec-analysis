@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c:130:21: style: Condition 'raw_end<=raw_start' is always true [knownConditionTrueFalse]
+            raw_end <= raw_start) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c:120:25: note: Assuming that condition 'match.rm_eo<match.rm_so' is not redundant
+            match.rm_eo < match.rm_so) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c:125:29: note: raw_start is assigned '(unsigned long)match.rm_so' here.
+        uintmax_t raw_start = (uintmax_t)match.rm_so;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c:126:29: note: Assignment 'raw_end=(unsigned long)match.rm_eo', assigned value is less than symbolic=raw_start-1
+        uintmax_t raw_end = (uintmax_t)match.rm_eo;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-73-s2.c:130:21: note: Condition 'raw_end<=raw_start' is always true
+            raw_end <= raw_start) {
+                    ^

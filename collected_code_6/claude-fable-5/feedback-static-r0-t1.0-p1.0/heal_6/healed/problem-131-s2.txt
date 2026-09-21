@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_vowel(char c)
+{
+    switch (c) {
+    case 'a': case 'e': case 'i': case 'o': case 'u':
+    case 'A': case 'E': case 'I': case 'O': case 'U':
+        return true;
+    default:
+        return false;
+    }
+}
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    while ((i < max_len) && (s[i] != '\0')) {
+        i++;
+    }
+
+    return i;
+}
+
+static int reverse_vowels(char *s, size_t max_len)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+    char tmp;
+
+    if (s == NULL) {
+        return -1;
+    }
+
+    len = bounded_strlen(s, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len < 2U) {
+        return 0;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        while ((left < right) && (!is_vowel(s[left]))) {
+            left++;
+        }
+        while ((left < right) && (!is_vowel(s[right]))) {
+            right--;
+        }
+        if (left < right) {
+            tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+            left++;
+            right--;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = bounded_strlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (reverse_vowels(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The identified weakness (CWE-119/CWE-120, statically-sized buffer) is already mitigated in this code through the following measures, which are preserved in the rewrite:
+
+1. **Bounded input reading**: `fgets` is called with `sizeof(buffer)`, guaranteeing no more than `BUFFER_SIZE - 1` characters are written plus the null terminator.
+2. **Forced null termination**: `buffer[sizeof(buffer) - 1U] = '\0'` guarantees termination even in edge cases.
+3. **Bounded length computation**: `bounded_strlen` never reads past `max_len`, avoiding out-of-bounds reads on non-terminated strings.
+4. **Defensive checks in `reverse_vowels`**: NULL pointer check, rejection of unterminated strings (`len >= max_len`), and `size_t` index arithmetic guarded against underflow (`len < 2U` early return before computing `len - 1U`).
+5. **Buffer initialization**: `memset` zeroes the buffer before use, preventing use of uninitialized memory.
+
+No further changes were required, as all buffer accesses are provably within bounds.

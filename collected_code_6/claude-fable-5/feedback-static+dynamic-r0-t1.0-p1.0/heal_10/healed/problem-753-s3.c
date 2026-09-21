@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define NAME_MAX_LEN 32U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int score;
+} Record;
+
+static int compare_records(const void *a, const void *b)
+{
+    const Record *ra = (const Record *)a;
+    const Record *rb = (const Record *)b;
+
+    if (ra->score < rb->score) {
+        return -1;
+    }
+    if (ra->score > rb->score) {
+        return 1;
+    }
+    return 0;
+}
+
+static int set_record(Record *record, const char *name, int score)
+{
+    size_t name_len;
+
+    if (record == NULL || name == NULL) {
+        return -1;
+    }
+
+    name_len = strnlen(name, sizeof(record->name));
+    if (name_len >= sizeof(record->name)) {
+        return -1;
+    }
+
+    memcpy(record->name, name, name_len);
+    record->name[name_len] = '\0';
+    record->score = score;
+
+    return 0;
+}
+
+static Record *find_min_k_records(const Record *records, size_t count, size_t k)
+{
+    Record *sorted = NULL;
+    Record *result = NULL;
+    size_t total_size;
+    size_t result_size;
+
+    if (records == NULL || count == 0U || k == 0U || k > count) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(Record)) {
+        return NULL;
+    }
+
+    total_size = count * sizeof(Record);
+    result_size = k * sizeof(Record);
+
+    if (result_size > total_size) {
+        return NULL;
+    }
+
+    sorted = malloc(total_size);
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    memcpy(sorted, records, total_size);
+    qsort(sorted, count, sizeof(Record), compare_records);
+
+    result = malloc(result_size);
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    memcpy(result, sorted, result_size);
+    free(sorted);
+
+    return result;
+}
+
+int main(void)
+{
+    Record records[6];
+    size_t count = sizeof(records) / sizeof(records[0]);
+    size_t k = 3U;
+    size_t i;
+    Record *min_records = NULL;
+
+    if (set_record(&records[0], "Alice", 85) != 0 ||
+        set_record(&records[1], "Bob", 42) != 0 ||
+        set_record(&records[2], "Carol", 91) != 0 ||
+        set_record(&records[3], "Dave", 27) != 0 ||
+        set_record(&records[4], "Eve", 63) != 0 ||
+        set_record(&records[5], "Frank", 55) != 0) {
+        fprintf(stderr, "Failed to initialize records\n");
+        return EXIT_FAILURE;
+    }
+
+    min_records = find_min_k_records(records, count, k);
+    if (min_records == NULL) {
+        fprintf(stderr, "Failed to find minimum records\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum %zu records:\n", k);
+    for (i = 0U; i < k; i++) {
+        printf("%s: %d\n", min_records[i].name, min_records[i].score);
+    }
+
+    free(min_records);
+    return EXIT_SUCCESS;
+}

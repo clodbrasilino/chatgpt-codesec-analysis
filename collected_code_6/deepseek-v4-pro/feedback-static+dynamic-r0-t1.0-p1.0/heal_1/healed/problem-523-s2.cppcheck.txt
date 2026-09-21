@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s2.c:21:29: style: Condition 'len>max_len' is always false [knownConditionTrueFalse]
+    if (*ptr != '\0' && len > max_len) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s2.c:17:30: note: Assuming that condition 'len>max_len' is not redundant
+    if (len < min_len || len > max_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-523-s2.c:21:29: note: Condition 'len>max_len' is always false
+    if (*ptr != '\0' && len > max_len) {
+                            ^

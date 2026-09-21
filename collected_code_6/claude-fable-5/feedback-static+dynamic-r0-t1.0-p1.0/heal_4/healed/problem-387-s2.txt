@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 128
+#define MAX_FLUSH_ITERATIONS 4096
+
+int is_valid_hex(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t start = 0;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len >= max_len) {
+        return 0;
+    }
+
+    if (len > 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+        start = 2;
+    }
+
+    if (start >= len) {
+        return 0;
+    }
+
+    for (i = start; i < len; i++) {
+        if (!isxdigit((unsigned char)str[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int hex_is_even(const char *hex_str, size_t max_len)
+{
+    size_t len;
+    char last;
+    int digit_value;
+
+    if (hex_str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(hex_str, max_len);
+    if (len == 0 || len >= max_len) {
+        return 0;
+    }
+
+    last = hex_str[len - 1];
+
+    if (last >= '0' && last <= '9') {
+        digit_value = last - '0';
+    } else if (last >= 'a' && last <= 'f') {
+        digit_value = last - 'a' + 10;
+    } else if (last >= 'A' && last <= 'F') {
+        digit_value = last - 'A' + 10;
+    } else {
+        return 0;
+    }
+
+    return (digit_value % 2) == 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t iterations = 0;
+
+    do {
+        ch = getchar();
+        iterations++;
+    } while (ch != '\n' && ch != EOF && iterations < MAX_FLUSH_ITERATIONS);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!is_valid_hex(buffer, sizeof(buffer))) {
+        fprintf(stderr, "Invalid hexadecimal number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (hex_is_even(buffer, sizeof(buffer))) {
+        printf("%s is even\n", buffer);
+    } else {
+        printf("%s is odd\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `getchar` warning in `flush_stdin` (CWE-120, CWE-20):** This is a false positive in practice. The loop never stores the character into a buffer, so no overflow is possible. Additionally, the loop is bounded by `MAX_FLUSH_ITERATIONS`, terminating on `\n`, `EOF`, or the iteration cap — this prevents an unbounded loop on a stream that never delivers a newline (e.g., a closed pipe). No change required.
+
+**2. Flawfinder `char buffer[MAX_INPUT_LEN]` warning (CWE-119/CWE-120):** The statically-sized buffer is properly protected:
+
+- Input is read with `fgets(buffer, sizeof(buffer), stdin)`, which limits the read to `sizeof(buffer) - 1` bytes and always null-terminates.
+- The buffer is zeroed with `memset` before use, and `buffer[sizeof(buffer) - 1] = '\0'` provides defense-in-depth termination.
+- All string length operations use `strnlen` with an explicit bound rather than `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+- Truncated (over-long) input is detected via the missing trailing newline check, the remaining stream data is drained with `flush_stdin`, and the program exits with an error rather than processing partial input.
+- `is_valid_hex` and `hex_is_even` both validate `NULL` pointers, zero-length input, and enforce their `max_len` bound, and character classification uses `isxdigit((unsigned char)...)` to avoid undefined behavior on negative `char` values.
+
+The code as written already mitigates both reported weaknesses; the rewrite above preserves those mitigations with the advisory comments removed.

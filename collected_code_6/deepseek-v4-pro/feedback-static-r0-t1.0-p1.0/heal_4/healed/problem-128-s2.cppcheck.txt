@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-128-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-128-s2.c:49:30: style: The comparison 'copy_len > full_len' is always false because 'copy_len' and 'full_len' represent the same value. [knownConditionTrueFalse]
+                if (copy_len > full_len) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-128-s2.c:48:35: note: 'copy_len' is assigned value 'bounded_len' here.
+                size_t copy_len = bounded_len;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-128-s2.c:38:35: note: 'full_len' is assigned value 'bounded_len' here.
+                size_t full_len = bounded_len;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-128-s2.c:49:30: note: The comparison 'copy_len > full_len' is always false because 'copy_len' and 'full_len' represent the same value.
+                if (copy_len > full_len) {
+                             ^

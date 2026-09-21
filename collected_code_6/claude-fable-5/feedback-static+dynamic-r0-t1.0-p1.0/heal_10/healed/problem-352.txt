@@ -1,0 +1,78 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and why the flagged weakness is already mitigated:
+
+**The Flawfinder warning (CWE-119/CWE-120)** on `char buffer[BUFFER_SIZE]` is a low-risk, informational hit. Statically-sized buffers are only dangerous when writes to them are unbounded. Here, every operation touching `buffer` is properly bounded:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — bounded read; `fgets` writes at most `sizeof(buffer) - 1` characters plus a NUL terminator. Using `sizeof(buffer)` rather than a repeated magic number means the bound stays correct even if `BUFFER_SIZE` changes.
+
+2. **Return value of `fgets` is checked** — EOF or read errors are handled instead of processing an indeterminate buffer.
+
+3. **Defensive NUL termination** — `buffer[sizeof(buffer) - 1] = '\0';` is redundant after `fgets` but harmless and protects against future refactoring to a non-terminating read function.
+
+4. **Newline stripping via `strcspn`** — this idiom is safe even when no newline is present (it writes to the position of the existing NUL terminator), unlike the classic buggy `buffer[strlen(buffer) - 1] = '\0'` which underflows on an empty string.
+
+5. **`strnlen` instead of `strlen`** in `all_chars_unique` — length computation is bounded by `max_len`, so even a non-terminated buffer passed by a future caller cannot cause an out-of-bounds read.
+
+6. **NULL check on `str`** — guards against a NULL-pointer dereference.
+
+7. **`(unsigned char)` cast before indexing `seen[]`** — critical correctness detail: plain `char` may be signed, and indexing an array with a negative value (e.g., bytes ≥ 0x80 in the input) would be undefined behavior. The cast confines indices to 0–255, matching the array size of 256.
+
+8. **`memset` initialization** — ensures the buffer contains no stale stack data before use.
+
+The code as given already follows bounds-checked, defensive C practices; no functional changes were required, so the rewrite preserves the logic with the comments removed as requested.

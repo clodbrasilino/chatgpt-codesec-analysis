@@ -1,0 +1,277 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+typedef struct {
+    int id;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[50];
+    int times;
+} Record;
+
+typedef struct {
+    int count;
+    int capacity;
+    int *values;
+} IntArray;
+
+typedef struct {
+    int *items;
+    int count;
+    int capacity;
+} RecordMap;
+
+void init_int_array(IntArray *arr) {
+    if (arr == NULL) {
+        return;
+    }
+    arr->count = 0;
+    arr->capacity = 4;
+    arr->values = (int*)malloc((size_t)arr->capacity * sizeof(int));
+    if (arr->values == NULL) {
+        exit(EXIT_FAILURE);
+    }
+}
+
+void free_int_array(IntArray *arr) {
+    if (arr == NULL) {
+        return;
+    }
+    free(arr->values);
+    arr->values = NULL;
+    arr->count = 0;
+    arr->capacity = 0;
+}
+
+int append_int(IntArray *arr, int value) {
+    if (arr == NULL) {
+        return -1;
+    }
+    if (arr->count >= arr->capacity) {
+        size_t new_capacity = (size_t)arr->capacity * 2;
+        if (new_capacity > (size_t)INT_MAX / sizeof(int)) {
+            return -1;
+        }
+        int *temp = (int*)realloc(arr->values, new_capacity * sizeof(int));
+        if (temp == NULL) {
+            return -1;
+        }
+        arr->values = temp;
+        arr->capacity = (int)new_capacity;
+    }
+    arr->values[arr->count++] = value;
+    return 0;
+}
+
+void init_record_map(RecordMap *map) {
+    if (map == NULL) {
+        return;
+    }
+    map->count = 0;
+    map->capacity = 8;
+    map->items = (int*)calloc((size_t)map->capacity, sizeof(int));
+    if (map->items == NULL) {
+        exit(EXIT_FAILURE);
+    }
+}
+
+void free_record_map(RecordMap *map) {
+    if (map == NULL) {
+        return;
+    }
+    free(map->items);
+    map->items = NULL;
+    map->count = 0;
+    map->capacity = 0;
+}
+
+int insert_record_map(RecordMap *map, int value) {
+    if (map == NULL) {
+        return -1;
+    }
+    if (map->count >= map->capacity) {
+        size_t new_capacity = (size_t)map->capacity * 2;
+        if (new_capacity > (size_t)INT_MAX / sizeof(int)) {
+            return -1;
+        }
+        int *temp = (int*)realloc(map->items, new_capacity * sizeof(int));
+        if (temp == NULL) {
+            return -1;
+        }
+        map->items = temp;
+        map->capacity = (int)new_capacity;
+    }
+    map->items[map->count++] = value;
+    return 0;
+}
+
+int find_record_map(const RecordMap *map, int value) {
+    if (map == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < map->count; i++) {
+        if (map->items[i] == value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void find_similar_time_records(Record *records, int n, IntArray *result) {
+    RecordMap *unique_counts = NULL;
+    int *freq = NULL;
+    int unique_count = 0;
+    
+    if (records == NULL || result == NULL || n <= 0) {
+        if (result != NULL) {
+            result->count = 0;
+            free(result->values);
+            result->values = NULL;
+            result->capacity = 0;
+        }
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        size_t name_len = strnlen(records[i].name, sizeof(records[i].name));
+        if (name_len >= sizeof(records[i].name)) {
+            records[i].name[sizeof(records[i].name) - 1] = '\0';
+        }
+    }
+    
+    unique_counts = (RecordMap*)malloc(sizeof(RecordMap));
+    if (unique_counts == NULL) {
+        result->count = 0;
+        free(result->values);
+        result->values = NULL;
+        result->capacity = 0;
+        return;
+    }
+    init_record_map(unique_counts);
+    
+    for (int i = 0; i < n; i++) {
+        int occurrences = records[i].times;
+        if (find_record_map(unique_counts, occurrences) == -1) {
+            if (insert_record_map(unique_counts, occurrences) != 0) {
+                free_record_map(unique_counts);
+                free(unique_counts);
+                result->count = 0;
+                free(result->values);
+                result->values = NULL;
+                result->capacity = 0;
+                return;
+            }
+        }
+    }
+    
+    unique_count = unique_counts->count;
+    if (unique_count == 0) {
+        free_record_map(unique_counts);
+        free(unique_counts);
+        result->count = 0;
+        result->capacity = 0;
+        free(result->values);
+        result->values = NULL;
+        return;
+    }
+    
+    freq = (int*)calloc((size_t)unique_count, sizeof(int));
+    if (freq == NULL) {
+        free_record_map(unique_counts);
+        free(unique_counts);
+        result->count = 0;
+        free(result->values);
+        result->values = NULL;
+        result->capacity = 0;
+        return;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        int idx = find_record_map(unique_counts, records[i].times);
+        if (idx >= 0 && idx < unique_count) {
+            freq[idx]++;
+        }
+    }
+    
+    free(result->values);
+    result->count = 0;
+    result->capacity = 4;
+    result->values = (int*)malloc((size_t)result->capacity * sizeof(int));
+    if (result->values == NULL) {
+        free(freq);
+        free_record_map(unique_counts);
+        free(unique_counts);
+        return;
+    }
+    
+    for (int i = 0; i < unique_count; i++) {
+        int current_freq = freq[i];
+        int has_match = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (i != j && freq[j] == current_freq) {
+                has_match = 1;
+                break;
+            }
+        }
+        if (has_match) {
+            for (int k = 0; k < n; k++) {
+                if (records[k].times == unique_counts->items[i]) {
+                    if (result->count >= result->capacity) {
+                        size_t new_capacity = (size_t)result->capacity * 2;
+                        if (new_capacity > (size_t)INT_MAX / sizeof(int)) {
+                            free(freq);
+                            free_record_map(unique_counts);
+                            free(unique_counts);
+                            free_int_array(result);
+                            return;
+                        }
+                        int *temp = (int*)realloc(result->values, new_capacity * sizeof(int));
+                        if (temp == NULL) {
+                            free(freq);
+                            free_record_map(unique_counts);
+                            free(unique_counts);
+                            free_int_array(result);
+                            return;
+                        }
+                        result->values = temp;
+                        result->capacity = (int)new_capacity;
+                    }
+                    result->values[result->count++] = records[k].id;
+                }
+            }
+        }
+    }
+    
+    free(freq);
+    free_record_map(unique_counts);
+    free(unique_counts);
+}
+
+int main(void) {
+    Record records[] = {
+        {1, "alpha", 3},
+        {2, "beta", 3},
+        {3, "gamma", 5},
+        {4, "delta", 5},
+        {5, "epsilon", 3},
+        {6, "zeta", 7}
+    };
+    int n = (int)(sizeof(records) / sizeof(records[0]));
+    IntArray result;
+    
+    init_int_array(&result);
+    find_similar_time_records(records, n, &result);
+    
+    printf("Records with similar occurrence times: ");
+    for (int i = 0; i < result.count; i++) {
+        printf("%d ", result.values[i]);
+    }
+    printf("\n");
+    
+    free_int_array(&result);
+    
+    return 0;
+}

@@ -1,0 +1,29 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c: In function 'create_list_of_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:64:34: error: invalid type argument of '->' (have 'ListOfLists')
+   64 |                         free(list->sublists[k].strings[j]);
+      |                                  ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:86:30: error: invalid type argument of '->' (have 'ListOfLists')
+   86 |                     free(list->sublists[i].strings[l]);
+      |                              ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:88:26: error: invalid type argument of '->' (have 'ListOfLists')
+   88 |                 free(list->sublists[i].strings);
+      |                          ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:94:38: error: invalid type argument of '->' (have 'ListOfLists')
+   94 |                             free(list->sublists[k].strings[m]);
+      |                                      ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:96:34: error: invalid type argument of '->' (have 'ListOfLists')
+   96 |                         free(list->sublists[k].strings);
+      |                                  ^~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:105:28: error: invalid type argument of '->' (have 'ListOfLists')
+  105 |                 memcpy(list->sublists[i].strings[j], buffer, len + 1);
+      |                            ^~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/secure/_stdio.h:32,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:522,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:1:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-104-s2.c:105:28: error: invalid type argument of '->' (have 'ListOfLists')
+  105 |                 memcpy(list->sublists[i].strings[j], buffer, len + 1);
+      |                            ^~

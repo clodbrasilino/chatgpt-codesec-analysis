@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-537.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-537.c:129:34: style: Condition 'word_len>0' is always true [knownConditionTrueFalse]
+                    if (word_len > 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-537.c:122:29: note: Assuming condition 'word_len>0' is true
+        } else if (word_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-537.c:129:34: note: Condition 'word_len>0' is always true
+                    if (word_len > 0) {
+                                 ^

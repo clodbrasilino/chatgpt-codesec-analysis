@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c:60:59: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+        if (p + match.rm_so + len <= p + strlen(p) && len > 0) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c:50:17: note: Assuming that condition 'len<=0' is not redundant
+        if (len <= 0 || len > MAX_WORD_LEN) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c:55:13: note: Assuming condition is false
+        if (!word) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c:60:59: note: Condition 'len>0' is always true
+        if (p + match.rm_so + len <= p + strlen(p) && len > 0) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-330-s3.c:82:19: style: Variable 'input_len' is assigned a value that is never used. [unreadVariable]
+        input_len = strlen(input);
+                  ^

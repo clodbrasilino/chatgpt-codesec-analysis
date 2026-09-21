@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:99:27: style: Condition 'remaining_len>0' is always true [knownConditionTrueFalse]
+        if (remaining_len > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:89:23: note: Assuming that condition 'remaining_len>0' is not redundant
+    if (remaining_len > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:91:26: note: Assuming condition is false
+        if (result[size] == NULL) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-73-s3.c:99:27: note: Condition 'remaining_len>0' is always true
+        if (remaining_len > 0) {
+                          ^

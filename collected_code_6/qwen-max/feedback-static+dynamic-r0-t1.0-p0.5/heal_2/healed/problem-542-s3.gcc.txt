@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-542-s3.c: In function 'replace_chars':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-542-s3.c:15:21: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   15 |     char *new_str = malloc(str_len + 1);
+      |                     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-542-s3.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-542-s3.c:27:13: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   27 |             free(new_str);
+      |             ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-542-s3.c:27:13: note: include '<stdlib.h>' or provide a declaration of 'free'

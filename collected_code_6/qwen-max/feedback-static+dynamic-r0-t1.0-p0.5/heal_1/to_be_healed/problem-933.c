@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'quad_core', got Q_Core
+  *  test case 1 failed: expected 'chrome_cast', got C_Cast
+  *  test case 0 failed: expected 'google_assistant', got G_Assistant
+  */
+
+char* camel_to_snake(const char *camel) {
+    regex_t regex;
+    regmatch_t matches[2];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    char *snake = (char *)malloc(strlen(camel) * 2 + 1);
+    if (!snake) return NULL;
+    snake[0] = '\0';
+
+    if (regcomp(&regex, "([a-z])([A-Z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        free(snake);
+        return NULL;
+    }
+
+    const char *p = camel;
+    while (*p) {
+        if (regexec(&regex, p, 2, matches, 0) == 0) {
+            /* Possible weaknesses found:
+             * Flawfinder strncat: Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120). Consider strcat_s, strlcat, snprintf, or automatically resizing strings. (risk 1, buffer)
+             */
+            strncat(snake, p, matches[1].rm_eo - matches[1].rm_so);
+            /* Possible weaknesses found:
+             * Flawfinder strncat: Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120). Consider strcat_s, strlcat, snprintf, or automatically resizing strings. Risk is low because the source is a constant character. (risk 1, buffer)
+             */
+            strncat(snake, "_", 1);
+            p += matches[1].rm_eo;
+        } else {
+            /* Possible weaknesses found:
+             * Flawfinder strncat: Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120). Consider strcat_s, strlcat, snprintf, or automatically resizing strings. (risk 1, buffer)
+             */
+            strncat(snake, p, 1);
+            p++;
+        }
+    }
+
+    regfree(&regex);
+    return snake;
+}
+
+int main() {
+    const char *camel = "ThisIsCamelCase";
+    char *snake = camel_to_snake(camel);
+    if (snake) {
+        printf("%s\n", snake);
+        free(snake);
+    } else {
+        fprintf(stderr, "Error converting to snake case.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <stdlib.h>
+
+void remove_multiple_spaces(char *input) {
+    regex_t regex;
+    regmatch_t matches[1];
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    char *temp = malloc(input_len + 1);
+    if (temp == NULL) {
+        return;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(temp, input, input_len);
+    temp[input_len] = '\0';
+
+    if (regcomp(&regex, "\\s{2,}", REG_NEWLINE | REG_EXTENDED) != 0) {
+        free(temp);
+        return;
+    }
+
+    while (regexec(&regex, temp, 1, matches, 0) == 0) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        memmove(temp + matches[0].rm_so + 1, temp + matches[0].rm_eo, strlen(temp + matches[0].rm_eo) + 1);
+        /* Possible weaknesses found:
+         *  Although the value stored to 'input_len' is used in the enclosing expression, the value is never actually read from 'input_len' [deadcode.DeadStores]
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        temp[input_len = strlen(temp)] = '\0';
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(input, temp);
+    free(temp);
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This  is   a    test     string.";
+    remove_multiple_spaces(str);
+    printf("%s\n", str);
+    return 0;
+}

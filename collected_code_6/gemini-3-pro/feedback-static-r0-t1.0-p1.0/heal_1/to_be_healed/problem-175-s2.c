@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+  */
+
+bool is_valid_parentheses(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        return true;
+    }
+
+    char *stack = (char *)malloc(len * sizeof(char));
+    if (stack == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'ptrdiff_t'
+     *  unknown type name 'ptrdiff_t'
+     */
+    ptrdiff_t top = -1;
+
+    for (size_t i = 0; i < len; i++) {
+        char current_char = str[i];
+
+        if (current_char == '(' || current_char == '{' || current_char == '[') {
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'top'
+             */
+            top++;
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'top'
+             */
+            stack[top] = current_char;
+        } else if (current_char == ')' || current_char == '}' || current_char == ']') {
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'top'
+             */
+            if (top == -1) {
+                free(stack);
+                return false;
+            }
+
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'top'
+             */
+            char top_char = stack[top];
+            /* Possible weaknesses found:
+             *  use of undeclared identifier 'top'
+             */
+            top--;
+
+            if ((current_char == ')' && top_char != '(') ||
+                (current_char == '}' && top_char != '{') ||
+                (current_char == ']' && top_char != '[')) {
+                free(stack);
+                return false;
+            }
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'top'
+     */
+    bool is_valid = (top == -1);
+    free(stack);
+
+    return is_valid;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        NULL
+    };
+
+    for (size_t i = 0; test_cases[i] != NULL; i++) {
+        bool result = is_valid_parentheses(test_cases[i]);
+        printf("%s: %s\n", test_cases[i], result ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

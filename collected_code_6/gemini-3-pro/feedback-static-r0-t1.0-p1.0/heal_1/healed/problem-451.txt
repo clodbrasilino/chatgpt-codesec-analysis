@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_whitespaces_regex(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int reti;
+    regmatch_t pmatch[1];
+    char *cursor = str;
+    char *write_ptr = str;
+
+    reti = regcomp(&regex, "[[:space:]]+", REG_EXTENDED);
+    if (reti != 0) {
+        return;
+    }
+
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        size_t len = pmatch[0].rm_so;
+        memmove(write_ptr, cursor, len);
+        write_ptr += len;
+        cursor += pmatch[0].rm_eo;
+    }
+
+    while (*cursor != '\0') {
+        *write_ptr = *cursor;
+        write_ptr++;
+        cursor++;
+    }
+    *write_ptr = '\0';
+
+    regfree(&regex);
+}
+
+int main(void) {
+    char str[] = "  Hello   World \t \n !  ";
+    printf("Original: '%s'\n", str);
+    remove_whitespaces_regex(str);
+    printf("Modified: '%s'\n", str);
+    return 0;
+}
+```

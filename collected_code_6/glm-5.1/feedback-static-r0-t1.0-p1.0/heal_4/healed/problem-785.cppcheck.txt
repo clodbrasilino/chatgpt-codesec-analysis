@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785.c:57:23: style: Condition 'copy_size>buffer_size' is always false [knownConditionTrueFalse]
+        if (copy_size > buffer_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785.c:54:26: note: copy_size is assigned 'buffer_size-1' here.
+        size_t copy_size = buffer_size - 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-785.c:57:23: note: Condition 'copy_size>buffer_size' is always false
+        if (copy_size > buffer_size) {
+                      ^

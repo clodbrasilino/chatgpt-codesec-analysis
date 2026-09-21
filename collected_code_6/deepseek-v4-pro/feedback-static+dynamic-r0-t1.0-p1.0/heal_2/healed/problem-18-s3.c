@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+char *remove_chars(char *str1, size_t str1_size, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return str1;
+    }
+
+    if (str1_size == 0) {
+        return str1;
+    }
+
+    int table[256] = {0};
+    size_t i, j = 0;
+    size_t len2 = strnlen(str2, str1_size);
+
+    for (i = 0; i < len2; i++) {
+        table[(unsigned char)str2[i]] = 1;
+    }
+
+    for (i = 0; i < str1_size - 1 && str1[i] != '\0'; i++) {
+        if (!table[(unsigned char)str1[i]]) {
+            str1[j++] = str1[i];
+        }
+    }
+
+    if (j < str1_size) {
+        str1[j] = '\0';
+    } else {
+        str1[str1_size - 1] = '\0';
+    }
+
+    return str1;
+}
+
+int main(void) {
+    char *str1 = NULL;
+    char *str2 = NULL;
+    size_t size1 = BUFFER_SIZE;
+    size_t size2 = BUFFER_SIZE;
+
+    str1 = malloc(size1);
+    str2 = malloc(size2);
+
+    if (str1 == NULL || str2 == NULL) {
+        free(str1);
+        free(str2);
+        return 1;
+    }
+
+    printf("Enter first string: ");
+    if (fgets(str1, (int)size1, stdin) == NULL) {
+        free(str1);
+        free(str2);
+        return 1;
+    }
+    str1[strcspn(str1, "\n")] = '\0';
+
+    printf("Enter second string: ");
+    if (fgets(str2, (int)size2, stdin) == NULL) {
+        free(str1);
+        free(str2);
+        return 1;
+    }
+    str2[strcspn(str2, "\n")] = '\0';
+
+    remove_chars(str1, size1, str2);
+
+    printf("Result: %s\n", str1);
+
+    free(str1);
+    free(str2);
+
+    return 0;
+}

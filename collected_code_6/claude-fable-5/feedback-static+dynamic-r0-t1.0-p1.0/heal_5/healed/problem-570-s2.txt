@@ -1,0 +1,137 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 4096
+
+size_t remove_words_containing(char **words, size_t count, const char *pattern);
+char *duplicate_string(const char *source);
+void free_word_list(char **words, size_t count);
+
+size_t remove_words_containing(char **words, size_t count, const char *pattern)
+{
+    size_t write_index = 0;
+    size_t read_index;
+
+    if (words == NULL || pattern == NULL) {
+        return count;
+    }
+
+    for (read_index = 0; read_index < count; read_index++) {
+        if (words[read_index] == NULL) {
+            continue;
+        }
+        if (strstr(words[read_index], pattern) != NULL) {
+            free(words[read_index]);
+            words[read_index] = NULL;
+        } else {
+            words[write_index] = words[read_index];
+            if (write_index != read_index) {
+                words[read_index] = NULL;
+            }
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+char *duplicate_string(const char *source)
+{
+    size_t length;
+    size_t buffer_size;
+    char *copy;
+
+    if (source == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(source, MAX_WORD_LENGTH);
+    if (length >= MAX_WORD_LENGTH) {
+        return NULL;
+    }
+
+    buffer_size = length + 1;
+    if (buffer_size <= length) {
+        return NULL;
+    }
+
+    copy = malloc(buffer_size);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length > 0 && length < buffer_size) {
+        memcpy(copy, source, length);
+    }
+    copy[length] = '\0';
+    return copy;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+        words[i] = NULL;
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *initial_words[] = {
+        "apple", "banana", "cherry", "grape", "pineapple", "mango"
+    };
+    const char *pattern = "ap";
+    size_t total = sizeof(initial_words) / sizeof(initial_words[0]);
+    size_t i;
+    size_t remaining;
+    char **words;
+
+    words = malloc(total * sizeof(char *));
+    if (words == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < total; i++) {
+        words[i] = duplicate_string(initial_words[i]);
+        if (words[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_word_list(words, i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list:\n");
+    for (i = 0; i < total; i++) {
+        printf("  %s\n", words[i]);
+    }
+
+    remaining = remove_words_containing(words, total, pattern);
+
+    printf("After removing words containing \"%s\":\n", pattern);
+    for (i = 0; i < remaining; i++) {
+        printf("  %s\n", words[i]);
+    }
+
+    free_word_list(words, total);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the changes made:
+
+**The flagged `memcpy` (CWE-120):** The original code was already functionally safe — `buffer_size = length + 1` guarantees the destination can hold `length` bytes plus the null terminator. However, to satisfy the static analyzer and make the safety invariant explicit, I added two defensive checks: an overflow guard on `length + 1` (`buffer_size <= length` detects `size_t` wraparound, unreachable here given the `MAX_WORD_LENGTH` cap, but it documents intent) and an explicit `length < buffer_size` bounds check immediately before the `memcpy`, making the destination-capacity guarantee locally verifiable.
+
+**Additional latent issue fixed:** In the original `main`, the final cleanup called `free_word_list(words, remaining)`. This worked only because `remove_words_containing` nulls out removed slots — a fragile implicit coupling. If that function's contract ever changed, indices between `remaining` and `total` could leak. I changed it to `free_word_list(words, total)`, which is safe regardless (`free(NULL)` is a no-op) and no longer depends on the callee's internal behavior.
+
+**What was already correct and preserved:** NULL-parameter guards, the `strnlen` bound preventing reads of unterminated input beyond `MAX_WORD_LENGTH`, the compaction algorithm's ownership handling (no double-frees, no dangling pointers), and proper partial-cleanup on allocation failure in `main`.

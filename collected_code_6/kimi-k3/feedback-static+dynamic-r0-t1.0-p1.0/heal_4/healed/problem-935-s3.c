@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long sum_of_squares(int n)
+{
+    return (unsigned long long)n * (unsigned long long)(n + 1) * (unsigned long long)(2 * n + 1) / 6ULL;
+}
+
+int main(void)
+{
+    char buffer[128];
+    char *endptr = NULL;
+    long value;
+    int n;
+
+    printf("Enter a positive integer n: ");
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        fprintf(stderr, "Input error.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(buffer, &endptr, 10);
+
+    if (errno != 0 || endptr == buffer || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (value < 1 || value > INT_MAX) {
+        fprintf(stderr, "Input out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)value;
+
+    if (n > 55108) {
+        fprintf(stderr, "Input too large; result would overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of squares = %llu\n", sum_of_squares(n));
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-885.c: In function 'are_isomorphic':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-885.c:14:27: error: 'UCHAR_MAX' undeclared (first use in this function)
+   14 |     unsigned char forward[UCHAR_MAX + 1U] = {0};
+      |                           ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-885.c:6:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    5 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-885.c:14:27: note: each undeclared identifier is reported only once for each function it appears in
+   14 |     unsigned char forward[UCHAR_MAX + 1U] = {0};
+      |                           ^~~~~~~~~

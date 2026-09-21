@@ -1,0 +1,7 @@
+during IPA pass: analyzer
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-674-s3.c: In function 'remove_duplicate_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_3/healed/problem-674-s3.c:55:18: internal compiler error: Segmentation fault: 11
+   55 |     char *word = strtok(copy, " \t\n");
+      |                  ^~~~~~~~~~~~~~~~~~~~~
+Please submit a full bug report, with preprocessed source (by using -freport-bug).
+See <https://github.com/Homebrew/homebrew-core/issues> for instructions.

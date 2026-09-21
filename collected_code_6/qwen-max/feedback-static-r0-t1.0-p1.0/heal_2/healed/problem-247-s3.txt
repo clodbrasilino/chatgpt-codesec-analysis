@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int lcs(const char *X, const char *Y, size_t m, size_t n) {
+    int L[m + 1][n + 1];
+    size_t i, j;
+
+    for (i = 0; i <= m; i++) {
+        for (j = 0; j <= n; j++) {
+            if (i == 0 || j == 0)
+                L[i][j] = 0;
+            else if (X[i - 1] == Y[j - 1])
+                L[i][j] = L[i - 1][j - 1] + 1;
+            else
+                L[i][j] = (L[i - 1][j] > L[i][j - 1]) ? L[i - 1][j] : L[i][j - 1];
+        }
+    }
+    return L[m][n];
+}
+
+int longestPalSubseq(const char *str, size_t len) {
+    char revStr[len + 1];
+    size_t i;
+
+    for (i = 0; i < len; i++)
+        revStr[i] = str[len - 1 - i];
+    revStr[i] = '\0';
+
+    return lcs(str, revStr, len, len);
+}
+
+int main() {
+    const char str[] = "agbdba";
+    size_t len = sizeof(str) / sizeof(str[0]) - 1;
+    printf("The length of the longest palindromic subsequence is %d\n", longestPalSubseq(str, len));
+    return 0;
+}
+```

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+#include <stdlib.h>
+
+void replace_chars(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    int i = 0;
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED)) {
+        return;
+    }
+
+    size_t str_len = strlen(str);
+    char *new_str = malloc(str_len + 2);
+    if (!new_str) {
+        regfree(&regex);
+        return;
+    }
+    new_str[str_len + 1] = '\0';
+
+    size_t n_pos = 0;
+    while (1) {
+        int rc = regexec(&regex, str + i, 1, pmatch, 0);
+        if (rc == REG_NOMATCH) break;
+        if (rc != 0) {
+            free(new_str);
+            regfree(&regex);
+            return;
+        }
+        size_t match_len = pmatch[0].rm_eo - pmatch[0].rm_so;
+        if (match_len > 0) {
+            memcpy(new_str + n_pos, str + i, match_len);
+            n_pos += match_len;
+            new_str[n_pos++] = ':';
+            i += match_len;
+        } else {
+            new_str[n_pos++] = str[i++];
+        }
+    }
+
+    size_t remaining = str_len - i;
+    memcpy(new_str + n_pos, str + i, remaining);
+    new_str[n_pos + remaining] = '\0';
+
+    strncpy(str, new_str, str_len + 1);
+
+    free(new_str);
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_chars(str);
+    printf("%s\n", str);
+    return 0;
+}

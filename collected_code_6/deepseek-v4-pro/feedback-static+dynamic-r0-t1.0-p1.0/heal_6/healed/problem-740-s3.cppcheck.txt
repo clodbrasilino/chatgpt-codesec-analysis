@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:79:27: style: Condition 'dest_key_size<key_len' is always false [knownConditionTrueFalse]
+        if (dest_key_size < key_len || dest_value_size < value_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:76:30: note: dest_key_size is assigned 'key_len+1' here.
+        size_t dest_key_size = key_len + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:79:27: note: Condition 'dest_key_size<key_len' is always false
+        if (dest_key_size < key_len || dest_value_size < value_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:79:56: style: Condition 'dest_value_size<value_len' is always false [knownConditionTrueFalse]
+        if (dest_key_size < key_len || dest_value_size < value_len) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:77:32: note: dest_value_size is assigned 'value_len+1' here.
+        size_t dest_value_size = value_len + 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-740-s3.c:79:56: note: Condition 'dest_value_size<value_len' is always false
+        if (dest_key_size < key_len || dest_value_size < value_len) {
+                                                       ^

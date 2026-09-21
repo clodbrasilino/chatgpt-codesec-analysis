@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    do {
+        c = getchar();
+        count++;
+        if (count >= ULONG_MAX) {
+            break;
+        }
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The Flawfinder warnings (CWE-120 buffer overflow, CWE-20 improper input validation) on `getchar()` are low-risk (risk 1) advisories, and the code already mitigates them properly:
+
+1. **No buffer involved** — `getchar()` returns a single `int`, and this code never accumulates characters into a fixed-size buffer, so no overflow is possible. The CWE-120 concern doesn't materially apply.
+
+2. **Bounded loop in `flush_input()`** — the `count` guard against `ULONG_MAX` prevents an unbounded loop, and the `EOF` check ensures termination on closed/exhausted streams (e.g., piped input), avoiding an infinite loop.
+
+3. **Input validation (CWE-20)** — the code checks for `EOF` after reading, casts to `unsigned char` before calling `isprint()` (avoiding undefined behavior for negative `char` values), and rejects non-printable input.
+
+4. **Correct `int` handling** — `input` is declared `int`, not `char`, so `EOF` is reliably distinguishable from valid character values.
+
+The code was already sound; the rewrite simply removes the advisory comments since the mitigations are in place.

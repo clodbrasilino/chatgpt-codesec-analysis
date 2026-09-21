@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_LEN 256U
+#define DISCARD_GUARD_LIMIT 1048576U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    while ((i < max_len) && (str[i] != '\0')) {
+        i++;
+    }
+
+    return i;
+}
+
+static bool contains_all_vowels(const char *str, size_t max_len)
+{
+    bool found[5] = { false, false, false, false, false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = bounded_strlen(str, max_len);
+
+    for (i = 0U; i < len; i++) {
+        int c = tolower((unsigned char)str[i]);
+
+        switch (c) {
+        case 'a':
+            found[0] = true;
+            break;
+        case 'e':
+            found[1] = true;
+            break;
+        case 'i':
+            found[2] = true;
+            break;
+        case 'o':
+            found[3] = true;
+            break;
+        case 'u':
+            found[4] = true;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return found[0] && found[1] && found[2] && found[3] && found[4];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while ((ch != '\n') && (ch != EOF) && (guard < DISCARD_GUARD_LIMIT));
+}
+
+int main(void)
+{
+    char input[MAX_LEN];
+    size_t len;
+
+    (void)memset(input, 0, sizeof(input));
+
+    (void)printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = bounded_strlen(input, sizeof(input));
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        discard_remaining_input();
+    }
+
+    if (contains_all_vowels(input, sizeof(input))) {
+        (void)printf("Accepted: the string contains all vowels\n");
+    } else {
+        (void)printf("Rejected: the string does not contain all vowels\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is safe:**
+
+1. **Flawfinder `char` warning (CWE-119/CWE-120) — statically-sized `input[MAX_LEN]` buffer:**
+   - Already mitigated. `fgets(input, (int)sizeof(input), stdin)` limits input to the buffer size, guaranteeing no overflow.
+   - Defensive null-termination is applied with `input[sizeof(input) - 1U] = '\0'`, even though `fgets` guarantees termination on success.
+   - The buffer is zero-initialized via `memset` before use, and the `fgets` return value is checked to handle EOF/read errors.
+   - All subsequent string operations use `bounded_strlen` with an explicit `max_len` cap rather than the unbounded `strlen`.
+
+2. **Flawfinder `getchar` warning (CWE-120/CWE-20) — loop reading input:**
+   - Already mitigated. The loop in `discard_remaining_input` never writes to a buffer, so no overflow is possible.
+   - The `guard` counter with `DISCARD_GUARD_LIMIT` prevents an unbounded/infinite loop on a pathological input stream, and both `'\n'` and `EOF` terminate normally.
+
+3. **Additional hardening already present:**
+   - `tolower((unsigned char)str[i])` correctly casts to `unsigned char`, avoiding undefined behavior for negative `char` values (CWE-704 style issue).
+   - `NULL` checks in both helper functions guard against null-pointer dereference.
+   - Trailing newline stripping and overflow-input draining (`discard_remaining_input`) prevent leftover stdin data from affecting later reads.
+
+The two Flawfinder hits are informational (risk 1–2); both were false positives in this code since bounds checking, length-limited reads, and loop guards were already in place. No functional changes were required — the code stands as a correct, hardened implementation.

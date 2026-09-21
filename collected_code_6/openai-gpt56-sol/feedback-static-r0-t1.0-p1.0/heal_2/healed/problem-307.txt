@@ -1,0 +1,84 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *get_column(const char *tuple, size_t tuple_length, size_t column)
+{
+    const char *start;
+    const char *end;
+    size_t remaining;
+    size_t field_length;
+    size_t current;
+    char *result;
+
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    start = tuple;
+    remaining = tuple_length;
+    current = 0;
+
+    while (current < column) {
+        end = memchr(start, ':', remaining);
+        if (end == NULL) {
+            return NULL;
+        }
+
+        field_length = (size_t)(end - start);
+
+        if (field_length == SIZE_MAX) {
+            return NULL;
+        }
+
+        field_length++;
+
+        if (field_length > remaining) {
+            return NULL;
+        }
+
+        start += field_length;
+        remaining -= field_length;
+        current++;
+    }
+
+    end = memchr(start, ':', remaining);
+    field_length = end != NULL ? (size_t)(end - start) : remaining;
+
+    if (field_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    result = malloc(field_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (field_length > 0) {
+        memcpy(result, start, field_length);
+    }
+
+    result[field_length] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    static const char tuple[] = "alpha:beta:gamma";
+    const size_t column = 1;
+    char *value = get_column(tuple, sizeof(tuple) - 1, column);
+
+    if (value == NULL) {
+        fputs("Unable to get column\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", value) < 0) {
+        free(value);
+        return EXIT_FAILURE;
+    }
+
+    free(value);
+    return EXIT_SUCCESS;
+}

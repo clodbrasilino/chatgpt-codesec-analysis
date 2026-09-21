@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c:28:81: warning: Uninitialized variable: result [uninitvar]
+    if (pos < (int)strlen(str) && (strlen(str) - pos) < sizeof(result) - strlen(result) - 1) {
+                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c:17:58: note: Assuming condition is false
+    while (regexec(&regex, str + pos, nmatch, pmatch, 0) == 0) {
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c:28:81: note: Uninitialized variable: result
+    if (pos < (int)strlen(str) && (strlen(str) - pos) < sizeof(result) - strlen(result) - 1) {
+                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c:22:70: error: Uninitialized variable: result [legacyUninitvar]
+        if (pos > 0 && (match_start - pos) < sizeof(result) - strlen(result) - 1) {
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-495-s2.c:20:17: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+        int len = match_end - match_start;
+                ^

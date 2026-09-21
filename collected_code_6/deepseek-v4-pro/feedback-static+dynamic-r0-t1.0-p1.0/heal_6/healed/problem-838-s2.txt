@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int minSwapsToEqual(const char *s1, const char *s2, size_t len) {
+    int count1_s1 = 0, count1_s2 = 0;
+    int type1 = 0, type2 = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        if (s1[i] == '1') count1_s1++;
+        if (s2[i] == '1') count1_s2++;
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') type1++;
+            else type2++;
+        }
+    }
+
+    if (count1_s1 != count1_s2) return -1;
+    if (type1 % 2 != 0 || type2 % 2 != 0) return -1;
+
+    return type1 / 2 + type2 / 2 + (type1 % 2) * 2;
+}
+
+int main(void) {
+    char s1[104] = {0};
+    char s2[104] = {0};
+
+    printf("Enter first binary string: ");
+    if (fgets(s1, sizeof(s1), stdin) == NULL) return 1;
+    size_t s1_len = strcspn(s1, "\n");
+    if (s1_len < sizeof(s1) && s1[s1_len] == '\n') {
+        s1[s1_len] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        s1[100] = '\0';
+    }
+
+    printf("Enter second binary string: ");
+    if (fgets(s2, sizeof(s2), stdin) == NULL) return 1;
+    size_t s2_len = strcspn(s2, "\n");
+    if (s2_len < sizeof(s2) && s2[s2_len] == '\n') {
+        s2[s2_len] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        s2[100] = '\0';
+    }
+
+    size_t len1 = strnlen(s1, 101);
+    size_t len2 = strnlen(s2, 101);
+
+    if (len1 != len2) {
+        printf("Strings must be of equal length\n");
+        return 1;
+    }
+
+    if (len1 == 0) {
+        printf("Minimum swaps required: 0\n");
+        return 0;
+    }
+
+    if (len1 > 100) {
+        printf("String length exceeds maximum allowed\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < len1; i++) {
+        if (s1[i] != '0' && s1[i] != '1') {
+            printf("Invalid character in first string\n");
+            return 1;
+        }
+        if (s2[i] != '0' && s2[i] != '1') {
+            printf("Invalid character in second string\n");
+            return 1;
+        }
+    }
+
+    int result = minSwapsToEqual(s1, s2, len1);
+    printf("Minimum swaps required: %d\n", result);
+
+    return 0;
+}
+```

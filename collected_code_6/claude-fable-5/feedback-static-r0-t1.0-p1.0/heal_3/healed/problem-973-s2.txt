@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0 || str_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len || len + 1 > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already well-defended against the CWE-120 (buffer overflow) risks flagged by Flawfinder — those warnings are heuristic hits on `memcpy` usage rather than actual vulnerabilities here. Specifically:
+
+1. **First two `memcpy` calls into `temp`**: `temp` is allocated with exactly `len + 1` bytes, and the two copies write `(len - d) + d = len` bytes total, followed by one NUL terminator at `temp[len]`. This fits precisely with no overflow.
+
+2. **Final `memcpy` into `str`**: The copy of `len + 1` bytes is guarded by verifying `len + 1 <= str_size`. Additionally, `strnlen(str, str_size)` combined with the `len >= str_size` check guarantees the string is NUL-terminated within the caller-provided bounds.
+
+**Improvements in the rewrite:**
+
+- **Consolidated validation before allocation**: The checks `d > len`, `(len - d) > len`, and `len + 1 > str_size` were moved *before* the `malloc`. In the original, a failing `len + 1 > str_size` check after the copies wasted an allocation and two `memcpy` operations. Validating all preconditions up front avoids unnecessary work and simplifies the error-handling paths (no `free` needed in validation failures).
+
+- **No functional change to the copy logic**: Since the bounds proofs hold (`temp` sized `len + 1`, writes totaling `len + 1`; `str` verified to hold `len + 1`), the `memcpy` calls remain safe and the Flawfinder findings can be considered addressed/mitigated by construction.
+
+The program correctly left-rotates `"GeeksforGeeks"` by 2, producing `eksforGeeksGe`.

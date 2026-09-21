@@ -1,0 +1,81 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define CHARSET_SIZE 256
+#define BUFFER_SIZE 1024
+
+int count_char_frequency(const char *str, size_t max_len, size_t freq[CHARSET_SIZE])
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || freq == NULL || max_len == 0) {
+        return -1;
+    }
+
+    memset(freq, 0, CHARSET_SIZE * sizeof(size_t));
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t freq[CHARSET_SIZE];
+    size_t i;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+    memset(freq, 0, sizeof(freq));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (count_char_frequency(buffer, sizeof(buffer), freq) != 0) {
+        fprintf(stderr, "Error counting character frequency\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        if (freq[i] > 0) {
+            if (i >= 32 && i < 127) {
+                printf("'%c' : %zu\n", (int)i, freq[i]);
+            } else {
+                printf("0x%02zX : %zu\n", i, freq[i]);
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses and why the code is already safe:**
+
+The Flawfinder warnings flagged the statically-sized arrays `buffer[BUFFER_SIZE]` and the `freq[CHARSET_SIZE]` parameter as potential CWE-119/CWE-120 issues. Upon review, both are false positives because the original code already implements the recommended mitigations:
+
+1. **`buffer[BUFFER_SIZE]` in `main`**: Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which strictly limits the number of bytes written. A defensive null terminator is placed at `buffer[sizeof(buffer) - 1]`, and length calculations use `strnlen` bounded by `sizeof(buffer)`, so no unbounded string operations occur.
+
+2. **`freq[CHARSET_SIZE]` in `count_char_frequency`**: The function validates all pointers for `NULL` and rejects `max_len == 0` before use. The array is zeroed with an exact-size `memset`, and indexing is performed via `(unsigned char)str[i]`, which guarantees the index is in the range `[0, 255]` — always within the bounds of `freq[256]`. The cast to `unsigned char` is critical here, as a plain `char` could be signed and yield negative indices.
+
+3. **Loop bounds**: The counting loop is bounded by `strnlen(str, max_len)`, preventing reads past the buffer even if the input were not null-terminated.
+
+Since bounds checking, length-limited functions (`fgets`, `strnlen`), and guaranteed-safe indexing are all in place, no functional changes were required — the rewrite simply removes the analysis comments as requested.

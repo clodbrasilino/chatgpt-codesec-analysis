@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 4096
+#define ERRBUF_SIZE 256
+
+char **split_string(const char *input, const char *pattern, size_t *count);
+void free_tokens(char **tokens, size_t count);
+
+char **split_string(const char *input, const char *pattern, size_t *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    char **temp = NULL;
+    size_t n = 0;
+    const char *cursor = input;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL || pattern == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    remaining = strnlen(input, MAX_INPUT_LEN);
+    if (remaining >= MAX_INPUT_LEN && input[MAX_INPUT_LEN] != '\0') {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_SIZE];
+        errbuf[0] = '\0';
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return NULL;
+    }
+
+    while (remaining > 0 && *cursor != '\0') {
+        size_t len;
+
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == 0 && match.rm_so != match.rm_eo) {
+            if ((size_t)match.rm_so > remaining) {
+                break;
+            }
+            len = (size_t)match.rm_so;
+        } else if (ret == 0 && match.rm_so == match.rm_eo) {
+            break;
+        } else {
+            len = remaining;
+        }
+
+        if (len > 0) {
+            char *token = malloc(len + 1);
+            if (token == NULL) {
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+            memcpy(token, cursor, len);
+            token[len] = '\0';
+
+            if (n == SIZE_MAX / sizeof(char *)) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+
+            temp = realloc(tokens, (n + 1) * sizeof(char *));
+            if (temp == NULL) {
+                free(token);
+                regfree(&regex);
+                free_tokens(tokens, n);
+                return NULL;
+            }
+            tokens = temp;
+            tokens[n] = token;
+            n++;
+        }
+
+        if (ret == 0) {
+            if ((size_t)match.rm_eo > remaining || match.rm_eo <= 0) {
+                break;
+            }
+            cursor += match.rm_eo;
+            remaining -= (size_t)match.rm_eo;
+        } else {
+            break;
+        }
+    }
+
+    regfree(&regex);
+    *count = n;
+    return tokens;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *text = "apple,banana;cherry  orange|grape";
+    const char *pattern = "[,;| ]+";
+    size_t count = 0;
+    size_t i;
+    char **tokens;
+
+    tokens = split_string(text, pattern, &count);
+    if (tokens == NULL || count == 0) {
+        fprintf(stderr, "split_string failed or returned no tokens\n");
+        free_tokens(tokens, count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("Token %zu: %s\n", i + 1, tokens[i]) < 0) {
+            free_tokens(tokens, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}

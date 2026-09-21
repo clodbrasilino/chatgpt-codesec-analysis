@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUF_SIZE 11
+#define YEAR_BUF_SIZE 5
+#define MONTH_BUF_SIZE 3
+#define DAY_BUF_SIZE 3
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    char year[YEAR_BUF_SIZE];
+    char month[MONTH_BUF_SIZE];
+    char day[DAY_BUF_SIZE];
+    size_t year_len;
+    size_t month_len;
+    size_t day_len;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUF_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUF_SIZE);
+    if (input_len != DATE_BUF_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_so < 0 || matches[2].rm_so < 0 || matches[3].rm_so < 0 ||
+        matches[1].rm_eo < matches[1].rm_so ||
+        matches[2].rm_eo < matches[2].rm_so ||
+        matches[3].rm_eo < matches[3].rm_so) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if ((size_t)matches[1].rm_eo > input_len ||
+        (size_t)matches[2].rm_eo > input_len ||
+        (size_t)matches[3].rm_eo > input_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len >= sizeof(year) || month_len >= sizeof(month) ||
+        day_len >= sizeof(day)) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (year_len != YEAR_BUF_SIZE - 1 || month_len != MONTH_BUF_SIZE - 1 ||
+        day_len != DAY_BUF_SIZE - 1) {
+        regfree(&regex);
+        return -1;
+    }
+
+    memcpy(year, input + matches[1].rm_so, year_len);
+    year[year_len] = '\0';
+
+    memcpy(month, input + matches[2].rm_so, month_len);
+    month[month_len] = '\0';
+
+    memcpy(day, input + matches[3].rm_so, day_len);
+    day[day_len] = '\0';
+
+    ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUF_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

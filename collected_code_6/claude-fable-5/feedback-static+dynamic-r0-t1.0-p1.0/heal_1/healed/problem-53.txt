@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal.\n");
+    } else {
+        printf("The first and last characters are not equal.\n");
+    }
+
+    return 0;
+}
+```
+
+**Key changes made to address the identified weaknesses:**
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound and will never read past the buffer even if the string is not null-terminated. The `first_last_equal` function now accepts a `max_len` parameter so it can enforce this bound, and it rejects input where `len == max_len` (which indicates no null terminator was found within the bound).
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is defined once via `BUFFER_SIZE` and consistently referenced with `sizeof(buffer)`. `fgets` already limits input to the buffer size, and an explicit `buffer[sizeof(buffer) - 1] = '\0';` guarantees null-termination as defense-in-depth before any string operations occur.
+
+3. **Defensive design**: Passing the buffer capacity explicitly into `first_last_equal` removes the implicit assumption that callers always provide null-terminated strings, making the function safe against unterminated input.

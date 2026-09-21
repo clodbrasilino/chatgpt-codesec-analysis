@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+} Tuple;
+
+Tuple *tuple_create(void **elements, size_t size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    if (size > 0 && elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    if (size > SIZE_MAX / sizeof(void *)) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->elements = (void **)malloc(size * sizeof(void *));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    if (size > 0) {
+        memmove(tuple->elements, elements, size * sizeof(void *));
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void tuple_destroy(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+size_t count_occurrences(Tuple *tuple, void *element, int (*compare)(const void *, const void *)) {
+    if (tuple == NULL || compare == NULL || tuple->elements == NULL) {
+        return 0;
+    }
+    size_t count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (compare(tuple->elements[i], element) == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int int_compare(const void *a, const void *b) {
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+int str_compare(const void *a, const void *b) {
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+    const char *str_a = (const char *)a;
+    const char *str_b = (const char *)b;
+    return strcmp(str_a, str_b);
+}
+
+int main(void) {
+    int values[] = {1, 2, 3, 2, 4, 2, 5};
+    void *int_elements[7];
+    for (int i = 0; i < 7; i++) {
+        int_elements[i] = &values[i];
+    }
+    Tuple *int_tuple = tuple_create(int_elements, 7);
+    if (int_tuple == NULL) {
+        return 1;
+    }
+    int target = 2;
+    size_t int_count = count_occurrences(int_tuple, &target, int_compare);
+    printf("Count of %d: %zu\n", target, int_count);
+    tuple_destroy(int_tuple);
+
+    const char *str_values[] = {"apple", "banana", "apple", "cherry"};
+    void *str_elements[4];
+    for (int i = 0; i < 4; i++) {
+        str_elements[i] = (void *)str_values[i];
+    }
+    Tuple *str_tuple = tuple_create(str_elements, 4);
+    if (str_tuple == NULL) {
+        return 1;
+    }
+    const char *str_target = "apple";
+    size_t str_count = count_occurrences(str_tuple, (void *)str_target, str_compare);
+    printf("Count of %s: %zu\n", str_target, str_count);
+    tuple_destroy(str_tuple);
+
+    return 0;
+}

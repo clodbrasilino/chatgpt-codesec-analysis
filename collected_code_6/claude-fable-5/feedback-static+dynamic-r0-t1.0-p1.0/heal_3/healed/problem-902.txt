@@ -1,0 +1,240 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_KEY_LEN 4096
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static int dict_init(Dict *d, size_t capacity)
+{
+    if (d == NULL || capacity == 0) {
+        return -1;
+    }
+    if (capacity > SIZE_MAX / sizeof(DictEntry)) {
+        return -1;
+    }
+    d->entries = malloc(capacity * sizeof(DictEntry));
+    if (d->entries == NULL) {
+        return -1;
+    }
+    d->size = 0;
+    d->capacity = capacity;
+    return 0;
+}
+
+static void dict_free(Dict *d)
+{
+    size_t i;
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+    }
+    free(d->entries);
+    d->entries = NULL;
+    d->size = 0;
+    d->capacity = 0;
+}
+
+static DictEntry *dict_find(const Dict *d, const char *key)
+{
+    size_t i;
+    if (d == NULL || key == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            return &d->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static char *dup_key(const char *key, size_t len)
+{
+    char *copy;
+
+    if (key == NULL || len >= MAX_KEY_LEN) {
+        return NULL;
+    }
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, key, len);
+    copy[len] = '\0';
+    return copy;
+}
+
+static int dict_set(Dict *d, const char *key, int value)
+{
+    DictEntry *found;
+    char *key_copy;
+    size_t len;
+
+    if (d == NULL || key == NULL) {
+        return -1;
+    }
+
+    len = strnlen(key, MAX_KEY_LEN);
+    if (len >= MAX_KEY_LEN) {
+        return -1;
+    }
+
+    found = dict_find(d, key);
+    if (found != NULL) {
+        found->value = value;
+        return 0;
+    }
+
+    if (d->size >= d->capacity) {
+        size_t new_capacity;
+        DictEntry *tmp;
+
+        if (d->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        new_capacity = d->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(DictEntry)) {
+            return -1;
+        }
+        tmp = realloc(d->entries, new_capacity * sizeof(DictEntry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        d->entries = tmp;
+        d->capacity = new_capacity;
+    }
+
+    key_copy = dup_key(key, len);
+    if (key_copy == NULL) {
+        return -1;
+    }
+
+    d->entries[d->size].key = key_copy;
+    d->entries[d->size].value = value;
+    d->size++;
+    return 0;
+}
+
+static int dict_combine(const Dict *a, const Dict *b, Dict *result)
+{
+    size_t i;
+
+    if (a == NULL || b == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (a->size > SIZE_MAX - b->size || a->size + b->size > SIZE_MAX - 1) {
+        return -1;
+    }
+
+    if (dict_init(result, a->size + b->size + 1) != 0) {
+        return -1;
+    }
+
+    for (i = 0; i < a->size; i++) {
+        if (dict_set(result, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_free(result);
+            return -1;
+        }
+    }
+
+    for (i = 0; i < b->size; i++) {
+        DictEntry *found = dict_find(result, b->entries[i].key);
+        if (found != NULL) {
+            found->value += b->entries[i].value;
+        } else {
+            if (dict_set(result, b->entries[i].key, b->entries[i].value) != 0) {
+                dict_free(result);
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static void dict_print(const Dict *d)
+{
+    size_t i;
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        printf("%s: %d\n", d->entries[i].key, d->entries[i].value);
+    }
+}
+
+int main(void)
+{
+    Dict a;
+    Dict b;
+    Dict combined;
+
+    if (dict_init(&a, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary a\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_init(&b, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary b\n");
+        dict_free(&a);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(&a, "apple", 10) != 0 ||
+        dict_set(&a, "banana", 5) != 0 ||
+        dict_set(&a, "cherry", 3) != 0) {
+        fprintf(stderr, "Failed to populate dictionary a\n");
+        dict_free(&a);
+        dict_free(&b);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(&b, "banana", 7) != 0 ||
+        dict_set(&b, "cherry", 2) != 0 ||
+        dict_set(&b, "date", 8) != 0) {
+        fprintf(stderr, "Failed to populate dictionary b\n");
+        dict_free(&a);
+        dict_free(&b);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_combine(&a, &b, &combined) != 0) {
+        fprintf(stderr, "Failed to combine dictionaries\n");
+        dict_free(&a);
+        dict_free(&b);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary A:\n");
+    dict_print(&a);
+    printf("\nDictionary B:\n");
+    dict_print(&b);
+    printf("\nCombined:\n");
+    dict_print(&combined);
+
+    dict_free(&a);
+    dict_free(&b);
+    dict_free(&combined);
+
+    return EXIT_SUCCESS;
+}
+```

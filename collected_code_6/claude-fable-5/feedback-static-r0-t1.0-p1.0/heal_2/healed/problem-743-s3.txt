@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void reverse_range(int *arr, size_t start, size_t end)
+{
+    while (start < end) {
+        int tmp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = tmp;
+        start++;
+        end--;
+    }
+}
+
+int rotate_right(int *arr, size_t n, size_t k)
+{
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    reverse_range(arr, 0, n - 1);
+    reverse_range(arr, 0, k - 1);
+    reverse_range(arr, k, n - 1);
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+    size_t i;
+
+    printf("Original list: ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    if (rotate_right(arr, n, k) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated list:  ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```
+
+The only weakness flagged was the `variableScope` issue on `tmp` in `reverse_range`. It has been fixed by moving the declaration of `tmp` inside the `while` loop, limiting its scope to the block where it is actually used. The rest of the code was already sound: `rotate_right` guards against a NULL pointer and zero-length array, normalizes `k` with the modulo operation (avoiding out-of-bounds access and the `k - 1` underflow when `k == 0` by returning early), and the three-reversal rotation algorithm operates strictly within valid index bounds.

@@ -1,0 +1,46 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:161:9: error: Memory pointed to by 't1' is freed twice. [doubleFree]
+        free(t1);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:153:5: note: Memory pointed to by 't1' is freed twice.
+    free(t1);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:161:9: note: Memory pointed to by 't1' is freed twice.
+        free(t1);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:162:9: error: Memory pointed to by 't2' is freed twice. [doubleFree]
+        free(t2);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:154:5: note: Memory pointed to by 't2' is freed twice.
+    free(t2);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:162:9: note: Memory pointed to by 't2' is freed twice.
+        free(t2);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:163:9: error: Memory pointed to by 't3' is freed twice. [doubleFree]
+        free(t3);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:155:5: note: Memory pointed to by 't3' is freed twice.
+    free(t3);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:163:9: note: Memory pointed to by 't3' is freed twice.
+        free(t3);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:164:9: error: Memory pointed to by 't4' is freed twice. [doubleFree]
+        free(t4);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:156:5: note: Memory pointed to by 't4' is freed twice.
+    free(t4);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:164:9: note: Memory pointed to by 't4' is freed twice.
+        free(t4);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:165:9: error: Memory pointed to by 't5' is freed twice. [doubleFree]
+        free(t5);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:157:5: note: Memory pointed to by 't5' is freed twice.
+    free(t5);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-920-s3.c:165:9: note: Memory pointed to by 't5' is freed twice.
+        free(t5);
+        ^

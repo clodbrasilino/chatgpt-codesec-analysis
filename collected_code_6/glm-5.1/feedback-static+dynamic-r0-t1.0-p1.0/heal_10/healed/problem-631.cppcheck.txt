@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c:47:17: style: Condition 'result3==NULL' is always true [knownConditionTrueFalse]
+    if (result3 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c:46:44: note: Calling function 'replace_whitespace_swap' returns 0
+    char *result3 = replace_whitespace_swap(input3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c:46:44: note: Assignment 'result3=replace_whitespace_swap(input3)', assigned value is 0
+    char *result3 = replace_whitespace_swap(input3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c:47:17: note: Condition 'result3==NULL' is always true
+    if (result3 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-631.c:45:11: style: Variable 'input3' can be declared as pointer to const [constVariablePointer]
+    char *input3 = NULL;
+          ^

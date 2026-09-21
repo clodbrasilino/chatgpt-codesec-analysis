@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+char** split_at_uppercase(const char* str, size_t* count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int regex_compiled = 0;
+    int ret = regcomp(&regex, "[A-Z][^A-Z]*", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+    regex_compiled = 1;
+
+    size_t capacity = 10;
+    *count = 0;
+    char** result = malloc(capacity * sizeof(char*));
+    if (result == NULL) {
+        goto fail;
+    }
+
+    const char* p = str;
+    regmatch_t match;
+
+    while (1) {
+        ret = regexec(&regex, p, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            goto fail;
+        }
+
+        if (*count >= capacity) {
+            if (capacity > SIZE_MAX / (2 * sizeof(char*))) {
+                goto fail;
+            }
+            capacity *= 2;
+            char** new_result = realloc(result, capacity * sizeof(char*));
+            if (new_result == NULL) {
+                goto fail;
+            }
+            result = new_result;
+        }
+
+        size_t len = match.rm_eo - match.rm_so;
+        if (len == SIZE_MAX) {
+            goto fail;
+        }
+
+        size_t dest_size = len + 1;
+        char* token = malloc(dest_size);
+        if (token == NULL) {
+            goto fail;
+        }
+
+        if (len >= dest_size) {
+            free(token);
+            goto fail;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(token, p + match.rm_so, len);
+        token[len] = '\0';
+
+        result[*count] = token;
+        (*count)++;
+
+        p += match.rm_eo;
+    }
+
+    if (regex_compiled) {
+        regfree(&regex);
+        regex_compiled = 0;
+    }
+
+    if (*count == SIZE_MAX) {
+        goto fail;
+    }
+
+    size_t final_capacity = *count + 1;
+    if (final_capacity > SIZE_MAX / sizeof(char*)) {
+        goto fail;
+    }
+    char** final_result = realloc(result, final_capacity * sizeof(char*));
+    if (final_result == NULL) {
+        goto fail;
+    }
+    result = final_result;
+    result[*count] = NULL;
+
+    return result;
+
+fail:
+    if (regex_compiled) {
+        regfree(&regex);
+    }
+    for (size_t i = 0; i < *count; i++) {
+        free(result[i]);
+    }
+    free(result);
+    return NULL;
+}
+
+void free_split_result(char** result) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; result[i] != NULL; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char* input = "HelloWorldThisIsATest";
+    size_t count = 0;
+    char** result = split_at_uppercase(input, &count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_result(result);
+    }
+
+    return 0;
+}

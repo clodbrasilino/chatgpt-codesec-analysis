@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-9-s3.c: In function 'find_min_rotations':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-9-s3.c:20:20: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   20 |     errno_t err1 = memcpy_s(doubled, 2 * len + 1, str, len);
+      |                    ^~~~~~~~
+      |                    memcpy

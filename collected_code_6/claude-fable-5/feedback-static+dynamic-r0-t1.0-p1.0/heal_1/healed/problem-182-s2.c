@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static void print_regex_error(const char *prefix, int errcode, const regex_t *regex)
+{
+    size_t errbuf_size;
+    char *errbuf;
+
+    errbuf_size = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(errbuf_size);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unable to allocate error buffer\n", prefix);
+        return;
+    }
+    regerror(errcode, regex, errbuf, errbuf_size);
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+    free(errbuf);
+}
+
+int count_matches(const char *pattern, const char *text, int *count)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+
+    if (pattern == NULL || text == NULL || count == NULL) {
+        return -1;
+    }
+
+    *count = 0;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error("regcomp failed", ret, &regex);
+        return -1;
+    }
+
+    cursor = text;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error("regexec failed", ret, &regex);
+            regfree(&regex);
+            return -1;
+        }
+        (*count)++;
+        if (match.rm_eo == 0) {
+            cursor++;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int analyze_string(const char *text)
+{
+    int upper = 0;
+    int lower = 0;
+    int digit = 0;
+    int special = 0;
+
+    if (text == NULL) {
+        fprintf(stderr, "analyze_string: NULL input\n");
+        return -1;
+    }
+
+    if (count_matches("[A-Z]", text, &upper) != 0) {
+        return -1;
+    }
+    if (count_matches("[a-z]", text, &lower) != 0) {
+        return -1;
+    }
+    if (count_matches("[0-9]", text, &digit) != 0) {
+        return -1;
+    }
+    if (count_matches("[^A-Za-z0-9]", text, &special) != 0) {
+        return -1;
+    }
+
+    printf("Input string: %s\n", text);
+    printf("Uppercase characters: %d\n", upper);
+    printf("Lowercase characters: %d\n", lower);
+    printf("Numeric characters: %d\n", digit);
+    printf("Special characters: %d\n", special);
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *sample = "Hello World! 123 @C_programming#2024";
+
+    if (analyze_string(sample) != 0) {
+        fprintf(stderr, "Analysis failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-788-s2.c:36:9: error: call to undeclared function 'memcpy_s'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   36 |         memcpy_s(t->list, list_size * sizeof(int), list, list_size * sizeof(int));
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-788-s2.c:36:9: note: did you mean 'memcpy'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:78:3: note: 'memcpy' declared here
+   78 |                 memcpy(void *_LIBC_SIZE(__n) __dst, const void *_LIBC_SIZE(__n) __src,
+      |                 ^
+1 error generated.

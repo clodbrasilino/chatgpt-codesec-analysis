@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_adjacent_duplicates(const int *array, size_t len)
+{
+    size_t count = 0U;
+
+    if (array == NULL || len < 2U) {
+        return 0U;
+    }
+
+    for (size_t i = 0U; i < len - 1U; i++) {
+        if (array[i] == array[i + 1U]) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const int data[] = {1, 2, 2, 3, 3, 3, 4, 5, 5};
+    const size_t len = sizeof(data) / sizeof(data[0]);
+
+    printf("Adjacent duplicate pairs: %zu\n", count_adjacent_duplicates(data, len));
+
+    return 0;
+}

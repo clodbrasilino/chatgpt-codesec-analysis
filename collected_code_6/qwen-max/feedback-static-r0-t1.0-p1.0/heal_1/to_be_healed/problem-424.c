@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *extract_rear_index(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *rear_char = (char *)malloc(2 * sizeof(char));
+    if (rear_char == NULL) {
+        return NULL;
+    }
+    rear_char[0] = str[len - 1];
+    rear_char[1] = '\0';
+    return rear_char;
+}
+
+int main() {
+    const char *array[] = {"hello", "world", "C", "programming", "", NULL};
+    size_t array_size = sizeof(array) / sizeof(array[0]);
+
+    for (size_t i = 0; i < array_size; ++i) {
+        char *rear_char = extract_rear_index(array[i]);
+        if (rear_char != NULL) {
+            printf("Rear index of '%s': %s\n", array[i], rear_char);
+            free(rear_char);
+        } else {
+            printf("Rear index of '%s': (null)\n", array[i]);
+        }
+    }
+
+    return 0;
+}

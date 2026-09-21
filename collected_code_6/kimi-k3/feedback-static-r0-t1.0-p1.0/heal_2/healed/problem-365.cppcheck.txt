@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:50:13: style: Condition 'too_long' is always true [knownConditionTrueFalse]
+        if (too_long) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:47:20: note: Assignment 'too_long=1', assigned value is 1
+        too_long = 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:50:13: note: Condition 'too_long' is always true
+        if (too_long) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:37:9: style: The scope of the variable 'c' can be reduced. [variableScope]
+    int c;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:38:9: style: The scope of the variable 'too_long' can be reduced. [variableScope]
+    int too_long = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-365.c:38:18: style: Variable 'too_long' is assigned a value that is never used. [unreadVariable]
+    int too_long = 0;
+                 ^

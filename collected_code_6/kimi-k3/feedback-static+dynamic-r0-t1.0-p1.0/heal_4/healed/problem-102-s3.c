@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(input, 1024);
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    int capitalize_next = 0;
+    int seen_char = 0;
+
+    while (i < len) {
+        if (input[i] == '_') {
+            if (seen_char) {
+                capitalize_next = 1;
+            }
+            i++;
+        } else {
+            if (capitalize_next) {
+                result[j] = (char)toupper((unsigned char)input[i]);
+                capitalize_next = 0;
+            } else {
+                result[j] = input[i];
+            }
+            seen_char = 1;
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    char* final_result = (char*)realloc(result, j + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char* test_cases[] = {
+        "Python_Program",
+        "Python_Language",
+        "Programming_Language",
+        "hello_world",
+        "snake_case_string",
+        "already_camel",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "multiple__underscores",
+        "a",
+        "",
+        "___",
+        "a_b_c_d_e"
+    };
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char* result = snake_to_camel(test_cases[i]);
+        if (result != NULL) {
+            printf("%s\n", result);
+            free(result);
+        } else {
+            fprintf(stderr, "Error: Failed to convert \"%s\"\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

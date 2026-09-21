@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_non_alnum(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t input_len = 0;
+    while (input_len < (size_t)-1 && input[input_len] != '\0') {
+        input_len++;
+    }
+
+    char *output = malloc(input_len + 1);
+    if (output == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t out_idx = 0;
+    const char *ptr = input;
+    regmatch_t match;
+
+    while (1) {
+        ret = regexec(&regex, ptr, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining_len = 0;
+            while (remaining_len < (size_t)-1 && ptr[remaining_len] != '\0') {
+                remaining_len++;
+            }
+            if (remaining_len > 0) {
+                if (out_idx + remaining_len <= input_len) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(output + out_idx, ptr, remaining_len);
+                    out_idx += remaining_len;
+                }
+            }
+            break;
+        }
+
+        if (ret != 0) {
+            free(output);
+            regfree(&regex);
+            return NULL;
+        }
+
+        size_t valid_len = match.rm_so;
+        if (valid_len > 0) {
+            if (out_idx + valid_len <= input_len) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(output + out_idx, ptr, valid_len);
+                out_idx += valid_len;
+            }
+        }
+
+        ptr += match.rm_eo;
+    }
+
+    output[out_idx] = '\0';
+
+    regfree(&regex);
+
+    char *shrunk = realloc(output, out_idx + 1);
+    if (shrunk != NULL) {
+        return shrunk;
+    }
+
+    return output;
+}
+
+int main(void) {
+    const char *test = "Hello, World! 123 @#$%";
+    char *result = remove_non_alnum(test);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

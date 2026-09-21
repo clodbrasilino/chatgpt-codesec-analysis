@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+Dict *dict_create(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        initial_capacity = 1;
+    }
+    if (initial_capacity > SIZE_MAX / sizeof(DictEntry)) {
+        return NULL;
+    }
+    Dict *dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = malloc(initial_capacity * sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+int dict_insert(Dict *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->size == dict->capacity) {
+        size_t new_capacity;
+        if (dict->capacity == 0) {
+            new_capacity = 1;
+        } else {
+            if (dict->capacity > SIZE_MAX / 2) {
+                return -1;
+            }
+            new_capacity = dict->capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(DictEntry)) {
+                return -1;
+            }
+        }
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    size_t max_key_len = 65536;
+    const char *end = memchr(key, '\0', max_key_len);
+    if (end == NULL) {
+        return -1;
+    }
+    size_t len = (size_t)(end - key) + 1;
+    char *new_key = malloc(len);
+    if (new_key == NULL) {
+        return -1;
+    }
+    snprintf(new_key, len, "%s", key);
+    dict->entries[dict->size].key = new_key;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+const DictEntry *dict_access_by_index(const Dict *dict, size_t index) {
+    if (dict == NULL || index >= dict->size) {
+        return NULL;
+    }
+    return &dict->entries[index];
+}
+
+void dict_free(Dict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int main(void) {
+    Dict *dict = dict_create(2);
+    if (dict == NULL) {
+        return EXIT_FAILURE;
+    }
+    if (dict_insert(dict, "apple", 1) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    if (dict_insert(dict, "banana", 2) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    if (dict_insert(dict, "cherry", 3) != 0) {
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        const DictEntry *entry = dict_access_by_index(dict, i);
+        if (entry != NULL) {
+            printf("Index %zu: Key=%s, Value=%d\n", i, entry->key, entry->value);
+        }
+    }
+    const DictEntry *invalid_entry = dict_access_by_index(dict, 10);
+    if (invalid_entry == NULL) {
+        printf("Out of bounds index handled correctly.\n");
+    }
+    dict_free(dict);
+    return EXIT_SUCCESS;
+}

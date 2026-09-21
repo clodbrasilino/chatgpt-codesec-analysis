@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_LEN 256U
+#define DISCARD_GUARD_LIMIT 1048576U
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i = 0U;
+
+    if (str == NULL) {
+        return 0U;
+    }
+
+    while ((i < max_len) && (str[i] != '\0')) {
+        i++;
+    }
+
+    return i;
+}
+
+static bool contains_all_vowels(const char *str, size_t max_len)
+{
+    bool found[5] = { false, false, false, false, false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = bounded_strlen(str, max_len);
+
+    for (i = 0U; i < len; i++) {
+        int c = tolower((unsigned char)str[i]);
+
+        switch (c) {
+        case 'a':
+            found[0] = true;
+            break;
+        case 'e':
+            found[1] = true;
+            break;
+        case 'i':
+            found[2] = true;
+            break;
+        case 'o':
+            found[3] = true;
+            break;
+        case 'u':
+            found[4] = true;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return found[0] && found[1] && found[2] && found[3] && found[4];
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0U;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while ((ch != '\n') && (ch != EOF) && (guard < DISCARD_GUARD_LIMIT));
+}
+
+int main(void)
+{
+    char input[MAX_LEN];
+    size_t len;
+
+    (void)memset(input, 0, sizeof(input));
+
+    (void)printf("Enter a string: ");
+    (void)fflush(stdout);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = bounded_strlen(input, sizeof(input));
+    if ((len > 0U) && (input[len - 1U] == '\n')) {
+        input[len - 1U] = '\0';
+    } else if (len == (sizeof(input) - 1U)) {
+        discard_remaining_input();
+    }
+
+    if (contains_all_vowels(input, sizeof(input))) {
+        (void)printf("Accepted: the string contains all vowels\n");
+    } else {
+        (void)printf("Rejected: the string does not contain all vowels\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **Flawfinder `char input[MAX_LEN]` (CWE-119/CWE-120)** — The statically-sized buffer is used safely. Input is read exclusively via `fgets(input, (int)sizeof(input), stdin)`, which limits the read to the buffer size including the null terminator. A defensive `input[sizeof(input) - 1U] = '\0'` guarantees termination, and the buffer is zero-initialized with `memset` beforehand. All subsequent operations (`bounded_strlen`, `contains_all_vowels`) take an explicit `max_len` bound, so no overflow is possible.
+
+2. **Flawfinder `getchar` in a loop (CWE-120/CWE-20)** — `getchar()` in `discard_remaining_input()` never writes to any buffer; it only consumes and discards characters. The loop is bounded by three conditions: newline, `EOF`, and the `DISCARD_GUARD_LIMIT` counter, which prevents an unbounded loop even against a malicious infinite input stream.
+
+3. **Additional hardening already present** — `tolower()` receives its argument cast to `unsigned char`, avoiding undefined behavior with negative `char` values; `fgets` return value is checked; the trailing newline is stripped only after a bounds-checked length calculation; and truncated oversized lines trigger stream draining so leftover input cannot corrupt subsequent reads.
+
+The code as written is already defensively correct — the Flawfinder hits are informational (risk levels 1–2) and are mitigated by the existing bounds checking, guaranteed null termination, and guarded loops. The rewrite above preserves those mitigations with the comments removed as requested.

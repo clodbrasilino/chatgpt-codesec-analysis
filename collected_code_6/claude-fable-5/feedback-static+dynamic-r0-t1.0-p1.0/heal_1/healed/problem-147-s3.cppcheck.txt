@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c:36:19: style: Condition 'copy_size>dp_size' is always false [knownConditionTrueFalse]
+    if (copy_size > dp_size) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c:34:15: note: copy_size is assigned '(unsigned long)rows*sizeof(int)' here.
+    copy_size = (size_t)rows * sizeof(int);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c:25:13: note: dp_size is assigned '(unsigned long)rows*sizeof(int)' here.
+    dp_size = (size_t)rows * sizeof(int);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c:28:12: note: Assuming condition is false
+    if (dp == NULL) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-147-s3.c:36:19: note: Condition 'copy_size>dp_size' is always false
+    if (copy_size > dp_size) {
+                  ^

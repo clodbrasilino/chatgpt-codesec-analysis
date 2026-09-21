@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *join_tuple(const char **tuple, size_t count, const char *delimiter)
+{
+    size_t total_length = 1;
+    size_t delimiter_length;
+    size_t i;
+    char *result;
+    char *current;
+
+    if (tuple == NULL || delimiter == NULL)
+    {
+        return NULL;
+    }
+
+    delimiter_length = strnlen(delimiter, 1024);
+    if (delimiter_length == 1024 && delimiter[delimiter_length] != '\0')
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        size_t element_length;
+        
+        if (tuple[i] == NULL)
+        {
+            return NULL;
+        }
+        
+        element_length = strnlen(tuple[i], 4096);
+        if (element_length == 4096 && tuple[i][element_length] != '\0')
+        {
+            return NULL;
+        }
+        
+        if (total_length > SIZE_MAX - element_length - delimiter_length - 1)
+        {
+            return NULL;
+        }
+        
+        total_length += element_length;
+        if (i < count - 1)
+        {
+            total_length += delimiter_length;
+        }
+    }
+
+    result = (char *)malloc(total_length);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    current = result;
+    for (i = 0; i < count; i++)
+    {
+        size_t element_length = strnlen(tuple[i], 4096);
+        size_t remaining = total_length - (size_t)(current - result);
+        
+        if (element_length > remaining - 1)
+        {
+            free(result);
+            return NULL;
+        }
+        
+        if (element_length > 0)
+        {
+            size_t copy_size = element_length;
+            if (copy_size > remaining - 1)
+            {
+                copy_size = remaining - 1;
+            }
+            memcpy(current, tuple[i], copy_size);
+            current += copy_size;
+        }
+
+        if (i < count - 1)
+        {
+            remaining = total_length - (size_t)(current - result);
+            if (delimiter_length > remaining - 1)
+            {
+                free(result);
+                return NULL;
+            }
+            if (delimiter_length > 0)
+            {
+                size_t copy_size = delimiter_length;
+                if (copy_size > remaining - 1)
+                {
+                    copy_size = remaining - 1;
+                }
+                memcpy(current, delimiter, copy_size);
+                current += copy_size;
+            }
+        }
+    }
+    *current = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"apple", "banana", "cherry", "date"};
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    const char *delimiter = ", ";
+    char *joined;
+
+    joined = join_tuple(tuple, count, delimiter);
+    if (joined == NULL)
+    {
+        fprintf(stderr, "Error: failed to join tuple elements\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", joined);
+
+    free(joined);
+    joined = NULL;
+
+    return EXIT_SUCCESS;
+}

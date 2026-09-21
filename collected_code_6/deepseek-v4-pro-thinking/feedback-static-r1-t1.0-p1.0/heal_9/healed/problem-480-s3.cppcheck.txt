@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-480-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-480-s3.c:40:15: style: Variable 'ret' can be declared as pointer to const [constVariablePointer]
+        char *ret = fgets(input + length, capacity - length, stdin);
+              ^

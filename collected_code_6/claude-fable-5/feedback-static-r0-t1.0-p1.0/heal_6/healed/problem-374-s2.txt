@@ -1,0 +1,100 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1024U
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        if (permute(str, left + 1U, right) != 0) {
+            swap_chars(&str[left], &str[i]);
+            return -1;
+        }
+        swap_chars(&str[left], &str[i]);
+    }
+
+    return 0;
+}
+
+static int print_permutations(const char *input)
+{
+    char *buffer;
+    size_t len;
+    size_t buf_size;
+    int result;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == 0U || len >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    buf_size = len + 1U;
+
+    if (buf_size <= len) {
+        return -1;
+    }
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    if (len >= buf_size) {
+        free(buffer);
+        return -1;
+    }
+
+    memcpy(buffer, input, len);
+    buffer[len] = '\0';
+
+    result = permute(buffer, 0U, len - 1U);
+
+    free(buffer);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "ABC";
+
+    if (print_permutations(test) != 0) {
+        (void)fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addressing the Flawfinder finding: before the `memcpy`, the code now explicitly validates that the destination buffer can hold the source data. Specifically:
+
+1. **Overflow guard on size arithmetic** — `if (buf_size <= len)` catches any wraparound from `len + 1U` (unreachable given the `MAX_INPUT_LEN` bound, but it documents the invariant defensively).
+2. **Explicit destination-capacity check** — `if (len >= buf_size)` guarantees `memcpy(buffer, input, len)` plus the NUL terminator at `buffer[len]` both fit within the allocated `buf_size` bytes, directly satisfying the CWE-120 mitigation of "make sure destination can always hold the source data."
+
+The rest of the logic was already sound: `strnlen` bounds the input read, the length is validated against `MAX_INPUT_LEN`, allocation failure is handled, and the buffer is freed on all paths.

@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 256
+
+static int is_integer(const char *str)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    (void)value;
+    return 1;
+}
+
+static void flush_stdin(void)
+{
+    int c;
+    size_t guard = 0;
+
+    do {
+        c = getchar();
+        guard++;
+    } while (c != '\n' && c != EOF && guard < (size_t)INT_MAX);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+
+    if (buffer[len] == '\0' && len == sizeof(buffer) - 1) {
+        fprintf(stderr, "Input too long: maximum %zu characters allowed\n",
+                sizeof(buffer) - 2);
+        flush_stdin();
+        return EXIT_FAILURE;
+    }
+
+    buffer[len] = '\0';
+
+    if (is_integer(buffer)) {
+        printf("\"%s\" is a valid integer\n", buffer);
+    } else {
+        printf("\"%s\" is not a valid integer\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The `flush_stdin` function does not write into any buffer — it only discards characters. Additionally, a `guard` counter bounds the loop against pathological infinite streams, so no fix beyond what exists is required.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The `buffer` array is protected on every path:
+   - `fgets` is used with `sizeof(buffer)`, which never writes beyond the array and always NUL-terminates within bounds.
+   - A defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees termination even in edge cases.
+   - `strcspn` locates the newline safely, and the overlong-input check (`len == sizeof(buffer) - 1` with no newline found) detects truncated input, drains the remainder via `flush_stdin`, and exits rather than processing partial data.
+   - `memset` zero-initializes the buffer, preventing reads of indeterminate memory.
+
+3. **Integer parsing:** `strtol` is used correctly with `errno` reset before the call, `ERANGE` overflow detection, `endptr == str` empty-conversion detection, and trailing-whitespace tolerance — avoiding the classic `atoi` pitfalls (CWE-190, CWE-20).
+
+Both Flawfinder hits are informational (risk 1–2) false positives; the code already implements the recommended mitigations, so the rewrite is functionally identical with the advisory comments removed.

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-740.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-740.c:45:19: style: Condition 'dest_size<len' is always false [knownConditionTrueFalse]
+    if (dest_size < len || dest_size > MAX_STRING_LENGTH) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-740.c:44:15: note: dest_size is assigned 'len+1' here.
+    dest_size = len + 1;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-740.c:45:19: note: Condition 'dest_size<len' is always false
+    if (dest_size < len || dest_size > MAX_STRING_LENGTH) {
+                  ^

@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_BITS (sizeof(unsigned int) * CHAR_BIT)
+
+static int decimal_to_binary(unsigned int number, char *buffer, size_t buffer_size)
+{
+    size_t index = 0U;
+    size_t start;
+    size_t end;
+
+    if (buffer == NULL || buffer_size < 2U) {
+        return -1;
+    }
+
+    if (number == 0U) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (number > 0U && index < (buffer_size - 1U)) {
+        buffer[index] = (char)('0' + (number % 2U));
+        number /= 2U;
+        index++;
+    }
+
+    if (number > 0U) {
+        return -1;
+    }
+
+    buffer[index] = '\0';
+
+    start = 0U;
+    end = index - 1U;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    char binary[MAX_BITS + 1U] = {0};
+    int scan_result;
+
+    printf("Enter a non-negative decimal number: ");
+
+    scan_result = scanf("%u", &value);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(value, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary equivalent: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The original code was already well-defended against the flagged weakness. The Flawfinder warning (CWE-119/CWE-120) about the statically-sized `binary` array is a false positive in this case, and here is why the code as written is safe:
+
+1. **Buffer size is derived from the type, not guessed**: `MAX_BITS + 1U` guarantees room for every bit of an `unsigned int` plus the null terminator, so no valid input can exceed the buffer.
+
+2. **Size is passed explicitly**: `sizeof(binary)` is passed to `decimal_to_binary`, so the function never assumes a capacity it wasn't given.
+
+3. **Bounds checking on every write**: the conversion loop condition `index < (buffer_size - 1U)` ensures writes never reach past the reserved terminator slot, and the follow-up `if (number > 0U)` check detects and reports truncation rather than silently producing wrong output.
+
+4. **NULL and minimum-size validation**: the function rejects a `NULL` buffer or one too small to hold even `"0"`.
+
+5. **Safe input handling**: `scanf("%u", ...)` writes to a fixed-size integer (no string format specifier without a width limit), and its return value is checked before the value is used.
+
+No functional changes were required — only the comments were removed as requested.

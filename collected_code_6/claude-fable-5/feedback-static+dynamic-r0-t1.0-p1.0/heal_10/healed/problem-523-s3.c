@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LENGTH 256
+#define MAX_FLUSH_COUNT ((size_t)MAX_INPUT_LENGTH * 16)
+
+static bool is_valid_password(const char *str, size_t required_length)
+{
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    size_t length;
+    size_t i;
+
+    if (str == NULL || required_length == 0 || required_length >= MAX_INPUT_LENGTH) {
+        return false;
+    }
+
+    length = strnlen(str, MAX_INPUT_LENGTH);
+
+    if (length >= MAX_INPUT_LENGTH || length != required_length) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit);
+}
+
+static void flush_stdin(void)
+{
+    size_t count = 0;
+    int ch;
+
+    do {
+        ch = getchar();
+        count++;
+    } while (ch != '\n' && ch != EOF && count < MAX_FLUSH_COUNT);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LENGTH];
+    size_t required_length = 8;
+    size_t input_length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string to validate (required length %zu): ", required_length);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    input_length = strnlen(buffer, sizeof(buffer));
+
+    if (input_length > 0 && buffer[input_length - 1] == '\n') {
+        buffer[input_length - 1] = '\0';
+    } else if (input_length == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (is_valid_password(buffer, required_length)) {
+        printf("The string is valid.\n");
+    } else {
+        printf("The string is invalid.\n");
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    return EXIT_SUCCESS;
+}

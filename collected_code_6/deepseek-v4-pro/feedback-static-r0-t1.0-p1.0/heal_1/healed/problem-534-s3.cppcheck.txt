@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-534-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-534-s3.c:10:51: style: Condition 'max_locations>0' is always true [knownConditionTrueFalse]
+    size_t text_len = strnlen(text, max_locations > 0 ? text_len + 1 : 1);
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-534-s3.c:6:79: note: Assuming condition 'max_locations<=0' is false
+    if (text == NULL || pattern == NULL || locations == NULL || max_locations <= 0) {
+                                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-534-s3.c:10:51: note: Condition 'max_locations>0' is always true
+    size_t text_len = strnlen(text, max_locations > 0 ? text_len + 1 : 1);
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-534-s3.c:10:57: error: Uninitialized variable: text_len [legacyUninitvar]
+    size_t text_len = strnlen(text, max_locations > 0 ? text_len + 1 : 1);
+                                                        ^

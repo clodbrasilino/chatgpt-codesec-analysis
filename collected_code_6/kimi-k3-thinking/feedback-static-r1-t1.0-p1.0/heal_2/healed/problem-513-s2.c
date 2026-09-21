@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+static size_t bounded_strnlen(const char *src, size_t max_len)
+{
+    size_t len = 0;
+
+    if (src == NULL) {
+        return 0;
+    }
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    size_t capacity;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = bounded_strnlen(src, MAX_STRING_LENGTH);
+    capacity = len + 1;
+
+    copy = malloc(capacity);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    (void)snprintf(copy, capacity, "%.*s", (int)len, src);
+
+    return copy;
+}
+
+void free_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+char **tuple_to_list(const char *const *tuple, size_t tuple_count, const char *item, size_t *list_count)
+{
+    char **list;
+    size_t total;
+    size_t i;
+
+    if (list_count == NULL) {
+        return NULL;
+    }
+    *list_count = 0;
+
+    if (tuple == NULL || item == NULL || tuple_count == 0) {
+        return NULL;
+    }
+    if (tuple_count > SIZE_MAX / 2) {
+        return NULL;
+    }
+
+    total = tuple_count * 2;
+    if (total > SIZE_MAX / sizeof(*list)) {
+        return NULL;
+    }
+
+    list = calloc(total, sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < tuple_count; i++) {
+        if (tuple[i] == NULL) {
+            free_list(list, total);
+            return NULL;
+        }
+        list[2 * i] = duplicate_string(tuple[i]);
+        if (list[2 * i] == NULL) {
+            free_list(list, total);
+            return NULL;
+        }
+        list[2 * i + 1] = duplicate_string(item);
+        if (list[2 * i + 1] == NULL) {
+            free_list(list, total);
+            return NULL;
+        }
+    }
+
+    *list_count = total;
+    return list;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"alpha", "beta", "gamma", "delta"};
+    const size_t tuple_count = sizeof(tuple) / sizeof(tuple[0]);
+    const char *item = "inserted";
+    char **list = NULL;
+    size_t list_count = 0;
+    size_t i;
+
+    list = tuple_to_list(tuple, tuple_count, item, &list_count);
+    if (list == NULL) {
+        fprintf(stderr, "Error: tuple_to_list failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        printf("[%zu] %s\n", i, list[i]);
+    }
+
+    free_list(list, list_count);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

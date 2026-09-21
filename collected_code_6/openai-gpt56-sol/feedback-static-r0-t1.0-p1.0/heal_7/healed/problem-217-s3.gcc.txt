@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-217-s3.c: In function 'find_first_repeated_character':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-217-s3.c:19:57: error: 'UINTMAX_WIDTH' undeclared (first use in this function); did you mean 'UINT_WIDTH'?
+   19 |         const uintmax_t mask = UINTMAX_C(1) << (value % UINTMAX_WIDTH);
+      |                                                         ^~~~~~~~~~~~~
+      |                                                         UINT_WIDTH
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-217-s3.c:19:57: note: each undeclared identifier is reported only once for each function it appears in

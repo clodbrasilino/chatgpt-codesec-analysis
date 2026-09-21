@@ -1,0 +1,195 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 65536
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && str[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+static int copy_bounded(char *dest, size_t dest_size, const char *src, size_t src_len)
+{
+    size_t k = 0;
+
+    if (dest == NULL || src == NULL || dest_size == 0)
+    {
+        return -1;
+    }
+
+    if (src_len > dest_size - 1)
+    {
+        return -1;
+    }
+
+    while (k < src_len && k + 1 < dest_size)
+    {
+        dest[k] = src[k];
+        k++;
+    }
+    dest[k] = '\0';
+
+    return 0;
+}
+
+static char **split_at_lowercase(const char *str, size_t *count)
+{
+    char **result = NULL;
+    char **temp = NULL;
+    char *part = NULL;
+    size_t num_parts = 0;
+    size_t capacity = 8;
+    size_t len = 0;
+    size_t i = 0;
+
+    if (str == NULL || count == NULL)
+    {
+        return NULL;
+    }
+
+    *count = 0;
+    len = bounded_length(str, MAX_STRING_LENGTH);
+
+    result = malloc(capacity * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    while (i < len)
+    {
+        size_t start;
+        size_t part_len;
+        size_t j;
+
+        if (islower((unsigned char)str[i]))
+        {
+            i++;
+            continue;
+        }
+
+        start = i;
+
+        while (i < len && !islower((unsigned char)str[i]))
+        {
+            i++;
+        }
+
+        part_len = i - start;
+
+        if (num_parts >= capacity)
+        {
+            if (capacity > SIZE_MAX / (2 * sizeof(*result)))
+            {
+                for (j = 0; j < num_parts; j++)
+                {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            temp = realloc(result, capacity * 2 * sizeof(*result));
+            if (temp == NULL)
+            {
+                for (j = 0; j < num_parts; j++)
+                {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            result = temp;
+            capacity *= 2;
+        }
+
+        if (part_len == SIZE_MAX)
+        {
+            for (j = 0; j < num_parts; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        part = malloc(part_len + 1);
+        if (part == NULL)
+        {
+            for (j = 0; j < num_parts; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        if (copy_bounded(part, part_len + 1, str + start, part_len) != 0)
+        {
+            free(part);
+            for (j = 0; j < num_parts; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        result[num_parts] = part;
+        num_parts++;
+    }
+
+    *count = num_parts;
+    return result;
+}
+
+static void free_split(char **parts, size_t count)
+{
+    size_t i = 0;
+
+    if (parts == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        free(parts[i]);
+    }
+    free(parts);
+}
+
+int main(void)
+{
+    const char *input = "ABCdefGHIjklMNOpqrSTU";
+    char **parts = NULL;
+    size_t count = 0;
+    size_t i = 0;
+
+    parts = split_at_lowercase(input, &count);
+    if (parts == NULL)
+    {
+        fprintf(stderr, "Error: failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        printf("Part %zu: %s\n", i, parts[i]);
+    }
+
+    free_split(parts, count);
+    parts = NULL;
+
+    return EXIT_SUCCESS;
+}

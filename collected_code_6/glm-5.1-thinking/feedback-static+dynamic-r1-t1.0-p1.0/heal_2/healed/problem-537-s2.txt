@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *find_first_repeated_word(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char **seen = NULL;
+    size_t seen_count = 0;
+    size_t seen_capacity = 0;
+    char *result = NULL;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        while (str[i] != '\0' && !isalnum((unsigned char)str[i])) {
+            i++;
+        }
+        if (str[i] == '\0') {
+            break;
+        }
+
+        const char *start = &str[i];
+        size_t len = 0;
+        while (str[i] != '\0' && isalnum((unsigned char)str[i])) {
+            len++;
+            i++;
+        }
+
+        char *current_word = malloc(len + 1);
+        if (current_word == NULL) {
+            goto cleanup;
+        }
+        for (size_t j = 0; j < len; j++) {
+            current_word[j] = tolower((unsigned char)start[j]);
+        }
+        current_word[len] = '\0';
+
+        int found = 0;
+        for (size_t k = 0; k < seen_count; k++) {
+            if (strcmp(seen[k], current_word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (found) {
+            result = current_word;
+            goto cleanup;
+        }
+
+        if (seen_count >= seen_capacity) {
+            size_t new_capacity = seen_capacity == 0 ? 8 : seen_capacity * 2;
+            char **new_seen = realloc(seen, new_capacity * sizeof(char *));
+            if (new_seen == NULL) {
+                free(current_word);
+                goto cleanup;
+            }
+            seen = new_seen;
+            seen_capacity = new_capacity;
+        }
+
+        seen[seen_count] = current_word;
+        seen_count++;
+    }
+
+cleanup:
+    for (size_t k = 0; k < seen_count; k++) {
+        free(seen[k]);
+    }
+    free(seen);
+
+    return result;
+}
+
+int main() {
+    const char *text = "This is a test, this is only a test.";
+    char *word = find_first_repeated_word(text);
+    if (word != NULL) {
+        printf("%s\n", word);
+        free(word);
+    } else {
+        printf("None\n");
+    }
+    return 0;
+}
+```

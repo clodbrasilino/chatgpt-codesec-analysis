@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:106:21: style: Condition 'sorted1!=NULL' is always true [knownConditionTrueFalse]
+        if (sorted1 != NULL && t1->data != NULL && copy_size1 <= t1->size * sizeof(int)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:134:21: style: Condition 'sorted2!=NULL' is always true [knownConditionTrueFalse]
+        if (sorted2 != NULL && t2->data != NULL && copy_size2 <= t2->size * sizeof(int)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:106:63: style: The comparison 'copy_size1 <= t1->size*sizeof(int)' is always true because 'copy_size1' and 't1->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (sorted1 != NULL && t1->data != NULL && copy_size1 <= t1->size * sizeof(int)) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:99:38: note: 'copy_size1' is assigned value 't1->size*sizeof(int)' here.
+        size_t copy_size1 = t1->size * sizeof(int);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:106:63: note: The comparison 'copy_size1 <= t1->size*sizeof(int)' is always true because 'copy_size1' and 't1->size*sizeof(int)' represent the same value.
+        if (sorted1 != NULL && t1->data != NULL && copy_size1 <= t1->size * sizeof(int)) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:134:63: style: The comparison 'copy_size2 <= t2->size*sizeof(int)' is always true because 'copy_size2' and 't2->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (sorted2 != NULL && t2->data != NULL && copy_size2 <= t2->size * sizeof(int)) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:126:38: note: 'copy_size2' is assigned value 't2->size*sizeof(int)' here.
+        size_t copy_size2 = t2->size * sizeof(int);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-579-s3.c:134:63: note: The comparison 'copy_size2 <= t2->size*sizeof(int)' is always true because 'copy_size2' and 't2->size*sizeof(int)' represent the same value.
+        if (sorted2 != NULL && t2->data != NULL && copy_size2 <= t2->size * sizeof(int)) {
+                                                              ^

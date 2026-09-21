@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+static int count_odd_rotations(const char *s, size_t s_size, size_t *count)
+{
+    size_t len, i, odd_count = 0;
+
+    if (s == NULL || count == NULL || s_size == 0)
+        return -1;
+
+    len = strnlen(s, s_size);
+    if (len == 0)
+    {
+        *count = 0;
+        return 0;
+    }
+
+    if (len == s_size)
+        return -1;
+
+    for (i = 0; i < len; i++)
+    {
+        if (s[i] != '0' && s[i] != '1')
+            return -1;
+        if (s[i] == '1')
+            odd_count++;
+    }
+
+    *count = odd_count;
+    return 0;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    size_t count;
+    ssize_t len;
+
+    len = getline(&buffer, &buffer_size, stdin);
+    if (len == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (len > 0 && buffer[len - 1] == '\n')
+        buffer[len - 1] = '\0';
+
+    if (count_odd_rotations(buffer, buffer_size, &count) != 0)
+    {
+        fprintf(stderr, "Invalid binary string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%zu\n", count);
+    free(buffer);
+    return EXIT_SUCCESS;
+}

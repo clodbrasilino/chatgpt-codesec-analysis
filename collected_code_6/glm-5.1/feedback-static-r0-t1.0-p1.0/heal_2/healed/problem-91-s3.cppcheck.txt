@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:42:17: style: Condition 'search1!=NULL' is always true [knownConditionTrueFalse]
+    if (search1 != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:36:27: note: Assignment 'search1="nan"', assigned value is "nan"
+    const char *search1 = "nan";
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:42:17: note: Condition 'search1!=NULL' is always true
+    if (search1 != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:47:17: style: Condition 'search2!=NULL' is always true [knownConditionTrueFalse]
+    if (search2 != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:37:27: note: Assignment 'search2="berry"', assigned value is "berry"
+    const char *search2 = "berry";
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-91-s3.c:47:17: note: Condition 'search2!=NULL' is always true
+    if (search2 != NULL) {
+                ^

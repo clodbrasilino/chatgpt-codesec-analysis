@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:115:38: style: Condition 'k<copy_len' is always false [knownConditionTrueFalse]
+                for (size_t k = 0; k < copy_len; k++) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:113:35: note: Assignment 'copy_len=token_len<(unsigned long)(50-1)?token_len:(unsigned long)(50-1)', assigned value is less than 1
+                                  ? token_len : (size_t)(MAX_WORD_LEN - 1);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:115:38: note: Condition 'k<copy_len' is always false
+                for (size_t k = 0; k < copy_len; k++) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:90:22: style: Local variable 'i' shadows outer variable [shadowVariable]
+            for (int i = 0; i < adverb_count; i++) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:74:12: note: Shadowed declaration
+    size_t i = 0;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-440.c:90:22: note: Shadow variable
+            for (int i = 0; i < adverb_count; i++) {
+                     ^

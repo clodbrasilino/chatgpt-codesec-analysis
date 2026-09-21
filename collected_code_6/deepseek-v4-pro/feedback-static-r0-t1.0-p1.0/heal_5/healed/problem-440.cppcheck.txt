@@ -1,0 +1,49 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:50:20: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:49:23: note: alloc_size is assigned 'len+1' here.
+    size_t alloc_size = len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:50:20: note: Condition 'alloc_size<=len' is always false
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:59:20: style: Condition 'alloc_size<=len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:49:23: note: alloc_size is assigned 'len+1' here.
+    size_t alloc_size = len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:55:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:59:20: note: Condition 'alloc_size<=len' is always false
+    if (alloc_size <= len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:64:13: style: Condition 'len>0' is always true [knownConditionTrueFalse]
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:45:13: note: Assuming that condition 'len==0' is not redundant
+    if (len == 0 || len >= SIZE_MAX / 2) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:55:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:64:13: note: Condition 'len>0' is always true
+    if (len > 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:90:30: style: Condition 'copy_len>0' is always true [knownConditionTrueFalse]
+                if (copy_len > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:77:23: note: Assuming that condition 'token_len>0' is not redundant
+        if (token_len > 0 && token_len < MAX_WORD_LEN && is_adverb(token, token_len)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:80:52: note: Assuming condition is false
+                if (strcmp(adverbs[i].word, token) == 0) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:86:35: note: Assignment 'copy_len=token_len', assigned value is greater than 0
+                size_t copy_len = token_len;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-440.c:90:30: note: Condition 'copy_len>0' is always true
+                if (copy_len > 0) {
+                             ^

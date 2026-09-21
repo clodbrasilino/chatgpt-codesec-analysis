@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int replace_chars(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if ((str[i] == ' ') || (str[i] == ',') || (str[i] == '.')) {
+            str[i] = ':';
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char text[] = "Hello, world. This is a test string.";
+    int result;
+
+    result = replace_chars(text, sizeof(text));
+    if (result != 0) {
+        (void)fprintf(stderr, "Error: invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", text) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness:
+
+1. **CWE-126 (buffer over-read via `strlen`)**: Replaced `strlen()` with `strnlen()`, which takes a maximum length bound. This guarantees the read never goes past the caller-supplied buffer size, even if the string lacks a `\0` terminator.
+
+2. **New `max_len` parameter**: The function signature now requires the caller to pass the buffer size (`sizeof(text)` at the call site), giving the function the information it needs to enforce the bound.
+
+3. **Termination check**: If `strnlen()` returns `max_len`, no `\0` was found within the buffer, so the function rejects the input with `-1` instead of processing a potentially unterminated string.
+
+The rest of the code was already sound: the `NULL` check, checked return values for `printf`/`fprintf`, and the in-place character replacement within the validated length are all safe.

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-674-s2.c:109:19: style: Condition 'start>input_len' is always true [knownConditionTrueFalse]
+        if (start > input_len || word_len > input_len - start) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-674-s2.c:99:17: note: Assuming that condition 'pos>=input_len' is not redundant
+        if (pos >= input_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-674-s2.c:103:15: note: start is assigned 'pos' here.
+        start = pos;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_2/healed/problem-674-s2.c:109:19: note: Condition 'start>input_len' is always true
+        if (start > input_len || word_len > input_len - start) {
+                  ^

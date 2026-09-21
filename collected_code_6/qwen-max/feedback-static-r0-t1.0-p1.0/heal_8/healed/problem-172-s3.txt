@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int count_occurrences(const char *str, const char *pattern, size_t str_len, size_t pattern_len) {
+    int count = 0;
+    if (pattern_len == 0) return 0;
+
+    for (const char *p = str; (p = memmem(p, str + str_len - p, pattern, pattern_len)) != NULL; p += pattern_len) {
+        count++;
+    }
+    return count;
+}
+
+int main() {
+    const char *str = "1. list item 1. list item 1. list item 2. list item 2. list item 2. list item";
+    const char *pattern = "std";
+    size_t str_len = strlen(str);
+    size_t pattern_len = strlen(pattern);
+    int occurrences = count_occurrences(str, pattern, str_len, pattern_len);
+    printf("The pattern '%s' occurs %d times.\n", pattern, occurrences);
+    return 0;
+}
+```

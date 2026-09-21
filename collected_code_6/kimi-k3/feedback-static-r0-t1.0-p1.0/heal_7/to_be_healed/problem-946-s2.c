@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define MAX_UNIQUE_WORDS 1000
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+void free_words(WordCount *words, int unique_count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < unique_count; i++) {
+        free(words[i].word);
+        words[i].word = NULL;
+    }
+}
+
+void find_most_common_words(const char *text, size_t text_size) {
+    if (text == NULL || text_size == 0 || text[0] == '\0') {
+        printf("Invalid input text.\n");
+        return;
+    }
+
+    size_t text_len = 0;
+    while (text_len < text_size && text[text_len] != '\0') {
+        text_len++;
+    }
+
+    if (text_len == 0) {
+        printf("Invalid input text.\n");
+        return;
+    }
+
+    WordCount *words = calloc(MAX_UNIQUE_WORDS, sizeof(WordCount));
+    if (words == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    char *buffer = malloc(MAX_WORD_LEN);
+    if (buffer == NULL) {
+        printf("Memory allocation failed.\n");
+        free(words);
+        return;
+    }
+
+    int unique_count = 0;
+    size_t buf_index = 0;
+
+    for (size_t i = 0; i <= text_len; i++) {
+        char c = text[i];
+        if (isalnum((unsigned char)c)) {
+            if (buf_index < MAX_WORD_LEN - 1) {
+                buffer[buf_index++] = (char)tolower((unsigned char)c);
+            }
+        } else if (buf_index > 0) {
+            buffer[buf_index] = '\0';
+            int found = 0;
+            for (int j = 0; j < unique_count; j++) {
+                if (words[j].word != NULL && strcmp(words[j].word, buffer) == 0) {
+                    words[j].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found && unique_count < MAX_UNIQUE_WORDS) {
+                size_t word_len = strnlen(buffer, MAX_WORD_LEN - 1);
+                words[unique_count].word = malloc(word_len + 1);
+                if (words[unique_count].word == NULL) {
+                    printf("Memory allocation failed.\n");
+                    free(buffer);
+                    free_words(words, unique_count);
+                    free(words);
+                    return;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+                 */
+                strcpy(words[unique_count].word, buffer);
+                words[unique_count].count = 1;
+                unique_count++;
+            }
+            buf_index = 0;
+        }
+    }
+
+    free(buffer);
+
+    if (unique_count == 0) {
+        printf("No words found in text.\n");
+        free(words);
+        return;
+    }
+
+    int max_count = 0;
+    for (int i = 0; i < unique_count; i++) {
+        if (words[i].count > max_count) {
+            max_count = words[i].count;
+        }
+    }
+
+    printf("Most common word(s) with count %d:\n", max_count);
+    for (int i = 0; i < unique_count; i++) {
+        if (words[i].count == max_count) {
+            printf("%s: %d\n", words[i].word, words[i].count);
+        }
+    }
+
+    free_words(words, unique_count);
+    free(words);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog was not amused by the fox.";
+    find_most_common_words(text, strnlen(text, 1024) + 1);
+    return 0;
+}

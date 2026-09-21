@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+void print_season(int month, int day) {
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        printf("Invalid date\n");
+        return;
+    }
+
+    if ((month == 3 && day >= 20) || month == 4 || month == 5 || (month == 6 && day < 21)) {
+        printf("Spring\n");
+    } else if ((month == 6 && day >= 21) || month == 7 || month == 8 || (month == 9 && day < 22)) {
+        printf("Summer\n");
+    } else if ((month == 9 && day >= 22) || month == 10 || month == 11 || (month == 12 && day < 21)) {
+        printf("Autumn\n");
+    } else {
+        printf("Winter\n");
+    }
+}
+
+int parse_int(const char *str, int *out_val) {
+    char *endptr;
+    long val;
+
+    errno = 0;
+    val = strtol(str, &endptr, 10);
+
+    if (errno != 0 || endptr == str || *endptr != '\0') {
+        return 0;
+    }
+
+    if (val < INT_MIN || val > INT_MAX) {
+        return 0;
+    }
+
+    *out_val = (int)val;
+    return 1;
+}
+
+int main(int argc, const char *const argv[]) {
+    int month = 0;
+    int day = 0;
+
+    if (argc == 3) {
+        if (!parse_int(argv[1], &month) || !parse_int(argv[2], &day)) {
+            printf("Invalid input for month or day\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        printf("Usage: %s <month> <day>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    print_season(month, day);
+
+    return EXIT_SUCCESS;
+}

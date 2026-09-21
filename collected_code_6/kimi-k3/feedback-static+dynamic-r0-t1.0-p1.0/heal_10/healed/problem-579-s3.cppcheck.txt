@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-579-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-579-s3.c:118:40: style: Same expression on both sides of '<='. [duplicateExpression]
+            if (t1->size * sizeof(int) <= t1->size * sizeof(int)) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-579-s3.c:137:40: style: Same expression on both sides of '<='. [duplicateExpression]
+            if (t2->size * sizeof(int) <= t2->size * sizeof(int)) {
+                                       ^

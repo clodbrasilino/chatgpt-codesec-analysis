@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c:64:29: style: Condition 'seq_len>0' is always true [knownConditionTrueFalse]
+                if (seq_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c:31:19: note: Assuming that condition 'i>start' is not redundant
+            if (i > start) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c:54:36: note: Assignment 'seq_len=i-start', assigned value is greater than 0
+                size_t seq_len = i - start;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c:56:21: note: Assuming condition is false
+                if (!seq) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-917-s3.c:64:29: note: Condition 'seq_len>0' is always true
+                if (seq_len > 0) {
+                            ^

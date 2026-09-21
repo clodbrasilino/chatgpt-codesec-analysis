@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-674.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-674.c:225:11: style: Variable 'line_end' can be declared as pointer to const [constVariablePointer]
+    char *line_end = memchr(input, '\n', input_length);
+          ^

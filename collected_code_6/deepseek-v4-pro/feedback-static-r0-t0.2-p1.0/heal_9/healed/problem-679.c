@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValue {
+    char *key;
+    int value;
+    struct KeyValue *next;
+} KeyValue;
+
+typedef struct {
+    KeyValue **buckets;
+    size_t size;
+} Dictionary;
+
+static unsigned long hash_function(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
+}
+
+Dictionary *dict_create(size_t size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->size = size;
+    dict->buckets = (KeyValue **)calloc(size, sizeof(KeyValue *));
+    if (!dict->buckets) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+int dict_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return -1;
+    
+    size_t key_len = 0;
+    while (key[key_len] != '\0') {
+        if (key_len == SIZE_MAX) return -1;
+        key_len++;
+    }
+    
+    unsigned long index = hash_function(key) % dict->size;
+    KeyValue *current = dict->buckets[index];
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+    
+    KeyValue *new_pair = (KeyValue *)malloc(sizeof(KeyValue));
+    if (!new_pair) return -1;
+    
+    new_pair->key = (char *)malloc(key_len + 1);
+    if (!new_pair->key) {
+        free(new_pair);
+        return -1;
+    }
+    
+    for (size_t i = 0; i < key_len; i++) {
+        new_pair->key[i] = key[i];
+    }
+    new_pair->key[key_len] = '\0';
+    
+    new_pair->value = value;
+    new_pair->next = dict->buckets[index];
+    dict->buckets[index] = new_pair;
+    return 0;
+}
+
+int dict_get_by_index(Dictionary *dict, size_t index, char **key, int *value) {
+    if (!dict || !key || !value) return -1;
+    if (index >= dict->size) return -1;
+    KeyValue *current = dict->buckets[index];
+    if (!current) return -1;
+    *key = current->key;
+    *value = current->value;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        KeyValue *current = dict->buckets[i];
+        while (current) {
+            KeyValue *temp = current;
+            current = current->next;
+            free(temp->key);
+            free(temp);
+        }
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict = dict_create(10);
+    if (!dict) return 1;
+
+    dict_insert(dict, "apple", 1);
+    dict_insert(dict, "banana", 2);
+    dict_insert(dict, "cherry", 3);
+
+    char *key = NULL;
+    int value = 0;
+    size_t index = hash_function("banana") % dict->size;
+
+    if (dict_get_by_index(dict, index, &key, &value) == 0) {
+        printf("Key: %s, Value: %d\n", key, value);
+    } else {
+        printf("No element at index %zu\n", index);
+    }
+
+    dict_free(dict);
+    return 0;
+}

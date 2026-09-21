@@ -1,0 +1,96 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+#define SUCCESS 0
+#define ERR_NULL -1
+#define ERR_NOT_FOUND -2
+
+int find_first_max_even_word(const char *str, size_t *start, size_t *length)
+{
+    size_t i = 0;
+    size_t word_start = 0;
+    size_t word_len = 0;
+    size_t max_start = 0;
+    size_t max_len = 0;
+    bool in_word = false;
+    bool found = false;
+
+    if (str == NULL || start == NULL || length == NULL) {
+        return ERR_NULL;
+    }
+
+    for (;;) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (c != '\0' && !isspace(c)) {
+            if (!in_word) {
+                word_start = i;
+                in_word = true;
+            }
+            word_len++;
+        } else {
+            if (in_word) {
+                if (word_len % 2 == 0 && word_len > max_len) {
+                    max_len = word_len;
+                    max_start = word_start;
+                    found = true;
+                }
+                in_word = false;
+                word_len = 0;
+            }
+            if (c == '\0') {
+                break;
+            }
+        }
+        i++;
+    }
+
+    if (!found) {
+        return ERR_NOT_FOUND;
+    }
+
+    *start = max_start;
+    *length = max_len;
+    return SUCCESS;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t buffer_capacity = 0;
+    ssize_t bytes_read;
+    size_t start = 0;
+    size_t length = 0;
+    int status;
+
+    printf("Enter a sentence: ");
+
+    bytes_read = getline(&buffer, &buffer_capacity, stdin);
+    if (bytes_read < 0) {
+        fprintf(stderr, "Failed to read input.\n");
+        free(buffer);
+        return 1;
+    }
+
+    status = find_first_max_even_word(buffer, &start, &length);
+
+    if (status == SUCCESS) {
+        printf("First maximum length even word: %.*s\n", (int)length, buffer + start);
+        printf("Word length: %zu\n", length);
+    } else if (status == ERR_NOT_FOUND) {
+        printf("No even-length word found in the input.\n");
+    } else {
+        fprintf(stderr, "Invalid input provided.\n");
+        free(buffer);
+        return 1;
+    }
+
+    free(buffer);
+    return 0;
+}

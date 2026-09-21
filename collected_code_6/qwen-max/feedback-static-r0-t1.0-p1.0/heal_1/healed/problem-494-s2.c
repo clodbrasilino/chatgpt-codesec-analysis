@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+
+int binary_tuple_to_integer(const char *binary, size_t length) {
+    int result = 0;
+    for (size_t i = 0; i < length; ++i) {
+        result = (result << 1) | (binary[i] - '0');
+    }
+    return result;
+}
+
+int main() {
+    const char *binary_tuple = "1101";
+    size_t length = 4;
+    int integer_value = binary_tuple_to_integer(binary_tuple, length);
+    printf("%d\n", integer_value);
+    return 0;
+}

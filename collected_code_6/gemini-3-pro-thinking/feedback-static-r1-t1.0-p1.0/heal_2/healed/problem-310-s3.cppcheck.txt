@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c:85:22: style: Condition 'elem_len>0' is always false [knownConditionTrueFalse]
+        if (elem_len > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c:73:25: note: Assuming that condition 'temp_end>start_elem' is not redundant
+        while (temp_end > start_elem && isspace((unsigned char)*(temp_end - 1))) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c:77:27: note: Assignment 'elem_len=(unsigned long)(temp_end-start_elem)', assigned value is less than 1
+        size_t elem_len = (size_t)(temp_end - start_elem);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c:80:13: note: Assuming condition is false
+        if (!elem_str) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-310-s3.c:85:22: note: Condition 'elem_len>0' is always false
+        if (elem_len > 0) {
+                     ^

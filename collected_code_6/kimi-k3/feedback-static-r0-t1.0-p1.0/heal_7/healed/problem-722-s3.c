@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <errno.h>
+
+#define MAX_NAME_LENGTH 50
+
+#define SAFE_STRNCPY(dest, src, size) do { \
+    if ((dest) != NULL && (src) != NULL && (size) > 0) { \
+        size_t copy_len = strnlen((src), (size) - 1); \
+        if (copy_len < (size)) { \
+            if ((dest) != (src)) { \
+                memcpy((dest), (src), copy_len); \
+            } \
+            (dest)[copy_len] = '\0'; \
+        } \
+    } \
+} while(0)
+
+typedef struct {
+    char *name;
+    int height;
+    int width;
+} Student;
+
+typedef struct {
+    Student *students;
+    size_t count;
+    size_t capacity;
+} StudentDict;
+
+int init_dict(StudentDict *dict, size_t capacity) {
+    if (dict == NULL || capacity == 0 || capacity > SIZE_MAX / sizeof(Student)) {
+        return -1;
+    }
+    dict->students = calloc(capacity, sizeof(Student));
+    if (dict->students == NULL) {
+        return -1;
+    }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return 0;
+}
+
+void free_dict(StudentDict *dict) {
+    if (dict != NULL && dict->students != NULL) {
+        for (size_t i = 0; i < dict->count; i++) {
+            free(dict->students[i].name);
+            dict->students[i].name = NULL;
+        }
+        free(dict->students);
+        dict->students = NULL;
+        dict->count = 0;
+        dict->capacity = 0;
+    }
+}
+
+int add_student(StudentDict *dict, const char *name, int height, int width) {
+    if (dict == NULL || name == NULL || dict->count >= dict->capacity) {
+        return -1;
+    }
+
+    size_t name_len = strnlen(name, MAX_NAME_LENGTH);
+    if (name_len >= MAX_NAME_LENGTH) {
+        return -1;
+    }
+
+    dict->students[dict->count].name = malloc(name_len + 1);
+    if (dict->students[dict->count].name == NULL) {
+        return -1;
+    }
+
+    SAFE_STRNCPY(dict->students[dict->count].name, name, name_len + 1);
+    dict->students[dict->count].height = height;
+    dict->students[dict->count].width = width;
+    dict->count++;
+    return 0;
+}
+
+size_t filter_students(const StudentDict *dict, int min_height, int max_height,
+                       int min_width, int max_width, Student *result, size_t result_size) {
+    size_t filtered_count = 0;
+    if (dict == NULL || result == NULL || result_size == 0) {
+        return 0;
+    }
+    for (size_t i = 0; i < dict->count && filtered_count < result_size; i++) {
+        if (dict->students[i].height >= min_height && dict->students[i].height <= max_height &&
+            dict->students[i].width >= min_width && dict->students[i].width <= max_width) {
+            size_t name_len = strnlen(dict->students[i].name, MAX_NAME_LENGTH) + 1;
+            result[filtered_count].name = malloc(name_len);
+            if (result[filtered_count].name == NULL) {
+                for (size_t j = 0; j < filtered_count; j++) {
+                    free(result[j].name);
+                    result[j].name = NULL;
+                }
+                return 0;
+            }
+            SAFE_STRNCPY(result[filtered_count].name, dict->students[i].name, name_len);
+            result[filtered_count].height = dict->students[i].height;
+            result[filtered_count].width = dict->students[i].width;
+            filtered_count++;
+        }
+    }
+    return filtered_count;
+}
+
+void free_filtered_students(Student *students, size_t count) {
+    if (students != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            free(students[i].name);
+            students[i].name = NULL;
+        }
+    }
+}
+
+int main(void) {
+    StudentDict dict;
+    Student filtered[10];
+    size_t filtered_count;
+
+    if (init_dict(&dict, 10) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (add_student(&dict, "Alice", 165, 55) != 0 ||
+        add_student(&dict, "Bob", 180, 75) != 0 ||
+        add_student(&dict, "Charlie", 170, 65) != 0 ||
+        add_student(&dict, "Diana", 160, 50) != 0 ||
+        add_student(&dict, "Eve", 175, 70) != 0) {
+        fprintf(stderr, "Failed to add students\n");
+        free_dict(&dict);
+        return EXIT_FAILURE;
+    }
+
+    filtered_count = filter_students(&dict, 160, 175, 50, 70, filtered, 10);
+
+    printf("Filtered students (height 160-175, width 50-70):\n");
+    for (size_t i = 0; i < filtered_count; i++) {
+        printf("Name: %s, Height: %d, Width: %d\n", filtered[i].name, filtered[i].height, filtered[i].width);
+    }
+
+    free_filtered_students(filtered, filtered_count);
+    free_dict(&dict);
+    return EXIT_SUCCESS;
+}

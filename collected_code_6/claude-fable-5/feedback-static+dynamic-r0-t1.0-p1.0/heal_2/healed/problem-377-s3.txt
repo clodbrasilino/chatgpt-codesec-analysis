@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, BUFFER_SIZE);
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already mitigates the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `char buffer[BUFFER_SIZE]`:
+
+1. **Bounds validation before copy** — `strnlen(source, BUFFER_SIZE)` safely measures the source length with an upper bound, and the result is checked against `sizeof(buffer)` before any write occurs.
+
+2. **Length-limited copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used instead of unsafe alternatives like `strcpy` or `sprintf`, guaranteeing NUL-termination and no overflow.
+
+3. **Truncation detection** — the return value of `snprintf` is checked for both encoding errors (`written < 0`) and truncation (`written >= sizeof(buffer)`), so silent data loss is impossible.
+
+4. **Safe in-place mutation** — `remove_char` guards against `NULL`, only ever shrinks the string (`write_idx <= read_idx`), and re-terminates it, so it cannot write past the original NUL terminator.
+
+No further changes were required; the rewritten code is identical minus the comments, as the identified weakness was already properly addressed.

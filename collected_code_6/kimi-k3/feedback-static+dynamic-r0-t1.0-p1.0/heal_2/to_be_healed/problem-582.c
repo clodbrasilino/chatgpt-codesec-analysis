@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DICTIONARY_SIZE 100
+#define MAX_KEY_SIZE 50
+#define MAX_VALUE_SIZE 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[MAX_KEY_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char value[MAX_VALUE_SIZE];
+} Entry;
+
+typedef struct {
+    Entry entries[DICTIONARY_SIZE];
+    int count;
+} Dictionary;
+
+void initDictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        dict->count = 0;
+    }
+}
+
+int isEmpty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return 1;
+    }
+    return dict->count == 0;
+}
+
+int insert(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    
+    if (dict->count >= DICTIONARY_SIZE) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t key_len = strlen(key);
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t value_len = strlen(value);
+    
+    if (key_len >= MAX_KEY_SIZE || value_len >= MAX_VALUE_SIZE) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(dict->entries[dict->count].key, key);
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(dict->entries[dict->count].value, value);
+    
+    dict->count++;
+    return 0;
+}
+
+int main(void) {
+    Dictionary dict;
+    initDictionary(&dict);
+
+    if (isEmpty(&dict)) {
+        printf("Dictionary is empty.\n");
+    } else {
+        printf("Dictionary is not empty.\n");
+    }
+
+    if (insert(&dict, "name", "John") != 0) {
+        fprintf(stderr, "Failed to insert entry.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isEmpty(&dict)) {
+        printf("Dictionary is empty.\n");
+    } else {
+        printf("Dictionary is not empty.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

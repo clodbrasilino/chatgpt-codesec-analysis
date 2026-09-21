@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_multiple_spaces(const char *input);
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t n = 0U;
+
+    while (n < max_len && s[n] != '\0') {
+        n++;
+    }
+
+    return n;
+}
+
+char *remove_multiple_spaces(const char *input)
+{
+    char *output;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = bounded_strlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    output = malloc(len + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if (input[i] == ' ' && j > 0U && output[j - 1U] == ' ') {
+            continue;
+        }
+        if (input[i] == ' ' && j == 0U) {
+            continue;
+        }
+        output[j] = input[i];
+        j++;
+    }
+
+    while (j > 0U && output[j - 1U] == ' ') {
+        j--;
+    }
+
+    output[j] = '\0';
+
+    return output;
+}
+
+static char *read_line(size_t max_len)
+{
+    char *buffer;
+    size_t i;
+    int got_eof;
+
+    if (max_len == 0U || max_len > MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    buffer = malloc(max_len);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    got_eof = 0;
+    i = 0U;
+    while (i < max_len - 1U) {
+        int c = fgetc(stdin);
+        if (c == EOF) {
+            got_eof = 1;
+            break;
+        }
+        if (c == '\n') {
+            break;
+        }
+        buffer[i] = (char)c;
+        i++;
+    }
+
+    if (i == 0U && got_eof != 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[i] = '\0';
+
+    return buffer;
+}
+
+int main(void)
+{
+    char *input;
+    char *result;
+
+    input = read_line(MAX_INPUT_LEN);
+    if (input == NULL) {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = remove_multiple_spaces(input);
+    free(input);
+
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

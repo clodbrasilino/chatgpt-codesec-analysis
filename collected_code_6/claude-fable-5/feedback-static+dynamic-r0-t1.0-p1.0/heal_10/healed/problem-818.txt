@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array through several defensive measures:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a belt-and-suspenders measure, even though `fgets` already null-terminates on success.
+3. **Safe length check**: `strnlen` with an explicit bound avoids reading past the buffer, and the subsequent check verifies proper termination.
+4. **Bounded search**: `memchr` is used with the known length rather than `strchr`, keeping all operations within validated bounds.
+5. **Correct `ctype` usage**: The cast to `(unsigned char)` before `islower` avoids undefined behavior for negative `char` values.
+6. **NULL checks**: Both the `fgets` return value and the `str` parameter in `count_lowercase` are validated.
+
+The Flawfinder hit is a low-risk (risk 2) informational finding inherent to any fixed-size array; the code as written mitigates it correctly, so no functional changes were required — only the comments were removed as requested.

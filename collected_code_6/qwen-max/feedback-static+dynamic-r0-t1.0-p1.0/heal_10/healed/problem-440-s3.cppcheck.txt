@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s3.c:35:34: style: Condition 'word_len<51' is always true [knownConditionTrueFalse]
+                    if (word_len < 51) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s3.c:29:39: note: Assuming that condition 'word_len<=50' is not redundant
+        if (word_len >= 2 && word_len <= 50) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-440-s3.c:35:34: note: Condition 'word_len<51' is always true
+                    if (word_len < 51) {
+                                 ^

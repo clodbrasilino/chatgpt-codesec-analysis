@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code already mitigates the Flawfinder warning (CWE-119/CWE-120) about the statically-sized `buffer` array. The re-written code preserves all of these defenses:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow. The return value is checked to handle EOF/read errors.
+
+2. **Guaranteed NUL-termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive belt-and-suspenders; `fgets` already NUL-terminates, but this guards against any future refactoring to a non-terminating read function.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so the scan can never run past the buffer even if termination were somehow lost.
+
+4. **Safe newline stripping** — the `len > 0` check prevents an out-of-bounds write at `buffer[-1]` on empty input.
+
+5. **Defensive API in `sort_string`** — it validates against `NULL` and zero length, uses `strnlen` with the caller-supplied bound, and rejects unterminated strings (`len >= max_len`), so `qsort` never operates beyond valid, terminated data.
+
+6. **Correct comparator** — characters are compared as `unsigned char`, matching how the standard library treats character comparisons and avoiding signed-`char` undefined ordering for bytes ≥ 0x80.
+
+No functional changes were required; the code is a correct, bounds-checked implementation as-is.

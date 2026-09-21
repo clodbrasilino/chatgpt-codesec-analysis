@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+The identified weakness (CWE-119/CWE-120, statically-sized array) is already properly mitigated in this code:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **NULL check on input**: The return value of `fgets` is checked, handling EOF and read errors.
+
+3. **Safe newline stripping**: `strcspn(buffer, "\n")` always returns an index within the string bounds (it returns the position of `\n` or the position of the null terminator), so the assignment never writes out of bounds.
+
+4. **Safe indexing in the counting array**: Characters are cast to `unsigned char` before being used as an index into `counts[UCHAR_MAX + 1]`, avoiding negative-index undefined behavior on platforms where `char` is signed.
+
+5. **Defensive parameter validation**: `max_occurring_char` checks both pointers for `NULL` and reports failure via return code rather than crashing.
+
+Since the flagged risk was already addressed by bounds-limited reads and safe indexing, the code stands as-is with no functional changes required.

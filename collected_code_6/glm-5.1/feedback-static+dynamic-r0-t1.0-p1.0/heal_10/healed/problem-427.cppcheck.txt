@@ -1,0 +1,85 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:39:21: style: Condition 'result_size<3' is always false [knownConditionTrueFalse]
+    if (result_size < 3 || day_len > result_size - 3) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:33:26: note: Assignment 'result_size=11', assigned value is 11
+    size_t result_size = 11;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:39:21: note: Condition 'result_size<3' is always false
+    if (result_size < 3 || day_len > result_size - 3) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:39:36: style: Condition 'day_len>result_size-3' is always false [knownConditionTrueFalse]
+    if (result_size < 3 || day_len > result_size - 3) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:29:17: note: Assuming that condition 'day_len!=2' is not redundant
+    if (day_len != 2 || month_len != 2 || year_len != 4) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:39:36: note: Condition 'day_len>result_size-3' is always false
+    if (result_size < 3 || day_len > result_size - 3) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:47:21: style: Condition 'result_size<6' is always false [knownConditionTrueFalse]
+    if (result_size < 6 || month_len > result_size - 6) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:33:26: note: Assignment 'result_size=11', assigned value is 11
+    size_t result_size = 11;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:47:21: note: Condition 'result_size<6' is always false
+    if (result_size < 6 || month_len > result_size - 6) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:47:38: style: Condition 'month_len>result_size-6' is always false [knownConditionTrueFalse]
+    if (result_size < 6 || month_len > result_size - 6) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:29:35: note: Assuming that condition 'month_len!=2' is not redundant
+    if (day_len != 2 || month_len != 2 || year_len != 4) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:47:38: note: Condition 'month_len>result_size-6' is always false
+    if (result_size < 6 || month_len > result_size - 6) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:55:21: style: Condition 'result_size<11' is always false [knownConditionTrueFalse]
+    if (result_size < 11 || year_len > result_size - 11) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:33:26: note: Assignment 'result_size=11', assigned value is 11
+    size_t result_size = 11;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:55:21: note: Condition 'result_size<11' is always false
+    if (result_size < 11 || year_len > result_size - 11) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:55:38: style: Condition 'year_len>result_size-11' is always true [knownConditionTrueFalse]
+    if (result_size < 11 || year_len > result_size - 11) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:29:52: note: Assuming that condition 'year_len!=4' is not redundant
+    if (day_len != 2 || month_len != 2 || year_len != 4) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:35:16: note: Assuming condition is false
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:55:38: note: Condition 'year_len>result_size-11' is always true
+    if (result_size < 11 || year_len > result_size - 11) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:82:20: style: Condition 'converted3!=NULL' is always false [knownConditionTrueFalse]
+    if (converted3 != NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:81:43: note: Calling function 'convert_date_format' returns 0
+    char* converted3 = convert_date_format(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:81:43: note: Assignment 'converted3=convert_date_format(NULL)', assigned value is 0
+    char* converted3 = convert_date_format(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-427.c:82:20: note: Condition 'converted3!=NULL' is always false
+    if (converted3 != NULL) {
+                   ^

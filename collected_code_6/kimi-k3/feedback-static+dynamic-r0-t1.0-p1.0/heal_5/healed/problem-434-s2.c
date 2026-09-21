@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match(const char *str) {
+    if (str == NULL || str[0] != 'a') {
+        return false;
+    }
+    int i = 1;
+    while (str[i] == 'b') {
+        i++;
+    }
+    return i > 1 && str[i] == '\0';
+}
+
+int main(void) {
+    char str[100];
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    str[strcspn(str, "\n")] = '\0';
+    if (match(str)) {
+        printf("Match found\n");
+    } else {
+        printf("No match\n");
+    }
+    return 0;
+}

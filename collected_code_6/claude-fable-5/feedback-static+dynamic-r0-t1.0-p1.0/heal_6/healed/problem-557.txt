@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened against the flagged weakness (CWE-119/CWE-120, statically-sized buffer). The key mitigations, preserved in the rewrite, are:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` acts as a defensive backstop, and `memset` zero-initializes the buffer beforehand.
+
+3. **Newline stripping via `strcspn`** — safe even if no newline is present, since `strcspn` returns the string length in that case, writing within bounds.
+
+4. **Length-limited string traversal** — the original used `strnlen`, which is POSIX rather than standard C. I replaced it with a portable `bounded_strlen` helper to guarantee the scan never reads past `max_len`, even if the string is not null-terminated.
+
+5. **Safe `ctype` usage** — characters are cast to `unsigned char` before being passed to `isupper`/`islower`/`toupper`/`tolower`, avoiding undefined behavior with negative `char` values on platforms where `char` is signed.
+
+6. **Error checking** — return values of `fgets` and `printf` are checked, with appropriate exit statuses.
+
+The Flawfinder warning is a heuristic triggered merely by the presence of a fixed-size array; given the bounds checking throughout, the risk is fully mitigated.

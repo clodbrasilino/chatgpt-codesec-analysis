@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-18.c: In function 'remove_characters':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-18.c:9:32: error: 'UCHAR_MAX' undeclared (first use in this function)
+    9 |     unsigned char remove_table[UCHAR_MAX + 1] = {0};
+      |                                ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-18.c:6:1: note: 'UCHAR_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    5 | #include <sys/types.h>
+  +++ |+#include <limits.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-18.c:9:32: note: each undeclared identifier is reported only once for each function it appears in
+    9 |     unsigned char remove_table[UCHAR_MAX + 1] = {0};
+      |                                ^~~~~~~~~

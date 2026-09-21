@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:10:27: error: Array 'str[1]' accessed at index 1, which is out of bounds. [arrayIndexOutOfBounds]
+    for (size_t i = 1; str[i] != '\0'; i++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:10:21: note: Assignment 'i=1', assigned value is 1
+    for (size_t i = 1; str[i] != '\0'; i++) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:10:27: note: Array index out of bounds
+    for (size_t i = 1; str[i] != '\0'; i++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:29:15: style: Condition 'test5!=NULL' is always false [knownConditionTrueFalse]
+    if (test5 != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:23:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-741.c:29:15: note: Condition 'test5!=NULL' is always false
+    if (test5 != NULL) {
+              ^

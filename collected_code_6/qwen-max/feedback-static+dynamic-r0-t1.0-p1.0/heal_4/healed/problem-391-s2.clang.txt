@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-391-s2.c:54:36: error: call to undeclared function 'isList'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   54 |         if (temp->value != NULL && isList(temp)) {
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-391-s2.c:64:6: error: conflicting types for 'isList'
+   64 | bool isList(const Node *node) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-391-s2.c:54:36: note: previous implicit declaration is here
+   54 |         if (temp->value != NULL && isList(temp)) {
+      |                                    ^
+2 errors generated.

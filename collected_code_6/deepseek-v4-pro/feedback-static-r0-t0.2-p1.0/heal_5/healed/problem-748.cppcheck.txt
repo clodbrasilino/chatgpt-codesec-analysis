@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-748.c:43:40: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                if (dst_pos + copy_len >= max_result_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-748.c:42:35: note: 'copy_len' is assigned value 'remaining_len' here.
+                size_t copy_len = remaining_len;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-748.c:41:62: note: outer condition: dst_pos+remaining_len<max_result_len
+            if (remaining_len > 0 && dst_pos + remaining_len < max_result_len) {
+                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_5/healed/problem-748.c:43:40: note: opposite inner condition: dst_pos+copy_len>=max_result_len
+                if (dst_pos + copy_len >= max_result_len) {
+                                       ^

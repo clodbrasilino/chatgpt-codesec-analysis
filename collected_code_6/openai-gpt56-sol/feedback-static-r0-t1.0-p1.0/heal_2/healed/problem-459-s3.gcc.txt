@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s3.c: In function 'remove_uppercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s3.c:28:25: error: 'SIZE_MAX' undeclared (first use in this function)
+   28 |     if (input_length == SIZE_MAX) {
+      |                         ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s3.c:10:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    9 | #include <sys/types.h>
+  +++ |+#include <stdint.h>
+   10 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-459-s3.c:28:25: note: each undeclared identifier is reported only once for each function it appears in
+   28 |     if (input_length == SIZE_MAX) {
+      |                         ^~~~~~~~

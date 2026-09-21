@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_ADVERBS 100
+#define MAX_WORD_LEN 100
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char word[MAX_WORD_LEN];
+    int position;
+} AdverbInfo;
+
+int is_adverb(const char *word) {
+    if (word == NULL) return 0;
+    size_t len = strnlen(word, MAX_WORD_LEN);
+    /* Possible weaknesses found:
+     *  Assuming that condition 'len<3' is not redundant
+     */
+    if (len < 3) return 0;
+    /* Possible weaknesses found:
+     *  Condition 'len<2' is always false [knownConditionTrueFalse]
+     *  Condition 'len<2' is always false
+     */
+    if (len < 2) return 0;
+    if (strncmp(word + len - 2, "ly", 2) == 0) return 1;
+    return 0;
+}
+
+int find_adverbs(const char *sentence, AdverbInfo *adverbs, int max_adverbs) {
+    if (sentence == NULL || adverbs == NULL || max_adverbs <= 0) {
+        return -1;
+    }
+
+    int count = 0;
+    size_t sentence_len = strnlen(sentence, 10000);
+    if (sentence_len == 10000) return -1;
+    
+    char *buffer = (char *)malloc(sentence_len + 1);
+    if (buffer == NULL) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy(buffer, sentence, sentence_len);
+    buffer[sentence_len] = '\0';
+
+    char *token = strtok(buffer, " ,.!?;:\"()[]{}");
+    int position = 0;
+
+    while (token != NULL && count < max_adverbs) {
+        if (is_adverb(token)) {
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(adverbs[count].word, token, MAX_WORD_LEN - 1);
+            adverbs[count].word[MAX_WORD_LEN - 1] = '\0';
+            adverbs[count].position = position;
+            count++;
+        }
+        position++;
+        token = strtok(NULL, " ,.!?;:\"()[]{}");
+    }
+
+    free(buffer);
+    return count;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char sentence[1000];
+    AdverbInfo adverbs[MAX_ADVERBS];
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    size_t len = strnlen(sentence, sizeof(sentence));
+    if (len > 0 && sentence[len - 1] == '\n') {
+        sentence[len - 1] = '\0';
+    }
+
+    int num_adverbs = find_adverbs(sentence, adverbs, MAX_ADVERBS);
+
+    if (num_adverbs < 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        return 1;
+    }
+
+    if (num_adverbs == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Adverbs found:\n");
+        for (int i = 0; i < num_adverbs; i++) {
+            printf("Word: %s, Position: %d\n", adverbs[i].word, adverbs[i].position);
+        }
+    }
+
+    return 0;
+}

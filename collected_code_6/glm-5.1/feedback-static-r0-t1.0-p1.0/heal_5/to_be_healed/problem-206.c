@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** concatenate_adjacent_tuples(char** tuples, const int* sizes, int count, int* result_count) {
+    if (count < 2 || tuples == NULL || sizes == NULL || result_count == NULL) {
+        if (result_count) *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = count - 1;
+    char** result = (char**)malloc(*result_count * sizeof(char*));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < *result_count; i++) {
+        int len1 = sizes[i];
+        int len2 = sizes[i + 1];
+        int total_len = len1 + len2;
+
+        result[i] = (char*)malloc((total_len + 1) * sizeof(char));
+        if (result[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_count = 0;
+            return NULL;
+        }
+
+        if (len1 > 0 && tuples[i] != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[i], tuples[i], len1);
+        }
+        if (len2 > 0 && tuples[i + 1] != NULL) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[i] + len1, tuples[i + 1], len2);
+        }
+        result[i][total_len] = '\0';
+    }
+
+    return result;
+}
+
+int main() {
+    char* tuples[] = {"abc", "def", "gh", "ijk"};
+    const int sizes[] = {3, 3, 2, 3};
+    int count = sizeof(sizes) / sizeof(sizes[0]);
+    int result_count = 0;
+
+    char** result = concatenate_adjacent_tuples(tuples, sizes, count, &result_count);
+
+    if (result != NULL) {
+        for (int i = 0; i < result_count; i++) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    char value;
+    struct ListNode *next;
+} ListNode;
+
+static void free_list(ListNode *head)
+{
+    while (head != NULL) {
+        ListNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static int string_to_list(const char *string, ListNode **out_head)
+{
+    ListNode **tail;
+
+    if (string == NULL || out_head == NULL) {
+        return 0;
+    }
+
+    *out_head = NULL;
+    tail = out_head;
+
+    while (*string != '\0') {
+        ListNode *node = malloc(sizeof(*node));
+
+        if (node == NULL) {
+            free_list(*out_head);
+            *out_head = NULL;
+            return 0;
+        }
+
+        node->value = *string;
+        node->next = NULL;
+        *tail = node;
+        tail = &node->next;
+        ++string;
+    }
+
+    return 1;
+}
+
+static int print_list(const ListNode *head)
+{
+    if (fputc('[', stdout) == EOF) {
+        return 0;
+    }
+
+    while (head != NULL) {
+        if (fprintf(stdout, "%u",
+                    (unsigned int)(unsigned char)head->value) < 0) {
+            return 0;
+        }
+
+        if (head->next != NULL && fputs(", ", stdout) == EOF) {
+            return 0;
+        }
+
+        head = head->next;
+    }
+
+    return fputs("]\n", stdout) != EOF;
+}
+
+/* Possible weaknesses found:
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char *argv[const])
+{
+    ListNode *list = NULL;
+    int result = EXIT_SUCCESS;
+
+    if (argc != 2) {
+        const char *program_name =
+            argc > 0 && argv[0] != NULL ? argv[0] : "program";
+
+        fprintf(stderr, "Usage: %s <string>\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    if (!string_to_list(argv[1], &list)) {
+        fputs("Failed to convert the string to a list.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!print_list(list)) {
+        fputs("Failed to write the list.\n", stderr);
+        result = EXIT_FAILURE;
+    }
+
+    free_list(list);
+    return result;
+}

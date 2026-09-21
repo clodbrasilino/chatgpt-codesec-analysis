@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:245:61: style: Condition 'key_len<=buffer_size-pos' is always true [knownConditionTrueFalse]
+                if (pos + key_len <= buffer_size && key_len <= buffer_size - pos) {
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:241:29: note: Assuming that condition 'key_len>=buffer_size-pos' is not redundant
+                if (key_len >= buffer_size - pos) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:245:61: note: Condition 'key_len<=buffer_size-pos' is always true
+                if (pos + key_len <= buffer_size && key_len <= buffer_size - pos) {
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:284:65: style: Condition 'value_len<=buffer_size-pos' is always true [knownConditionTrueFalse]
+                if (pos + value_len <= buffer_size && value_len <= buffer_size - pos) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:280:31: note: Assuming that condition 'value_len>=buffer_size-pos' is not redundant
+                if (value_len >= buffer_size - pos) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-87-s2.c:284:65: note: Condition 'value_len<=buffer_size-pos' is always true
+                if (pos + value_len <= buffer_size && value_len <= buffer_size - pos) {
+                                                                ^

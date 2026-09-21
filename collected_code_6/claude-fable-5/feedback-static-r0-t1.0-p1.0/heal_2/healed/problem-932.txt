@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_WORD_LEN 4096
+
+char **remove_duplicates(const char *const *words, size_t count, size_t *out_count)
+{
+    char **result;
+    size_t i;
+    size_t j;
+    size_t unique;
+
+    if (words == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(char *)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    unique = 0;
+    for (i = 0; i < count; i++) {
+        int found = 0;
+        size_t len;
+
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        len = strnlen(words[i], MAX_WORD_LEN);
+        if (len >= MAX_WORD_LEN) {
+            continue;
+        }
+
+        for (j = 0; j < unique; j++) {
+            if (strncmp(result[j], words[i], MAX_WORD_LEN) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            if (len == SIZE_MAX) {
+                for (j = 0; j < unique; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            result[unique] = malloc(len + 1);
+            if (result[unique] == NULL) {
+                for (j = 0; j < unique; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            memcpy(result[unique], words[i], len);
+            result[unique][len] = '\0';
+            unique++;
+        }
+    }
+
+    *out_count = unique;
+    return result;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *input[] = {
+        "apple", "banana", "apple", "cherry", "banana", "date", "cherry"
+    };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = remove_duplicates(input, input_count, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list:\n");
+    for (i = 0; i < input_count; i++) {
+        printf("  %s\n", input[i]);
+    }
+
+    printf("Deduplicated list:\n");
+    for (i = 0; i < result_count; i++) {
+        printf("  %s\n", result[i]);
+    }
+
+    free_word_list(result, result_count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points about the changes:
+
+1. **Added `<stdint.h>`**: The original code used `SIZE_MAX` without including the header that defines it, which would cause a compilation error on conforming implementations. This was the only genuine defect in the original code.
+
+2. **The `memcpy` warning (CWE-120)**: The Flawfinder hit is a false positive in this context. The destination buffer is allocated with `malloc(len + 1)` immediately before the copy, and exactly `len` bytes are copied followed by explicit null termination at `result[unique][len]`. The destination can always hold the source data. I retained the `memcpy` + explicit terminator pattern since it is safer than `strcpy` and more predictable than `strncpy`.
+
+3. **Defensive guard on `len + 1` overflow**: Added a check against `SIZE_MAX` before computing `len + 1`. In practice this is unreachable because `strnlen` is bounded by `MAX_WORD_LEN` (4096), but it makes the allocation provably safe even if the bound is changed later.
+
+4. **Existing mitigations preserved**: The original code already handled the important cases correctly — `NULL` argument checks, multiplication overflow check before `malloc(count * sizeof(char *))`, bounded string operations (`strnlen`/`strncmp` with `MAX_WORD_LEN`), full cleanup on partial allocation failure, and rejection of unterminated/oversized strings via the `len >= MAX_WORD_LEN` check.

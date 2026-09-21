@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int octal_to_decimal(const char *octal_str, long *result) {
+    if (octal_str == NULL || result == NULL || *octal_str == '\0') {
+        return -1;
+    }
+    
+    const char *p = octal_str;
+    if (*p == '+' || *p == '-') {
+        p++;
+        if (*p == '\0') {
+            return -1;
+        }
+    }
+    
+    for (const char *q = p; *q != '\0'; q++) {
+        if (*q < '0' || *q > '7') {
+            return -1;
+        }
+    }
+    
+    errno = 0;
+    char *endptr;
+    long value = strtol(octal_str, &endptr, 8);
+    
+    if (errno == ERANGE || endptr == octal_str || *endptr != '\0') {
+        return -1;
+    }
+    
+    *result = value;
+    return 0;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 0;
+    long decimal;
+    
+    printf("Enter an octal number: ");
+    ssize_t line_length = getline(&input, &buffer_size, stdin);
+    
+    if (line_length == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (line_length > 0 && input[line_length - 1] == '\n') {
+        input[line_length - 1] = '\0';
+        line_length--;
+    }
+    
+    if (line_length == 0) {
+        fprintf(stderr, "Invalid octal number\n");
+        free(input);
+        return 1;
+    }
+    
+    if (octal_to_decimal(input, &decimal) != 0) {
+        fprintf(stderr, "Invalid octal number\n");
+        free(input);
+        return 1;
+    }
+    
+    printf("Decimal equivalent: %ld\n", decimal);
+    
+    free(input);
+    return 0;
+}

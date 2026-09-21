@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:95:19: style: Condition 'copy_size==0' is always false [knownConditionTrueFalse]
+    if (copy_size == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:94:34: note: Assignment 'copy_size=input_len+1', assigned value is greater than 0
+    size_t copy_size = input_len + 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:95:19: note: Condition 'copy_size==0' is always false
+    if (copy_size == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:105:19: style: Condition 'copy_size>0' is always true [knownConditionTrueFalse]
+    if (copy_size > 0 && copy_size >= input_len + 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:94:34: note: Assignment 'copy_size=input_len+1', assigned value is greater than 0
+    size_t copy_size = input_len + 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:100:14: note: Assuming condition is false
+    if (copy == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:105:19: note: Condition 'copy_size>0' is always true
+    if (copy_size > 0 && copy_size >= input_len + 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:106:23: style: Condition 'input_len<copy_size' is always true [knownConditionTrueFalse]
+        if (input_len < copy_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:105:36: note: Assuming that condition 'copy_size>=input_len+1' is not redundant
+    if (copy_size > 0 && copy_size >= input_len + 1) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:106:23: note: Condition 'input_len<copy_size' is always true
+        if (input_len < copy_size) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:167:26: style: Condition 'copy_len<=output_size' is always true [knownConditionTrueFalse]
+            if (copy_len <= output_size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:166:22: note: Assuming that condition 'copy_len<=output_size-1' is not redundant
+        if (copy_len <= output_size - 1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:167:26: note: Condition 'copy_len<=output_size' is always true
+            if (copy_len <= output_size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-674-s2.c:58:17: style: Same expression on both sides of '>'. [duplicateExpression]
+    if (len + 1 > len + 1) {
+                ^

@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char* camel_to_snake(const char* camel_case) {
+    if (camel_case == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    size_t snake_len = 0;
+
+    for (size_t i = 0; camel_case[i] != '\0'; i++) {
+        len++;
+        if (isupper((unsigned char)camel_case[i])) {
+            snake_len += (i > 0) ? 2 : 1;
+        } else {
+            snake_len += 1;
+        }
+    }
+
+    if (len == 0) {
+        char* empty_str = (char*)malloc(1);
+        if (empty_str != NULL) {
+            empty_str[0] = '\0';
+        }
+        return empty_str;
+    }
+
+    char* snake_case = (char*)malloc(snake_len + 1);
+    if (snake_case == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)camel_case[i])) {
+            if (i > 0) {
+                snake_case[j++] = '_';
+            }
+            snake_case[j++] = tolower((unsigned char)camel_case[i]);
+        } else {
+            snake_case[j++] = camel_case[i];
+        }
+    }
+    snake_case[j] = '\0';
+
+    return snake_case;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    
+    if (getline(&buffer, &bufsize, stdin) != -1) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        
+        char* snake = camel_to_snake(buffer);
+        if (snake != NULL) {
+            printf("%s\n", snake);
+            free(snake);
+        }
+    }
+    
+    if (buffer != NULL) {
+        free(buffer);
+    }
+    
+    return 0;
+}

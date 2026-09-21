@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERROR_BUF_SIZE 256
+
+static void replace_chars(char *str, size_t str_size) {
+    regex_t regex;
+    regmatch_t match;
+    char *src = str;
+    char *dst = str;
+    int result;
+    size_t dst_offset;
+    size_t remaining;
+    
+    if (str == NULL || str_size == 0) {
+        return;
+    }
+    
+    result = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    
+    if (result != 0) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char error_buf[ERROR_BUF_SIZE];
+        size_t err_len;
+        regerror(result, &regex, error_buf, ERROR_BUF_SIZE);
+        error_buf[ERROR_BUF_SIZE - 1] = '\0';
+        err_len = strnlen(error_buf, ERROR_BUF_SIZE - 1);
+        if (err_len < ERROR_BUF_SIZE - 2) {
+            error_buf[err_len] = '\n';
+            error_buf[err_len + 1] = '\0';
+        } else {
+            error_buf[ERROR_BUF_SIZE - 2] = '\n';
+            error_buf[ERROR_BUF_SIZE - 1] = '\0';
+        }
+        fprintf(stderr, "Regex compilation failed: %s", error_buf);
+        return;
+    }
+    
+    while (*src != '\0') {
+        if (regexec(&regex, src, 1, &match, 0) == 0 && match.rm_so == 0) {
+            dst_offset = (size_t)(dst - str);
+            if (dst_offset >= str_size) {
+                break;
+            }
+            remaining = str_size - dst_offset;
+            if (remaining < 2) {
+                break;
+            }
+            *dst++ = ':';
+            src += match.rm_eo;
+        } else {
+            dst_offset = (size_t)(dst - str);
+            if (dst_offset >= str_size) {
+                break;
+            }
+            remaining = str_size - dst_offset;
+            if (remaining < 2) {
+                break;
+            }
+            *dst++ = *src++;
+        }
+    }
+    
+    if ((size_t)(dst - str) < str_size) {
+        *dst = '\0';
+    } else {
+        str[str_size - 1] = '\0';
+    }
+    
+    regfree(&regex);
+}
+
+int main(void) {
+    char str1[] = "Hello, world. This is a test";
+    char str2[] = "one,two.three four";
+    char str3[] = "NoDelimitersHere";
+    
+    printf("Before: %s\n", str1);
+    replace_chars(str1, sizeof(str1));
+    printf("After:  %s\n\n", str1);
+    
+    printf("Before: %s\n", str2);
+    replace_chars(str2, sizeof(str2));
+    printf("After:  %s\n\n", str2);
+    
+    printf("Before: %s\n", str3);
+    replace_chars(str3, sizeof(str3));
+    printf("After:  %s\n", str3);
+    
+    return 0;
+}

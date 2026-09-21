@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+int64_t sum_of_odd_factors(int64_t n) {
+    int64_t sum = 0;
+    
+    if (n <= 0) {
+        return 0;
+    }
+    
+    if (n > INT64_MAX) {
+        return -1;
+    }
+    
+    double sqrt_n = sqrt((double)n);
+    if (sqrt_n > (double)INT64_MAX || isnan(sqrt_n) || isinf(sqrt_n)) {
+        return -1;
+    }
+    
+    int64_t limit = (int64_t)sqrt_n;
+    
+    if (limit < 0) {
+        return -1;
+    }
+    
+    for (int64_t i = 1; i <= limit; i++) {
+        if (n % i == 0) {
+            if (i % 2 == 1) {
+                if (sum > INT64_MAX - i) {
+                    return -1;
+                }
+                sum += i;
+            }
+            
+            int64_t paired_factor = n / i;
+            if (paired_factor != i && paired_factor % 2 == 1) {
+                if (sum > INT64_MAX - paired_factor) {
+                    return -1;
+                }
+                sum += paired_factor;
+            }
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = 0;
+    ssize_t input_len;
+    
+    printf("Enter a number: ");
+    input_len = getline(&input, &input_size, stdin);
+    
+    if (input_len == -1) {
+        printf("Invalid input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (input_len == 0 || input_len == 1) {
+        printf("Invalid input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (input_len > 1 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+        input_len--;
+    }
+    
+    size_t valid_len = strnlen(input, (size_t)input_len);
+    if (valid_len != (size_t)input_len) {
+        printf("Invalid input\n");
+        free(input);
+        return 1;
+    }
+    
+    char *endptr;
+    errno = 0;
+    int64_t number = strtoll(input, &endptr, 10);
+    
+    if (errno == ERANGE || number <= 0 || endptr == input || *endptr != '\0') {
+        printf("Invalid input\n");
+        free(input);
+        return 1;
+    }
+    
+    free(input);
+    
+    int64_t result = sum_of_odd_factors(number);
+    if (result < 0) {
+        printf("Overflow detected\n");
+        return 1;
+    }
+    
+    printf("%" PRId64 "\n", result);
+    
+    return 0;
+}

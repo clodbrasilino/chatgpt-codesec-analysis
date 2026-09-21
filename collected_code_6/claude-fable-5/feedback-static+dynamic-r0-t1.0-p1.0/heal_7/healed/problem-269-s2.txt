@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+    unsigned long count = 0;
+
+    do {
+        c = getchar();
+        count++;
+        if (count >= ULONG_MAX) {
+            break;
+        }
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings (CWE-120 buffer overflow, CWE-20 improper input validation) flagged against `getchar()` are informational, low-risk (risk 1) hits. Flawfinder flags `getchar()` generically because character-reading loops are a common source of buffer overflows when results are stored into fixed-size buffers. In this code, both findings are already mitigated:
+
+1. **No buffer is used** — each `getchar()` result is stored in a single `int`, never accumulated into an array, so CWE-120 (classic buffer copy without size checking) does not apply.
+
+2. **`int` is correctly used for the return type** — this preserves the ability to distinguish `EOF` from valid characters, a common bug when `char` is used instead.
+
+3. **EOF is explicitly handled** — both in `main` (error exit) and in `flush_input` (loop termination), preventing infinite loops on closed/redirected stdin.
+
+4. **The drain loop is bounded** — the `ULONG_MAX` counter guard in `flush_input` provides a defensive upper bound so the loop cannot spin forever even on a pathological stream.
+
+5. **Input is validated** — `isprint()` is called with the value cast to `unsigned char`, which is the correct, defined usage (passing a negative `char` value to `<ctype.h>` functions is undefined behavior).
+
+Since the warnings are false positives already addressed by the existing defensive structure, the rewrite preserves the logic verbatim with the audit comments removed, as requested.

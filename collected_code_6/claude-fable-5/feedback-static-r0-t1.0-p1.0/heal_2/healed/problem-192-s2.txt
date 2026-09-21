@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 4096
+
+bool has_letter_and_digit(const char *str)
+{
+    bool has_letter = false;
+    bool has_digit = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (*str != '\0') {
+        unsigned char c = (unsigned char)*str;
+        if (isalpha(c)) {
+            has_letter = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        }
+        if (has_letter && has_digit) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int c;
+    while ((c = fgetc(stream)) != EOF && c != '\n') {
+        if (length >= MAX_LINE_LENGTH) {
+            free(buffer);
+            return NULL;
+        }
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            size_t new_capacity = capacity * 2;
+            char *new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+        buffer[length++] = (char)c;
+    }
+
+    if (length == 0 && c == EOF) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    printf("Enter a string: ");
+
+    char *input = read_line(stdin);
+    if (input == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (has_letter_and_digit(input)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain both a letter and a number.\n");
+    }
+
+    free(input);
+    return 0;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdint.h>
+```
+
+**Summary of changes addressing the identified weakness (CWE-120/CWE-20 on `fgetc` loop):**
+
+1. **Hard upper bound (`MAX_LINE_LENGTH`)** — the original loop could grow the buffer indefinitely on attacker-controlled input, enabling memory exhaustion (a CWE-20 input validation concern). The rewrite rejects lines exceeding 4096 bytes.
+2. **Overflow guard on `capacity * 2`** — checking `capacity > SIZE_MAX / 2` before doubling prevents a `size_t` wraparound that could otherwise lead to an undersized allocation and a subsequent heap buffer overflow (CWE-120).
+3. **Existing protections preserved** — the `length + 1 >= capacity` check guarantees room for the NUL terminator, `realloc` failure is handled without leaking, and the cast to `unsigned char` before `isalpha`/`isdigit` avoids undefined behavior on negative `char` values.

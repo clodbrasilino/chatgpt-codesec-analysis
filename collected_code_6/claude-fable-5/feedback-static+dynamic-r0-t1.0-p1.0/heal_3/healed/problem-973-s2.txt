@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+int left_rotate(char *str, size_t buf_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || buf_size == 0 || buf_size > MAX_STR_LEN) {
+        return -1;
+    }
+
+    len = strnlen(str, buf_size);
+    if (len == buf_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (len + 1 > buf_size || d > len || len - d > len) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if (len - d > len || d > len) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if (len + 1 > buf_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "GeeksforGeeks";
+    size_t d = 2;
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", str) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already quite defensive, but the Flawfinder warnings on the three `memcpy` calls warranted explicit guarantees that each destination buffer can hold the source data:
+
+1. **First `memcpy` (`temp`, `str + d`, `len - d`)** — `temp` is allocated with `len + 1` bytes, and `len - d <= len`, so this is safe. An explicit re-validation of `len - d` and `d` against `len` was added immediately before the copies to make the invariant locally verifiable, satisfying the CWE-120 concern.
+
+2. **Second `memcpy` (`temp + (len - d)`, `str`, `d`)** — writes `d` bytes starting at offset `len - d`, ending exactly at offset `len`, within the `len + 1` allocation. Safe by construction; the added guard makes it explicit.
+
+3. **Third `memcpy` (`str`, `temp`, `len + 1`)** — the original check `len + 1 > buf_size` already guaranteed the destination capacity, but it was performed early in the function. A re-check directly before the copy ensures the bound holds at the point of use.
+
+Other robustness properties preserved from the original: `strnlen` bounded by `buf_size` prevents reading past unterminated buffers, the `len == buf_size` check rejects non-null-terminated input, `MAX_STR_LEN` caps the allocation size, `malloc` failure is handled, and `temp` is freed on all paths after allocation, preventing memory leaks.

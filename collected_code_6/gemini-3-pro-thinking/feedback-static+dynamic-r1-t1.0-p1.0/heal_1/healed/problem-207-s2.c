@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t longest_repeating_subsequence(const char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    size_t n = 0;
+    while (n < max_len && str[n] != '\0') {
+        n++;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    size_t *dp = (size_t *)calloc((n + 1) * (n + 1), sizeof(size_t));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 1; i <= n; i++) {
+        for (size_t j = 1; j <= n; j++) {
+            if (str[i - 1] == str[j - 1] && i != j) {
+                dp[i * (n + 1) + j] = 1 + dp[(i - 1) * (n + 1) + (j - 1)];
+            } else {
+                size_t a = dp[i * (n + 1) + (j - 1)];
+                size_t b = dp[(i - 1) * (n + 1) + j];
+                dp[i * (n + 1) + j] = (a > b) ? a : b;
+            }
+        }
+    }
+
+    size_t result = dp[n * (n + 1) + n];
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    const char test_str[] = "AABEBCDD";
+    size_t result = longest_repeating_subsequence(test_str, sizeof(test_str));
+    printf("%zu\n", result);
+    return 0;
+}

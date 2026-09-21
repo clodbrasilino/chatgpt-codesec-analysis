@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-15.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-15.c:36:24: style: Condition 'token_size<=len' is always false [knownConditionTrueFalse]
+        if (token_size <= len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-15.c:34:27: note: token_size is assigned 'len+1' here.
+        size_t token_size = len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-15.c:36:24: note: Condition 'token_size<=len' is always false
+        if (token_size <= len) {
+                       ^

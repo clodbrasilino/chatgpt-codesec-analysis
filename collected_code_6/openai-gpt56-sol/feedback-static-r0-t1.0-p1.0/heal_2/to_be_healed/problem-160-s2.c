@@ -1,0 +1,184 @@
+#include <errno.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static uint64_t magnitude(int64_t value)
+{
+    if (value >= 0) {
+        return (uint64_t)value;
+    }
+
+    return (uint64_t)(-(value + 1)) + UINT64_C(1);
+}
+
+static uint64_t gcd_extended(uint64_t a, uint64_t b,
+                             __int128 *x, __int128 *y)
+{
+    __int128 old_r = (__int128)a;
+    __int128 r = (__int128)b;
+    __int128 old_s = 1;
+    __int128 s = 0;
+    __int128 old_t = 0;
+    __int128 t = 1;
+
+    while (r != 0) {
+        __int128 quotient = old_r / r;
+        __int128 next_r = old_r - quotient * r;
+        __int128 next_s = old_s - quotient * s;
+        __int128 next_t = old_t - quotient * t;
+
+        old_r = r;
+        r = next_r;
+        old_s = s;
+        s = next_s;
+        old_t = t;
+        t = next_t;
+    }
+
+    *x = old_s;
+    *y = old_t;
+
+    return (uint64_t)old_r;
+}
+
+static int solve_diophantine(int64_t a, int64_t b, int64_t n,
+                             __int128 *x, __int128 *y)
+{
+    uint64_t gcd;
+    __int128 base_x;
+    __int128 base_y;
+    __int128 factor;
+
+    if (x == NULL || y == NULL) {
+        return 0;
+    }
+
+    if (a == 0 && b == 0) {
+        if (n != 0) {
+            return 0;
+        }
+
+        *x = 0;
+        *y = 0;
+        return 1;
+    }
+
+    gcd = gcd_extended(magnitude(a), magnitude(b), &base_x, &base_y);
+
+    if ((__int128)n % (__int128)gcd != 0) {
+        return 0;
+    }
+
+    factor = (__int128)n / (__int128)gcd;
+    *x = base_x * factor * (a < 0 ? -1 : 1);
+    *y = base_y * factor * (b < 0 ? -1 : 1);
+
+    return 1;
+}
+
+static int parse_int64(const char *text, int64_t *value)
+{
+    char *end;
+    intmax_t parsed;
+
+    if (text == NULL || value == NULL || *text == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    end = NULL;
+    parsed = strtoimax(text, &end, 10);
+
+    if (errno == ERANGE || end == text || *end != '\0' ||
+        parsed < INT64_MIN || parsed > INT64_MAX) {
+        return 0;
+    }
+
+    *value = (int64_t)parsed;
+    return 1;
+}
+
+static int print_int128(__int128 value)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[1 + 39];
+    size_t position = sizeof buffer;
+    unsigned __int128 remaining;
+    int negative = value < 0;
+
+    if (negative) {
+        remaining = (unsigned __int128)(-(value + 1)) + 1;
+    } else {
+        remaining = (unsigned __int128)value;
+    }
+
+    do {
+        unsigned int digit;
+
+        if (position == 0) {
+            return 0;
+        }
+
+        digit = (unsigned int)(remaining % 10);
+        buffer[--position] = (char)('0' + digit);
+        remaining /= 10;
+    } while (remaining != 0);
+
+    if (negative) {
+        if (position == 0) {
+            return 0;
+        }
+
+        buffer[--position] = '-';
+    }
+
+    return fwrite(buffer + position, 1, sizeof buffer - position, stdout) ==
+           sizeof buffer - position;
+}
+
+int main(int argc, char *argv[])
+{
+    int64_t a;
+    int64_t b;
+    int64_t n;
+    __int128 x;
+    __int128 y;
+
+    if (argc != 4) {
+        const char *program = argc > 0 && argv[0] != NULL
+                            ? argv[0]
+                            : "program";
+
+        fprintf(stderr, "Usage: %s a b n\n", program);
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_int64(argv[1], &a) ||
+        !parse_int64(argv[2], &b) ||
+        !parse_int64(argv[3], &n)) {
+        fputs("Invalid integer input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!solve_diophantine(a, b, n, &x, &y)) {
+        if (puts("No solution") == EOF) {
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_SUCCESS;
+    }
+
+    if (fputs("x = ", stdout) == EOF ||
+        !print_int128(x) ||
+        fputs(", y = ", stdout) == EOF ||
+        !print_int128(y) ||
+        putchar('\n') == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase_substrings(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strnlen(input, 65536);
+    
+    regex_t regex;
+    int reti = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (reti) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t result_pos = 0;
+    size_t search_pos = 0;
+    regmatch_t match;
+
+    while (search_pos < input_len) {
+        int match_result = regexec(&regex, input + search_pos, 1, &match, 0);
+        
+        if (match_result == REG_NOMATCH) {
+            size_t remaining = input_len - search_pos;
+            if (result_pos + remaining <= input_len && remaining <= input_len - result_pos) {
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(result + result_pos, input + search_pos, remaining);
+                result_pos += remaining;
+            }
+            break;
+        } else if (match_result == 0) {
+            if (match.rm_so > 0) {
+                size_t copy_size = (size_t)match.rm_so;
+                if (result_pos + copy_size <= input_len && copy_size <= input_len - result_pos) {
+                    /* Possible weaknesses found:
+                     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                     */
+                    memcpy(result + result_pos, input + search_pos, copy_size);
+                    result_pos += copy_size;
+                }
+            }
+            search_pos += match.rm_eo;
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    result[result_pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "HelloWorld",
+        "abcDEFghiJKL",
+        "NoLowercase",
+        "123abc456def789",
+        "MixedCaseABCdefGHI",
+        "",
+        "alllowercase",
+        NULL
+    };
+
+    for (int i = 0; test_strings[i] != NULL; i++) {
+        char *result = remove_lowercase_substrings(test_strings[i]);
+        if (result != NULL) {
+            printf("Input: '%s' -> Output: '%s'\n", test_strings[i], result);
+            free(result);
+        } else {
+            printf("Input: '%s' -> Error processing\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

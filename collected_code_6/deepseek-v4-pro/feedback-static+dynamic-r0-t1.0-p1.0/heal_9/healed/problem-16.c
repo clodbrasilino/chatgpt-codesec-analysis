@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+#define MAX_SEQUENCE_LENGTH 256
+#define MAX_SEQUENCES 100
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int find_sequences(const char *input, char (*sequences)[MAX_SEQUENCE_LENGTH], size_t max_sequences) {
+    if (input == NULL || sequences == NULL || max_sequences == 0) {
+        return -1;
+    }
+
+    size_t count = 0;
+    size_t i = 0;
+    size_t input_len = safe_strlen(input, (size_t)MAX_SEQUENCE_LENGTH * (size_t)MAX_SEQUENCES);
+
+    while (i < input_len && count < max_sequences) {
+        if (islower((unsigned char)input[i])) {
+            size_t low_start = i;
+            while (i < input_len && islower((unsigned char)input[i])) {
+                i++;
+            }
+            if (i < input_len && input[i] == '_') {
+                size_t underscore_pos = i;
+                i++;
+                if (i < input_len && islower((unsigned char)input[i])) {
+                    size_t second_start = i;
+                    while (i < input_len && islower((unsigned char)input[i])) {
+                        i++;
+                    }
+                    size_t first_part_len = underscore_pos - low_start;
+                    size_t second_part_len = i - second_start;
+                    size_t total_len = first_part_len + 1 + second_part_len;
+
+                    if (total_len >= MAX_SEQUENCE_LENGTH) {
+                        total_len = MAX_SEQUENCE_LENGTH - 1;
+                    }
+
+                    size_t copy_len = total_len;
+                    if (low_start + copy_len > input_len) {
+                        copy_len = input_len - low_start;
+                    }
+                    if (copy_len >= MAX_SEQUENCE_LENGTH) {
+                        copy_len = MAX_SEQUENCE_LENGTH - 1;
+                    }
+
+                    if (copy_len > 0 && copy_len < MAX_SEQUENCE_LENGTH) {
+                        memcpy(sequences[count], input + low_start, copy_len);
+                        sequences[count][copy_len] = '\0';
+                        count++;
+                    }
+                } else {
+                    i = underscore_pos + 1;
+                }
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return (int)count;
+}
+
+int main(void) {
+    const char *text = "hello_world test example_foo bar_baz_qux abc_def_ghi";
+    char (*sequences)[MAX_SEQUENCE_LENGTH];
+    int num_sequences;
+    size_t text_len;
+    size_t max_safe_len = (size_t)MAX_SEQUENCE_LENGTH * (size_t)MAX_SEQUENCES;
+
+    sequences = malloc((size_t)MAX_SEQUENCES * sizeof(*sequences));
+    if (sequences == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    text_len = safe_strlen(text, max_safe_len);
+    if (text_len >= max_safe_len) {
+        fprintf(stderr, "Error: Input string too long\n");
+        free(sequences);
+        return EXIT_FAILURE;
+    }
+
+    num_sequences = find_sequences(text, sequences, (size_t)MAX_SEQUENCES);
+
+    if (num_sequences < 0) {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        free(sequences);
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %d sequences:\n", num_sequences);
+    for (int i = 0; i < num_sequences; i++) {
+        printf("%s\n", sequences[i]);
+    }
+
+    free(sequences);
+    return EXIT_SUCCESS;
+}

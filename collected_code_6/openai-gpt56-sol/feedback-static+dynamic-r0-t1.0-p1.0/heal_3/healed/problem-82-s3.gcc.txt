@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-82-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-82-s3.c:49:12: error: implicit declaration of function 'isspace' [-Wimplicit-function-declaration]
+   49 |     while (isspace((unsigned char)*end)) {
+      |            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-82-s3.c:5:1: note: include '<ctype.h>' or provide a declaration of 'isspace'
+    4 | #include <stdlib.h>
+  +++ |+#include <ctype.h>
+    5 | 

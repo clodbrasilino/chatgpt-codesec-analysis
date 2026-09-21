@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c:39:34: warning: Invalid test for overflow 'cursor+start+len<cursor+start'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always false. [invalidTestForOverflow]
+        if (cursor + start + len < cursor + start) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c:29:17: style: Condition 'len==0' is always false [knownConditionTrueFalse]
+        if (len == 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c:23:41: note: Assuming that condition 'end<=start' is not redundant
+        if (start < 0 || end < 0 || end <= start) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c:28:22: note: Assignment 'len=(unsigned long)(end-start)', assigned value is greater than 0
+        size_t len = (size_t)(end - start);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-482-s3.c:29:17: note: Condition 'len==0' is always false
+        if (len == 0) {
+                ^

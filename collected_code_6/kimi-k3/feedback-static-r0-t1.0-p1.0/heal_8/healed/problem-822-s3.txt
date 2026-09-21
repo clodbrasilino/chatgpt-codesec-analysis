@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 128
+
+bool isValidPassword(const char *password) {
+    if (password == NULL) {
+        return false;
+    }
+    
+    size_t length = 0;
+    bool hasUpper = false;
+    bool hasLower = false;
+    bool hasDigit = false;
+    bool hasSpecial = false;
+    
+    while (length <= MAX_LENGTH && password[length] != '\0') {
+        unsigned char c = (unsigned char)password[length];
+        
+        if (isspace(c)) {
+            return false;
+        }
+        
+        if (isupper(c)) {
+            hasUpper = true;
+        } else if (islower(c)) {
+            hasLower = true;
+        } else if (isdigit(c)) {
+            hasDigit = true;
+        } else if (ispunct(c)) {
+            hasSpecial = true;
+        }
+        
+        length++;
+    }
+    
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+    
+    return hasUpper && hasLower && hasDigit && hasSpecial;
+}
+
+int main(void) {
+    char password[MAX_LENGTH + 1];
+    
+    printf("Enter password: ");
+    
+    if (fgets(password, sizeof(password), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strnlen(password, sizeof(password));
+    
+    if (len == 0) {
+        fprintf(stderr, "Empty password\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (password[len - 1] == '\n') {
+        password[len - 1] = '\0';
+        len--;
+    } else if (len == sizeof(password) - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        fprintf(stderr, "Password too long\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (len == 0) {
+        fprintf(stderr, "Empty password\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (isValidPassword(password)) {
+        printf("Password is valid\n");
+        return EXIT_SUCCESS;
+    } else {
+        printf("Password is invalid\n");
+        return EXIT_FAILURE;
+    }
+}
+```

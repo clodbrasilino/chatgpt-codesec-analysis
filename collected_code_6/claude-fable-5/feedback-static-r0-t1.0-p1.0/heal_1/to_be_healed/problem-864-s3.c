@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+static bool is_palindrome(const char *str)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(str);
+    if (len == 0U) {
+        return false;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        if (tolower((unsigned char)str[left]) != tolower((unsigned char)str[right])) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+
+    return true;
+}
+
+static size_t find_palindromes(const char *const *strings, size_t count,
+                               const char **results, size_t results_capacity)
+{
+    size_t i;
+    size_t found;
+
+    if ((strings == NULL) || (results == NULL) || (results_capacity == 0U)) {
+        return 0U;
+    }
+
+    found = 0U;
+    for (i = 0U; i < count; i++) {
+        if (is_palindrome(strings[i])) {
+            if (found < results_capacity) {
+                results[found] = strings[i];
+                found++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *const words[] = {
+        "racecar",
+        "hello",
+        "Level",
+        "world",
+        "noon",
+        "example",
+        "madam"
+    };
+    const size_t word_count = sizeof(words) / sizeof(words[0]);
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    const char *palindromes[sizeof(words) / sizeof(words[0])];
+    size_t found;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    found = find_palindromes(words, word_count, palindromes, word_count);
+
+    if (found == 0U) {
+        if (puts("No palindromes found.") == EOF) {
+            return 1;
+        }
+    } else {
+        if (printf("Found %zu palindrome(s):\n", found) < 0) {
+            return 1;
+        }
+        for (i = 0U; i < found; i++) {
+            if (printf("%s\n", palindromes[i]) < 0) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}

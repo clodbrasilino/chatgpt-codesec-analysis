@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    size_t needed = regerror(errcode, regex, NULL, 0);
+    char *errbuf = malloc(needed);
+
+    if (errbuf != NULL) {
+        regerror(errcode, regex, errbuf, needed);
+        fprintf(stderr, "%s: %s\n", context, errbuf);
+        free(errbuf);
+    } else {
+        fprintf(stderr, "%s: unable to allocate error buffer\n", context);
+    }
+}
+
+char *extract_quoted_value(const char *input)
+{
+    regex_t regex;
+    regmatch_t matches[2];
+    char *result = NULL;
+    int ret;
+    size_t input_len;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+
+    ret = regcomp(&regex, "\"([^\"]*)\"", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return NULL;
+    }
+
+    ret = regexec(&regex, input, 2, matches, 0);
+    if (ret == 0) {
+        if (matches[1].rm_so >= 0 &&
+            matches[1].rm_eo >= matches[1].rm_so &&
+            (size_t)matches[1].rm_eo <= input_len) {
+            size_t len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+            result = malloc(len + 1);
+            if (result != NULL) {
+                memcpy(result, input + matches[1].rm_so, len);
+                result[len] = '\0';
+            } else {
+                fprintf(stderr, "Memory allocation failed\n");
+            }
+        }
+    } else if (ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "Regex execution failed");
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_string = "The value is \"hello world\" in this string";
+    char *value;
+
+    value = extract_quoted_value(test_string);
+    if (value != NULL) {
+        printf("Extracted value: %s\n", value);
+        free(value);
+    } else {
+        printf("No quoted value found\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was actually quite well-written — the Flawfinder warnings were largely false positives, but the rewrite hardens the code against them regardless:
+
+1. **`char errbuf[256]` (CWE-119/CWE-120)** — Flawfinder flags any statically-sized array. The original usage was safe because `regerror()` respects the size argument and truncates. The rewrite eliminates the fixed-size buffer entirely by calling `regerror(errcode, regex, NULL, 0)` first to query the exact required size, then allocating dynamically. This removes both the warning and any possibility of truncated error messages. The duplicated error-handling logic was also factored into a helper function (`print_regex_error`), removing code duplication.
+
+2. **`memcpy` (CWE-120)** — The original was safe: `len` was derived from match offsets and the destination was allocated as `len + 1`. However, the rewrite adds defense-in-depth by validating that `matches[1].rm_eo` does not exceed the input string's length (`(size_t)matches[1].rm_eo <= input_len`), guaranteeing the source read is in-bounds even in the hypothetical case of a misbehaving regex implementation. The check `rm_so >= 0` also replaces `rm_so != -1`, which is a slightly stronger invariant.
+
+3. **Retained correct practices from the original:** NULL input check, checking `regcomp`/`regexec` return codes, distinguishing `REG_NOMATCH` from real errors, NUL-terminating the result, calling `regfree()` on all paths after successful compilation, and freeing the returned buffer in `main`.

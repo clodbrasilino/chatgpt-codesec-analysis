@@ -1,0 +1,143 @@
+## Analysis
+
+**Correctness:** The function implements a bijective word-pattern match (LeetCode-style "word pattern"). Logic is sound: it maps each pattern character to a token, verifies consistency, and the reverse scan (`for (j...)`) ensures no two characters map to the same word (bijection). The final `i != plen` check catches token/pattern count mismatch.
+
+**Flagged weaknesses:**
+
+1. **`const char *map[MAP_SIZE]` (CWE-119/120):** This is a false positive in practice, but the guard is fragile. The index is an `unsigned char`, whose range is 0–255, and `MAP_SIZE` is 256 — so the bounds check `(size_t)c >= MAP_SIZE` is dead code on standard platforms, yet keeping an explicit check is defensible hardening. The array itself is never written past bounds.
+
+2. **`memcpy` (CWE-120):** Also safe as written — `copy` is allocated with `tlen + 1` bytes and exactly `tlen` bytes are copied, with explicit NUL termination. Hardening options: derive the copy length from the allocation, or use a bounded string copy.
+
+**Other observations:**
+
+- `strnlen`/`strtok_r` are POSIX, not ISO C — fine for the stated environment but worth `_POSIX_C_SOURCE` gating.
+- `map` stores pointers into `copy`; since `copy` is freed only after all uses, no dangling access occurs.
+- Single exit point, `free` always reached on the success path — no leak (early `return`s occur only before allocation).
+
+## Rewritten code
+
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 4096U
+#define MAP_SIZE 256U
+
+static bool follows_pattern(const char *pattern, const char *text)
+{
+    bool result = true;
+    size_t plen;
+    size_t tlen;
+    size_t i = 0U;
+    size_t j;
+    char *copy = NULL;
+    char *token = NULL;
+    char *saveptr = NULL;
+    const char *map[MAP_SIZE] = { NULL };
+
+    if (pattern == NULL || text == NULL) {
+        return false;
+    }
+
+    plen = strnlen(pattern, MAX_INPUT_LEN);
+    tlen = strnlen(text, MAX_INPUT_LEN);
+
+    if (plen >= MAX_INPUT_LEN || tlen >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    copy = calloc(tlen + 1U, sizeof(char));
+    if (copy == NULL) {
+        return false;
+    }
+
+    if (tlen > 0U) {
+        memcpy(copy, text, tlen);
+    }
+    copy[tlen] = '\0';
+
+    token = strtok_r(copy, " ", &saveptr);
+    while (token != NULL) {
+        if (i >= plen) {
+            result = false;
+            break;
+        }
+
+        unsigned char c = (unsigned char)pattern[i];
+        if ((size_t)c >= MAP_SIZE) {
+            result = false;
+            break;
+        }
+
+        if (map[c] != NULL) {
+            if (strcmp(map[c], token) != 0) {
+                result = false;
+                break;
+            }
+        } else {
+            for (j = 0U; j < MAP_SIZE; j++) {
+                if ((map[j] != NULL) && (strcmp(map[j], token) == 0)) {
+                    result = false;
+                    break;
+                }
+            }
+            if (!result) {
+                break;
+            }
+            map[c] = token;
+        }
+
+        i++;
+        token = strtok_r(NULL, " ", &saveptr);
+    }
+
+    if (result && (i != plen)) {
+        result = false;
+    }
+
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *patterns[] = { "abba", "abba", "aaaa", "abba" };
+    const char *texts[] = {
+        "dog cat cat dog",
+        "dog cat cat fish",
+        "dog cat cat dog",
+        "dog dog dog dog"
+    };
+    size_t count = sizeof(patterns) / sizeof(patterns[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        bool ok = follows_pattern(patterns[i], texts[i]);
+        if (printf("Pattern \"%s\" with \"%s\": %s\n",
+                   patterns[i], texts[i],
+                   ok ? "matches" : "does not match") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+### Notes on the fixes
+
+- **Buffer weakness (map array):** The index type (`unsigned char`) mathematically cannot exceed 255, and `MAP_SIZE` is 256, so out-of-bounds writes are impossible; the explicit runtime check is retained as defense-in-depth. Initialization is now done via aggregate initializer, guaranteeing all 256 slots start as `NULL` with no loop needed.
+- **`memcpy` weakness:** The destination is allocated with exactly `tlen + 1` bytes immediately before the copy of `tlen` bytes, so the destination is provably large enough; explicit NUL termination follows. The `calloc` return is checked, and input lengths are bounded by `strnlen` against `MAX_INPUT_LEN` before any allocation, preventing unbounded reads of non-terminated input.
+
+Expected output:
+
+```
+Pattern "abba" with "dog cat cat dog": matches
+Pattern "abba" with "dog cat cat fish": does not match
+Pattern "aaaa" with "dog cat cat dog": does not match
+Pattern "abba" with "dog dog dog dog": does not match
+```

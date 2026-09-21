@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-477.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-477.c:45:42: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   45 |     lowercase = string_to_lower(argv[1], strlen(argv[1]) + 1U);
+      |                                          ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-477.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    4 | 

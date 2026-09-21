@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char* data;
+    struct Node* next;
+};
+
+char* concatenate_list(struct Node* head) {
+    if (head == NULL) {
+        char* empty_str = malloc(1);
+        if (empty_str != NULL) {
+            empty_str[0] = '\0';
+        }
+        return empty_str;
+    }
+
+    size_t total_length = 0;
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data != NULL) {
+            size_t len = 0;
+            while (current->data[len] != '\0') {
+                len++;
+            }
+            total_length += len;
+        }
+        current = current->next;
+    }
+
+    char* result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char* dest_ptr = result;
+    current = head;
+    while (current != NULL) {
+        if (current->data != NULL) {
+            size_t len = 0;
+            while (current->data[len] != '\0') {
+                len++;
+            }
+            memcpy(dest_ptr, current->data, len);
+            dest_ptr += len;
+        }
+        current = current->next;
+    }
+    *dest_ptr = '\0';
+
+    return result;
+}
+
+int main(void) {
+    struct Node node3 = {"World!", NULL};
+    struct Node node2 = {" ", &node3};
+    struct Node node1 = {"Hello", &node2};
+
+    char* concatenated_string = concatenate_list(&node1);
+
+    if (concatenated_string != NULL) {
+        printf("%s\n", concatenated_string);
+        free(concatenated_string);
+    } else {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    return 0;
+}

@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define BUFFER_SIZE 256
+
+bool first_last_equal(const char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    return str[0] == str[len - 1];
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (buffer[0] == '\0') {
+        printf("Empty string provided\n");
+        return 1;
+    }
+
+    if (first_last_equal(buffer, sizeof(buffer))) {
+        printf("The first and last characters are equal\n");
+    } else {
+        printf("The first and last characters are not equal\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning about the statically-sized `buffer[BUFFER_SIZE]` is a low-risk informational hit, and the code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to `sizeof(buffer) - 1` characters plus the null terminator, preventing a classic `gets()`-style overflow.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure ensuring the buffer is always null-terminated (though `fgets` already guarantees this on success).
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+4. **Safe helper function:** `first_last_equal` validates against `NULL`, rejects empty strings, and treats `len == max_len` (potentially unterminated) as invalid, so `str[len - 1]` never indexes out of bounds.
+
+No functional changes were required; the code as written already addresses the identified weakness, so the rewrite simply strips the comments per the request.

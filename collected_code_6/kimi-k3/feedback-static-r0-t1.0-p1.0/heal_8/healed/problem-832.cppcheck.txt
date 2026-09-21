@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-832.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-832.c:46:17: style: Condition 'len==0' is always false [knownConditionTrueFalse]
+        if (len == 0 || len >= SIZE_MAX - 1)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-832.c:38:17: note: Assuming that condition 'end<=start' is not redundant
+        if (end <= start)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-832.c:44:15: note: Assignment 'len=(unsigned long)(end-start)', assigned value is greater than 0
+        len = (size_t)(end - start);
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-832.c:46:17: note: Condition 'len==0' is always false
+        if (len == 0 || len >= SIZE_MAX - 1)
+                ^

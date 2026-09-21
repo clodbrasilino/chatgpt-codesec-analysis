@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-440.c:106:43: warning: Either the condition 'sentence_len<1024' is redundant or the array 'sentence[73]' is accessed at index 1023, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (sentence_len < 1024 && sentence[sentence_len] != '\0') {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-440.c:106:25: note: Assuming that condition 'sentence_len<1024' is not redundant
+    while (sentence_len < 1024 && sentence[sentence_len] != '\0') {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-440.c:106:43: note: Array index out of bounds
+    while (sentence_len < 1024 && sentence[sentence_len] != '\0') {
+                                          ^

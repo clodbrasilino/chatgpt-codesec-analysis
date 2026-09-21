@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+static size_t string_length(const char *str, size_t max_len)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (length < max_len && str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = string_length(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+        length--;
+        printf("You entered: %s\n", buffer);
+    } else if (length == sizeof(buffer) - 1) {
+        flush_stdin();
+        printf("You entered (truncated): %s\n", buffer);
+    } else {
+        printf("You entered: %s\n", buffer);
+    }
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is already safe:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20)** — This is a false positive in this context. The `getchar()` call in `flush_stdin()` never writes into a buffer; it simply consumes and discards characters until a newline or `EOF` is reached. The loop terminates correctly on `EOF` because `ch` is declared as `int` (not `char`), which is the correct type to reliably detect `EOF`. No fix required.
+
+2. **Flawfinder `char buffer[MAX_INPUT]` warning (CWE-119/CWE-120)** — Statically-sized arrays are only dangerous when combined with unbounded writes. Here the code mitigates this correctly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` limits the read to the buffer size, guaranteeing no overflow.
+   - The return value of `fgets` is checked for `NULL`, handling read errors and `EOF` gracefully.
+   - `buffer[sizeof(buffer) - 1] = '\0'` is a defensive guarantee of null-termination.
+   - `string_length()` is itself bounded by `max_len` and checks for `NULL`, so it can never read past the buffer even if termination were somehow missing.
+   - The truncation case (`length == sizeof(buffer) - 1` with no newline) is detected, leftover input is drained via `flush_stdin()` to avoid it leaking into subsequent reads, and the user is informed.
+
+Since both findings are properly mitigated already, the rewritten code is functionally identical with the analysis comments removed, as requested.

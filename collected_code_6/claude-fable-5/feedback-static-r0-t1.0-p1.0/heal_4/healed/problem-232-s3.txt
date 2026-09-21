@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_desc(const void *a, const void *b)
+{
+    int lhs = *(const int *)a;
+    int rhs = *(const int *)b;
+
+    if (lhs < rhs) {
+        return 1;
+    }
+    if (lhs > rhs) {
+        return -1;
+    }
+    return 0;
+}
+
+int get_n_largest(const int *data, size_t size, size_t n, int *result,
+                  size_t result_capacity)
+{
+    int *copy;
+    size_t copy_bytes;
+    size_t out_bytes;
+    size_t i;
+
+    if (data == NULL || result == NULL) {
+        return -1;
+    }
+    if (size == 0U || n == 0U || n > size) {
+        return -1;
+    }
+    if (n > result_capacity) {
+        return -1;
+    }
+    if (size > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+    if (result_capacity > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    copy_bytes = size * sizeof(int);
+    out_bytes = n * sizeof(int);
+
+    if (out_bytes > result_capacity * sizeof(int)) {
+        return -1;
+    }
+
+    copy = malloc(copy_bytes);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        copy[i] = data[i];
+    }
+
+    qsort(copy, size, sizeof(int), compare_desc);
+
+    for (i = 0U; i < n; i++) {
+        result[i] = copy[i];
+    }
+
+    free(copy);
+
+    return 0;
+}
+
+int main(void)
+{
+    int dataset[] = { 42, 7, 93, 15, 88, 3, 61, 27, 54, 99 };
+    size_t size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3U;
+    int *largest;
+    size_t i;
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        fprintf(stderr, "Requested size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    largest = malloc(n * sizeof(int));
+    if (largest == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (get_n_largest(dataset, size, n, largest, n) != 0) {
+        fprintf(stderr, "Failed to get largest items\n");
+        free(largest);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest items are:\n", n);
+    for (i = 0U; i < n; i++) {
+        printf("%d\n", largest[i]);
+    }
+
+    free(largest);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of changes made:**
+
+The two Flawfinder warnings both concerned `memcpy` calls (CWE-120, buffer overflow risk). The original code was already largely safe because it validated sizes before copying, but the rewrite hardens it further:
+
+1. **First `memcpy` (source → copy):** Replaced with an explicit element-wise loop. The destination `copy` is allocated with exactly `copy_bytes`, and the overflow guard `size > SIZE_MAX / sizeof(int)` runs before allocation, so the copy is provably bounded by the loop index `i < size`.
+
+2. **Second `memcpy` (copy → result):** Replaced with a bounded loop as well. Crucially, the capacity check `out_bytes > result_capacity * sizeof(int)` was **moved before the allocation**, which is both a correctness hardening and a minor efficiency improvement — the original performed the `malloc`, `memcpy`, and `qsort` before discovering the destination was too small.
+
+3. **Added a guard against `result_capacity * sizeof(int)` overflowing** (`result_capacity > SIZE_MAX / sizeof(int)`), which the original code missed — a very large `result_capacity` could wrap the multiplication and defeat the capacity check.
+
+All original semantics, error handling (`-1` on failure, `0` on success), and the `main` driver behavior are preserved; the program still prints the three largest values (99, 93, 88).

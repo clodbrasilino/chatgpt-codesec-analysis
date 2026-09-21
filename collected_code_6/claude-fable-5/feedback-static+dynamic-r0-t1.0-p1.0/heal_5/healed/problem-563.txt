@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t alloc_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    if (end < start) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    alloc_size = length + 1U;
+
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U && length < alloc_size) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already quite defensive, but the Flawfinder warning on `memcpy` (CWE-120) deserves scrutiny. Here's my assessment:
+
+1. **The `memcpy` was already safe in practice** — the destination buffer is allocated as `length + 1` bytes, and exactly `length` bytes are copied. Flawfinder is a static pattern-matcher and flags all `memcpy` calls regardless of context.
+
+2. **Hardening added:** An explicit guard `length < alloc_size` before the `memcpy` makes the invariant (destination can hold the source data) locally provable at the call site, silencing the concern without relying on reasoning about earlier code.
+
+3. **Additional defensive check:** `end < start` is added before the pointer subtraction. While `strchr(start, '"')` can never return a pointer before `start`, making the precondition explicit protects against undefined behavior if the surrounding logic is ever refactored.
+
+4. **Existing strengths retained:** NULL input handling, overflow guard on `length + 1` via the `SIZE_MAX - 1U` comparison, `malloc` failure check, guaranteed NUL termination, checked return values of `printf`/`fprintf`, and no memory leaks on any exit path.
+
+The code is correct, portable C, and free of buffer overflow risk.

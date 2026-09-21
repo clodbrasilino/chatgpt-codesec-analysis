@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} ListOfLists;
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (!lol) {
+        return;
+    }
+    if (lol->lists) {
+        for (size_t i = 0; i < lol->count; i++) {
+            free(lol->lists[i].data);
+        }
+        free(lol->lists);
+    }
+    free(lol);
+}
+
+ListOfLists *find_min_length_lists(const ListOfLists *input) {
+    if (!input || !input->lists || input->count == 0) {
+        return NULL;
+    }
+
+    size_t min_len = input->lists[0].length;
+    for (size_t i = 1; i < input->count; i++) {
+        if (input->lists[i].length < min_len) {
+            min_len = input->lists[i].length;
+        }
+    }
+
+    size_t min_count = 0;
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i].length == min_len) {
+            min_count++;
+        }
+    }
+
+    ListOfLists *result = malloc(sizeof(ListOfLists));
+    if (!result) {
+        return NULL;
+    }
+
+    result->count = min_count;
+    result->lists = calloc(min_count, sizeof(IntList));
+    if (!result->lists) {
+        free(result);
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i].length == min_len) {
+            result->lists[idx].length = min_len;
+            if (min_len > 0) {
+                result->lists[idx].data = calloc(min_len, sizeof(int));
+                if (!result->lists[idx].data) {
+                    result->count = idx;
+                    free_list_of_lists(result);
+                    return NULL;
+                }
+                for (size_t k = 0; k < min_len; k++) {
+                    result->lists[idx].data[k] = input->lists[i].data[k];
+                }
+            } else {
+                result->lists[idx].data = NULL;
+            }
+            idx++;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    ListOfLists *input = malloc(sizeof(ListOfLists));
+    if (!input) {
+        return EXIT_FAILURE;
+    }
+
+    input->count = 3;
+    input->lists = calloc(input->count, sizeof(IntList));
+    if (!input->lists) {
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'data0' can be declared as const array [constVariable]
+     */
+    int data0[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'data1' can be declared as const array [constVariable]
+     */
+    int data1[] = {4};
+    /* Possible weaknesses found:
+     *  Variable 'data2' can be declared as const array [constVariable]
+     */
+    int data2[] = {5, 6};
+
+    input->lists[0].length = 3;
+    input->lists[0].data = calloc(3, sizeof(int));
+    if (!input->lists[0].data) {
+        input->count = 0;
+        free_list_of_lists(input);
+        return EXIT_FAILURE;
+    }
+    for (size_t k = 0; k < 3; k++) {
+        input->lists[0].data[k] = data0[k];
+    }
+
+    input->lists[1].length = 1;
+    input->lists[1].data = calloc(1, sizeof(int));
+    if (!input->lists[1].data) {
+        input->count = 1;
+        free_list_of_lists(input);
+        return EXIT_FAILURE;
+    }
+    for (size_t k = 0; k < 1; k++) {
+        input->lists[1].data[k] = data1[k];
+    }
+
+    input->lists[2].length = 2;
+    input->lists[2].data = calloc(2, sizeof(int));
+    if (!input->lists[2].data) {
+        input->count = 2;
+        free_list_of_lists(input);
+        return EXIT_FAILURE;
+    }
+    for (size_t k = 0; k < 2; k++) {
+        input->lists[2].data[k] = data2[k];
+    }
+
+    ListOfLists *min_lists = find_min_length_lists(input);
+    if (!min_lists) {
+        free_list_of_lists(input);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < min_lists->count; i++) {
+        for (size_t j = 0; j < min_lists->lists[i].length; j++) {
+            printf("%d ", min_lists->lists[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    free_list_of_lists(min_lists);
+    free_list_of_lists(input);
+
+    return EXIT_SUCCESS;
+}

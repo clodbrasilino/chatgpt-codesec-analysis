@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_chars(char *str1, const char *str2) {
+    size_t len = 0;
+    while (str1[len] != '\0') {
+        if (strchr(str2, str1[len]) == NULL) {
+            len++;
+        } else {
+            memmove(&str1[len], &str1[len + 1], strlen(&str1[len]));
+        }
+    }
+}
+
+int main() {
+    char str1[100] = "Hello, World!";
+    const char *str2 = ",!";
+
+    remove_chars(str1, str2);
+    printf("%s\n", str1);
+
+    return 0;
+}

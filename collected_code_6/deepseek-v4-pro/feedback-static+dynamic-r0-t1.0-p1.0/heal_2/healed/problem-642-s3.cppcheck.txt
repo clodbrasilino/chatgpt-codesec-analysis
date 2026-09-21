@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:31:19: style: Condition 'mat->rows>0' is always true [knownConditionTrueFalse]
+    if (mat->rows > 0 && mat->cols > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:27:34: note: Assuming that condition 'mat->rows<=0' is not redundant
+    if (mat == NULL || mat->rows <= 0 || mat->cols <= 0 || mat->data == NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:31:19: note: Condition 'mat->rows>0' is always true
+    if (mat->rows > 0 && mat->cols > 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:31:36: style: Condition 'mat->cols>0' is always true [knownConditionTrueFalse]
+    if (mat->rows > 0 && mat->cols > 0) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:27:52: note: Assuming that condition 'mat->cols<=0' is not redundant
+    if (mat == NULL || mat->rows <= 0 || mat->cols <= 0 || mat->data == NULL) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-642-s3.c:31:36: note: Condition 'mat->cols>0' is always true
+    if (mat->rows > 0 && mat->cols > 0) {
+                                   ^

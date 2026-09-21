@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct KeyValue {
+    char *key;
+    int value;
+    struct KeyValue *next;
+} KeyValue;
+
+typedef struct {
+    KeyValue *head;
+} Dictionary;
+
+void dict_init(Dictionary *dict) {
+    dict->head = NULL;
+}
+
+void dict_add(Dictionary *dict, const char *key, int value) {
+    if (key == NULL) {
+        fprintf(stderr, "NULL key provided\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    size_t key_len = 0;
+    /* Possible weaknesses found:
+     *  Either the condition 'key_len<256' is redundant or the array 'key[6]' is accessed at index 255, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Array index out of bounds
+     *  Assuming that condition 'key_len<256' is not redundant
+     */
+    while (key_len < 256 && key[key_len] != '\0') {
+        key_len++;
+    }
+    
+    if (key_len == 256) {
+        fprintf(stderr, "Key too long or not null-terminated\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    KeyValue *new_pair = (KeyValue *)malloc(sizeof(KeyValue));
+    if (new_pair == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    new_pair->key = (char *)malloc(key_len + 1);
+    if (new_pair->key == NULL) {
+        free(new_pair);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (key_len > 0) {
+        size_t i;
+        for (i = 0; i < key_len; i++) {
+            new_pair->key[i] = key[i];
+        }
+    }
+    new_pair->key[key_len] = '\0';
+    new_pair->value = value;
+    new_pair->next = dict->head;
+    dict->head = new_pair;
+}
+
+int sum_dictionary(const Dictionary *dict) {
+    int sum = 0;
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        sum += current->value;
+        current = current->next;
+    }
+    return sum;
+}
+
+void dict_free(Dictionary *dict) {
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        KeyValue *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    dict->head = NULL;
+}
+
+int main(void) {
+    Dictionary dict;
+    dict_init(&dict);
+    
+    dict_add(&dict, "apple", 5);
+    dict_add(&dict, "banana", 3);
+    dict_add(&dict, "orange", 7);
+    dict_add(&dict, "grape", 2);
+    
+    int total = sum_dictionary(&dict);
+    printf("Sum of all items: %d\n", total);
+    
+    dict_free(&dict);
+    
+    return 0;
+}

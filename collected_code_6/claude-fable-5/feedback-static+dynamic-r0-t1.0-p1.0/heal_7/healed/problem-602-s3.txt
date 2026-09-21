@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define MAX_INPUT_LEN 256
+
+static size_t bounded_strlen(const char *str, size_t maxlen)
+{
+    size_t i;
+
+    for (i = 0; i < maxlen; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+
+    return i;
+}
+
+int find_first_repeated_char(const char *str, size_t maxlen, char *result)
+{
+    int seen[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t len;
+
+    if (str == NULL || result == NULL || maxlen == 0) {
+        return -1;
+    }
+
+    len = bounded_strlen(str, maxlen);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c] != 0) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char repeated = '\0';
+    int status;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    status = find_first_repeated_char(buffer, sizeof(buffer), &repeated);
+
+    if (status < 0) {
+        fprintf(stderr, "Invalid arguments\n");
+        return 1;
+    }
+
+    if (status == 0) {
+        if (printf("First repeated character: %c\n", repeated) < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("No repeated character found\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis summary:**
+
+The flagged weakness (CWE-119/CWE-120, statically-sized buffer) was already properly mitigated in the original code, so the rewritten version preserves those defenses:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. The return value is checked for read failure.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` ensures the string is terminated even in edge cases, and `memset` zero-initializes the buffer beforehand.
+
+3. **Safe newline stripping** — `strcspn(buffer, "\n")` is used instead of unsafe pointer arithmetic; it always returns an index within bounds for a null-terminated string.
+
+4. **Bounded string traversal** — `bounded_strlen` never reads past `maxlen`, avoiding out-of-bounds reads even if termination were somehow missing.
+
+5. **Defensive API design** — `find_first_repeated_char` validates all pointers and the length argument, and characters are cast to `unsigned char` before indexing `seen[]`, preventing negative-index undefined behavior on platforms where `char` is signed.
+
+6. **Checked I/O** — `printf` return values are verified, and errors route to `stderr` with a non-zero exit status.
+
+No additional changes were required; the code is already resistant to the buffer-related weaknesses Flawfinder flagged.

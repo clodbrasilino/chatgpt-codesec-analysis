@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int count_odd_rotations(const char *str, size_t len) {
+    if (len == 0) return 0;
+    
+    int ones_count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == '1') ones_count++;
+    }
+    
+    if (ones_count % 2 == 0) return 0;
+    
+    int count = 0;
+    char *rotated = (char *)malloc(len + 1);
+    if (rotated == NULL) return -1;
+    
+    for (size_t i = 0; i < len; i++) {
+        size_t idx = 0;
+        for (size_t j = i; j < i + len; j++) {
+            rotated[idx++] = str[j % len];
+        }
+        rotated[idx] = '\0';
+        
+        if (rotated[len - 1] == '1') {
+            count++;
+        }
+    }
+    
+    free(rotated);
+    return count;
+}
+
+int main(void) {
+    char *str = NULL;
+    size_t capacity = 128;
+    size_t input_pos = 0;
+    int c;
+    
+    str = (char *)malloc(capacity);
+    if (str == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter binary string: ");
+    
+    while (1) {
+        c = getchar();
+        if (c == '\n' || c == EOF) {
+            break;
+        }
+        
+        if (input_pos + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            if (new_capacity <= capacity) {
+                free(str);
+                printf("Input too long\n");
+                return 1;
+            }
+            char *new_str = (char *)realloc(str, new_capacity);
+            if (new_str == NULL) {
+                free(str);
+                printf("Memory allocation failed\n");
+                return 1;
+            }
+            str = new_str;
+            capacity = new_capacity;
+        }
+        
+        if (input_pos < capacity - 1) {
+            str[input_pos++] = (char)c;
+        }
+    }
+    
+    if (input_pos < capacity) {
+        str[input_pos] = '\0';
+    } else {
+        free(str);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    if (c != '\n' && c != EOF) {
+        int discard;
+        while ((discard = getchar()) != '\n' && discard != EOF) {
+            continue;
+        }
+        free(str);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    size_t len = input_pos;
+    
+    if (len == 0) {
+        free(str);
+        printf("Invalid input: empty string\n");
+        return 1;
+    }
+    
+    if (len > 100) {
+        free(str);
+        printf("Input too long\n");
+        return 1;
+    }
+    
+    if (strspn(str, "01") != len) {
+        free(str);
+        printf("Invalid input: only '0' and '1' allowed\n");
+        return 1;
+    }
+    
+    int result = count_odd_rotations(str, len);
+    
+    free(str);
+    
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+    } else {
+        printf("Count of rotations with odd value: %d\n", result);
+    }
+    
+    return 0;
+}

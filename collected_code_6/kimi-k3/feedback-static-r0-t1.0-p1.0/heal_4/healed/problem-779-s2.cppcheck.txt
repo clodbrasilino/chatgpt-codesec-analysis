@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s2.c:84:36: style: Condition 'dest->data!=NULL' is always true [knownConditionTrueFalse]
+    if (src_size > 0 && dest->data != NULL && src != NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s2.c:80:20: note: Assuming condition 'dest->data==NULL' is false
+    if (dest->data == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-779-s2.c:84:36: note: Condition 'dest->data!=NULL' is always true
+    if (src_size > 0 && dest->data != NULL && src != NULL) {
+                                   ^

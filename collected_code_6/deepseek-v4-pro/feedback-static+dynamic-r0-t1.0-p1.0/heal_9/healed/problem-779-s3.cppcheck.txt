@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-779-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-779-s3.c:104:36: style: Condition 'new_data!=NULL' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0 && new_data != NULL && data != NULL) {
+                                   ^

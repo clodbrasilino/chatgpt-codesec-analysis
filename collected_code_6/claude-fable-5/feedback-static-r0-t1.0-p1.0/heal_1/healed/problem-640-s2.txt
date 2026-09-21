@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *test2 = "Nested (outer (inner) text) example";
+    const char *test3 = "No parentheses here";
+    char *output;
+
+    output = remove_parentheses(test1);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    output = remove_parentheses(test2);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    output = remove_parentheses(test3);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was functionally correct, but the flagged weakness (CWE-126, buffer over-read) stemmed from calling `strlen` on a pointer that is merely *assumed* to be NUL-terminated. If a caller ever passed a non-terminated buffer, `strlen` would read past the end of the allocation.
+
+Key fixes applied:
+
+1. **`strnlen` instead of `strlen`** — bounds the scan to `MAX_INPUT_LEN` bytes, so a missing NUL terminator can no longer cause an unbounded over-read.
+2. **Explicit length validation** — if `strnlen` returns the maximum (meaning no terminator was found within the bound, or the string is too long), the function fails safely by returning `NULL` rather than processing potentially untrusted data.
+3. **Retained defensive checks** — the `NULL` input guard, the `malloc` failure check, and the `depth > 0` guard against unbalanced closing parentheses are all preserved, and every allocation in `main` is still paired with a `free`.
+
+The core algorithm remains O(n), the output buffer of `len + 1` bytes is provably sufficient (output length ≤ input length), and `result[j] = '\0'` guarantees the returned string is always properly terminated.

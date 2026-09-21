@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
+  */
+
+char *snake_to_camel(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[1];
+    const char *cursor;
+    char *result;
+    size_t input_len;
+    size_t i;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "_([a-zA-Z0-9])", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    input_len = strlen(input);
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    i = 0;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, match, 0);
+        if (ret == 0) {
+            size_t offset = (size_t)match[0].rm_so;
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + i, cursor, offset);
+            i += offset;
+            result[i++] = (char)toupper((unsigned char)cursor[match[0].rm_so + 1]);
+            cursor += match[0].rm_eo;
+        } else if (ret == REG_NOMATCH) {
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t rest = strlen(cursor);
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + i, cursor, rest);
+            i += rest;
+            break;
+        } else {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    result[i] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "hello_world",
+        "snake_case_string",
+        "convert_this_to_camel",
+        "already",
+        NULL
+    };
+    size_t t;
+
+    for (t = 0; tests[t] != NULL; t++) {
+        char *camel = snake_to_camel(tests[t]);
+        if (camel == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[t]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[t], camel);
+        free(camel);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void capitalize(char *str) {
+    if (str == NULL || *str == '\0') return;
+    size_t len = strnlen(str, 256);
+    for (size_t i = 0; i < len; ++i) {
+        if (i == 0 || (i > 0 && isspace((unsigned char)str[i - 1]))) {
+            str[i] = toupper((unsigned char)str[i]);
+        }
+    }
+    for (ssize_t i = len - 1; i >= 0; --i) {
+        if (i + 1 == len || (i + 1 < len && isspace((unsigned char)str[i + 1]))) {
+            str[i] = toupper((unsigned char)str[i]);
+        }
+    }
+}
+
+int main() {
+    char input[256];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = 0;
+        capitalize(input);
+        printf("Capitalized: %s\n", input);
+    } else {
+        fprintf(stderr, "Input error\n");
+    }
+    return 0;
+}

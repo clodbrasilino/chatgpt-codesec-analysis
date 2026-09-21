@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-387.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-387.c:42:25: warning: Either the condition 'last_digit<='9'' is redundant or there is signed integer overflow for expression 'last_digit-'a''. [integerOverflowCond]
+    return ((last_digit - 'a' + 10U) % 2U) == 0U;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-387.c:37:41: note: Assuming that condition 'last_digit<='9'' is not redundant
+    if (last_digit >= '0' && last_digit <= '9') {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-387.c:41:18: note: Assignment 'last_digit=(unsigned char)tolower(last_digit)', assigned value is 58
+    last_digit = (unsigned char)tolower(last_digit);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-387.c:42:25: note: Integer overflow
+    return ((last_digit - 'a' + 10U) % 2U) == 0U;
+                        ^

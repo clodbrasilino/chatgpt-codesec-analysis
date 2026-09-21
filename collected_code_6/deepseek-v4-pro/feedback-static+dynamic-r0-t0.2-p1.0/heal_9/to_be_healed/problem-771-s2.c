@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char items[MAX_SIZE];
+    int top;
+} Stack;
+
+void initStack(Stack *s) {
+    s->top = -1;
+}
+
+int isEmpty(const Stack *s) {
+    return s->top == -1;
+}
+
+int isFull(const Stack *s) {
+    return s->top == MAX_SIZE - 1;
+}
+
+int push(Stack *s, char c) {
+    if (s == NULL) {
+        return 0;
+    }
+    if (isFull(s)) {
+        return 0;
+    }
+    s->top++;
+    s->items[s->top] = c;
+    return 1;
+}
+
+int pop(Stack *s, char *c) {
+    if (s == NULL || c == NULL) {
+        return 0;
+    }
+    if (isEmpty(s)) {
+        return 0;
+    }
+    *c = s->items[s->top];
+    s->top--;
+    return 1;
+}
+
+int isMatchingPair(char opening, char closing) {
+    if (opening == '(' && closing == ')') return 1;
+    if (opening == '{' && closing == '}') return 1;
+    if (opening == '[' && closing == ']') return 1;
+    return 0;
+}
+
+int isBalanced(const char *expression) {
+    Stack stack;
+    size_t i;
+    size_t len;
+    
+    if (expression == NULL) {
+        return 0;
+    }
+    
+    len = strnlen(expression, MAX_SIZE + 1);
+    if (len == 0 || len > MAX_SIZE) {
+        return 0;
+    }
+    
+    initStack(&stack);
+    
+    for (i = 0; i < len; i++) {
+        char current = expression[i];
+        
+        if (current == '(' || current == '{' || current == '[') {
+            if (!push(&stack, current)) {
+                return 0;
+            }
+        }
+        else if (current == ')' || current == '}' || current == ']') {
+            char topChar;
+            if (!pop(&stack, &topChar)) {
+                return 0;
+            }
+            if (!isMatchingPair(topChar, current)) {
+                return 0;
+            }
+        }
+    }
+    
+    return isEmpty(&stack);
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[MAX_SIZE + 2];
+    
+    printf("Enter an expression: ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    size_t len = strnlen(input, sizeof(input));
+    
+    if (len > 0 && input[len - 1] != '\n' && len == sizeof(input) - 1) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {}
+        fprintf(stderr, "Expression too long\n");
+        return 1;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    }
+    
+    if (len > MAX_SIZE) {
+        fprintf(stderr, "Expression exceeds maximum allowed length\n");
+        return 1;
+    }
+    
+    if (isBalanced(input)) {
+        printf("Balanced\n");
+    } else {
+        printf("Not Balanced\n");
+    }
+    
+    return 0;
+}

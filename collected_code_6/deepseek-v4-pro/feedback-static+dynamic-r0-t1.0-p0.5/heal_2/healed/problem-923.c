@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int shortest_common_supersequence_length(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return -1;
+    }
+
+    size_t len1 = strnlen(str1, (size_t)-1);
+    size_t len2 = strnlen(str2, (size_t)-1);
+
+    int *dp = (int *)calloc((len1 + 1) * (len2 + 1), sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t j = 0; j <= len2; j++) {
+        dp[j] = (int)j;
+    }
+
+    for (size_t i = 1; i <= len1; i++) {
+        dp[i * (len2 + 1)] = (int)i;
+        for (size_t j = 1; j <= len2; j++) {
+            if (str1[i - 1] == str2[j - 1]) {
+                dp[i * (len2 + 1) + j] = dp[(i - 1) * (len2 + 1) + (j - 1)] + 1;
+            } else {
+                int left = dp[(i - 1) * (len2 + 1) + j];
+                int up = dp[i * (len2 + 1) + (j - 1)];
+                dp[i * (len2 + 1) + j] = (left < up ? left : up) + 1;
+            }
+        }
+    }
+
+    int result = dp[len1 * (len2 + 1) + len2];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    const char str1[] = "AGGTAB";
+    const char str2[] = "GXTXAYB";
+    int length = shortest_common_supersequence_length(str1, str2);
+    if (length != -1) {
+        printf("%d\n", length);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    return 0;
+}

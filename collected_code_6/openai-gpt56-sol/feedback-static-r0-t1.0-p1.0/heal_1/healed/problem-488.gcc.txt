@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-488.c: In function 'pentagon_area':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-488.c:16:21: error: 'DBL_MAX' undeclared (first use in this function)
+   16 |     if (side > sqrt(DBL_MAX / factor)) {
+      |                     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-488.c:6:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    5 | #include <stdlib.h>
+  +++ |+#include <float.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-488.c:16:21: note: each undeclared identifier is reported only once for each function it appears in
+   16 |     if (side > sqrt(DBL_MAX / factor)) {
+      |                     ^~~~~~~

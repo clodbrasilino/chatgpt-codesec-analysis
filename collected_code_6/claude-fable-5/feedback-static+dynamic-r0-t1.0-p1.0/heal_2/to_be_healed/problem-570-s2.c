@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 4096
+
+size_t remove_words_containing(char **words, size_t count, const char *pattern)
+{
+    size_t write_index = 0;
+    size_t read_index;
+
+    if (words == NULL || pattern == NULL) {
+        return count;
+    }
+
+    for (read_index = 0; read_index < count; read_index++) {
+        if (words[read_index] == NULL) {
+            continue;
+        }
+        if (strstr(words[read_index], pattern) != NULL) {
+            free(words[read_index]);
+            words[read_index] = NULL;
+        } else {
+            words[write_index] = words[read_index];
+            if (write_index != read_index) {
+                words[read_index] = NULL;
+            }
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+char *duplicate_string(const char *source)
+{
+    size_t length;
+    char *copy;
+
+    if (source == NULL) {
+        return NULL;
+    }
+
+    length = strnlen(source, MAX_WORD_LENGTH);
+    if (length >= MAX_WORD_LENGTH) {
+        return NULL;
+    }
+
+    copy = malloc(length + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, source, length);
+    copy[length] = '\0';
+    return copy;
+}
+
+void free_word_list(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+        words[i] = NULL;
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *initial_words[] = {
+        "apple", "banana", "cherry", "grape", "pineapple", "mango"
+    };
+    const char *pattern = "ap";
+    size_t total = sizeof(initial_words) / sizeof(initial_words[0]);
+    size_t i;
+    size_t remaining;
+    char **words;
+
+    words = malloc(total * sizeof(char *));
+    if (words == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < total; i++) {
+        words[i] = duplicate_string(initial_words[i]);
+        if (words[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_word_list(words, i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list:\n");
+    for (i = 0; i < total; i++) {
+        printf("  %s\n", words[i]);
+    }
+
+    remaining = remove_words_containing(words, total, pattern);
+
+    printf("After removing words containing \"%s\":\n", pattern);
+    for (i = 0; i < remaining; i++) {
+        printf("  %s\n", words[i]);
+    }
+
+    free_word_list(words, remaining);
+
+    return EXIT_SUCCESS;
+}

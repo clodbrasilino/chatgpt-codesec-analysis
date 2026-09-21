@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:78:26: style: Condition 'copy_len>len-src_pos' is always false [knownConditionTrueFalse]
+            if (copy_len > len - src_pos) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:61:33: note: Assuming that condition '(unsigned long)match.rm_so>=len-src_pos' is not redundant
+        if ((size_t)match.rm_so >= len - src_pos || (size_t)match.rm_eo > len - src_pos) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:65:30: note: Assignment 'match_start=(unsigned long)match.rm_so', assigned value is less than symbolic=len-src_pos
+        size_t match_start = (size_t)match.rm_so;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:68:23: note: Assuming condition is false
+        if (match_end == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:77:29: note: copy_len is assigned 'match_start' here.
+            size_t copy_len = match_start;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-676-s2.c:78:26: note: Condition 'copy_len>len-src_pos' is always false
+            if (copy_len > len - src_pos) {
+                         ^

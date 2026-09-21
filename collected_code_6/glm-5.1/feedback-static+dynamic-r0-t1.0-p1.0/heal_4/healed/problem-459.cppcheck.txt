@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:76:32: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (prefix_len <= capacity - result_idx) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:75:28: note: outer condition: prefix_len<=capacity-result_idx
+            if (prefix_len <= capacity - result_idx) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-459.c:76:32: note: identical inner condition: prefix_len<=capacity-result_idx
+                if (prefix_len <= capacity - result_idx) {
+                               ^

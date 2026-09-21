@@ -1,0 +1,71 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("Toggled string: %s\n", buffer) < 0) {
+        fprintf(stderr, "Error writing output\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code already addresses the Flawfinder warning (CWE-119/CWE-120) properly. The statically-sized `buffer[BUFFER_SIZE]` is safely handled because:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow — unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`.
+2. **Guaranteed null-termination**: `buffer[sizeof(buffer) - 1] = '\0'` is a defensive measure (technically redundant since `fgets` always null-terminates on success, but harmless).
+3. **Bounded string operations**: `strnlen(str, max_len)` is used instead of `strlen()`, ensuring `toggle_case` never reads past the buffer even if passed a non-terminated string.
+4. **Safe character classification**: Casting to `unsigned char` before calling `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior with negative `char` values.
+5. **NULL/zero-length guards**: `toggle_case` validates its arguments before use.
+6. **Error handling**: Both input (`fgets`) and output (`printf`) return values are checked.
+
+No functional changes were required — the code is already a correct mitigation of the flagged weakness, so the rewrite simply removes the comments as requested.

@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define INPUT_SIZE 64
+
+int octal_to_decimal(const char *octal, size_t max_len, long *result)
+{
+    size_t len;
+    size_t i;
+    long value = 0;
+
+    if (octal == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    len = strnlen(octal, max_len);
+    if (len == 0 || len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        char c = octal[i];
+        if (c < '0' || c > '7') {
+            return -1;
+        }
+        if (value > (LONG_MAX - (c - '0')) / 8) {
+            return -1;
+        }
+        value = value * 8 + (c - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[INPUT_SIZE];
+    long decimal = 0;
+    size_t len;
+
+    printf("Enter an octal number: ");
+    fflush(stdout);
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else if (len == sizeof(input) - 1) {
+        flush_stdin();
+        fprintf(stderr, "Error: input too long.\n");
+        return 1;
+    }
+
+    if (octal_to_decimal(input, sizeof(input), &decimal) != 0) {
+        fprintf(stderr, "Error: invalid octal number or value out of range.\n");
+        return 1;
+    }
+
+    printf("Decimal value: %ld\n", decimal);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the changes made:**
+
+The original code was already fairly robust — the flawfinder warnings were largely informational (risk levels 1–2), not confirmed vulnerabilities:
+
+1. **CWE-119/CWE-120 (statically-sized buffer `input`):** The original already mitigated this by using `fgets(input, sizeof(input), stdin)`, which bounds the read, and `strnlen` with an explicit size limit. The rewrite keeps these mitigations and adds an explicit rejection path when the input fills the buffer without a newline — previously the truncated remainder was silently discarded and the truncated prefix was still converted, which could produce a wrong (but "valid-looking") result. Now over-long input is treated as an error.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The `getchar()` drain loop never writes to a buffer, so no overflow is possible; it correctly terminates on both `'\n'` and `EOF`. It was factored into `flush_stdin()` for clarity and is only invoked in the overflow-detection path.
+
+3. **Integer overflow (CWE-190):** The pre-multiplication check `value > (LONG_MAX - digit) / 8` correctly prevents signed overflow (which would be undefined behavior) and was preserved as-is.
+
+4. **Minor hardening:** Added a `max_len == 0` guard in `octal_to_decimal` and an `fflush(stdout)` so the prompt is guaranteed to appear before blocking on input.

@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_quoted(const char *input)
+{
+    const char *start;
+    const char *end;
+    size_t length;
+    size_t alloc_size;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    start = strchr(input, '"');
+    if (start == NULL) {
+        return NULL;
+    }
+
+    start++;
+    end = strchr(start, '"');
+    if (end == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(end - start);
+
+    if (length >= SIZE_MAX - 1U) {
+        return NULL;
+    }
+
+    alloc_size = length + 1U;
+
+    result = malloc(alloc_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(result, start, length);
+    }
+    result[length] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test = "The value is \"hello world\" in this string";
+    char *extracted;
+
+    extracted = extract_quoted(test);
+    if (extracted == NULL) {
+        if (fprintf(stderr, "No quoted value found or allocation failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Extracted: %s\n", extracted) < 0) {
+        free(extracted);
+        return EXIT_FAILURE;
+    }
+
+    free(extracted);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes:**
+
+1. **Removed the always-false check** `if (alloc_size < length)` — since `length` is verified against `SIZE_MAX - 1U` before the addition, `length + 1U` can never wrap around, so the overflow guard was dead code (as cppcheck's `knownConditionTrueFalse` correctly flagged).
+
+2. **Removed the always-true condition** `length < alloc_size` inside the copy guard — `alloc_size` is provably `length + 1`, so this comparison was redundant. Only `length > 0U` is retained to skip a zero-byte `memcpy` (which is well-defined anyway, but the guard is harmless and cheap).
+
+3. **Tightened the overflow bound** from `length >= SIZE_MAX` to `length >= SIZE_MAX - 1U`, which makes the safety of `length + 1U` explicit at the point of the check rather than relying on a post-hoc wrap test.
+
+4. **The Flawfinder `memcpy` warning (CWE-120)** is a heuristic hit, not a genuine defect: the destination buffer is allocated with exactly `length + 1` bytes immediately before the copy of `length` bytes, so the destination is guaranteed to hold the source data. No change to the copy itself was required.
+
+5. **Removed the redundant `end < start` check** — `strchr(start, '"')` can only return a pointer at or after `start`, so `end - start` is always non-negative.
+
+The remaining structure (NULL checks on `input`, `malloc` failure handling, checked `printf`/`fprintf` return values, and `free` on all exit paths in `main`) was already correct and is preserved.

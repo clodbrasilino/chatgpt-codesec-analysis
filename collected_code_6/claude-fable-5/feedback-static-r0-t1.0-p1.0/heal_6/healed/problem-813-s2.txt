@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+Analysis of the original code and why this version addresses the flagged weakness:
+
+**The Flawfinder warning (CWE-119/CWE-120)** is a heuristic flag on any statically-sized `char` array. It doesn't necessarily indicate a real vulnerability — it requires manual verification. In this case, the code was already safe, and the rewrite preserves all the mitigations:
+
+1. **Bounded input**: `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters plus the null terminator, preventing buffer overflow on read. Using `sizeof(buffer)` instead of a hardcoded constant keeps the size in sync if `BUFFER_SIZE` changes.
+
+2. **Return value checked**: The `NULL` check on `fgets` handles EOF and read errors, avoiding operations on indeterminate buffer contents.
+
+3. **Defensive termination**: `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant after a successful `fgets` (which always null-terminates), but it's cheap insurance against future refactoring to functions that don't guarantee termination.
+
+4. **Bounded newline strip**: The loop condition `i < sizeof(buffer) && buffer[i] != '\0'` ensures the scan never walks past the array, even if the terminator were somehow missing.
+
+5. **Safe length function**: `string_length` guards against `NULL` input, unlike `strlen`, whose behavior is undefined on `NULL`.
+
+No functional changes were needed — the code as written already performs proper bounds checking, so the risk-2 warning is a false positive that has been verified and mitigated by design.

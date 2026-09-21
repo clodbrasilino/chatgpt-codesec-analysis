@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define IP_BUFFER_SIZE 16
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) return 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void safe_strncpy(char *dest, const char *src, size_t dest_size) {
+    if (dest == NULL || src == NULL || dest_size == 0) return;
+    
+    size_t i;
+    for (i = 0; i < dest_size - 1 && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+}
+
+void remove_leading_zeroes(char *ip) {
+    if (ip == NULL) return;
+    
+    char *result;
+    char *ip_copy;
+    char *token;
+    char *rest;
+    char *start;
+    int first;
+    size_t current_length;
+    size_t token_length;
+    size_t result_len;
+    
+    result = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    if (result == NULL) return;
+    
+    ip_copy = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    if (ip_copy == NULL) {
+        free(result);
+        return;
+    }
+    
+    first = 1;
+    current_length = 0;
+    
+    safe_strncpy(ip_copy, ip, IP_BUFFER_SIZE);
+    rest = ip_copy;
+    
+    while ((token = strtok_r(rest, ".", &rest)) != NULL) {
+        start = token;
+        while (*start == '0' && *(start + 1) != '\0') {
+            start++;
+        }
+        
+        if (!first) {
+            if (current_length < IP_BUFFER_SIZE - 1) {
+                result[current_length] = '.';
+                current_length++;
+                result[current_length] = '\0';
+            }
+        }
+        
+        token_length = safe_strlen(start, IP_BUFFER_SIZE - current_length);
+        if (current_length + token_length < IP_BUFFER_SIZE) {
+            safe_strncpy(result + current_length, start, IP_BUFFER_SIZE - current_length);
+            current_length += token_length;
+        }
+        
+        first = 0;
+    }
+    
+    result[IP_BUFFER_SIZE - 1] = '\0';
+    
+    result_len = safe_strlen(result, IP_BUFFER_SIZE);
+    if (result_len < IP_BUFFER_SIZE) {
+        safe_strncpy(ip, result, IP_BUFFER_SIZE);
+    }
+    
+    free(ip_copy);
+    free(result);
+}
+
+int main(void) {
+    char *ip1;
+    char *ip2;
+    char *ip3;
+    char *ip4;
+    
+    ip1 = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    ip2 = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    ip3 = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    ip4 = (char *)calloc(IP_BUFFER_SIZE, sizeof(char));
+    
+    if (ip1 == NULL || ip2 == NULL || ip3 == NULL || ip4 == NULL) {
+        free(ip1);
+        free(ip2);
+        free(ip3);
+        free(ip4);
+        return 1;
+    }
+    
+    safe_strncpy(ip1, "192.168.001.001", IP_BUFFER_SIZE);
+    safe_strncpy(ip2, "010.000.000.001", IP_BUFFER_SIZE);
+    safe_strncpy(ip3, "000.000.000.000", IP_BUFFER_SIZE);
+    safe_strncpy(ip4, "255.255.255.255", IP_BUFFER_SIZE);
+    
+    remove_leading_zeroes(ip1);
+    remove_leading_zeroes(ip2);
+    remove_leading_zeroes(ip3);
+    remove_leading_zeroes(ip4);
+    
+    printf("%s\n", ip1);
+    printf("%s\n", ip2);
+    printf("%s\n", ip3);
+    printf("%s\n", ip4);
+    
+    free(ip1);
+    free(ip2);
+    free(ip3);
+    free(ip4);
+    
+    return 0;
+}
+```

@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <errno.h>
+
+#define MAX_WORD_LENGTH 256
+#define MAX_ADVERBS 100
+
+typedef struct {
+    char *word;
+    size_t position;
+} AdverbInfo;
+
+int is_adverb(const char *word, size_t len) {
+    if (word == NULL || len < 2) {
+        return 0;
+    }
+    return (word[len - 2] == 'l' && word[len - 1] == 'y');
+}
+
+void free_adverbs(AdverbInfo *adverbs, size_t count) {
+    if (adverbs == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(adverbs[i].word);
+    }
+    free(adverbs);
+}
+
+int find_adverbs(const char *sentence, size_t sentence_len, AdverbInfo *adverbs, size_t max_adverbs) {
+    if (sentence == NULL || adverbs == NULL || max_adverbs == 0) {
+        return -1;
+    }
+
+    if (max_adverbs > SIZE_MAX / sizeof(AdverbInfo)) {
+        return -1;
+    }
+
+    size_t count = 0;
+    size_t pos = 0;
+    size_t word_start = 0;
+    size_t word_len = 0;
+
+    while (pos <= sentence_len) {
+        if (pos == sentence_len || isspace((unsigned char)sentence[pos])) {
+            if (word_len > 0) {
+                if (word_len >= MAX_WORD_LENGTH) {
+                    free_adverbs(adverbs, count);
+                    return -1;
+                }
+
+                if (is_adverb(sentence + word_start, word_len)) {
+                    if (count >= max_adverbs) {
+                        free_adverbs(adverbs, count);
+                        return -1;
+                    }
+
+                    if (word_len + 1 < word_len) {
+                        free_adverbs(adverbs, count);
+                        return -1;
+                    }
+
+                    adverbs[count].word = malloc(word_len + 1);
+                    if (adverbs[count].word == NULL) {
+                        free_adverbs(adverbs, count);
+                        return -1;
+                    }
+
+                    if (word_len + 1 > word_len) {
+                        if (word_len < MAX_WORD_LENGTH) {
+                            /* Possible weaknesses found:
+                             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                             */
+                            memcpy(adverbs[count].word, sentence + word_start, word_len);
+                            adverbs[count].word[word_len] = '\0';
+                        } else {
+                            free(adverbs[count].word);
+                            adverbs[count].word = NULL;
+                            free_adverbs(adverbs, count);
+                            return -1;
+                        }
+                    } else {
+                        free(adverbs[count].word);
+                        adverbs[count].word = NULL;
+                        free_adverbs(adverbs, count);
+                        return -1;
+                    }
+                    adverbs[count].position = word_start;
+                    count++;
+                }
+            }
+            word_start = pos + 1;
+            word_len = 0;
+        } else {
+            word_len++;
+        }
+        pos++;
+    }
+
+    return (int)count;
+}
+
+int main(void) {
+    const char sentence[] = "She quickly ran to the store and carefully picked the items. He slowly walked home.";
+    size_t sentence_len = strnlen(sentence, sizeof(sentence));
+    AdverbInfo *adverbs = calloc(MAX_ADVERBS, sizeof(AdverbInfo));
+
+    if (adverbs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    int count = find_adverbs(sentence, sentence_len, adverbs, MAX_ADVERBS);
+
+    if (count < 0) {
+        fprintf(stderr, "Error processing sentence\n");
+        free_adverbs(adverbs, MAX_ADVERBS);
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %d adverb(s):\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("Adverb: %s, Position: %zu\n", adverbs[i].word, adverbs[i].position);
+    }
+
+    free_adverbs(adverbs, (size_t)count);
+    return EXIT_SUCCESS;
+}

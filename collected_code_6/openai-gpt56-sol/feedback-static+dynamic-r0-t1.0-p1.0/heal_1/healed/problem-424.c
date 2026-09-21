@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *extract_rear_elements(const char *const strings[],
+                            const size_t lengths[],
+                            size_t count)
+{
+    if ((count > 0 && (strings == NULL || lengths == NULL)) ||
+        count == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(count + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (strings[i] == NULL || lengths[i] == 0 ||
+            memchr(strings[i], '\0', lengths[i]) != NULL) {
+            free(result);
+            return NULL;
+        }
+
+        result[i] = strings[i][lengths[i] - 1];
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    static const char apple[] = "apple";
+    static const char banana[] = "banana";
+    static const char cherry[] = "cherry";
+    static const char date[] = "date";
+
+    const char *strings[] = {apple, banana, cherry, date};
+    const size_t lengths[] = {
+        sizeof(apple) - 1,
+        sizeof(banana) - 1,
+        sizeof(cherry) - 1,
+        sizeof(date) - 1
+    };
+    const size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    char *rear_elements = extract_rear_elements(strings, lengths, count);
+    if (rear_elements == NULL) {
+        fputs("Failed to extract rear elements.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%c\n", rear_elements[i]);
+    }
+
+    free(rear_elements);
+    return EXIT_SUCCESS;
+}

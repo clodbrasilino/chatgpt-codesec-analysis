@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *test2 = "abc(def(ghi)jkl)mno";
+    const char *test3 = "no parentheses here";
+    char *output;
+
+    output = remove_parentheses(test1);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+    free(output);
+
+    output = remove_parentheses(test2);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+    free(output);
+
+    output = remove_parentheses(test3);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return EXIT_FAILURE;
+    }
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key change addressing the identified weakness:**
+
+The Flawfinder warning (CWE-126) concerned `strlen` performing an over-read on non-NUL-terminated input. The fix replaces `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, which guarantees the scan never reads past a fixed limit. If the input reaches that bound (meaning no terminator was found within the allowed range), the function safely rejects it by returning `NULL` rather than risking a buffer over-read.
+
+The rest of the original code was already sound: the allocation of `len + 1` correctly accounts for the NUL terminator, `j` can never exceed `i` so no overflow of `result` is possible, all `malloc` and `printf` return values are checked, and every allocation is freed on all paths.

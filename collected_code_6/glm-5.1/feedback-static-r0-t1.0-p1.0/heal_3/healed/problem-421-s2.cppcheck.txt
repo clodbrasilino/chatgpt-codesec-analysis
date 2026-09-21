@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-421-s2.c:18:12: style: The scope of the variable 'last_valid_index' can be reduced. [variableScope]
+    size_t last_valid_index = 0;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-421-s2.c:18:29: style: Variable 'last_valid_index' is assigned a value that is never used. [unreadVariable]
+    size_t last_valid_index = 0;
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-421-s2.c:23:30: style: Variable 'last_valid_index' is assigned a value that is never used. [unreadVariable]
+            last_valid_index = i;
+                             ^

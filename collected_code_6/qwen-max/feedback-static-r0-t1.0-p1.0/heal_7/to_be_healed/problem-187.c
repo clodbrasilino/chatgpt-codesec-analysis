@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+char* longestCommonSubsequence(const char *X, const char *Y, int m, int n) {
+    int L[m + 1][n + 1];
+    int i, j;
+
+    for (i = 0; i <= m; i++) {
+        for (j = 0; j <= n; j++) {
+            if (i == 0 || j == 0)
+                L[i][j] = 0;
+            else if (X[i - 1] == Y[j - 1])
+                L[i][j] = L[i - 1][j - 1] + 1;
+            else
+                L[i][j] = max(L[i - 1][j], L[i][j - 1]);
+        }
+    }
+
+    int index = L[m][n];
+    char *lcs = (char *)malloc((index + 1) * sizeof(char));
+    lcs[index] = '\0';
+
+    i = m, j = n;
+    while (i > 0 && j > 0) {
+        if (X[i - 1] == Y[j - 1]) {
+            lcs[index - 1] = X[i - 1];
+            i--;
+            j--;
+            index--;
+        } else if (L[i - 1][j] > L[i][j - 1])
+            i--;
+        else
+            j--;
+    }
+
+    return lcs;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Null pointer dereference
+     *  Either the condition '!X' is redundant or there is possible null pointer dereference: X. [nullPointerRedundantCheck]
+     */
+    const char X[] = "AGGTAB";
+    /* Possible weaknesses found:
+     *  Null pointer dereference
+     *  Either the condition '!Y' is redundant or there is possible null pointer dereference: Y. [nullPointerRedundantCheck]
+     */
+    const char Y[] = "GXTXAYB";
+
+    /* Possible weaknesses found:
+     *  Assuming that condition '!X' is not redundant
+     *  Assuming that condition '!Y' is not redundant
+     *  Assuming condition '!X' is false
+     *  Assuming condition '!Y' is false
+     */
+    if (!X || !Y) {
+        printf("One of the input strings is NULL.\n");
+        return 1;
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'X' is always true
+     *  Condition 'X' is always true [knownConditionTrueFalse]
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int m = (X ? strlen(X) : 0);
+    /* Possible weaknesses found:
+     *  Condition 'Y' is always true
+     *  Condition 'Y' is always true [knownConditionTrueFalse]
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    int n = (Y ? strlen(Y) : 0);
+
+    char *lcs = longestCommonSubsequence(X, Y, m, n);
+    printf("Longest Common Subsequence: %s\n", lcs);
+    free(lcs);
+
+    return 0;
+}

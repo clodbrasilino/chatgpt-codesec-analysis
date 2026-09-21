@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool is_valid_positive_integer(const char *str) {
+    if (str == NULL || str[0] == '\0') return false;
+    while (*str) {
+        if (*str < '0' || *str > '9') return false;
+        str++;
+    }
+    return true;
+}
+
+int64_t sum_of_squares(int64_t n) {
+    int64_t sum = 0;
+    for (int64_t i = 1; i <= n; i++) {
+        int64_t odd_number = 2 * i - 1;
+        sum += odd_number * odd_number;
+    }
+    return sum;
+}
+
+int main() {
+    char input[12];
+    int64_t n;
+
+    printf("Enter the value of n: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (!is_valid_positive_integer(input)) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    n = strtoll(input, NULL, 10);
+    if (n < 1 || n > INT64_MAX || n != (int64_t)n) {
+        printf("Please enter a positive integer within the valid range.\n");
+        return 1;
+    }
+
+    int64_t result = sum_of_squares(n);
+    printf("The sum of squares of the first %lld odd natural numbers is: %lld\n", n, result);
+
+    return 0;
+}

@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+Tuple string_list_to_tuple(char **list, size_t count) {
+    Tuple tuple;
+    tuple.count = 0;
+    tuple.items = NULL;
+
+    if (count > 0) {
+        tuple.items = (char **)malloc(count * sizeof(char *));
+        if (tuple.items == NULL) {
+            return tuple;
+        }
+        tuple.count = count;
+
+        for (size_t i = 0; i < count; i++) {
+            if (list[i] != NULL) {
+                size_t len = strnlen(list[i], 1024 * 1024);
+                tuple.items[i] = (char *)malloc(len + 1);
+                if (tuple.items[i] == NULL) {
+                    for (size_t j = 0; j < i; j++) {
+                        free(tuple.items[j]);
+                    }
+                    free(tuple.items);
+                    tuple.items = NULL;
+                    tuple.count = 0;
+                    return tuple;
+                }
+                /* Possible weaknesses found:
+                 * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+                 */
+                memcpy(tuple.items[i], list[i], len + 1);
+            } else {
+                tuple.items[i] = NULL;
+            }
+        }
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            /* Possible weaknesses found:
+             *  member reference type 'Tuple *' is a pointer; did you mean to use '->'?
+             *  'tuple' is a pointer; did you mean to use '->'?
+             */
+            free(tuple.items[i]);
+        }
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0;
+    }
+}
+
+int main(void) {
+    char *list[] = {"apple", "banana", "cherry"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+
+    Tuple tuple = string_list_to_tuple(list, count);
+
+    if (tuple.items != NULL) {
+        for (size_t i = 0; i < tuple.count; i++) {
+            if (tuple.items[i] != NULL) {
+                printf("%s\n", tuple.items[i]);
+            }
+        }
+    }
+
+    free_tuple(&tuple);
+
+    return 0;
+}

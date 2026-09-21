@@ -1,0 +1,56 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *snake_to_camel(const char *snake)
+{
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(snake);
+    char *result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t dest = 0;
+    int capitalize_next = 0;
+
+    for (size_t i = 0; i < input_len; i++) {
+        char ch = snake[i];
+        if (ch == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                result[dest++] = (char)toupper((unsigned char)ch);
+                capitalize_next = 0;
+            } else {
+                result[dest++] = ch;
+            }
+        }
+
+        if (dest > input_len) {
+            free(result);
+            return NULL;
+        }
+    }
+
+    result[dest] = '\0';
+    return result;
+}
+
+int main(int argc, char **argv)
+{
+    const char *input = (argc > 1) ? argv[1] : "snake_case_string";
+    char *camel = snake_to_camel(input);
+    if (camel == NULL) {
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", camel);
+    free(camel);
+    return EXIT_SUCCESS;
+}

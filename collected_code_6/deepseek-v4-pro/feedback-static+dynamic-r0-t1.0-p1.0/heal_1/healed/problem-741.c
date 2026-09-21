@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    
+    char first = str[0];
+    size_t len = strlen(str);
+    for (size_t i = 1; i < len; i++) {
+        if (str[i] != first) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "aaaa";
+    const char *test2 = "abca";
+    const char *test3 = "";
+    const char *test4 = "b";
+    const char *test5 = NULL;
+    
+    printf("Test 1 (\"%s\"): %s\n", test1, all_characters_same(test1) ? "true" : "false");
+    printf("Test 2 (\"%s\"): %s\n", test2, all_characters_same(test2) ? "true" : "false");
+    printf("Test 3 (\"%s\"): %s\n", test3, all_characters_same(test3) ? "true" : "false");
+    printf("Test 4 (\"%s\"): %s\n", test4, all_characters_same(test4) ? "true" : "false");
+    printf("Test 5 (NULL): %s\n", all_characters_same(test5) ? "true" : "false");
+    
+    return 0;
+}

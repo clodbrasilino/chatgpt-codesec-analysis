@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:21:17: style: The comparison 'max_len < n+3' is always false because 'max_len' and 'n+3' represent the same value. [knownConditionTrueFalse]
+    if (max_len < n + 3 || max_len > SIZE_MAX - 1) return NULL;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:20:24: note: 'max_len' is assigned value 'n+3' here.
+    size_t max_len = n + 3;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:21:17: note: The comparison 'max_len < n+3' is always false because 'max_len' and 'n+3' represent the same value.
+    if (max_len < n + 3 || max_len > SIZE_MAX - 1) return NULL;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:63:25: style: The comparison 'new_len < n+2' is always false because 'new_len' and 'n+2' represent the same value. [knownConditionTrueFalse]
+            if (new_len < n + 2 || new_len > SIZE_MAX - 1) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:62:32: note: 'new_len' is assigned value 'n+2' here.
+            size_t new_len = n + 2;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-100.c:63:25: note: The comparison 'new_len < n+2' is always false because 'new_len' and 'n+2' represent the same value.
+            if (new_len < n + 2 || new_len > SIZE_MAX - 1) {
+                        ^

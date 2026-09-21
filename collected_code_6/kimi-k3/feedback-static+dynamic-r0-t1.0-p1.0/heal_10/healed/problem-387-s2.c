@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <stdlib.h>
+
+bool is_hex_even(const char *hex_str, size_t max_len) {
+    if (hex_str == NULL || max_len == 0) {
+        return false;
+    }
+    
+    size_t len = 0;
+    bool terminated = false;
+    
+    for (size_t i = 0; i < max_len; i++) {
+        if (hex_str[i] == '\0') {
+            len = i;
+            terminated = true;
+            break;
+        }
+    }
+    
+    if (!terminated || len == 0) {
+        return false;
+    }
+    
+    size_t start = 0;
+    
+    if (len >= 2 && hex_str[0] == '0' && (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        start = 2;
+    }
+    
+    if (start >= len) {
+        return false;
+    }
+    
+    char last_char = '\0';
+    for (size_t i = start; i < len; i++) {
+        if (!isxdigit((unsigned char)hex_str[i])) {
+            return false;
+        }
+        last_char = hex_str[i];
+    }
+    
+    int digit;
+    if (last_char >= '0' && last_char <= '9') {
+        digit = last_char - '0';
+    } else if (last_char >= 'a' && last_char <= 'f') {
+        digit = last_char - 'a' + 10;
+    } else if (last_char >= 'A' && last_char <= 'F') {
+        digit = last_char - 'A' + 10;
+    } else {
+        return false;
+    }
+    
+    return (digit % 2) == 0;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t chars_read;
+    
+    chars_read = getline(&buffer, &buffer_size, stdin);
+    
+    if (chars_read == -1) {
+        free(buffer);
+        return 0;
+    }
+    
+    if (chars_read > 0 && buffer[chars_read - 1] == '\n') {
+        buffer[chars_read - 1] = '\0';
+        chars_read--;
+    }
+    
+    if (chars_read == 0) {
+        printf("Odd\n");
+        free(buffer);
+        return 0;
+    }
+    
+    if (is_hex_even(buffer, (size_t)chars_read + 1)) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+    
+    free(buffer);
+    return 0;
+}

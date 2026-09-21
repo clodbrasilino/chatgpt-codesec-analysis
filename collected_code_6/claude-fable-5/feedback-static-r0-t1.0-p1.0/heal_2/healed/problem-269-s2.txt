@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+    int extra;
+
+    printf("Enter a character: ");
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 255) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    while ((extra = getchar()) != '\n' && extra != EOF) {
+        continue;
+    }
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and the changes made:
+
+**Original code assessment:** The source was already largely safe. The flawfinder warning on `getchar()` (CWE-120 buffer overflow, CWE-20 improper input validation) is a low-risk, generic advisory — `getchar()` itself cannot overflow a buffer since it reads a single character into an `int`. The original code correctly:
+
+- Stored the return value in an `int` (not `char`), which is essential for correctly detecting `EOF`.
+- Checked for `EOF` before using the value.
+- Validated the range before passing it to `isprint()`, avoiding undefined behavior since `isprint()` requires an argument representable as `unsigned char` or `EOF`.
+- Cast through `unsigned char` in `get_ascii_value()` to avoid sign-extension issues on platforms where `char` is signed.
+
+**Improvement added:** The rewritten version drains the remainder of the input line (`while ((extra = getchar()) != '\n' && extra != EOF)`). This addresses the CWE-20 concern more thoroughly: leftover characters in `stdin` (e.g., if the user types multiple characters before pressing Enter) are consumed rather than left in the stream, which matters if the program is later extended to read further input in a loop — the exact scenario the flawfinder note warns about.
+
+No unbounded reads, no fixed-size buffers, and no unchecked library calls remain, so the CWE-120/CWE-20 concerns are fully mitigated.

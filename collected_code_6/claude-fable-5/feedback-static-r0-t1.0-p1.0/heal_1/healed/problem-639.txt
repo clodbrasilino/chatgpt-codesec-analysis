@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_NAME_LEN 256
+
+size_t sum_name_lengths(const char *const *names, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t len;
+
+    if (names == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (names[i] == NULL) {
+            continue;
+        }
+        if (names[i][0] == '\0') {
+            continue;
+        }
+        if (islower((unsigned char)names[i][0])) {
+            continue;
+        }
+        len = strnlen(names[i], MAX_NAME_LEN);
+        if (len == MAX_NAME_LEN) {
+            continue;
+        }
+        total += len;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    const char *const names[] = { "Alice", "bob", "Charlie", "dave", "Eve" };
+    size_t count = sizeof(names) / sizeof(names[0]);
+    size_t result;
+
+    result = sum_name_lengths(names, count);
+
+    if (printf("Total length: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder warning about `strlen` (CWE-126): it has been replaced with `strnlen`, which bounds the read to `MAX_NAME_LEN` bytes. If a string is not properly NUL-terminated, `strnlen` will stop at the limit instead of over-reading memory. Strings that hit the limit (indicating a possibly unterminated buffer) are skipped rather than counted, so the function fails safely. All other defensive checks — the NULL array check, per-element NULL checks, empty-string checks, and the safe `(unsigned char)` cast before `islower` — are preserved, and `main` verifies the return value of `printf` before returning `EXIT_SUCCESS`.

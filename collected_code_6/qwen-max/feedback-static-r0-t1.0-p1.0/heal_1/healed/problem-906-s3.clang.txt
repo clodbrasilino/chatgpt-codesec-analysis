@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-906-s3.c:18:71: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   18 |         if (match[1].rm_so + 4 <= match[1].rm_eo && match[1].rm_eo <= strlen(url)) {
+      |                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-906-s3.c:18:71: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-906-s3.c:19:13: error: call to undeclared library function 'strncpy' with type 'char *(char *, const char *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |             strncpy(year_str, url + match[1].rm_so, 4);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-906-s3.c:19:13: note: include the header <string.h> or explicitly provide a declaration for 'strncpy'
+2 errors generated.

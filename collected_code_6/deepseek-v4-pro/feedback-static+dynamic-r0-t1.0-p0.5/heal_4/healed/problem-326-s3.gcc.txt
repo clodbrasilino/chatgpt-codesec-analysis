@@ -1,0 +1,7 @@
+during IPA pass: analyzer
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-326-s3.c: In function 'most_frequent_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-326-s3.c:41:23: internal compiler error: Segmentation fault: 11
+   41 |         char* token = strtok(str_copy, " \t\n\r.,;:!?\"'()[]{}");
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Please submit a full bug report, with preprocessed source (by using -freport-bug).
+See <https://github.com/Homebrew/homebrew-core/issues> for instructions.

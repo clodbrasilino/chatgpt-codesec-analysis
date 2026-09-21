@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* largestNumber(const int *digits, int size) {
+    char **str_digits = (char **)malloc(size * sizeof(char *));
+    for (int i = 0; i < size; ++i) {
+        str_digits[i] = (char *)malloc(2 * sizeof(char));
+        snprintf(str_digits[i], 2 * sizeof(char), "%d", digits[i]);
+    }
+
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = 0; j < size - 1 - i; ++j) {
+            char temp1[6];
+            char temp2[6];
+            snprintf(temp1, 6, "%s%s", str_digits[j], str_digits[j + 1]);
+            snprintf(temp2, 6, "%s%s", str_digits[j + 1], str_digits[j]);
+            if (strcmp(temp1, temp2) <= 0) {
+                char *t = str_digits[j];
+                str_digits[j] = str_digits[j + 1];
+                str_digits[j + 1] = t;
+            }
+        }
+    }
+
+    char *result = (char *)malloc((size * 2 + 1) * sizeof(char));
+    result[0] = '\0';
+    for (int i = 0; i < size; ++i) {
+        strncat(result, str_digits[i], 2);
+        free(str_digits[i]);
+    }
+    free(str_digits);
+
+    return result;
+}
+
+int main() {
+    int digits[] = {3, 30, 34, 5, 9};
+    int size = 5;
+    char *result = largestNumber(digits, size);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

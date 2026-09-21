@@ -1,0 +1,75 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) on the statically-sized `buffer` array is a low-risk, informational flag rather than an actual vulnerability in this code. The original source already implements the correct mitigations, which I preserved:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is defensive; `fgets` already null-terminates, but this makes the invariant explicit.
+
+3. **Bounded length calculation** — `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a hypothetically non-terminated buffer cannot cause an out-of-bounds read. Note that `strnlen` is POSIX, hence the `_POSIX_C_SOURCE` feature-test macro for portability.
+
+4. **Safe indexing in the helper** — `count_position_matches` validates its arguments (`NULL` check, `max_len == 0` check), bounds the loop by both the measured length and the alphabet size (26), and casts comparisons to `char` to avoid signedness/promotion surprises on platforms where `char` is signed.
+
+5. **Correct error handling** — the `fgets` return value is checked, and errors go to `stderr` with a nonzero exit code.
+
+The code is effectively already hardened; no functional changes were required beyond ensuring `strnlen` availability across POSIX toolchains.

@@ -1,0 +1,195 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    ITEM_INT,
+    ITEM_STR
+} ItemType;
+
+typedef struct {
+    ItemType type;
+    union {
+        long num;
+        char *str;
+    } value;
+} Item;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(src) + 1U;
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, src, len);
+    return copy;
+}
+
+static int compare_items(const void *a, const void *b)
+{
+    const Item *left = (const Item *)a;
+    const Item *right = (const Item *)b;
+
+    if (left->type != right->type) {
+        return (left->type == ITEM_INT) ? -1 : 1;
+    }
+    if (left->type == ITEM_INT) {
+        if (left->value.num < right->value.num) {
+            return -1;
+        }
+        if (left->value.num > right->value.num) {
+            return 1;
+        }
+        return 0;
+    }
+    return strcmp(left->value.str, right->value.str);
+}
+
+static void free_items(Item *items, size_t count)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        if (items[i].type == ITEM_STR) {
+            free(items[i].value.str);
+            items[i].value.str = NULL;
+        }
+    }
+    free(items);
+}
+
+static int sort_mixed_list(Item *items, size_t count)
+{
+    if (items == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(items, count, sizeof(Item), compare_items);
+    return 0;
+}
+
+static int add_int_item(Item *items, size_t index, long value)
+{
+    if (items == NULL) {
+        return -1;
+    }
+    items[index].type = ITEM_INT;
+    items[index].value.num = value;
+    return 0;
+}
+
+static int add_str_item(Item *items, size_t index, const char *value)
+{
+    char *copy;
+
+    if (items == NULL || value == NULL) {
+        return -1;
+    }
+    copy = duplicate_string(value);
+    if (copy == NULL) {
+        return -1;
+    }
+    items[index].type = ITEM_STR;
+    items[index].value.str = copy;
+    return 0;
+}
+
+static void print_items(const Item *items, size_t count)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        if (items[i].type == ITEM_INT) {
+            if (printf("%ld\n", items[i].value.num) < 0) {
+                return;
+            }
+        } else {
+            if (printf("%s\n", items[i].value.str) < 0) {
+                return;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    const size_t count = 7U;
+    size_t filled = 0U;
+    Item *items;
+
+    items = calloc(count, sizeof(Item));
+    if (items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (add_int_item(items, filled, 42L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str_item(items, filled, "banana") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int_item(items, filled, -7L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str_item(items, filled, "apple") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int_item(items, filled, 15L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_str_item(items, filled, "cherry") != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (add_int_item(items, filled, 0L) != 0) {
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+    filled++;
+
+    if (sort_mixed_list(items, filled) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_items(items, filled);
+        return EXIT_FAILURE;
+    }
+
+    print_items(items, filled);
+    free_items(items, filled);
+    return EXIT_SUCCESS;
+}

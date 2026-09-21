@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_input(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_input();
+    }
+
+    if (!isprint((unsigned char)input)) {
+        fprintf(stderr, "Error: input is not a printable character\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made:**
+
+1. **Redundant `continue` removed** — the `while` loop with an empty body containing only `continue` was restructured into a `do...while` loop, which reads the character and tests it without any redundant statements. This resolves the `[redundantContinue]` finding.
+
+2. **Flawfinder `getchar` warnings (CWE-120, CWE-20)** — these are informational risk-level-1 findings. Since `getchar()` returns a single `int` and is never used to fill a buffer, there is no actual buffer-overflow risk here. The code already mitigates the input-validation concern (CWE-20) by checking for `EOF`, draining the rest of the line, and validating printability before use. No structural change was required, only the code kept its existing safe handling.
+
+3. **Defensive hardening of `isprint`** — the argument is explicitly cast to `unsigned char` to guarantee it is always in the valid domain for the `<ctype.h>` functions (a value representable as `unsigned char` or `EOF`), avoiding undefined behavior on platforms with signed `char` if the code is ever modified to pass a raw `char`.
+
+4. **`get_ascii_value` marked `static`** — since it is only used within this translation unit, internal linkage is more appropriate and satisfies stricter linting configurations (e.g., missing-prototype warnings).

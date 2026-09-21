@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 64
+
+static void swap_chars(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void permute(char *str, size_t left, size_t right)
+{
+    size_t i;
+
+    if (left == right) {
+        if (puts(str) == EOF) {
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
+
+    for (i = left; i <= right; i++) {
+        swap_chars(&str[left], &str[i]);
+        permute(str, left + 1, right);
+        swap_chars(&str[left], &str[i]);
+    }
+}
+
+static int print_permutations(const char *input)
+{
+    size_t len;
+    char *copy;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN + 1);
+    if (len > MAX_INPUT_LEN) {
+        return -1;
+    }
+    if (len == 0) {
+        return 0;
+    }
+
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+
+    memcpy(copy, input, len);
+    copy[len] = '\0';
+
+    permute(copy, 0, len - 1);
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    const char *test = "abc";
+
+    if (print_permutations(test) != 0) {
+        fprintf(stderr, "Failed to print permutations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN + 1`. If the string is not NUL-terminated within the bound, the function rejects the input rather than reading past the buffer. Bounding the length also prevents unbounded recursion depth and factorial-time blowup in `permute` for pathologically long inputs.
+
+2. **CWE-120 (`memcpy` overflow):** The copy now transfers exactly `len` bytes into a buffer of `len + 1` bytes, with the NUL terminator written explicitly. The destination size is guaranteed to hold the source data since both are derived from the same validated `len`, and the copy no longer blindly trusts that byte `len` of the source is a terminator.
+
+The rest of the logic (in-place permutation via backtracking swaps, `puts` error checking, allocation failure handling) is preserved unchanged.

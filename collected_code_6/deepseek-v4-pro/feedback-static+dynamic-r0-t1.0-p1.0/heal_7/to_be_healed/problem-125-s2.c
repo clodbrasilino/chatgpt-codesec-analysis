@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+int maxDifference(const char *str, size_t len) {
+    int max_diff = INT_MIN;
+    int current_diff = 0;
+    
+    for (size_t i = 0; i < len; i++) {
+        int value = (str[i] == '0') ? 1 : -1;
+        current_diff += value;
+        
+        if (current_diff > max_diff) {
+            max_diff = current_diff;
+        }
+        
+        if (current_diff < 0) {
+            current_diff = 0;
+        }
+    }
+    
+    return max_diff;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char binary_str[1001];
+    size_t len;
+    
+    printf("Enter a binary string: ");
+    if (fgets(binary_str, sizeof(binary_str), stdin) == NULL) {
+        printf("Error reading input\n");
+        return 1;
+    }
+    
+    if (binary_str[0] == '\0') {
+        printf("Empty string\n");
+        return 1;
+    }
+    
+    size_t i;
+    for (i = 0; i < sizeof(binary_str); i++) {
+        if (binary_str[i] == '\0') {
+            break;
+        }
+        if (binary_str[i] == '\n') {
+            binary_str[i] = '\0';
+            break;
+        }
+    }
+    
+    if (i >= sizeof(binary_str)) {
+        binary_str[sizeof(binary_str) - 1] = '\0';
+    }
+    
+    len = 0;
+    while (len < sizeof(binary_str) && binary_str[len] != '\0') {
+        len++;
+    }
+    
+    if (len >= sizeof(binary_str)) {
+        len = sizeof(binary_str) - 1;
+        binary_str[len] = '\0';
+    }
+    
+    if (len == 0) {
+        printf("Empty string\n");
+        return 1;
+    }
+    
+    for (size_t j = 0; j < len; j++) {
+        if (binary_str[j] != '0' && binary_str[j] != '1') {
+            printf("Invalid input: string must contain only 0s and 1s\n");
+            return 1;
+        }
+    }
+    
+    int result = maxDifference(binary_str, len);
+    printf("Maximum difference (0s - 1s): %d\n", result);
+    
+    return 0;
+}

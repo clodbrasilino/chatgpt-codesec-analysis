@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int hamming_distance(unsigned int x, unsigned int y)
+{
+    unsigned int diff = x ^ y;
+    int distance = 0;
+
+    while (diff != 0U)
+    {
+        diff &= (diff - 1U);
+        distance++;
+    }
+
+    return distance;
+}
+
+int main(void)
+{
+    char *input_buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t read_length;
+    char *end_ptr;
+    unsigned long val1;
+    unsigned long val2;
+    unsigned int num1;
+    unsigned int num2;
+    int result;
+
+    read_length = getline(&input_buffer, &buffer_size, stdin);
+    if (read_length == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    val1 = strtoul(input_buffer, &end_ptr, 10);
+    if (errno != 0 || end_ptr == input_buffer || val1 > UINT_MAX)
+    {
+        fprintf(stderr, "Invalid first integer\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (*end_ptr != ' ' && *end_ptr != '\t' && *end_ptr != '\n')
+    {
+        fprintf(stderr, "Invalid input format\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    while (*end_ptr == ' ' || *end_ptr == '\t')
+    {
+        end_ptr++;
+    }
+
+    errno = 0;
+    val2 = strtoul(end_ptr, &end_ptr, 10);
+    if (errno != 0 || val2 > UINT_MAX)
+    {
+        fprintf(stderr, "Invalid second integer\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    num1 = (unsigned int)val1;
+    num2 = (unsigned int)val2;
+
+    result = hamming_distance(num1, num2);
+    printf("%d\n", result);
+
+    free(input_buffer);
+    return EXIT_SUCCESS;
+}

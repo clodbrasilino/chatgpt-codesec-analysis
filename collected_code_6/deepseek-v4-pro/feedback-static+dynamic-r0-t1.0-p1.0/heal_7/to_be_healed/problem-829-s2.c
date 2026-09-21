@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRINGS 1000
+#define MAX_LENGTH 100
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char str[MAX_LENGTH];
+    int count;
+} StringCount;
+
+static char *safe_duplicate(const char *str, size_t max_len) {
+    size_t len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return NULL;
+    }
+    char *dup = (char *)malloc(len + 1);
+    if (dup == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dup, str, len);
+    dup[len] = '\0';
+    return dup;
+}
+
+char *second_most_repeated(const char strings[][MAX_LENGTH], int n) {
+    if (n <= 0 || n > MAX_STRINGS) return NULL;
+
+    StringCount *counts = (StringCount *)calloc((size_t)n, sizeof(StringCount));
+    if (counts == NULL) return NULL;
+
+    int unique_count = 0;
+
+    for (int i = 0; i < n; i++) {
+        size_t input_len = strnlen(strings[i], MAX_LENGTH);
+        if (input_len >= MAX_LENGTH) {
+            free(counts);
+            return NULL;
+        }
+
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (strncmp(counts[j].str, strings[i], MAX_LENGTH - 1) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            if (unique_count >= n) {
+                free(counts);
+                return NULL;
+            }
+
+            if (input_len >= MAX_LENGTH - 1) {
+                free(counts);
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(counts[unique_count].str, strings[i], input_len + 1);
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    if (unique_count < 2) {
+        free(counts);
+        return NULL;
+    }
+
+    int first_max = 0, second_max = -1;
+
+    for (int i = 1; i < unique_count; i++) {
+        if (counts[i].count > counts[first_max].count) {
+            second_max = first_max;
+            first_max = i;
+        } else if (counts[i].count < counts[first_max].count) {
+            if (second_max == -1 || counts[i].count > counts[second_max].count) {
+                second_max = i;
+            }
+        }
+    }
+
+    if (second_max == -1) {
+        free(counts);
+        return NULL;
+    }
+
+    char *result = safe_duplicate(counts[second_max].str, MAX_LENGTH);
+    free(counts);
+    return result;
+}
+
+int main(void) {
+    char strings[][MAX_LENGTH] = {
+        "apple", "banana", "apple", "orange", "banana", "apple", "grape"
+    };
+    int n = sizeof(strings) / sizeof(strings[0]);
+
+    char *result = second_most_repeated(strings, n);
+
+    if (result != NULL) {
+        printf("Second most repeated string: %s\n", result);
+        free(result);
+    } else {
+        printf("No second most repeated string found.\n");
+    }
+
+    return 0;
+}

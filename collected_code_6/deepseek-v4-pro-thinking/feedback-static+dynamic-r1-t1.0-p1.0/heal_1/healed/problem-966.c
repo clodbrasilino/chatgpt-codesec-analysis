@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *items;
+    size_t length;
+    size_t capacity;
+} TupleList;
+
+static bool tuple_is_empty(const Tuple *tuple) {
+    if (tuple == NULL) {
+        return false;
+    }
+    return tuple->length == 0;
+}
+
+static bool tuple_list_init(TupleList *list, size_t capacity) {
+    if (list == NULL) {
+        return false;
+    }
+    if (capacity == 0) {
+        capacity = 4;
+    }
+    if (capacity > SIZE_MAX / sizeof(Tuple)) {
+        return false;
+    }
+    list->items = malloc(capacity * sizeof(Tuple));
+    if (list->items == NULL) {
+        return false;
+    }
+    list->length = 0;
+    list->capacity = capacity;
+    return true;
+}
+
+static void tuple_list_deinit(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->length; ++i) {
+        free(list->items[i].items);
+    }
+    free(list->items);
+    list->items = NULL;
+    list->length = 0;
+    list->capacity = 0;
+}
+
+static bool tuple_list_push(TupleList *list, const Tuple *tuple) {
+    if (list == NULL || tuple == NULL) {
+        return false;
+    }
+    if (tuple->length > 0 && tuple->items == NULL) {
+        return false;
+    }
+    if (list->length == list->capacity) {
+        if (list->capacity > SIZE_MAX / 2) {
+            return false;
+        }
+        size_t new_capacity = list->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Tuple)) {
+            return false;
+        }
+        Tuple *new_items = realloc(list->items, new_capacity * sizeof(Tuple));
+        if (new_items == NULL) {
+            return false;
+        }
+        list->items = new_items;
+        list->capacity = new_capacity;
+    }
+    Tuple new_tuple;
+    new_tuple.length = tuple->length;
+    if (tuple->length == 0) {
+        new_tuple.items = NULL;
+    } else {
+        if (tuple->length > SIZE_MAX / sizeof(int)) {
+            return false;
+        }
+        new_tuple.items = malloc(tuple->length * sizeof(int));
+        if (new_tuple.items == NULL) {
+            return false;
+        }
+        memcpy(new_tuple.items, tuple->items, tuple->length * sizeof(int));
+    }
+    list->items[list->length] = new_tuple;
+    ++list->length;
+    return true;
+}
+
+static bool remove_empty_tuple(TupleList *list) {
+    if (list == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < list->length; ++i) {
+        if (tuple_is_empty(&list->items[i])) {
+            free(list->items[i].items);
+            if (i < list->length - 1) {
+                memmove(&list->items[i], &list->items[i + 1],
+                        (list->length - i - 1) * sizeof(Tuple));
+            }
+            --list->length;
+            return true;
+        }
+    }
+    return false;
+}
+
+static void tuple_print(const Tuple *tuple) {
+    if (tuple == NULL) {
+        printf("null");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < tuple->length; ++i) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%d", tuple->items[i]);
+    }
+    printf(")");
+}
+
+static void tuple_list_print(const TupleList *list) {
+    if (list == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < list->length; ++i) {
+        if (i > 0) {
+            printf(", ");
+        }
+        tuple_print(&list->items[i]);
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    TupleList list;
+    if (!tuple_list_init(&list, 4)) {
+        return EXIT_FAILURE;
+    }
+
+    int values[] = {1, 2, 3};
+    Tuple t1 = {NULL, 0};
+    Tuple t2 = {NULL, 0};
+    Tuple t3 = {values, 3};
+    Tuple t4 = {NULL, 0};
+
+    if (!tuple_list_push(&list, &t1) ||
+        !tuple_list_push(&list, &t2) ||
+        !tuple_list_push(&list, &t3) ||
+        !tuple_list_push(&list, &t4)) {
+        tuple_list_deinit(&list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_list_print(&list);
+    if (remove_empty_tuple(&list)) {
+        tuple_list_print(&list);
+    }
+
+    tuple_list_deinit(&list);
+    return EXIT_SUCCESS;
+}

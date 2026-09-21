@@ -1,0 +1,164 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_NAME_LEN 64
+
+typedef struct {
+    char name[MAX_NAME_LEN];
+    double height;
+    double width;
+} Student;
+
+typedef struct {
+    Student *entries;
+    size_t count;
+    size_t capacity;
+} StudentDict;
+
+int dict_init(StudentDict *dict, size_t initial_capacity)
+{
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    if (initial_capacity > SIZE_MAX / sizeof(Student)) {
+        return -1;
+    }
+    dict->entries = malloc(initial_capacity * sizeof(Student));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+int dict_add(StudentDict *dict, const char *name, double height, double width)
+{
+    if (dict == NULL || name == NULL) {
+        return -1;
+    }
+    size_t name_len = strnlen(name, MAX_NAME_LEN);
+    if (name_len >= MAX_NAME_LEN) {
+        return -1;
+    }
+    if (dict->count == dict->capacity) {
+        if (dict->capacity > SIZE_MAX / (2 * sizeof(Student))) {
+            return -1;
+        }
+        size_t new_capacity = dict->capacity * 2;
+        Student *tmp = realloc(dict->entries, new_capacity * sizeof(Student));
+        if (tmp == NULL) {
+            return -1;
+        }
+        dict->entries = tmp;
+        dict->capacity = new_capacity;
+    }
+    memcpy(dict->entries[dict->count].name, name, name_len);
+    dict->entries[dict->count].name[name_len] = '\0';
+    dict->entries[dict->count].height = height;
+    dict->entries[dict->count].width = width;
+    dict->count++;
+    return 0;
+}
+
+int dict_filter(const StudentDict *src, StudentDict *dst,
+                double min_height, double min_width)
+{
+    if (src == NULL || dst == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < src->count; i++) {
+        if (src->entries[i].height >= min_height &&
+            src->entries[i].width >= min_width) {
+            if (dict_add(dst, src->entries[i].name,
+                         src->entries[i].height,
+                         src->entries[i].width) != 0) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+void dict_free(StudentDict *dict)
+{
+    if (dict != NULL) {
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->count = 0;
+        dict->capacity = 0;
+    }
+}
+
+void dict_print(const StudentDict *dict)
+{
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("%s: height=%.2f, width=%.2f\n",
+               dict->entries[i].name,
+               dict->entries[i].height,
+               dict->entries[i].width);
+    }
+}
+
+int main(void)
+{
+    StudentDict students;
+    StudentDict filtered;
+
+    if (dict_init(&students, 4) != 0) {
+        fprintf(stderr, "Failed to initialize student dictionary\n");
+        return EXIT_FAILURE;
+    }
+    if (dict_init(&filtered, 4) != 0) {
+        fprintf(stderr, "Failed to initialize filtered dictionary\n");
+        dict_free(&students);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(&students, "Alice", 165.5, 40.0) != 0 ||
+        dict_add(&students, "Bob", 180.2, 55.3) != 0 ||
+        dict_add(&students, "Carol", 158.0, 38.5) != 0 ||
+        dict_add(&students, "Dave", 175.0, 50.0) != 0) {
+        fprintf(stderr, "Failed to add student\n");
+        dict_free(&students);
+        dict_free(&filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_filter(&students, &filtered, 160.0, 45.0) != 0) {
+        fprintf(stderr, "Failed to filter students\n");
+        dict_free(&students);
+        dict_free(&filtered);
+        return EXIT_FAILURE;
+    }
+
+    printf("All students:\n");
+    dict_print(&students);
+    printf("\nFiltered students (height >= 160.0, width >= 45.0):\n");
+    dict_print(&filtered);
+
+    dict_free(&students);
+    dict_free(&filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Missing `<stdint.h>` include**: The original code used `SIZE_MAX` without including `<stdint.h>`, which would fail to compile on strict compilers. This is now included.
+
+2. **`strlen` over-read (CWE-126)**: Replaced `strlen(name)` with `strnlen(name, MAX_NAME_LEN)`, which bounds the read to at most `MAX_NAME_LEN` bytes, protecting against non-null-terminated input causing an over-read.
+
+3. **`strncpy` misuse (CWE-120)**: Replaced `strncpy` with `memcpy` using the already-validated length, followed by explicit null termination. Since `name_len` is guaranteed `< MAX_NAME_LEN`, the copy is provably in-bounds and always null-terminated. This also avoids `strncpy`'s inefficient zero-padding behavior.
+
+4. **Integer overflow in `dict_init`**: Added an overflow check on `initial_capacity * sizeof(Student)` before `malloc`, matching the protection already present in the `realloc` path.
+
+5. **Defensive check in `dict_print`**: Added a `NULL` check on `dict->entries` to guard against printing a freed or uninitialized dictionary.
+
+The fixed-size `name` array (CWE-119/CWE-120 flag on the struct) is retained by design, but all writes to it are now strictly bounds-checked, so the risk is mitigated.

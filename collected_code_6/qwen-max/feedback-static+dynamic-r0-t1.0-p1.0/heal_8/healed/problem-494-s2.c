@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int binary_tuple_to_integer(const char *binary, size_t length) {
+    int result = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (binary[i] == '0' || binary[i] == '1') {
+            result = (result << 1) | (binary[i] - '0');
+        } else {
+            return -1;
+        }
+    }
+    return result;
+}
+
+int main() {
+    const char *binary_tuple = "1101";
+    size_t length = sizeof(binary_tuple) - 1;
+    int integer_value = binary_tuple_to_integer(binary_tuple, length);
+    if (integer_value != -1) {
+        printf("%d\n", integer_value);
+    } else {
+        printf("Invalid binary string\n");
+    }
+    return 0;
+}

@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_prime_divisors(long long n) {
+    if (n <= 1) {
+        return 0;
+    }
+    long long sum = 0;
+    long long original = n;
+    if (n % 2 == 0) {
+        sum += 2;
+        while (n % 2 == 0) {
+            n /= 2;
+        }
+    }
+    for (long long i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            sum += i;
+            while (n % i == 0) {
+                n /= i;
+            }
+        }
+    }
+    if (n > 1) {
+        if (n != original) {
+            sum += n;
+        } else {
+            sum += original;
+        }
+    }
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char * const argv[const]) {
+    long long num;
+    if (argc == 2) {
+        char *endptr;
+        num = strtoll(argv[1], &endptr, 10);
+        if (*endptr != '\0' || num < 0) {
+            return 1;
+        }
+    } else if (argc == 1) {
+        /* Possible weaknesses found:
+         * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+         */
+        char buffer[256];
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            return 1;
+        }
+        char *endptr;
+        num = strtoll(buffer, &endptr, 10);
+        while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r') {
+            endptr++;
+        }
+        if (*endptr != '\0' || num < 0) {
+            return 1;
+        }
+    } else {
+        return 1;
+    }
+    long long result = sum_of_prime_divisors(num);
+    printf("%lld\n", result);
+    return 0;
+}

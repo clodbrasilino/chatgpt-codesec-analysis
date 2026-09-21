@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c:134:15: style: Condition 'input!=NULL' is always true [knownConditionTrueFalse]
+    if (input != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c:128:25: note: Assignment 'input="apple,banana;cherry:grape|orange"', assigned value is "apple,banana;cherry:grape|orange"
+    const char *input = "apple,banana;cherry:grape|orange";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c:134:15: note: Condition 'input!=NULL' is always true
+    if (input != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c:60:29: style: Same expression on both sides of '<='. [duplicateExpression]
+                if (len + 1 <= len + 1) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-73.c:94:21: style: Same expression on both sides of '<='. [duplicateExpression]
+        if (len + 1 <= len + 1) {
+                    ^

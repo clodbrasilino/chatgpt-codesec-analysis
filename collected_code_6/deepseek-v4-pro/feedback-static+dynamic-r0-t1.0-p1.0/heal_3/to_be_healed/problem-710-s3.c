@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    void *initial;
+    void *last;
+} TupleAccess;
+
+Tuple *create_tuple(size_t size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    
+    tuple->data = (void **)calloc(size, sizeof(void *));
+    if (!tuple->data) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (!tuple) return;
+    
+    if (tuple->data) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free(tuple->data[i]);
+        }
+        free(tuple->data);
+    }
+    
+    free(tuple);
+}
+
+int set_tuple_element(Tuple *tuple, size_t index, void *element, size_t element_size) {
+    if (!tuple || !element || index >= tuple->size || element_size == 0) return -1;
+    
+    if (tuple->data[index]) {
+        free(tuple->data[index]);
+    }
+    
+    tuple->data[index] = malloc(element_size);
+    if (!tuple->data[index]) return -1;
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(tuple->data[index], element, element_size);
+    return 0;
+}
+
+TupleAccess access_tuple_data(const Tuple *tuple) {
+    TupleAccess access = {NULL, NULL};
+    
+    if (!tuple || tuple->size == 0 || !tuple->data) {
+        /* Possible weaknesses found:
+         * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+         */
+        return access;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+     */
+    access.initial = tuple->data[0];
+    /* Possible weaknesses found:
+     * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+     */
+    access.last = tuple->data[tuple->size - 1];
+    
+    /* Possible weaknesses found:
+     * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+     */
+    return access;
+}
+
+int main(void) {
+    Tuple *tuple = create_tuple(3);
+    if (!tuple) {
+        return EXIT_FAILURE;
+    }
+    
+    int val1 = 10;
+    int val2 = 20;
+    int val3 = 30;
+    
+    if (set_tuple_element(tuple, 0, &val1, sizeof(int)) != 0 ||
+        set_tuple_element(tuple, 1, &val2, sizeof(int)) != 0 ||
+        set_tuple_element(tuple, 2, &val3, sizeof(int)) != 0) {
+        destroy_tuple(tuple);
+        return EXIT_FAILURE;
+    }
+    
+    TupleAccess access = access_tuple_data(tuple);
+    
+    /* Possible weaknesses found:
+     * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+     */
+    if (access.initial && access.last) {
+        int initial_val;
+        int last_val;
+        
+        /* Possible weaknesses found:
+         * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(&initial_val, access.initial, sizeof(int));
+        /* Possible weaknesses found:
+         * Flawfinder access: This usually indicates a security flaw. If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid()) and try to open the file directly. (risk 4, race)
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(&last_val, access.last, sizeof(int));
+        
+        printf("Initial: %d\n", initial_val);
+        printf("Last: %d\n", last_val);
+    }
+    
+    destroy_tuple(tuple);
+    
+    return EXIT_SUCCESS;
+}

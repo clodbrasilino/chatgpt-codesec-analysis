@@ -1,0 +1,134 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1)
+#define INPUT_BUFFER_SIZE 64
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    memset(buffer, 0, buffer_size);
+
+    if (decimal == 0) {
+        buffer[index++] = '0';
+        buffer[index] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0) {
+        if (index >= buffer_size - 1) {
+            return -1;
+        }
+        buffer[index++] = (char)('0' + (decimal % 2U));
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_unsigned(unsigned int *value)
+{
+    char input[INPUT_BUFFER_SIZE] = {0};
+    char *endptr = NULL;
+    unsigned long parsed;
+
+    if (value == NULL) {
+        return -1;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        return -1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    if (strchr(input, '\n') == NULL && !feof(stdin)) {
+        discard_remaining_input();
+        return -1;
+    }
+
+    if (strchr(input, '-') != NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtoul(input, &endptr, 10);
+
+    if (endptr == input) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    if (errno == ERANGE || parsed > UINT_MAX) {
+        return -1;
+    }
+
+    *value = (unsigned int)parsed;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0;
+    char binary[BINARY_BUFFER_SIZE] = {0};
+
+    printf("Enter a non-negative decimal number: ");
+    fflush(stdout);
+
+    if (read_unsigned(&number) != 0) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weaknesses, so the rewrite hardens it further rather than changing logic:
+
+1. **CWE-119/CWE-120 (statically-sized buffers `input` and `binary`):** Both buffers are now zero-initialized at declaration, and `input` is explicitly NUL-terminated after `fgets` as defense-in-depth. All writes remain bounds-checked: `fgets` is limited by `sizeof(input)`, and `decimal_to_binary` verifies `index >= buffer_size - 1` before every write, returning an error instead of overflowing. `BINARY_BUFFER_SIZE` is correctly derived from `sizeof(unsigned int) * CHAR_BIT + 1`, guaranteeing room for the longest possible bit string plus the terminator.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The flush loop was moved into a dedicated `discard_remaining_input()` helper. It writes to no buffer at all—it only consumes and discards characters until newline or `EOF`—so no boundary can be violated, and the `EOF` check guarantees termination.
+
+3. **Input validation (CWE-20):** Parsing still uses `strtoul` with `errno`/`ERANGE` checking, rejects values above `UINT_MAX`, rejects trailing non-whitespace garbage, and the `'-'` check (moved before parsing) closes the `strtoul` quirk where negative numbers silently wrap to large unsigned values.

@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+char *abbreviate_road(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LENGTH);
+    if (len == MAX_INPUT_LENGTH) {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i < len) {
+        if ((len - i) >= 4 && strncmp(&input[i], "road", 4) == 0) {
+            result[j] = 'r';
+            result[j + 1] = 'd';
+            result[j + 2] = '.';
+            j += 3;
+            i += 4;
+        } else {
+            result[j] = input[i];
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Take the main road until the road ends.";
+    char *abbreviated;
+
+    abbreviated = abbreviate_road(text);
+    if (abbreviated == NULL) {
+        fprintf(stderr, "Failed to abbreviate string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Abbreviated: %s\n", abbreviated) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    free(abbreviated);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the Flawfinder warning about `strlen` (CWE-126): the code now uses `strnlen` with an explicit upper bound (`MAX_INPUT_LENGTH`), which guarantees the scan never reads past a fixed limit even if the input is not NUL-terminated. If the input reaches the maximum length without a terminator being found, the function safely rejects it by returning `NULL` rather than risking an over-read.
+
+The rest of the logic was already sound: the output buffer of `len + 1` bytes is sufficient since replacing the 4-character "road" with the 3-character "rd." can only shrink the output, all allocations are checked, the buffer is properly NUL-terminated, and memory is freed on every exit path in `main`.

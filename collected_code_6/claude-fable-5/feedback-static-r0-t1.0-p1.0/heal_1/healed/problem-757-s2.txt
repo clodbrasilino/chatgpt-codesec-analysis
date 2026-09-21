@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+static int is_reverse(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    size_t i;
+
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+
+    len_a = strnlen(a, MAX_STR_LEN);
+    len_b = strnlen(b, MAX_STR_LEN);
+
+    if (len_a >= MAX_STR_LEN || len_b >= MAX_STR_LEN) {
+        return 0;
+    }
+
+    if (len_a != len_b) {
+        return 0;
+    }
+
+    for (i = 0; i < len_a; i++) {
+        if (a[i] != b[len_a - 1 - i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+size_t count_reverse_pairs(const char **strings, size_t count)
+{
+    size_t pairs = 0;
+    size_t i;
+    size_t j;
+
+    if (strings == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+        for (j = i + 1; j < count; j++) {
+            if (strings[j] == NULL) {
+                continue;
+            }
+            if (is_reverse(strings[i], strings[j])) {
+                pairs++;
+            }
+        }
+    }
+
+    return pairs;
+}
+
+int main(void)
+{
+    const char *list[] = {"abc", "cba", "hello", "olleh", "world", "abc"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    size_t result;
+
+    result = count_reverse_pairs(list, count);
+
+    if (printf("Number of reverse pairs: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Replaced `strlen` with `strnlen`** — This addresses the CWE-126 (buffer over-read) weakness flagged by Flawfinder. `strnlen` accepts a maximum bound (`MAX_STR_LEN`), so even if a string is not null-terminated, the scan stops at the bound instead of reading past the buffer indefinitely.
+
+2. **Added a bound check** — If `strnlen` returns a value equal to `MAX_STR_LEN`, the string may be unterminated (or simply too long), so the function safely returns `0` rather than proceeding with potentially invalid data.
+
+3. **Preserved all existing defensive checks** — The `NULL` pointer guards in both `is_reverse` and `count_reverse_pairs`, the `printf` return-value check, and the use of `size_t` for indices and lengths were already correct and remain in place.
+
+Note: `strnlen` is POSIX / C23; if strict C89/C99 portability is required, an equivalent bounded loop can be substituted.

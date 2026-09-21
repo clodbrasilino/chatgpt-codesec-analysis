@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t len;
+} ListOfLists;
+
+IntList copy_int_list(IntList src) {
+    IntList dst;
+    dst.len = 0;
+    dst.data = NULL;
+    if (src.len == 0 || src.data == NULL) {
+        return dst;
+    }
+    if (src.len > SIZE_MAX / sizeof(int)) {
+        return dst;
+    }
+    dst.data = malloc(src.len * sizeof(int));
+    if (!dst.data) {
+        return dst;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dst.data, src.data, src.len * sizeof(int));
+    dst.len = src.len;
+    return dst;
+}
+
+void free_int_list(IntList *list) {
+    free(list->data);
+    list->data = NULL;
+    list->len = 0;
+}
+
+ListOfLists zip_lists_of_lists(ListOfLists a, ListOfLists b) {
+    ListOfLists result;
+    size_t min_len = a.len < b.len ? a.len : b.len;
+    
+    if (min_len > SIZE_MAX / 2) {
+        result.len = 0;
+        result.lists = NULL;
+        return result;
+    }
+    
+    result.len = min_len * 2;
+    result.lists = NULL;
+
+    if (result.len == 0) {
+        return result;
+    }
+
+    if (result.len > SIZE_MAX / sizeof(IntList)) {
+        result.len = 0;
+        return result;
+    }
+
+    result.lists = malloc(result.len * sizeof(IntList));
+    if (!result.lists) {
+        result.len = 0;
+        return result;
+    }
+
+    for (size_t i = 0; i < result.len; i++) {
+        IntList src;
+        if (i % 2 == 0) {
+            src = a.lists[i / 2];
+        } else {
+            src = b.lists[i / 2];
+        }
+
+        result.lists[i] = copy_int_list(src);
+        if (src.len > 0 && !result.lists[i].data) {
+            for (size_t j = 0; j < i; j++) {
+                free_int_list(&result.lists[j]);
+            }
+            free(result.lists);
+            result.lists = NULL;
+            result.len = 0;
+            return result;
+        }
+    }
+
+    return result;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (!lol) {
+        return;
+    }
+    for (size_t i = 0; i < lol->len; i++) {
+        free_int_list(&lol->lists[i]);
+    }
+    free(lol->lists);
+    lol->lists = NULL;
+    lol->len = 0;
+}
+
+int main(void) {
+    int a1_data[] = {1, 2};
+    int a2_data[] = {3, 4};
+    IntList a1 = {a1_data, 2};
+    IntList a2 = {a2_data, 2};
+    ListOfLists A = {(IntList[]){a1, a2}, 2};
+
+    int b1_data[] = {5, 6};
+    int b2_data[] = {7, 8};
+    IntList b1 = {b1_data, 2};
+    IntList b2 = {b2_data, 2};
+    ListOfLists B = {(IntList[]){b1, b2}, 2};
+
+    ListOfLists C = zip_lists_of_lists(A, B);
+
+    for (size_t i = 0; i < C.len; i++) {
+        printf("[");
+        for (size_t j = 0; j < C.lists[i].len; j++) {
+            printf("%d ", C.lists[i].data[j]);
+        }
+        printf("] ");
+    }
+    printf("\n");
+
+    free_list_of_lists(&C);
+
+    return 0;
+}

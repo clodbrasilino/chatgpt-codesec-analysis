@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_LEN 4096
+
+static size_t bounded_len(const char *s, size_t max)
+{
+    size_t i = 0;
+
+    while (i < max && s[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = bounded_len(s1, MAX_LEN);
+    len2 = bounded_len(s2, MAX_LEN);
+
+    if (len1 >= MAX_LEN || len2 >= MAX_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    if (len1 == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    char str1[MAX_LEN];
+    char str2[MAX_LEN];
+    int result;
+
+    memset(str1, 0, sizeof(str1));
+    memset(str2, 0, sizeof(str2));
+
+    if (scanf("%4095s", str1) != 1) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (scanf("%4095s", str2) != 1) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    str1[sizeof(str1) - 1] = '\0';
+    str2[sizeof(str2) - 1] = '\0';
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the changes:**
+
+1. **Test case failures (`<no output>` for all three cases):** The original code read input with two separate `fgets()` calls, which requires each string to be on its own line. If the test harness supplies both binary strings on a single line (whitespace-separated), the second `fgets()` fails and the program either behaves unexpectedly or the harness sees no matching output. Switching to `scanf("%4095s", ...)` tokenizes on any whitespace (spaces or newlines), so the program now works regardless of whether the two strings are on one line or two. This also makes `strip_newline()` unnecessary, since `%s` never includes newline characters.
+
+2. **Flawfinder CWE-119/CWE-120 (buffer overflow on statically-sized arrays):** The `scanf` format specifier uses an explicit field width of `4095` (`MAX_LEN - 1`), guaranteeing no more than 4095 characters plus the null terminator are written into each 4096-byte buffer. Buffers are also zero-initialized with `memset` and explicitly null-terminated at the last index as defense in depth, and `bounded_len()` still enforces the length cap inside `min_swaps()`.
+
+3. **Algorithm correctness retained:** `min_swaps()` correctly returns the count of `(1,0)` mismatches, which equals the minimum number of swaps needed within `s1` to match `s2`, and returns `-1` ("Not Possible") when lengths differ, characters aren't binary, or the mismatch counts are unbalanced (differing number of `1`s).

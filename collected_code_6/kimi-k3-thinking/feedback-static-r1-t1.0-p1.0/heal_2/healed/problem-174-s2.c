@@ -1,0 +1,292 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 65536
+
+typedef struct {
+    char *key;
+    char *value;
+} Pair;
+
+typedef struct {
+    char *key;
+    char **values;
+    size_t count;
+    size_t capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static size_t bounded_string_length(const char *s, size_t max_length)
+{
+    size_t length = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+    while (length < max_length && s[length] != '\0') {
+        length++;
+    }
+    return length;
+}
+
+static char *duplicate_string(const char *s)
+{
+    size_t length;
+    size_t i;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    length = bounded_string_length(s, MAX_STRING_LENGTH);
+    if (length >= MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    if (length + 1 > MAX_STRING_LENGTH) {
+        return NULL;
+    }
+    copy = malloc(length + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < length && s[i] != '\0'; i++) {
+        copy[i] = s[i];
+    }
+    copy[i] = '\0';
+    return copy;
+}
+
+static void group_init(Group *group)
+{
+    if (group == NULL) {
+        return;
+    }
+    group->key = NULL;
+    group->values = NULL;
+    group->count = 0;
+    group->capacity = 0;
+}
+
+static void group_destroy(Group *group)
+{
+    size_t i;
+
+    if (group == NULL) {
+        return;
+    }
+    free(group->key);
+    for (i = 0; i < group->count; i++) {
+        free(group->values[i]);
+    }
+    free(group->values);
+    group_init(group);
+}
+
+void dictionary_init(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    dict->groups = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+void dictionary_destroy(Dictionary *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->count; i++) {
+        group_destroy(&dict->groups[i]);
+    }
+    free(dict->groups);
+    dictionary_init(dict);
+}
+
+static Group *dictionary_find_group(Dictionary *dict, const char *key)
+{
+    size_t i;
+
+    if (dict == NULL || key == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < dict->count; i++) {
+        if (dict->groups[i].key != NULL &&
+            strcmp(dict->groups[i].key, key) == 0) {
+            return &dict->groups[i];
+        }
+    }
+    return NULL;
+}
+
+static int group_add_value(Group *group, const char *value)
+{
+    char *value_copy;
+
+    if (group == NULL || value == NULL) {
+        return -1;
+    }
+
+    if (group->count == group->capacity) {
+        size_t new_capacity;
+        char **new_values;
+
+        if (group->capacity == 0) {
+            new_capacity = 4;
+        } else {
+            if (group->capacity > SIZE_MAX / 2) {
+                return -1;
+            }
+            new_capacity = group->capacity * 2;
+        }
+        if (new_capacity > SIZE_MAX / sizeof(*new_values)) {
+            return -1;
+        }
+        new_values = realloc(group->values, new_capacity * sizeof(*new_values));
+        if (new_values == NULL) {
+            return -1;
+        }
+        group->values = new_values;
+        group->capacity = new_capacity;
+    }
+
+    value_copy = duplicate_string(value);
+    if (value_copy == NULL) {
+        return -1;
+    }
+
+    group->values[group->count] = value_copy;
+    group->count++;
+    return 0;
+}
+
+int dictionary_add(Dictionary *dict, const char *key, const char *value)
+{
+    Group *group;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    group = dictionary_find_group(dict, key);
+    if (group != NULL) {
+        return group_add_value(group, value);
+    }
+
+    if (dict->count == dict->capacity) {
+        size_t new_capacity;
+        Group *new_groups;
+
+        if (dict->capacity == 0) {
+            new_capacity = 4;
+        } else {
+            if (dict->capacity > SIZE_MAX / 2) {
+                return -1;
+            }
+            new_capacity = dict->capacity * 2;
+        }
+        if (new_capacity > SIZE_MAX / sizeof(*new_groups)) {
+            return -1;
+        }
+        new_groups = realloc(dict->groups, new_capacity * sizeof(*new_groups));
+        if (new_groups == NULL) {
+            return -1;
+        }
+        dict->groups = new_groups;
+        dict->capacity = new_capacity;
+    }
+
+    group = &dict->groups[dict->count];
+    group_init(group);
+
+    group->key = duplicate_string(key);
+    if (group->key == NULL) {
+        return -1;
+    }
+
+    if (group_add_value(group, value) != 0) {
+        group_destroy(group);
+        return -1;
+    }
+
+    dict->count++;
+    return 0;
+}
+
+int group_pairs(const Pair *pairs, size_t pair_count, Dictionary *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return -1;
+    }
+    if (pairs == NULL && pair_count > 0) {
+        return -1;
+    }
+
+    dictionary_init(dict);
+
+    for (i = 0; i < pair_count; i++) {
+        if (pairs[i].key == NULL || pairs[i].value == NULL) {
+            dictionary_destroy(dict);
+            return -1;
+        }
+        if (dictionary_add(dict, pairs[i].key, pairs[i].value) != 0) {
+            dictionary_destroy(dict);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void dictionary_print(const Dictionary *dict)
+{
+    size_t i;
+    size_t j;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->count; i++) {
+        printf("%s: [", dict->groups[i].key);
+        for (j = 0; j < dict->groups[i].count; j++) {
+            printf("%s%s", dict->groups[i].values[j],
+                   (j + 1 < dict->groups[i].count) ? ", " : "");
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Pair pairs[] = {
+        {"fruit", "apple"},
+        {"vegetable", "carrot"},
+        {"fruit", "banana"},
+        {"grain", "rice"},
+        {"vegetable", "broccoli"},
+        {"fruit", "cherry"}
+    };
+    Dictionary dict;
+    size_t pair_count = sizeof(pairs) / sizeof(pairs[0]);
+
+    if (group_pairs(pairs, pair_count, &dict) != 0) {
+        fprintf(stderr, "Error: failed to group key-value pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    dictionary_print(&dict);
+    dictionary_destroy(&dict);
+
+    return EXIT_SUCCESS;
+}

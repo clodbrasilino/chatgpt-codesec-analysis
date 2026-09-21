@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:42:67: style: Condition 'result_index+(unsigned long)match.rm_so<=result_size' is always true [knownConditionTrueFalse]
+            size_t copy_len = (result_index + (size_t)match.rm_so <= result_size) ? (size_t)match.rm_so : result_size - result_index - 1;
+                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:37:52: note: Assuming that condition 'result_index+(unsigned long)match.rm_so>=result_size' is not redundant
+            if (result_index + (size_t)match.rm_so >= result_size) {
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:42:67: note: Condition 'result_index+(unsigned long)match.rm_so<=result_size' is always true
+            size_t copy_len = (result_index + (size_t)match.rm_so <= result_size) ? (size_t)match.rm_so : result_size - result_index - 1;
+                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:74:53: style: Condition 'result_index+remaining<=result_size' is always true [knownConditionTrueFalse]
+        size_t copy_len = (result_index + remaining <= result_size) ? remaining : result_size - result_index - 1;
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:69:38: note: Assuming that condition 'result_index+remaining>=result_size' is not redundant
+        if (result_index + remaining >= result_size) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-451.c:74:53: note: Condition 'result_index+remaining<=result_size' is always true
+        size_t copy_len = (result_index + remaining <= result_size) ? remaining : result_size - result_index - 1;
+                                                    ^

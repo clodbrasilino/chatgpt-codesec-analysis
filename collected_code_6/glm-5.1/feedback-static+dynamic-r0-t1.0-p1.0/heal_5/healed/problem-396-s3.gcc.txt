@@ -1,0 +1,21 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c: In function 'check_same_start_end':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:29:15: error: implicit declaration of function 'regcomp' [-Wimplicit-function-declaration]
+   29 |     int ret = regcomp(&regex, full_pattern, REG_EXTENDED | REG_NOSUB);
+      |               ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:29:24: error: 'regex' undeclared (first use in this function)
+   29 |     int ret = regcomp(&regex, full_pattern, REG_EXTENDED | REG_NOSUB);
+      |                        ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:29:24: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:29:45: error: 'REG_EXTENDED' undeclared (first use in this function)
+   29 |     int ret = regcomp(&regex, full_pattern, REG_EXTENDED | REG_NOSUB);
+      |                                             ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:29:60: error: 'REG_NOSUB' undeclared (first use in this function)
+   29 |     int ret = regcomp(&regex, full_pattern, REG_EXTENDED | REG_NOSUB);
+      |                                                            ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:36:11: error: implicit declaration of function 'regexec' [-Wimplicit-function-declaration]
+   36 |     ret = regexec(&regex, str, 0, NULL, 0);
+      |           ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-396-s3.c:37:5: error: implicit declaration of function 'regfree'; did you mean 'free'? [-Wimplicit-function-declaration]
+   37 |     regfree(&regex);
+      |     ^~~~~~~
+      |     free

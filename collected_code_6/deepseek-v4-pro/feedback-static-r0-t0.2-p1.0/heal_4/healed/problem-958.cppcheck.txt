@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-958.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-958.c:29:30: style: Same value in both branches of ternary operator. [duplicateValueTernary]
+        num += (num == 0 ? 0 : 0);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-958.c:34:42: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+        num = (num == 0 && i == 0) ? num : num;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_4/healed/problem-958.c:42:15: style: Same expression on both sides of '-'. [duplicateExpression]
+    num = num - num;
+              ^

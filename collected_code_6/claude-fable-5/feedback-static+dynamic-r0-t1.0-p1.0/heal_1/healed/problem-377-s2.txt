@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+void remove_char(char *str, char c)
+{
+    char *src;
+    char *dst;
+
+    if (str == NULL) {
+        return;
+    }
+
+    src = str;
+    dst = str;
+
+    while (*src != '\0') {
+        if (*src != c) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main(void)
+{
+    const char *original = "hello world, hello everyone";
+    char target = 'l';
+    size_t len;
+    size_t buffer_size;
+    char *buffer;
+
+    len = strnlen(original, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        fprintf(stderr, "Input string too long or not terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer_size = len + 1;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, len);
+    buffer[len] = '\0';
+
+    printf("Original: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **`strlen` → `strnlen` (CWE-126 fix):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`. This guarantees the read is limited even if the string were somehow not null-terminated, preventing an over-read. An explicit check rejects strings that hit the bound (meaning no terminator was found within the limit).
+
+2. **`memcpy` bounds safety (CWE-120 fix):** The destination size is now tracked explicitly in `buffer_size`, and the copy is limited to `len` bytes (which is guaranteed `< buffer_size`). The null terminator is written explicitly with `buffer[len] = '\0'` rather than relying on copying `len + 1` bytes from the source, so the destination can never be overrun and termination is always guaranteed.
+
+3. **Preserved existing good practices:** The `NULL` check after `malloc`, the `NULL` guard in `remove_char`, the in-place two-pointer removal (which can only shrink the string, never overflow), the `free` followed by nulling the pointer, and the use of `EXIT_SUCCESS`/`EXIT_FAILURE` are all retained.

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, BUFFER_SIZE);
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string safely\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key fixes applied:**
+
+1. **`strcpy` → `snprintf` (CWE-120):** The banned `strcpy` was replaced with `snprintf`, which guarantees the destination buffer is never overrun and always NUL-terminates. Its return value is checked to detect truncation or encoding errors.
+
+2. **`strlen` → `strnlen` (CWE-126):** `strnlen` bounds the read to `BUFFER_SIZE`, so even a non-NUL-terminated input cannot cause an over-read. The length check against `sizeof(buffer)` is preserved as defense in depth.
+
+3. **Statically-sized array (CWE-119/CWE-120):** The buffer size is now a named constant (`BUFFER_SIZE`), used consistently for the array declaration, the bounded length check, and the bounded copy — ensuring all operations agree on the same limit.
+
+4. **`remove_char` remains safe as-is:** it only shrinks the string in place (`write_idx <= read_idx` is an invariant), performs a NULL check, and terminates on the existing NUL, so no changes were required there.

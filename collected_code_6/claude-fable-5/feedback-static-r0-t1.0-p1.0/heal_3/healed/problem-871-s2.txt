@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 4096
+
+bool are_rotations(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t buf_size;
+    char *temp;
+    bool result;
+
+    if (s1 == NULL || s2 == NULL) {
+        return false;
+    }
+
+    len1 = strnlen(s1, MAX_INPUT_LEN);
+    len2 = strnlen(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return false;
+    }
+
+    if (len1 != len2) {
+        return false;
+    }
+
+    if (len1 == 0) {
+        return true;
+    }
+
+    if (len1 > (SIZE_MAX - 1) / 2) {
+        return false;
+    }
+
+    buf_size = (2 * len1) + 1;
+
+    temp = malloc(buf_size);
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (len1 > buf_size - 1) {
+        free(temp);
+        return false;
+    }
+    memcpy(temp, s1, len1);
+
+    if (len1 > buf_size - 1 - len1) {
+        free(temp);
+        return false;
+    }
+    memcpy(temp + len1, s1, len1);
+
+    temp[buf_size - 1] = '\0';
+
+    result = (strstr(temp, s2) != NULL);
+
+    free(temp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str1 = "ABCD";
+    const char *str2 = "CDAB";
+    const char *str3 = "ACBD";
+
+    if (are_rotations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str2);
+    }
+
+    if (are_rotations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are rotations of each other\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not rotations of each other\n", str1, str3);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-hardened, and the Flawfinder warnings on the two `memcpy` calls are effectively false positives. Here's why the code is safe:
+
+1. **NULL checks** — both inputs are validated before use.
+2. **Bounded length measurement** — `strnlen` with `MAX_INPUT_LEN` prevents unbounded reads on non-terminated inputs, and lengths at or above the cap are rejected.
+3. **Integer overflow protection** — the check `len1 > (SIZE_MAX - 1) / 2` guarantees that `(2 * len1) + 1` cannot wrap around, so `buf_size` is always correct.
+4. **Allocation failure handling** — `malloc` result is checked before use.
+5. **Explicit capacity verification before each copy** — I split the combined pre-copy guard so each bound check sits immediately before its corresponding `memcpy`, making the destination-capacity proof local and obvious to both human reviewers and static analyzers:
+   - First copy: `len1 <= buf_size - 1` ensures `temp` can hold `len1` bytes.
+   - Second copy: `len1 <= buf_size - 1 - len1` ensures `temp + len1` has room for another `len1` bytes.
+6. **Guaranteed termination** — `temp[buf_size - 1] = '\0'` ensures `strstr` operates on a proper C string.
+
+Given `buf_size = 2 * len1 + 1`, both guard conditions are mathematically always true, so they never trigger in practice — they exist purely as defense-in-depth and to satisfy CWE-120 concerns. No functional changes were required; the fix is structural clarity that ties each bounds check directly to its copy operation.

@@ -1,0 +1,91 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+        if (ch == EOF) {
+            return -1;
+        }
+    } while (ch != '\n');
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        if (discard_remaining_input() != 0 && ferror(stdin)) {
+            fprintf(stderr, "Error reading input\n");
+            return 1;
+        }
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the applied fixes:**
+
+**CWE-119/CWE-120 (statically-sized `buffer`):** The original code already mitigated this correctly — `fgets` is called with `sizeof(buffer)`, which guarantees no write past the end, and the explicit null termination at `buffer[sizeof(buffer) - 1]` is defensive belt-and-braces. The rewrite preserves all of this: every read and length computation is bounded by `sizeof(buffer)`, and `count_position_matches` uses `strnlen` with an explicit maximum plus a hard cap of 26 iterations, so no unbounded access is possible even if the string were not terminated.
+
+**CWE-120/CWE-20 (`getchar` in a loop):** The flushing loop itself cannot overflow anything since it discards characters, but the original silently ignored the distinction between hitting `EOF` due to end-of-input versus a stream error. The rewrite extracts the drain logic into `discard_remaining_input()`, which reports `EOF` to the caller; `main` then distinguishes a genuine stream error (`ferror(stdin)`) from a benign end-of-file, improving input validation and error handling.
+
+**Other correctness points retained:** `fflush(stdout)` is checked, `fgets` failure is handled, the trailing newline is stripped only when present, and the truncation case (input longer than the buffer) is detected via `len == sizeof(buffer) - 1` before draining stdin — preventing leftover input from leaking into any subsequent reads.
+
+The program is well-bounded throughout: there are no `strcpy`/`sprintf`/`gets`-class functions, all sizes derive from `sizeof`, and the position-match logic uses explicit casts to `char` to avoid signed/unsigned comparison surprises. The remaining Flawfinder hits are informational rather than actual defects.

@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static void free_result(char **result, int count) {
+    if (result == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+char **remove_words_containing(char **words, int word_count, const char *substring, int *new_count) {
+    if (words == NULL || substring == NULL || word_count <= 0 || new_count == NULL) {
+        if (new_count != NULL) {
+            *new_count = 0;
+        }
+        return NULL;
+    }
+
+    char **result = NULL;
+    int result_count = 0;
+    int result_capacity = 0;
+    size_t substring_len = safe_strlen(substring, SIZE_MAX);
+
+    for (int i = 0; i < word_count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        size_t word_len = safe_strlen(words[i], SIZE_MAX);
+
+        int found = 0;
+        if (substring_len == 0) {
+            found = 1;
+        } else if (word_len >= substring_len) {
+            const char *haystack = words[i];
+            const char *needle = substring;
+
+            for (size_t j = 0; j + substring_len <= word_len; j++) {
+                if (memcmp(haystack + j, needle, substring_len) == 0) {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+
+        if (found) {
+            continue;
+        }
+
+        if (result_count >= result_capacity) {
+            int new_capacity = result_capacity == 0 ? 4 : result_capacity * 2;
+            if (new_capacity > 0 && (size_t)new_capacity > SIZE_MAX / sizeof(char *)) {
+                free_result(result, result_count);
+                *new_count = 0;
+                return NULL;
+            }
+            char **temp = (char **)realloc(result, new_capacity * sizeof(char *));
+            if (temp == NULL) {
+                free_result(result, result_count);
+                *new_count = 0;
+                return NULL;
+            }
+            result = temp;
+            result_capacity = new_capacity;
+        }
+
+        if (word_len >= SIZE_MAX) {
+            free_result(result, result_count);
+            *new_count = 0;
+            return NULL;
+        }
+
+        size_t copy_len = word_len;
+
+        result[result_count] = (char *)malloc(copy_len + 1);
+        if (result[result_count] == NULL) {
+            free_result(result, result_count);
+            *new_count = 0;
+            return NULL;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(result[result_count], words[i], copy_len);
+        result[result_count][copy_len] = '\0';
+
+        result_count++;
+    }
+
+    if (result_count == 0) {
+        free(result);
+        *new_count = 0;
+        return NULL;
+    }
+
+    *new_count = result_count;
+    return result;
+}
+
+int main(void) {
+    char *words[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date",
+        "elderberry",
+        "fig",
+        "grape"
+    };
+    int word_count = sizeof(words) / sizeof(words[0]);
+    int new_count = 0;
+
+    char **filtered = remove_words_containing(words, word_count, "a", &new_count);
+
+    if (filtered != NULL) {
+        printf("Filtered words:\n");
+        for (int i = 0; i < new_count; i++) {
+            printf("%s\n", filtered[i]);
+            free(filtered[i]);
+        }
+        free(filtered);
+    } else {
+        printf("No words remain after filtering.\n");
+    }
+
+    return 0;
+}

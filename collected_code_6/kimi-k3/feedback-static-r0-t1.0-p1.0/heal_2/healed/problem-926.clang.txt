@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:176:13: error: call to undeclared function 'strtok_r'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  176 |     token = strtok_r(line, " \t\n\r", &saveptr);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:176:11: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+  176 |     token = strtok_r(line, " \t\n\r", &saveptr);
+      |           ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:183:11: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+  183 |     token = strtok_r(NULL, " \t\n\r", &saveptr);
+      |           ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:190:11: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+  190 |     token = strtok_r(NULL, " \t\n\r", &saveptr);
+      |           ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4 errors generated.

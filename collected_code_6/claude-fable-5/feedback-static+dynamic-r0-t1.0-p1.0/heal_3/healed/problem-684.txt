@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT 1024
+
+static unsigned long long count_char_in_repeated_string(const char *str,
+                                                        size_t str_len,
+                                                        char target,
+                                                        unsigned long long total_length)
+{
+    unsigned long long count_in_one;
+    unsigned long long full_repeats;
+    unsigned long long remainder;
+    unsigned long long total_count;
+    size_t i;
+
+    if (str == NULL || str_len == 0U || total_length == 0ULL) {
+        return 0ULL;
+    }
+
+    count_in_one = 0ULL;
+    for (i = 0U; i < str_len; i++) {
+        if (str[i] == target) {
+            count_in_one++;
+        }
+    }
+
+    full_repeats = total_length / (unsigned long long)str_len;
+    remainder = total_length % (unsigned long long)str_len;
+
+    if (count_in_one != 0ULL && full_repeats > ULLONG_MAX / count_in_one) {
+        return ULLONG_MAX;
+    }
+
+    total_count = full_repeats * count_in_one;
+
+    for (i = 0U; i < (size_t)remainder && i < str_len; i++) {
+        if (str[i] == target) {
+            if (total_count == ULLONG_MAX) {
+                return ULLONG_MAX;
+            }
+            total_count++;
+        }
+    }
+
+    return total_count;
+}
+
+static int discard_rest_of_line(void)
+{
+    int ch;
+    size_t guard;
+
+    guard = 0U;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        guard++;
+        if (guard > (size_t)INT_MAX) {
+            return -1;
+        }
+    }
+    if (ch == EOF && guard == 0U) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    char target;
+    unsigned long long total_length;
+    unsigned long long result;
+    size_t len;
+    int ch;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter the string: ");
+    fflush(stdout);
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading string input\n");
+        return EXIT_FAILURE;
+    }
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+        len--;
+    } else if (len == sizeof(buffer) - 1U) {
+        if (discard_rest_of_line() != 0) {
+            fprintf(stderr, "Input line too long\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (len == 0U) {
+        fprintf(stderr, "Empty string is not allowed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the character to count: ");
+    fflush(stdout);
+    ch = getchar();
+    if (ch == EOF) {
+        fprintf(stderr, "Error reading character input\n");
+        return EXIT_FAILURE;
+    }
+    target = (char)ch;
+
+    if (ch != '\n') {
+        if (discard_rest_of_line() != 0) {
+            fprintf(stderr, "Error reading character input\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Enter the total length of the repeated string: ");
+    fflush(stdout);
+    if (scanf("%llu", &total_length) != 1) {
+        fprintf(stderr, "Error reading length input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_char_in_repeated_string(buffer, len, target, total_length);
+
+    printf("The character '%c' occurs %llu times in the first %llu characters\n",
+           target, result, total_length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened, and the flawfinder findings were essentially false positives that had been mitigated:
+
+1. **`char buffer[MAX_INPUT]` (CWE-119/CWE-120):** Safe because `fgets` is called with `sizeof(buffer)`, the buffer is explicitly null-terminated afterward, and `strnlen` (rather than `strlen`) bounds the length scan. Overlong lines are detected via the `len == sizeof(buffer) - 1U` check and drained with `discard_rest_of_line()`.
+
+2. **`getchar` in loops (CWE-120/CWE-20):** `getchar` returns an `int` and never writes to a buffer, so no overflow is possible. The `guard` counter additionally protects against unbounded looping on pathological input streams.
+
+3. **Integer overflow protection:** The multiplication `full_repeats * count_in_one` is guarded with an `ULLONG_MAX / count_in_one` check, and the increment path saturates at `ULLONG_MAX` rather than wrapping.
+
+**Changes made in the rewrite:**
+
+- Added `i < str_len` to the remainder loop condition as defense-in-depth. Although `remainder` is mathematically always less than `str_len`, the explicit bound makes the invariant enforced rather than assumed, satisfying the CWE-119 bounds-checking recommendation.
+- Added `fflush(stdout)` after each prompt so prompts reliably appear before blocking reads when stdout is not line-buffered (e.g., piped output).
+- All original mitigations (null-termination, `strnlen`, input draining, overflow saturation, EOF handling) were preserved.

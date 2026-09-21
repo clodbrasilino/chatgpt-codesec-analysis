@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            return;
+        }
+        i++;
+    }
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t length;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    strip_newline(buffer);
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already largely safe. The Flawfinder warning about `char buffer[256]` (CWE-119/CWE-120) is a low-risk, informational flag — it triggers on *any* statically-sized array. The original code already mitigated the actual risk correctly by:
+
+1. **Using `fgets(buffer, sizeof(buffer), stdin)`** — this bounds the read to the buffer size and guarantees null-termination on success, preventing buffer overflow (unlike `gets()` or unbounded `scanf("%s")`).
+2. **Checking the return value of `fgets`** — handles EOF/error conditions gracefully.
+3. **Null-checking in `count_characters`** — defensive against NULL pointers.
+
+Improvements made in the rewrite:
+
+- **Explicit defensive null-termination** (`buffer[sizeof(buffer) - 1] = '\0'`) as a belt-and-braces guarantee before any string operations.
+- **Extracted newline stripping into `strip_newline()`** — this removes the redundant double call to `count_characters` (the original computed the length once just to find the newline, then recomputed it). The new version scans the string only as far as needed, in a single pass, and the length is computed exactly once.
+- **Consistent bounds discipline** — all string traversal stops at `'\0'`, which is now guaranteed to exist within the buffer.
+
+The code remains C89/C99-portable (aside from `%zu`, which requires C99) and contains no unbounded copies, no format-string vulnerabilities, and no unchecked I/O.

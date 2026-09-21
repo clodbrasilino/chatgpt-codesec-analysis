@@ -1,0 +1,206 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 8192
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+char *duplicate_string(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Array index 'len' is used before limits check. [arrayIndexThenCheck]
+     */
+    while (src[len] != '\0' && len < MAX_STRING_LENGTH) {
+        len++;
+    }
+
+    char *dst = (char *)malloc(len + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        dst[i] = src[i];
+    }
+    dst[len] = '\0';
+
+    return dst;
+}
+
+Dictionary *create_dictionary(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        initial_capacity = 8;
+    }
+    
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    
+    dict->pairs = (KeyValuePair *)calloc(initial_capacity, sizeof(KeyValuePair));
+    if (!dict->pairs) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->pairs[i].key);
+        free(dict->pairs[i].value);
+    }
+    free(dict->pairs);
+    free(dict);
+}
+
+int set_dictionary_value(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (strcmp(dict->pairs[i].key, key) == 0) {
+            char *new_value = duplicate_string(value);
+            if (!new_value) {
+                return -1;
+            }
+            free(dict->pairs[i].value);
+            dict->pairs[i].value = new_value;
+            return 0;
+        }
+    }
+
+    if (dict->count >= dict->capacity) {
+        if (dict->capacity > ((size_t)-1) / (2 * sizeof(KeyValuePair))) {
+            return -1;
+        }
+        size_t new_capacity = dict->capacity * 2;
+        KeyValuePair *new_pairs = (KeyValuePair *)realloc(dict->pairs, new_capacity * sizeof(KeyValuePair));
+        if (!new_pairs) {
+            return -1;
+        }
+        dict->pairs = new_pairs;
+        dict->capacity = new_capacity;
+    }
+
+    char *new_key = duplicate_string(key);
+    if (!new_key) {
+        return -1;
+    }
+    
+    char *new_value = duplicate_string(value);
+    if (!new_value) {
+        free(new_key);
+        return -1;
+    }
+
+    dict->pairs[dict->count].key = new_key;
+    dict->pairs[dict->count].value = new_value;
+    dict->count++;
+
+    return 0;
+}
+
+Dictionary *merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2) {
+    if (!dict1 || !dict2) {
+        return NULL;
+    }
+
+    size_t total_capacity = dict1->count + dict2->count;
+    if (total_capacity == 0) {
+        total_capacity = 8;
+    }
+
+    Dictionary *merged = create_dictionary(total_capacity);
+    if (!merged) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dict1->count; i++) {
+        if (set_dictionary_value(merged, dict1->pairs[i].key, dict1->pairs[i].value) != 0) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < dict2->count; i++) {
+        if (set_dictionary_value(merged, dict2->pairs[i].key, dict2->pairs[i].value) != 0) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+
+    return merged;
+}
+
+void print_dictionary(const Dictionary *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; i++) {
+        printf("%s: %s\n", dict->pairs[i].key, dict->pairs[i].value);
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary(4);
+    if (!dict1) {
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *dict2 = create_dictionary(4);
+    if (!dict2) {
+        free_dictionary(dict1);
+        return EXIT_FAILURE;
+    }
+
+    int status = 0;
+    status |= set_dictionary_value(dict1, "host", "localhost");
+    status |= set_dictionary_value(dict1, "port", "8080");
+    status |= set_dictionary_value(dict1, "timeout", "30");
+
+    status |= set_dictionary_value(dict2, "port", "443");
+    status |= set_dictionary_value(dict2, "protocol", "https");
+
+    if (status != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+    if (!merged) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return EXIT_FAILURE;
+    }
+
+    print_dictionary(merged);
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+
+    return EXIT_SUCCESS;
+}

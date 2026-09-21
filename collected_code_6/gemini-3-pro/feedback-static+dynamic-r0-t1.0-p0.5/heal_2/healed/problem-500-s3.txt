@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    size_t length;
+    struct Node *next;
+} Node;
+
+char* concatenate_list(Node *head) {
+    if (head == NULL) {
+        char *empty_str = malloc(1);
+        if (empty_str != NULL) {
+            empty_str[0] = '\0';
+        }
+        return empty_str;
+    }
+
+    size_t total_length = 0;
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data != NULL) {
+            total_length += current->length;
+        }
+        current = current->next;
+    }
+
+    char *result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *dest = result;
+    current = head;
+    while (current != NULL) {
+        if (current->data != NULL) {
+            for (size_t i = 0; i < current->length; i++) {
+                *dest = current->data[i];
+                dest++;
+            }
+        }
+        current = current->next;
+    }
+    *dest = '\0';
+
+    return result;
+}
+
+Node* create_node(const char *data) {
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    
+    if (data != NULL) {
+        size_t len = 0;
+        while (data[len] != '\0') {
+            len++;
+        }
+        new_node->length = len;
+        new_node->data = malloc(len + 1);
+        if (new_node->data == NULL) {
+            free(new_node);
+            return NULL;
+        }
+        for (size_t i = 0; i < len; i++) {
+            new_node->data[i] = data[i];
+        }
+        new_node->data[len] = '\0';
+    } else {
+        new_node->data = NULL;
+        new_node->length = 0;
+    }
+    
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *head = create_node("Hello");
+    if (head == NULL) return 1;
+
+    head->next = create_node(", ");
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    head->next->next = create_node("World");
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    head->next->next->next = create_node("!");
+    if (head->next->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    char *concatenated = concatenate_list(head);
+    if (concatenated != NULL) {
+        printf("%s\n", concatenated);
+        free(concatenated);
+    }
+
+    free_list(head);
+    return 0;
+}

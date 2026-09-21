@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+char *remove_whitespaces(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return NULL;
+    }
+
+    char *read = str;
+    char *write = str;
+    const char *end = str + size - 1;
+
+    while (read <= end && *read != '\0') {
+        if (!isspace((unsigned char)*read)) {
+            if (write >= end) {
+                break;
+            }
+            *write = *read;
+            write++;
+        }
+        read++;
+    }
+
+    if (write <= end) {
+        *write = '\0';
+    } else {
+        *end = '\0';
+    }
+
+    return str;
+}
+
+int main(void) {
+    char str1[] = "  Hello   World  ";
+    printf("Original: \"%s\"\n", str1);
+    remove_whitespaces(str1, sizeof(str1));
+    printf("Modified: \"%s\"\n", str1);
+
+    char str2[] = "\tTab\tand\nNewline\r\n";
+    printf("Original: \"%s\"\n", str2);
+    remove_whitespaces(str2, sizeof(str2));
+    printf("Modified: \"%s\"\n", str2);
+
+    char str3[] = "NoWhitespace";
+    printf("Original: \"%s\"\n", str3);
+    remove_whitespaces(str3, sizeof(str3));
+    printf("Modified: \"%s\"\n", str3);
+
+    return 0;
+}

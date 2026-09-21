@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define KEY_MAX 64
+
+typedef struct {
+    char key[KEY_MAX];
+    int value;
+} CounterEntry;
+
+static int set_entry(CounterEntry *entry, const char *key, int value)
+{
+    int written;
+
+    if (entry == NULL || key == NULL) {
+        return -1;
+    }
+
+    written = snprintf(entry->key, sizeof(entry->key), "%s", key);
+    if (written < 0 || (size_t)written >= sizeof(entry->key)) {
+        return -1;
+    }
+
+    entry->value = value;
+    return 0;
+}
+
+static int compare_by_value_desc(const void *a, const void *b)
+{
+    const CounterEntry *ea = (const CounterEntry *)a;
+    const CounterEntry *eb = (const CounterEntry *)b;
+
+    if (ea->value < eb->value) {
+        return 1;
+    }
+    if (ea->value > eb->value) {
+        return -1;
+    }
+    return strcmp(ea->key, eb->key);
+}
+
+static int sort_counter_by_value(CounterEntry *entries, size_t count)
+{
+    if (entries == NULL) {
+        return -1;
+    }
+    if (count == 0) {
+        return 0;
+    }
+    qsort(entries, count, sizeof(CounterEntry), compare_by_value_desc);
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 5;
+    size_t i;
+    CounterEntry *entries;
+
+    entries = calloc(count, sizeof(CounterEntry));
+    if (entries == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (set_entry(&entries[0], "apple", 3) != 0 ||
+        set_entry(&entries[1], "banana", 7) != 0 ||
+        set_entry(&entries[2], "cherry", 1) != 0 ||
+        set_entry(&entries[3], "date", 7) != 0 ||
+        set_entry(&entries[4], "elderberry", 5) != 0) {
+        fprintf(stderr, "Failed to initialize entries\n");
+        free(entries);
+        return EXIT_FAILURE;
+    }
+
+    if (sort_counter_by_value(entries, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free(entries);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%s: %d\n", entries[i].key, entries[i].value) < 0) {
+            free(entries);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(entries);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The only weakness flagged was the statically-sized `char key[KEY_MAX]` buffer (CWE-119/CWE-120). The original code already mitigates this correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded write with `snprintf`**: `set_entry` uses `snprintf(entry->key, sizeof(entry->key), "%s", key)` rather than `strcpy`/`sprintf`, so the destination buffer can never overflow — `snprintf` truncates and NUL-terminates within `sizeof(entry->key)`.
+
+2. **Truncation detection**: The return value is checked. If `written < 0` (encoding error) or `written >= sizeof(entry->key)` (the key would have been truncated), the function fails explicitly with `-1` instead of silently storing a truncated key.
+
+3. **NULL-pointer guards**: Both `set_entry` and `sort_counter_by_value` validate their pointer arguments before use.
+
+4. **Zero-initialized allocation**: `calloc` ensures the buffers start zeroed, so `key` is always NUL-terminated even before initialization.
+
+5. **Consistent cleanup**: Every error path frees the heap allocation, avoiding leaks, and `printf`'s return value is checked for output errors.
+
+No further changes were required — the identified risk is already fully addressed by the bounds-checked, length-limited write and its verification.

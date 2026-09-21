@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCH_LEN 256
+#define ERRBUF_LEN 128
+
+static int find_sequences(const char *input);
+static void report_regex_error(int code, const regex_t *regex, const char *context);
+
+static void report_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char *errbuf;
+    size_t needed;
+
+    needed = regerror(code, regex, NULL, 0);
+    if (needed == 0 || needed > ERRBUF_LEN) {
+        needed = ERRBUF_LEN;
+    }
+
+    errbuf = calloc(needed, sizeof(char));
+    if (errbuf == NULL) {
+        fprintf(stderr, "Error: %s: unable to allocate error buffer\n", context);
+        return;
+    }
+
+    regerror(code, regex, errbuf, needed);
+    errbuf[needed - 1] = '\0';
+    fprintf(stderr, "Error: %s: %s\n", context, errbuf);
+    free(errbuf);
+}
+
+static int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    char *buffer;
+    int ret;
+    int found;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "failed to compile regex");
+        return -1;
+    }
+
+    buffer = calloc(MAX_MATCH_LEN, sizeof(char));
+    if (buffer == NULL) {
+        fprintf(stderr, "Error: unable to allocate match buffer\n");
+        regfree(&regex);
+        return -1;
+    }
+
+    found = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regex execution failed");
+            free(buffer);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            fprintf(stderr, "Error: invalid match offsets\n");
+            free(buffer);
+            regfree(&regex);
+            return -1;
+        }
+
+        {
+            size_t length = (size_t)(match.rm_eo - match.rm_so);
+            size_t max_len = (size_t)MAX_MATCH_LEN - 1;
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t remaining = strlen(cursor);
+
+            if ((size_t)match.rm_so > remaining) {
+                fprintf(stderr, "Error: match offset out of range\n");
+                free(buffer);
+                regfree(&regex);
+                return -1;
+            }
+
+            if (length > remaining - (size_t)match.rm_so) {
+                length = remaining - (size_t)match.rm_so;
+            }
+
+            if (length > max_len) {
+                length = max_len;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(buffer, cursor + match.rm_so, length);
+            buffer[length] = '\0';
+        }
+
+        printf("Found match: %s\n", buffer);
+        found++;
+
+        if (match.rm_eo == 0) {
+            cursor++;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    free(buffer);
+    regfree(&regex);
+
+    if (found == 0) {
+        printf("No matches found.\n");
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *test_string = "HelloWorld this Is a TestString with Mixed caseWords";
+    int result;
+
+    printf("Input: %s\n", test_string);
+
+    result = find_sequences(test_string);
+    if (result < 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total matches: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

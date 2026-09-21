@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+
+static int read_size(size_t *value)
+{
+    char buffer[128];
+    char *end;
+    uintmax_t parsed;
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return 0;
+    }
+
+    errno = 0;
+    parsed = strtoumax(buffer, &end, 10);
+
+    if (end == buffer || errno == ERANGE || parsed > SIZE_MAX) {
+        return 0;
+    }
+
+    while (*end == ' ' || *end == '\t' || *end == '\r' || *end == '\n') {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return 0;
+    }
+
+    *value = (size_t)parsed;
+    return 1;
+}
+
+static int read_int64(int64_t *value)
+{
+    return scanf("%" SCNd64, value) == 1;
+}
+
+static int64_t max_non_adjacent_sum(const int64_t *top,
+                                    const int64_t *bottom,
+                                    size_t n)
+{
+    int64_t previous = 0;
+    int64_t previous_previous = 0;
+
+    for (size_t i = 0; i < n; ++i) {
+        int64_t column_max = top[i] > bottom[i] ? top[i] : bottom[i];
+        int64_t include = previous_previous;
+
+        if (column_max > 0) {
+            if (include > INT64_MAX - column_max) {
+                include = INT64_MAX;
+            } else {
+                include += column_max;
+            }
+        }
+
+        int64_t current = previous > include ? previous : include;
+        previous_previous = previous;
+        previous = current;
+    }
+
+    return previous;
+}
+
+int main(void)
+{
+    size_t n;
+    int64_t *top = NULL;
+    int64_t *bottom = NULL;
+
+    if (!read_size(&n) || n > SIZE_MAX / sizeof(*top)) {
+        return EXIT_FAILURE;
+    }
+
+    if (n > 0) {
+        top = malloc(n * sizeof(*top));
+        bottom = malloc(n * sizeof(*bottom));
+
+        if (top == NULL || bottom == NULL) {
+            free(top);
+            free(bottom);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        if (!read_int64(&top[i])) {
+            free(top);
+            free(bottom);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        if (!read_int64(&bottom[i])) {
+            free(top);
+            free(bottom);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%" PRId64 "\n", max_non_adjacent_sum(top, bottom, n));
+
+    free(top);
+    free(bottom);
+    return EXIT_SUCCESS;
+}

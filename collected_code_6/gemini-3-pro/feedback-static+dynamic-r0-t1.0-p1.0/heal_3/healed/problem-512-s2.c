@@ -1,0 +1,240 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    VAL_INT,
+    VAL_STR,
+    VAL_TUPLE
+} ValType;
+
+struct Value;
+
+typedef struct {
+    struct Value **elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+typedef struct Value {
+    ValType type;
+    union {
+        int i;
+        char *s;
+        Tuple t;
+    } data;
+} Value;
+
+typedef struct {
+    Value *val;
+    size_t count;
+} FreqEntry;
+
+typedef struct {
+    FreqEntry *entries;
+    size_t size;
+    size_t capacity;
+} FreqMap;
+
+char *duplicate_string(const char *s, size_t max_len) {
+    if (!s) return NULL;
+    size_t len = strnlen(s, max_len);
+    char *dup = malloc(len + 1);
+    if (!dup) return NULL;
+    
+    if (len > 0) {
+        memcpy(dup, s, len);
+    }
+    dup[len] = '\0';
+    return dup;
+}
+
+Value *create_int(int i) {
+    Value *v = malloc(sizeof(Value));
+    if (!v) return NULL;
+    v->type = VAL_INT;
+    v->data.i = i;
+    return v;
+}
+
+Value *create_str(const char *s) {
+    Value *v = malloc(sizeof(Value));
+    if (!v) return NULL;
+    v->type = VAL_STR;
+    v->data.s = duplicate_string(s, 1024 * 1024);
+    if (!v->data.s) {
+        free(v);
+        return NULL;
+    }
+    return v;
+}
+
+Value *create_tuple(size_t capacity) {
+    Value *v = malloc(sizeof(Value));
+    if (!v) return NULL;
+    v->type = VAL_TUPLE;
+    v->data.t.count = 0;
+    v->data.t.capacity = capacity;
+    v->data.t.elements = capacity > 0 ? malloc(capacity * sizeof(Value *)) : NULL;
+    if (capacity > 0 && !v->data.t.elements) {
+        free(v);
+        return NULL;
+    }
+    return v;
+}
+
+int add_to_tuple(Value *tuple, Value *val) {
+    if (!tuple || tuple->type != VAL_TUPLE || !val) return -1;
+    if (tuple->data.t.count >= tuple->data.t.capacity) {
+        size_t new_cap = tuple->data.t.capacity == 0 ? 4 : tuple->data.t.capacity * 2;
+        Value **new_elems = realloc(tuple->data.t.elements, new_cap * sizeof(Value *));
+        if (!new_elems) return -1;
+        tuple->data.t.elements = new_elems;
+        tuple->data.t.capacity = new_cap;
+    }
+    tuple->data.t.elements[tuple->data.t.count++] = val;
+    return 0;
+}
+
+void free_value(Value *v) {
+    if (!v) return;
+    if (v->type == VAL_STR) {
+        free(v->data.s);
+    } else if (v->type == VAL_TUPLE) {
+        for (size_t i = 0; i < v->data.t.count; i++) {
+            free_value(v->data.t.elements[i]);
+        }
+        free(v->data.t.elements);
+    }
+    free(v);
+}
+
+FreqMap *create_freq_map(void) {
+    FreqMap *fm = malloc(sizeof(FreqMap));
+    if (!fm) return NULL;
+    fm->size = 0;
+    fm->capacity = 16;
+    fm->entries = malloc(fm->capacity * sizeof(FreqEntry));
+    if (!fm->entries) {
+        free(fm);
+        return NULL;
+    }
+    return fm;
+}
+
+void free_freq_map(FreqMap *fm) {
+    if (!fm) return;
+    free(fm->entries);
+    free(fm);
+}
+
+int values_equal(const Value *a, const Value *b) {
+    if (!a || !b) return 0;
+    if (a->type != b->type) return 0;
+    if (a->type == VAL_INT) return a->data.i == b->data.i;
+    if (a->type == VAL_STR) return strcmp(a->data.s, b->data.s) == 0;
+    return 0; 
+}
+
+int increment_freq(FreqMap *fm, Value *v) {
+    if (!fm || !v || v->type == VAL_TUPLE) return -1;
+    for (size_t i = 0; i < fm->size; i++) {
+        if (values_equal(fm->entries[i].val, v)) {
+            fm->entries[i].count++;
+            return 0;
+        }
+    }
+    if (fm->size >= fm->capacity) {
+        size_t new_cap = fm->capacity * 2;
+        FreqEntry *new_entries = realloc(fm->entries, new_cap * sizeof(FreqEntry));
+        if (!new_entries) return -1;
+        fm->entries = new_entries;
+        fm->capacity = new_cap;
+    }
+    fm->entries[fm->size].val = v;
+    fm->entries[fm->size].count = 1;
+    fm->size++;
+    return 0;
+}
+
+int count_frequencies(Value *v, FreqMap *fm) {
+    if (!v || !fm) return -1;
+    if (v->type == VAL_TUPLE) {
+        for (size_t i = 0; i < v->data.t.count; i++) {
+            if (count_frequencies(v->data.t.elements[i], fm) != 0) {
+                return -1;
+            }
+        }
+    } else {
+        if (increment_freq(fm, v) != 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+void print_freq_map(const FreqMap *fm) {
+    if (!fm) return;
+    for (size_t i = 0; i < fm->size; i++) {
+        if (fm->entries[i].val->type == VAL_INT) {
+            printf("Integer %d : %zu\n", fm->entries[i].val->data.i, fm->entries[i].count);
+        } else if (fm->entries[i].val->type == VAL_STR) {
+            printf("String \"%s\" : %zu\n", fm->entries[i].val->data.s, fm->entries[i].count);
+        }
+    }
+}
+
+int main(void) {
+    Value *root = create_tuple(3);
+    if (!root) return EXIT_FAILURE;
+
+    Value *val1 = create_int(42);
+    Value *val2 = create_str("hello");
+    Value *val3 = create_int(42);
+    
+    Value *inner_tuple = create_tuple(2);
+    if (!val1 || !val2 || !val3 || !inner_tuple) {
+        free_value(root);
+        free_value(val1);
+        free_value(val2);
+        free_value(val3);
+        free_value(inner_tuple);
+        return EXIT_FAILURE;
+    }
+
+    Value *val4 = create_str("hello");
+    Value *val5 = create_int(99);
+
+    if (!val4 || !val5 || add_to_tuple(inner_tuple, val4) != 0 || add_to_tuple(inner_tuple, val5) != 0) {
+        free_value(val4);
+        free_value(val5);
+        free_value(inner_tuple);
+        free_value(val1);
+        free_value(val2);
+        free_value(val3);
+        free_value(root);
+        return EXIT_FAILURE;
+    }
+
+    if (add_to_tuple(root, val1) != 0 || add_to_tuple(root, val2) != 0 || add_to_tuple(root, val3) != 0 || add_to_tuple(root, inner_tuple) != 0) {
+        free_value(root);
+        return EXIT_FAILURE;
+    }
+
+    FreqMap *fm = create_freq_map();
+    if (!fm) {
+        free_value(root);
+        return EXIT_FAILURE;
+    }
+
+    if (count_frequencies(root, fm) == 0) {
+        print_freq_map(fm);
+    } else {
+        fprintf(stderr, "Error counting frequencies.\n");
+    }
+
+    free_freq_map(fm);
+    free_value(root);
+
+    return EXIT_SUCCESS;
+}

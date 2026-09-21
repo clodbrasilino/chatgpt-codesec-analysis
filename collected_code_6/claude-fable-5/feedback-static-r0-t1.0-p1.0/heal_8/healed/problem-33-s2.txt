@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define BINARY_BUFFER_SIZE (sizeof(unsigned int) * CHAR_BIT + 1U)
+#define INPUT_BUFFER_SIZE 64U
+
+static int decimal_to_binary(unsigned int decimal, char *buffer, size_t buffer_size)
+{
+    size_t index = 0;
+
+    if (buffer == NULL || buffer_size < 2U) {
+        return -1;
+    }
+
+    memset(buffer, 0, buffer_size);
+
+    if (decimal == 0U) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return 0;
+    }
+
+    while (decimal > 0U) {
+        if (index >= buffer_size - 1U) {
+            return -1;
+        }
+        buffer[index] = (char)('0' + (decimal % 2U));
+        index++;
+        decimal /= 2U;
+    }
+    buffer[index] = '\0';
+
+    for (size_t i = 0, j = index - 1U; i < j; i++, j--) {
+        char temp = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j] = temp;
+    }
+
+    return 0;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+static int read_unsigned(unsigned int *value)
+{
+    char input[INPUT_BUFFER_SIZE];
+    char *endptr = NULL;
+    unsigned long parsed;
+
+    if (value == NULL) {
+        return -1;
+    }
+
+    memset(input, 0, sizeof(input));
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        return -1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    if (strchr(input, '\n') == NULL && !feof(stdin)) {
+        discard_remaining_input();
+        return -1;
+    }
+
+    if (strchr(input, '-') != NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtoul(input, &endptr, 10);
+
+    if (endptr == input) {
+        return -1;
+    }
+
+    while (*endptr != '\0') {
+        if (!isspace((unsigned char)*endptr)) {
+            return -1;
+        }
+        endptr++;
+    }
+
+    if (errno == ERANGE || parsed > (unsigned long)UINT_MAX) {
+        return -1;
+    }
+
+    *value = (unsigned int)parsed;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    char binary[BINARY_BUFFER_SIZE];
+
+    memset(binary, 0, sizeof(binary));
+
+    printf("Enter a non-negative decimal number: ");
+    fflush(stdout);
+
+    if (read_unsigned(&number) != 0) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(number, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20)** — This is a false positive. The `discard_remaining_input()` function reads and discards characters one at a time without storing them into any buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed input streams.
+
+2. **Statically-sized array `input[INPUT_BUFFER_SIZE]` (CWE-119/CWE-120)** — Mitigated. Input is read with `fgets(input, (int)sizeof(input), stdin)`, which enforces the bound. A defensive `input[sizeof(input) - 1U] = '\0'` guarantees termination, and oversized lines (no newline found and not EOF) are detected, drained via `discard_remaining_input()`, and rejected rather than silently truncated.
+
+3. **Statically-sized array `binary[BINARY_BUFFER_SIZE]` (CWE-119/CWE-120)** — Mitigated. The buffer is sized from `sizeof(unsigned int) * CHAR_BIT + 1U`, which is exactly enough for the maximum number of binary digits plus the null terminator on any platform. `decimal_to_binary()` receives the buffer size explicitly, validates it (`buffer_size < 2U`), and bounds-checks every write (`index >= buffer_size - 1U`).
+
+**Additional robustness already present:**
+- `strtoul` parsing checks `errno == ERANGE`, rejects trailing non-whitespace garbage, rejects negative input via the `'-'` scan (since `strtoul` silently accepts negatives), and range-checks against `UINT_MAX` for platforms where `unsigned long` is wider than `unsigned int`.
+- All pointer parameters are null-checked.
+- Unsigned arithmetic throughout avoids signed overflow (undefined behavior).
+
+The code required no functional changes — the Flawfinder hits are risk-level 1–2 informational findings whose recommended mitigations (bounds checking, length-limited reads, explicit buffer sizing) were already correctly implemented. Only the annotation comments were removed as requested.

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_non_alnum(const char *input, size_t input_len) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret;
+    char *result = malloc(input_len + 1);
+    
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *temp = malloc(input_len + 1);
+    if (temp == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[^a-zA-Z0-9]+", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        free(temp);
+        return NULL;
+    }
+
+    size_t result_idx = 0;
+    const char *ptr = input;
+    size_t remaining_len = input_len;
+    regmatch_t match;
+
+    while (remaining_len > 0) {
+        for (size_t i = 0; i < remaining_len; i++) {
+            temp[i] = ptr[i];
+        }
+        temp[remaining_len] = '\0';
+
+        ret = regexec(&regex, temp, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            for (size_t i = 0; i < remaining_len; i++) {
+                result[result_idx + i] = ptr[i];
+            }
+            result_idx += remaining_len;
+            break;
+        }
+
+        size_t copy_len = match.rm_so;
+        if (copy_len > 0) {
+            for (size_t i = 0; i < copy_len; i++) {
+                result[result_idx + i] = ptr[i];
+            }
+            result_idx += copy_len;
+        }
+
+        ptr += match.rm_eo;
+        remaining_len = input_len - (ptr - input);
+    }
+
+    result[result_idx] = '\0';
+    regfree(&regex);
+    free(temp);
+
+    return result;
+}
+
+int main(void) {
+    const char *test = "Hello, World! 123 @#$%";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(test);
+    char *cleaned = remove_non_alnum(test, len);
+    
+    if (cleaned != NULL) {
+        printf("%s\n", cleaned);
+        free(cleaned);
+    }
+    
+    return 0;
+}

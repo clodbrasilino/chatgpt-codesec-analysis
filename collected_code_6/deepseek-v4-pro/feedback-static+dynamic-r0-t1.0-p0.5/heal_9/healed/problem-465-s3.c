@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct dict_entry {
+    char *key;
+    char *value;
+    struct dict_entry *next;
+} dict_entry;
+
+typedef struct {
+    dict_entry *head;
+    size_t size;
+} dictionary;
+
+dictionary *dict_create(void) {
+    dictionary *d = malloc(sizeof(*d));
+    if (!d) return NULL;
+    d->head = NULL;
+    d->size = 0;
+    return d;
+}
+
+int dict_add(dictionary *d, const char *key, const char *value) {
+    if (!d || !key || !value) return -1;
+    
+    size_t key_len = strnlen(key, 4096);
+    size_t value_len = strnlen(value, 4096);
+    
+    if (key_len >= 4096 || value_len >= 4096) return -1;
+    
+    if (key_len > SIZE_MAX - 1 || value_len > SIZE_MAX - 1) return -1;
+    
+    dict_entry *e = malloc(sizeof(*e));
+    if (!e) return -1;
+    
+    e->key = malloc(key_len + 1);
+    e->value = malloc(value_len + 1);
+    if (!e->key || !e->value) {
+        free(e->key);
+        free(e->value);
+        free(e);
+        return -1;
+    }
+    
+    if (key_len + 1 < key_len) {
+        free(e->key);
+        free(e->value);
+        free(e);
+        return -1;
+    }
+    if (value_len + 1 < value_len) {
+        free(e->key);
+        free(e->value);
+        free(e);
+        return -1;
+    }
+    
+    memcpy(e->key, key, key_len);
+    e->key[key_len] = '\0';
+    memcpy(e->value, value, value_len);
+    e->value[value_len] = '\0';
+    e->next = d->head;
+    d->head = e;
+    d->size++;
+    return 0;
+}
+
+void dict_drop_empty(dictionary *d) {
+    if (!d) return;
+    dict_entry **pp = &d->head;
+    while (*pp) {
+        dict_entry *e = *pp;
+        if (e->value == NULL || e->value[0] == '\0') {
+            *pp = e->next;
+            free(e->key);
+            free(e->value);
+            free(e);
+            d->size--;
+        } else {
+            pp = &e->next;
+        }
+    }
+}
+
+void dict_print(const dictionary *d) {
+    if (!d) return;
+    for (dict_entry *e = d->head; e; e = e->next) {
+        printf("%s: %s\n", e->key, e->value);
+    }
+}
+
+void dict_destroy(dictionary *d) {
+    if (!d) return;
+    dict_entry *e = d->head;
+    while (e) {
+        dict_entry *next = e->next;
+        free(e->key);
+        free(e->value);
+        free(e);
+        e = next;
+    }
+    free(d);
+}
+
+int main(void) {
+    dictionary *d = dict_create();
+    if (!d) return 1;
+
+    dict_add(d, "name", "Alice");
+    dict_add(d, "email", "");
+    dict_add(d, "phone", "12345");
+    dict_add(d, "address", "");
+    dict_add(d, "city", "Paris");
+
+    printf("Before dropping empty items:\n");
+    dict_print(d);
+
+    dict_drop_empty(d);
+
+    printf("\nAfter dropping empty items:\n");
+    dict_print(d);
+
+    dict_destroy(d);
+    return 0;
+}

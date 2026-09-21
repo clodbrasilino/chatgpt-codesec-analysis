@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_chars(char *str1, const char *str2, size_t max_len)
+{
+    if (str1 == NULL || str2 == NULL || max_len == 0) {
+        return;
+    }
+    
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+    size_t len1 = strnlen(str1, max_len);
+    
+    while (read_idx < len1) {
+        if (strchr(str2, str1[read_idx]) == NULL) {
+            str1[write_idx] = str1[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str1[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char *buffer1 = malloc(BUFFER_SIZE);
+    if (buffer1 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    char *buffer2 = malloc(BUFFER_SIZE);
+    if (buffer2 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(buffer1);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter first string: ");
+    if (fgets(buffer1, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer1);
+        free(buffer2);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter second string: ");
+    if (fgets(buffer2, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer1);
+        free(buffer2);
+        return EXIT_FAILURE;
+    }
+    
+    buffer1[strcspn(buffer1, "\n")] = '\0';
+    buffer2[strcspn(buffer2, "\n")] = '\0';
+    
+    remove_chars(buffer1, buffer2, BUFFER_SIZE);
+    
+    printf("Result: %s\n", buffer1);
+    
+    free(buffer1);
+    free(buffer2);
+    
+    return EXIT_SUCCESS;
+}
+```

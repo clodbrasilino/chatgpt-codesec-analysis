@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int find_literal(const char *text, size_t text_len, const char *pattern, size_t pattern_len, int *location) {
+    if (text == NULL || pattern == NULL || text_len == 0 || pattern_len == 0) {
+        return -1;
+    }
+    *location = 0;
+    int index = 0;
+
+    while (index + pattern_len <= text_len) {
+        if (strncmp(&text[index], pattern, pattern_len) == 0) {
+            *location = index;
+            return 1;
+        }
+        index++;
+    }
+    return -1;
+}
+
+int main() {
+    const char *text = "Hello, World!";
+    const char *pattern = "World";
+    size_t text_len = 13; // Explicit length of the text
+    size_t pattern_len = 5; // Explicit length of the pattern
+    int location;
+
+    if (find_literal(text, text_len, pattern, pattern_len, &location) > 0) {
+        printf("Pattern found at index: %d\n", location);
+    } else {
+        printf("Pattern not found.\n");
+    }
+
+    return 0;
+}
+```

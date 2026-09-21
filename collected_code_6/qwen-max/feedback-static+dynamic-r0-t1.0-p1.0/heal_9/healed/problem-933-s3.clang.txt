@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-933-s3.c:39:67: error: too many arguments to function call, expected 5, have 7
+   39 |         size_t len = regexec(&reg, tmp, 1, pmatches, replacement, tmp_result, n * 2 + 1);
+      |                      ~~~~~~~                                      ^~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_regex.h:226:5: note: 'regexec' declared here
+  226 | int     regexec(const regex_t * __restrict, const char * __restrict, size_t __nmatch,
+      |         ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  227 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

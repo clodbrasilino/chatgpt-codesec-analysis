@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_lowercase_substrings(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    output = malloc(len + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i < len) {
+        if (!islower((unsigned char)input[i])) {
+            output[j] = input[i];
+            j++;
+        }
+        i++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *input = "Hello World Example String";
+    char *result;
+
+    result = remove_lowercase_substrings(input);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Modified: %s\n", result);
+
+    free(result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 8192
+
+int remove_special_chars(const char *input, char **output) {
+    if (!input || !output) {
+        return -1;
+    }
+
+    size_t len = strnlen(input, MAX_INPUT_LEN);
+    
+    *output = (char *)malloc(len + 1);
+    if (!*output) {
+        return -1;
+    }
+
+    size_t out_idx = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (isalnum((unsigned char)input[i])) {
+            (*output)[out_idx++] = input[i];
+        }
+    }
+    (*output)[out_idx] = '\0';
+
+    return 0;
+}
+
+int main(void) {
+    const char *input = "Hello, World! 123 @#$";
+    char *output = NULL;
+
+    if (remove_special_chars(input, &output) == 0) {
+        printf("Original: %s\n", input);
+        printf("Cleaned:  %s\n", output);
+        free(output);
+    } else {
+        fprintf(stderr, "Error processing string.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

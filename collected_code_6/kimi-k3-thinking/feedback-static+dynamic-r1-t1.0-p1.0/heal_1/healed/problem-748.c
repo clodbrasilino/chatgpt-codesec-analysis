@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define MAX_INPUT_LENGTH ((size_t)1024 * 1024)
+
+char *insert_spaces_between_capital_words(const char *input)
+{
+    regex_t regex;
+    regmatch_t matches[3];
+    const char *pattern = "([[:alnum:]_])([[:upper:]])";
+    char *result;
+    size_t capacity;
+    size_t length = 0;
+    size_t offset = 0;
+    size_t input_len;
+
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LENGTH);
+    if (input_len == MAX_INPUT_LENGTH)
+    {
+        return NULL;
+    }
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0)
+    {
+        return NULL;
+    }
+
+    if (input_len > (SIZE_MAX - 1) / 2)
+    {
+        regfree(&regex);
+        return NULL;
+    }
+
+    capacity = input_len * 2 + 1;
+    result = malloc(capacity);
+    if (result == NULL)
+    {
+        regfree(&regex);
+        return NULL;
+    }
+
+    while (regexec(&regex, input + offset, 3, matches, 0) == 0)
+    {
+        size_t chunk_len = (size_t)matches[1].rm_eo;
+
+        while (length + chunk_len + 2 > capacity)
+        {
+            size_t new_capacity;
+            char *resized;
+
+            if (capacity > SIZE_MAX / 2)
+            {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            new_capacity = capacity * 2;
+            resized = realloc(result, new_capacity);
+            if (resized == NULL)
+            {
+                free(result);
+                regfree(&regex);
+                return NULL;
+            }
+
+            result = resized;
+            capacity = new_capacity;
+        }
+
+        memcpy(result + length, input + offset, chunk_len);
+        length += chunk_len;
+        result[length] = ' ';
+        length++;
+        offset += (size_t)matches[2].rm_so;
+    }
+
+    if (length < capacity)
+    {
+        int written = snprintf(result + length, capacity - length, "%s", input + offset);
+
+        if (written < 0 || (size_t)written >= capacity - length)
+        {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+    else
+    {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWorldThisIsATestString";
+    char *output = insert_spaces_between_capital_words(input);
+
+    if (output == NULL)
+    {
+        fprintf(stderr, "Failed to process the input string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input:  %s\n", input);
+    printf("Output: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}

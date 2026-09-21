@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c: In function 'process_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c:124:24: error: 'PATH_MAX' undeclared (first use in this function)
+  124 |     char resolved_path[PATH_MAX];
+      |                        ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c:124:24: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c:143:17: error: storage size of 'file_stat' isn't known
+  143 |     struct stat file_stat;
+      |                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c:144:9: error: implicit declaration of function 'fstat' [-Wimplicit-function-declaration]
+  144 |     if (fstat(fd, &file_stat) == -1) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-13.c:150:10: error: implicit declaration of function 'S_ISREG' [-Wimplicit-function-declaration]
+  150 |     if (!S_ISREG(file_stat.st_mode)) {
+      |          ^~~~~~~

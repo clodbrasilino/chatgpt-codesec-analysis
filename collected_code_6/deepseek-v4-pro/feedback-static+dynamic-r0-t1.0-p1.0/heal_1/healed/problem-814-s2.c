@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <math.h>
+
+#define INPUT_BUFFER_SIZE 256
+
+double rhombus_area(double diagonal1, double diagonal2) {
+    if (diagonal1 <= 0 || diagonal2 <= 0) {
+        return -1.0;
+    }
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+static int read_double(const char *prompt, double *value) {
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t nread;
+    char *endptr;
+
+    printf("%s", prompt);
+    fflush(stdout);
+
+    nread = getline(&input, &len, stdin);
+    if (nread == -1) {
+        free(input);
+        fprintf(stderr, "Error reading input\n");
+        return -1;
+    }
+
+    if (nread > 0 && input[nread - 1] == '\n') {
+        input[nread - 1] = '\0';
+    }
+
+    errno = 0;
+    *value = strtod(input, &endptr);
+
+    if (endptr == input || *endptr != '\0') {
+        free(input);
+        fprintf(stderr, "Invalid input\n");
+        return -1;
+    }
+
+    if (errno == ERANGE) {
+        free(input);
+        fprintf(stderr, "Input value out of range\n");
+        return -1;
+    }
+
+    free(input);
+    return 0;
+}
+
+int main(void) {
+    double d1;
+    double d2;
+    double area;
+
+    if (read_double("Enter length of first diagonal: ", &d1) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (read_double("Enter length of second diagonal: ", &d2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    area = rhombus_area(d1, d2);
+    if (area < 0) {
+        fprintf(stderr, "Diagonals must be positive numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Area of rhombus: %.2f\n", area);
+    return EXIT_SUCCESS;
+}

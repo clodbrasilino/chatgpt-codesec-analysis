@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-780-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-780-s2.c:33:30: style: Condition 'current_size>0' is always true [knownConditionTrueFalse]
+            if (current_size > 0 && current_indices != NULL) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-780-s2.c:26:41: note: Assuming that condition 'current_size>0' is not redundant
+    if (target_sum == 0 && current_size > 0) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-780-s2.c:29:48: note: Assuming condition is false
+            if (results[*result_count].indices == NULL) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-780-s2.c:33:30: note: Condition 'current_size>0' is always true
+            if (current_size > 0 && current_indices != NULL) {
+                             ^

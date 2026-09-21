@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-206.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-206.c:109:90: style: Condition 'total_len<capacity' is always true [knownConditionTrueFalse]
+        if ((left_len <= capacity) && (right_len <= (capacity - left_len)) && (total_len < capacity))
+                                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-206.c:100:25: note: capacity is assigned 'total_len+1U' here.
+        size_t capacity = total_len + 1U;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-206.c:103:23: note: Assuming condition is false
+        if (result[i] == NULL)
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-206.c:109:90: note: Condition 'total_len<capacity' is always true
+        if ((left_len <= capacity) && (right_len <= (capacity - left_len)) && (total_len < capacity))
+                                                                                         ^

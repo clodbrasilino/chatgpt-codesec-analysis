@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *word;
+    size_t position;
+} Adverb;
+
+typedef struct {
+    Adverb *adverbs;
+    size_t count;
+    size_t capacity;
+} AdverbList;
+
+AdverbList* create_adverb_list(void) {
+    AdverbList *list = (AdverbList *)malloc(sizeof(AdverbList));
+    if (!list) {
+        return NULL;
+    }
+    list->capacity = 10;
+    list->count = 0;
+    list->adverbs = (Adverb *)malloc(list->capacity * sizeof(Adverb));
+    if (!list->adverbs) {
+        free(list);
+        return NULL;
+    }
+    return list;
+}
+
+void free_adverb_list(AdverbList *list) {
+    if (!list) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->adverbs[i].word);
+    }
+    free(list->adverbs);
+    free(list);
+}
+
+int add_adverb(AdverbList *list, const char *start, size_t length, size_t position) {
+    if (!list || !start) {
+        return 0;
+    }
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Adverb *new_adverbs = (Adverb *)realloc(list->adverbs, new_capacity * sizeof(Adverb));
+        if (!new_adverbs) {
+            return 0;
+        }
+        list->adverbs = new_adverbs;
+        list->capacity = new_capacity;
+    }
+    list->adverbs[list->count].word = (char *)malloc(length + 1);
+    if (!list->adverbs[list->count].word) {
+        return 0;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(list->adverbs[list->count].word, start, length);
+    list->adverbs[list->count].word[length] = '\0';
+    list->adverbs[list->count].position = position;
+    list->count++;
+    return 1;
+}
+
+AdverbList* find_adverbs(const char *sentence) {
+    if (!sentence) {
+        return NULL;
+    }
+    AdverbList *list = create_adverb_list();
+    if (!list) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    while (sentence[i] != '\0') {
+        if (!isalpha((unsigned char)sentence[i])) {
+            i++;
+            continue;
+        }
+
+        size_t start_idx = i;
+        while (sentence[i] != '\0' && isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        size_t word_len = i - start_idx;
+        if (word_len >= 2) {
+            char last = (char)tolower((unsigned char)sentence[i - 1]);
+            char second_last = (char)tolower((unsigned char)sentence[i - 2]);
+            if (last == 'y' && second_last == 'l') {
+                if (!add_adverb(list, &sentence[start_idx], word_len, start_idx)) {
+                    free_adverb_list(list);
+                    return NULL;
+                }
+            }
+        }
+    }
+    return list;
+}
+
+int main(void) {
+    const char *text = "He quickly ran to the extremely tall building and quietly entered.";
+    AdverbList *result = find_adverbs(text);
+
+    if (!result) {
+        fprintf(stderr, "Memory allocation failure or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result->count; i++) {
+        printf("Adverb: %s, Position: %zu\n", result->adverbs[i].word, result->adverbs[i].position);
+    }
+
+    free_adverb_list(result);
+    return EXIT_SUCCESS;
+}

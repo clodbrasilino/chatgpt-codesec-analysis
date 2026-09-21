@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+Analysis of the original code and the weakness cited:
+
+**The Flawfinder warning (CWE-119/CWE-120) is a false positive here.** The static analyzer flags `char buffer[256]` simply because it is a fixed-size array, but the code already implements every mitigation the warning asks for:
+
+1. **Bounded read:** `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to at most 255 characters plus the null terminator, so no overflow is possible. Unlike `gets()` or an unbounded `scanf("%s", ...)`, this cannot write past the end of the array.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive (technically redundant, since `fgets` always null-terminates on success), and `buffer[strcspn(buffer, "\n")] = '\0'` safely strips the trailing newline. `strcspn` returns the length of the string if no `\n` is found, which indexes the existing terminator — safe in all cases.
+
+3. **Safe indexing in the counting logic:** The cast to `unsigned char` before indexing `counts[]` is important. Indexing with a plain `char` (which may be signed) could produce a negative index for bytes ≥ 0x80, causing out-of-bounds access. The array size `UCHAR_MAX + 1` covers all possible byte values.
+
+4. **Robust error handling:** NULL-pointer checks in `max_occurring_char`, checking the return values of `fflush` and `fgets`, and handling the empty-string case (`found == 0`) all follow good defensive practice.
+
+The code is already correct and safe; no functional changes were required — only the removal of comments as requested.

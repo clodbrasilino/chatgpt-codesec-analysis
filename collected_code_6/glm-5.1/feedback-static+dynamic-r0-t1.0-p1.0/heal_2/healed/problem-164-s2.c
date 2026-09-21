@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int sum_of_divisors(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    int sum = 0;
+    for (int i = 1; i * i <= n; ++i) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+        }
+    }
+    return sum;
+}
+
+int are_divisor_sums_same(int a, int b) {
+    if (a <= 0 || b <= 0) {
+        return 0;
+    }
+    int sum_a = sum_of_divisors(a);
+    int sum_b = sum_of_divisors(b);
+    if (sum_a == -1 || sum_b == -1) {
+        return 0;
+    }
+    return sum_a == sum_b;
+}
+
+int main(int argc, char * const * argv) {
+    if (argc != 3) {
+        return EXIT_FAILURE;
+    }
+    char *endptr_a;
+    errno = 0;
+    long va = strtol(argv[1], &endptr_a, 10);
+    if (errno != 0 || *endptr_a != '\0' || va <= 0 || va > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+    char *endptr_b;
+    errno = 0;
+    long vb = strtol(argv[2], &endptr_b, 10);
+    if (errno != 0 || *endptr_b != '\0' || vb <= 0 || vb > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+    int a = (int)va;
+    int b = (int)vb;
+    int result = are_divisor_sums_same(a, b);
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}

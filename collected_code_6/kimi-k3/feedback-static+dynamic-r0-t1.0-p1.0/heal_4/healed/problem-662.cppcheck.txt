@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-662.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-662.c:82:36: style: Condition 'memchr(key,'\0',key_len)!=NULL' is always false [knownConditionTrueFalse]
+    if (memchr(key, '\0', key_len) != NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-662.c:72:36: note: Assuming that condition 'memchr(key,'\0',key_len)!=NULL' is not redundant
+    if (memchr(key, '\0', key_len) != NULL) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-662.c:79:20: note: Assuming condition is false
+    if (entry->key == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-662.c:82:36: note: Condition 'memchr(key,'\0',key_len)!=NULL' is always false
+    if (memchr(key, '\0', key_len) != NULL) {
+                                   ^

@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on `char buffer[MAX_INPUT_LEN]` is a **false positive** in this context, and the original code already contains all the necessary mitigations. Here's why the code is safe as written:
+
+1. **Bounded input read** — `fgets(buffer, sizeof(buffer), stdin)` limits the read to `sizeof(buffer) - 1` characters plus a null terminator, so the statically-sized array cannot overflow (this addresses CWE-119/CWE-120 directly). Using `sizeof(buffer)` rather than repeating the constant keeps the size and buffer coupled if the definition changes.
+
+2. **Guaranteed termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive belt-and-braces; `fgets` already null-terminates on success, but this makes the invariant explicit and safe against future refactoring.
+
+3. **Newline stripping via `strcspn`** — `buffer[strcspn(buffer, "\n")] = '\0';` is the idiomatic, safe way to strip the trailing newline. It never indexes out of bounds even when no newline is present (it writes over the existing terminator).
+
+4. **Bounded scanning in `all_chars_unique`** — the loop is doubly bounded by `max_len` and the null terminator, and it checks for a `NULL` pointer before dereferencing.
+
+5. **Correct `char` handling** — casting to `unsigned char` before indexing `seen[]` avoids undefined behavior/negative indexing on platforms where `char` is signed, and sizing the table as `UCHAR_MAX + 1` covers the full byte range.
+
+6. **Error handling** — the `fgets` return value is checked, with a diagnostic to `stderr` and a nonzero exit code on failure.
+
+No functional changes were required; the rewrite simply removes the comments as requested.

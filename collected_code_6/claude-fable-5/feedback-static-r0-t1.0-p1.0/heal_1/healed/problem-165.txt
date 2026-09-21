@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        if (i < 26) {
+            char c = str[i];
+            if (c == (char)('a' + i) || c == (char)('A' + i)) {
+                count++;
+            }
+        } else {
+            break;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original code was already reasonably well-written — the flagged issues were mostly low-risk hints from Flawfinder rather than actual exploitable bugs. Here's what was addressed:
+
+1. **`strlen` on potentially unterminated strings (CWE-126):** Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound. This guarantees the read can never run past the buffer even if a non-terminated string is somehow passed in. The `count_position_matches` function signature was extended with a `max_len` parameter so the caller communicates the buffer bound explicitly.
+
+2. **Statically-sized array (CWE-119/CWE-120):** The original already used `fgets(buffer, sizeof(buffer), stdin)` correctly, which prevents overflow. As defense-in-depth, I added an explicit `buffer[sizeof(buffer) - 1] = '\0';` after `fgets` to guarantee null termination regardless of input, and defined the size as a named constant (`BUFFER_SIZE`) for maintainability.
+
+3. **Existing good practices preserved:** the `NULL` check in `count_position_matches`, the `fgets` return-value check, the newline stripping with a `len > 0` guard, and the safe `(char)('a' + i)` casts that avoid signed/unsigned comparison surprises.

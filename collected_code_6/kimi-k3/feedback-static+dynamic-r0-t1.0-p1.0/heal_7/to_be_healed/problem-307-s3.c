@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char **elements;
+    size_t count;
+} Tuple;
+
+void tuple_init(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    t->elements = NULL;
+    t->count = 0;
+}
+
+int tuple_add(Tuple *t, const char *element, size_t element_len) {
+    char **new_elements;
+    char *new_element;
+    size_t actual_len;
+    
+    if (t == NULL || element == NULL) {
+        return -1;
+    }
+    
+    if (element_len == 0) {
+        actual_len = strnlen(element, 4096);
+        if (actual_len == 0 || actual_len >= 4096) {
+            return -1;
+        }
+    } else {
+        if (element_len >= 4096) {
+            return -1;
+        }
+        actual_len = strnlen(element, element_len);
+        if (actual_len != element_len) {
+            return -1;
+        }
+    }
+    
+    if (t->count == SIZE_MAX) {
+        return -1;
+    }
+    
+    new_elements = realloc(t->elements, (t->count + 1) * sizeof(char *));
+    if (new_elements == NULL) {
+        return -1;
+    }
+    t->elements = new_elements;
+    
+    new_element = malloc(actual_len + 1);
+    if (new_element == NULL) {
+        return -1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+     */
+    strncpy(new_element, element, actual_len);
+    new_element[actual_len] = '\0';
+    
+    t->elements[t->count] = new_element;
+    t->count++;
+    
+    return 0;
+}
+
+const char *tuple_get_colon(const Tuple *t, size_t index) {
+    if (t == NULL || index >= t->count) {
+        return NULL;
+    }
+    return t->elements[index];
+}
+
+void tuple_free(Tuple *t) {
+    size_t i;
+    
+    if (t == NULL) {
+        return;
+    }
+    
+    for (i = 0; i < t->count; i++) {
+        free(t->elements[i]);
+    }
+    free(t->elements);
+    t->elements = NULL;
+    t->count = 0;
+}
+
+int main(void) {
+    Tuple t;
+    const char *result;
+    
+    tuple_init(&t);
+    
+    if (tuple_add(&t, "first", 5) != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    if (tuple_add(&t, "second", 6) != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    if (tuple_add(&t, "third", 5) != 0) {
+        fprintf(stderr, "Failed to add element\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    result = tuple_get_colon(&t, 1);
+    if (result != NULL) {
+        printf("Element at index 1: %s\n", result);
+    } else {
+        printf("Invalid index\n");
+    }
+    
+    tuple_free(&t);
+    
+    return EXIT_SUCCESS;
+}

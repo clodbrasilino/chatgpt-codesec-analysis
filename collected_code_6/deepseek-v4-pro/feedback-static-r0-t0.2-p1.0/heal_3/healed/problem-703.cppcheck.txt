@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:60:20: style: Condition 'alloc_size<=key_len' is always false [knownConditionTrueFalse]
+    if (alloc_size <= key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:59:23: note: alloc_size is assigned 'key_len+1' here.
+    size_t alloc_size = key_len + 1;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:60:20: note: Condition 'alloc_size<=key_len' is always false
+    if (alloc_size <= key_len) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:69:20: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+    if (alloc_size > 0) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:59:33: note: Assignment 'alloc_size=key_len+1', assigned value is greater than 0
+    size_t alloc_size = key_len + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:65:9: note: Assuming condition is false
+    if (!new_entry->key) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-703.c:69:20: note: Condition 'alloc_size>0' is always true
+    if (alloc_size > 0) {
+                   ^

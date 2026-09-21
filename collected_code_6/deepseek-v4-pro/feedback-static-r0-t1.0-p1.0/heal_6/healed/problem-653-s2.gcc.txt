@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-653-s2.c: In function 'add_to_entry':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-653-s2.c:57:4: error: expected expression before '<' token
+   57 |    <｜begin▁of▁sentence｜>
+      |    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-653-s2.c:57:12: error: stray '\342' in program
+   57 |    <<U+FF5C>begin<U+2581>of<U+2581>sentence<U+FF5C>>
+      |                  ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-653-s2.c:57:15: error: stray '\342' in program
+   57 |    <<U+FF5C>begin<U+2581>of<U+2581>sentence<U+FF5C>>
+      |                            ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-653-s2.c:145:1: error: expected declaration or statement at end of input
+  145 | }
+      | ^

@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LEN 1024
+
+static size_t safe_strnlen(const char *str, size_t max_len)
+{
+    size_t i;
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+int longestRepeatingSubsequence(const char *str, size_t max_len)
+{
+    size_t n;
+    size_t i;
+    size_t j;
+    int **dp;
+    int result;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    n = safe_strnlen(str, max_len);
+    if (n == 0) {
+        return 0;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int *)) - 1) {
+        return -1;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int)) - 1) {
+        return -1;
+    }
+
+    dp = malloc((n + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i <= n; i++) {
+        dp[i] = calloc(n + 1, sizeof(int));
+        if (dp[i] == NULL) {
+            while (i > 0) {
+                i--;
+                free(dp[i]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= n; j++) {
+            if (str[i - 1] == str[j - 1] && i != j) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = (dp[i - 1][j] > dp[i][j - 1]) ? dp[i - 1][j] : dp[i][j - 1];
+            }
+        }
+    }
+
+    result = dp[n][n];
+
+    for (i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    int result;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = safe_strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longestRepeatingSubsequence(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Failed to compute longest repeating subsequence\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of longest repeating subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of changes made:**
+
+1. **Missing include fixed**: The original code used `SIZE_MAX` without including `<stdint.h>`, which would cause a compilation error on strictly conforming implementations. Added the include.
+
+2. **Portability of `strnlen`**: `strnlen` is POSIX, not standard C89/C99. Replaced with a `safe_strnlen` implementation that performs the same bounds-limited length calculation, guaranteeing no read beyond `max_len` bytes.
+
+3. **Additional overflow guard**: Added a second check `n > (SIZE_MAX / sizeof(int)) - 1` protecting the `calloc(n + 1, sizeof(int))` argument computation (defensive; `calloc` also checks, but this makes intent explicit and portable to older libcs).
+
+4. **CWE-119/CWE-120 (buffer handling)**: The flagged fixed-size buffer is safe as used — `fgets(buffer, sizeof(buffer), stdin)` limits input length, the buffer is explicitly NUL-terminated at `sizeof(buffer) - 1`, length is computed with a bounded scan, and the newline strip checks `len > 0` before indexing. These mitigations are preserved.
+
+5. **`fflush(stdout)` added** after the prompt so it reliably appears before blocking on input when stdout is fully buffered (e.g., piped output).
+
+6. **Memory management**: The existing allocation error path (unwinding partially allocated rows) and full cleanup before return were already correct and are retained.

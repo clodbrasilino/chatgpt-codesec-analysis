@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-772-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-772-s3.c:113:25: style: Condition 'result_capacity==0u' is always false [knownConditionTrueFalse]
+    if (result_capacity == 0u) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-772-s3.c:112:27: note: Assignment 'result_capacity=len+1u', assigned value is greater than 0
+    result_capacity = len + 1u;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_10/healed/problem-772-s3.c:113:25: note: Condition 'result_capacity==0u' is always false
+    if (result_capacity == 0u) {
+                        ^

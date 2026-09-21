@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:8: error: unknown type name 'size_t'
+    1 | static size_t bounded_strnlen(const char *s, size_t max_len)
+      |        ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:1: note: 'size_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+  +++ |+#include <stddef.h>
+    1 | static size_t bounded_strnlen(const char *s, size_t max_len)
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:46: error: unknown type name 'size_t'
+    1 | static size_t bounded_strnlen(const char *s, size_t max_len)
+      |                                              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-450-s2.c:1:46: note: 'size_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'

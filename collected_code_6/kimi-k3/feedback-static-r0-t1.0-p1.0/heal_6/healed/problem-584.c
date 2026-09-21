@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <errno.h>
+
+#define MAX_MATCHES 100
+#define MAX_SENTENCE_LENGTH 1024
+#define MAX_ADVERB_LENGTH 256
+
+typedef struct {
+    int start;
+    int end;
+    char adverb[MAX_ADVERB_LENGTH];
+} AdverbMatch;
+
+static bool safe_strncpy(char *dest, size_t dest_size, const char *src, size_t src_len) {
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return false;
+    }
+    
+    if (src_len >= dest_size) {
+        return false;
+    }
+    
+    memcpy(dest, src, src_len);
+    dest[src_len] = '\0';
+    return true;
+}
+
+static bool validate_input(const char *sentence, size_t max_len) {
+    if (sentence == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(sentence, max_len);
+    if (len == max_len) {
+        return false;
+    }
+    
+    return true;
+}
+
+int find_adverbs(const char *sentence, AdverbMatch *matches, int max_matches) {
+    regex_t regex;
+    regmatch_t match[1];
+    const char *pattern = "\\b[a-zA-Z]+ly\\b";
+    int ret;
+    int count = 0;
+    const char *cursor = sentence;
+    long offset = 0;
+
+    if (sentence == NULL || matches == NULL || max_matches <= 0 || max_matches > MAX_MATCHES) {
+        return -1;
+    }
+
+    if (!validate_input(sentence, MAX_SENTENCE_LENGTH)) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
+    if (ret != 0) {
+        return -1;
+    }
+
+    while (count < max_matches) {
+        ret = regexec(&regex, cursor, 1, match, 0);
+        if (ret != 0) {
+            break;
+        }
+
+        if (match[0].rm_so == -1 || match[0].rm_eo == -1) {
+            break;
+        }
+
+        if (match[0].rm_eo < match[0].rm_so) {
+            break;
+        }
+
+        long start = (long)match[0].rm_so + offset;
+        long end = (long)match[0].rm_eo + offset;
+        size_t length = (size_t)(match[0].rm_eo - match[0].rm_so);
+
+        if (start > INT_MAX || end > INT_MAX || start < 0 || end < 0) {
+            break;
+        }
+
+        if (length >= MAX_ADVERB_LENGTH || length == 0) {
+            break;
+        }
+
+        if (!safe_strncpy(matches[count].adverb, MAX_ADVERB_LENGTH, 
+                         cursor + match[0].rm_so, length)) {
+            break;
+        }
+
+        matches[count].start = (int)start;
+        matches[count].end = (int)end;
+        count++;
+
+        cursor += match[0].rm_eo;
+        offset += match[0].rm_eo;
+
+        if (match[0].rm_eo == 0) {
+            if (*cursor == '\0') {
+                break;
+            }
+            cursor++;
+            offset++;
+        }
+    }
+
+    regfree(&regex);
+    return count;
+}
+
+int main(void) {
+    char sentence[MAX_SENTENCE_LENGTH];
+    AdverbMatch matches[MAX_MATCHES];
+    int num_matches;
+    int i;
+
+    printf("Enter a sentence: ");
+    
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (!validate_input(sentence, sizeof(sentence))) {
+        fprintf(stderr, "Input too long\n");
+        return 1;
+    }
+
+    size_t len = strnlen(sentence, sizeof(sentence));
+    if (len > 0 && sentence[len - 1] == '\n') {
+        sentence[len - 1] = '\0';
+    }
+
+    num_matches = find_adverbs(sentence, matches, MAX_MATCHES);
+
+    if (num_matches < 0) {
+        fprintf(stderr, "Error processing regex\n");
+        return 1;
+    }
+
+    printf("Found %d adverb(s):\n", num_matches);
+    for (i = 0; i < num_matches; i++) {
+        printf("Adverb: \"%s\" at position [%d, %d)\n",
+               matches[i].adverb, matches[i].start, matches[i].end);
+    }
+
+    return 0;
+}

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-772-s3.c: In function 'remove_k_length_words':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-772-s3.c:34:21: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   34 |                     memcpy_s(result + res_idx, len + 1 - res_idx, str + word_start, word_len);
+      |                     ^~~~~~~~
+      |                     memcpy

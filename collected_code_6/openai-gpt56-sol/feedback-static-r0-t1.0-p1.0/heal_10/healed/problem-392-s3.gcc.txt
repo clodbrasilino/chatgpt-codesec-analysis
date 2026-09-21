@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c: In function 'discard_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c:228:13: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+  228 |         if (strchr(buffer, '\n') != NULL) {
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c:7:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    6 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c: In function 'read_uint64':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c:251:14: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+  251 |     length = strlen(line);
+      |              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-392-s3.c:251:14: note: include '<string.h>' or provide a declaration of 'strlen'

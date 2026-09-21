@@ -1,0 +1,145 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 32
+
+static size_t bounded_length(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (str[i] == '\0') {
+            return i;
+        }
+    }
+
+    return max_len;
+}
+
+static bool normalize_month(const char *month, char *normalized, size_t normalized_size)
+{
+    size_t len;
+    size_t i;
+
+    if (month == NULL || normalized == NULL || normalized_size == 0) {
+        return false;
+    }
+
+    len = bounded_length(month, normalized_size);
+    if (len == 0 || len >= normalized_size) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[len] = '\0';
+
+    return true;
+}
+
+static bool has_thirty_days(const char *month)
+{
+    static const char *thirty_day_months[] = {
+        "april", "june", "september", "november"
+    };
+    char normalized[MAX_INPUT_LEN];
+    size_t i;
+
+    if (!normalize_month(month, normalized, sizeof(normalized))) {
+        return false;
+    }
+
+    for (i = 0; i < sizeof(thirty_day_months) / sizeof(thirty_day_months[0]); i++) {
+        if (strcmp(normalized, thirty_day_months[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool is_valid_month(const char *month)
+{
+    static const char *all_months[] = {
+        "january", "february", "march", "april", "may", "june",
+        "july", "august", "september", "october", "november", "december"
+    };
+    char normalized[MAX_INPUT_LEN];
+    size_t i;
+
+    if (!normalize_month(month, normalized, sizeof(normalized))) {
+        return false;
+    }
+
+    for (i = 0; i < sizeof(all_months) / sizeof(all_months[0]); i++) {
+        if (strcmp(normalized, all_months[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    size_t len;
+
+    printf("Enter a month name: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = bounded_length(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    } else {
+        discard_remaining_input();
+    }
+
+    if (!is_valid_month(input)) {
+        fprintf(stderr, "Invalid month name: %s\n", input);
+        return 1;
+    }
+
+    if (has_thirty_days(input)) {
+        printf("%s has 30 days.\n", input);
+    } else {
+        printf("%s does not have 30 days.\n", input);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and how they are addressed:**
+
+1. **CWE-119/CWE-120 — Statically-sized `char` arrays (`normalized[MAX_INPUT_LEN]`, `input[MAX_INPUT_LEN]`):** These flawfinder hits are informational (risk 2). The code already mitigates them correctly:
+   - `fgets(input, sizeof(input), stdin)` bounds the read to the buffer size and always null-terminates on success.
+   - An explicit `input[sizeof(input) - 1] = '\0'` acts as a defensive belt-and-suspenders guarantee.
+   - `bounded_length()` never scans past `max_len`, avoiding the unbounded-read pitfall of plain `strlen()` on potentially unterminated data.
+   - `normalize_month()` validates `normalized_size`, rejects inputs with `len >= normalized_size`, and writes the terminator within bounds. No overflow path exists.
+
+2. **CWE-120/CWE-20 — `getchar()` in a loop:** The loop only *discards* characters until newline or EOF; nothing is stored, so no buffer boundary can be violated. I factored it into `discard_remaining_input()` for clarity and correct EOF handling.
+
+Additional notes: `tolower()` is correctly called with an `unsigned char` cast, avoiding undefined behavior for negative `char` values; `strcmp` is safe here because both operands are guaranteed null-terminated. The code is effectively free of the reported weaknesses — the flawfinder warnings are false positives given the existing bounds checking.

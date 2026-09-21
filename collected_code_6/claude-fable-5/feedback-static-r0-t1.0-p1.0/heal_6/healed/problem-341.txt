@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int *set_to_ordered_tuple(const int *set, size_t size)
+{
+    int *tuple = NULL;
+    size_t total_bytes = 0U;
+
+    if (set == NULL || size == 0U) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    total_bytes = size * sizeof(int);
+
+    tuple = malloc(total_bytes);
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    memcpy(tuple, set, total_bytes);
+    qsort(tuple, size, sizeof(int), compare_ints);
+
+    return tuple;
+}
+
+int main(void)
+{
+    int set[] = {7, 2, 9, 4, 1};
+    size_t size = sizeof(set) / sizeof(set[0]);
+    size_t i = 0U;
+    int *tuple = NULL;
+
+    tuple = set_to_ordered_tuple(set, size);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < size; i++) {
+        if (i > 0U) {
+            printf(", ");
+        }
+        printf("%d", tuple[i]);
+    }
+    printf(")\n");
+
+    free(tuple);
+    tuple = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Regarding the flagged weakness: the `memcpy` warning from Flawfinder (CWE-120) is a low-risk, informational finding in this code. The original source already mitigates it properly, so no functional changes were required:
+
+1. **Destination sizing is guaranteed** — `tuple` is allocated with exactly `total_bytes`, the same value passed to `memcpy`, so the destination can always hold the source data.
+2. **Integer overflow is prevented** — the check `size > SIZE_MAX / sizeof(int)` ensures `size * sizeof(int)` cannot wrap around, which is the classic path to an undersized allocation followed by a buffer overflow.
+3. **NULL and zero-size inputs are rejected** — avoiding undefined behavior in `memcpy` with a NULL source.
+4. **Allocation failure is handled** — `malloc` is checked before use.
+
+The caller in `main` also behaves correctly: it checks the return value, frees the buffer exactly once, and nulls the pointer afterward. The Flawfinder hit is a pattern-match on `memcpy` itself rather than an actual defect here.

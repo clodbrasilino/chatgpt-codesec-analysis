@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The original code was already largely safe, but I made the following hardening improvements based on the Flawfinder warning (CWE-119/CWE-120):
+
+1. **Named constant for buffer size** — `BUFFER_SIZE` replaces the magic number `256`, ensuring the size is defined in one place and consistently referenced via `sizeof(buffer)`.
+
+2. **Explicit null-termination guarantee** — `buffer[sizeof(buffer) - 1] = '\0'` defensively ensures the buffer is always a valid C string, even in edge cases, before any string operations occur.
+
+3. **Newline stripping** — `fgets` retains the trailing `\n`, which the original code passed into `count_numeric`. While harmless here, stripping it is correct practice and prevents subtle bugs if the buffer is later used elsewhere.
+
+4. **Retained existing protections** — the original code already did things right: `fgets(buffer, sizeof(buffer), stdin)` performs proper bounds checking (unlike `gets` or unbounded `scanf("%s")`), the return value of `fgets` is checked, `count_numeric` guards against `NULL`, and the `(unsigned char)` cast before `isdigit` avoids undefined behavior on negative `char` values.
+
+The Flawfinder finding was a risk-level-2 informational flag on the fixed-size array itself; since all writes to `buffer` are length-limited, the code is not vulnerable to overflow, and the changes above simply add defense-in-depth.

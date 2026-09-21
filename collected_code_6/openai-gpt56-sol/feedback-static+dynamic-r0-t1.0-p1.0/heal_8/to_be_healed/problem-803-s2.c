@@ -1,0 +1,143 @@
+#include <ctype.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+static bool is_perfect_square(uint64_t number)
+{
+    uint64_t low = 0;
+    uint64_t high = number < UINT32_MAX ? number : UINT32_MAX;
+
+    while (low <= high) {
+        uint64_t middle = low + (high - low) / 2;
+
+        if (middle != 0 && middle > number / middle) {
+            high = middle - 1;
+        } else {
+            uint64_t square = middle * middle;
+
+            if (square == number) {
+                return true;
+            }
+
+            low = middle + 1;
+        }
+    }
+
+    return false;
+}
+
+static bool read_input(char **buffer)
+{
+    if (buffer == NULL) {
+        return false;
+    }
+
+    *buffer = NULL;
+
+    size_t capacity = 128;
+    size_t length = 0;
+    char *input = malloc(capacity);
+
+    if (input == NULL) {
+        return false;
+    }
+
+    for (;;) {
+        if (length + 1 == capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(input);
+                return false;
+            }
+
+            size_t new_capacity = capacity * 2;
+            char *new_input = realloc(input, new_capacity);
+
+            if (new_input == NULL) {
+                free(input);
+                return false;
+            }
+
+            input = new_input;
+            capacity = new_capacity;
+        }
+
+        size_t available = capacity - length;
+
+        /* Possible weaknesses found:
+         *  'INT_MAX' undeclared (first use in this function)
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'INT_MAX'
+         */
+        if (fgets(input + length, (int)(available > INT_MAX ? INT_MAX : available),
+                  stdin) == NULL) {
+            if (ferror(stdin)) {
+                free(input);
+                return false;
+            }
+            break;
+        }
+
+        while (input[length] != '\0' && input[length] != '\n') {
+            ++length;
+        }
+
+        if (input[length] == '\n') {
+            input[length] = '\0';
+            *buffer = input;
+            return true;
+        }
+    }
+
+    input[length] = '\0';
+    *buffer = input;
+    return true;
+}
+
+int main(void)
+{
+    char *input = NULL;
+
+    if (!read_input(&input)) {
+        return EXIT_FAILURE;
+    }
+
+    char *start = input;
+
+    while (isspace((unsigned char)*start)) {
+        ++start;
+    }
+
+    bool result = false;
+
+    if (*start != '\0' && *start != '-') {
+        errno = 0;
+
+        char *end = NULL;
+        uintmax_t value = strtoumax(start, &end, 10);
+
+        if (end != start && errno != ERANGE && value <= UINT64_MAX) {
+            while (isspace((unsigned char)*end)) {
+                ++end;
+            }
+
+            if (*end == '\0') {
+                result = is_perfect_square((uint64_t)value);
+            }
+        }
+    }
+
+    free(input);
+
+    if (printf("%s\n", result ? "True" : "False") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

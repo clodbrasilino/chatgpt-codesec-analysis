@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCHES 10
+#define MAX_ERROR_MSG 256
+#define MAX_MATCH_LEN 255
+#define MAX_INPUT_LEN (MAX_MATCH_LEN * MAX_MATCHES)
+
+static int validate_params(const char *input, const char *pattern,
+                           char (*matches)[MAX_ERROR_MSG], int max_matches) {
+    if (input == NULL || pattern == NULL || matches == NULL) {
+        return -1;
+    }
+    if (max_matches <= 0 || max_matches > MAX_MATCHES) {
+        return -1;
+    }
+    return 0;
+}
+
+static int copy_match(char *dest, size_t dest_size,
+                      const char *src, size_t match_len,
+                      const char *input, size_t input_len,
+                      size_t cursor_offset, size_t src_offset) {
+    size_t copy_len;
+
+    if (dest == NULL || src == NULL || input == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    if (match_len > MAX_MATCH_LEN) {
+        return -1;
+    }
+
+    if (cursor_offset > input_len) {
+        return -1;
+    }
+
+    if (src_offset > (input_len - cursor_offset)) {
+        return -1;
+    }
+
+    if (match_len > (input_len - cursor_offset - src_offset)) {
+        return -1;
+    }
+
+    if (match_len < (dest_size - 1)) {
+        copy_len = match_len;
+    } else {
+        copy_len = dest_size - 1;
+    }
+
+    if (copy_len == 0 || copy_len >= dest_size) {
+        return -1;
+    }
+
+    if (copy_len > dest_size - 1) {
+        copy_len = dest_size - 1;
+    }
+
+    if (copy_len > dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, src, copy_len);
+    dest[copy_len] = '\0';
+    return 0;
+}
+
+int search_literals(const char *input, const char *pattern,
+                    char (*matches)[MAX_ERROR_MSG], int max_matches) {
+    regex_t regex;
+    regmatch_t pmatch[MAX_MATCHES];
+    int ret;
+    int match_count = 0;
+    const char *cursor;
+    size_t input_len;
+    size_t dest_size;
+    size_t cursor_offset;
+    size_t src_offset;
+
+    if (validate_params(input, pattern, matches, max_matches) != 0) {
+        return -1;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN + 1);
+    if (input_len > MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    cursor = input;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        char err_buf[MAX_ERROR_MSG];
+        regerror(ret, &regex, err_buf, MAX_ERROR_MSG);
+        err_buf[MAX_ERROR_MSG - 1] = '\0';
+        fprintf(stderr, "Regex compilation failed: %s\n", err_buf);
+        return -1;
+    }
+
+    while (match_count < max_matches && *cursor != '\0') {
+        int pmatch_count;
+        int match_len;
+
+        pmatch_count = (max_matches - match_count < MAX_MATCHES) ?
+                       (max_matches - match_count) : MAX_MATCHES;
+
+        ret = regexec(&regex, cursor, (size_t)pmatch_count, pmatch, 0);
+
+        if (ret == REG_NOMATCH) {
+            break;
+        } else if (ret != 0) {
+            char err_buf[MAX_ERROR_MSG];
+            regerror(ret, &regex, err_buf, MAX_ERROR_MSG);
+            err_buf[MAX_ERROR_MSG - 1] = '\0';
+            fprintf(stderr, "Regex execution failed: %s\n", err_buf);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (pmatch[0].rm_so == -1) {
+            break;
+        }
+
+        match_len = pmatch[0].rm_eo - pmatch[0].rm_so;
+        if (match_len > 0 && (size_t)match_len <= MAX_MATCH_LEN) {
+            dest_size = MAX_ERROR_MSG;
+            cursor_offset = (size_t)(cursor - input);
+            src_offset = (size_t)pmatch[0].rm_so;
+
+            if (copy_match(matches[match_count], dest_size,
+                          cursor + pmatch[0].rm_so, (size_t)match_len,
+                          input, input_len, cursor_offset, src_offset) == 0) {
+                match_count++;
+            }
+        }
+
+        if (pmatch[0].rm_eo == 0) {
+            cursor++;
+            if ((size_t)(cursor - input) > input_len) {
+                break;
+            }
+        } else {
+            cursor += pmatch[0].rm_eo;
+            if ((size_t)(cursor - input) > input_len) {
+                break;
+            }
+        }
+    }
+
+    regfree(&regex);
+    return match_count;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. Quick fox, brown dog.";
+    const char *pattern = "(quick|brown|fox|dog)";
+    char matches[MAX_MATCHES][MAX_ERROR_MSG];
+    int found;
+    int i;
+
+    memset(matches, 0, sizeof(matches));
+
+    found = search_literals(text, pattern, matches, MAX_MATCHES);
+
+    if (found < 0) {
+        fprintf(stderr, "Error occurred during search\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %d matches:\n", found);
+    for (i = 0; i < found; i++) {
+        printf("Match %d: %s\n", i + 1, matches[i]);
+    }
+
+    return EXIT_SUCCESS;
+}

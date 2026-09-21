@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 32
+#define DISCARD_GUARD_LIMIT 4096
+
+static int has_28_days(const char *month)
+{
+    char normalized[MAX_INPUT];
+    size_t i;
+    size_t len;
+
+    if (month == NULL) {
+        return -1;
+    }
+
+    len = strnlen(month, MAX_INPUT);
+    if (len == 0 || len >= MAX_INPUT) {
+        return -1;
+    }
+
+    for (i = 0; i < len && i < (sizeof(normalized) - 1); i++) {
+        if (!isalpha((unsigned char)month[i])) {
+            return -1;
+        }
+        normalized[i] = (char)tolower((unsigned char)month[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strcmp(normalized, "february") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    size_t guard = 0;
+
+    do {
+        ch = getchar();
+        guard++;
+    } while (ch != '\n' && ch != EOF && guard < DISCARD_GUARD_LIMIT);
+
+    return (ch == EOF) ? -1 : 0;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+    int result;
+
+    printf("Enter a month name: ");
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+        len--;
+    } else {
+        (void)discard_remaining_input();
+        if (len == sizeof(input) - 1) {
+            fprintf(stderr, "Input too long.\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (len == 0) {
+        fprintf(stderr, "Empty input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = has_28_days(input);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid month name input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("%s contains 28 days.\n", input);
+    } else {
+        printf("%s does not contain exactly 28 days.\n", input);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and how the code mitigates them:
+
+**1. `char normalized[MAX_INPUT]` in `has_28_days` (CWE-119/CWE-120, risk 2):** The fixed-size buffer is protected on every path. `strnlen(month, MAX_INPUT)` bounds the length measurement, inputs of length `0` or `>= MAX_INPUT` are rejected before any copy, the copy loop is double-bounded (`i < len && i < sizeof(normalized) - 1`), and null-termination is explicit. No overflow is possible.
+
+**2. `getchar()` in a loop inside `discard_remaining_input` (CWE-120/CWE-20, risk 1):** The loop never writes the read characters into a buffer, so there is nothing to overflow. The `guard < DISCARD_GUARD_LIMIT` counter additionally prevents unbounded looping on a pathological stream, and `EOF` is handled and reported to the caller.
+
+**3. `char input[MAX_INPUT]` in `main` (CWE-119/CWE-120, risk 2):** Input is read with `fgets(input, (int)sizeof(input), stdin)`, which enforces the buffer limit. The buffer is defensively null-terminated, length is measured with the bounded `strnlen`, oversized lines are detected (`len == sizeof(input) - 1` without a trailing newline), the remainder of the line is drained, and the program exits with an error rather than truncating silently.
+
+The warnings are informational (Flawfinder flags any statically-sized array and any `getchar` loop); the code already contained the correct mitigations, so the rewrite preserves them, with the only substantive change being lifting the magic number `4096` into a named constant and marking `has_28_days` as `static` for internal linkage consistency.

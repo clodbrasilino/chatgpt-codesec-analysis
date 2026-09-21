@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char **split_at_lowercase(const char *input, size_t *count);
+void free_tokens(char **tokens, size_t count);
+
+char **split_at_lowercase(const char *input, size_t *count)
+{
+    char **tokens = NULL;
+    char **temp = NULL;
+    size_t num_tokens = 0;
+    size_t start = 0;
+    size_t i = 0;
+    size_t len = 0;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    for (i = 0; i <= len; i++) {
+        if (i == len || islower((unsigned char)input[i])) {
+            if (i > start) {
+                size_t seg_len = i - start;
+
+                if (seg_len >= MAX_INPUT_LEN || start > len || seg_len > len - start) {
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+
+                char *segment = malloc(seg_len + 1);
+                if (segment == NULL) {
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+
+                memcpy(segment, &input[start], seg_len);
+                segment[seg_len] = '\0';
+
+                if (num_tokens >= SIZE_MAX / sizeof(char *) - 1) {
+                    free(segment);
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+
+                temp = realloc(tokens, (num_tokens + 1) * sizeof(char *));
+                if (temp == NULL) {
+                    free(segment);
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+                tokens = temp;
+                tokens[num_tokens] = segment;
+                num_tokens++;
+            }
+            start = i + 1;
+        }
+    }
+
+    *count = num_tokens;
+    return tokens;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char test[] = "HELLOworldFOObarBAZ123";
+    char **tokens = NULL;
+    size_t count = 0;
+    size_t i;
+
+    tokens = split_at_lowercase(test, &count);
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string or no tokens found\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input: %s\n", test);
+    printf("Tokens: %zu\n", count);
+    for (i = 0; i < count; i++) {
+        printf("  [%zu]: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+```
+
+**Analysis summary of the fixes applied:**
+
+1. **memcpy bounds (CWE-120):** The original flawfinder warning was technically a false positive since `segment` is allocated with exactly `seg_len + 1` bytes. However, I added an explicit defensive guard verifying that `seg_len` is bounded by `MAX_INPUT_LEN` and that `start + seg_len` cannot read past `len` before the `memcpy` executes, making the invariant locally provable rather than relying on distant loop logic.
+
+2. **Integer overflow in realloc size (CWE-190):** `(num_tokens + 1) * sizeof(char *)` could theoretically wrap; a `SIZE_MAX` check now prevents that.
+
+3. **Existing good practices preserved:** `strnlen` with a hard cap, `islower` with the `unsigned char` cast (avoiding UB on negative `char` values), the realloc-into-temp pattern preventing memory leaks on failure, and full cleanup on every error path.

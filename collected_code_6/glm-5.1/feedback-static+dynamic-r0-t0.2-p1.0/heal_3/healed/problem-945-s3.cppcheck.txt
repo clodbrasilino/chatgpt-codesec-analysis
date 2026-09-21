@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:43:45: style: Condition 'unique_count>0' is always true [knownConditionTrueFalse]
+        size_t dest_capacity = unique_count > 0 ? unique_count * sizeof(int) : 1;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:41:22: note: Assuming condition 'unique_count>0' is true
+    if (unique_count > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:43:45: note: Condition 'unique_count>0' is always true
+        size_t dest_capacity = unique_count > 0 ? unique_count * sizeof(int) : 1;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:44:23: style: Condition 'copy_size<=dest_capacity' is always true [knownConditionTrueFalse]
+        if (copy_size <= dest_capacity) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:42:26: note: copy_size is assigned 'unique_count*sizeof(int)' here.
+        size_t copy_size = unique_count * sizeof(int);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:43:49: note: Assignment 'dest_capacity=unique_count>0?unique_count*sizeof(int):1', assigned value is symbolic=copy_size
+        size_t dest_capacity = unique_count > 0 ? unique_count * sizeof(int) : 1;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-945-s3.c:44:23: note: Condition 'copy_size<=dest_capacity' is always true
+        if (copy_size <= dest_capacity) {
+                      ^

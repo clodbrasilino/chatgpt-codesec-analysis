@@ -1,0 +1,76 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:75:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'of'
+   75 | **Analysis of the flagged weakness (CWE-120, `memcpy`):**
+      |            ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:75:12: error: unknown type name 'of'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:75:46: error: stray '`' in program
+   75 | **Analysis of the flagged weakness (CWE-120, `memcpy`):**
+      |                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:75:53: error: stray '`' in program
+   75 | **Analysis of the flagged weakness (CWE-120, `memcpy`):**
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:77:27: error: stray '`' in program
+   77 | The Flawfinder warning on `memcpy` is a heuristic hit rather than an actual vulnerability in this code, and the existing mitigations are already correct:
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:77:34: error: stray '`' in program
+   77 | The Flawfinder warning on `memcpy` is a heuristic hit rather than an actual vulnerability in this code, and the existing mitigations are already correct:
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:36: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:71: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:84: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:97: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:116: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:135: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:146: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:79:152: error: stray '`' in program
+   79 | 1. **Bounded length measurement:** `strnlen(input, MAX_INPUT_SIZE - 1)` guarantees `input_length` can never exceed `MAX_INPUT_SIZE - 1`, even if `input` were somehow unterminated.
+      |                                                                                                                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:80:39: error: stray '`' in program
+   80 | 2. **Destination sized from source:** `buffer_size = input_length + 1` ensures the destination is allocated to exactly fit the copied bytes plus the NUL terminator.
+      |                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:80:70: error: stray '`' in program
+   80 | 2. **Destination sized from source:** `buffer_size = input_length + 1` ensures the destination is allocated to exactly fit the copied bytes plus the NUL terminator.
+      |                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:81:37: error: stray '`' in program
+   81 | 3. **Explicit pre-copy guard:** The `input_length >= buffer_size` check verifies the destination can hold the source data before `memcpy` executes, which is precisely what CWE-120 asks for.
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:81:65: error: stray '`' in program
+   81 | 3. **Explicit pre-copy guard:** The `input_length >= buffer_size` check verifies the destination can hold the source data before `memcpy` executes, which is precisely what CWE-120 asks for.
+      |                                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:81:130: error: stray '`' in program
+   81 | 3. **Explicit pre-copy guard:** The `input_length >= buffer_size` check verifies the destination can hold the source data before `memcpy` executes, which is precisely what CWE-120 asks for.
+      |                                                                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:81:137: error: stray '`' in program
+   81 | 3. **Explicit pre-copy guard:** The `input_length >= buffer_size` check verifies the destination can hold the source data before `memcpy` executes, which is precisely what CWE-120 asks for.
+      |                                                                                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:82:32: error: stray '`' in program
+   82 | 4. **Manual NUL termination:** `buffer[input_length] = '\0'` guarantees the buffer is a valid C string regardless of the copy contents.
+      |                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:82:60: error: stray '`' in program
+   82 | 4. **Manual NUL termination:** `buffer[input_length] = '\0'` guarantees the buffer is a valid C string regardless of the copy contents.
+      |                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:83:49: error: stray '`' in program
+   83 | 5. **Allocation failure handling and cleanup:** `malloc` is checked, `free` is called on all exit paths after allocation, and the pointer is nulled after freeing to prevent accidental use-after-free.
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:83:56: error: stray '`' in program
+   83 | 5. **Allocation failure handling and cleanup:** `malloc` is checked, `free` is called on all exit paths after allocation, and the pointer is nulled after freeing to prevent accidental use-after-free.
+      |                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:83:70: error: stray '`' in program
+   83 | 5. **Allocation failure handling and cleanup:** `malloc` is checked, `free` is called on all exit paths after allocation, and the pointer is nulled after freeing to prevent accidental use-after-free.
+      |                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-892-s2.c:83:75: error: stray '`' in program
+   83 | 5. **Allocation failure handling and cleanup:** `malloc` is checked, `free` is called on all exit paths after allocation, and the pointer is nulled after freeing to prevent accidental use-after-free.
+      |                                                                           ^

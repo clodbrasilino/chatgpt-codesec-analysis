@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-553-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-553-s2.c:29:22: style: The comparison 'copy_len > t->len' is always false because 'copy_len' and 't->len' represent the same value. [knownConditionTrueFalse]
+        if (copy_len > t->len) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-553-s2.c:28:28: note: 'copy_len' is assigned value 't->len' here.
+        size_t copy_len = t->len;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-553-s2.c:29:22: note: The comparison 'copy_len > t->len' is always false because 'copy_len' and 't->len' represent the same value.
+        if (copy_len > t->len) {
+                     ^

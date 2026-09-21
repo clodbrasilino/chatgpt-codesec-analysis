@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT 64
+
+bool digit_frequency_valid(const char *number, size_t max_len)
+{
+    int counts[10] = {0};
+    size_t i;
+    size_t len;
+
+    if (number == NULL || max_len == 0U) {
+        return false;
+    }
+
+    len = strnlen(number, max_len);
+    if (len == 0U || len >= max_len) {
+        return false;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (!isdigit((unsigned char)number[i])) {
+            return false;
+        }
+        const int digit = number[i] - '0';
+        if (digit < 0 || digit > 9) {
+            return false;
+        }
+        counts[digit]++;
+    }
+
+    for (i = 0U; i < 10U; i++) {
+        if (counts[i] > (int)i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT];
+    size_t len;
+
+    printf("Enter a number: ");
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+
+    len = strnlen(input, sizeof(input));
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    }
+
+    if (digit_frequency_valid(input, sizeof(input))) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **Variable scope reduction (`variableScope`)**: The `digit` variable was moved from function scope into the loop body where it is actually used, and declared `const` since it is never modified after initialization. This limits its lifetime to a single iteration and prevents accidental misuse elsewhere in the function.
+
+2. **Statically-sized buffer (CWE-119/CWE-120, Flawfinder risk 2)**: The original code already mitigated this correctly, so the defensive measures were preserved rather than changed:
+   - `fgets` is used with `sizeof(input)` to limit the read length, preventing overflow.
+   - Explicit null termination via `input[sizeof(input) - 1U] = '\0'` guarantees a terminated string.
+   - `strnlen` (bounded) is used instead of `strlen`, both in `main` and in `digit_frequency_valid`.
+   - `digit_frequency_valid` validates its inputs (`NULL` check, zero-length check, and the `len >= max_len` check that rejects unterminated/truncated input).
+
+The remaining structure — the `isdigit` cast to `unsigned char` (avoiding UB with negative `char` values), the redundant range check on `digit` as defense-in-depth before indexing `counts[]`, and the newline stripping — is already sound practice and was left intact.

@@ -1,0 +1,154 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total = 0;
+    size_t i;
+    size_t *lengths = NULL;
+    size_t remaining;
+    size_t capacity;
+    char *result = NULL;
+    char *pos = NULL;
+
+    if (list == NULL) {
+        return NULL;
+    }
+
+    if (count == 0) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+
+    if (count > SIZE_MAX / sizeof(size_t)) {
+        return NULL;
+    }
+
+    lengths = malloc(count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+
+        if (list[i] == NULL) {
+            free(lengths);
+            return NULL;
+        }
+
+        len = strnlen(list[i], MAX_STRING_LEN);
+        if (len >= MAX_STRING_LEN) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (len > SIZE_MAX - 1 - total) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total += len;
+    }
+
+    capacity = total + 1;
+    result = malloc(capacity);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    pos = result;
+    remaining = total;
+    for (i = 0; i < count; i++) {
+        size_t verify_len;
+        size_t used;
+
+        used = (size_t)(pos - result);
+        if (used > capacity - 1 || lengths[i] > (capacity - 1) - used) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        if (lengths[i] > remaining) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        verify_len = strnlen(list[i], MAX_STRING_LEN);
+        if (verify_len != lengths[i]) {
+            free(lengths);
+            free(result);
+            return NULL;
+        }
+
+        if (lengths[i] > 0) {
+            memcpy(pos, list[i], lengths[i]);
+        }
+        pos += lengths[i];
+        remaining -= lengths[i];
+    }
+
+    if (remaining != 0) {
+        free(lengths);
+        free(result);
+        return NULL;
+    }
+
+    if ((size_t)(pos - result) >= capacity) {
+        free(lengths);
+        free(result);
+        return NULL;
+    }
+
+    *pos = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void)
+{
+    const char *const list[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *joined = concatenate_list(list, count);
+
+    if (joined == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", joined) < 0) {
+        free(joined);
+        return EXIT_FAILURE;
+    }
+
+    free(joined);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness: The Flawfinder warning on `memcpy` (CWE-120) is a false positive in this code. The destination buffer safety is already guaranteed by multiple layers of defense that I have preserved in the rewrite:
+
+1. **Precomputed lengths with overflow checks**: Each string length is measured with `strnlen` bounded by `MAX_STRING_LEN`, and the running total is checked against `SIZE_MAX - 1` to prevent integer overflow when computing the allocation size.
+
+2. **Exact capacity allocation**: The buffer is allocated as `total + 1`, sized precisely from the validated lengths.
+
+3. **Pre-copy bounds verification**: Before every `memcpy`, the code verifies that `used + lengths[i]` cannot exceed `capacity - 1`, guaranteeing the copy fits within the destination.
+
+4. **TOCTOU mitigation**: `strnlen` is re-run (`verify_len`) immediately before copying, so if another thread mutated a string between the measurement pass and the copy pass, the mismatch is detected and the operation aborts rather than copying a wrong length.
+
+5. **Post-loop invariant checks**: `remaining` must reach exactly zero and the final write position must remain inside the buffer before the NUL terminator is written.
+
+No functional changes were required — the code already correctly guards the `memcpy` destination, so the rewrite retains the existing checks with the comments removed as requested.

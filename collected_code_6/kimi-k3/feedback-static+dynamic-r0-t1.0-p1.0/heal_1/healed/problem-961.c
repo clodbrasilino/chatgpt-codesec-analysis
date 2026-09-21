@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int roman_char_value(char c) {
+    switch (toupper((unsigned char)c)) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0;
+    }
+}
+
+int roman_to_int(const char *s, size_t len) {
+    if (s == NULL || len == 0) {
+        return -1;
+    }
+
+    int result = 0;
+    int prev_value = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        int current = roman_char_value(s[i]);
+        if (current == 0) {
+            return -1;
+        }
+
+        if (current > prev_value) {
+            result += current - 2 * prev_value;
+        } else {
+            result += current;
+        }
+        prev_value = current;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {"III", "IV", "IX", "LVIII", "MCMXCIV", "MMXXIV"};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        size_t len = strlen(test_cases[i]);
+        int value = roman_to_int(test_cases[i], len);
+        if (value >= 0) {
+            printf("%s = %d\n", test_cases[i], value);
+        } else {
+            printf("%s = Invalid Roman numeral\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:109:61: style: Condition 'result_pos+new_num_len<=result_size' is always true [knownConditionTrueFalse]
+            if (new_num_len > 0 && result_pos + new_num_len <= result_size) {
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:104:83: note: Assuming that condition 'result_pos+new_num_len>=result_size' is not redundant
+            if (result_pos + new_num_len < result_pos || result_pos + new_num_len >= result_size) {
+                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:109:61: note: Condition 'result_pos+new_num_len<=result_size' is always true
+            if (new_num_len > 0 && result_pos + new_num_len <= result_size) {
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:162:28: style: Condition 'result6' is always false [knownConditionTrueFalse]
+    printf("Result: %s\n", result6 ? result6 : "NULL");
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:144:45: note: Calling function 'increment_numeric_values' returns 0
+    char* result6 = increment_numeric_values(NULL, 5);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:144:45: note: Assignment 'result6=increment_numeric_values(NULL,5)', assigned value is 0
+    char* result6 = increment_numeric_values(NULL, 5);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-621-s2.c:162:28: note: Condition 'result6' is always false
+    printf("Result: %s\n", result6 ? result6 : "NULL");
+                           ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-15-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-15-s3.c:14:40: warning: Either the condition 'len<max_allowed_len' is redundant or the array 'str[15]' is accessed at index 8191, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len < max_allowed_len && str[len] != '\0') {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-15-s3.c:11:30: note: Assignment 'max_allowed_len=8192', assigned value is 8192
+    size_t max_allowed_len = 8192;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-15-s3.c:14:16: note: Assuming that condition 'len<max_allowed_len' is not redundant
+    while (len < max_allowed_len && str[len] != '\0') {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-15-s3.c:14:40: note: Array index out of bounds
+    while (len < max_allowed_len && str[len] != '\0') {
+                                       ^

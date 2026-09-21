@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:21:23: style: Condition 'dest_size<=str_length' is always false [knownConditionTrueFalse]
+        if (dest_size <= str_length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:19:26: note: dest_size is assigned 'str_length+1' here.
+        size_t dest_size = str_length + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:21:23: note: Condition 'dest_size<=str_length' is always false
+        if (dest_size <= str_length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:32:24: style: Condition 'str_length>=dest_size' is always false [knownConditionTrueFalse]
+        if (str_length >= dest_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:19:26: note: dest_size is assigned 'str_length+1' here.
+        size_t dest_size = str_length + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:27:19: note: Assuming condition is false
+        if (t.str == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-788.c:32:24: note: Condition 'str_length>=dest_size' is always false
+        if (str_length >= dest_size) {
+                       ^

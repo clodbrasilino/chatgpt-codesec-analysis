@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-937-s2.c:37:50: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   37 |     char result = find_most_common_char(argv[1], strlen(argv[1]), &count);
+      |                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-937-s2.c:37:50: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+1 error generated.

@@ -1,0 +1,133 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096U
+
+static void free_partial(char **result, size_t count)
+{
+    size_t j;
+
+    for (j = 0; j < count; j++) {
+        free(result[j]);
+    }
+    free(result);
+}
+
+char **concat_adjacent(const char **tuple, size_t n, size_t *out_n)
+{
+    char **result;
+    size_t i;
+
+    if (tuple == NULL || out_n == NULL || n < 2) {
+        if (out_n != NULL) {
+            *out_n = 0;
+        }
+        return NULL;
+    }
+
+    result = calloc(n - 1, sizeof(char *));
+    if (result == NULL) {
+        *out_n = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < n - 1; i++) {
+        size_t len1;
+        size_t len2;
+        size_t total;
+
+        if (tuple[i] == NULL || tuple[i + 1] == NULL) {
+            free_partial(result, i);
+            *out_n = 0;
+            return NULL;
+        }
+
+        len1 = strnlen(tuple[i], MAX_STR_LEN);
+        len2 = strnlen(tuple[i + 1], MAX_STR_LEN);
+
+        if (len1 >= MAX_STR_LEN || len2 >= MAX_STR_LEN) {
+            free_partial(result, i);
+            *out_n = 0;
+            return NULL;
+        }
+
+        if (len1 > SIZE_MAX - len2 - 1U) {
+            free_partial(result, i);
+            *out_n = 0;
+            return NULL;
+        }
+
+        total = len1 + len2 + 1U;
+
+        result[i] = malloc(total);
+        if (result[i] == NULL) {
+            free_partial(result, i);
+            *out_n = 0;
+            return NULL;
+        }
+
+        memcpy(result[i], tuple[i], len1);
+        memcpy(result[i] + len1, tuple[i + 1], len2);
+        result[i][len1 + len2] = '\0';
+    }
+
+    *out_n = n - 1;
+    return result;
+}
+
+void free_result(char **result, size_t n)
+{
+    size_t i;
+
+    if (result == NULL) {
+        return;
+    }
+    for (i = 0; i < n; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *tuple[] = { "DSP ", "IS ", "BEST ", "FOR ", "ALL ", "UTS" };
+    size_t n = sizeof(tuple) / sizeof(tuple[0]);
+    size_t out_n = 0;
+    size_t i;
+    char **result;
+
+    result = concat_adjacent(tuple, n, &out_n);
+    if (result == NULL) {
+        fprintf(stderr, "Concatenation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < out_n; i++) {
+        printf("'%s'", result[i]);
+        if (i + 1 < out_n) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_result(result, out_n);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll need `#include <stdint.h>` for `SIZE_MAX` on some toolchains — add it to the includes:
+
+```c
+#include <stdint.h>
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_STR_LEN`. If the result equals the bound, the string is treated as unterminated/oversized and the function fails safely instead of over-reading.
+
+2. **CWE-120 (`memcpy` overflow):** The destination buffer size is now computed with an explicit overflow check (`len1 > SIZE_MAX - len2 - 1U`) before allocation, guaranteeing the buffer can always hold both source segments. The NUL terminator is written explicitly rather than relying on copying `len2 + 1` bytes from the source, so each `memcpy` copies exactly the number of bytes measured and verified against the allocation.
+
+3. Cleanup logic was factored into `free_partial` to avoid duplicated error-path code, reducing the chance of a future leak or double-free being introduced during maintenance.

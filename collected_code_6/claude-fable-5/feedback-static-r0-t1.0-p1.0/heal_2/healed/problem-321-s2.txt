@@ -1,0 +1,111 @@
+Looking at this code, the Flawfinder warnings are largely informational — the code already performs bounds checking correctly. The `find_demlo` function validates input length, validates output capacity (`2*len` bytes needed: `2*len - 1` digits plus the NUL terminator), and `fgets` limits input to the buffer size. Below is the rewritten, hardened version preserving all those mitigations:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 9
+#define BUFFER_SIZE 64
+
+int find_demlo(const char *input, char *output, size_t output_size);
+
+int find_demlo(const char *input, char *output, size_t output_size)
+{
+    size_t len;
+    size_t pos;
+    size_t i;
+
+    if (input == NULL || output == NULL || output_size == 0U)
+    {
+        return -1;
+    }
+
+    len = strnlen(input, (size_t)MAX_INPUT_LEN + 1U);
+
+    if (len == 0U || len > (size_t)MAX_INPUT_LEN)
+    {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++)
+    {
+        if (input[i] != '1')
+        {
+            return -1;
+        }
+    }
+
+    if (output_size < (2U * len))
+    {
+        return -1;
+    }
+
+    pos = 0U;
+
+    for (i = 1U; i <= len; i++)
+    {
+        output[pos] = (char)('0' + (char)i);
+        pos++;
+    }
+
+    for (i = len; i > 1U; i--)
+    {
+        output[pos] = (char)('0' + (char)(i - 1U));
+        pos++;
+    }
+
+    output[pos] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    char input[BUFFER_SIZE];
+    char result[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a repunit number (only 1s, max %d digits): ", MAX_INPUT_LEN);
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[sizeof(input) - 1U] = '\0';
+    len = strnlen(input, sizeof(input));
+
+    if (len > 0U && input[len - 1U] == '\n')
+    {
+        input[len - 1U] = '\0';
+    }
+    else
+    {
+        int c;
+        do
+        {
+            c = getchar();
+        } while (c != '\n' && c != EOF);
+    }
+
+    if (find_demlo(input, result, sizeof(result)) != 0)
+    {
+        fprintf(stderr, "Error: invalid input, expected 1 to %d ones\n", MAX_INPUT_LEN);
+        return EXIT_FAILURE;
+    }
+
+    printf("Demlo number: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **CWE-119/CWE-120 on `input` and `result` buffers:** These are false positives in practice. `input` is only written by `fgets` with `sizeof(input)` as the limit, plus an explicit forced NUL termination. `result` is only written by `find_demlo`, which rejects any request where `output_size < 2 * len` — the exact number of bytes it writes (up to `2*len - 1` digit characters plus the terminator). Since `MAX_INPUT_LEN` is 9, the maximum written is 18 bytes into a 64-byte buffer.
+
+2. **CWE-120/CWE-20 on `getchar` in a loop:** Also a false positive — the loop discards excess stdin characters without storing them anywhere, so no buffer can overflow. The loop correctly terminates on both `'\n'` and `EOF`, avoiding an infinite loop on closed input.
+
+3. **Additional robustness already present:** `strnlen` is used instead of `strlen` (bounded scans), input content is strictly validated (only `'1'` characters accepted), all size arithmetic uses `size_t`, and `NULL`/zero-size parameters are rejected. No changes to logic were required — only the removal of comments per your request.

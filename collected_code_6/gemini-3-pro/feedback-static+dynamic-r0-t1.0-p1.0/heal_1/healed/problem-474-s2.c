@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* replace_char(const char* str, size_t max_len, char find, char replace) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strnlen(str, max_len);
+    char* str_copy = (char*)malloc(len + 1);
+    
+    if (str_copy == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == find) {
+            str_copy[i] = replace;
+        } else {
+            str_copy[i] = str[i];
+        }
+    }
+    str_copy[len] = '\0';
+
+    return str_copy;
+}
+
+int main(void) {
+    const char* original = "hello world";
+    size_t max_len = 256; 
+    char* modified = replace_char(original, max_len, 'o', '0');
+
+    if (modified != NULL) {
+        printf("Original: %s\n", original);
+        printf("Modified: %s\n", modified);
+        free(modified);
+    } else {
+        printf("Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

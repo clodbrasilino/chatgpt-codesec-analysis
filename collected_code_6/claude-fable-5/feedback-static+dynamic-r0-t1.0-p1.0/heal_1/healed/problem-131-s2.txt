@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256U
+
+static bool is_vowel(char c)
+{
+    switch (c) {
+    case 'a': case 'e': case 'i': case 'o': case 'u':
+    case 'A': case 'E': case 'I': case 'O': case 'U':
+        return true;
+    default:
+        return false;
+    }
+}
+
+static int reverse_vowels(char *s, size_t max_len)
+{
+    size_t left;
+    size_t right;
+    size_t len;
+    char tmp;
+
+    if (s == NULL) {
+        return -1;
+    }
+
+    len = strnlen(s, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len < 2U) {
+        return 0;
+    }
+
+    left = 0U;
+    right = len - 1U;
+
+    while (left < right) {
+        while ((left < right) && (!is_vowel(s[left]))) {
+            left++;
+        }
+        while ((left < right) && (!is_vowel(s[right]))) {
+            right--;
+        }
+        if (left < right) {
+            tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+            left++;
+            right--;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    if (reverse_vowels(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Summary of changes made to address the identified weaknesses:**
+
+1. **CWE-126 (`strlen` over-read)** — Both occurrences of `strlen` were replaced with `strnlen`, bounded by the buffer size. This guarantees the scan can never read past the buffer even if the string were somehow unterminated.
+
+2. **CWE-119/CWE-120 (statically-sized array)** — The buffer size is now a named constant (`BUFFER_SIZE`), `fgets` remains bounded by `sizeof(buffer)`, and an explicit `buffer[sizeof(buffer) - 1U] = '\0';` enforces null termination defensively, ensuring downstream string operations are always safe.
+
+3. **Hardened API contract** — `reverse_vowels` now takes an explicit `max_len` parameter and validates that the string is properly terminated within bounds (`len >= max_len` returns an error), so the function no longer trusts its caller to pass a well-formed string.
+
+The original code was already functionally safe (since `fgets` null-terminates), so these are defense-in-depth changes that silence the static-analysis findings without altering behavior.

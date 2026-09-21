@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-27.c:21:33: error: incompatible integer to pointer conversion passing 'char' to parameter of type 'const char *'; take the address with & [-Wint-conversion]
+   21 |         size_t str_len = strlen(strings[i]);
+      |                                 ^~~~~~~~~~
+      |                                 &
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h:96:28: note: passing argument to parameter '__s' here
+   96 | size_t   strlen(const char *__s);
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-27.c:22:23: error: incompatible integer to pointer conversion passing 'char' to parameter of type 'char *'; take the address with & [-Wint-conversion]
+   22 |         remove_digits(strings[i], str_len);
+      |                       ^~~~~~~~~~
+      |                       &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-27.c:6:26: note: passing argument to parameter 'str' here
+    6 | void remove_digits(char *str, size_t len) {
+      |                          ^
+2 errors generated.

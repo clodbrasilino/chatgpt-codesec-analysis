@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:68:23: style: Condition 'dest_size<=len' is always false [knownConditionTrueFalse]
+        if (dest_size <= len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:67:26: note: dest_size is assigned 'len+1' here.
+        size_t dest_size = len + 1;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:68:23: note: Condition 'dest_size<=len' is always false
+        if (dest_size <= len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:99:24: style: Condition 'final_capacity<=*count' is always false [knownConditionTrueFalse]
+    if (final_capacity <= *count) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:98:27: note: final_capacity is assigned '*count+1' here.
+    size_t final_capacity = *count + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956-s2.c:99:24: note: Condition 'final_capacity<=*count' is always false
+    if (final_capacity <= *count) {
+                       ^

@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-206.c: In function 'adjacent_concat':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-206.c:22:33: error: '_tuples' undeclared (first use in this function); did you mean 'tuples'?
+   22 |         if (tuples[i] == NULL ||_tuples[i + 1] == NULL) {
+      |                                 ^~~~~~~
+      |                                 tuples
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-206.c:22:33: note: each undeclared identifier is reported only once for each function it appears in

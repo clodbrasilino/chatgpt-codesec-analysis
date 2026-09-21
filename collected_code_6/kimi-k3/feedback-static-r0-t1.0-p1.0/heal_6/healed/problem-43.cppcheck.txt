@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c:65:20: style: Condition 'length==0' is always false [knownConditionTrueFalse]
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c:58:41: note: Assuming that condition 'end<=start' is not redundant
+        if (start < 0 || end < 0 || end <= start || (size_t)end > input_len - offset) {
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c:63:25: note: Assignment 'length=(unsigned long)(end-start)', assigned value is greater than 0
+        size_t length = (size_t)(end - start);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c:65:20: note: Condition 'length==0' is always false
+        if (length == 0 || length >= MAX_MATCH_LEN) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-43.c:21:12: style: The scope of the variable 'offset' can be reduced. [variableScope]
+    size_t offset;
+           ^

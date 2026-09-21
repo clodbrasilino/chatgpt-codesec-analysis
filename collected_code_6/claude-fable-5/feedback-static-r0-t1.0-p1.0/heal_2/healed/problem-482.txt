@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_MATCH_LEN 256
+#define ERRBUF_LEN 128
+
+static int find_sequences(const char *input);
+
+static void report_regex_error(int code, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_LEN];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    regerror(code, regex, errbuf, sizeof(errbuf) - 1);
+    errbuf[sizeof(errbuf) - 1] = '\0';
+    fprintf(stderr, "Error: %s: %s\n", context, errbuf);
+}
+
+static int find_sequences(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[A-Z][a-z]+";
+    const char *cursor;
+    char buffer[MAX_MATCH_LEN];
+    int ret;
+    int found;
+
+    if (input == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "failed to compile regex");
+        return -1;
+    }
+
+    found = 0;
+    cursor = input;
+
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            report_regex_error(ret, &regex, "regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            regfree(&regex);
+            fprintf(stderr, "Error: invalid match offsets\n");
+            return -1;
+        }
+
+        {
+            size_t length = (size_t)(match.rm_eo - match.rm_so);
+            size_t max_len = sizeof(buffer) - 1;
+
+            if (length > max_len) {
+                length = max_len;
+            }
+            memcpy(buffer, cursor + match.rm_so, length);
+            buffer[length] = '\0';
+        }
+
+        printf("Found match: %s\n", buffer);
+        found++;
+
+        if (match.rm_eo == 0) {
+            cursor++;
+        } else {
+            cursor += match.rm_eo;
+        }
+    }
+
+    regfree(&regex);
+
+    if (found == 0) {
+        printf("No matches found.\n");
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    const char *test_string = "HelloWorld this Is a TestString with Mixed caseWords";
+    int result;
+
+    printf("Input: %s\n", test_string);
+
+    result = find_sequences(test_string);
+    if (result < 0) {
+        fprintf(stderr, "Error: sequence search failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total matches: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the Flawfinder warnings were low-risk (risk 2) advisories triggered by the mere presence of statically-sized arrays and `memcpy`, not actual exploitable flaws. Here's how each flagged concern is addressed in the rewrite:
+
+1. **`char buffer[MAX_MATCH_LEN]` (CWE-119/CWE-120):** The copy into `buffer` clamps the match length to `sizeof(buffer) - 1` before `memcpy`, and null-termination is guaranteed. No overflow is possible.
+
+2. **`char errbuf[ERRBUF_LEN]` (two occurrences):** The duplicated error-reporting blocks were consolidated into a single `report_regex_error()` helper. The buffer is zero-initialized, `regerror` is passed `sizeof(errbuf) - 1` so the last byte is never written by the library, and explicit termination is enforced. This removes code duplication and hardens the boundary by one byte.
+
+3. **`memcpy` (CWE-120):** The destination size check (`length > max_len`) is performed immediately before the copy, so the destination always holds the source data plus terminator.
+
+Other correctness properties preserved: `regfree` is called on every exit path after successful `regcomp`, the zero-length-match guard (`match.rm_eo == 0`) prevents infinite loops, and `NULL` input is rejected up front.

@@ -1,0 +1,73 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char *buffer = NULL;
+    size_t bufsize = 0;
+    ssize_t nread;
+    long result;
+
+    printf("Enter a string: ");
+
+    nread = getline(&buffer, &bufsize, stdin);
+    if (nread == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (nread > 0 && buffer[nread - 1] == '\n') {
+        buffer[nread - 1] = '\0';
+        nread--;
+    }
+
+    result = ascii_sum(buffer, (size_t)nread + 1);
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of ASCII values: %ld\n", result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The original code was already quite defensive, but the Flawfinder warning pointed at the statically-sized `char buffer[BUFFER_SIZE]` array (CWE-119/CWE-120). While the original mitigations were correct — `fgets` with `sizeof(buffer)` bounds the read, the explicit NUL termination is redundant but harmless, and `strnlen` prevents unbounded scans — the rewrite eliminates the class of weakness entirely rather than just mitigating it:
+
+1. **Dynamic allocation via `getline`**: Replaces the fixed-size stack buffer with a heap buffer that grows to fit the input. This removes both the overflow risk and the silent truncation behavior of the original (input longer than 255 characters was previously cut off and the remainder left in stdin).
+
+2. **Length tracking without re-scanning**: `getline` returns the number of bytes read, so the newline strip uses `nread` directly instead of calling `strnlen` again — avoiding a redundant O(n) pass and any reliance on NUL placement.
+
+3. **Consistent resource cleanup**: `free(buffer)` is called on every exit path, including error paths, preventing leaks (relevant since `getline` allocates even on some failure modes).
+
+4. **Retained safety in `ascii_sum`**: The NULL check, `strnlen` bounding, and the `(unsigned char)` cast (which prevents sign-extension producing negative sums on platforms where `char` is signed) are all preserved.
+
+The `_POSIX_C_SOURCE 200809L` feature-test macro is kept because both `getline` and `strnlen` require it for declaration on POSIX systems.

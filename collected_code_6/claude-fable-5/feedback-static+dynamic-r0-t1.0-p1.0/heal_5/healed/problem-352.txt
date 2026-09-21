@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the identified weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[BUFFER_SIZE]` is a low-risk, informational flag — statically-sized arrays are only dangerous when written to without bounds checking. This code already mitigates the concern fully:
+
+1. **`fgets(buffer, sizeof(buffer), stdin)`** — reads at most `sizeof(buffer) - 1` bytes and always null-terminates, so no overflow is possible on input. Using `sizeof(buffer)` rather than a repeated literal ensures the size stays correct if `BUFFER_SIZE` changes.
+
+2. **`memset` initialization** — guarantees the buffer contains no indeterminate data before use.
+
+3. **Defensive null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is technically redundant after `fgets`, but is harmless belt-and-braces hardening.
+
+4. **`strnlen(str, max_len)` instead of `strlen`** — bounds the scan even if a non-terminated buffer were ever passed, preventing an out-of-bounds read.
+
+5. **`unsigned char` cast before indexing `seen[]`** — critical correctness detail: plain `char` may be signed, and indexing an array with a negative value (e.g., bytes ≥ 0x80 in UTF-8 input) would be undefined behavior. The cast confines indices to 0–255.
+
+6. **NULL check** in `all_chars_unique` guards against misuse of the API.
+
+The code as written is already safe; the rewrite preserves it unchanged apart from removing comments, since no actual fix is required — the Flawfinder finding is a false positive given the consistent bounds enforcement.

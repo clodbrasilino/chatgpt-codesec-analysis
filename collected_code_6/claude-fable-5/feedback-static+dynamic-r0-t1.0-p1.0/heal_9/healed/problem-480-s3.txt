@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+        }
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char max_char = '\0';
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    if (max_occurring_char(buffer, &max_char) != 0) {
+        fprintf(stderr, "Invalid or empty input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum occurring character: %c\n", max_char) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weakness (CWE-119/CWE-120). The rewrite preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure, and `memset` pre-zeroes the buffer so no uninitialized reads occur.
+
+3. **Safe newline stripping** — `strcspn` with a bounds check avoids writing out of range.
+
+4. **Safe counting table** — `counts[UCHAR_MAX + 1]` indexed by `(unsigned char)str[i]` prevents negative-index undefined behavior that would occur if plain `char` (potentially signed) were used as the index.
+
+5. **Robust error handling** — NULL-pointer and empty-string checks in `max_occurring_char`, return-value checks on `fgets` and `printf`, and proper `EXIT_SUCCESS`/`EXIT_FAILURE` codes.
+
+The statically-sized array is acceptable here because every write path is length-limited; no further changes were required beyond removing comments as requested.

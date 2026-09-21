@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495-s2.c:64:42: style: Condition 'available>0' is always true [knownConditionTrueFalse]
+                    copy_len = available > 0 ? available - 1 : 0;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495-s2.c:49:39: note: Assuming that condition 'out_pos<output_size-1' is not redundant
+    while (*cursor != '\0' && out_pos < output_size - 1) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495-s2.c:62:48: note: Assignment 'available=output_size-out_pos', assigned value is greater than 1
+                size_t available = output_size - out_pos;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-495-s2.c:64:42: note: Condition 'available>0' is always true
+                    copy_len = available > 0 ? available - 1 : 0;
+                                         ^

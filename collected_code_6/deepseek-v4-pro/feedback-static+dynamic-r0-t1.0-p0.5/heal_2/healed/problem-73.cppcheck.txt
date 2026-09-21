@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c:67:34: style: Condition 'token_length>0' is always true [knownConditionTrueFalse]
+                if (token_length > 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c:35:30: note: Assuming that condition 'token_length>0' is not redundant
+            if (token_length > 0) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c:59:35: note: Assuming condition is false
+                if (tokens[count] == NULL) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c:67:34: note: Condition 'token_length>0' is always true
+                if (token_length > 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-73.c:110:26: style: Variable 'capacity' is assigned a value that is never used. [unreadVariable]
+                capacity = new_capacity;
+                         ^

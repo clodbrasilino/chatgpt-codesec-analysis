@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c:48:27: style: Condition 'strlen(snake)+1>512' is always false [knownConditionTrueFalse]
+    if (strlen(snake) + 1 > 512) return 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c:47:25: note: Assignment 'snake="this_is_snake_case"', assigned value is "this_is_snake_case"
+    const char *snake = "this_is_snake_case";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c:48:27: note: Condition 'strlen(snake)+1>512' is always false
+    if (strlen(snake) + 1 > 512) return 1;
+                          ^

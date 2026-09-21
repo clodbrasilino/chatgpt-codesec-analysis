@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_palindrome(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+char **find_palindromes(char **strings, size_t count, size_t *palindrome_count) {
+    if (strings == NULL || palindrome_count == NULL || count == 0) {
+        if (palindrome_count != NULL) {
+            *palindrome_count = 0;
+        }
+        return NULL;
+    }
+
+    char **palindromes = malloc(count * sizeof(char *));
+    if (palindromes == NULL) {
+        *palindrome_count = 0;
+        return NULL;
+    }
+
+    size_t found = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (strings[i] != NULL && is_palindrome(strings[i])) {
+            palindromes[found] = strings[i];
+            found++;
+        }
+    }
+
+    *palindrome_count = found;
+    if (found == 0) {
+        free(palindromes);
+        return NULL;
+    }
+
+    char **result = realloc(palindromes, found * sizeof(char *));
+    if (result == NULL) {
+        *palindrome_count = 0;
+        free(palindromes);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void) {
+    char *strings[] = {
+        "radar",
+        "hello",
+        "level",
+        "world",
+        "deified",
+        "c",
+        "",
+        "notapalindrome",
+        "aabbaa"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    size_t palindrome_count = 0;
+
+    char **palindromes = find_palindromes(strings, count, &palindrome_count);
+
+    if (palindromes != NULL) {
+        printf("Found %zu palindromes:\n", palindrome_count);
+        for (size_t i = 0; i < palindrome_count; i++) {
+            printf("  %s\n", palindromes[i]);
+        }
+        free(palindromes);
+    } else {
+        if (palindrome_count == 0) {
+            printf("No palindromes found.\n");
+        } else {
+            printf("Memory allocation failed.\n");
+        }
+    }
+
+    return 0;
+}

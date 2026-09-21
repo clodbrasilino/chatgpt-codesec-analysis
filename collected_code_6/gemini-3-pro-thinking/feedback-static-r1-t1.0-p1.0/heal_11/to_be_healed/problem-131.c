@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 1048576
+
+bool is_vowel(char c);
+char* reverse_vowels(const char *input);
+
+bool is_vowel(char c) {
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
+}
+
+char* reverse_vowels(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input);
+    
+    if (len > MAX_INPUT_LEN) {
+        len = MAX_INPUT_LEN;
+    }
+
+    char *str = (char *)malloc(len + 1);
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(str, input, len);
+    str[len] = '\0';
+
+    if (len == 0) {
+        return str;
+    }
+
+    size_t left = 0;
+    size_t right = len - 1;
+
+    while (left < right) {
+        while (left < right && !is_vowel(str[left])) {
+            left++;
+        }
+        while (left < right && !is_vowel(str[right])) {
+            right--;
+        }
+        if (left < right) {
+            char temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    return str;
+}
+
+int main(void) {
+    const char *test_str = "Programming in C is fun";
+    char *result = reverse_vowels(test_str);
+    
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+    int ch;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+
+    if (isprint(input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+Analysis of the original code and the fixes applied:
+
+**Original weaknesses assessed:**
+
+1. **Flawfinder `getchar` warning (CWE-120, CWE-20):** This is a low-risk (risk 1) advisory. The warning is primarily relevant when `getchar()` results are stored into a fixed-size buffer inside a loop without bounds checking. The original code reads a single character into an `int` — no buffer is involved, so no overflow is possible. The original code was already safe in this regard.
+
+2. **Correct EOF handling:** The original code correctly declares `input` as `int` (not `char`), which is essential for reliably distinguishing `EOF` from valid character values. This is preserved.
+
+3. **`isprint()` with correct argument range:** Passing a value to `isprint()` that is neither `EOF` nor representable as `unsigned char` is undefined behavior. Since `input` comes directly from `getchar()` (which returns `EOF` or an `unsigned char` value) and `EOF` is filtered out first, the call is safe.
+
+4. **Safe cast in `get_ascii_value()`:** The cast through `unsigned char` avoids negative values on platforms where `char` is signed. Preserved as-is.
+
+**Improvement added:** A drain loop consumes any remaining characters on the input line (including the trailing newline). This hardens the program against excess input lingering in `stdin` (relevant to CWE-20 input validation concerns) and ensures deterministic behavior if the program were later extended to read further input.

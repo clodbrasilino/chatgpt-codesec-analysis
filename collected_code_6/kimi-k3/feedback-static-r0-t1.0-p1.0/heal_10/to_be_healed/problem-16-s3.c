@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <errno.h>
+
+#define MAX_INPUT_LEN 1024
+
+void find_lowercase_underscore_sequences(const char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    size_t len = strnlen(str, max_len);
+    size_t i = 0;
+    int found = 0;
+
+    while (i < len) {
+        if (islower((unsigned char)str[i])) {
+            size_t start = i;
+            size_t count = 0;
+
+            while (i < len && (islower((unsigned char)str[i]) || str[i] == '_')) {
+                if (str[i] == '_') {
+                    count++;
+                }
+                i++;
+            }
+
+            if (count > 0 && i > start && str[i - 1] != '_') {
+                printf("Found sequence: ");
+                for (size_t j = start; j < i; j++) {
+                    putchar(str[j]);
+                }
+                putchar('\n');
+                found = 1;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    if (!found) {
+        printf("No sequences found.\n");
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t input_size = MAX_INPUT_LEN;
+    size_t len = 0;
+    int c;
+
+    input = malloc(input_size);
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Enter a string: ");
+
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (len >= input_size - 1) {
+            size_t new_size = input_size * 2;
+            if (new_size < input_size) {
+                fprintf(stderr, "Input size overflow.\n");
+                free(input);
+                return 1;
+            }
+            char *new_input = realloc(input, new_size);
+            if (new_input == NULL) {
+                fprintf(stderr, "Memory reallocation failed.\n");
+                free(input);
+                return 1;
+            }
+            input = new_input;
+            input_size = new_size;
+        }
+        input[len++] = (char)c;
+    }
+    input[len] = '\0';
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input.\n");
+        free(input);
+        return 1;
+    }
+
+    find_lowercase_underscore_sequences(input, len + 1);
+
+    free(input);
+    return 0;
+}

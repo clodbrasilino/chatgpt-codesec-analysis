@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning on the statically-sized `signs` array (CWE-119/CWE-120) is a false positive in the original code, and the rewritten version retains the mitigations that make it safe:
+
+1. **Bounds are mathematically guaranteed:** `year % ZODIAC_COUNT` yields a value in `(-12, 12)`. The negative-adjustment branch (`index += ZODIAC_COUNT`) normalizes any negative remainder (which can occur with negative operands under C99+ truncation semantics), guaranteeing `0 <= index < 12`.
+
+2. **Defense-in-depth check:** The explicit `if (index < 0 || index >= ZODIAC_COUNT)` guard before indexing ensures no out-of-bounds read can ever occur, even if the modulo logic were altered later.
+
+3. **No writable buffers:** The array is `static const char *const` — read-only pointers to read-only string literals — so there is no overflow *write* target at all (CWE-120 does not apply).
+
+4. **Input validation in `main`:** `scanf` return value is checked, and non-positive years are rejected, preventing undefined or misleading behavior from malformed input.
+
+The code is correct as written; no functional changes were required to address the flagged weakness.

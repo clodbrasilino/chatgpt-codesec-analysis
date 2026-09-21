@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:110:23: style: Condition 'arr1_size<=t1.size' is always true [knownConditionTrueFalse]
+        if (arr1_size <= t1.size && arr1_size * sizeof(int) <= t1.size * sizeof(int)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:109:17: note: Assuming that condition 't1.size>=arr1_size' is not redundant
+    if (t1.size >= arr1_size && t1.data != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:110:23: note: Condition 'arr1_size<=t1.size' is always true
+        if (arr1_size <= t1.size && arr1_size * sizeof(int) <= t1.size * sizeof(int)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:124:23: style: Condition 'arr2_size<=t2.size' is always true [knownConditionTrueFalse]
+        if (arr2_size <= t2.size && arr2_size * sizeof(int) <= t2.size * sizeof(int)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:123:17: note: Assuming that condition 't2.size>=arr2_size' is not redundant
+    if (t2.size >= arr2_size && t2.data != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-560.c:124:23: note: Condition 'arr2_size<=t2.size' is always true
+        if (arr2_size <= t2.size && arr2_size * sizeof(int) <= t2.size * sizeof(int)) {
+                      ^

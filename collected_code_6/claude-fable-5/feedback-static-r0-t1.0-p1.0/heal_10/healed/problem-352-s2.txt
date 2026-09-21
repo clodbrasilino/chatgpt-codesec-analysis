@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code was already well-defended against the Flawfinder-flagged weakness (CWE-119/CWE-120). The rewritten version preserves all of those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing the classic `gets()`-style overflow that the "statically-sized array" warning is concerned about.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy; `fgets` already null-terminates on success, but this makes the guarantee explicit and future-proof against refactoring.
+
+3. **Newline stripping via `strcspn`** — safe even when no newline is present, since `strcspn` returns the index of the terminating null in that case, and that index is a valid write position.
+
+4. **Bounded scanning in `all_chars_unique`** — the loop condition `i < max_len && str[i] != '\0'` ensures the function never reads past the caller-supplied bound, even if handed a non-terminated buffer. The `NULL` check guards against invalid pointers.
+
+5. **Correct `char` handling** — casting to `unsigned char` before indexing `seen[]` avoids negative-index UB on platforms where `char` is signed, and sizing the array as `UCHAR_MAX + 1` covers the full byte range.
+
+No functional changes were required — only the removal of comments as requested.

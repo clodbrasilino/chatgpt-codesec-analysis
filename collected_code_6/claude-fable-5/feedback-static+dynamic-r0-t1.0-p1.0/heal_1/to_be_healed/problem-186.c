@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 256
+
+int search_literal(const char *text, const char *literal)
+{
+    regex_t regex;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     *  The scope of the variable 'errbuf' can be reduced. [variableScope]
+     */
+    char errbuf[ERRBUF_SIZE];
+    char *pattern;
+    size_t literal_len;
+    size_t i;
+    size_t j;
+    int ret;
+
+    if (text == NULL || literal == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    literal_len = strlen(literal);
+    pattern = malloc((literal_len * 2U) + 1U);
+    if (pattern == NULL) {
+        return -1;
+    }
+
+    j = 0U;
+    for (i = 0U; i < literal_len; i++) {
+        if (strchr(".^$*+?()[]{}|\\", literal[i]) != NULL) {
+            pattern[j] = '\\';
+            j++;
+        }
+        pattern[j] = literal[i];
+        j++;
+    }
+    pattern[j] = '\0';
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        (void)regerror(ret, &regex, errbuf, sizeof(errbuf));
+        (void)fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        free(pattern);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0U, NULL, 0);
+    regfree(&regex);
+    free(pattern);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+    return -1;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog. Price: $10.50 (discounted)";
+    const char *literals[] = { "brown fox", "$10.50", "(discounted)", "purple cow" };
+    size_t count = sizeof(literals) / sizeof(literals[0]);
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'result' can be reduced. [variableScope]
+     */
+    int result;
+
+    for (i = 0U; i < count; i++) {
+        result = search_literal(text, literals[i]);
+        if (result < 0) {
+            (void)fprintf(stderr, "Error searching for \"%s\"\n", literals[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            if (printf("Found: \"%s\"\n", literals[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("Not found: \"%s\"\n", literals[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

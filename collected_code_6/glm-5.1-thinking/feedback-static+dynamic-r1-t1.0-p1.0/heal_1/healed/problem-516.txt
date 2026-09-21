@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int radix_sort(int *arr, size_t n) {
+    if (n == 0) return 0;
+    if (arr == NULL) return -1;
+
+    unsigned int *arr_u = malloc(n * sizeof(unsigned int));
+    if (!arr_u) return -1;
+
+    unsigned int *output = malloc(n * sizeof(unsigned int));
+    if (!output) {
+        free(arr_u);
+        return -1;
+    }
+
+    unsigned int max_val = 0;
+    for (size_t i = 0; i < n; i++) {
+        arr_u[i] = (unsigned int)arr[i] - (unsigned int)INT_MIN;
+        if (arr_u[i] > max_val) {
+            max_val = arr_u[i];
+        }
+    }
+
+    for (long long exp = 1; max_val / exp > 0; exp *= 10) {
+        int count[10] = {0};
+        for (size_t i = 0; i < n; i++) {
+            count[(arr_u[i] / exp) % 10]++;
+        }
+        for (int i = 1; i < 10; i++) {
+            count[i] += count[i - 1];
+        }
+        for (size_t i = n; i > 0; i--) {
+            output[--count[(arr_u[i - 1] / exp) % 10]] = arr_u[i - 1];
+        }
+        for (size_t i = 0; i < n; i++) {
+            arr_u[i] = output[i];
+        }
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        unsigned int uval = arr_u[i] + (unsigned int)INT_MIN;
+        arr[i] = (int)uval;
+    }
+
+    free(arr_u);
+    free(output);
+
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {170, -45, 75, -90, 802, 24, 2, 66, INT_MIN, INT_MAX};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    if (radix_sort(arr, n) != 0) {
+        fprintf(stderr, "Radix sort failed\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

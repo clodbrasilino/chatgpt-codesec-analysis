@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isIsomorphic(const char *s, const char *t) {
+    if (s == NULL || t == NULL) {
+        return false;
+    }
+
+    int map_s_t[256];
+    int map_t_s[256];
+    for (int i = 0; i < 256; i++) {
+        map_s_t[i] = -1;
+        map_t_s[i] = -1;
+    }
+
+    int i = 0;
+    while (s[i] != '\0' && t[i] != '\0') {
+        unsigned char c1 = (unsigned char)s[i];
+        unsigned char c2 = (unsigned char)t[i];
+
+        if (map_s_t[c1] == -1 && map_t_s[c2] == -1) {
+            map_s_t[c1] = c2;
+            map_t_s[c2] = c1;
+        } else if (map_s_t[c1] != c2 || map_t_s[c2] != c1) {
+            return false;
+        }
+        i++;
+    }
+
+    if (s[i] != t[i]) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    printf("%d\n", isIsomorphic("egg", "add"));
+    printf("%d\n", isIsomorphic("foo", "bar"));
+    printf("%d\n", isIsomorphic("paper", "title"));
+    printf("%d\n", isIsomorphic("ab", "aa"));
+    printf("%d\n", isIsomorphic("", ""));
+    printf("%d\n", isIsomorphic(NULL, "a"));
+    return 0;
+}

@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_WORD_LENGTH 256
+
+bool is_word_length_odd(const char *word, size_t max_length)
+{
+    size_t length;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    length = strnlen(word, max_length);
+    return (length % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LENGTH] = {0};
+    size_t length;
+
+    printf("Enter a word: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0U && buffer[length - 1U] == '\n') {
+        buffer[length - 1U] = '\0';
+        length--;
+    } else if (length == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (length == 0U || buffer[0] == '\0') {
+        fprintf(stderr, "Error: empty input.\n");
+        return 1;
+    }
+
+    if (is_word_length_odd(buffer, sizeof(buffer))) {
+        printf("The length of the word \"%s\" is odd.\n", buffer);
+    } else {
+        printf("The length of the word \"%s\" is even.\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** The flawfinder warning here is a low-risk informational note. The original usage was already safe — `getchar()` returns an `int`, the result is stored in an `int` (correctly handling `EOF`), and nothing is written into a buffer. No change was required; the loop simply drains stray input.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The original code already mitigated this properly:
+   - `fgets(buffer, (int)sizeof(buffer), stdin)` bounds the read to the buffer size.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1U]` guarantees a terminated string even in edge cases.
+   - `strnlen()` with an explicit bound is used instead of `strlen()`, preventing over-reads on non-terminated data.
+   - Overflow of leftover stdin data is handled by `discard_remaining_input()` when the buffer is filled without a newline.
+
+   In the rewrite, I additionally zero-initialized the buffer (`= {0}`) as defense-in-depth, ensuring no uninitialized memory can ever be read or leaked, and added `<stddef.h>` for `size_t` portability. The code is otherwise structurally identical because the original mitigations were correct — the flawfinder hits were false positives given the existing bounds checking.

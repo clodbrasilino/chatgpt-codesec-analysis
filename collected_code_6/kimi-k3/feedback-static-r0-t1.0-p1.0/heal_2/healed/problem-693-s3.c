@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_multiple_spaces(const char *input, size_t max_len)
+{
+    char *result;
+    size_t input_len;
+    size_t pos = 0;
+    size_t i;
+    int in_space = 0;
+
+    if (input == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, max_len);
+    
+    if (input_len == max_len && input[max_len - 1] != '\0') {
+        return NULL;
+    }
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        if (input[i] == ' ') {
+            if (!in_space) {
+                result[pos++] = ' ';
+                in_space = 1;
+            }
+        } else {
+            result[pos++] = input[i];
+            in_space = 0;
+        }
+    }
+
+    result[pos] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *test_string = "This   is    a   test    string  with   multiple    spaces.";
+    char *cleaned;
+    size_t test_len;
+
+    test_len = strnlen(test_string, 1024);
+    if (test_len == 1024) {
+        fprintf(stderr, "Error: string too long or not null-terminated\n");
+        return EXIT_FAILURE;
+    }
+
+    cleaned = remove_multiple_spaces(test_string, test_len + 1);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", test_string);
+    printf("Cleaned:  %s\n", cleaned);
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+int is_vowel(char c) {
+    c = tolower((unsigned char)c);
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
+void reverse_vowels(char *str, size_t len) {
+    if (str == NULL || len == 0) return;
+    
+    size_t left = 0;
+    size_t right = len - 1;
+    
+    while (left < right) {
+        while (left < right && !is_vowel(str[left])) {
+            left++;
+        }
+        while (left < right && !is_vowel(str[right])) {
+            right--;
+        }
+        
+        if (left < right) {
+            char temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main() {
+    char *str = NULL;
+    size_t buffer_size = 0;
+    ssize_t len;
+    
+    printf("Enter a string: ");
+    
+    len = getline(&str, &buffer_size, stdin);
+    
+    if (len != -1) {
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+            len--;
+        }
+        
+        reverse_vowels(str, (size_t)len);
+        printf("String after reversing vowels: %s\n", str);
+    }
+    
+    free(str);
+    return 0;
+}

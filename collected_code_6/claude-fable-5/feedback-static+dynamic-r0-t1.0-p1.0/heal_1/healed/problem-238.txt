@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define BUFFER_SIZE 1024
+
+static unsigned long long count_substrings(const char *str, size_t max_len)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strnlen(str, max_len);
+
+    if (n > 0ULL && n > (ULLONG_MAX / (n + 1ULL)))
+    {
+        return 0ULL;
+    }
+
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer, sizeof(buffer));
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **CWE-126 (strlen over-read)**: Replaced both `strlen` calls with `strnlen`, which bounds the scan to a maximum length, preventing over-reads on non-terminated strings. The `count_substrings` function now accepts an explicit maximum length parameter.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is defined via a named constant, `fgets` is bounded by `sizeof(buffer)`, and an explicit null terminator is forced at `buffer[sizeof(buffer) - 1]` as defense-in-depth, guaranteeing the string is always terminated before any length calculation.
+
+3. **Additional hardening**: Added an integer overflow guard in `count_substrings`, since `n * (n + 1)` can wrap around for very large inputs; the check against `ULLONG_MAX / (n + 1)` prevents undefined behavior from silently producing wrong results.

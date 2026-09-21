@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 3, got <no output>
+  *  test case 2 failed: expected 0, got <no output>
+  *  test case 0 failed: expected 8, got <no output>
+  */
+
+size_t length_of_last_word(const char *s)
+{
+    size_t len;
+    size_t end;
+    size_t count;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    if (len == 0U) {
+        return 0U;
+    }
+
+    end = len;
+    while (end > 0U && isspace((unsigned char)s[end - 1U])) {
+        end--;
+    }
+
+    count = 0U;
+    while (end > 0U && !isspace((unsigned char)s[end - 1U])) {
+        count++;
+        end--;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Hello World",
+        "   fly me   to   the moon  ",
+        "luffy is still joyboy",
+        "",
+        "     ",
+        "single"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0U; i < num_tests; i++) {
+        size_t result = length_of_last_word(tests[i]);
+        if (printf("Input: \"%s\" -> Last word length: %zu\n", tests[i], result) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

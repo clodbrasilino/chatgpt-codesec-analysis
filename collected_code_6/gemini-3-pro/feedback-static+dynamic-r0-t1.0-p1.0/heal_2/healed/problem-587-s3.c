@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+typedef struct {
+    const int *data;
+    size_t size;
+} Tuple;
+
+Tuple list_to_tuple(const List *list, int *status) {
+    Tuple tuple = {NULL, 0};
+
+    if (!list || !status) {
+        if (status) {
+            *status = -1;
+        }
+        return tuple;
+    }
+
+    if (list->size == 0 || !list->data) {
+        *status = 0;
+        return tuple;
+    }
+
+    if (list->size > SIZE_MAX / sizeof(int)) {
+        *status = -1;
+        return tuple;
+    }
+
+    int *tuple_data = (int *)malloc(list->size * sizeof(int));
+    if (!tuple_data) {
+        *status = -1;
+        return tuple;
+    }
+
+    size_t bytes_to_copy = list->size * sizeof(int);
+    memcpy(tuple_data, list->data, bytes_to_copy);
+    tuple.data = tuple_data;
+    tuple.size = list->size;
+    
+    *status = 0;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple && tuple->data) {
+        free((void *)tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+    }
+}
+
+void free_list(List *list) {
+    if (list && list->data) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+    }
+}
+
+int main(void) {
+    List my_list = {NULL, 0};
+    size_t initial_size = 5;
+
+    my_list.data = (int *)malloc(initial_size * sizeof(int));
+    if (!my_list.data) {
+        return EXIT_FAILURE;
+    }
+    my_list.size = initial_size;
+
+    for (size_t i = 0; i < my_list.size; ++i) {
+        my_list.data[i] = (int)(i + 1) * 10;
+    }
+
+    int status = 0;
+    Tuple my_tuple = list_to_tuple(&my_list, &status);
+
+    if (status != 0) {
+        free_list(&my_list);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < my_tuple.size; ++i) {
+        printf("%d ", my_tuple.data[i]);
+    }
+    printf("\n");
+
+    free_tuple(&my_tuple);
+    free_list(&my_list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_SIZE 256
+
+static size_t bounded_strlen(const char *str, size_t max_len)
+{
+    size_t i = 0;
+
+    while (i < max_len && str[i] != '\0') {
+        i++;
+    }
+
+    return i;
+}
+
+void toggle_case(char *str, size_t max_len)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    len = bounded_strlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (isupper(c)) {
+            str[i] = (char)tolower(c);
+        } else if (islower(c)) {
+            str[i] = (char)toupper(c);
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_SIZE];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    toggle_case(buffer, sizeof(buffer));
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on `char buffer[MAX_INPUT_SIZE]` is a low-risk, informational flag — statically-sized buffers are only dangerous when writes into them are unbounded. This code already mitigates the risk correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most 255 characters plus the terminator, so the buffer cannot overflow on input.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0'` is defensive belt-and-suspenders (fgets already null-terminates on success), ensuring later string functions never run past the array.
+3. **Newline stripping via `strcspn`:** Safe even when no newline is present, since `strcspn` returns the string length in that case, and the buffer is guaranteed terminated.
+4. **Bounded processing:** `toggle_case` receives the buffer capacity and uses `bounded_strlen` rather than trusting `strlen`, so it never reads or writes out of bounds even if handed a non-terminated buffer.
+5. **Correct ctype usage:** Casting to `unsigned char` before calling `isupper`/`islower`/`toupper`/`tolower` avoids undefined behavior for characters with negative `char` values.
+
+No functional changes were required — the code is already a correct fix for the flagged pattern, so the rewrite preserves the logic and simply removes the comments as requested.

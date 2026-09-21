@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:42:19: style: Condition 'alloc_len<key_len' is always false [knownConditionTrueFalse]
+    if (alloc_len < key_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:41:22: note: alloc_len is assigned 'key_len+1' here.
+    size_t alloc_len = key_len + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:42:19: note: Condition 'alloc_len<key_len' is always false
+    if (alloc_len < key_len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:51:19: style: Condition 'alloc_len>0' is always true [knownConditionTrueFalse]
+    if (alloc_len > 0 && key_len <= alloc_len - 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:41:32: note: Assignment 'alloc_len=key_len+1', assigned value is greater than 0
+    size_t alloc_len = key_len + 1;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:47:9: note: Assuming condition is false
+    if (!n->key) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:51:19: note: Condition 'alloc_len>0' is always true
+    if (alloc_len > 0 && key_len <= alloc_len - 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:115:31: style: Condition 'alloc_len<val_len' is always false [knownConditionTrueFalse]
+                if (alloc_len < val_len) break;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:114:34: note: alloc_len is assigned 'val_len+1' here.
+                size_t alloc_len = val_len + 1;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:115:31: note: Condition 'alloc_len<val_len' is always false
+                if (alloc_len < val_len) break;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:118:31: style: Condition 'alloc_len>0' is always true [knownConditionTrueFalse]
+                if (alloc_len > 0 && val_len <= alloc_len - 1) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:114:44: note: Assignment 'alloc_len=val_len+1', assigned value is greater than 0
+                size_t alloc_len = val_len + 1;
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:117:21: note: Assuming condition is false
+                if (!val_copy) continue;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_3/healed/problem-391.c:118:31: note: Condition 'alloc_len>0' is always true
+                if (alloc_len > 0 && val_len <= alloc_len - 1) {
+                              ^

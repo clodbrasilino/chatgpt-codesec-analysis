@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:40:67: warning: Invalid test for overflow 'str+len-(unsigned long)n<str+len'; pointer overflow is undefined behavior. Some mainstream compilers remove such overflow tests when optimising the code and assume it's always true. [invalidTestForOverflow]
+        if (str + len - (size_t)n >= str && str + len - (size_t)n < str + len) {
+                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:30:23: style: Condition '(unsigned long)n<=len' is always true [knownConditionTrueFalse]
+        if ((size_t)n <= len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:20:19: note: Assuming condition '(unsigned long)n>len' is false
+    if ((size_t)n > len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:25:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:30:23: note: Condition '(unsigned long)n<=len' is always true
+        if ((size_t)n <= len) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:35:13: style: Condition 'len>=(unsigned long)n' is always true [knownConditionTrueFalse]
+    if (len >= (size_t)n) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:20:19: note: Assuming condition '(unsigned long)n>len' is false
+    if ((size_t)n > len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:25:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:35:13: note: Condition 'len>=(unsigned long)n' is always true
+    if (len >= (size_t)n) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:39:19: style: Condition '(unsigned long)n<=len' is always true [knownConditionTrueFalse]
+    if ((size_t)n <= len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:20:19: note: Assuming condition '(unsigned long)n>len' is false
+    if ((size_t)n > len) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:25:14: note: Assuming condition is false
+    if (temp == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-973-s3.c:39:19: note: Condition '(unsigned long)n<=len' is always true
+    if ((size_t)n <= len) {
+                  ^

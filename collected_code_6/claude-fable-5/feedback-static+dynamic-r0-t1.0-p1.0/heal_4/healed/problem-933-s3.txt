@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t input_len;
+    size_t out_capacity;
+    size_t out_len = 0;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strnlen(input, MAX_INPUT_LEN);
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (input_len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+    out_capacity = (input_len * 2U) + 1U;
+
+    output = malloc(out_capacity);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c)) {
+            if (i > 0U) {
+                if (out_len >= (out_capacity - 1U)) {
+                    free(output);
+                    return NULL;
+                }
+                output[out_len] = '_';
+                out_len++;
+            }
+            if (out_len >= (out_capacity - 1U)) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)tolower(c);
+            out_len++;
+        } else {
+            if (out_len >= (out_capacity - 1U)) {
+                free(output);
+                return NULL;
+            }
+            output[out_len] = (char)c;
+            out_len++;
+        }
+    }
+
+    if (out_len >= out_capacity) {
+        free(output);
+        return NULL;
+    }
+
+    output[out_len] = '\0';
+    return output;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *result = NULL;
+    size_t len;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if ((len > 0U) && (buffer[len - 1U] == '\n')) {
+        buffer[len - 1U] = '\0';
+    }
+
+    result = camel_to_snake(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed for input: %s\n", buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The `camel_to_snake` function itself was logically sound: it validates the input pointer, bounds the input length with `strnlen`, guards against integer overflow when computing the output capacity, checks every write against the buffer capacity, and correctly handles the `char`-to-`unsigned char` cast before calling `isupper`/`tolower` (avoiding undefined behavior with negative `char` values).
+
+The failing test cases (`'google_assistant'`, `'chrome_cast'`, `'quad_core'` — all reported as `<no output>`) indicate the test harness supplies input via **stdin** and expects the bare converted string on **stdout**. The original `main` ignored stdin entirely, running only a hardcoded test array and printing in an `input -> output` format, which is why every external test saw no matching output.
+
+The rewritten `main`:
+
+1. Reads a single line from stdin with `fgets`, bounded by `MAX_INPUT_LEN` to prevent overflow.
+2. Strips the trailing newline safely (checking length first to avoid an out-of-bounds access on empty input).
+3. Prints only the converted string, matching the expected test output.
+4. Preserves all error handling: NULL checks, `printf` return-value checking, and freeing allocated memory on every path to avoid leaks.

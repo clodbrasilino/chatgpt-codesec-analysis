@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-584-s3.c:71:14: error: use of undeclared identifier 'uintmax_t'; did you mean 'uintptr_t'?
+   71 |         if ((uintmax_t)match.rm_so > SIZE_MAX - offset ||
+      |              ^~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h:34:33: note: 'uintptr_t' declared here
+   34 | typedef unsigned long           uintptr_t;
+      |                                 ^
+1 error generated.

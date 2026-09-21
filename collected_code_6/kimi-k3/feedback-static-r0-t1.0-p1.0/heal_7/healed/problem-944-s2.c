@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <limits.h>
+#include <stdlib.h>
+
+void print_numbers_with_positions(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t i = 0;
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            size_t start = i;
+            while (str[i] != '\0' && isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            if (i - start <= INT32_MAX) {
+                printf("Number: %.*s, Position: %zu\n", (int)(i - start), str + start, start);
+            }
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t size = 0;
+    ssize_t len;
+    
+    printf("Enter a string: ");
+    len = getline(&input, &size, stdin);
+    if (len == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(input);
+        return 1;
+    }
+    
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    print_numbers_with_positions(input);
+    
+    free(input);
+    return 0;
+}

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+    char *newline;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len >= sizeof(buffer)) {
+        fprintf(stderr, "Input string not properly terminated.\n");
+        return 1;
+    }
+
+    newline = memchr(buffer, '\n', len);
+    if (newline != NULL) {
+        *newline = '\0';
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the fixes applied:**
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The original code was already reasonably safe here — `fgets(buffer, sizeof(buffer), stdin)` performs implicit bounds checking by limiting the read to `sizeof(buffer) - 1` characters plus the null terminator. The rewrite keeps this pattern, uses a named constant `BUFFER_SIZE` for clarity, and retains the defensive explicit null termination of the last byte.
+
+2. **CWE-126 (unbounded `strlen` over-read):** Replaced `strlen` with `strnlen(buffer, sizeof(buffer))`, which guarantees the scan never reads past the buffer boundary even if the string were somehow not null-terminated. A sanity check on the returned length rejects any non-terminated input, making the over-read impossible.
+
+3. **Newline stripping:** Replaced the index-based trim with `memchr` bounded by the known length, which avoids any arithmetic on potentially unexpected values and is explicit about the search range.
+
+The `count_lowercase` function was already defensively written — it null-checks its argument and correctly casts to `unsigned char` before calling `islower`, avoiding undefined behavior for negative `char` values — so it remains unchanged.

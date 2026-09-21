@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool all_items_equal(const char **list, size_t list_size, const char *target) {
+    if (list_size == 0) {
+        return true;
+    }
+
+    if (list == NULL || target == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] == NULL || strcmp(list[i], target) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *target = "apple";
+    
+    const char *list1[] = {"apple", "apple", "apple"};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+
+    if (all_items_equal(list1, size1, target)) {
+        printf("List 1: All items are equal to '%s'\n", target);
+    } else {
+        printf("List 1: Not all items are equal to '%s'\n", target);
+    }
+
+    const char *list2[] = {"apple", "banana", "apple"};
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+
+    if (all_items_equal(list2, size2, target)) {
+        printf("List 2: All items are equal to '%s'\n", target);
+    } else {
+        printf("List 2: Not all items are equal to '%s'\n", target);
+    }
+
+    if (all_items_equal(NULL, 0, target)) {
+        printf("List 3: All items are equal to '%s'\n", target);
+    } else {
+        printf("List 3: Not all items are equal to '%s'\n", target);
+    }
+
+    return 0;
+}
+```

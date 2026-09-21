@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <ctype.h>
+
+size_t longest_word_length(void)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+    int c;
+
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (isspace((unsigned char)c)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            if (current_len < SIZE_MAX) {
+                current_len++;
+            }
+        }
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    size_t result;
+
+    result = longest_word_length();
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness:**
+
+The Flawfinder warning on `getchar()` (CWE-120 buffer overflow, CWE-20 improper input validation) is a **false positive** in this context, and the original code already contains all the appropriate mitigations. Here's why the code is safe as written:
+
+1. **No buffer exists to overflow.** The classic risk with `getchar()` in a loop is writing characters into a fixed-size array (e.g., `buf[i++] = c`) without bounds checking. This code never stores the characters — it only counts them — so CWE-120 cannot apply.
+
+2. **`c` is declared as `int`, not `char`.** This is essential: `EOF` is a negative `int`, and storing the result of `getchar()` in a `char` would make EOF detection unreliable (or falsely match byte `0xFF` on platforms with unsigned `char`).
+
+3. **`isspace((unsigned char)c)`** — the cast prevents undefined behavior, since passing a negative value other than `EOF` to `isspace()` is UB. By this point `c` cannot be `EOF`, so the cast makes the value safely representable.
+
+4. **Counter overflow guard.** The `current_len < SIZE_MAX` check prevents `size_t` wraparound on pathologically long input (an integer-overflow hardening measure, CWE-190).
+
+5. **I/O error handling.** `ferror(stdin)` distinguishes a genuine read error from a normal EOF, and the `printf` return value is checked so output failures propagate as a nonzero exit status.
+
+Since the identified weakness was already mitigated, the rewritten code is functionally identical with the comments removed — changing the logic would only risk introducing a real defect where none exists.

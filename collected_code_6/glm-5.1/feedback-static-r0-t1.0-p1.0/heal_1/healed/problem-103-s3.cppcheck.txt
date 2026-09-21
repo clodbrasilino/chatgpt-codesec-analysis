@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-103-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-103-s3.c:13:12: style: Same expression used in consecutive assignments of 'rows' and 'cols'. [duplicateAssignExpression]
+    size_t rows = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-103-s3.c:14:12: note: Same expression used in consecutive assignments of 'rows' and 'cols'.
+    size_t cols = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-103-s3.c:13:12: note: Same expression used in consecutive assignments of 'rows' and 'cols'.
+    size_t rows = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-103-s3.c:37:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

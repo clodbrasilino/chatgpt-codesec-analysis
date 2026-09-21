@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LEN 4096
+
+static size_t get_strnlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void free_word_list(char **list, size_t size);
+char **remove_specific_words(const char **input_list, size_t input_size, const char **words_to_remove, size_t remove_size, size_t *output_size);
+
+char **remove_specific_words(const char **input_list, size_t input_size, const char **words_to_remove, size_t remove_size, size_t *output_size) {
+    if (!input_list || !words_to_remove || !output_size) {
+        return NULL;
+    }
+
+    char **filtered_list = malloc(input_size * sizeof(char *));
+    if (!filtered_list) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < input_size; i++) {
+        if (!input_list[i]) {
+            continue;
+        }
+
+        size_t word_len = get_strnlen(input_list[i], MAX_WORD_LEN);
+        int match_found = 0;
+        for (size_t j = 0; j < remove_size; j++) {
+            if (words_to_remove[j]) {
+                size_t remove_len = get_strnlen(words_to_remove[j], MAX_WORD_LEN);
+                if (word_len == remove_len && strncmp(input_list[i], words_to_remove[j], word_len) == 0) {
+                    match_found = 1;
+                    break;
+                }
+            }
+        }
+
+        if (!match_found) {
+            filtered_list[count] = malloc(word_len + 1);
+            if (!filtered_list[count]) {
+                free_word_list(filtered_list, count);
+                return NULL;
+            }
+            
+            /* Possible weaknesses found:
+             * Flawfinder strncpy: Easily used incorrectly; doesn't always \0-terminate or check for invalid pointers [MS-banned] (CWE-120). (risk 1, buffer)
+             */
+            strncpy(filtered_list[count], input_list[i], word_len);
+            filtered_list[count][word_len] = '\0';
+            count++;
+        }
+    }
+
+    *output_size = count;
+
+    if (count == 0) {
+        free(filtered_list);
+        return NULL;
+    }
+
+    char **resized_list = realloc(filtered_list, count * sizeof(char *));
+    if (resized_list) {
+        filtered_list = resized_list;
+    }
+
+    return filtered_list;
+}
+
+void free_word_list(char **list, size_t size) {
+    if (!list) {
+        return;
+    }
+    for (size_t i = 0; i < size; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void) {
+    const char *original_list[] = {"apple", "banana", "orange", "kiwi", "grape", "banana"};
+    size_t original_size = sizeof(original_list) / sizeof(original_list[0]);
+
+    const char *words_to_remove[] = {"banana", "kiwi"};
+    size_t remove_size = sizeof(words_to_remove) / sizeof(words_to_remove[0]);
+
+    size_t new_size = 0;
+    char **new_list = remove_specific_words(original_list, original_size, words_to_remove, remove_size, &new_size);
+
+    if (new_list) {
+        for (size_t i = 0; i < new_size; i++) {
+            printf("%s\n", new_list[i]);
+        }
+        free_word_list(new_list, new_size);
+    }
+
+    return 0;
+}

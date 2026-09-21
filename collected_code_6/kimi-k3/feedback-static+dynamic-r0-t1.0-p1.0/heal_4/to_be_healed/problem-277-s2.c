@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LEN 256
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[MAX_KEY_LEN];
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef int (*FilterPredicate)(int value);
+
+int dict_init(Dictionary *dict, size_t initial_capacity) {
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    
+    dict->entries = calloc(initial_capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL || dict->entries == NULL || dict->size >= dict->capacity) {
+        return -1;
+    }
+    
+    size_t key_len = strnlen(key, MAX_KEY_LEN);
+    if (key_len >= MAX_KEY_LEN) {
+        return -1;
+    }
+    
+    size_t copy_len = key_len + 1;
+    if (copy_len > MAX_KEY_LEN) {
+        copy_len = MAX_KEY_LEN;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dict->entries[dict->size].key, key, copy_len);
+    dict->entries[dict->size].key[MAX_KEY_LEN - 1] = '\0';
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary* dict_filter(const Dictionary *src, FilterPredicate predicate) {
+    if (src == NULL || predicate == NULL || src->entries == NULL) {
+        return NULL;
+    }
+    
+    Dictionary *result = malloc(sizeof(Dictionary));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    if (dict_init(result, src->capacity) != 0) {
+        free(result);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < src->size; i++) {
+        if (predicate(src->entries[i].value)) {
+            if (dict_add(result, src->entries[i].key, src->entries[i].value) != 0) {
+                free(result->entries);
+                free(result);
+                return NULL;
+            }
+        }
+    }
+    
+    return result;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict->entries);
+        free(dict);
+    }
+}
+
+int is_positive(int value) {
+    return value > 0;
+}
+
+int is_even(int value) {
+    return value % 2 == 0;
+}
+
+void dict_print(const Dictionary *dict) {
+    if (dict == NULL || dict->entries == NULL) {
+        printf("Empty dictionary\n");
+        return;
+    }
+    
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
+    }
+}
+
+int main(void) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (dict_init(dict, 10) != 0) {
+        fprintf(stderr, "Dictionary initialization failed\n");
+        free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    if (dict_add(dict, "apple", 5) != 0 ||
+        dict_add(dict, "banana", -3) != 0 ||
+        dict_add(dict, "cherry", 8) != 0 ||
+        dict_add(dict, "date", -1) != 0 ||
+        dict_add(dict, "elderberry", 4) != 0) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original dictionary:\n");
+    dict_print(dict);
+    
+    Dictionary *positive_dict = dict_filter(dict, is_positive);
+    if (positive_dict == NULL) {
+        fprintf(stderr, "Filter operation failed\n");
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nPositive values only:\n");
+    dict_print(positive_dict);
+    
+    Dictionary *even_dict = dict_filter(dict, is_even);
+    if (even_dict == NULL) {
+        fprintf(stderr, "Filter operation failed\n");
+        dict_free(positive_dict);
+        dict_free(dict);
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nEven values only:\n");
+    dict_print(even_dict);
+    
+    dict_free(even_dict);
+    dict_free(positive_dict);
+    dict_free(dict);
+    
+    return EXIT_SUCCESS;
+}

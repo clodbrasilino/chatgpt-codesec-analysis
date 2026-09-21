@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+
+int starts_with_number(const char *str, size_t str_len, int number)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char num_str[32];
+    int ret;
+    size_t num_len;
+
+    if (str == NULL || str_len == 0)
+    {
+        return 0;
+    }
+
+    if (strnlen(str, str_len) != str_len)
+    {
+        return 0;
+    }
+
+    ret = snprintf(num_str, sizeof(num_str), "%d", number);
+    if (ret < 0 || (size_t)ret >= sizeof(num_str))
+    {
+        return 0;
+    }
+
+    num_len = (size_t)ret;
+
+    if (num_len > str_len)
+    {
+        return 0;
+    }
+
+    if (strncmp(str, num_str, num_len) == 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_string = "12345 is the number";
+    int test_number = 12345;
+    size_t test_string_len = strnlen(test_string, 1024);
+
+    if (test_string_len == 1024)
+    {
+        printf("String does not start with %d\n", test_number);
+        return 0;
+    }
+
+    if (starts_with_number(test_string, test_string_len, test_number))
+    {
+        printf("String starts with %d\n", test_number);
+    }
+    else
+    {
+        printf("String does not start with %d\n", test_number);
+    }
+
+    return 0;
+}

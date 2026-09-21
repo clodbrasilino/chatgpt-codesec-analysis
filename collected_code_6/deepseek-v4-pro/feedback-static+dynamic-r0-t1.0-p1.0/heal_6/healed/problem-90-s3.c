@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+int longest_word_length(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int max_length = 0;
+    int current_length = 0;
+    size_t count = 0;
+
+    while (count < BUFFER_SIZE - 1 && str[count] != '\0') {
+        if (isalpha((unsigned char)str[count])) {
+            current_length++;
+        } else {
+            if (current_length > max_length) {
+                max_length = current_length;
+            }
+            current_length = 0;
+        }
+        count++;
+    }
+
+    if (current_length > max_length) {
+        max_length = current_length;
+    }
+
+    return max_length;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+
+    printf("Enter a sentence: ");
+    bytes_read = getline(&buffer, &buffer_size, stdin);
+    if (bytes_read == -1) {
+        fprintf(stderr, "Error reading input\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
+        buffer[bytes_read - 1] = '\0';
+    }
+
+    int result = longest_word_length(buffer);
+    printf("Longest word length: %d\n", result);
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}

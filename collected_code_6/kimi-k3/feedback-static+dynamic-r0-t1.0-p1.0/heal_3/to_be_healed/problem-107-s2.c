@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64
+
+int count_hexadecimal_numbers(unsigned long long start, unsigned long long end, unsigned long long *count) {
+    if (count == NULL) {
+        return -1;
+    }
+    
+    if (start > end) {
+        return -1;
+    }
+    
+    if (start == 0 && end == ULLONG_MAX) {
+        return -1;
+    }
+    
+    *count = end - start + 1;
+    return 0;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char start_buffer[BUFFER_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char end_buffer[BUFFER_SIZE];
+    char *endptr;
+    unsigned long long start;
+    unsigned long long end;
+    unsigned long long count;
+    size_t len;
+    
+    printf("Enter start of range (decimal): ");
+    if (fgets(start_buffer, sizeof(start_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(start_buffer, sizeof(start_buffer));
+    if (len == 0) {
+        fprintf(stderr, "Empty input\n");
+        return EXIT_FAILURE;
+    }
+    if (len == sizeof(start_buffer) - 1 && start_buffer[len - 1] != '\n') {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    if (start_buffer[len - 1] == '\n') {
+        start_buffer[len - 1] = '\0';
+    }
+    
+    errno = 0;
+    start = strtoull(start_buffer, &endptr, 10);
+    if (errno == ERANGE || endptr == start_buffer || *endptr != '\0') {
+        fprintf(stderr, "Invalid start value\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter end of range (decimal): ");
+    if (fgets(end_buffer, sizeof(end_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    len = strnlen(end_buffer, sizeof(end_buffer));
+    if (len == 0) {
+        fprintf(stderr, "Empty input\n");
+        return EXIT_FAILURE;
+    }
+    if (len == sizeof(end_buffer) - 1 && end_buffer[len - 1] != '\n') {
+        fprintf(stderr, "Input too long\n");
+        return EXIT_FAILURE;
+    }
+    if (end_buffer[len - 1] == '\n') {
+        end_buffer[len - 1] = '\0';
+    }
+    
+    errno = 0;
+    end = strtoull(end_buffer, &endptr, 10);
+    if (errno == ERANGE || endptr == end_buffer || *endptr != '\0') {
+        fprintf(stderr, "Invalid end value\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (count_hexadecimal_numbers(start, end, &count) != 0) {
+        fprintf(stderr, "Invalid range\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Count of hexadecimal numbers in range [%llu, %llu]: %llu\n", start, end, count);
+    printf("Hexadecimal range: [0x%llX, 0x%llX]\n", start, end);
+    
+    return EXIT_SUCCESS;
+}

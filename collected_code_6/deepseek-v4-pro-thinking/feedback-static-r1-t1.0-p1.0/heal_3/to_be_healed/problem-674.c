@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_duplicate_words(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    char *result = NULL;
+    size_t result_len = 0;
+    size_t result_cap = 0;
+
+    char **seen = NULL;
+    size_t seen_count = 0;
+
+    const char *p = input;
+
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        const char *start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            p++;
+        }
+        size_t word_len = (size_t)(p - start);
+
+        char *word = malloc(word_len + 1);
+        if (word == NULL) {
+            for (size_t i = 0; i < seen_count; i++) {
+                free(seen[i]);
+            }
+            free(seen);
+            free(result);
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(word, start, word_len);
+        word[word_len] = '\0';
+
+        int found = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            char **new_seen = realloc(seen, (seen_count + 1) * sizeof(*seen));
+            if (new_seen == NULL) {
+                free(word);
+                for (size_t i = 0; i < seen_count; i++) {
+                    free(seen[i]);
+                }
+                free(seen);
+                free(result);
+                return NULL;
+            }
+            seen = new_seen;
+            seen[seen_count] = word;
+            seen_count++;
+
+            size_t needed = result_len + word_len + 2;
+            if (result_len == 0) {
+                needed = word_len + 1;
+            }
+
+            if (result_cap < needed) {
+                size_t new_cap = (result_cap == 0) ? needed :
+                                 (result_cap * 2 > needed ? result_cap * 2 : needed);
+                char *new_result = realloc(result, new_cap);
+                if (new_result == NULL) {
+                    free(word);
+                    for (size_t i = 0; i < seen_count - 1; i++) {
+                        free(seen[i]);
+                    }
+                    free(seen);
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+                result_cap = new_cap;
+            }
+
+            if (result_len > 0) {
+                result[result_len] = ' ';
+                result_len++;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + result_len, word, word_len);
+            result_len += word_len;
+            result[result_len] = '\0';
+        } else {
+            free(word);
+        }
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen[i]);
+    }
+    free(seen);
+
+    if (result == NULL) {
+        result = malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char input[] = "apple banana apple cherry banana";
+    char *result = remove_duplicate_words(input);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+    return 0;
+}

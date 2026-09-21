@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 128
+#define MAX_FLUSH_ITERATIONS 4096
+
+bool is_decimal_precision_two(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i = 0;
+    size_t digits_before = 0;
+    size_t digits_after = 0;
+    bool dot_found = false;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+    if (len == 0 || len == max_len) {
+        return false;
+    }
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+        if (i == len) {
+            return false;
+        }
+    }
+
+    for (; i < len; i++) {
+        if (isdigit((unsigned char)str[i])) {
+            if (dot_found) {
+                digits_after++;
+            } else {
+                digits_before++;
+            }
+        } else if (str[i] == '.') {
+            if (dot_found) {
+                return false;
+            }
+            dot_found = true;
+        } else {
+            return false;
+        }
+    }
+
+    if (digits_before == 0) {
+        return false;
+    }
+
+    if (dot_found && (digits_after == 0 || digits_after > 2)) {
+        return false;
+    }
+
+    return true;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+    size_t iterations = 0;
+
+    do {
+        ch = getchar();
+        iterations++;
+    } while (ch != '\n' && ch != EOF && iterations < MAX_FLUSH_ITERATIONS);
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t len;
+
+    printf("Enter a number: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Output error\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Input error\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (is_decimal_precision_two(buffer, sizeof(buffer))) {
+        printf("Valid decimal with precision of 2: %s\n", buffer);
+    } else {
+        printf("Invalid decimal with precision of 2: %s\n", buffer);
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — The `flush_stdin()` function does not store the characters read into any buffer, so there is no possibility of a buffer overflow. The return value is correctly stored in an `int` (not a `char`), so `EOF` is detected reliably. The `MAX_FLUSH_ITERATIONS` bound additionally prevents an unbounded loop on a pathological stream. No fix needed.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120)** — The buffer is only ever written by `fgets()` with `sizeof(buffer)` as the limit, which guarantees no overflow and NUL-termination. The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy. All subsequent reads use `strnlen()` with the buffer size as a bound, so no unbounded string operations occur. No fix needed.
+
+Both Flawfinder hits are false positives here; the mitigations (bounded reads, `strnlen`, explicit termination, iteration caps, and `unsigned char` casts for `isdigit`) are already in place, so the rewritten code is functionally identical with the comments removed.

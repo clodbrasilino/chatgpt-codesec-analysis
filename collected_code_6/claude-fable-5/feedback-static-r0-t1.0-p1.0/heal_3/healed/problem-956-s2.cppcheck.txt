@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:72:36: style: Condition 'len>remaining-start' is always false [knownConditionTrueFalse]
+        if (len >= SIZE_MAX || len > remaining - start) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:53:22: note: Assuming that condition 'remaining>0' is not redundant
+    while (remaining > 0 && *cursor != '\0') {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:115:22: note: Assignment to 'remaining-=end'
+        remaining -= end;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:70:26: note: Assignment 'len=end-start', assigned value is less than 1
+        size_t len = end - start;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:72:36: note: Condition 'len>remaining-start' is always false
+        if (len >= SIZE_MAX || len > remaining - start) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:84:17: style: Condition 'len<alloc_size' is always true [knownConditionTrueFalse]
+        if (len < alloc_size) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:76:27: note: alloc_size is assigned 'len+1' here.
+        size_t alloc_size = len + 1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:78:19: note: Assuming condition is false
+        if (token == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-956-s2.c:84:17: note: Condition 'len<alloc_size' is always true
+        if (len < alloc_size) {
+                ^

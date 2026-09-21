@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:176:13: error: implicit declaration of function 'strtok_r' [-Wimplicit-function-declaration]
+  176 |     token = strtok_r(line, " \t\n\r", &saveptr);
+      |             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:176:11: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  176 |     token = strtok_r(line, " \t\n\r", &saveptr);
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:183:11: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  183 |     token = strtok_r(NULL, " \t\n\r", &saveptr);
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-926.c:190:11: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  190 |     token = strtok_r(NULL, " \t\n\r", &saveptr);
+      |           ^

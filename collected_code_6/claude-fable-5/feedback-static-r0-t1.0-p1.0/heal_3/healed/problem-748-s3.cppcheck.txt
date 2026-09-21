@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:64:35: style: Condition '(out_pos+chunk)>=out_size' is always false [knownConditionTrueFalse]
+            if ((out_pos + chunk) >= out_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:57:55: note: Assuming that condition '(out_pos+chunk+2u)>out_size' is not redundant
+        if ((start >= len) || ((out_pos + chunk + 2u) > out_size)) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:64:35: note: Condition '(out_pos+chunk)>=out_size' is always false
+            if ((out_pos + chunk) >= out_size) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:90:40: style: Condition '(out_pos+(len-offset))>=out_size' is always false [knownConditionTrueFalse]
+        if ((out_pos + (len - offset)) >= out_size) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:83:60: note: Assuming that condition '(out_pos+(len-offset)+1u)>out_size' is not redundant
+    if ((offset > len) || ((out_pos + (len - offset) + 1u) > out_size)) {
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-748-s3.c:90:40: note: Condition '(out_pos+(len-offset))>=out_size' is always false
+        if ((out_pos + (len - offset)) >= out_size) {
+                                       ^

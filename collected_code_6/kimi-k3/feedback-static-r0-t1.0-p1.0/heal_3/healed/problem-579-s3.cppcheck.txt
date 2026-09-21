@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:106:24: style: The comparison 'copy_size1 > t1->size*sizeof(int)' is always false because 'copy_size1' and 't1->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (copy_size1 > t1->size * sizeof(int)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:105:38: note: 'copy_size1' is assigned value 't1->size*sizeof(int)' here.
+        size_t copy_size1 = t1->size * sizeof(int);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:106:24: note: The comparison 'copy_size1 > t1->size*sizeof(int)' is always false because 'copy_size1' and 't1->size*sizeof(int)' represent the same value.
+        if (copy_size1 > t1->size * sizeof(int)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:138:24: style: The comparison 'copy_size2 > t2->size*sizeof(int)' is always false because 'copy_size2' and 't2->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+        if (copy_size2 > t2->size * sizeof(int)) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:137:38: note: 'copy_size2' is assigned value 't2->size*sizeof(int)' here.
+        size_t copy_size2 = t2->size * sizeof(int);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-579-s3.c:138:24: note: The comparison 'copy_size2 > t2->size*sizeof(int)' is always false because 'copy_size2' and 't2->size*sizeof(int)' represent the same value.
+        if (copy_size2 > t2->size * sizeof(int)) {
+                       ^

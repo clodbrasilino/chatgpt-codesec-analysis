@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-667-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-667-s3.c:15:26: style: Condition 'i<max_check' is always false [knownConditionTrueFalse]
+    for (size_t i = 0; i < max_check; i++) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-667-s3.c:13:34: note: Assignment 'max_check=len<256?len:256', assigned value is less than 1
+    size_t max_check = len < 256 ? len : 256;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-667-s3.c:15:26: note: Condition 'i<max_check' is always false
+    for (size_t i = 0; i < max_check; i++) {
+                         ^

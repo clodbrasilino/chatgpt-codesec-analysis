@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-958.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-958.c:33:46: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (current_len + symbol_len <= max_len) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-958.c:32:42: note: outer condition: current_len+symbol_len<=max_len
+            if (current_len + symbol_len <= max_len) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-958.c:33:46: note: identical inner condition: current_len+symbol_len<=max_len
+                if (current_len + symbol_len <= max_len) {
+                                             ^

@@ -1,0 +1,109 @@
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool is_greater_than_all(int number, const int array[], size_t length)
+{
+    if (array == NULL && length != 0U) {
+        return false;
+    }
+
+    for (size_t i = 0U; i < length; ++i) {
+        if (number <= array[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void discard_line(void)
+{
+    int ch;
+
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+}
+
+static bool read_int(int *value)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[128];
+    char *end;
+    long parsed;
+
+    if (value == NULL) {
+        return false;
+    }
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        return false;
+    }
+
+    size_t length = 0U;
+    while (length < sizeof buffer && buffer[length] != '\0' &&
+           buffer[length] != '\n') {
+        ++length;
+    }
+
+    if (length == sizeof buffer) {
+        discard_line();
+        return false;
+    }
+
+    if (buffer[length] != '\n' && !feof(stdin)) {
+        discard_line();
+        return false;
+    }
+
+    errno = 0;
+    end = NULL;
+    parsed = strtol(buffer, &end, 10);
+
+    if (end == buffer || errno == ERANGE ||
+        parsed < INT_MIN || parsed > INT_MAX) {
+        return false;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0') {
+        return false;
+    }
+
+    *value = (int)parsed;
+    return true;
+}
+
+int main(void)
+{
+    const int array[] = {3, 7, 12, 18, 25};
+    const size_t length = sizeof array / sizeof array[0];
+    int number;
+
+    fputs("Enter an integer: ", stdout);
+    fflush(stdout);
+
+    if (!read_int(&number)) {
+        fputs("Invalid input.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (is_greater_than_all(number, array, length)) {
+        printf("%d is greater than every array element.\n", number);
+    } else {
+        printf("%d is not greater than every array element.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}

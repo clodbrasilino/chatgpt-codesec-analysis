@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s2.c: In function 'move_numbers':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s2.c:6:20: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    6 |     char *result = malloc(str_len + 1);
+      |                    ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s2.c:4:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    3 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s2.c:10:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   10 |         free(result);
+      |         ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-619-s2.c:10:9: note: include '<stdlib.h>' or provide a declaration of 'free'

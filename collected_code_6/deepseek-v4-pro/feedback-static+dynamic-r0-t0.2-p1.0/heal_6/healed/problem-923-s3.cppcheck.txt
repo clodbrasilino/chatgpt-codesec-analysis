@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:110:10: style: Variable 'len1' is reassigned a value before the old one has been used. [redundantAssignment]
+    len1 = strnlen(str1, buffer_size);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:91:13: note: len1 is assigned
+        len1--;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:110:10: note: len1 is overwritten
+    len1 = strnlen(str1, buffer_size);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:111:10: style: Variable 'len2' is reassigned a value before the old one has been used. [redundantAssignment]
+    len2 = strnlen(str2, buffer_size);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:105:13: note: len2 is assigned
+        len2--;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-923-s3.c:111:10: note: len2 is overwritten
+    len2 = strnlen(str2, buffer_size);
+         ^

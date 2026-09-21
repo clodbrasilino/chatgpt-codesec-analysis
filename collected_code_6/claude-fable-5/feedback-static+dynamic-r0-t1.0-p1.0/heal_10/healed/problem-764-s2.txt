@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    result = count_numeric(buffer);
+
+    printf("Number of numeric characters: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+The original code was already well-defended against both Flawfinder warnings, so the rewrite preserves those mitigations rather than changing logic:
+
+1. **`getchar()` in a loop (CWE-120, CWE-20):** This is a false positive in context. `flush_stdin()` never stores the characters into a buffer — it simply discards them until a newline or `EOF` is reached. There is no buffer to overflow, and the `EOF` check prevents an infinite loop on closed/exhausted input streams.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer is used safely:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits the read to the buffer size, guaranteeing no overflow.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination defensively.
+   - `strnlen` (rather than `strlen`) bounds the length scan to the buffer size.
+   - When input exceeds the buffer (detected by `len == sizeof(buffer) - 1` with no trailing newline), the leftover characters are drained via `flush_stdin()`, preventing stale input from corrupting subsequent reads.
+
+3. **`isdigit((unsigned char)*str)`:** The cast is important and retained — passing a plain `char` that happens to be negative (e.g., from extended character sets) to `isdigit()` is undefined behavior per the C standard.
+
+4. **NULL check in `count_numeric`:** Defensive guard against null-pointer dereference (CWE-476) is preserved.
+
+The code is safe as written; no functional changes were required beyond removing the comments.

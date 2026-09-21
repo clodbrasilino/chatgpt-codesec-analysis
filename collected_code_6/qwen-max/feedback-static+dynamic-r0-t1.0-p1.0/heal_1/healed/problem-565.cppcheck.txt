@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-565.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-565.c:9:36: style: Redundant condition: If 'str[str_length] != '\0'', the comparison 'str[str_length] != 0' is always true. [redundantCondition]
+    while (str[str_length] != '\0' && str[str_length] != 0) ++str_length;
+                                   ^

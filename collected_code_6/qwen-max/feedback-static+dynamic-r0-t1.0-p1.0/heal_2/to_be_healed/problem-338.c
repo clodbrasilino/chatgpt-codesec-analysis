@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringsWithSameFirstLast(const char *s, size_t len) {
+    int count = 0;
+    for (size_t i = 0; i < len; ++i) {
+        for (size_t j = i + 1; j <= len; ++j) {
+            if (s[i] == s[j - 1]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char str[] = "abcab";
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    int result = countSubstringsWithSameFirstLast(str, len);
+    printf("%d\n", result);
+    return 0;
+}

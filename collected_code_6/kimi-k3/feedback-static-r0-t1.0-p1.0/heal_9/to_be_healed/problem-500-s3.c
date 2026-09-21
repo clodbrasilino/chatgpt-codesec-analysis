@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+
+char* concatenate_list(const char **list, size_t count) {
+    size_t total_length = 0;
+    size_t i;
+    char *result;
+    size_t offset = 0;
+
+    if (list == NULL || count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t len;
+        if (list[i] == NULL) {
+            return NULL;
+        }
+        len = strnlen(list[i], 1024);
+        if (len > SIZE_MAX - total_length) {
+            return NULL;
+        }
+        total_length += len;
+    }
+
+    if (total_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    result = (char*)malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len = strlen(list[i]);
+        if (len > 0) {
+            if (len > total_length - offset) {
+                free(result);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result + offset, list[i], len);
+            offset += len;
+        }
+    }
+    result[total_length] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *list[] = {"Hello", " ", "World", "!"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    char *concatenated;
+
+    concatenated = concatenate_list(list, count);
+    if (concatenated == NULL) {
+        fprintf(stderr, "Error: Failed to concatenate strings\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", concatenated);
+
+    free(concatenated);
+
+    return EXIT_SUCCESS;
+}

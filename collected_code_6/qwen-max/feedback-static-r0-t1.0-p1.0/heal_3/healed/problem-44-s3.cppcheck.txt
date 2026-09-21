@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44-s3.c:5:30: warning: Either the condition 'word==NULL' is redundant or there is possible null pointer dereference: word. [nullPointerRedundantCheck]
+    size_t word_len = strlen(word);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44-s3.c:6:29: note: Assuming that condition 'word==NULL' is not redundant
+    if (str == NULL || word == NULL || *str == '\0' || *word == '\0') {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-44-s3.c:5:30: note: Null pointer dereference
+    size_t word_len = strlen(word);
+                             ^

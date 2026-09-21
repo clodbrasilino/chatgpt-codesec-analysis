@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void remove_lowercase_substrings(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    if (regcomp(&regex, "[a-z]+", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    regmatch_t pmatch[1];
+    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
+        size_t match_start = pmatch[0].rm_so;
+        size_t match_end = pmatch[0].rm_eo;
+        size_t i = 0;
+
+        while (str[match_end + i] != '\0') {
+            str[match_start + i] = str[match_end + i];
+            i++;
+        }
+        str[match_start + i] = '\0';
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    char str1[] = "Hello World! This IS A Test string 123.";
+    char str2[] = "ALLUPPERCASE";
+    char str3[] = "alllowercase";
+    char str4[] = "M1x3D c4S3";
+
+    remove_lowercase_substrings(str1);
+    printf("%s\n", str1);
+
+    remove_lowercase_substrings(str2);
+    printf("%s\n", str2);
+
+    remove_lowercase_substrings(str3);
+    printf("%s\n", str3);
+
+    remove_lowercase_substrings(str4);
+    printf("%s\n", str4);
+
+    return 0;
+}

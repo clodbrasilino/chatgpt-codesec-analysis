@@ -1,0 +1,227 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_ADVERBS 128
+#define MAX_WORD_LEN 64
+#define MAX_SENTENCE_LEN 1024
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    size_t char_position;
+    size_t word_index;
+} AdverbEntry;
+
+static const char *common_adverbs[] = {
+    "very", "too", "quite", "rather", "almost", "nearly",
+    "always", "never", "often", "seldom", "rarely", "sometimes",
+    "usually", "frequently", "soon", "now", "then", "here",
+    "there", "everywhere", "anywhere", "somewhere", "nowhere",
+    "well", "fast", "hard", "just", "even", "still", "yet",
+    "again", "also", "indeed", "perhaps", "maybe", "certainly",
+    "really", "truly", "surely", "today", "tomorrow", "yesterday",
+    "ago", "already", "once", "twice", "enough", "far", "much",
+    "so", "however", "therefore", "thus", "hence", "meanwhile"
+};
+
+static const char *ly_exceptions[] = {
+    "family", "fly", "apply", "reply", "supply", "imply",
+    "holy", "lonely", "ugly", "friendly", "lovely", "lively",
+    "silly", "jelly", "belly", "ally", "rally", "tally",
+    "bully", "chilly", "costly", "elderly", "likely", "orderly",
+    "scholarly", "deadly", "oily", "unruly", "wily", "assembly",
+    "curly", "dally", "folly", "gully", "hilly", "holly",
+    "jolly", "lily", "comply", "multiply", "grisly"
+};
+
+static size_t bounded_length(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL || max_len == 0) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+static size_t copy_word_lower(char *dest, size_t dest_size,
+                              const char *src, size_t src_len)
+{
+    size_t copied = 0;
+
+    if (dest == NULL || dest_size == 0 || src == NULL) {
+        return 0;
+    }
+
+    while (copied < src_len && copied + 1 < dest_size) {
+        dest[copied] = (char)tolower((unsigned char)src[copied]);
+        copied++;
+    }
+    dest[copied] = '\0';
+
+    return copied;
+}
+
+static bool ends_with_ly(const char *word)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = bounded_length(word, MAX_WORD_LEN);
+
+    if (len < 3 || len >= MAX_WORD_LEN) {
+        return false;
+    }
+
+    return word[len - 2] == 'l' && word[len - 1] == 'y';
+}
+
+static bool matches_word_list(const char *word, const char **list, size_t count)
+{
+    if (word == NULL || list == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL && strcmp(word, list[i]) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool is_adverb(const char *word)
+{
+    if (word == NULL || word[0] == '\0') {
+        return false;
+    }
+
+    if (matches_word_list(word, common_adverbs,
+                          sizeof(common_adverbs) / sizeof(common_adverbs[0]))) {
+        return true;
+    }
+
+    if (ends_with_ly(word) &&
+        !matches_word_list(word, ly_exceptions,
+                           sizeof(ly_exceptions) / sizeof(ly_exceptions[0]))) {
+        return true;
+    }
+
+    return false;
+}
+
+static size_t find_adverbs(const char *sentence, AdverbEntry *results, size_t max_results)
+{
+    size_t found = 0;
+    size_t word_index = 0;
+    size_t i = 0;
+
+    if (sentence == NULL || results == NULL || max_results == 0) {
+        return 0;
+    }
+
+    while (sentence[i] != '\0') {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            char word[MAX_WORD_LEN];
+            size_t raw_len;
+            size_t wlen;
+
+            while (isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+            raw_len = i - start;
+
+            wlen = copy_word_lower(word, sizeof(word), sentence + start, raw_len);
+
+            if (wlen > 0 && raw_len < sizeof(word)) {
+                if (is_adverb(word) && found < max_results) {
+                    int written = snprintf(results[found].word,
+                                           sizeof(results[found].word),
+                                           "%s", word);
+
+                    if (written < 0 ||
+                        (size_t)written >= sizeof(results[found].word)) {
+                        results[found].word[0] = '\0';
+                    }
+                    results[found].word[sizeof(results[found].word) - 1] = '\0';
+                    results[found].char_position = start;
+                    results[found].word_index = word_index;
+                    found++;
+                }
+            }
+            word_index++;
+        } else {
+            i++;
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    char sentence[MAX_SENTENCE_LEN];
+    AdverbEntry results[MAX_ADVERBS];
+    size_t count;
+    size_t len;
+
+    printf("Enter a sentence: ");
+    fflush(stdout);
+
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    len = bounded_length(sentence, sizeof(sentence));
+
+    if (len == sizeof(sentence) - 1 && sentence[len - 1] != '\n') {
+        int ch;
+
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+        fprintf(stderr, "Error: sentence too long (maximum %d characters).\n",
+                MAX_SENTENCE_LEN - 2);
+        return EXIT_FAILURE;
+    }
+
+    while (len > 0 && (sentence[len - 1] == '\n' || sentence[len - 1] == '\r')) {
+        sentence[len - 1] = '\0';
+        len--;
+    }
+
+    if (sentence[0] == '\0') {
+        fprintf(stderr, "Error: empty sentence provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    memset(results, 0, sizeof(results));
+
+    count = find_adverbs(sentence, results, MAX_ADVERBS);
+
+    if (count == 0) {
+        printf("No adverbs found.\n");
+    } else {
+        printf("Found %zu adverb(s):\n", count);
+        for (size_t i = 0; i < count; i++) {
+            printf("  \"%s\" -> word #%zu, character offset %zu\n",
+                   results[i].word,
+                   results[i].word_index + 1,
+                   results[i].char_position);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

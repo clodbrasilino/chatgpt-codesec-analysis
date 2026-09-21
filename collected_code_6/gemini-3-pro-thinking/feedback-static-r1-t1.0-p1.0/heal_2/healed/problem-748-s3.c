@@ -1,0 +1,108 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 1048576
+
+char *insert_spaces(const char *input) {
+    regex_t regex;
+    int ret;
+    size_t len;
+    char *result;
+    const char *cursor;
+    char *out;
+    regmatch_t pmatch[1];
+    size_t max_out;
+    size_t out_len = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == MAX_INPUT_LEN || len > ((size_t)-1 / 2) - 1) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    max_out = len * 2 + 1;
+    result = (char *)malloc(max_out);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    out = result;
+
+    while (regexec(&regex, cursor, 1, pmatch, 0) == 0) {
+        size_t offset = (size_t)pmatch[0].rm_so;
+
+        if (offset > 0) {
+            if (out_len + offset < max_out) {
+                size_t i;
+                for (i = 0; i < offset; i++) {
+                    out[i] = cursor[i];
+                }
+                out += offset;
+                out_len += offset;
+            } else {
+                break;
+            }
+        }
+
+        if ((cursor + offset) > input) {
+            if (*(cursor + offset - 1) != ' ') {
+                if (out_len + 1 < max_out) {
+                    *out = ' ';
+                    out++;
+                    out_len++;
+                }
+            }
+        }
+
+        if (out_len + 1 < max_out) {
+            *out = cursor[offset];
+            out++;
+            out_len++;
+        }
+        
+        cursor += offset + 1;
+
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    if (out_len < max_out) {
+        snprintf(out, max_out - out_len, "%s", cursor);
+    } else {
+        if (max_out > 0) {
+            result[max_out - 1] = '\0';
+        }
+    }
+
+    regfree(&regex);
+
+    return result;
+}
+
+int main(void) {
+    const char *test_str = "HelloWorldThisIsATest";
+    char *spaced_str;
+
+    spaced_str = insert_spaces(test_str);
+    if (spaced_str != NULL) {
+        printf("%s\n", spaced_str);
+        free(spaced_str);
+    }
+
+    return 0;
+}

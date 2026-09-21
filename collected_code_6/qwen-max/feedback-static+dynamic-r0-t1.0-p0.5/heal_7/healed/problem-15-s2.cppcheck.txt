@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:8:35: warning: Either the condition 'length<10000' is redundant or the array 'input[22]' is accessed at index 9999, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (length < 10000 && input[length] != '\0') length++;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:8:19: note: Assuming that condition 'length<10000' is not redundant
+    while (length < 10000 && input[length] != '\0') length++;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:8:35: note: Array index out of bounds
+    while (length < 10000 && input[length] != '\0') length++;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:9:33: warning: Either the condition 'length==10000' is redundant or the array 'input[22]' is accessed at index 10000, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    if (length == 10000 && input[length] != '\0') return NULL;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:9:16: note: Assuming that condition 'length==10000' is not redundant
+    if (length == 10000 && input[length] != '\0') return NULL;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-15-s2.c:9:33: note: Array index out of bounds
+    if (length == 10000 && input[length] != '\0') return NULL;
+                                ^

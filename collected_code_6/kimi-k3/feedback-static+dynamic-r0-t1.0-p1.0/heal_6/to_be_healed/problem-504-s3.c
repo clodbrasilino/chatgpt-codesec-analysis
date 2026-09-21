@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int64_t cube_sum(int64_t n)
+{
+    if (n < 0 || n > 1290) {
+        return -1;
+    }
+    
+    int64_t sum = n * (n + 1) / 2;
+    return sum * sum;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[64];
+    char *endptr;
+    int64_t n;
+    size_t len;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1 && !feof(stdin)) {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        return 1;
+    }
+    
+    errno = 0;
+    n = strtoimax(buffer, &endptr, 10);
+    
+    if (errno != 0 || endptr == buffer || *endptr != '\0') {
+        return 1;
+    }
+    
+    int64_t result = cube_sum(n);
+    if (result == -1) {
+        return 1;
+    }
+    
+    printf("%" PRId64 "\n", result);
+    return 0;
+}

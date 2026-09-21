@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define SENTENCE_MAX 256
+#define WORD_MAX 64
+
+int is_word_present(const char *sentence, const char *word);
+
+int is_word_present(const char *sentence, const char *word)
+{
+    size_t word_len;
+    size_t i;
+
+    if (sentence == NULL || word == NULL) {
+        return 0;
+    }
+
+    word_len = strnlen(word, WORD_MAX);
+    if (word_len == 0U || word_len >= WORD_MAX) {
+        return 0;
+    }
+
+    i = 0U;
+    while (i < SENTENCE_MAX && sentence[i] != '\0') {
+        while (i < SENTENCE_MAX && sentence[i] != '\0' &&
+               !isalnum((unsigned char)sentence[i])) {
+            i++;
+        }
+        if (i >= SENTENCE_MAX || sentence[i] == '\0') {
+            break;
+        }
+
+        size_t start = i;
+        while (i < SENTENCE_MAX && sentence[i] != '\0' &&
+               isalnum((unsigned char)sentence[i])) {
+            i++;
+        }
+        size_t token_len = i - start;
+
+        if (token_len == word_len &&
+            strncmp(&sentence[start], word, word_len) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char sentence[SENTENCE_MAX];
+    char word[WORD_MAX];
+
+    memset(sentence, 0, sizeof(sentence));
+    memset(word, 0, sizeof(word));
+
+    if (fgets(sentence, (int)sizeof(sentence), stdin) == NULL) {
+        fprintf(stderr, "Error reading sentence.\n");
+        return EXIT_FAILURE;
+    }
+    sentence[sizeof(sentence) - 1U] = '\0';
+    sentence[strcspn(sentence, "\n")] = '\0';
+
+    if (fgets(word, (int)sizeof(word), stdin) == NULL) {
+        fprintf(stderr, "Error reading word.\n");
+        return EXIT_FAILURE;
+    }
+    word[sizeof(word) - 1U] = '\0';
+    word[strcspn(word, "\n")] = '\0';
+
+    if (is_word_present(sentence, word) == 1) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings (CWE-119/CWE-120) on the statically-sized `char` arrays are informational-level warnings triggered simply by the presence of fixed-size buffers. The original code already mitigates them correctly, and the rewrite preserves those mitigations:
+
+1. **Bounded input reads** — `fgets(buf, sizeof(buf), stdin)` limits writes to the buffer size, preventing overflow at the input stage. Return values are checked so read failures don't leave the buffers in an assumed-valid state (they're also pre-zeroed with `memset`).
+
+2. **Guaranteed termination** — explicit `buf[sizeof(buf) - 1] = '\0'` is defensive (redundant with `fgets`, but harmless), and `strcspn(buf, "\n")` strips the trailing newline safely without scanning past the terminator.
+
+3. **Bounded string operations** — `strnlen(word, WORD_MAX)` instead of `strlen` caps traversal, and the rejection of `word_len >= WORD_MAX` catches unterminated/oversized input. All sentence scanning loops are double-guarded by both `i < SENTENCE_MAX` and the null-terminator check, and comparison uses length-limited `strncmp`.
+
+4. **Correct `ctype` usage** — casting to `unsigned char` before `isalnum` avoids undefined behavior for negative `char` values on platforms where `char` is signed.
+
+No functional changes were required — the code as written already addresses the flagged weaknesses; the arrays are properly bounds-checked at every point of use.

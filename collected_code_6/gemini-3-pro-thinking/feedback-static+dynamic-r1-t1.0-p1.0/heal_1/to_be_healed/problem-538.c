@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t length;
+} StringTuple;
+
+StringTuple* create_tuple_from_list(const char *const *list, size_t count);
+void free_string_tuple(StringTuple *tuple);
+void print_tuple(const StringTuple *tuple);
+
+StringTuple* create_tuple_from_list(const char *const *list, size_t count) {
+    if (count > 0 && list == NULL) {
+        return NULL;
+    }
+
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->length = count;
+    tuple->elements = NULL;
+
+    if (count > 0) {
+        tuple->elements = (char **)calloc(count, sizeof(char *));
+        if (tuple->elements == NULL) {
+            free(tuple);
+            return NULL;
+        }
+
+        for (size_t i = 0; i < count; i++) {
+            if (list[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->elements[j]);
+                }
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+             */
+            size_t len = strlen(list[i]) + 1;
+            tuple->elements[i] = (char *)malloc(len);
+            if (tuple->elements[i] == NULL) {
+                for (size_t j = 0; j < i; j++) {
+                    free(tuple->elements[j]);
+                }
+                free(tuple->elements);
+                free(tuple);
+                return NULL;
+            }
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(tuple->elements[i], list[i], len);
+        }
+    }
+
+    return tuple;
+}
+
+void free_string_tuple(StringTuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->length; i++) {
+            if (tuple->elements[i] != NULL) {
+                free(tuple->elements[i]);
+            }
+        }
+        free(tuple->elements);
+    }
+    free(tuple);
+}
+
+void print_tuple(const StringTuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple->length; i++) {
+        printf("\"%s\"", tuple->elements[i]);
+        if (i < tuple->length - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    const char *string_list[] = {"apple", "banana", "cherry", "date"};
+    size_t list_length = sizeof(string_list) / sizeof(string_list[0]);
+
+    StringTuple *tuple = create_tuple_from_list(string_list, list_length);
+    if (tuple == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(tuple);
+
+    free_string_tuple(tuple);
+
+    return EXIT_SUCCESS;
+}

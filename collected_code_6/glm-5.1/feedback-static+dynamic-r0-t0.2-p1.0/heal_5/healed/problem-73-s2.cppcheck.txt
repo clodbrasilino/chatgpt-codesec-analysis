@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:57:32: style: Condition 'alloc_size>0' is always true [knownConditionTrueFalse]
+                if (alloc_size > 0 && cursor_len <= alloc_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:49:48: note: Assignment 'alloc_size=cursor_len+1', assigned value is greater than 0
+                size_t alloc_size = cursor_len + 1;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:51:33: note: Assuming condition is false
+                if (result[idx] == NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:57:32: note: Condition 'alloc_size>0' is always true
+                if (alloc_size > 0 && cursor_len <= alloc_size) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:57:50: style: Condition 'cursor_len<=alloc_size' is always true [knownConditionTrueFalse]
+                if (alloc_size > 0 && cursor_len <= alloc_size) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:49:35: note: alloc_size is assigned 'cursor_len+1' here.
+                size_t alloc_size = cursor_len + 1;
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:51:33: note: Assuming condition is false
+                if (result[idx] == NULL) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:57:50: note: Condition 'cursor_len<=alloc_size' is always true
+                if (alloc_size > 0 && cursor_len <= alloc_size) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:86:56: style: Condition '(unsigned long)match.rm_so<alloc_len' is always true [knownConditionTrueFalse]
+            if (match.rm_so > 0 && (size_t)match.rm_so < alloc_len) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:78:30: note: alloc_len is assigned '(unsigned long)match.rm_so+1' here.
+            size_t alloc_len = (size_t)match.rm_so + 1;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:80:29: note: Assuming condition is false
+            if (result[idx] == NULL) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:86:56: note: Condition '(unsigned long)match.rm_so<alloc_len' is always true
+            if (match.rm_so > 0 && (size_t)match.rm_so < alloc_len) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-73-s2.c:14:12: style: The scope of the variable 'cursor_len' can be reduced. [variableScope]
+    size_t cursor_len;
+           ^

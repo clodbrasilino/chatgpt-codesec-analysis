@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void swap_whitespace_underscore(char *str, size_t len) {
+    regex_t re;
+    regmatch_t match;
+
+    if (regcomp(&re, " ", REG_EXTENDED) != 0) return;
+
+    char *new_str = (char *)malloc(len + 1);
+    if (new_str == NULL) return;
+    strcpy(new_str, str);
+
+    while (regexec(&re, new_str, 1, &match, 0) == 0) {
+        memmove(new_str + match.rm_so + 1, new_str + match.rm_so, len - match.rm_so);
+        new_str[match.rm_so] = '_';
+        len++;
+        new_str[len] = '\0';
+    }
+    regfree(&re);
+
+    if (regcomp(&re, "_", REG_EXTENDED) != 0) return;
+    while (regexec(&re, new_str, 1, &match, 0) == 0) {
+        memmove(new_str + match.rm_so + 1, new_str + match.rm_so, len - match.rm_so);
+        new_str[match.rm_so] = ' ';
+        len++;
+        new_str[len] = '\0';
+    }
+    regfree(&re);
+
+    strncpy(str, new_str, len + 1);
+    free(new_str);
+}
+
+int main() {
+    char input[1024];
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = 0;
+        size_t len = strlen(input);
+        if (len > 0 && len < sizeof(input) - 1) {
+            swap_whitespace_underscore(input, len);
+            printf("%s\n", input);
+        }
+    }
+    return 0;
+}

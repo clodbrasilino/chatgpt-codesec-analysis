@@ -1,0 +1,145 @@
+#include <ctype.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool nth_bell_number(size_t n, uint64_t *result)
+{
+    if (result == NULL || n == SIZE_MAX ||
+        n + 1U > SIZE_MAX / sizeof(uint64_t)) {
+        return false;
+    }
+
+    uint64_t *row = calloc(n + 1U, sizeof(*row));
+    if (row == NULL) {
+        return false;
+    }
+
+    row[0] = UINT64_C(1);
+
+    for (size_t i = 1U; i <= n; ++i) {
+        row[i] = row[0];
+
+        for (size_t j = i; j > 0U; --j) {
+            if (row[j - 1U] > UINT64_MAX - row[j]) {
+                free(row);
+                return false;
+            }
+
+            row[j - 1U] += row[j];
+        }
+    }
+
+    *result = row[0];
+    free(row);
+    return true;
+}
+
+static bool read_input(uintmax_t *value)
+{
+    if (value == NULL) {
+        return false;
+    }
+
+    char *buffer = NULL;
+    size_t capacity = 0U;
+    size_t length = 0U;
+    int ch;
+
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        if (ch == '\0') {
+            free(buffer);
+            return false;
+        }
+
+        if (length == capacity) {
+            size_t new_capacity = capacity == 0U ? 64U : capacity * 2U;
+
+            if (new_capacity <= capacity ||
+                new_capacity > SIZE_MAX / sizeof(*buffer)) {
+                free(buffer);
+                return false;
+            }
+
+            char *new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return false;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+
+        buffer[length++] = (char)ch;
+    }
+
+    if (ferror(stdin) || (ch == EOF && length == 0U)) {
+        free(buffer);
+        return false;
+    }
+
+    if (length == capacity) {
+        if (capacity == SIZE_MAX) {
+            free(buffer);
+            return false;
+        }
+
+        char *new_buffer = realloc(buffer, capacity + 1U);
+        if (new_buffer == NULL) {
+            free(buffer);
+            return false;
+        }
+
+        buffer = new_buffer;
+    }
+
+    buffer[length] = '\0';
+
+    errno = 0;
+    char *end = NULL;
+    uintmax_t parsed = strtoumax(buffer, &end, 10);
+
+    if (end == buffer || errno == ERANGE) {
+        free(buffer);
+        return false;
+    }
+
+    while (*end != '\0' && isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    if (*end != '\0' || parsed > SIZE_MAX) {
+        free(buffer);
+        return false;
+    }
+
+    *value = parsed;
+    free(buffer);
+    return true;
+}
+
+int main(void)
+{
+    uintmax_t input;
+    uint64_t result;
+
+    if (!read_input(&input)) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (!nth_bell_number((size_t)input, &result)) {
+        fputs("Unable to compute Bell number\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRIu64 "\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

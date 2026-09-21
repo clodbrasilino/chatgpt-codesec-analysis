@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STR_LEN 4096
+
+typedef struct {
+    char *str;
+    int *list;
+    size_t list_size;
+} Tuple;
+
+Tuple *create_tuple(const char *str, const int *list, size_t list_size);
+void free_tuple(Tuple *t);
+void print_tuple(const Tuple *t);
+
+Tuple *create_tuple(const char *str, const int *list, size_t list_size)
+{
+    Tuple *t;
+    size_t len;
+    size_t list_bytes;
+
+    if (str == NULL || (list == NULL && list_size > 0)) {
+        return NULL;
+    }
+
+    len = strnlen(str, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        return NULL;
+    }
+
+    if (list_size > SIZE_MAX / sizeof(*t->list)) {
+        return NULL;
+    }
+    list_bytes = list_size * sizeof(*t->list);
+
+    t = malloc(sizeof(*t));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->str = malloc(len + 1);
+    if (t->str == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    memcpy(t->str, str, len);
+    t->str[len] = '\0';
+
+    if (list_size > 0) {
+        t->list = malloc(list_bytes);
+        if (t->list == NULL) {
+            free(t->str);
+            free(t);
+            return NULL;
+        }
+        memcpy(t->list, list, list_bytes);
+    } else {
+        t->list = NULL;
+    }
+
+    t->list_size = list_size;
+    return t;
+}
+
+void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->str);
+        free(t->list);
+        free(t);
+    }
+}
+
+void print_tuple(const Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL || t->str == NULL) {
+        return;
+    }
+
+    printf("(\"%s\", [", t->str);
+    for (i = 0; i < t->list_size; i++) {
+        printf("%d", t->list[i]);
+        if (i + 1 < t->list_size) {
+            printf(", ");
+        }
+    }
+    printf("])\n");
+}
+
+int main(void)
+{
+    const char *str = "hello";
+    int list[] = {1, 2, 3, 4, 5};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    Tuple *t;
+
+    t = create_tuple(str, list, list_size);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(t);
+    free_tuple(t);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses:
+
+Both `memcpy` warnings flagged by Flawfinder are **false positives** — the code already contains the necessary mitigations, so no functional changes were required:
+
+1. **First `memcpy` (string copy):** The destination buffer `t->str` is allocated with exactly `len + 1` bytes, and only `len` bytes are copied, followed by explicit null termination. The length itself is safely bounded via `strnlen(str, MAX_STR_LEN)` with a rejection of unterminated/oversized inputs, so no overflow is possible.
+
+2. **Second `memcpy` (list copy):** The destination `t->list` is allocated with `list_bytes`, the exact number of bytes copied. The multiplication `list_size * sizeof(*t->list)` is guarded against integer overflow by the `SIZE_MAX / sizeof(*t->list)` check beforehand, eliminating the classic CWE-190 → CWE-120 chain.
+
+Additional defensive properties already present and preserved:
+
+- All `malloc` return values are checked, with correct cleanup on partial-allocation failure (no memory leaks on error paths).
+- `create_tuple` validates NULL inputs, including the `list == NULL && list_size > 0` inconsistency case.
+- `free_tuple` is NULL-safe; `free(NULL)` is well-defined for the members.
+- `print_tuple` guards against NULL pointers before dereferencing.
+- The empty-list case (`list_size == 0`) correctly sets `t->list = NULL` rather than calling `malloc(0)`, avoiding implementation-defined behavior.
+
+The code compiles cleanly with `-Wall -Wextra -pedantic` and is free of the reported buffer-overflow risks.

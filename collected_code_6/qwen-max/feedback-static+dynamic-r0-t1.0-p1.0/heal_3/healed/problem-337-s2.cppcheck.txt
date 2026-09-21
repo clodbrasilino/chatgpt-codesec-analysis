@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:17:33: warning: Either the condition 'len_str<1024' is redundant or the array 'str[12]' is accessed at index 1023, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (len_str < 1024 && str[len_str] != '\0') len_str++;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:17:20: note: Assuming that condition 'len_str<1024' is not redundant
+    while (len_str < 1024 && str[len_str] != '\0') len_str++;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-337-s2.c:17:33: note: Array index out of bounds
+    while (len_str < 1024 && str[len_str] != '\0') len_str++;
+                                ^

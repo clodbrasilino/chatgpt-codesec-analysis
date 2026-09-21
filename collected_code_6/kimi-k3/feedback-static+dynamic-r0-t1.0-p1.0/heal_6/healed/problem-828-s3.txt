@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void count_characters(const char *str, size_t len, int *alphabets, int *digits, int *special)
+{
+    size_t i;
+    
+    if (alphabets == NULL || digits == NULL || special == NULL)
+    {
+        return;
+    }
+    
+    *alphabets = 0;
+    *digits = 0;
+    *special = 0;
+    
+    if (str == NULL)
+    {
+        return;
+    }
+    
+    for (i = 0; i < len; i++)
+    {
+        if (isalpha((unsigned char)str[i]))
+        {
+            (*alphabets)++;
+        }
+        else if (isdigit((unsigned char)str[i]))
+        {
+            (*digits)++;
+        }
+        else if (str[i] != ' ' && str[i] != '\0')
+        {
+            (*special)++;
+        }
+    }
+}
+
+int main(void)
+{
+    char *str = NULL;
+    size_t buffer_size = 0;
+    ssize_t line_length;
+    int alphabets = 0;
+    int digits = 0;
+    int special = 0;
+    size_t len;
+    
+    printf("Enter a string: ");
+    
+    line_length = getline(&str, &buffer_size, stdin);
+    
+    if (line_length == -1)
+    {
+        fprintf(stderr, "Error reading input\n");
+        free(str);
+        return EXIT_FAILURE;
+    }
+    
+    len = (size_t)line_length;
+    
+    if (len > 0 && str[len - 1] == '\n')
+    {
+        str[len - 1] = '\0';
+        len--;
+    }
+    
+    count_characters(str, len, &alphabets, &digits, &special);
+    
+    printf("Alphabets: %d\n", alphabets);
+    printf("Digits: %d\n", digits);
+    printf("Special characters: %d\n", special);
+    
+    free(str);
+    
+    return EXIT_SUCCESS;
+}
+```

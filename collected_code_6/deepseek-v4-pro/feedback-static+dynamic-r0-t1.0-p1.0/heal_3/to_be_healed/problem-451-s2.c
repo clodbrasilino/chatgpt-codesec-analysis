@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'GoogleDart', got <no output>
+  *  test case 0 failed: expected 'GoogleFlutter', got <no output>
+  *  test case 2 failed: expected 'iOSSwift', got <no output>
+  */
+
+char *remove_whitespaces(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    if (input_len >= (size_t)-1) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+
+    while (src_pos < input_len) {
+        if (!isspace((unsigned char)input[src_pos])) {
+            if (dst_pos >= input_len) {
+                free(result);
+                return NULL;
+            }
+            result[dst_pos++] = input[src_pos];
+        }
+        src_pos++;
+    }
+
+    result[dst_pos] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "Hello   World\tfrom\nC programming";
+    char *cleaned = remove_whitespaces(test_string);
+    
+    if (cleaned != NULL) {
+        printf("Original: '%s'\n", test_string);
+        printf("Cleaned:  '%s'\n", cleaned);
+        free(cleaned);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

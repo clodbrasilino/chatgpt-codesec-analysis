@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isspace(c) != 0) {
+            if (j > 0U && output[j - 1U] != '_') {
+                output[j] = '_';
+                j++;
+            }
+        } else if (isupper(c) != 0) {
+            if (j > 0U && output[j - 1U] != '_') {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+
+    while (j > 0U && output[j - 1U] == '_') {
+        j--;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    char *buffer;
+    int status = EXIT_SUCCESS;
+
+    buffer = malloc(MAX_INPUT_LEN);
+    if (buffer == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    while (fgets(buffer, (int)MAX_INPUT_LEN, stdin) != NULL) {
+        char *result;
+        size_t len = strnlen(buffer, MAX_INPUT_LEN);
+
+        while (len > 0U && (buffer[len - 1U] == '\n' || buffer[len - 1U] == '\r')) {
+            buffer[len - 1U] = '\0';
+            len--;
+        }
+
+        result = camel_to_snake(buffer);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for input: %s\n", buffer);
+            status = EXIT_FAILURE;
+        } else {
+            if (printf("%s\n", result) < 0) {
+                status = EXIT_FAILURE;
+            }
+            free(result);
+        }
+    }
+
+    free(buffer);
+    return status;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+The failing test cases revealed that the original program produced no output for inputs that were expected to yield `python_program`, `python_language`, and `programming_language`. This pattern strongly suggests the test inputs contained **spaces** (e.g., `Python Program`, `Python Language`, `Programming Language`), which the original conversion routine did not handle — it only handled pure camelCase input.
+
+Key changes made:
+
+1. **Whitespace handling** — spaces (and any whitespace via `isspace`) are now converted into a single underscore separator rather than being copied verbatim or ignored.
+2. **Duplicate underscore suppression** — the underscore insertion logic now checks `output[j - 1U] != '_'` instead of only `i > 0U`. This prevents double underscores when an uppercase letter immediately follows a space (e.g., `Python Program` would otherwise become `python__program`).
+3. **Leading/trailing underscore avoidance** — underscores are only inserted when `j > 0U` (output already has content), and any trailing underscores are trimmed before null-termination, so inputs with leading or trailing spaces still produce clean output.
+
+The allocation size of `(len * 2U) + 1U` remains a safe worst-case bound, since each input character produces at most two output characters. All original robustness properties (NULL checks, bounded `strnlen`, `unsigned char` casts before `ctype` calls, checked `printf`/`malloc` returns, CR/LF stripping) are preserved.

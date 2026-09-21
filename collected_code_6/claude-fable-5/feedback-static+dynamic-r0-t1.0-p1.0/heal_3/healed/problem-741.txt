@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_STR_LEN 4096
+
+bool all_chars_same(const char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strlen(str);
+    if (len == 0) {
+        return false;
+    }
+
+    for (i = 1; i < len; i++) {
+        if (str[i] != str[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_STR_LEN + 2];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        printf("False\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\r\n")] = '\0';
+
+    if (all_chars_same(buffer)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    fflush(stdout);
+    return 0;
+}
+```
+
+Key changes made as an experienced C developer reviewing the weaknesses:
+
+1. **Replaced `strnlen` with `strlen`** — `strnlen` is a POSIX extension, not part of standard C89/C99. On strict compilers or non-POSIX toolchains this fails to compile or link, which explains the `<no output>` results in all test cases (the binary never ran). Since `fgets` guarantees NUL-termination within the given size, `strlen` is safe here.
+
+2. **Explicit NUL-termination safeguard** (`buffer[sizeof(buffer) - 1] = '\0'`) and `memset` initialization — addresses the Flawfinder CWE-119/CWE-120 concern about the statically-sized buffer by guaranteeing the string is always bounded and terminated regardless of input.
+
+3. **Added `fflush(stdout)`** — ensures output is actually emitted before exit, guarding against harness environments where buffered output could be lost (another possible cause of `<no output>`).
+
+4. **Bounded read preserved** — `fgets(buffer, sizeof(buffer), stdin)` already limits input length, satisfying the "use functions that limit length" recommendation.

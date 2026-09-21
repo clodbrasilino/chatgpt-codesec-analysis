@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-694.c: In function 'extract_unique_values':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-694.c:33:32: error: 'INT_MAX' undeclared (first use in this function)
+   33 |             if (total_values > INT_MAX - dict->entries[i].value_count) {
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-694.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <string.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-694.c:33:32: note: each undeclared identifier is reported only once for each function it appears in
+   33 |             if (total_values > INT_MAX - dict->entries[i].value_count) {
+      |                                ^~~~~~~

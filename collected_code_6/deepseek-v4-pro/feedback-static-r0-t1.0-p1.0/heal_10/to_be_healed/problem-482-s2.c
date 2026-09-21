@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+#include <stdint.h>
+
+int find_sequences(const char *input, char ***matches, int *count) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    const char *pattern = "[A-Z][a-z]+";
+    int ret;
+    int max_matches = 10;
+    int found = 0;
+    char **result;
+    const char *p = input;
+
+    if (input == NULL || matches == NULL || count == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        return -1;
+    }
+
+    result = (char **)malloc(max_matches * sizeof(char *));
+    if (result == NULL) {
+        regfree(&regex);
+        return -1;
+    }
+
+    while (regexec(&regex, p, 1, pmatch, 0) == 0) {
+        if (found >= max_matches) {
+            int new_max;
+            if (max_matches > INT_MAX / 2) {
+                for (int i = 0; i < found; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+            new_max = max_matches * 2;
+            char **temp = (char **)realloc(result, new_max * sizeof(char *));
+            if (temp == NULL) {
+                for (int i = 0; i < found; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+            result = temp;
+            max_matches = new_max;
+        }
+
+        int len = pmatch[0].rm_eo - pmatch[0].rm_so;
+        if (len < 0 || len > INT_MAX - 1) {
+            for (int i = 0; i < found; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return -1;
+        }
+
+        /* Possible weaknesses found:
+         *  Assignment 'alloc_size=(unsigned long)len+1', assigned value is greater than 0
+         */
+        size_t alloc_size = (size_t)len + 1;
+        /* Possible weaknesses found:
+         *  Condition 'alloc_size==0' is always false
+         *  Condition 'alloc_size==0' is always false [knownConditionTrueFalse]
+         */
+        if (alloc_size == 0 || alloc_size > SIZE_MAX) {
+            for (int i = 0; i < found; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return -1;
+        }
+
+        const char *src = p + pmatch[0].rm_so;
+
+        result[found] = (char *)malloc(alloc_size);
+        if (result[found] == NULL) {
+            for (int i = 0; i < found; i++) {
+                free(result[i]);
+            }
+            free(result);
+            regfree(&regex);
+            return -1;
+        }
+
+        if (len > 0) {
+            const char *end = memchr(src, '\0', (size_t)len + 1);
+            if (end == NULL) {
+                free(result[found]);
+                for (int i = 0; i < found; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            size_t remaining = (size_t)(end - src);
+            if ((size_t)len > remaining) {
+                free(result[found]);
+                for (int i = 0; i < found; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            if (alloc_size < (size_t)len) {
+                free(result[found]);
+                for (int i = 0; i < found; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                regfree(&regex);
+                return -1;
+            }
+
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(result[found], src, (size_t)len);
+        }
+        result[found][len] = '\0';
+        found++;
+
+        p += pmatch[0].rm_eo;
+    }
+
+    *matches = result;
+    *count = found;
+    regfree(&regex);
+    return 0;
+}
+
+int main() {
+    const char *text = "Hello World This Is A Test String With Uppercase Words Like ABCdef and Xyz";
+    char **matches = NULL;
+    int count = 0;
+
+    if (find_sequences(text, &matches, &count) == 0) {
+        printf("Found %d sequences:\n", count);
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", matches[i]);
+            free(matches[i]);
+        }
+        free(matches);
+    } else {
+        printf("Error finding sequences\n");
+    }
+
+    return 0;
+}

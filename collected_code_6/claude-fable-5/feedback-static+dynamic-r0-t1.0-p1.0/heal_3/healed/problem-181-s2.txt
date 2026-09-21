@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *longest_common_prefix(const char *const *strs, size_t count)
+{
+    size_t prefix_len;
+    size_t alloc_len;
+    size_t i;
+    char *result;
+
+    if (strs == NULL || count == 0U) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+    }
+
+    prefix_len = 0U;
+    while (strs[0][prefix_len] != '\0') {
+        prefix_len++;
+    }
+
+    for (i = 1U; i < count; i++) {
+        size_t j = 0U;
+        while (j < prefix_len && strs[i][j] != '\0' && strs[i][j] == strs[0][j]) {
+            j++;
+        }
+        prefix_len = j;
+        if (prefix_len == 0U) {
+            break;
+        }
+    }
+
+    if (prefix_len >= SIZE_MAX) {
+        return NULL;
+    }
+
+    alloc_len = prefix_len + 1U;
+
+    result = malloc(alloc_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < prefix_len; i++) {
+        result[i] = strs[0][i];
+    }
+    result[prefix_len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "flower",
+        "flow",
+        "flight"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char *prefix;
+
+    prefix = longest_common_prefix(strings, count);
+    if (prefix == NULL) {
+        if (fprintf(stderr, "Failed to compute longest common prefix\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Longest common prefix: \"%s\"\n", prefix) < 0) {
+        free(prefix);
+        return EXIT_FAILURE;
+    }
+
+    free(prefix);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **Removed the always-false condition** (`alloc_len < prefix_len`): The static analyzer correctly flagged this overflow check as dead code. Since the code already verified `prefix_len != (size_t)-1` beforehand, the addition `prefix_len + 1U` could never wrap around, making the subsequent check unreachable logic.
+
+2. **Consolidated the overflow guard**: Replaced the cast-based check `prefix_len == (size_t)-1` with the clearer `prefix_len >= SIZE_MAX` (requiring `<stdint.h>`). This performs the overflow prevention *before* the addition, which is the correct pattern — checking for wraparound after an unsigned overflow has occurred is too late semantically, even though unsigned overflow is well-defined in C.
+
+3. **Preserved all defensive properties**: NULL checks on the array and each element, malloc failure handling, guaranteed null-termination, and proper `free()` on all exit paths in `main` remain intact. The function still has no undefined behavior for any valid input and never reads past a string's null terminator.

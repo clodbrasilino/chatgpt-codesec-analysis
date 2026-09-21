@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-341.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-341.c:80:68: style: The comparison 'copy_size > set->size*sizeof(int)' is always false because 'copy_size' and 'set->size*sizeof(int)' represent the same value. [knownConditionTrueFalse]
+    if (copy_size > SIZE_MAX || copy_size < set->size || copy_size > set->size * sizeof(int)) {
+                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-341.c:79:34: note: 'copy_size' is assigned value 'set->size*sizeof(int)' here.
+    size_t copy_size = set->size * sizeof(int);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-341.c:80:68: note: The comparison 'copy_size > set->size*sizeof(int)' is always false because 'copy_size' and 'set->size*sizeof(int)' represent the same value.
+    if (copy_size > SIZE_MAX || copy_size < set->size || copy_size > set->size * sizeof(int)) {
+                                                                   ^

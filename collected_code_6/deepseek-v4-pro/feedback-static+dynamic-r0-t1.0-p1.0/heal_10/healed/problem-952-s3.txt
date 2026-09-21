@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
+
+int64_t mul_mod(int64_t a, int64_t b, int64_t mod) {
+    int64_t result = 0;
+    int64_t ua;
+    int64_t ub;
+    
+    if (mod <= 0) {
+        return 0;
+    }
+    
+    ua = a % mod;
+    if (ua < 0) {
+        ua += mod;
+    }
+    ub = b % mod;
+    if (ub < 0) {
+        ub += mod;
+    }
+    
+    while (ub > 0) {
+        if (ub & 1) {
+            if (ua > INT64_MAX - result) {
+                int64_t diff = mod - ua;
+                if (result >= diff) {
+                    result = result - diff;
+                } else {
+                    result = result + ua;
+                }
+            } else {
+                result = result + ua;
+            }
+            result %= mod;
+            if (result < 0) result += mod;
+        }
+        {
+            if (ua > INT64_MAX - ua) {
+                int64_t diff = mod - ua;
+                if (ua >= diff) {
+                    ua = ua - diff;
+                } else {
+                    ua = ua + ua;
+                }
+            } else {
+                ua = ua * 2;
+            }
+            ua %= mod;
+            if (ua < 0) ua += mod;
+        }
+        ub >>= 1;
+    }
+    result %= mod;
+    if (result < 0) result += mod;
+    return result;
+}
+
+int64_t power_mod(int64_t base, int64_t exp, int64_t mod) {
+    int64_t result = 1;
+    int64_t b;
+    
+    if (mod <= 0) {
+        return 0;
+    }
+    
+    b = base % mod;
+    if (b < 0) {
+        b += mod;
+    }
+    
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mul_mod(result, b, mod);
+        }
+        b = mul_mod(b, b, mod);
+        exp >>= 1;
+    }
+    return result;
+}
+
+int64_t mod_inverse(int64_t a, int64_t p) {
+    if (a % p == 0) {
+        return 0;
+    }
+    return power_mod(a, p - 2, p);
+}
+
+int64_t ncr_mod_p(int64_t n, int64_t r, int64_t p) {
+    int64_t numerator;
+    int64_t denominator;
+    int64_t i;
+    int64_t inv_denom;
+    
+    if (r > n || r < 0) {
+        return 0;
+    }
+    if (r == 0 || r == n) {
+        return 1;
+    }
+    
+    if (r > n - r) {
+        r = n - r;
+    }
+    
+    numerator = 1;
+    denominator = 1;
+    
+    for (i = 0; i < r; i++) {
+        numerator = mul_mod(numerator, ((n - i) % p + p) % p, p);
+        denominator = mul_mod(denominator, ((i + 1) % p + p) % p, p);
+    }
+    
+    inv_denom = mod_inverse(denominator, p);
+    if (inv_denom == 0 && denominator != 0) {
+        return 0;
+    }
+    
+    return mul_mod(numerator, inv_denom, p);
+}
+
+int main(void) {
+    int64_t n, r, p;
+    char buf[256];
+    char format[32];
+    
+    if (fgets(buf, sizeof(buf), stdin) == NULL) {
+        return 1;
+    }
+    
+    buf[strcspn(buf, "\n")] = '\0';
+    
+    snprintf(format, sizeof(format), "%%%d" SCNd64 " %%%d" SCNd64 " %%%d" SCNd64,
+             (int)sizeof(buf) - 1, (int)sizeof(buf) - 1, (int)sizeof(buf) - 1);
+    
+    if (sscanf(buf, "%" SCNd64 " %" SCNd64 " %" SCNd64, &n, &r, &p) != 3) {
+        return 1;
+    }
+    
+    if (p <= 1) {
+        return 1;
+    }
+    
+    printf("%" PRId64 "\n", ncr_mod_p(n, r, p));
+    
+    return 0;
+}
+```

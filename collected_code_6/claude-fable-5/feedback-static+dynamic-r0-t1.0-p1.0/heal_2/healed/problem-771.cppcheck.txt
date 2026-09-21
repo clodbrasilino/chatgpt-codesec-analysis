@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-771.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-771.c:157:22: warning: Uninitialized variable: ch [uninitvar]
+    if (used == 0 && ch == EOF) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-771.c:148:17: note: Assuming condition is false
+    while (used < max_len - 1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-771.c:157:22: note: Uninitialized variable: ch
+    if (used == 0 && ch == EOF) {
+                     ^

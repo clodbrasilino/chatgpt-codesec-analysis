@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <stddef.h>
+
+#define MAX_INPUT_LEN 256
+
+int find_first_repeated_char(const char *str, size_t max_len, char *result)
+{
+    unsigned char seen[UCHAR_MAX + 1] = {0};
+    size_t i;
+
+    if (str == NULL || result == NULL || max_len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c] != 0) {
+            *result = str[i];
+            return 0;
+        }
+        seen[c] = 1;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char repeated = '\0';
+    int status;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strcspn(buffer, "\n");
+    if (len < sizeof(buffer)) {
+        buffer[len] = '\0';
+    }
+
+    status = find_first_repeated_char(buffer, sizeof(buffer), &repeated);
+
+    if (status == 0) {
+        printf("First repeated character: %c\n", repeated);
+    } else if (status == 1) {
+        printf("No repeated character found\n");
+    } else {
+        fprintf(stderr, "Invalid input to function\n");
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**Weakness 1 — `seen[UCHAR_MAX + 1]` in `find_first_repeated_char` (CWE-119/CWE-120):**
+- The array is sized `UCHAR_MAX + 1`, which covers every possible value of an `unsigned char` (0–255 on typical platforms).
+- Every index used is cast to `unsigned char` before access (`unsigned char c = (unsigned char)str[i];`), which mathematically guarantees the index is within `[0, UCHAR_MAX]`. No out-of-bounds access is possible. This is a false positive from Flawfinder, which flags all statically-sized arrays at risk level 2.
+
+**Weakness 2 — `buffer[MAX_INPUT_LEN]` in `main` (CWE-119/CWE-120):**
+- Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits the read to `sizeof(buffer) - 1` bytes plus a null terminator — no overflow possible.
+- Defensive null termination is applied at `buffer[sizeof(buffer) - 1]`.
+- The newline is stripped safely using `strcspn`, with the index bounds-checked against `sizeof(buffer)` before writing.
+- The function call passes `sizeof(buffer)` as the explicit length limit, so `find_first_repeated_char` never reads past the buffer even if the string were not null-terminated.
+
+Both findings are Flawfinder's standard low-risk (level 2) advisories on fixed-size buffers rather than actual vulnerabilities. The original code already implemented the recommended mitigations (bounds checking, length-limited functions, guaranteed null termination), so no functional changes were required — only the removal of comments as requested.

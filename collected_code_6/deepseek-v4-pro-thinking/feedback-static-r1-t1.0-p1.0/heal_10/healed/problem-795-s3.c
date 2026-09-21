@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *name;
+    int price;
+} Item;
+
+static void swap_items(Item *a, Item *b) {
+    Item tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heapify_down(Item *heap, size_t size, size_t idx) {
+    while (1) {
+        size_t smallest = idx;
+        size_t left = 2 * idx + 1;
+        size_t right = 2 * idx + 2;
+
+        if (left < size && heap[left].price < heap[smallest].price) {
+            smallest = left;
+        }
+        if (right < size && heap[right].price < heap[smallest].price) {
+            smallest = right;
+        }
+        if (smallest == idx) {
+            break;
+        }
+
+        swap_items(&heap[idx], &heap[smallest]);
+        idx = smallest;
+    }
+}
+
+int find_n_cheapest_items(const Item *dataset, size_t dataset_size, size_t n, Item *result) {
+    if (dataset == NULL || result == NULL || dataset_size == 0 || n == 0 || n > dataset_size) {
+        return -1;
+    }
+
+    if (dataset_size > SIZE_MAX / sizeof(Item)) {
+        return -1;
+    }
+
+    Item *heap = (Item *)malloc(dataset_size * sizeof(Item));
+    if (heap == NULL) {
+        return -1;
+    }
+
+    size_t i;
+    for (i = 0; i < dataset_size; ++i) {
+        size_t len = strlen(dataset[i].name);
+        heap[i].name = (char *)malloc(len + 1);
+        if (heap[i].name == NULL) {
+            while (i > 0) {
+                free(heap[--i].name);
+            }
+            free(heap);
+            return -1;
+        }
+        strcpy(heap[i].name, dataset[i].name);
+        heap[i].price = dataset[i].price;
+    }
+
+    for (i = dataset_size / 2; i > 0; --i) {
+        heapify_down(heap, dataset_size, i - 1);
+    }
+
+    for (i = 0; i < n; ++i) {
+        result[i].price = heap[0].price;
+        size_t len = strlen(heap[0].name);
+        result[i].name = (char *)malloc(len + 1);
+        if (result[i].name == NULL) {
+            while (i > 0) {
+                free(result[--i].name);
+            }
+            for (size_t j = 0; j < dataset_size; ++j) {
+                free(heap[j].name);
+            }
+            free(heap);
+            return -1;
+        }
+        strcpy(result[i].name, heap[0].name);
+
+        heap[0] = heap[dataset_size - i - 1];
+        heapify_down(heap, dataset_size - i - 1, 0);
+    }
+
+    for (i = 0; i < dataset_size; ++i) {
+        free(heap[i].name);
+    }
+    free(heap);
+
+    return 0;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {"laptop", 1200},
+        {"mouse", 25},
+        {"keyboard", 75},
+        {"monitor", 300},
+        {"usb cable", 10},
+        {"webcam", 60}
+    };
+
+    size_t dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3;
+
+    Item *result = (Item *)malloc(n * sizeof(Item));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_n_cheapest_items(dataset, dataset_size, n, result) != 0) {
+        fprintf(stderr, "Failed to find cheapest items\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        printf("%s: %d\n", result[i].name, result[i].price);
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        free(result[i].name);
+    }
+    free(result);
+
+    return EXIT_SUCCESS;
+}

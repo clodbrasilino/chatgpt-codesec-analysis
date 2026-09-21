@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool check_first_last(const char *str, size_t max_len) {
+    if (str == NULL || max_len == 0) {
+        return false;
+    }
+    
+    size_t len = strnlen(str, max_len);
+    if (len == 0) {
+        return false;
+    }
+    
+    return str[0] == str[len - 1];
+}
+
+int main(void) {
+    const char *test1 = "level";
+    const char *test2 = "hello";
+    const char *test3 = "a";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    printf("%d\n", check_first_last(test1, 6));
+    printf("%d\n", check_first_last(test2, 6));
+    printf("%d\n", check_first_last(test3, 2));
+    printf("%d\n", check_first_last(test4, 1));
+    printf("%d\n", check_first_last(test5, 0));
+
+    return 0;
+}

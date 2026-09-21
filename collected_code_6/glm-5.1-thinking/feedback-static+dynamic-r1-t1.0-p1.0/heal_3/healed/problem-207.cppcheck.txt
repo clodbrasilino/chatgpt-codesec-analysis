@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:14:12: style: Same expression used in consecutive assignments of 'num_ptrs' and 'num_ints'. [duplicateAssignExpression]
+    size_t num_ptrs = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:15:12: note: Same expression used in consecutive assignments of 'num_ptrs' and 'num_ints'.
+    size_t num_ints = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:14:12: note: Same expression used in consecutive assignments of 'num_ptrs' and 'num_ints'.
+    size_t num_ptrs = (size_t)n + 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:16:45: style: Same expression on both sides of '||' because 'num_ptrs>SIZE_MAX/sizeof(int*)' and 'num_ints>SIZE_MAX/sizeof(int)' represent the same value. [knownConditionTrueFalse]
+    if (num_ptrs > SIZE_MAX / sizeof(int *) || num_ints > SIZE_MAX / sizeof(int)) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:14:33: note: 'num_ptrs' is assigned value '(unsigned long)n+1' here.
+    size_t num_ptrs = (size_t)n + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:15:33: note: 'num_ints' is assigned value '(unsigned long)n+1' here.
+    size_t num_ints = (size_t)n + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-207.c:16:45: note: Same expression on both sides of '||' because 'num_ptrs>SIZE_MAX/sizeof(int*)' and 'num_ints>SIZE_MAX/sizeof(int)' represent the same value.
+    if (num_ptrs > SIZE_MAX / sizeof(int *) || num_ints > SIZE_MAX / sizeof(int)) {
+                                            ^

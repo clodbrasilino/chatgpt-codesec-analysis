@@ -1,0 +1,175 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static char *duplicate_string(const char *source, size_t max_length)
+{
+    const char *terminator;
+    size_t length;
+    char *copy;
+
+    if (source == NULL || max_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    terminator = memchr(source, '\0', max_length + 1U);
+    if (terminator == NULL) {
+        return NULL;
+    }
+
+    length = (size_t)(terminator - source);
+    copy = malloc(length + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    if (length > 0U) {
+        memcpy(copy, source, length);
+    }
+    copy[length] = '\0';
+
+    return copy;
+}
+
+static int dictionary_init(Dictionary *dictionary, size_t capacity)
+{
+    if (dictionary == NULL) {
+        return -1;
+    }
+
+    dictionary->entries = NULL;
+    dictionary->count = 0U;
+    dictionary->capacity = 0U;
+
+    if (capacity == 0U) {
+        return 0;
+    }
+
+    if (capacity > SIZE_MAX / sizeof(*dictionary->entries)) {
+        return -1;
+    }
+
+    dictionary->entries = calloc(capacity, sizeof(*dictionary->entries));
+    if (dictionary->entries == NULL) {
+        return -1;
+    }
+
+    dictionary->capacity = capacity;
+    return 0;
+}
+
+static void dictionary_destroy(Dictionary *dictionary)
+{
+    size_t index;
+
+    if (dictionary == NULL) {
+        return;
+    }
+
+    for (index = 0U; index < dictionary->count; ++index) {
+        free(dictionary->entries[index].key);
+        free(dictionary->entries[index].value);
+    }
+
+    free(dictionary->entries);
+    dictionary->entries = NULL;
+    dictionary->count = 0U;
+    dictionary->capacity = 0U;
+}
+
+static int dictionary_add(Dictionary *dictionary,
+                          const char *key,
+                          size_t key_max_length,
+                          const char *value,
+                          size_t value_max_length)
+{
+    char *key_copy;
+    char *value_copy;
+
+    if (dictionary == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    if (dictionary->count >= dictionary->capacity ||
+        dictionary->entries == NULL) {
+        return -1;
+    }
+
+    key_copy = duplicate_string(key, key_max_length);
+    if (key_copy == NULL) {
+        return -1;
+    }
+
+    value_copy = duplicate_string(value, value_max_length);
+    if (value_copy == NULL) {
+        free(key_copy);
+        return -1;
+    }
+
+    dictionary->entries[dictionary->count].key = key_copy;
+    dictionary->entries[dictionary->count].value = value_copy;
+    ++dictionary->count;
+
+    return 0;
+}
+
+static const char *dictionary_key_at(const Dictionary *dictionary, size_t index)
+{
+    if (dictionary == NULL || dictionary->entries == NULL ||
+        index >= dictionary->count) {
+        return NULL;
+    }
+
+    return dictionary->entries[index].key;
+}
+
+int main(void)
+{
+    Dictionary dictionary;
+    const char *key;
+    int status = EXIT_FAILURE;
+
+    if (dictionary_init(&dictionary, 3U) != 0) {
+        fputs("Failed to initialize dictionary.\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (dictionary_add(&dictionary, "name", sizeof("name") - 1U,
+                       "Alice", sizeof("Alice") - 1U) != 0 ||
+        dictionary_add(&dictionary, "age", sizeof("age") - 1U,
+                       "30", sizeof("30") - 1U) != 0 ||
+        dictionary_add(&dictionary, "city", sizeof("city") - 1U,
+                       "Paris", sizeof("Paris") - 1U) != 0) {
+        fputs("Failed to add dictionary entries.\n", stderr);
+        goto cleanup;
+    }
+
+    key = dictionary_key_at(&dictionary, 1U);
+    if (key == NULL) {
+        fputs("Dictionary index is out of range.\n", stderr);
+        goto cleanup;
+    }
+
+    if (printf("%s\n", key) < 0) {
+        fputs("Failed to write output.\n", stderr);
+        goto cleanup;
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    dictionary_destroy(&dictionary);
+    return status;
+}

@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LEN 64
+
+bool match_two_words_starting_with_p(const char words[][MAX_WORD_LEN], size_t count, char *first_match, char *second_match, size_t buffer_size)
+{
+    if (words == NULL || first_match == NULL || second_match == NULL || buffer_size == 0 || buffer_size > MAX_WORD_LEN)
+    {
+        return false;
+    }
+
+    if (count > MAX_WORDS)
+    {
+        count = MAX_WORDS;
+    }
+
+    size_t found = 0;
+    for (size_t i = 0; i < count; i++)
+    {
+        if (words[i][0] == 'p')
+        {
+            size_t word_len = strnlen(words[i], MAX_WORD_LEN);
+            
+            if (word_len >= buffer_size)
+            {
+                return false;
+            }
+            
+            if (found == 0)
+            {
+                memcpy(first_match, words[i], word_len + 1);
+                found++;
+            }
+            else if (found == 1)
+            {
+                memcpy(second_match, words[i], word_len + 1);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    char words[][MAX_WORD_LEN] = {
+        "apple",
+        "pear",
+        "peach",
+        "banana",
+        "plum",
+        "orange"
+    };
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    
+    char *first = calloc(MAX_WORD_LEN, sizeof(char));
+    char *second = calloc(MAX_WORD_LEN, sizeof(char));
+    
+    if (first == NULL || second == NULL)
+    {
+        free(first);
+        free(second);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (match_two_words_starting_with_p(words, word_count, first, second, MAX_WORD_LEN))
+    {
+        printf("First match: %s\n", first);
+        printf("Second match: %s\n", second);
+    }
+    else
+    {
+        printf("Could not find two words starting with 'p'\n");
+    }
+
+    free(first);
+    free(second);
+    
+    return EXIT_SUCCESS;
+}

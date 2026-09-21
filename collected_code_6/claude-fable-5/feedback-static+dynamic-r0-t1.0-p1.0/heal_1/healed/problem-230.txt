@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 1024
+
+int replace_spaces(char *str, size_t max_len, char replacement)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    if (replacement == '\0') {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == max_len) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            str[i] = replacement;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[] = "Hello world this is a test";
+    int result;
+
+    result = replace_spaces(buffer, sizeof(buffer), '_');
+    if (result != 0) {
+        fprintf(stderr, "Error: failed to replace spaces\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The original code was already reasonably defensive (NULL check, rejecting `'\0'` as a replacement, correct use of `size_t`), but the Flawfinder warning about `strlen` (CWE-126) pointed to the risk of an over-read if the input string is not NUL-terminated.
+
+Key fixes applied:
+
+1. **`strlen` → `strnlen`**: The function now takes an explicit `max_len` bound and uses `strnlen(str, max_len)`, which never reads past `max_len` bytes even if the buffer lacks a NUL terminator. This directly addresses the CWE-126 over-read risk.
+
+2. **Termination validation**: If `strnlen` returns `max_len`, no NUL terminator was found within the buffer bounds, so the function fails safely with `-1` rather than operating on an unterminated string.
+
+3. **Caller passes the true buffer size**: `main` uses `sizeof(buffer)`, which is correct here because `buffer` is a genuine array (not a decayed pointer), so the bound is accurate at the call site.
+
+Note that `strnlen` is POSIX / C23 (`_POSIX_C_SOURCE >= 200809L`); if strict C89/C99 portability were required, an equivalent bounded loop or `memchr(str, '\0', max_len)` could be substituted.

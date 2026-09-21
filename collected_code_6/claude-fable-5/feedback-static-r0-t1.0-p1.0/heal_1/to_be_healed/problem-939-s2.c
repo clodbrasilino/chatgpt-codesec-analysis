@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t count;
+} Dict;
+
+static const char *g_sort_key = NULL;
+
+static char *dup_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(s) + 1U;
+    copy = malloc(len);
+    if (copy != NULL) {
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(copy, s, len);
+    }
+    return copy;
+}
+
+static const char *dict_get(const Dict *d, const char *key)
+{
+    size_t i;
+
+    if (d == NULL || key == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < d->count; i++) {
+        if (strcmp(d->pairs[i].key, key) == 0) {
+            return d->pairs[i].value;
+        }
+    }
+    return NULL;
+}
+
+static int dict_set(Dict *d, const char *key, const char *value)
+{
+    Pair *tmp;
+    char *kcopy;
+    char *vcopy;
+
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    kcopy = dup_string(key);
+    if (kcopy == NULL) {
+        return -1;
+    }
+    vcopy = dup_string(value);
+    if (vcopy == NULL) {
+        free(kcopy);
+        return -1;
+    }
+    tmp = realloc(d->pairs, (d->count + 1U) * sizeof(Pair));
+    if (tmp == NULL) {
+        free(kcopy);
+        free(vcopy);
+        return -1;
+    }
+    d->pairs = tmp;
+    d->pairs[d->count].key = kcopy;
+    d->pairs[d->count].value = vcopy;
+    d->count++;
+    return 0;
+}
+
+static void dict_free(Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->count; i++) {
+        free(d->pairs[i].key);
+        free(d->pairs[i].value);
+    }
+    free(d->pairs);
+    d->pairs = NULL;
+    d->count = 0;
+}
+
+static int compare_dicts(const void *a, const void *b)
+{
+    const Dict *da = a;
+    const Dict *db = b;
+    const char *va = dict_get(da, g_sort_key);
+    const char *vb = dict_get(db, g_sort_key);
+
+    if (va == NULL && vb == NULL) {
+        return 0;
+    }
+    if (va == NULL) {
+        return -1;
+    }
+    if (vb == NULL) {
+        return 1;
+    }
+    return strcmp(va, vb);
+}
+
+static int sort_dicts(Dict *list, size_t n, const char *key)
+{
+    if (list == NULL || key == NULL || n == 0U) {
+        return -1;
+    }
+    g_sort_key = key;
+    qsort(list, n, sizeof(Dict), compare_dicts);
+    g_sort_key = NULL;
+    return 0;
+}
+
+static void print_dicts(const Dict *list, size_t n)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < n; i++) {
+        printf("{ ");
+        for (j = 0; j < list[i].count; j++) {
+            printf("%s: %s", list[i].pairs[j].key, list[i].pairs[j].value);
+            if (j + 1U < list[i].count) {
+                printf(", ");
+            }
+        }
+        printf(" }\n");
+    }
+}
+
+int main(void)
+{
+    Dict list[3];
+    size_t n = sizeof(list) / sizeof(list[0]);
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    for (i = 0; i < n; i++) {
+        list[i].pairs = NULL;
+        list[i].count = 0;
+    }
+
+    if (dict_set(&list[0], "name", "Charlie") != 0 ||
+        dict_set(&list[0], "age", "35") != 0 ||
+        dict_set(&list[1], "name", "Alice") != 0 ||
+        dict_set(&list[1], "age", "30") != 0 ||
+        dict_set(&list[2], "name", "Bob") != 0 ||
+        dict_set(&list[2], "age", "25") != 0) {
+        fprintf(stderr, "Failed to build dictionaries\n");
+        status = EXIT_FAILURE;
+    } else {
+        printf("Before sorting:\n");
+        print_dicts(list, n);
+
+        if (sort_dicts(list, n, "name") != 0) {
+            fprintf(stderr, "Sorting failed\n");
+            status = EXIT_FAILURE;
+        } else {
+            printf("\nAfter sorting by name:\n");
+            print_dicts(list, n);
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        dict_free(&list[i]);
+    }
+
+    return status;
+}

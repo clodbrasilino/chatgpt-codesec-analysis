@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_KEY_LEN 256
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dict;
+
+static Dict *dict_create(size_t capacity)
+{
+    Dict *dict;
+
+    if (capacity == 0 || capacity > SIZE_MAX / sizeof(DictEntry)) {
+        return NULL;
+    }
+    dict = malloc(sizeof(Dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = calloc(capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+static int dict_add(Dict *dict, const char *key, int value)
+{
+    char *key_copy;
+    size_t len;
+    size_t dest_size;
+
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->count >= dict->capacity) {
+        return -1;
+    }
+    len = strnlen(key, MAX_KEY_LEN);
+    if (len >= MAX_KEY_LEN) {
+        return -1;
+    }
+    dest_size = len + 1;
+    key_copy = malloc(dest_size);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    memcpy(key_copy, key, len);
+    key_copy[len] = '\0';
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+static void dict_destroy(Dict *dict)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+static int dict_sum(const Dict *dict, long *result)
+{
+    size_t i;
+    long sum = 0;
+
+    if (dict == NULL || result == NULL) {
+        return -1;
+    }
+    for (i = 0; i < dict->count; i++) {
+        sum += (long)dict->entries[i].value;
+    }
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    Dict *dict;
+    long total;
+
+    dict = dict_create(10);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(dict, "apple", 100) != 0 ||
+        dict_add(dict, "banana", 200) != 0 ||
+        dict_add(dict, "cherry", 300) != 0) {
+        fprintf(stderr, "Failed to add entries\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_sum(dict, &total) != 0) {
+        fprintf(stderr, "Failed to compute sum\n");
+        dict_destroy(dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of all items: %ld\n", total);
+
+    dict_destroy(dict);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the changes made:
+
+1. **Removed the redundant `len > SIZE_MAX - 1` check** — since `len` is already guaranteed to be less than `MAX_KEY_LEN` (256) by the preceding check, this condition could never be true, so it was dead code.
+
+2. **Removed the `len >= dest_size` check** — the static analyzer correctly flagged this as always false (`knownConditionTrueFalse`), since `dest_size = len + 1` guarantees `len < dest_size`. Removing it eliminates dead code and unnecessary branching.
+
+3. **The `memcpy` (CWE-120 / Flawfinder risk 2) is retained but safe** — this was a false positive worth verifying rather than "fixing" incorrectly. The destination buffer is allocated with exactly `len + 1` bytes, exactly `len` bytes are copied, and the null terminator is written at index `len`, which is within bounds. The bounds are provably correct: `strnlen` caps `len` at `MAX_KEY_LEN`, the `len >= MAX_KEY_LEN` rejection ensures `len + 1` cannot overflow, and `malloc` failure is checked before the copy.
+
+4. **Everything else was already sound** — `dict_create` guards against zero capacity and multiplication overflow, all allocations are checked, `dict_destroy` frees every key plus the entries array and the dict itself (no leaks, no double-frees), and all public functions validate their pointer arguments.

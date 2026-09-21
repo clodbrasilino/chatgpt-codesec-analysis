@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-317.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-317.c:65:42: style: Condition 'input_len>0' is always true [knownConditionTrueFalse]
+    } else if (rle_len == 0 && input_len > 0) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-317.c:51:37: note: Assignment 'input_len=sizeof(text)-1', assigned value is 14
+    size_t input_len = sizeof(text) - 1;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-317.c:65:42: note: Condition 'input_len>0' is always true
+    } else if (rle_len == 0 && input_len > 0) {
+                                         ^

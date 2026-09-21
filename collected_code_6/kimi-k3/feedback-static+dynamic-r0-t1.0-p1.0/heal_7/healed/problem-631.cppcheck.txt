@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-631.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-631.c:82:24: style: Condition 'output_len+1>output_size' is always false [knownConditionTrueFalse]
+    if (output_len + 1 > output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-631.c:76:24: note: Assuming that condition 'output_len+1>output_size' is not redundant
+    if (output_len + 1 > output_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-631.c:82:24: note: Condition 'output_len+1>output_size' is always false
+    if (output_len + 1 > output_size) {
+                       ^

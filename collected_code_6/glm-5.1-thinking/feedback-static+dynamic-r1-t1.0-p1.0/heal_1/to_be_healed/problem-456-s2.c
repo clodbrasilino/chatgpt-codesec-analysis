@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void reverse_strings(char **strings, size_t count) {
+    if (strings == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            continue;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t len = strlen(strings[i]);
+        for (size_t j = 0; j < len / 2; j++) {
+            char temp = strings[i][j];
+            strings[i][j] = strings[i][len - 1 - j];
+            strings[i][len - 1 - j] = temp;
+        }
+    }
+}
+
+int main(void) {
+    const char *original[] = {
+        "hello",
+        "world",
+        "C",
+        "programming"
+    };
+    size_t count = sizeof(original) / sizeof(original[0]);
+
+    char **strings = malloc(count * sizeof(char *));
+    if (strings == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        strings[i] = malloc(strlen(original[i]) + 1);
+        if (strings[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(strings[j]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+         */
+        strcpy(strings[i], original[i]);
+    }
+
+    reverse_strings(strings, count);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return EXIT_SUCCESS;
+}

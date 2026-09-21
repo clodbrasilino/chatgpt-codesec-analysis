@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int left_rotate(char *str, size_t str_size, size_t d)
+{
+    size_t len;
+    char *temp;
+
+    if (str == NULL || str_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(str, str_size);
+    if (len >= str_size) {
+        return -1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    d = d % len;
+    if (d == 0) {
+        return 0;
+    }
+
+    if (d > len || (len - d) > len || (len + 1) > str_size) {
+        return -1;
+    }
+
+    temp = malloc(len + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    if ((len - d) > len + 1 || d > (len + 1) - (len - d)) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(temp, str + d, len - d);
+    memcpy(temp + (len - d), str, d);
+    temp[len] = '\0';
+
+    if ((len + 1) > str_size) {
+        free(temp);
+        return -1;
+    }
+
+    memcpy(str, temp, len + 1);
+    free(temp);
+
+    return 0;
+}
+
+int main(void)
+{
+    char str[] = "HelloWorld";
+    size_t d = 3;
+
+    printf("Original string: %s\n", str);
+
+    if (left_rotate(str, sizeof(str), d) != 0) {
+        fprintf(stderr, "Rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated string:  %s\n", str);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely safe — the flawfinder warnings on `memcpy` are heuristic (risk 2) and flag every use of `memcpy` regardless of context. Here's why each copy was and remains safe:
+
+1. **`memcpy(temp, str + d, len - d)`** — `temp` holds `len + 1` bytes; since `d >= 1` after the modulo, `len - d < len + 1`. The source read `str + d` through `str + len` is within the validated string bounds.
+
+2. **`memcpy(temp + (len - d), str, d)`** — writes bytes `len - d` through `len - 1` of `temp`, totaling exactly `len` bytes written across both copies, within the `len + 1` allocation.
+
+3. **`memcpy(str, temp, len + 1)`** — guarded by the earlier `(len + 1) > str_size` check, so the destination buffer is guaranteed large enough.
+
+The rewritten version adds explicit destination-capacity guards immediately before each `memcpy` to make the safety invariants locally verifiable, which satisfies static analyzers and future maintainers. Additional guarantees already present and preserved:
+
+- `strnlen` with the buffer size prevents reads past unterminated buffers, and the `len >= str_size` check rejects unterminated input.
+- `d % len` prevents out-of-bounds offsets from oversized rotation values.
+- `malloc` failure is handled, and `temp` is freed on all paths after allocation, so there are no leaks.
+- Rotation by `0` (or a multiple of `len`) and empty strings short-circuit safely.

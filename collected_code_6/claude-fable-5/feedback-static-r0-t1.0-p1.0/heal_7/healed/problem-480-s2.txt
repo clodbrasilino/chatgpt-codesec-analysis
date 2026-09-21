@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int max_occurring_char(const char *str, char *result)
+{
+    size_t counts[UCHAR_MAX + 1] = {0};
+    size_t max_count = 0;
+    size_t i;
+    unsigned char best = 0;
+    int found = 0;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        counts[c]++;
+        if (counts[c] > max_count) {
+            max_count = counts[c];
+            best = c;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    *result = (char)best;
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char result;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (max_occurring_char(buffer, &result) != 0) {
+        fprintf(stderr, "No characters found in input\n");
+        return 1;
+    }
+
+    printf("Maximum occurring character: %c\n", result);
+    return 0;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning (CWE-119/CWE-120) on `char buffer[256]` is a heuristic flag on any statically-sized array. In this case, the code is already properly mitigated:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to at most 255 characters plus the null terminator, so no overflow is possible. Using `sizeof(buffer)` rather than a hardcoded literal keeps the bound correct even if the array size changes.
+
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is defensive (technically redundant after a successful `fgets`, which always null-terminates), ensuring the string is terminated before `strcspn` and the counting loop run.
+
+3. **Newline stripping:** `buffer[strcspn(buffer, "\n")] = '\0';` safely removes the trailing newline without risking out-of-bounds access, since `strcspn` returns the string length if no newline is found, which is a valid index within the buffer.
+
+4. **Safe indexing in the counter:** The cast to `unsigned char` before indexing `counts[]` is important — indexing with a plain `char` (which may be signed) could produce negative indices for bytes ≥ 0x80, causing out-of-bounds reads/writes. The array size `UCHAR_MAX + 1` covers all possible byte values.
+
+5. **Robust error handling:** NULL pointer checks in `max_occurring_char`, a checked `fgets` return value, and a distinct error path for empty input all follow defensive coding practice.
+
+The code as written already addresses the flagged weakness; no functional changes were required, only the removal of comments as requested.

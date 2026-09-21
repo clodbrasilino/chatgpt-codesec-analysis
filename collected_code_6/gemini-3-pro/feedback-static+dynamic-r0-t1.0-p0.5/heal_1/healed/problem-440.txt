@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *word;
+    int position;
+} AdverbInfo;
+
+int is_adverb(const char *word, size_t max_len) {
+    size_t len = 0;
+    while (len < max_len && word[len] != '\0') {
+        len++;
+    }
+    if (len > 2 && len < max_len && word[len - 2] == 'l' && word[len - 1] == 'y') {
+        return 1;
+    }
+    return 0;
+}
+
+AdverbInfo* find_adverbs(const char *sentence, int *count) {
+    if (!sentence || !count) {
+        return NULL;
+    }
+
+    size_t sentence_len = 0;
+    while (sentence[sentence_len] != '\0') {
+        sentence_len++;
+    }
+
+    char *sentence_copy = malloc(sentence_len + 1);
+    if (!sentence_copy) {
+        return NULL;
+    }
+    memcpy(sentence_copy, sentence, sentence_len + 1);
+
+    AdverbInfo *adverbs = NULL;
+    int capacity = 0;
+    *count = 0;
+
+    char *token = strtok(sentence_copy, " \t\n\r.,;:!?()[]{}");
+    int position = 0;
+
+    while (token != NULL) {
+        if (is_adverb(token, sentence_len + 1)) {
+            if (*count >= capacity) {
+                capacity = capacity == 0 ? 4 : capacity * 2;
+                AdverbInfo *temp = realloc(adverbs, capacity * sizeof(AdverbInfo));
+                if (!temp) {
+                    for (int i = 0; i < *count; i++) {
+                        free(adverbs[i].word);
+                    }
+                    free(adverbs);
+                    free(sentence_copy);
+                    return NULL;
+                }
+                adverbs = temp;
+            }
+            
+            size_t token_len = 0;
+            while (token[token_len] != '\0') {
+                token_len++;
+            }
+            
+            adverbs[*count].word = malloc(token_len + 1);
+            if (!adverbs[*count].word) {
+                for (int i = 0; i < *count; i++) {
+                    free(adverbs[i].word);
+                }
+                free(adverbs);
+                free(sentence_copy);
+                return NULL;
+            }
+            memcpy(adverbs[*count].word, token, token_len + 1);
+            
+            adverbs[*count].position = position;
+            (*count)++;
+        }
+        token = strtok(NULL, " \t\n\r.,;:!?()[]{}");
+        position++;
+    }
+
+    free(sentence_copy);
+    return adverbs;
+}
+
+int main(void) {
+    const char *sentence = "He quickly ran to the store and quietly bought some milk.";
+    int count = 0;
+
+    AdverbInfo *adverbs = find_adverbs(sentence, &count);
+
+    if (adverbs) {
+        for (int i = 0; i < count; i++) {
+            printf("Adverb: %s, Position: %d\n", adverbs[i].word, adverbs[i].position);
+            free(adverbs[i].word);
+        }
+        free(adverbs);
+    } else {
+        printf("No adverbs found or memory allocation failed.\n");
+    }
+
+    return 0;
+}
+```

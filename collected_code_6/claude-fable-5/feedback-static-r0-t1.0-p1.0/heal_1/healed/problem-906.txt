@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_PATTERN "/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(/|$)"
+#define MAX_FIELD_LEN 8
+#define ERRBUF_LEN 128
+#define MATCH_COUNT 5
+
+typedef struct {
+    char year[MAX_FIELD_LEN];
+    char month[MAX_FIELD_LEN];
+    char day[MAX_FIELD_LEN];
+} UrlDate;
+
+static int copy_match(const char *source, size_t source_len,
+                      const regmatch_t *match,
+                      char *dest, size_t dest_size)
+{
+    size_t length;
+
+    if (source == NULL || match == NULL || dest == NULL || dest_size == 0) {
+        return -1;
+    }
+    if (match->rm_so < 0 || match->rm_eo < match->rm_so) {
+        return -1;
+    }
+    if ((size_t)match->rm_eo > source_len) {
+        return -1;
+    }
+
+    length = (size_t)(match->rm_eo - match->rm_so);
+    if (length >= dest_size) {
+        return -1;
+    }
+
+    memcpy(dest, source + match->rm_so, length);
+    dest[length] = '\0';
+    return 0;
+}
+
+int extract_date_from_url(const char *url, UrlDate *result)
+{
+    regex_t regex;
+    regmatch_t matches[MATCH_COUNT];
+    size_t url_len;
+    int ret;
+
+    if (url == NULL || result == NULL) {
+        return -1;
+    }
+
+    memset(result, 0, sizeof(*result));
+    url_len = strlen(url);
+
+    ret = regcomp(&regex, DATE_PATTERN, REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[ERRBUF_LEN];
+        memset(errbuf, 0, sizeof(errbuf));
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        errbuf[sizeof(errbuf) - 1] = '\0';
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, url, MATCH_COUNT, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (copy_match(url, url_len, &matches[1], result->year, sizeof(result->year)) != 0 ||
+        copy_match(url, url_len, &matches[2], result->month, sizeof(result->month)) != 0 ||
+        copy_match(url, url_len, &matches[3], result->day, sizeof(result->day)) != 0) {
+        memset(result, 0, sizeof(*result));
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *urls[] = {
+        "https://example.com/blog/2023/07/15/some-article",
+        "https://news.site.org/2019/1/9",
+        "https://example.com/no-date-here"
+    };
+    size_t count = sizeof(urls) / sizeof(urls[0]);
+    size_t i;
+    UrlDate date;
+
+    for (i = 0; i < count; i++) {
+        if (extract_date_from_url(urls[i], &date) == 0) {
+            if (printf("URL: %s\n  Year: %s, Month: %s, Day: %s\n",
+                       urls[i], date.year, date.month, date.day) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("URL: %s\n  No date found\n", urls[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the flagged weaknesses — the Flawfinder hits were largely informational (risk 2), not actual vulnerabilities:
+
+1. **`memcpy` (CWE-120):** Already safe in the original because `length >= dest_size` was checked before copying, guaranteeing room for the NUL terminator. I hardened it further by passing the source length and validating `rm_eo` doesn't exceed it, protecting against a corrupt `regmatch_t`.
+
+2. **Statically-sized `char` arrays (CWE-119/CWE-120):** All buffer writes go through `copy_match`, which enforces bounds via `dest_size`. `MAX_FIELD_LEN` (8) comfortably exceeds the maximum match length the regex can produce (4 digits for year). Added a `dest_size == 0` guard for completeness.
+
+3. **`errbuf` with `regerror`:** POSIX guarantees `regerror` NUL-terminates when the buffer size is passed, but I added an explicit `memset` and terminator write as defense-in-depth.
+
+4. **Extra hygiene:** On partial extraction failure the result struct is now zeroed again, so callers never see partially populated data; magic numbers (`5`, `128`) were replaced with named constants.

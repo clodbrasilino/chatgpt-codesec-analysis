@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LEN 256
+
+static bool is_length_odd(const char *word, size_t max_len)
+{
+    size_t len;
+
+    if (word == NULL) {
+        return false;
+    }
+
+    len = strnlen(word, max_len);
+    return (len % 2U) != 0U;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LEN] = {0};
+    size_t len;
+
+    printf("Enter a word: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len > 0U && buffer[len - 1U] == '\n') {
+        buffer[len - 1U] = '\0';
+    } else if (len == sizeof(buffer) - 1U) {
+        discard_remaining_input();
+    }
+
+    if (buffer[0] == '\0') {
+        fprintf(stderr, "No word entered\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_length_odd(buffer, sizeof(buffer))) {
+        printf("The word \"%s\" has an odd length.\n", buffer);
+    } else {
+        printf("The word \"%s\" has an even length.\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses:**
+
+1. **Flawfinder `char` warning (CWE-119/CWE-120)** — The statically-sized array `buffer[MAX_WORD_LEN]` is already properly protected. Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits the read to the buffer size, and the buffer is explicitly null-terminated at `buffer[sizeof(buffer) - 1U]` as a defensive measure. All length calculations use the bounded `strnlen` rather than `strlen`, so no overflow is possible. **No change required.**
+
+2. **Flawfinder `getchar` warning (CWE-120/CWE-20)** — This is a low-risk advisory. In `discard_remaining_input()`, `getchar()` results are never stored into a buffer; the loop simply drains stdin until a newline or `EOF`. Crucially, `ch` is declared as `int` (not `char`), so the `EOF` comparison is correct and the loop cannot spin infinitely on end-of-input. **No change required.**
+
+The original code was already well-hardened: it checks the `fgets` return value, handles the empty-input case, strips the trailing newline safely, drains oversized input lines to avoid polluting subsequent reads, guards against `NULL` in `is_length_odd`, uses unsigned literals consistently, and returns proper exit codes. The rewrite therefore preserves the logic verbatim with the analysis comments removed.

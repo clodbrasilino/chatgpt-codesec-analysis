@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got (null)
+  */
+
+char *find_first_repeated_word(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    char *str_copy = malloc(len + 1);
+    if (str_copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(str_copy, str);
+
+    char **seen_words = malloc((len + 1) * sizeof(char *));
+    if (seen_words == NULL) {
+        free(str_copy);
+        return NULL;
+    }
+
+    size_t count = 0;
+    char *result = NULL;
+    char *token = strtok(str_copy, " \t\n\r,.;:!?()[]{}");
+
+    while (token != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            if (strcmp(seen_words[i], token) == 0) {
+                /* Possible weaknesses found:
+                 * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+                 */
+                size_t res_len = strlen(token);
+                result = malloc(res_len + 1);
+                if (result != NULL) {
+                    /* Possible weaknesses found:
+                     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+                     */
+                    strcpy(result, token);
+                }
+                goto cleanup;
+            }
+        }
+        seen_words[count++] = token;
+        token = strtok(NULL, " \t\n\r,.;:!?()[]{}");
+    }
+
+cleanup:
+    free(seen_words);
+    free(str_copy);
+
+    return result;
+}
+
+int main(void) {
+    const char *text = "apple banana orange apple grape banana";
+    char *repeated = find_first_repeated_word(text);
+
+    if (repeated != NULL) {
+        printf("%s\n", repeated);
+        free(repeated);
+    }
+
+    return 0;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-885.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-885.c:13:13: style: Array index 'len_s' is used before limits check. [arrayIndexThenCheck]
+    while (s[len_s] != '\0' && len_s < 256) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-885.c:16:13: style: Array index 'len_t' is used before limits check. [arrayIndexThenCheck]
+    while (t[len_t] != '\0' && len_t < 256) {
+            ^

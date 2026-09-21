@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int romanToInt(const char *s) {
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *roman[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    const char *p = s;
+    int i, result = 0;
+
+    while (*p) {
+        for (i = 0; i < 13; ++i) {
+            size_t len = strlen(roman[i]);
+            if (strncmp(p, roman[i], len) == 0) {
+                result += values[i];
+                p += len;
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char input[16];
+    printf("Enter a Roman numeral: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
+        if (strlen(input) > 15) {
+            fprintf(stderr, "Input too long\n");
+            return EXIT_FAILURE;
+        }
+        int output = romanToInt(input);
+        printf("The integer value is: %d\n", output);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    return 0;
+}

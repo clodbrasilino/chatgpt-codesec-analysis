@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* find_first_max_even_word(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    int max_len = 0;
+    int current_len = 0;
+    int max_start = -1;
+    int current_start = -1;
+    int i = 0;
+
+    while (str[i] != '\0') {
+        if (!isspace((unsigned char)str[i])) {
+            if (current_len == 0) {
+                current_start = i;
+            }
+            current_len++;
+        } else {
+            if (current_len % 2 == 0 && current_len > max_len) {
+                max_len = current_len;
+                max_start = current_start;
+            }
+            current_len = 0;
+        }
+        i++;
+    }
+
+    if (current_len % 2 == 0 && current_len > max_len) {
+        max_len = current_len;
+        max_start = current_start;
+    }
+
+    if (max_len == 0 || max_start == -1) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc((max_len + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(result, str + max_start, max_len);
+    result[max_len] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* text = "This is a test string with some even length words";
+    char* max_even_word = find_first_max_even_word(text);
+
+    if (max_even_word != NULL) {
+        printf("%s\n", max_even_word);
+        free(max_even_word);
+    } else {
+        printf("No even length word found.\n");
+    }
+
+    return 0;
+}

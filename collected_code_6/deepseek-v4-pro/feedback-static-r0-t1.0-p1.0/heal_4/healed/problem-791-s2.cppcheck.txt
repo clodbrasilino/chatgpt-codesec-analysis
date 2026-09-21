@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:38:18: style: Condition 'name_len>=dest_size' is always false [knownConditionTrueFalse]
+    if (name_len >= dest_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:31:22: note: dest_size is assigned 'name_len+1' here.
+    size_t dest_size = name_len + 1;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:38:18: note: Condition 'name_len>=dest_size' is always false
+    if (name_len >= dest_size) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:32:19: style: The comparison 'dest_size < name_len+1' is always false because 'dest_size' and 'name_len+1' represent the same value. [knownConditionTrueFalse]
+    if (dest_size < name_len + 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:31:33: note: 'dest_size' is assigned value 'name_len+1' here.
+    size_t dest_size = name_len + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-791-s2.c:32:19: note: The comparison 'dest_size < name_len+1' is always false because 'dest_size' and 'name_len+1' represent the same value.
+    if (dest_size < name_len + 1) {
+                  ^

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int min_rotations(const char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    
+    if (str == NULL)
+    {
+        return -1;
+    }
+    
+    len = strnlen(str, max_len);
+    
+    if (len == 0 || len == max_len)
+    {
+        return -1;
+    }
+    
+    for (i = 1; i <= len; i++)
+    {
+        int is_rotation = 1;
+        for (j = 0; j < len; j++)
+        {
+            if (str[j] != str[(j + i) % len])
+            {
+                is_rotation = 0;
+                break;
+            }
+        }
+        
+        if (is_rotation)
+        {
+            return (int)i;
+        }
+    }
+    
+    return (int)len;
+}
+
+int main(void)
+{
+    const char *test1 = "abcabc";
+    const char *test2 = "aaaa";
+    const char *test3 = "abcd";
+    const char *test4 = "";
+    const char *test5 = "a";
+    size_t max_len = 1024;
+    
+    printf("%d\n", min_rotations(test1, max_len));
+    printf("%d\n", min_rotations(test2, max_len));
+    printf("%d\n", min_rotations(test3, max_len));
+    printf("%d\n", min_rotations(test4, max_len));
+    printf("%d\n", min_rotations(test5, max_len));
+    
+    return EXIT_SUCCESS;
+}

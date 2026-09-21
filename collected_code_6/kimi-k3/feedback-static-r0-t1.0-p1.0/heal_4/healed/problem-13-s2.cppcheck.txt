@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-13-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-13-s2.c:282:18: style: Condition 'text_len>0' is always true [knownConditionTrueFalse]
+    if (text_len > 0 && count_words_from_text(&dict, sample_text, text_len) != 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-13-s2.c:281:29: note: Assignment 'text_len=strlen(sample_text)', assigned value is 231
+    size_t text_len = strlen(sample_text);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-13-s2.c:282:18: note: Condition 'text_len>0' is always true
+    if (text_len > 0 && count_words_from_text(&dict, sample_text, text_len) != 0) {
+                 ^

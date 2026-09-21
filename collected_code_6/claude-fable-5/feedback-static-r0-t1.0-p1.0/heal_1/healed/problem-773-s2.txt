@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+size_t find_substring_occurrences(const char *text, const char *pattern,
+                                  size_t **positions)
+{
+    size_t count;
+    size_t capacity;
+    size_t pattern_len;
+    size_t *result;
+    size_t *temp;
+    const char *cursor;
+    const char *found;
+
+    if (text == NULL || pattern == NULL || positions == NULL) {
+        if (positions != NULL) {
+            *positions = NULL;
+        }
+        return 0U;
+    }
+
+    *positions = NULL;
+
+    pattern_len = strlen(pattern);
+    if (pattern_len == 0U) {
+        return 0U;
+    }
+
+    count = 0U;
+    capacity = 8U;
+    result = malloc(capacity * sizeof(size_t));
+    if (result == NULL) {
+        return 0U;
+    }
+
+    cursor = text;
+    found = strstr(cursor, pattern);
+    while (found != NULL) {
+        if (count == capacity) {
+            if (capacity > (SIZE_MAX / (2U * sizeof(size_t)))) {
+                free(result);
+                *positions = NULL;
+                return 0U;
+            }
+            capacity *= 2U;
+            temp = realloc(result, capacity * sizeof(size_t));
+            if (temp == NULL) {
+                free(result);
+                *positions = NULL;
+                return 0U;
+            }
+            result = temp;
+        }
+        result[count] = (size_t)(found - text);
+        count++;
+        cursor = found + 1;
+        found = strstr(cursor, pattern);
+    }
+
+    if (count == 0U) {
+        free(result);
+        *positions = NULL;
+        return 0U;
+    }
+
+    *positions = result;
+    return count;
+}
+
+int main(void)
+{
+    const char *text = "the cat sat on the mat, the end";
+    const char *pattern = "the";
+    size_t *positions = NULL;
+    size_t count;
+    size_t i;
+
+    count = find_substring_occurrences(text, pattern, &positions);
+
+    if (count == 0U || positions == NULL) {
+        if (printf("Substring \"%s\" not found in \"%s\"\n",
+                   pattern, text) < 0) {
+            free(positions);
+            return EXIT_FAILURE;
+        }
+        free(positions);
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Substring \"%s\" found %zu time(s) in \"%s\"\n",
+               pattern, count, text) < 0) {
+        free(positions);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("Occurrence %zu at position %zu\n",
+                   i + 1U, positions[i]) < 0) {
+            free(positions);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(positions);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+1. **`strlen` (CWE-126, flagged by Flawfinder):** The risk of an over-read on a non-NUL-terminated string is inherent to the C string API. In this program the concern is mitigated by design: `pattern` and `text` originate from string literals in `main`, which are guaranteed NUL-terminated, and the function's documented contract requires NUL-terminated inputs. No code change is needed beyond preserving the NULL-pointer guards already in place. The same reasoning applies to `strstr`, which Flawfinder would flag for the same class of issue.
+
+2. **Actual defect fixed — missing `<stdint.h>`:** The original code used `SIZE_MAX` without including `<stdint.h>`. Depending on the toolchain, this either fails to compile (C99+) or, worse under C89-style implicit declarations, silently misbehaves. The rewrite adds the include, making the overflow guard `capacity > (SIZE_MAX / (2U * sizeof(size_t)))` well-defined.
+
+3. **Correctness properties preserved:**
+   - Integer overflow check before `capacity *= 2U` prevents a wrap-around in the `realloc` size computation (CWE-190).
+   - `realloc` result assigned to `temp` first, avoiding the classic leak-on-failure pattern.
+   - All error paths free `result` and reset `*positions`, so the caller never receives a dangling or leaked pointer.
+   - `main` checks `printf` return values and frees `positions` on every exit path.
+   - Advancing by `found + 1` intentionally reports overlapping matches; use `found + pattern_len` if non-overlapping semantics are desired.

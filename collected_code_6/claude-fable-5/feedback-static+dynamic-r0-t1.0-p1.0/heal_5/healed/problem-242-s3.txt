@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str, size_t max_len)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (count < max_len && str[count] != '\0') {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer, sizeof(buffer));
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the original code and why this version addresses the flagged weakness:
+
+**The flagged weakness (CWE-119/CWE-120):** Flawfinder statically flags any fixed-size `char` array because such buffers are a common source of overflows. This is a heuristic warning, not a confirmed vulnerability. The code as written already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, (int)sizeof(buffer), stdin)` reads at most `BUFFER_SIZE - 1` characters and always null-terminates within bounds — unlike `gets()` or unbounded `scanf("%s", ...)`, it cannot overflow the buffer.
+
+2. **Defensive null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is redundant with `fgets` semantics but harmless belt-and-suspenders hardening, and the prior `memset` guarantees a zeroed buffer even before input.
+
+3. **Safe newline stripping:** `strcspn(buffer, "\n")` returns an index that is always within the string (it returns the string length if no newline exists), so the write is always in bounds.
+
+4. **Bounded counting:** `count_characters` takes an explicit `max_len` and checks it before every dereference, plus a `NULL` guard, so it can never read past the buffer even if the string were somehow unterminated.
+
+5. **Correct format specifier:** `%zu` matches `size_t`, avoiding undefined behavior from format-string mismatches.
+
+No functional changes were required — the code is a correct fix for the class of weakness Flawfinder identified, so the rewrite simply removes the comments as requested.

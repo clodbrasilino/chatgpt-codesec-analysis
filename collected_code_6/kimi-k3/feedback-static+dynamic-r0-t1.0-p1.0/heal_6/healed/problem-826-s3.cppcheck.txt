@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-826-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-826-s3.c:118:9: style: The scope of the variable 'ch' can be reduced. [variableScope]
+    int ch;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-826-s3.c:119:9: style: The scope of the variable 'overflow' can be reduced. [variableScope]
+    int overflow = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-826-s3.c:119:18: style: Variable 'overflow' is assigned a value that is never used. [unreadVariable]
+    int overflow = 0;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-826-s3.c:137:22: style: Variable 'overflow' is assigned a value that is never used. [unreadVariable]
+            overflow = 1;
+                     ^

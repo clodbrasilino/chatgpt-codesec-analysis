@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *output;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    if (len > ((SIZE_MAX - 1U) / 2U)) {
+        return NULL;
+    }
+
+    output = malloc((len * 2U) + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (isupper(c) != 0) {
+            if (i > 0U) {
+                output[j] = '_';
+                j++;
+            }
+            output[j] = (char)tolower(c);
+            j++;
+        } else {
+            output[j] = (char)c;
+            j++;
+        }
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "camelCaseString",
+        "convertThisToSnakeCase",
+        "alreadylower",
+        "PascalCaseExample",
+        "aB"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        char *result = camel_to_snake(test_strings[i]);
+        if (result == NULL) {
+            (void)fprintf(stderr, "Conversion failed for: %s\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+        if (printf("%s -> %s\n", test_strings[i], result) < 0) {
+            free(result);
+            return EXIT_FAILURE;
+        }
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you'll also need `#include <stdint.h>` for `SIZE_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+```
+
+Key changes made to address the identified weakness:
+
+1. **CWE-126 (over-read via `strlen`)**: Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, so a non-NUL-terminated buffer can no longer cause an unbounded read. Inputs at or beyond the bound are rejected rather than silently truncated.
+
+2. **Integer overflow hardening**: Added a check that `len * 2 + 1` cannot overflow `size_t` before calling `malloc`, preventing a potential undersized allocation (CWE-190/CWE-131) — defensive, since the length cap already prevents it, but it keeps the function safe if the cap is ever changed.
+
+3. All other defensive measures from the original (NULL input check, `malloc` failure check, `unsigned char` casts before `ctype` calls, checked `printf` return, freeing on all paths) were preserved.

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_valid_parentheses(const char *s) {
+    int balance = 0;
+    while (*s) {
+        if (*s == '(') {
+            balance++;
+        } else if (*s == ')') {
+            balance--;
+            if (balance < 0) {
+                return false;
+            }
+        }
+        s++;
+    }
+    return balance == 0;
+}
+
+int main() {
+    const char *test_strings[] = {"()", "(()", ")()(", "(()())", "(())", "(()))("};
+    int num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (int i = 0; i < num_tests; ++i) {
+        bool result = is_valid_parentheses(test_strings[i]);
+        printf("%s: %s\n", test_strings[i], result ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-39.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-39.c:49:18: style: Condition 'capacity==0U' is always false [knownConditionTrueFalse]
+    if (capacity == 0U || capacity > SIZE_MAX - 1U) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-39.c:39:23: note: Assignment 'capacity=128U', assigned value is 128
+    size_t capacity = INITIAL_CAPACITY;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-39.c:42:40: note: Assuming condition is false
+    if (stream == NULL || line == NULL || length == NULL) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-39.c:49:18: note: Condition 'capacity==0U' is always false
+    if (capacity == 0U || capacity > SIZE_MAX - 1U) {
+                 ^

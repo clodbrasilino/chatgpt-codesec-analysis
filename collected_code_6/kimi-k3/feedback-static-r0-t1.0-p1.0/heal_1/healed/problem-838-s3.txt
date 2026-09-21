@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps_to_equal(const char *s1, size_t len1, const char *s2, size_t len2) {
+    if (len1 != len2) {
+        return -1;
+    }
+    
+    int count_10 = 0;
+    int count_01 = 0;
+    
+    for (size_t i = 0; i < len1; i++) {
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1' && s2[i] == '0') {
+                count_10++;
+            } else if (s1[i] == '0' && s2[i] == '1') {
+                count_01++;
+            }
+        }
+    }
+    
+    if (count_10 != count_01) {
+        return -1;
+    }
+    
+    return count_10;
+}
+
+int main(void) {
+    char *s1 = NULL;
+    char *s2 = NULL;
+    size_t cap1 = 0;
+    size_t cap2 = 0;
+    ssize_t len1;
+    ssize_t len2;
+    
+    len1 = getline(&s1, &cap1, stdin);
+    if (len1 == -1) {
+        free(s1);
+        return EXIT_FAILURE;
+    }
+    
+    len2 = getline(&s2, &cap2, stdin);
+    if (len2 == -1) {
+        free(s1);
+        free(s2);
+        return EXIT_FAILURE;
+    }
+    
+    if (len1 > 0 && s1[len1 - 1] == '\n') {
+        s1[len1 - 1] = '\0';
+        len1--;
+    }
+    
+    if (len2 > 0 && s2[len2 - 1] == '\n') {
+        s2[len2 - 1] = '\0';
+        len2--;
+    }
+    
+    for (ssize_t i = 0; i < len1; i++) {
+        if (s1[i] != '0' && s1[i] != '1') {
+            free(s1);
+            free(s2);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    for (ssize_t i = 0; i < len2; i++) {
+        if (s2[i] != '0' && s2[i] != '1') {
+            free(s1);
+            free(s2);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    int result = min_swaps_to_equal(s1, (size_t)len1, s2, (size_t)len2);
+    
+    if (result == -1) {
+        printf("-1\n");
+    } else {
+        printf("%d\n", result);
+    }
+    
+    free(s1);
+    free(s2);
+    
+    return EXIT_SUCCESS;
+}
+```

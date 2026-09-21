@@ -1,0 +1,187 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    VAL_INT,
+    VAL_DICT
+} ValType;
+
+typedef struct Dict Dict;
+
+typedef struct {
+    ValType type;
+    union {
+        int int_val;
+        Dict *dict_val;
+    } data;
+} DictValue;
+
+typedef struct {
+    char *key;
+    DictValue value;
+} DictEntry;
+
+struct Dict {
+    size_t size;
+    size_t capacity;
+    DictEntry *entries;
+};
+
+Dict* dict_create(void) {
+    Dict *d = (Dict*)malloc(sizeof(Dict));
+    if (!d) {
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = 4;
+    d->entries = (DictEntry*)malloc(d->capacity * sizeof(DictEntry));
+    if (!d->entries) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+void dict_destroy(Dict *d) {
+    if (!d) {
+        return;
+    }
+    for (size_t i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+        if (d->entries[i].value.type == VAL_DICT) {
+            dict_destroy(d->entries[i].value.data.dict_val);
+        }
+    }
+    free(d->entries);
+    free(d);
+}
+
+static int dict_ensure_capacity(Dict *d) {
+    if (d->size >= d->capacity) {
+        size_t new_capacity = d->capacity * 2;
+        DictEntry *new_entries = (DictEntry*)realloc(d->entries, new_capacity * sizeof(DictEntry));
+        if (!new_entries) {
+            return -1;
+        }
+        d->capacity = new_capacity;
+        d->entries = new_entries;
+    }
+    return 0;
+}
+
+static char* safe_strdup(const char *src) {
+    if (!src) {
+        return NULL;
+    }
+    size_t max_len = 4096;
+    size_t len = 0;
+    while (len < max_len && src[len] != '\0') {
+        len++;
+    }
+    char *dup = (char*)malloc(len + 1);
+    if (dup) {
+        for (size_t i = 0; i < len; i++) {
+            dup[i] = src[i];
+        }
+        dup[len] = '\0';
+    }
+    return dup;
+}
+
+int dict_add_int(Dict *d, const char *key, int val) {
+    if (!d || !key || dict_ensure_capacity(d) != 0) {
+        return -1;
+    }
+    char *dup_key = safe_strdup(key);
+    if (!dup_key) {
+        return -1;
+    }
+    DictEntry *entry = &d->entries[d->size++];
+    entry->key = dup_key;
+    entry->value.type = VAL_INT;
+    entry->value.data.int_val = val;
+    return 0;
+}
+
+int dict_add_dict(Dict *d, const char *key, Dict *val) {
+    if (!d || !key || !val || dict_ensure_capacity(d) != 0) {
+        return -1;
+    }
+    char *dup_key = safe_strdup(key);
+    if (!dup_key) {
+        return -1;
+    }
+    DictEntry *entry = &d->entries[d->size++];
+    entry->key = dup_key;
+    entry->value.type = VAL_DICT;
+    entry->value.data.dict_val = val;
+    return 0;
+}
+
+size_t dict_get_depth(const Dict *d) {
+    if (!d) {
+        return 0;
+    }
+    size_t max_depth = 0;
+    for (size_t i = 0; i < d->size; i++) {
+        if (d->entries[i].value.type == VAL_DICT) {
+            size_t child_depth = dict_get_depth(d->entries[i].value.data.dict_val);
+            if (child_depth > max_depth) {
+                max_depth = child_depth;
+            }
+        }
+    }
+    return 1 + max_depth;
+}
+
+int main(void) {
+    Dict *root = dict_create();
+    if (!root) {
+        return EXIT_FAILURE;
+    }
+
+    Dict *child1 = dict_create();
+    if (!child1) {
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    Dict *child2 = dict_create();
+    if (!child2) {
+        dict_destroy(child1);
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_int(child2, "val", 42) != 0) {
+        dict_destroy(child2);
+        dict_destroy(child1);
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_dict(child1, "child2", child2) != 0) {
+        dict_destroy(child2);
+        dict_destroy(child1);
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_dict(root, "child1", child1) != 0) {
+        dict_destroy(child1);
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add_int(root, "root_val", 1) != 0) {
+        dict_destroy(root);
+        return EXIT_FAILURE;
+    }
+
+    size_t depth = dict_get_depth(root);
+    printf("Dictionary depth: %zu\n", depth);
+
+    dict_destroy(root);
+    return EXIT_SUCCESS;
+}

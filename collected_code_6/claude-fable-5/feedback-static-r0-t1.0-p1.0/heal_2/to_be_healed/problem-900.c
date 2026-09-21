@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool string_starts_with_number(const char *str, long number)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char prefix[32];
+    int written;
+    size_t prefix_len;
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    written = snprintf(prefix, sizeof(prefix), "%ld", number);
+    if (written < 0 || (size_t)written >= sizeof(prefix)) {
+        return false;
+    }
+
+    prefix_len = (size_t)written;
+
+    for (i = 0; i < prefix_len; i++) {
+        if (str[i] == '\0' || str[i] != prefix[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *test1 = "42 is the answer";
+    const char *test2 = "hello world";
+    const char *test3 = "100apples";
+    long target1 = 42;
+    long target2 = 42;
+    long target3 = 100;
+
+    if (string_starts_with_number(test1, target1)) {
+        if (printf("\"%s\" starts with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test1, target1) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test2, target2)) {
+        if (printf("\"%s\" starts with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test2, target2) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (string_starts_with_number(test3, target3)) {
+        if (printf("\"%s\" starts with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("\"%s\" does not start with %ld\n", test3, target3) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

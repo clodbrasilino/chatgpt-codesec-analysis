@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-400-s3.c:79:23: portability: Assigning a pointer to an integer is not portable. [AssignmentAddressToInteger]
+    boolean_processed = (int *)calloc((size_t)tuple_count, sizeof(int));
+                      ^

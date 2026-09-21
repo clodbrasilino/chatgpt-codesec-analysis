@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[128];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "no_underscore_here_ok"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_lowercase_underscore(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address both static-analysis findings:
+
+1. **`errbuf` scope reduced**: The buffer is now declared inside the `if (ret != 0)` block, the only place it is used. It is still sized statically, but every use is bounded via `sizeof(errbuf)` passed to `regerror()`, which guarantees truncation rather than overflow — this satisfies the Flawfinder CWE-119/CWE-120 concern.
+
+2. **`result` scope reduced**: The variable is now declared inside the `for` loop body, limiting its lifetime to a single iteration and resolving the cppcheck `[variableScope]` warning.
+
+All other behavior is unchanged: `NULL` input is rejected, the compiled regex is always freed via `regfree()` before returning from `regexec()` paths, and distinct return codes (`1` match, `0` no match, `-1` error) are preserved.

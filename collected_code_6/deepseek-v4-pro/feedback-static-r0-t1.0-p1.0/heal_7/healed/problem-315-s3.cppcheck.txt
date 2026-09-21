@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:46:32: style: Condition 'word_start<str_len' is always false [knownConditionTrueFalse]
+                if (word_start < str_len && word_start + word_len <= str_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:23:17: note: Assuming that condition 'pos>=str_len' is not redundant
+        if (pos >= str_len) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:27:27: note: word_start is assigned 'pos' here.
+        size_t word_start = pos;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:46:32: note: Condition 'word_start<str_len' is always false
+                if (word_start < str_len && word_start + word_len <= str_len) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:48:34: style: Condition 'copy_len>=max_word_size' is always false [knownConditionTrueFalse]
+                    if (copy_len >= max_word_size) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:45:46: note: Assuming condition 'word_len<max_word_size' is true
+            if (max_word != NULL && word_len < max_word_size) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-315-s3.c:48:34: note: Condition 'copy_len>=max_word_size' is always false
+                    if (copy_len >= max_word_size) {
+                                 ^

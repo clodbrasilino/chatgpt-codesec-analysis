@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ZODIAC_COUNT 12
+
+static const char *chinese_zodiac(int year)
+{
+    static const char *const signs[ZODIAC_COUNT] = {
+        "Monkey", "Rooster", "Dog", "Pig",
+        "Rat", "Ox", "Tiger", "Rabbit",
+        "Dragon", "Snake", "Horse", "Goat"
+    };
+    int index;
+
+    index = year % ZODIAC_COUNT;
+    if (index < 0) {
+        index += ZODIAC_COUNT;
+    }
+    if (index < 0 || index >= ZODIAC_COUNT) {
+        return "Unknown";
+    }
+    return signs[index];
+}
+
+int main(void)
+{
+    int year;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input, expected an integer year.\n");
+        return EXIT_FAILURE;
+    }
+    if (year < 1) {
+        fprintf(stderr, "Error: year must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The Chinese zodiac sign for year %d is: %s\n",
+           year, chinese_zodiac(year));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weakness and why the code is safe:
+
+The Flawfinder warning (CWE-119/CWE-120) is a generic heuristic triggered by the presence of a statically-sized array (`signs[ZODIAC_COUNT]`). In this code the risk is already fully mitigated:
+
+1. **Index normalization**: `year % ZODIAC_COUNT` in C can yield a negative result for negative operands, so the code adds `ZODIAC_COUNT` when `index < 0`, guaranteeing a value in `[0, 11]`.
+2. **Explicit bounds check**: The defensive `if (index < 0 || index >= ZODIAC_COUNT)` guard ensures no out-of-bounds read can ever occur, returning `"Unknown"` as a safe fallback.
+3. **Read-only data**: The array is `static const char *const`, so it can never be written to — buffer *overflow* (CWE-120) is impossible; only an out-of-bounds *read* could occur, and that is prevented by the checks above.
+4. **Validated input**: `scanf` return value is checked, and negative/zero years are rejected before use, so `index` is always non-negative in practice anyway.
+
+No functional changes were required — the warning is a false positive given the existing bounds checking, so the rewrite simply removes the comments as requested.

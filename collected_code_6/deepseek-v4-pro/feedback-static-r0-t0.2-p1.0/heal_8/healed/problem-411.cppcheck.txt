@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:90:38: style: Condition 'dst_pos+prefix_len>result_capacity' is always false [knownConditionTrueFalse]
+            if (dst_pos + prefix_len > result_capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:85:38: note: Assuming that condition 'dst_pos+prefix_len>=result_capacity' is not redundant
+            if (dst_pos + prefix_len >= result_capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:90:38: note: Condition 'dst_pos+prefix_len>result_capacity' is always false
+            if (dst_pos + prefix_len > result_capacity) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:124:33: style: Condition 'dst_pos+remaining>result_capacity' is always false [knownConditionTrueFalse]
+        if (dst_pos + remaining > result_capacity) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:119:33: note: Assuming that condition 'dst_pos+remaining>=result_capacity' is not redundant
+        if (dst_pos + remaining >= result_capacity) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_8/healed/problem-411.c:124:33: note: Condition 'dst_pos+remaining>result_capacity' is always false
+        if (dst_pos + remaining > result_capacity) {
+                                ^

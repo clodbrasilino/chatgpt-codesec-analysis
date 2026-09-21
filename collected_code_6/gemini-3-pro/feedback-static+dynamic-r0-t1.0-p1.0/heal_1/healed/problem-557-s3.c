@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void toggle_case(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            *str = tolower((unsigned char)*str);
+        } else if (islower((unsigned char)*str)) {
+            *str = toupper((unsigned char)*str);
+        }
+        str++;
+    }
+}
+
+int main(void) {
+    size_t size = 256;
+    char *input_str = malloc(size * sizeof(char));
+    if (input_str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    snprintf(input_str, size, "Hello World! 123");
+    
+    toggle_case(input_str);
+    printf("%s\n", input_str);
+
+    free(input_str);
+    input_str = NULL;
+
+    return EXIT_SUCCESS;
+}

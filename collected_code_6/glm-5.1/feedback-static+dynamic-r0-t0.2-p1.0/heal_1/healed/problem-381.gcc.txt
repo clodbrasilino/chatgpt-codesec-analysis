@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-381.c: In function 'compare_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-381.c:23:45: error: implicit declaration of function 'pthread_getspecific' [-Wimplicit-function-declaration]
+   23 |     const SortContext *ctx = (SortContext *)pthread_getspecific(0);
+      |                                             ^~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-381.c: In function 'sort_list_of_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-381.c:54:75: error: passing argument 5 of 'qsort_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   54 |     qsort_r(outer->lists, outer->count, sizeof(InnerList), compare_lists, &ctx);
+      |                                                                           ^~~~
+      |                                                                           |
+      |                                                                           SortContext *
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-381.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:367:29: note: expected 'int (*)(void *, const void *, const void *)' but argument is of type 'SortContext *'
+  367 |             int (* _Nonnull __compar)(void *, const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <limits.h>
+
+static int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+static void flush_stdin(void)
+{
+    unsigned long guard = 0;
+    int extra;
+
+    while (guard < ULONG_MAX) {
+        extra = getchar();
+        if (extra == '\n' || extra == EOF) {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error: failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > UCHAR_MAX) {
+        fprintf(stderr, "Error: input out of valid character range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input != '\n') {
+        flush_stdin();
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The two Flawfinder findings (CWE-120 buffer overflow, CWE-20 improper input validation) flagged against `getchar` are risk-level 1 informational hits — `getchar` reads a single character and returns an `int`, so there is no buffer to overflow. Both call sites are already mitigated:
+
+1. **`flush_stdin`** — The loop consuming leftover input is bounded by the `guard < ULONG_MAX` counter, so it cannot loop unboundedly even on a pathological stream that never yields `'\n'` or `EOF`. The rewrite converts the `do/while` to a `while` so the guard condition is checked before every read, which is marginally stricter.
+
+2. **`main`** — The return value of `getchar` is stored in an `int` (not a `char`), correctly preserving the ability to distinguish `EOF` from valid data. The result is validated against `EOF` and range-checked against `[0, UCHAR_MAX]` before being cast for use with `isprint`, which avoids undefined behavior from passing negative values to `<ctype.h>` functions.
+
+Other defensive measures already present and retained: the `fflush(stdout)` return value is checked, the `(unsigned char)` cast is applied before `isprint`, and the newline case skips the stdin flush to avoid blocking on an empty stream. No functional changes were required — the code was already safe; the rewrite simply removes the comments and tightens the flush loop structure.

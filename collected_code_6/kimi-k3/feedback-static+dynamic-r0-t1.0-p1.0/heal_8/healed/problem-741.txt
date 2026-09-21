@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || str[0] == '\0') {
+        return false;
+    }
+    
+    char first = str[0];
+    size_t i = 1;
+    
+    while (str[i] != '\0') {
+        if (str[i] != first) {
+            return false;
+        }
+        i++;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+    
+    bytes_read = getline(&buffer, &buffer_size, stdin);
+    
+    if (bytes_read == -1) {
+        free(buffer);
+        return 1;
+    }
+    
+    if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
+        buffer[bytes_read - 1] = '\0';
+    }
+    
+    if (all_characters_same(buffer)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    
+    free(buffer);
+    return 0;
+}
+```

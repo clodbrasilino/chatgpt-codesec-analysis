@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+void remove_first_last(char *str, size_t max_len, char ch)
+{
+    size_t len;
+    char *first;
+    char *last;
+    size_t pos;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    str[max_len - 1] = '\0';
+
+    len = strnlen(str, max_len);
+    if (len == 0) {
+        return;
+    }
+
+    first = memchr(str, ch, len);
+    if (first == NULL) {
+        return;
+    }
+
+    last = strrchr(str, ch);
+
+    if (last != NULL && last != first) {
+        pos = (size_t)(last - str);
+        if (pos < len) {
+            memmove(str + pos, str + pos + 1, len - pos);
+            len--;
+        }
+    }
+
+    pos = (size_t)(first - str);
+    if (pos < len) {
+        memmove(str + pos, str + pos + 1, len - pos);
+    }
+}
+
+static void flush_stdin(void)
+{
+    int c;
+
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
+static int read_line(char *buffer, size_t size)
+{
+    size_t len;
+
+    if (buffer == NULL || size == 0 || size > (size_t)INT_MAX) {
+        return -1;
+    }
+
+    if (fgets(buffer, (int)size, stdin) == NULL) {
+        return -1;
+    }
+
+    buffer[size - 1] = '\0';
+
+    len = strnlen(buffer, size);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == size - 1) {
+        flush_stdin();
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char ch;
+    int c;
+
+    printf("Enter a string: ");
+    if (read_line(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error reading input string\n");
+        return 1;
+    }
+
+    printf("Enter a character to remove: ");
+    c = getchar();
+    if (c == EOF) {
+        fprintf(stderr, "Error reading character\n");
+        return 1;
+    }
+    ch = (char)c;
+
+    if (c != '\n') {
+        flush_stdin();
+    }
+
+    remove_first_last(buffer, sizeof(buffer), ch);
+
+    printf("Result: %s\n", buffer);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **Flawfinder `getchar` warnings (CWE-120, CWE-20)** — These are false positives in this code. In `flush_stdin()`, `getchar()` results are never stored into a buffer; the loop simply discards characters until newline or EOF, with proper `EOF` termination preventing infinite loops. In `main()`, the return value is captured as an `int` (not `char`), correctly checked against `EOF` before use, and only then cast to `char`. This is the canonical safe pattern.
+
+2. **Flawfinder `char buffer[256]` warning (CWE-119/CWE-120)** — The statically-sized array is safe because all writes are bounds-checked: `read_line()` receives `sizeof(buffer)` and uses `fgets()` with that exact size, which never writes beyond `size - 1` characters plus the null terminator. Defensive null termination (`buffer[size - 1] = '\0'`) and `strnlen()` (rather than `strlen()`) guarantee no unbounded reads. Excess input beyond the buffer is drained via `flush_stdin()` so it cannot leak into the subsequent character read.
+
+3. **`remove_first_last()` hardening** — The function validates `NULL`/zero-length inputs, force-terminates at `max_len - 1`, uses `strnlen`/`memchr` with explicit bounds, and every `memmove` operates strictly within `[str, str + len]`, which is guaranteed in-bounds because `len <= max_len - 1`. Removing the last occurrence before the first keeps pointer offsets valid.
+
+4. **`read_line()` robustness** — Guards against `size > INT_MAX` before the narrowing cast to `int` for `fgets`, checks for read failure, strips the trailing newline, and flushes remaining input on truncation.
+
+The code is already correct with respect to the identified findings; the rewrite above preserves the safe implementation with the advisory comments removed.

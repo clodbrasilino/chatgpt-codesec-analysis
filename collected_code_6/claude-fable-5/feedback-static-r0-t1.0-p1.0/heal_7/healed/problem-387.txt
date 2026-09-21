@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+#define MAX_DISCARD 1000000
+
+static int is_valid_hex(const char *str, size_t max_len)
+{
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    if (len == 0 || len >= max_len) {
+        return 0;
+    }
+
+    if (len > 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+        i = 2;
+    }
+
+    if (i >= len) {
+        return 0;
+    }
+
+    for (; i < len; i++) {
+        if (!isxdigit((unsigned char)str[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static int is_hex_even(const char *hex, size_t max_len, int *result)
+{
+    size_t len;
+    char last;
+
+    if (hex == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (!is_valid_hex(hex, max_len)) {
+        return -1;
+    }
+
+    len = strnlen(hex, max_len);
+
+    if (len == 0 || len >= max_len) {
+        return -1;
+    }
+
+    last = hex[len - 1];
+
+    if (last >= '0' && last <= '9') {
+        *result = ((last - '0') % 2 == 0) ? 1 : 0;
+    } else {
+        last = (char)tolower((unsigned char)last);
+        if (last < 'a' || last > 'f') {
+            return -1;
+        }
+        *result = ((last - 'a' + 10) % 2 == 0) ? 1 : 0;
+    }
+
+    return 0;
+}
+
+static int discard_remaining_input(void)
+{
+    int c;
+    int discarded = 0;
+    size_t guard = 0;
+
+    while ((c = getchar()) != '\n' && c != EOF) {
+        discarded = 1;
+        guard++;
+        if (guard > (size_t)MAX_DISCARD) {
+            break;
+        }
+    }
+
+    return discarded;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    int even = 0;
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else {
+        if (discard_remaining_input()) {
+            fprintf(stderr, "Input too long (maximum %d characters)\n",
+                    BUFFER_SIZE - 2);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_hex_even(buffer, sizeof(buffer), &even) != 0) {
+        fprintf(stderr, "Invalid hexadecimal input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (even) {
+        printf("%s is even\n", buffer);
+    } else {
+        printf("%s is odd\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is safe:**
+
+1. **`getchar()` in a loop (CWE-120, CWE-20)** — The flagged loop in `discard_remaining_input()` never writes the read characters into any buffer; it only consumes and counts them. A `guard` counter bounded by `MAX_DISCARD` additionally prevents unbounded looping on pathological input streams. No overflow is possible here, so the finding is a false positive that is already mitigated.
+
+2. **Statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — All reads into the buffer go through `fgets(buffer, (int)sizeof(buffer), stdin)`, which limits input to `BUFFER_SIZE - 1` characters and always null-terminates. As defense-in-depth, `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination, and every subsequent string operation uses the bounded `strnlen()` rather than `strlen()`. Overlong input is detected (missing trailing newline) and rejected with a clear error after safely draining stdin.
+
+Additional hardening already present in the code: `isxdigit`/`tolower` are called with the argument cast to `unsigned char` (avoiding UB on negative `char` values), all pointer parameters are NULL-checked, and length results from `strnlen` are validated against the maximum before indexing (`hex[len - 1]`). No changes beyond the existing mitigations were required.

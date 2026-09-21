@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+struct char_counts {
+    size_t alphabets;
+    size_t digits;
+    size_t specials;
+};
+
+static void count_characters(const char *str, size_t max_len, struct char_counts *counts)
+{
+    size_t i;
+
+    if (counts == NULL) {
+        return;
+    }
+
+    counts->alphabets = 0;
+    counts->digits = 0;
+    counts->specials = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+
+        if (isalpha(c)) {
+            counts->alphabets++;
+        } else if (isdigit(c)) {
+            counts->digits++;
+        } else if (!isspace(c)) {
+            counts->specials++;
+        }
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    struct char_counts counts;
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+        len--;
+    }
+
+    count_characters(buffer, len, &counts);
+
+    printf("Alphabets: %zu\n", counts.alphabets);
+    printf("Digits: %zu\n", counts.digits);
+    printf("Special characters: %zu\n", counts.specials);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code already properly addresses the flagged CWE-119/CWE-120 buffer weakness: `fgets` is bounded by `sizeof(buffer)`, explicit null termination is enforced, `strnlen` is used instead of `strlen` to guarantee bounded length computation, characters are cast to `unsigned char` before being passed to `ctype.h` functions (avoiding undefined behavior on negative values), and `count_characters` defensively handles `NULL` pointers and respects the `max_len` bound.

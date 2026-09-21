@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:128:29: style: Condition 'additional_capacity>0U' is always true [knownConditionTrueFalse]
+    if (additional_capacity > 0U) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:111:18: note: Assuming that condition 'capacity<=dictionary->capacity' is not redundant
+    if (capacity <= dictionary->capacity) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:115:18: note: Assuming condition is false
+    if (capacity > SIZE_MAX / sizeof(*new_entries)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:119:18: note: old_capacity is assigned 'dictionary->capacity' here.
+    old_capacity = dictionary->capacity;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:120:36: note: Assignment 'additional_capacity=capacity-old_capacity', assigned value is greater than 0
+    additional_capacity = capacity - old_capacity;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:124:21: note: Assuming condition is false
+    if (new_entries == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-263.c:128:29: note: Condition 'additional_capacity>0U' is always true
+    if (additional_capacity > 0U) {
+                            ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-9-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-9-s2.c:19:22: style: Condition 'doubled_size<2*len+1' is always false [knownConditionTrueFalse]
+    if (doubled_size < 2 * len + 1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-9-s2.c:14:25: note: doubled_size is assigned '2*len+1' here.
+    size_t doubled_size = 2 * len + 1;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-9-s2.c:17:17: note: Assuming condition is false
+    if (doubled == NULL) return -1;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-9-s2.c:19:22: note: Condition 'doubled_size<2*len+1' is always false
+    if (doubled_size < 2 * len + 1) {
+                     ^

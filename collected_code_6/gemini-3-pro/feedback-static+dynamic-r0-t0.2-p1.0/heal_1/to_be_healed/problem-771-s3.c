@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node* next;
+} Node;
+
+void push(Node** top, char data) {
+    if (top == NULL) {
+        return;
+    }
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = *top;
+    *top = newNode;
+}
+
+char pop(Node** top) {
+    if (top == NULL || *top == NULL) {
+        return '\0';
+    }
+    Node* temp = *top;
+    char data = temp->data;
+    *top = (*top)->next;
+    free(temp);
+    return data;
+}
+
+bool isMatchingPair(char character1, char character2) {
+    if (character1 == '(' && character2 == ')') {
+        return true;
+    } else if (character1 == '{' && character2 == '}') {
+        return true;
+    } else if (character1 == '[' && character2 == ']') {
+        return true;
+    }
+    return false;
+}
+
+bool isBalanced(const char* exp) {
+    if (exp == NULL) {
+        return false;
+    }
+    
+    Node* stack = NULL;
+    
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    for (size_t i = 0; i < strlen(exp); i++) {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[') {
+            push(&stack, exp[i]);
+        } else if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+            if (stack == NULL) {
+                return false;
+            }
+            char poppedChar = pop(&stack);
+            if (!isMatchingPair(poppedChar, exp[i])) {
+                while (stack != NULL) {
+                    pop(&stack);
+                }
+                return false;
+            }
+        }
+    }
+    
+    if (stack == NULL) {
+        return true;
+    } else {
+        while (stack != NULL) {
+            pop(&stack);
+        }
+        return false;
+    }
+}
+
+int main(void) {
+    const char* exp1 = "{()}[]";
+    const char* exp2 = "{([)]}";
+    
+    if (isBalanced(exp1)) {
+        printf("Expression 1 is balanced\n");
+    } else {
+        printf("Expression 1 is not balanced\n");
+    }
+    
+    if (isBalanced(exp2)) {
+        printf("Expression 2 is balanced\n");
+    } else {
+        printf("Expression 2 is not balanced\n");
+    }
+    
+    return 0;
+}

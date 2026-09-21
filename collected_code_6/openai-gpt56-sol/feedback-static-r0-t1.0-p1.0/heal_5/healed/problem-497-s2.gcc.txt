@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c: In function 'cone_surface_area':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:24:24: error: 'DBL_MAX' undeclared (first use in this function)
+   24 |         (radius > sqrt(DBL_MAX / pi) ||
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:6:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    5 | #include <stdlib.h>
+  +++ |+#include <float.h>
+    6 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:24:24: note: each undeclared identifier is reported only once for each function it appears in
+   24 |         (radius > sqrt(DBL_MAX / pi) ||
+      |                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c: In function 'read_nonnegative_double':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:57:14: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   57 |     length = strlen(buffer);
+      |              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-497-s2.c:6:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    5 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    6 | 

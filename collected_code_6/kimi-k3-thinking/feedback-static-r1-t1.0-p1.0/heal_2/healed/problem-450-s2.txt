@@ -1,0 +1,26 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+
+static size_t bounded_strnlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello, World!";
+    const char *test2 = "";
+    const char *test3 = "This is a much longer string used for testing";
+
+    printf("Length of test1 (max 50): %zu\n", bounded_strnlen(test1, 50));
+    printf("Length of test2 (max 10): %zu\n", bounded_strnlen(test2, 10));
+    printf("Length of test3 (max 10): %zu\n", bounded_strnlen(test3, 10));
+
+    return 0;
+}
+```

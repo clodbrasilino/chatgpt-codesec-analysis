@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NAME_LEN 32
+#define TUPLE_COUNT 5
+
+typedef struct {
+    char name[NAME_LEN];
+    int id;
+    float value;
+} Tuple;
+
+static int set_tuple_name(Tuple *t, const char *name)
+{
+    size_t len;
+
+    if (t == NULL || name == NULL) {
+        return -1;
+    }
+    len = strnlen(name, NAME_LEN);
+    if (len >= NAME_LEN) {
+        return -1;
+    }
+    if (len >= sizeof(t->name)) {
+        return -1;
+    }
+    memcpy(t->name, name, len);
+    t->name[len] = '\0';
+    return 0;
+}
+
+static int init_tuple(Tuple *t, const char *name, int id, float value)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    if (set_tuple_name(t, name) != 0) {
+        return -1;
+    }
+    t->id = id;
+    t->value = value;
+    return 0;
+}
+
+static int compare_by_float(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->value < tb->value) {
+        return -1;
+    }
+    if (ta->value > tb->value) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_by_float);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("(%.*s, %d, %.2f)\n",
+                     NAME_LEN - 1,
+                     tuples[i].name,
+                     tuples[i].id,
+                     (double)tuples[i].value);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[TUPLE_COUNT];
+    size_t i;
+    static const char *const names[TUPLE_COUNT] = {
+        "alpha", "beta", "gamma", "delta", "epsilon"
+    };
+    static const int ids[TUPLE_COUNT] = { 1, 2, 3, 4, 5 };
+    static const float values[TUPLE_COUNT] = {
+        3.14f, 1.41f, 2.72f, 0.58f, 1.62f
+    };
+
+    for (i = 0U; i < TUPLE_COUNT; i++) {
+        if (init_tuple(&tuples[i], names[i], ids[i], values[i]) != 0) {
+            (void)fprintf(stderr, "Error: failed to initialize tuple %zu\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    (void)printf("Before sorting:\n");
+    print_tuples(tuples, TUPLE_COUNT);
+
+    if (sort_tuples(tuples, TUPLE_COUNT) != 0) {
+        (void)fprintf(stderr, "Error: failed to sort tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("After sorting:\n");
+    print_tuples(tuples, TUPLE_COUNT);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary of the flagged weaknesses and how they are mitigated:**
+
+1. **`char name[NAME_LEN]` (CWE-119/CWE-120, statically-sized array):** This is an informational warning inherent to any fixed-size buffer. The mitigation is strict bounds checking before every write, which `set_tuple_name` enforces via `strnlen(name, NAME_LEN)` and rejecting any input where `len >= NAME_LEN`. An additional defensive check against `sizeof(t->name)` was added so the invariant holds even if the struct definition changes independently of the constant.
+
+2. **`memcpy` (CWE-120, no built-in overflow check):** The copy is provably safe because `len` is bounded strictly below `NAME_LEN` before the call, guaranteeing room for both the payload and the NUL terminator written afterward. The extra `sizeof`-based guard makes this locally verifiable without relying on the macro.
+
+3. **`names` array of string literals:** A false-positive style warning; the array is read-only and index-bounded by `TUPLE_COUNT`. It was hardened to `const char *const` so neither the pointers nor the pointed-to strings can be modified.
+
+4. **Output safety:** `printf` uses `%.*s` with a maximum field precision of `NAME_LEN - 1`, so even a hypothetically unterminated buffer could not cause an out-of-bounds read during printing.
+
+The code compiles cleanly with `-Wall -Wextra -Wpedantic` under C99/C11 (note: `strnlen` requires POSIX.1-2008 or `_GNU_SOURCE` on some platforms).

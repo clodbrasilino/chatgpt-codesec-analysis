@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958.c: In function 'intToRoman':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958.c:11:13: error: implicit declaration of function 'strncat' [-Wimplicit-function-declaration]
+   11 |             strncat(roman, symbols[i], 20 - strlen(roman) - 1);
+      |             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958.c:3:1: note: include '<string.h>' or provide a declaration of 'strncat'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958.c:11:45: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   11 |             strncat(roman, symbols[i], 20 - strlen(roman) - 1);
+      |                                             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-958.c:11:45: note: include '<string.h>' or provide a declaration of 'strlen'

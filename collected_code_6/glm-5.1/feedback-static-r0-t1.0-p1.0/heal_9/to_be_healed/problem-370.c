@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <float.h>
+
+typedef struct {
+    int id;
+    float value;
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char label[32];
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    if (ta->value < tb->value) return -1;
+    if (ta->value > tb->value) return 1;
+    if (ta->id < tb->id) return -1;
+    if (ta->id > tb->id) return 1;
+    return 0;
+}
+
+int main() {
+    Tuple *tuples = NULL;
+    size_t capacity = 4;
+    size_t count = 0;
+    int input[] = {3, 1, 4, 1, 5};
+    /* Possible weaknesses found:
+     *  Assignment 'input_size=sizeof(input)/sizeof(input[0])', assigned value is 5
+     */
+    size_t input_size = sizeof(input) / sizeof(input[0]);
+
+    /* Possible weaknesses found:
+     *  Condition 'input_size==0' is always false
+     *  Condition 'input_size==0' is always false [knownConditionTrueFalse]
+     */
+    if (input_size == 0) {
+        return 0;
+    }
+
+    if (capacity > SIZE_MAX / sizeof(Tuple)) {
+        return 1;
+    }
+
+    tuples = (Tuple *)malloc(capacity * sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < input_size; i++) {
+        if (count == capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(tuples);
+                return 1;
+            }
+            size_t new_capacity = capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(Tuple)) {
+                free(tuples);
+                return 1;
+            }
+            Tuple *temp = (Tuple *)realloc(tuples, new_capacity * sizeof(Tuple));
+            if (temp == NULL) {
+                free(tuples);
+                return 1;
+            }
+            tuples = temp;
+            capacity = new_capacity;
+        }
+        tuples[count].id = (int)i;
+        tuples[count].value = (float)input[i] / 2.0f;
+        snprintf(tuples[count].label, sizeof(tuples[count].label), "item_%zu", i);
+        count++;
+    }
+
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("id: %d, value: %.2f, label: %s\n", tuples[i].id, tuples[i].value, tuples[i].label);
+    }
+
+    free(tuples);
+    tuples = NULL;
+
+    return 0;
+}

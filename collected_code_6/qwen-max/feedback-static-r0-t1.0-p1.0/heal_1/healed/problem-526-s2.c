@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void capitalizeFirstLast(char *str, size_t len) {
+    for (size_t i = 0, wordStart = 0; i < len; i++) {
+        if (i == 0 || str[i-1] == ' ') {
+            wordStart = i;
+            str[i] = toupper(str[i]);
+        } else if (str[i] == ' ' || i == len - 1) {
+            if (wordStart < i) {
+                str[i-1] = toupper(str[i-1]);
+            }
+        }
+    }
+}
+
+int main() {
+    char str[] = "hello world this is a test";
+    size_t len = sizeof(str) / sizeof(str[0]) - 1;
+    capitalizeFirstLast(str, len);
+    printf("%s\n", str);
+    return 0;
+}

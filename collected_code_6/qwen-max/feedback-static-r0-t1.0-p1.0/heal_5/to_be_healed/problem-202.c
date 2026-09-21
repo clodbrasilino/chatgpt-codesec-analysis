@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_even_chars(char *str) {
+    /* Possible weaknesses found:
+     *  Unused variable: len [unusedVariable]
+     */
+    int i, j, len;
+    for (i = 0; str[i] != '\0'; i++) {
+        if ((i % 2) == 0 && i != 0) {
+            for (j = i; str[j] != '\0'; j++) {
+                str[j] = str[j + 1];
+            }
+            str[j] = '\0';
+            i--;
+        }
+    }
+}
+
+int main() {
+    char str[] = "abcdefghijklmnopqrstuvwxyz";
+    printf("Original String: %s\n", str);
+    remove_even_chars(str);
+    printf("Modified String: %s\n", str);
+    return 0;
+}

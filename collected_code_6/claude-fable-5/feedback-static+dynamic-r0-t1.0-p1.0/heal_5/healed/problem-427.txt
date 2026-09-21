@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define DATE_BUF_SIZE 11
+#define YEAR_LEN 4
+#define MONTH_LEN 2
+#define DAY_LEN 2
+
+int convert_date(const char *input, char *output, size_t output_size);
+
+int convert_date(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret;
+    const char *pattern = "^([0-9]{4})-([0-9]{2})-([0-9]{2})$";
+    char year[YEAR_LEN + 1];
+    char month[MONTH_LEN + 1];
+    char day[DAY_LEN + 1];
+    size_t year_len;
+    size_t month_len;
+    size_t day_len;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size < DATE_BUF_SIZE) {
+        return -1;
+    }
+
+    input_len = strnlen(input, DATE_BUF_SIZE);
+    if (input_len != DATE_BUF_SIZE - 1) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, input, 4, matches, 0);
+    if (ret != 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_so < 0 || matches[2].rm_so < 0 || matches[3].rm_so < 0) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (matches[1].rm_eo < matches[1].rm_so ||
+        matches[2].rm_eo < matches[2].rm_so ||
+        matches[3].rm_eo < matches[3].rm_so) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if ((size_t)matches[1].rm_eo > input_len ||
+        (size_t)matches[2].rm_eo > input_len ||
+        (size_t)matches[3].rm_eo > input_len) {
+        regfree(&regex);
+        return -1;
+    }
+
+    year_len = (size_t)(matches[1].rm_eo - matches[1].rm_so);
+    month_len = (size_t)(matches[2].rm_eo - matches[2].rm_so);
+    day_len = (size_t)(matches[3].rm_eo - matches[3].rm_so);
+
+    if (year_len != YEAR_LEN || month_len != MONTH_LEN || day_len != DAY_LEN) {
+        regfree(&regex);
+        return -1;
+    }
+
+    if (year_len >= sizeof(year) || month_len >= sizeof(month) || day_len >= sizeof(day)) {
+        regfree(&regex);
+        return -1;
+    }
+
+    memcpy(year, input + matches[1].rm_so, year_len);
+    year[year_len] = '\0';
+
+    memcpy(month, input + matches[2].rm_so, month_len);
+    month[month_len] = '\0';
+
+    memcpy(day, input + matches[3].rm_so, day_len);
+    day[day_len] = '\0';
+
+    ret = snprintf(output, output_size, "%s-%s-%s", day, month, year);
+    regfree(&regex);
+
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "2024-05-17";
+    char output[DATE_BUF_SIZE];
+
+    memset(output, 0, sizeof(output));
+
+    if (convert_date(input, output, sizeof(output)) != 0) {
+        fprintf(stderr, "Failed to convert date: %s\n", input);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Input:  %s\nOutput: %s\n", input, output) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:** The Flawfinder warnings in the original source are all false positives, and the code already contains the mitigations Flawfinder recommends:
+
+- **Statically-sized arrays (CWE-119/CWE-120):** `year`, `month`, `day`, and `output` are fixed-size buffers, but every write into them is bounds-checked before it happens. The lengths are validated against `YEAR_LEN`/`MONTH_LEN`/`DAY_LEN` and additionally against `sizeof(...)` before any copy occurs.
+
+- **`memcpy` calls (CWE-120):** Each `memcpy` is preceded by explicit checks that the match offsets are non-negative, that `rm_eo >= rm_so`, that offsets do not exceed `input_len`, and that the computed lengths fit the destination buffers with room for the NUL terminator. Overflow is therefore not possible.
+
+- **Input handling:** `strnlen` with a bounded maximum prevents reading past an unterminated string, and the strict regex `^([0-9]{4})-([0-9]{2})-([0-9]{2})$` guarantees the exact format before any parsing.
+
+- **Output handling:** `snprintf` with `output_size` prevents output overflow, and its return value is checked for both encoding errors and truncation.
+
+- **Resource management:** `regfree` is called on every exit path after a successful `regcomp`, so there are no regex memory leaks.
+
+Since the code is already defensively correct, the rewrite preserves the logic verbatim with the audit comments removed.

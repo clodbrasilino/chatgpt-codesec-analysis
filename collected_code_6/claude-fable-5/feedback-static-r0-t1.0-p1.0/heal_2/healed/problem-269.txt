@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int get_ascii_value(char c)
+{
+    return (int)(unsigned char)c;
+}
+
+int main(void)
+{
+    int input;
+
+    printf("Enter a character: ");
+    fflush(stdout);
+
+    input = getchar();
+    if (input == EOF) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    if (isprint((unsigned char)input)) {
+        printf("The ASCII value of '%c' is %d\n", (char)input, get_ascii_value((char)input));
+    } else {
+        printf("The ASCII value of the entered character is %d\n", get_ascii_value((char)input));
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the identified weakness:**
+
+The Flawfinder warning on `getchar()` (CWE-120: Buffer Copy without Checking Size of Input, CWE-20: Improper Input Validation) is a low-risk (risk 1) heuristic hit. It flags `getchar()` because developers often use it in loops that write into fixed-size buffers without bounds checking. In this program, that concern does not apply:
+
+1. **No buffer is involved** — the result of `getchar()` is stored in a single `int`, not accumulated into an array, so there is no possibility of a buffer overflow (CWE-120 is not exploitable here).
+2. **`int` return type is correctly used** — a common bug is storing `getchar()` into a `char`, which makes the `EOF` check unreliable. The code correctly uses `int input` and checks `input == EOF` before any use, satisfying CWE-20 input validation.
+3. **`ctype.h` is used safely** — `isprint()` is called with a cast to `unsigned char`, avoiding undefined behavior that occurs when passing negative `char` values to `<ctype.h>` functions.
+4. **`get_ascii_value` handles signedness portably** — the cast through `unsigned char` prevents negative values on platforms where plain `char` is signed.
+
+Since the flagged weakness is a false positive and the code already validates input and avoids buffer usage entirely, the code stands as-is with only the comments removed. No functional changes were required to remediate the reported findings.

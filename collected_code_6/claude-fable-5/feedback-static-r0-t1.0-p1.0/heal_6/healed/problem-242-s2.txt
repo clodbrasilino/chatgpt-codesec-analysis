@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < BUFFER_SIZE && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+The analysis of the original source confirms that the weakness flagged by Flawfinder (CWE-119/CWE-120, statically-sized array `buffer`) was already properly mitigated, so the rewritten code preserves those mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure ensuring the buffer is always a valid C string.
+3. **Zero-initialization** — `memset(buffer, 0, sizeof(buffer))` avoids reading uninitialized memory.
+4. **Bounds-checked traversal** — `count_characters()` checks both `count < BUFFER_SIZE` and the null terminator, and guards against a `NULL` pointer, so it can never read past the array even if given a non-terminated buffer.
+5. **Return value checking** — the `fgets` return value is validated, handling EOF/read errors gracefully.
+6. **Newline stripping via `strcspn`** — a safe idiom that works correctly even when no newline is present (it indexes the terminating `'\0'`).
+
+No functional changes were required; the code as written is already resistant to the identified buffer-overflow risk.

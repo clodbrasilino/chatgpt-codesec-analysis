@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <ctype.h>
+#include <string.h>
+
+size_t longest_word_length(const char *str)
+{
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+        str++;
+    }
+
+    if (current_len > max_len) {
+        max_len = current_len;
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = longest_word_length(buffer);
+
+    if (printf("Longest word length: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The original code was already largely safe. The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a *potential* weakness flagged by static analysis, not an actual vulnerability here, because:
+
+1. **`fgets` is bounds-limited** — it reads at most `sizeof(buffer) - 1` characters and always null-terminates, so no overflow is possible.
+2. **Defensive null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is redundant with `fgets` but harmless belt-and-braces hardening.
+3. **`isspace` is called correctly** — the cast to `unsigned char` avoids undefined behavior with negative `char` values.
+4. **NULL checks** — both the `str` parameter and the `fgets` return value are validated.
+
+Improvements made in the rewrite:
+
+- **`memset` initialization** of the buffer guarantees no uninitialized reads under any code path, further satisfying the static analyzer.
+- **Trailing newline stripping** — `fgets` retains the `\n`, which the original handled implicitly via `isspace`, but explicit removal makes the input canonical and the logic more robust.
+- **Added `<string.h>`** for `strlen`/`memset`.
+
+The core algorithm (single-pass scan with a final check for a trailing word) is correct and O(n), so it was preserved unchanged.

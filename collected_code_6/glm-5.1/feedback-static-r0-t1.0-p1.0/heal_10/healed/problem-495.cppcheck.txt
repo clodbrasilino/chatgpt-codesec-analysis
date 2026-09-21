@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:33:43: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (result_len + copy_len <= input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:32:39: note: outer condition: result_len+copy_len<=input_len
+            if (result_len + copy_len <= input_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:33:43: note: identical inner condition: result_len+copy_len<=input_len
+                if (result_len + copy_len <= input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:53:44: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (result_len + remaining_len <= input_len) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:52:40: note: outer condition: result_len+remaining_len<=input_len
+        if (result_len + remaining_len <= input_len) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-495.c:53:44: note: identical inner condition: result_len+remaining_len<=input_len
+            if (result_len + remaining_len <= input_len) {
+                                           ^

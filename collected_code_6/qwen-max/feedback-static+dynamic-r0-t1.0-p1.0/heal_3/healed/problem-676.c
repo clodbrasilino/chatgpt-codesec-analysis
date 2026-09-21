@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_non_alphanumeric(char *str) {
+    regex_t regex;
+    if (regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED | REG_NEWLINE)) {
+        return -1;
+    }
+
+    size_t len = strlen(str);
+    char *result = (char *)malloc(len + 1);
+    if (!result) {
+        regfree(&regex);
+        return -1;
+    }
+
+    int i = 0, j = 0;
+    while (i < (int)len) {
+        if (regexec(&regex, &str[i], 0, NULL, 0)) {
+            result[j++] = str[i];
+            i++;
+        } else {
+            regmatch_t match;
+            if (regexec(&regex, &str[i], 1, &match, 0) == 0) {
+                i += match.rm_eo - match.rm_so;
+            } else {
+                i++;
+            }
+        }
+    }
+    result[j] = '\0';
+
+    free(str);
+    str = (char *)realloc(result, j + 1);
+    if (!str) {
+        free(result);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+
+    return 0;
+}
+
+int main() {
+    char *str = "Hello!@# World$%^&*()_+";
+    if (remove_non_alphanumeric(str) == 0) {
+        printf("%s\n", str);
+    } else {
+        printf("Error occurred.\n");
+    }
+    free(str);
+    return 0;
+}

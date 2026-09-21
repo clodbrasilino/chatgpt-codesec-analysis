@@ -1,0 +1,21 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:47:5: error: 'errno' undeclared (first use in this function)
+   47 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:4:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    3 | #include <math.h>
+  +++ |+#include <errno.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:47:5: note: each undeclared identifier is reported only once for each function it appears in
+   47 |     errno = 0;
+      |     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:49:18: error: 'ERANGE' undeclared (first use in this function)
+   49 |     if (errno == ERANGE || *endptr_n != '\0' || n_val < 0 || n_val > INT_MAX) {
+      |                  ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:49:70: error: 'INT_MAX' undeclared (first use in this function)
+   49 |     if (errno == ERANGE || *endptr_n != '\0' || n_val < 0 || n_val > INT_MAX) {
+      |                                                                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-486-s3.c:4:1: note: 'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <math.h>
+  +++ |+#include <limits.h>
+    4 | 

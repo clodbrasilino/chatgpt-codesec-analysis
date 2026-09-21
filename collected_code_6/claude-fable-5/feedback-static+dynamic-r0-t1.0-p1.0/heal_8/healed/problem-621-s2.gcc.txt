@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c: In function 'read_line':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c:119:46: error: expected ')' at end of input
+  119 |         if (buf_append(&line, &len, &cap, &ch
+      |                       ~                      ^
+      |                                              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c:119:13: error: too few arguments to function 'buf_append'; expected 5, have 4
+  119 |         if (buf_append(&line, &len, &cap, &ch
+      |             ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c:9:12: note: declared here
+    9 | static int buf_append(char **buf, size_t *len, size_t *cap, const char *src, size_t n)
+      |            ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c:119:9: error: expected declaration or statement at end of input
+  119 |         if (buf_append(&line, &len, &cap, &ch
+      |         ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-621-s2.c:119:9: error: expected declaration or statement at end of input

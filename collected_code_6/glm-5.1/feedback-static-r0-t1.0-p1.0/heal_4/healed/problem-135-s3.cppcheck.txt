@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-135-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-135-s3.c:26:29: style: Condition 'max_n>0' is always true [knownConditionTrueFalse]
+    if (n > max_n || (max_n > 0 && hexagonal_number(max_n) / max_n < 2 * max_n - 1)) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-135-s3.c:25:32: note: Assignment 'max_n=3037000499ULL', assigned value is 3037000499
+    unsigned long long max_n = 3037000499ULL;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-135-s3.c:26:29: note: Condition 'max_n>0' is always true
+    if (n > max_n || (max_n > 0 && hexagonal_number(max_n) / max_n < 2 * max_n - 1)) {
+                            ^

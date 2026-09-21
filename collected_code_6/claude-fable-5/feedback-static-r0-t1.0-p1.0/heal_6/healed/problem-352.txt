@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warning about the statically-sized `buffer` array (CWE-119/CWE-120) is a low-risk, informational finding, and the original code already mitigates it correctly:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits the read to at most 255 characters plus the null terminator, so no overflow is possible.
+2. **Guaranteed termination:** `buffer[sizeof(buffer) - 1] = '\0';` is a defensive measure ensuring null termination even in edge cases.
+3. **Newline stripping:** `strcspn(buffer, "\n")` safely truncates at the newline without risking out-of-bounds access, since the string is guaranteed null-terminated.
+4. **Bounded scanning:** `all_chars_unique` takes an explicit `max_len` and checks both the length bound and the null terminator, plus a `NULL` pointer guard. The cast to `unsigned char` also correctly avoids undefined behavior from negative array indices when `char` is signed.
+
+No functional changes were required — the code as written is already free of the flagged weakness; only the comments were removed per the request.

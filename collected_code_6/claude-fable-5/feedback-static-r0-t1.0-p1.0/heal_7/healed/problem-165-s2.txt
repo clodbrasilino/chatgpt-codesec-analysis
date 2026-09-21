@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-hardened against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer` array. The rewritten code preserves all of the existing mitigations:
+
+1. **Bounded input reading** — `fgets(buffer, (int)sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow. Its return value is checked for read failure.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure (technically redundant after `fgets` plus `memset`, but harmless and explicit).
+
+3. **Bounded string operations** — `strnlen` is used instead of `strlen` in both `main` and `count_position_matches`, ensuring traversal never exceeds the buffer bounds even if termination were somehow lost.
+
+4. **Defensive parameter validation** — `count_position_matches` checks for `NULL` and zero-length input before dereferencing, and its loop is double-bounded (`i < len && i < 26`), preventing out-of-bounds reads.
+
+5. **Safe newline stripping** — the `len > 0` check before accessing `buffer[len - 1]` avoids an underflow read on empty input.
+
+6. **Initialization** — `memset` zeroes the buffer before use, avoiding uninitialized memory reads.
+
+No functional or security changes were required; the code as written correctly addresses the flagged risk.

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            str[write] = str[read];
+            write++;
+        }
+        read++;
+    }
+    str[write] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text);
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The Flawfinder warnings here are false positives, and the original code already contains the correct mitigations:
+
+1. **NULL pointer check** — `if (str == NULL) return;` guards against dereferencing a null pointer.
+
+2. **No buffer overflow possible (CWE-120)** — The function operates *in-place* using a two-index compaction technique. Since `write <= read` is an invariant throughout the loop, `str[write]` can never write past any position already read, and the loop terminates at the existing `'\0'`. The output is always shorter than or equal to the input, so no boundary is ever exceeded.
+
+3. **Correct `isspace()` usage (CWE-20)** — The cast to `(unsigned char)` before passing to `isspace()` is essential: passing a negative `char` value (possible with high-bit characters on platforms where `char` is signed) invokes undefined behavior. The cast is retained.
+
+4. **Null termination guaranteed** — `str[write] = '\0';` after the loop ensures the result is always a valid C string, and since `write <= read <= original length`, this write stays within the original buffer.
+
+5. **`main` is safe** — `text` is a writable array (not a string literal pointer), so modifying it in place is well-defined.
+
+The code is correct as written; the rewrite simply strips the analyzer annotations since no actual fixes were required.

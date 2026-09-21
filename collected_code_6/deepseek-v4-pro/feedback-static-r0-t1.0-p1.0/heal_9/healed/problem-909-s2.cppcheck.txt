@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:105:20: style: Condition 'copy_limit>=capacity' is always false [knownConditionTrueFalse]
+    if (copy_limit >= capacity) copy_limit = capacity - 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:99:25: note: Assuming that condition 'len>=capacity' is not redundant
+    if (len == 0 || len >= capacity) return;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:102:13: note: Assuming condition is false
+    if (tmp == NULL) exit(EXIT_FAILURE);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:104:23: note: copy_limit is assigned 'len' here.
+    size_t copy_limit = len;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-909-s2.c:105:20: note: Condition 'copy_limit>=capacity' is always false
+    if (copy_limit >= capacity) copy_limit = capacity - 1;
+                   ^

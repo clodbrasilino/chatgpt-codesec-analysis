@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-407.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-407.c:39:25: style: Condition 'len>=(int)sizeof(digits)' is always false [knownConditionTrueFalse]
+    if (len <= 0 || len >= (int)sizeof(digits)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-407.c:34:32: note: Assuming that condition 'written>=(int)sizeof(digits)' is not redundant
+    if (written < 0 || written >= (int)sizeof(digits)) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-407.c:38:9: note: len is assigned 'written' here.
+    len = written;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-407.c:39:25: note: Condition 'len>=(int)sizeof(digits)' is always false
+    if (len <= 0 || len >= (int)sizeof(digits)) {
+                        ^

@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LEN 100
+#define MAX_INPUT_LEN 10000
+
+static int is_valid_char(unsigned char c) {
+    return isalnum(c);
+}
+
+int find_words_ae(const char *str, char words[][MAX_WORD_LEN]) {
+    if (str == NULL || words == NULL) {
+        return -1;
+    }
+    
+    int word_count = 0;
+    size_t len = strnlen(str, MAX_INPUT_LEN);
+    int in_word = 0;
+    size_t word_start = 0;
+    size_t word_len = 0;
+    char current_word[MAX_WORD_LEN];
+    
+    for (size_t i = 0; i <= len; i++) {
+        if (i < len && is_valid_char((unsigned char)str[i])) {
+            if (!in_word) {
+                in_word = 1;
+                word_start = i;
+                word_len = 0;
+            }
+            word_len++;
+        } else {
+            if (in_word) {
+                if (word_len > 0 && word_len < MAX_WORD_LEN) {
+                    size_t copy_len = word_len;
+                    if (copy_len >= MAX_WORD_LEN) {
+                        copy_len = MAX_WORD_LEN - 1;
+                    }
+                    
+                    size_t available = len - word_start;
+                    if (available < copy_len) {
+                        copy_len = available;
+                    }
+                    
+                    if (copy_len > 0 && word_start + copy_len <= len) {
+                        memcpy(current_word, str + word_start, copy_len);
+                        current_word[copy_len] = '\0';
+                        
+                        if (tolower((unsigned char)current_word[0]) == 'a' || 
+                            tolower((unsigned char)current_word[0]) == 'e') {
+                            if (word_count < MAX_WORDS) {
+                                strncpy(words[word_count], current_word, MAX_WORD_LEN - 1);
+                                words[word_count][MAX_WORD_LEN - 1] = '\0';
+                                word_count++;
+                            }
+                        }
+                    }
+                }
+                in_word = 0;
+            }
+        }
+    }
+    
+    return word_count;
+}
+
+int main(void) {
+    char input[1000];
+    char words[MAX_WORDS][MAX_WORD_LEN];
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t input_len = strnlen(input, sizeof(input));
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+    }
+    
+    int count = find_words_ae(input, words);
+    
+    if (count < 0) {
+        printf("Error processing input\n");
+        return 1;
+    }
+    
+    printf("Words starting with 'a' or 'e':\n");
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", words[i]);
+    }
+    
+    return 0;
+}

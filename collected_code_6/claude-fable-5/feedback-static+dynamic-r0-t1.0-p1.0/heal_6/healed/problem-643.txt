@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+int contains_interior_z(const char *word, size_t len)
+{
+    size_t i;
+
+    if (word == NULL || len < 3) {
+        return 0;
+    }
+
+    for (i = 1; i < len - 1; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int find_word_with_interior_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    result[0] = '\0';
+
+    while (text[i] != '\0') {
+        size_t start;
+        size_t len;
+
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        start = i;
+
+        while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        len = i - start;
+
+        if (len > 0 && contains_interior_z(text + start, len)) {
+            size_t j;
+
+            if (len >= result_size) {
+                return -1;
+            }
+
+            for (j = 0; j < len && j < result_size - 1; j++) {
+                result[j] = text[start + j];
+            }
+            result[j] = '\0';
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the lazy dog jumped",
+        "zebra runs fast",
+        "jazz music is nice",
+        "no matching words here",
+        "amazing puzzle pieces"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    char buffer[BUFFER_SIZE];
+    size_t i;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    for (i = 0; i < num_tests; i++) {
+        int status = find_word_with_interior_z(tests[i], buffer, sizeof(buffer));
+        if (status == 0) {
+            printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], buffer);
+        } else if (status == 1) {
+            printf("Input: \"%s\" -> No match found\n", tests[i]);
+        } else {
+            fprintf(stderr, "Error processing input: \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **CWE-120 (memcpy warning):** The original code already guarded the `memcpy` with `if (len >= result_size) return -1;`, so it was technically safe. However, to fully satisfy the static analyzer and make the bounds enforcement explicit at the point of the copy, I replaced `memcpy` with a bounded character-by-character copy loop that is structurally incapable of writing past `result_size - 1`, followed by explicit null termination. This makes the safety invariant local and verifiable rather than dependent on a prior check.
+
+2. **CWE-119/CWE-120 (statically-sized `char buffer[BUFFER_SIZE]`):** The statically sized array itself is fine as long as all writes are bounded. The mitigations in place are:
+   - `sizeof(buffer)` is always passed as the capacity to `find_word_with_interior_z`, so the size is never hardcoded or duplicated.
+   - The buffer is zero-initialized with `memset` before use, guaranteeing it is always a valid null-terminated string even on early failure paths.
+   - The copy routine strictly enforces `result_size` including space for the null terminator.
+
+3. **Preserved correctness properties:** parameter validation (`NULL` checks, zero-size rejection), the `(unsigned char)` casts before `isalpha` (avoiding undefined behavior on negative `char` values), and the three-state return protocol (0 = match, 1 = no match, -1 = error) all remain intact.

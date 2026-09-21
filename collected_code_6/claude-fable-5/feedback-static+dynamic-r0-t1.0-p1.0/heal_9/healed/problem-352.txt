@@ -1,0 +1,67 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+bool all_chars_unique(const char *str, size_t max_len)
+{
+    bool seen[256] = { false };
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return false;
+        }
+        seen[c] = true;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (all_chars_unique(buffer, sizeof(buffer))) {
+        printf("All characters are unique\n");
+    } else {
+        printf("Duplicate characters found\n");
+    }
+
+    return 0;
+}
+```
+
+The code was already well-hardened against the flagged weaknesses, so the rewrite preserves all existing mitigations:
+
+- **CWE-120/CWE-20 (buffer overflow on input):** `fgets(buffer, sizeof(buffer), stdin)` bounds the read to the buffer size, avoiding unsafe alternatives like `gets()` or unbounded `scanf("%s", ...)`. The return value is checked to handle EOF/read errors.
+- **CWE-119 (statically-sized array):** All buffer accesses use `sizeof(buffer)` consistently, so the size argument can never drift out of sync with the actual array size. This makes the Flawfinder `char buffer[...]` hit a low-risk finding requiring no change.
+- **CWE-126 (string over-read):** `strnlen(str, max_len)` (enabled via `_POSIX_C_SOURCE 200809L`) bounds the scan even if a non-terminated buffer were ever passed, unlike `strlen`.
+- **Defensive termination:** `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination, and `memset` zero-initializes the buffer to avoid reads of indeterminate memory.
+- **Safe newline stripping:** `strcspn` removes the trailing newline without out-of-bounds risk, working correctly even when no newline is present.
+- **Undefined behavior guards:** The `NULL` check prevents invalid pointer dereference, and the cast to `unsigned char` before indexing `seen[]` prevents negative-index UB on platforms where `char` is signed.
+
+The compiler diagnostics in the original listing (`stray '`'`, `unknown type name`, etc.) were caused by prose text embedded in the source file, not by the code itself — removing the non-code text resolves them.

@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERRBUF_SIZE 128U
+#define WORD_LEN 5U
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    char errbuf[ERRBUF_SIZE];
+
+    memset(errbuf, 0, sizeof(errbuf));
+    (void)regerror(errcode, regex, errbuf, sizeof(errbuf) - 1U);
+    errbuf[sizeof(errbuf) - 1U] = '\0';
+    fprintf(stderr, "Error: %s failed: %s\n", context, errbuf);
+}
+
+int find_five_letter_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char word[WORD_LEN + 1U];
+    int ret;
+
+    if (text == NULL) {
+        fprintf(stderr, "Error: input string is NULL\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[[:alpha:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "regcomp");
+        return -1;
+    }
+
+    cursor = text;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        size_t len;
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            break;
+        }
+
+        len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (len == WORD_LEN && len < sizeof(word)) {
+            memset(word, 0, sizeof(word));
+            memcpy(word, cursor + match.rm_so, len);
+            word[sizeof(word) - 1U] = '\0';
+            printf("%s\n", word);
+        }
+
+        if (match.rm_eo <= match.rm_so) {
+            break;
+        }
+
+        cursor += match.rm_eo;
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        print_regex_error(ret, &regex, "regexec");
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *sample = "The quick brown fox jumps over a lazy dog while birds watch above";
+
+    if (find_five_letter_words(sample) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+1. **`errbuf` in `print_regex_error` (CWE-119/CWE-120):** The buffer is zeroed with `memset`, `regerror` is limited to `sizeof(errbuf) - 1U` bytes, and a null terminator is explicitly forced at the last index. No overflow is possible; the Flawfinder hit is a false positive.
+
+2. **`word` in `find_five_letter_words` (CWE-119/CWE-120):** The array is sized `WORD_LEN + 1U` to leave room for the terminator, cleared before use, and writes are guarded by the condition `len == WORD_LEN && len < sizeof(word)`. Safe as written.
+
+3. **`memcpy` (CWE-120):** The copy length `len` is verified against `sizeof(word)` before the call, and the destination's final byte is explicitly null-terminated afterward. The destination can always hold the source data, so this is also a false positive.
+
+Additional robustness already present: NULL input check, validation of `rm_so`/`rm_eo` before pointer arithmetic (guarding against negative offsets and zero-length matches that could cause an infinite loop), proper `regfree` on both success and error paths, and distinguishing `REG_NOMATCH` from genuine `regexec` failures. No functional changes were required — the code as reviewed correctly mitigates every issue the static analyzer flagged.

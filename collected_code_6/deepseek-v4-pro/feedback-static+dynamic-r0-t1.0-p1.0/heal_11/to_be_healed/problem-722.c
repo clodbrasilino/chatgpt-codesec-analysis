@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+#define MAX_NAME_LEN 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char name[MAX_NAME_LEN];
+    float height;
+    float width;
+} Student;
+
+typedef struct {
+    Student students[MAX_STUDENTS];
+    int count;
+} StudentDict;
+
+void init_dict(StudentDict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    dict->count = 0;
+}
+
+int add_student(StudentDict *dict, const char *name, float height, float width) {
+    size_t name_len;
+    
+    if (dict == NULL || name == NULL || dict->count >= MAX_STUDENTS) {
+        return -1;
+    }
+    
+    name_len = strnlen(name, MAX_NAME_LEN - 1);
+    if (name_len >= MAX_NAME_LEN - 1) {
+        return -1;
+    }
+    
+    if (name_len + 1 > MAX_NAME_LEN) {
+        return -1;
+    }
+    
+    memset(dict->students[dict->count].name, 0, MAX_NAME_LEN);
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(dict->students[dict->count].name, name, name_len);
+    dict->students[dict->count].name[name_len] = '\0';
+    dict->students[dict->count].height = height;
+    dict->students[dict->count].width = width;
+    dict->count++;
+    
+    return 0;
+}
+
+int filter_students(const StudentDict *input, StudentDict *output, float min_height, float max_height, float min_width, float max_width) {
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+    
+    init_dict(output);
+    
+    if (min_height > max_height || min_width > max_width) {
+        return -1;
+    }
+    
+    for (int i = 0; i < input->count; i++) {
+        if (input->students[i].height >= min_height && 
+            input->students[i].height <= max_height &&
+            input->students[i].width >= min_width && 
+            input->students[i].width <= max_width) {
+            
+            if (output->count >= MAX_STUDENTS) {
+                return -1;
+            }
+            
+            if (add_student(output, input->students[i].name, 
+                           input->students[i].height, 
+                           input->students[i].width) != 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return output->count;
+}
+
+void print_students(const StudentDict *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < dict->count; i++) {
+        printf("Name: %s, Height: %.2f, Width: %.2f\n", 
+               dict->students[i].name, 
+               dict->students[i].height, 
+               dict->students[i].width);
+    }
+}
+
+int main(void) {
+    StudentDict all_students;
+    StudentDict filtered_students;
+    
+    init_dict(&all_students);
+    
+    add_student(&all_students, "Alice", 165.5f, 45.2f);
+    add_student(&all_students, "Bob", 175.0f, 55.8f);
+    add_student(&all_students, "Charlie", 180.3f, 60.1f);
+    add_student(&all_students, "Diana", 155.2f, 40.5f);
+    add_student(&all_students, "Eve", 170.7f, 52.3f);
+    
+    printf("All students:\n");
+    print_students(&all_students);
+    
+    int result = filter_students(&all_students, &filtered_students, 160.0f, 178.0f, 42.0f, 58.0f);
+    
+    if (result < 0) {
+        fprintf(stderr, "Filter operation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nFiltered students (height 160-178, width 42-58):\n");
+    print_students(&filtered_students);
+    
+    return EXIT_SUCCESS;
+}

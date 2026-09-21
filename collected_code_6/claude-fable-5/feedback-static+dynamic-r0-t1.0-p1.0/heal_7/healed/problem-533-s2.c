@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i_val;
+        double f_val;
+        char *s_val;
+    } data;
+} Element;
+
+typedef struct {
+    Element *elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static int tuple_init(Tuple *t, size_t capacity)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    t->elements = NULL;
+    t->count = 0;
+    t->capacity = 0;
+    if (capacity == 0) {
+        return 0;
+    }
+    if (capacity > SIZE_MAX / sizeof(Element)) {
+        return -1;
+    }
+    t->elements = calloc(capacity, sizeof(Element));
+    if (t->elements == NULL) {
+        return -1;
+    }
+    t->capacity = capacity;
+    return 0;
+}
+
+static void tuple_free(Tuple *t)
+{
+    if (t == NULL) {
+        return;
+    }
+    if (t->elements != NULL) {
+        for (size_t i = 0; i < t->count; i++) {
+            if (t->elements[i].type == TYPE_STRING) {
+                free(t->elements[i].data.s_val);
+                t->elements[i].data.s_val = NULL;
+            }
+        }
+        free(t->elements);
+        t->elements = NULL;
+    }
+    t->count = 0;
+    t->capacity = 0;
+}
+
+static int tuple_add_int(Tuple *t, int value)
+{
+    if (t == NULL || t->elements == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    t->elements[t->count].type = TYPE_INT;
+    t->elements[t->count].data.i_val = value;
+    t->count++;
+    return 0;
+}
+
+static int tuple_add_float(Tuple *t, double value)
+{
+    if (t == NULL || t->elements == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    t->elements[t->count].type = TYPE_FLOAT;
+    t->elements[t->count].data.f_val = value;
+    t->count++;
+    return 0;
+}
+
+static int tuple_add_string(Tuple *t, const char *value)
+{
+    if (t == NULL || t->elements == NULL || value == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    size_t len = strnlen(value, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return -1;
+    }
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+    if (len > 0) {
+        memcpy(copy, value, len);
+    }
+    copy[len] = '\0';
+    t->elements[t->count].type = TYPE_STRING;
+    t->elements[t->count].data.s_val = copy;
+    t->count++;
+    return 0;
+}
+
+static int remove_type_elements(Tuple *t, ElementType type_to_remove)
+{
+    size_t write_index = 0;
+
+    if (t == NULL || t->elements == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < t->count; i++) {
+        if (t->elements[i].type == type_to_remove) {
+            if (t->elements[i].type == TYPE_STRING) {
+                free(t->elements[i].data.s_val);
+                t->elements[i].data.s_val = NULL;
+            }
+        } else {
+            if (write_index != i) {
+                t->elements[write_index] = t->elements[i];
+            }
+            write_index++;
+        }
+    }
+    t->count = write_index;
+    return 0;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL || t->elements == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->count; i++) {
+        switch (t->elements[i].type) {
+        case TYPE_INT:
+            printf("%d", t->elements[i].data.i_val);
+            break;
+        case TYPE_FLOAT:
+            printf("%f", t->elements[i].data.f_val);
+            break;
+        case TYPE_STRING:
+            printf("\"%s\"", t->elements[i].data.s_val != NULL ? t->elements[i].data.s_val : "");
+            break;
+        default:
+            printf("?");
+            break;
+        }
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    Tuple t;
+
+    if (tuple_init(&t, 6) != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_add_int(&t, 10) != 0 ||
+        tuple_add_string(&t, "hello") != 0 ||
+        tuple_add_float(&t, 3.14) != 0 ||
+        tuple_add_int(&t, 42) != 0 ||
+        tuple_add_string(&t, "world") != 0 ||
+        tuple_add_float(&t, 2.71) != 0) {
+        fprintf(stderr, "Failed to populate tuple\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original tuple: ");
+    tuple_print(&t);
+
+    if (remove_type_elements(&t, TYPE_STRING) != 0) {
+        fprintf(stderr, "Failed to remove elements\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("After removing strings: ");
+    tuple_print(&t);
+
+    if (remove_type_elements(&t, TYPE_FLOAT) != 0) {
+        fprintf(stderr, "Failed to remove elements\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("After removing floats: ");
+    tuple_print(&t);
+
+    tuple_free(&t);
+    return EXIT_SUCCESS;
+}

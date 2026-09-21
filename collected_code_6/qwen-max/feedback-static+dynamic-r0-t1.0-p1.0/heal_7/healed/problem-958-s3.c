@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+
+const char *const romanNumerals[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+
+char *intToRoman(int num) {
+    static char roman[20];
+    memset(roman, 0, sizeof(roman));
+
+    for (int i = 0; i < 13; i++) {
+        while (num >= values[i]) {
+            size_t len = strlen(roman);
+            if (len + strlen(romanNumerals[i]) < sizeof(roman) - 1) {
+                strncat(roman, romanNumerals[i], sizeof(roman) - len - 1);
+                num -= values[i];
+            } else {
+                break;
+            }
+        }
+    }
+
+    return roman;
+}
+
+int main() {
+    int number = 1994;
+    printf("%s\n", intToRoman(number));
+    return 0;
+}

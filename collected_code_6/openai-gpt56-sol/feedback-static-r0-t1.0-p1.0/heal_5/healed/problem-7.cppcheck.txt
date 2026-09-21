@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:77:55: style: Condition 'fwrite(cursor+start,1,length,stdout)!=length' is always true [knownConditionTrueFalse]
+        if (fwrite(cursor + start, 1, length, stdout) != length ||
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:67:44: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:73:15: note: start is assigned '(unsigned long)match.rm_so' here.
+        start = (size_t)match.rm_so;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:74:15: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+        end = (size_t)match.rm_eo;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:75:22: note: Assignment 'length=end-start', assigned value is less than 0
+        length = end - start;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-7.c:77:55: note: Condition 'fwrite(cursor+start,1,length,stdout)!=length' is always true
+        if (fwrite(cursor + start, 1, length, stdout) != length ||
+                                                      ^

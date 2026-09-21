@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LEN 256
+#define MAX_INPUT_LEN 65536
+
+static int extract_words(const char *str, size_t max_len,
+                         char words[][MAX_WORD_LEN], int max_words)
+{
+    int count = 0;
+    size_t i = 0;
+    size_t len;
+
+    if (str == NULL || words == NULL || max_words <= 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    while (i < len && count < max_words) {
+        while (i < len && !isalnum((unsigned char)str[i])) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        size_t w = 0;
+        while (i < len && isalnum((unsigned char)str[i]) && w < MAX_WORD_LEN - 1) {
+            words[count][w] = (char)tolower((unsigned char)str[i]);
+            w++;
+            i++;
+        }
+        words[count][w] = '\0';
+        while (i < len && isalnum((unsigned char)str[i])) {
+            i++;
+        }
+        count++;
+    }
+    return count;
+}
+
+const char *find_first_repeated_word(const char *str, char *result, size_t result_size)
+{
+    char (*words)[MAX_WORD_LEN];
+    const char *found = NULL;
+    int count;
+    int i;
+    int j;
+
+    if (str == NULL || result == NULL || result_size == 0) {
+        return NULL;
+    }
+
+    words = calloc(MAX_WORDS, sizeof(*words));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    count = extract_words(str, MAX_INPUT_LEN, words, MAX_WORDS);
+
+    for (i = 1; i < count && found == NULL; i++) {
+        for (j = 0; j < i; j++) {
+            if (strncmp(words[i], words[j], MAX_WORD_LEN) == 0) {
+                size_t wlen = strnlen(words[i], MAX_WORD_LEN);
+                if (wlen >= result_size) {
+                    free(words);
+                    return NULL;
+                }
+                memcpy(result, words[i], wlen);
+                result[wlen] = '\0';
+                found = result;
+                break;
+            }
+        }
+    }
+
+    free(words);
+    return found;
+}
+
+int main(void)
+{
+    const char *test1 = "he had had quite enough of this nonsense";
+    const char *test2 = "one two three four";
+    char result[MAX_WORD_LEN];
+
+    memset(result, 0, sizeof(result));
+
+    if (find_first_repeated_word(test1, result, sizeof(result)) != NULL) {
+        if (printf("First repeated word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No repeated word found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    memset(result, 0, sizeof(result));
+
+    if (find_first_repeated_word(test2, result, sizeof(result)) != NULL) {
+        if (printf("First repeated word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No repeated word found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+1. **`char (*words)[MAX_WORD_LEN]` allocation (CWE-119/CWE-120):** The statically-sized word buffers are safe because `extract_words` strictly enforces `w < MAX_WORD_LEN - 1` before every write, guaranteeing room for the null terminator, and enforces `count < max_words` so the array of words is never overrun. Overly long words are truncated and their remainder skipped.
+
+2. **`memcpy` into `result` (CWE-120):** The copy is guarded by `if (wlen >= result_size) return NULL;`, which guarantees the destination can hold `wlen` bytes plus the null terminator. `wlen` itself is bounded via `strnlen(..., MAX_WORD_LEN)`, so no unbounded read occurs.
+
+3. **`char result[MAX_WORD_LEN]` in `main` (CWE-119/CWE-120):** The buffer size is always passed via `sizeof(result)` and honored by the callee's bounds check, and the buffer is zero-initialized before each use.
+
+Additional defensive measures already present: `strnlen` caps input scanning at `MAX_INPUT_LEN`, all `ctype` calls cast to `unsigned char` to avoid undefined behavior on negative `char` values, `calloc` failure is handled, `words` is freed on every exit path, and `printf` return values are checked. The Flawfinder hits are informational (risk 2) and each is mitigated by explicit bounds checking, so the logic remains unchanged with the comments removed.

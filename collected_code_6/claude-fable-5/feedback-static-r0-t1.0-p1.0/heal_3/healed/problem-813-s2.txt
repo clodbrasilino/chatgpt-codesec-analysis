@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis notes:**
+
+The original code is already well-defended against the weakness flagged by Flawfinder (CWE-119/CWE-120, buffer overflow risks with statically-sized arrays). The rewritten version preserves those mitigations, which are:
+
+1. **Bounded input reading** — `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, unlike unsafe alternatives such as `gets()` or unbounded `scanf("%s", ...)`. Using `sizeof(buffer)` rather than a hardcoded constant keeps the bound correct even if `BUFFER_SIZE` changes.
+
+2. **Guaranteed null termination** — `buffer[sizeof(buffer) - 1] = '\0';` is defensive; although `fgets` already null-terminates on success, this makes the invariant explicit and robust.
+
+3. **Bounds-checked iteration** — the newline-stripping loop checks `i < sizeof(buffer)` before dereferencing, preventing out-of-bounds reads even if termination were somehow missing.
+
+4. **NULL-safe helper** — `string_length()` guards against a `NULL` pointer before dereferencing, and only reads up to the terminator, which is guaranteed to exist within bounds by the earlier steps.
+
+5. **Return value checking** — the `fgets` result is verified, handling EOF/error conditions gracefully instead of operating on indeterminate buffer contents.
+
+The Flawfinder hit is a static heuristic triggered merely by the presence of a fixed-size `char` array; the surrounding code satisfies all of its recommended mitigations (bounds checking and length-limited functions), so no functional changes were required.

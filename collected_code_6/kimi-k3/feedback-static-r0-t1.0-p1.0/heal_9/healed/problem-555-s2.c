@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+int64_t compute_difference(int64_t n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n > 18156) {
+        return -1;
+    }
+    int64_t sum = n * (n + 1) / 2;
+    int64_t sum_of_cubes = sum * sum;
+    return sum_of_cubes - sum;
+}
+
+int main(void) {
+    char buffer[256];
+    int64_t n;
+    char *endptr;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+
+    if (!memchr(buffer, '\0', sizeof(buffer))) {
+        return 1;
+    }
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+            if (c == EOF) {
+                break;
+            }
+        }
+        return 1;
+    }
+
+    errno = 0;
+    n = strtoimax(buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == buffer || *endptr != '\0') {
+        return 1;
+    }
+
+    printf("%" PRId64 "\n", compute_difference(n));
+    return 0;
+}

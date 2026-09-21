@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool match_z_inside_word(const char *word) {
+    if (word == NULL || word[0] == '\0') {
+        return false;
+    }
+
+    size_t i = 1;
+    while (word[i] != '\0') {
+        if (word[i + 1] == '\0') {
+            break;
+        }
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return true;
+        }
+        i++;
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_words[] = {
+        "pizza",
+        "zebra",
+        "buzz",
+        "lazy",
+        "z",
+        "az",
+        "za",
+        "hazard",
+        NULL
+    };
+
+    for (size_t i = 0; test_words[i] != NULL; i++) {
+        const char *word = test_words[i];
+        bool result = match_z_inside_word(word);
+        printf("%s: %s\n", word, result ? "Match" : "No match");
+    }
+
+    return 0;
+}

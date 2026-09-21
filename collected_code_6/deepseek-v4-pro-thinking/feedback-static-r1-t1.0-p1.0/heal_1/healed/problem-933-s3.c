@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t len = 0;
+    size_t extra = 0;
+
+    while (input[i] != '\0') {
+        if (isupper((unsigned char)input[i]) && i > 0) {
+            extra++;
+        }
+        len++;
+        i++;
+    }
+
+    size_t total = len + extra;
+    char *output = malloc(total + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    size_t j = 0;
+    while (input[i] != '\0') {
+        if (isupper((unsigned char)input[i])) {
+            if (i > 0) {
+                output[j++] = '_';
+            }
+            output[j++] = (char)tolower((unsigned char)input[i]);
+        } else {
+            output[j++] = input[i];
+        }
+        i++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void) {
+    const char *camel = "camelCaseString";
+    char *snake = camel_to_snake(camel);
+
+    if (snake != NULL) {
+        printf("%s\n", snake);
+        free(snake);
+    }
+
+    return 0;
+}

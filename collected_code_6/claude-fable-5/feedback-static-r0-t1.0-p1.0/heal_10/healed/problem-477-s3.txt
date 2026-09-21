@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *to_lower_case(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer;
+    char *tmp;
+    int ch;
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            tmp = realloc(buffer, capacity);
+            if (tmp == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = tmp;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (ch == EOF && ferror(stream)) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length >= capacity) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *result;
+
+    buffer = read_line(stdin);
+    if (buffer == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = to_lower_case(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the flagged weakness:**
+
+The Flawfinder warning on `fgetc` (CWE-120 buffer overflow, CWE-20 improper input validation) is a low-risk, heuristic-based flag. Reviewing the loop, the code already mitigates the concern correctly:
+
+1. **Bounds checking before every write** — `length + 1 >= capacity` guarantees space for both the incoming character and the eventual null terminator before `buffer[length++]` executes.
+2. **Overflow-safe growth** — the `capacity > SIZE_MAX / 2` guard prevents `size_t` wraparound when doubling, avoiding an undersized allocation that could lead to a heap overflow.
+3. **Safe `realloc` pattern** — the result is assigned to `tmp` first, so the original buffer isn't leaked or lost if reallocation fails.
+4. **Correct EOF/error handling** — `ferror` distinguishes read errors from a legitimate EOF, and an EOF with zero bytes read returns `NULL` rather than an empty allocation.
+5. **`tolower` safety** — casting to `unsigned char` before passing to `tolower` avoids undefined behavior on platforms where `char` is signed and the input contains bytes ≥ 0x80.
+
+Since the code as written already defends against the flagged weakness, the rewrite is functionally identical with the comments removed; no additional hardening is required for this warning.

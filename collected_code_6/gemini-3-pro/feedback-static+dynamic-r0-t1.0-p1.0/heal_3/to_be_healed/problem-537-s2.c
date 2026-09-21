@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+static char* return_none(void) {
+    char* none = (char*)malloc(5);
+    if (none) {
+        snprintf(none, 5, "None");
+    }
+    return none;
+}
+
+char* find_first_repeated_word(const char* input_string) {
+    if (!input_string) {
+        return return_none();
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(input_string);
+    char* str_copy = (char*)malloc(len + 1);
+    if (!str_copy) {
+        return return_none();
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+     */
+    strcpy(str_copy, input_string);
+
+    for (size_t i = 0; i < len; ++i) {
+        str_copy[i] = tolower((unsigned char)str_copy[i]);
+    }
+
+    size_t words_capacity = 10;
+    char** words = (char**)malloc(words_capacity * sizeof(char*));
+    if (!words) {
+        free(str_copy);
+        return return_none();
+    }
+
+    size_t word_count = 0;
+    char* context = NULL;
+    char* token = strtok_r(str_copy, " \t\n\r.,!?;:-", &context);
+
+    while (token != NULL) {
+        for (size_t i = 0; i < word_count; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                /* Possible weaknesses found:
+                 * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+                 */
+                char* result = (char*)malloc(strlen(token) + 1);
+                if (result) {
+                    /* Possible weaknesses found:
+                     * Flawfinder strcpy: Does not check for buffer overflows when copying to destination [MS-banned] (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy easily misused). (risk 4, buffer)
+                     */
+                    strcpy(result, token);
+                }
+                free(words);
+                free(str_copy);
+                return result ? result : return_none();
+            }
+        }
+
+        if (word_count >= words_capacity) {
+            words_capacity *= 2;
+            char** temp = (char**)realloc(words, words_capacity * sizeof(char*));
+            if (!temp) {
+                free(words);
+                free(str_copy);
+                return return_none();
+            }
+            words = temp;
+        }
+        words[word_count++] = token;
+
+        token = strtok_r(NULL, " \t\n\r.,!?;:-", &context);
+    }
+
+    free(words);
+    free(str_copy);
+    return return_none();
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[4096];
+    size_t len = 0;
+    int c;
+    
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && len < sizeof(buffer) - 1) {
+        buffer[len++] = c;
+    }
+    buffer[len] = '\0';
+    
+    if (len > 0) {
+        char* repeated_word = find_first_repeated_word(buffer);
+        if (repeated_word) {
+            printf("%s", repeated_word);
+            free(repeated_word);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_INPUT_LEN 4096
+
+static size_t bounded_len(const char *s, size_t max_len)
+{
+    size_t i;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < max_len; i++) {
+        if (s[i] == '\0') {
+            break;
+        }
+    }
+    return i;
+}
+
+static void trim_trailing(char *s, size_t max_len)
+{
+    size_t len;
+
+    if (s == NULL) {
+        return;
+    }
+
+    len = bounded_len(s, max_len);
+
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r' ||
+                       s[len - 1] == ' ' || s[len - 1] == '\t')) {
+        s[len - 1] = '\0';
+        len--;
+    }
+}
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count10 = 0;
+    int count01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = bounded_len(s1, MAX_INPUT_LEN);
+    len2 = bounded_len(s2, MAX_INPUT_LEN);
+
+    if (len1 >= MAX_INPUT_LEN || len2 >= MAX_INPUT_LEN) {
+        return -1;
+    }
+
+    if (len1 != len2 || len1 == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') {
+                count10++;
+            } else {
+                count01++;
+            }
+        }
+    }
+
+    if (count10 != count01) {
+        return -1;
+    }
+
+    return count10;
+}
+
+static int read_token(char *buf, size_t size)
+{
+    size_t pos = 0;
+    int c;
+
+    if (buf == NULL || size == 0) {
+        return 0;
+    }
+
+    do {
+        c = getchar();
+    } while (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+
+    if (c == EOF) {
+        return 0;
+    }
+
+    while (c != EOF && c != ' ' && c != '\t' && c != '\n' && c != '\r') {
+        if (pos + 1 < size) {
+            buf[pos] = (char)c;
+            pos++;
+        } else {
+            buf[0] = '\0';
+            return 0;
+        }
+        c = getchar();
+    }
+
+    buf[pos] = '\0';
+    return 1;
+}
+
+int main(void)
+{
+    char s1[MAX_INPUT_LEN];
+    char s2[MAX_INPUT_LEN];
+    int result;
+
+    memset(s1, 0, sizeof(s1));
+    memset(s2, 0, sizeof(s2));
+
+    if (!read_token(s1, sizeof(s1))) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+        if (fflush(stdout) != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    if (!read_token(s2, sizeof(s2))) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+        if (fflush(stdout) != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    trim_trailing(s1, sizeof(s1));
+    trim_trailing(s2, sizeof(s2));
+
+    s1[sizeof(s1) - 1] = '\0';
+    s2[sizeof(s2) - 1] = '\0';
+
+    result = min_swaps(s1, s2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("%d\n", result) < 0) {
+            return 1;
+        }
+    }
+
+    if (fflush(stdout) != 0) {
+        return 1;
+    }
+
+    return 0;
+}

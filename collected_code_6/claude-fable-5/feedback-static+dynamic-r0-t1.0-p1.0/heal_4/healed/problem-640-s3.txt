@@ -1,0 +1,208 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            if (depth < INT_MAX) {
+                depth++;
+            }
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            if (j < len) {
+                result[j] = input[i];
+                j++;
+            }
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int process_line(const char *input)
+{
+    char *output;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return -1;
+    }
+    free(output);
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[sizeof(buffer) - 1] = '\0';
+        size_t len = strnlen(buffer, sizeof(buffer));
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        if (process_line(buffer) != 0) {
+            return EXIT_FAILURE;
+        }
+        memset(buffer, 0, sizeof(buffer));
+    }
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — I used `INT_MAX` without including `<limits.h>`. Here is the corrected, complete version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            if (depth < INT_MAX) {
+                depth++;
+            }
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            if (j < len) {
+                result[j] = input[i];
+                j++;
+            }
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int process_line(const char *input)
+{
+    char *output;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+    if (printf("%s\n", output) < 0) {
+        free(output);
+        return -1;
+    }
+    free(output);
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[sizeof(buffer) - 1] = '\0';
+        size_t len = strnlen(buffer, sizeof(buffer));
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        if (process_line(buffer) != 0) {
+            return EXIT_FAILURE;
+        }
+        memset(buffer, 0, sizeof(buffer));
+    }
+
+    if (ferror(stdin)) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes addressing the identified weaknesses:
+
+1. **Garbage output in test cases** (e.g., `expected 'string', got t�`): The garbage characters suggest uninitialized memory being printed. `malloc` was replaced with `calloc` so the result buffer is always zero-initialized, guaranteeing null-termination even in unexpected code paths.
+
+2. **CWE-119/CWE-120 (buffer bounds)**: An explicit bounds check `j < len` was added before every write into `result`, ensuring writes can never exceed the allocated size regardless of logic changes. The final `result[j] = '\0'` is safe since `j <= len` and the allocation is `len + 1`.
+
+3. **Defense in depth on the stack buffer**: `buffer` is zeroed with `memset` before first use and after each iteration, so stale data from a previous (longer) line can never leak into a subsequent shorter read, and the existing forced null-terminator after `fgets` is retained.
+
+4. **Integer overflow guard**: `depth` is capped at `INT_MAX` to prevent signed integer overflow (undefined behavior) on pathological inputs consisting of thousands of `(` characters.
+
+5. **NULL check in `process_line`**: Added a defensive NULL check on the input pointer before use.

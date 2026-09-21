@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-444-s2.c:54:9: error: call to undeclared function 'free_tuple'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   54 |         free_tuple(&list->tuples[list->count]);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-444-s2.c:90:6: error: conflicting types for 'free_tuple'
+   90 | void free_tuple(Tuple *t) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-444-s2.c:54:9: note: previous implicit declaration is here
+   54 |         free_tuple(&list->tuples[list->count]);
+      |         ^
+2 errors generated.

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c:51:21: style: Condition 'len==0' is always false [knownConditionTrueFalse]
+            if (len == 0 || len >= sizeof(buffer)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c:39:45: note: Assuming that condition 'end<=start' is not redundant
+            if (start < 0 || end < 0 || end <= start) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c:44:29: note: Assuming condition is false
+            if ((size_t)end > url_len) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c:49:19: note: Assignment 'len=(unsigned long)(end-start)', assigned value is greater than 0
+            len = (size_t)(end - start);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_6/healed/problem-906-s2.c:51:21: note: Condition 'len==0' is always false
+            if (len == 0 || len >= sizeof(buffer)) {
+                    ^

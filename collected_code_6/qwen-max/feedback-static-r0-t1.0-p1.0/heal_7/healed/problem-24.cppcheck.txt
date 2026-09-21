@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-24.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-24.c:21:16: style: Condition 'length>0' is always true [knownConditionTrueFalse]
+    if (length > 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-24.c:18:26: note: Assignment 'binary="1101"', assigned value is "1101"
+    const char *binary = "1101";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-24.c:19:27: note: Assignment 'length=strlen(binary)', assigned value is 4
+    size_t length = strlen(binary);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-24.c:21:16: note: Condition 'length>0' is always true
+    if (length > 0) {
+               ^

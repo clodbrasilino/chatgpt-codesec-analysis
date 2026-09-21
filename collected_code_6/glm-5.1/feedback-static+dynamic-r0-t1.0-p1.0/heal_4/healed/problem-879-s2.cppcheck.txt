@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-879-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-879-s2.c:1:22: error: The code contains unhandled character(s) (character code=229). Neither unicode nor extended ascii is supported. [syntaxError]
+#include <ncurses.h> 参数不正确，应为标准头文件
+                     ^

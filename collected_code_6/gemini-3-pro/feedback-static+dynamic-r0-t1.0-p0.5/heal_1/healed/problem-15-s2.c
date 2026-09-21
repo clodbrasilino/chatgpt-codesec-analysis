@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char** split_at_lowercase(const char* str, int* count) {
+    if (!str || !count) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+
+    if (len == 0) {
+        *count = 0;
+        return NULL;
+    }
+
+    size_t max_splits = len + 1;
+    char** result = (char**)malloc(max_splits * sizeof(char*));
+    if (!result) {
+        return NULL;
+    }
+
+    int current_split = 0;
+    size_t start_idx = 0;
+
+    for (size_t i = 0; i <= len; i++) {
+        if (str[i] == '\0' || islower((unsigned char)str[i])) {
+            size_t substr_len = i - start_idx;
+            result[current_split] = (char*)malloc((substr_len + 1) * sizeof(char));
+            if (!result[current_split]) {
+                for (int j = 0; j < current_split; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            memcpy(result[current_split], str + start_idx, substr_len);
+            result[current_split][substr_len] = '\0';
+            current_split++;
+            start_idx = i + 1;
+        }
+    }
+
+    *count = current_split;
+    return result;
+}
+
+void free_splits(char** splits, int count) {
+    if (!splits) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(splits[i]);
+    }
+    free(splits);
+}
+
+int main(void) {
+    const char* test_str = "HELLOwORLDtEST";
+    int count = 0;
+    
+    char** splits = split_at_lowercase(test_str, &count);
+    
+    if (splits) {
+        for (int i = 0; i < count; i++) {
+            printf("Split %d: '%s'\n", i, splits[i]);
+        }
+        free_splits(splits, count);
+    } else {
+        printf("Failed to split string or string was empty.\n");
+    }
+
+    return 0;
+}

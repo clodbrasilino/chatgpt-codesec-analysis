@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-885-s2.c: In function 'is_isomorphic':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-885-s2.c:14:40: error: 'SIZE_MAX' undeclared (first use in this function)
+   14 |     while (s[len_s] != '\0' && len_s < SIZE_MAX) {
+      |                                        ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-885-s2.c:5:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    4 | #include <limits.h>
+  +++ |+#include <stdint.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-885-s2.c:14:40: note: each undeclared identifier is reported only once for each function it appears in
+   14 |     while (s[len_s] != '\0' && len_s < SIZE_MAX) {
+      |                                        ^~~~~~~~

@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+static int ensure_capacity(char **result, size_t *capacity, size_t required)
+{
+    while (required > *capacity) {
+        size_t new_capacity;
+        char *tmp;
+
+        if (*capacity > SIZE_MAX / 2U) {
+            return -1;
+        }
+        new_capacity = *capacity * 2U;
+        tmp = realloc(*result, new_capacity);
+        if (tmp == NULL) {
+            return -1;
+        }
+        *result = tmp;
+        *capacity = new_capacity;
+    }
+    return 0;
+}
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count)
+{
+    size_t capacity;
+    size_t length;
+    size_t i;
+    char *result;
+    char buffer[64];
+
+    if (tuples == NULL || count == 0U) {
+        result = malloc(1U);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    capacity = 64U;
+    length = 0U;
+    result = malloc(capacity);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    for (i = 0U; i < count; i++) {
+        int written;
+        size_t needed;
+
+        memset(buffer, 0, sizeof(buffer));
+        written = snprintf(buffer, sizeof(buffer), "%d %d",
+                           tuples[i].first, tuples[i].second);
+        if (written < 0 || (size_t)written >= sizeof(buffer)) {
+            free(result);
+            return NULL;
+        }
+
+        needed = (size_t)written;
+
+        if (needed > SIZE_MAX - 2U || length > SIZE_MAX - needed - 2U) {
+            free(result);
+            return NULL;
+        }
+
+        if (ensure_capacity(&result, &capacity, length + needed + 2U) != 0) {
+            free(result);
+            return NULL;
+        }
+
+        if (length > 0U) {
+            if (length + 1U > capacity) {
+                free(result);
+                return NULL;
+            }
+            result[length] = ' ';
+            length++;
+        }
+
+        if (needed > capacity || length > capacity - needed - 1U) {
+            free(result);
+            return NULL;
+        }
+
+        memcpy(&result[length], buffer, needed);
+        length += needed;
+        result[length] = '\0';
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6},
+        {7, 8}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    char *flattened;
+
+    flattened = flatten_tuple_list(tuples, count);
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten tuple list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", flattened) < 0) {
+        free(flattened);
+        return EXIT_FAILURE;
+    }
+
+    free(flattened);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is safe as written:
+
+**1. Flawfinder `char buffer[64]` (CWE-119/CWE-120):** This warning is a false positive in practice. The fixed-size stack buffer is only ever written to via `snprintf(buffer, sizeof(buffer), ...)`, which is length-bounded and null-terminates. The return value is validated with `written < 0 || (size_t)written >= sizeof(buffer)`, correctly detecting both encoding errors and truncation. Two `int` values plus a space can never exceed 64 bytes (worst case roughly 23 characters for 32-bit ints), so the buffer is adequately sized with margin.
+
+**2. Flawfinder `memcpy` (CWE-120):** Also mitigated. Before the copy, `ensure_capacity(&result, &capacity, length + needed + 2U)` guarantees the destination holds `length + needed + 2` bytes (data, optional separator, and null terminator). The preceding overflow guards (`needed > SIZE_MAX - 2U`, `length > SIZE_MAX - needed - 2U`) prevent size_t wraparound in that arithmetic, and the redundant check `needed > capacity || length > capacity - needed - 1U` acts as defense-in-depth before the `memcpy`.
+
+Other correctness points worth noting: `realloc` is done through a temporary pointer to avoid leaking on failure, the doubling logic in `ensure_capacity` guards against `SIZE_MAX / 2U` overflow, `NULL`/zero-count inputs return a valid empty string rather than `NULL`, and every error path frees `result` before returning. The code has no exploitable buffer overflow paths as written.

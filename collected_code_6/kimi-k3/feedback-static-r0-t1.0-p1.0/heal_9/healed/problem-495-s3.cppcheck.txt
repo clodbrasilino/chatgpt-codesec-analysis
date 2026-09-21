@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:51:43: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+                if (result_len + copy_len > input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:50:55: note: outer condition: result_len+copy_len<=input_len
+            if (copy_len > 0 && result_len + copy_len <= input_len) {
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:51:43: note: opposite inner condition: result_len+copy_len>input_len
+                if (result_len + copy_len > input_len) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:78:39: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+            if (result_len + copy_len > input_len) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:77:51: note: outer condition: result_len+copy_len<=input_len
+        if (copy_len > 0 && result_len + copy_len <= input_len) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-495-s3.c:78:39: note: opposite inner condition: result_len+copy_len>input_len
+            if (result_len + copy_len > input_len) {
+                                      ^

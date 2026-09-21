@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+typedef struct {
+    char *word;
+    int position;
+} Adverb;
+
+typedef struct {
+    Adverb *adverbs;
+    int count;
+} AdverbResult;
+
+AdverbResult find_adverbs(const char *sentence) {
+    AdverbResult result = {NULL, 0};
+    if (sentence == NULL) {
+        return result;
+    }
+
+    size_t len = strnlen(sentence, SIZE_MAX);
+    int adverb_count = 0;
+
+    for (size_t i = 0; i < len; ) {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            while (i < len && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+            size_t word_len = i - start;
+            if (word_len >= 2) {
+                char c1 = tolower((unsigned char)sentence[start + word_len - 2]);
+                char c2 = tolower((unsigned char)sentence[start + word_len - 1]);
+                if (c1 == 'l' && c2 == 'y') {
+                    adverb_count++;
+                }
+            }
+        } else {
+            i++;
+        }
+    }
+
+    if (adverb_count == 0) {
+        return result;
+    }
+
+    result.adverbs = malloc(adverb_count * sizeof(Adverb));
+    if (result.adverbs == NULL) {
+        result.count = -1;
+        return result;
+    }
+    result.count = adverb_count;
+
+    int current_adverb = 0;
+    for (size_t i = 0; i < len; ) {
+        if (isalpha((unsigned char)sentence[i])) {
+            size_t start = i;
+            while (i < len && isalpha((unsigned char)sentence[i])) {
+                i++;
+            }
+            size_t word_len = i - start;
+            if (word_len >= 2) {
+                char c1 = tolower((unsigned char)sentence[start + word_len - 2]);
+                char c2 = tolower((unsigned char)sentence[start + word_len - 1]);
+                if (c1 == 'l' && c2 == 'y') {
+                    result.adverbs[current_adverb].word = malloc(word_len + 1);
+                    if (result.adverbs[current_adverb].word == NULL) {
+                        for (int k = 0; k < current_adverb; k++) {
+                            free(result.adverbs[k].word);
+                        }
+                        free(result.adverbs);
+                        result.adverbs = NULL;
+                        result.count = -1;
+                        return result;
+                    }
+                    for (size_t j = 0; j < word_len; j++) {
+                        result.adverbs[current_adverb].word[j] = sentence[start + j];
+                    }
+                    result.adverbs[current_adverb].word[word_len] = '\0';
+                    result.adverbs[current_adverb].position = (int)start;
+                    current_adverb++;
+                }
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return result;
+}
+
+void free_adverb_result(AdverbResult result) {
+    if (result.adverbs != NULL) {
+        for (int i = 0; i < result.count; i++) {
+            free(result.adverbs[i].word);
+        }
+        free(result.adverbs);
+    }
+}
+
+int main(void) {
+    const char *sentence = "He quickly ran and suddenly stopped, but she softly spoke.";
+    AdverbResult result = find_adverbs(sentence);
+
+    if (result.count < 0) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < result.count; i++) {
+        printf("Adverb: %s, Position: %d\n", result.adverbs[i].word, result.adverbs[i].position);
+    }
+
+    free_adverb_result(result);
+
+    return 0;
+}

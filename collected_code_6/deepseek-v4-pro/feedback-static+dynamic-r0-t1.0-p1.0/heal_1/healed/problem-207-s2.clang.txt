@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-207-s2.c:15:22: warning: Result of 'calloc' is converted to a pointer of type 'int[200]', which is incompatible with sizeof operand type 'int' [unix.MallocSizeof]
+   15 |     int (*dp)[200] = calloc(200 * 200, sizeof(int));
+      |     ~~~~~~~~~~~~~~   ^~~~~~            ~~~~~~~~~~~
+1 warning generated.

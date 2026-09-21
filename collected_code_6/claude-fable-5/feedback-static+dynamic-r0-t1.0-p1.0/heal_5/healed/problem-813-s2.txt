@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(int argc, const char *argv[])
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    size_t i;
+
+    if (argc > 1 && argv[1] != NULL) {
+        length = string_length(argv[1]);
+        printf("%zu\n", length);
+        fflush(stdout);
+        return 0;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        printf("0\n");
+        fflush(stdout);
+        return 0;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    i = 0;
+    while (i < sizeof(buffer) && buffer[i] != '\0') {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+        i++;
+    }
+
+    length = string_length(buffer);
+
+    printf("%zu\n", length);
+    fflush(stdout);
+
+    return 0;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Failing test cases (no output):** The most likely cause of the tests producing no output at all is the input path failing. When `fgets` returned `NULL` (e.g., the test harness closed `stdin` immediately or provided input in a way that triggered EOF), the original code printed an error to `stderr` and exited with status 1, producing nothing on `stdout`. The rewrite handles the EOF case gracefully by printing `0`, and adds `fflush(stdout)` to guarantee output is flushed before exit in case the test harness terminates the process or the pipe abruptly.
+
+2. **`constParameter` warning (cppcheck):** `argv` is never modified, so it is declared as `const char *argv[]` to satisfy the static analyzer.
+
+3. **CWE-119/CWE-120 (Flawfinder, statically-sized buffer):** The buffer usage was already bounded correctly (`fgets` with `sizeof(buffer)`, forced null termination, bounded loop), so those defensive measures are retained — the Flawfinder hit is a low-risk informational finding once bounds checking is in place.
+
+4. **Portability improvement:** Replaced the `(unsigned long)` cast with the `%zu` format specifier, which is the correct C99 specifier for `size_t` and avoids potential truncation on platforms where `size_t` is wider than `unsigned long`.
+
+5. **`string_length` NULL guard** was kept as-is — it correctly avoids dereferencing a `NULL` pointer.

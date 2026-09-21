@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:72:13: error: call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   72 |             free_dictionary(&dict);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:78:13: error: call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   78 |             free_dictionary(&dict);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:83:13: error: call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   83 |             free_dictionary(&dict);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:89:13: error: call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   89 |             free_dictionary(&dict);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:97:6: error: conflicting types for 'free_dictionary'
+   97 | void free_dictionary(Dictionary *dict) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-740-s3.c:72:13: note: previous implicit declaration is here
+   72 |             free_dictionary(&dict);
+      |             ^
+5 errors generated.

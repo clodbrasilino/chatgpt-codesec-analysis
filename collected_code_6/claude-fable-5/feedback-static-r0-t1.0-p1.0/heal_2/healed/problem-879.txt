@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define ERROR_BUFFER_SIZE 256
+
+static void report_regex_error(int errcode, const regex_t *regex, const char *context)
+{
+    char error_buffer[ERROR_BUFFER_SIZE];
+
+    memset(error_buffer, 0, sizeof(error_buffer));
+    regerror(errcode, regex, error_buffer, sizeof(error_buffer) - 1);
+    error_buffer[sizeof(error_buffer) - 1] = '\0';
+    fprintf(stderr, "%s: %s\n", context, error_buffer);
+}
+
+static int match_pattern(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        fprintf(stderr, "match_pattern: NULL input\n");
+        return -1;
+    }
+
+    ret = regcomp(&regex, "a.*b$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        report_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+
+    if (ret == 0) {
+        regfree(&regex);
+        return 1;
+    }
+
+    if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 0;
+    }
+
+    report_regex_error(ret, &regex, "Regex execution failed");
+    regfree(&regex);
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "acb",
+        "ab",
+        "axyzb",
+        "a123b",
+        "bca",
+        "abc",
+        "b",
+        "a"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_pattern(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\" matches\n", tests[i]);
+        } else {
+            printf("\"%s\" does not match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the original code and the applied hardening:**
+
+The original code was already largely safe — the Flawfinder hit on `char error_buffer[ERROR_BUFFER_SIZE]` is a heuristic warning (CWE-119/CWE-120) about statically-sized buffers in general, not an actual overflow, since `regerror()` was correctly called with `sizeof(error_buffer)` and the buffer was explicitly NUL-terminated.
+
+The rewrite strengthens this further:
+
+1. **Centralized error reporting** — the duplicated `regerror` + terminate + `fprintf` sequence is factored into `report_regex_error()`, reducing the chance of a future edit forgetting the bounds argument or termination in one of the copies.
+2. **Defense in depth on the buffer** — the buffer is zero-initialized with `memset`, `regerror` is given `sizeof(buffer) - 1` so the final byte is never written by the library, and the last byte is still explicitly set to `'\0'`. Even a misbehaving `regerror` implementation cannot produce an unterminated string.
+3. **NULL guard** — `regexec` with a NULL `text` is undefined behavior; the input is now validated before use.
+4. **Resource safety preserved** — every path after a successful `regcomp` still calls `regfree`, so no leak of the compiled pattern.

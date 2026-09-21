@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long largest_prime_factor(long long n) {
+    long long largest = -1;
+    long long divisor = 2;
+
+    if (n < 2) {
+        return -1;
+    }
+
+    while (n % divisor == 0) {
+        largest = divisor;
+        n /= divisor;
+    }
+
+    divisor = 3;
+    while (divisor <= n / divisor) {
+        while (n % divisor == 0) {
+            largest = divisor;
+            n /= divisor;
+        }
+        divisor += 2;
+    }
+
+    if (n > 1) {
+        largest = n;
+    }
+
+    return largest;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[256];
+    char *endptr;
+    long long number;
+    long long result;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoll(input, &endptr, 10);
+
+    if (endptr == input) {
+        fprintf(stderr, "Invalid input: not a number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Invalid input: number out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n' || *endptr == '\r') {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid input: trailing characters\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 2) {
+        fprintf(stderr, "Number must be greater than or equal to 2\n");
+        return EXIT_FAILURE;
+    }
+
+    result = largest_prime_factor(number);
+
+    if (result == -1) {
+        fprintf(stderr, "Could not determine largest prime factor\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

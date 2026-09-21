@@ -1,0 +1,238 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i_val;
+        double f_val;
+        char *s_val;
+    } data;
+} Element;
+
+typedef struct {
+    Element *elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static int tuple_init(Tuple *t, size_t capacity)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    t->elements = NULL;
+    t->count = 0;
+    t->capacity = 0;
+    if (capacity == 0) {
+        return 0;
+    }
+    if (capacity > SIZE_MAX / sizeof(Element)) {
+        return -1;
+    }
+    t->elements = calloc(capacity, sizeof(Element));
+    if (t->elements == NULL) {
+        return -1;
+    }
+    t->capacity = capacity;
+    return 0;
+}
+
+static void tuple_free(Tuple *t)
+{
+    if (t == NULL) {
+        return;
+    }
+    if (t->elements != NULL) {
+        for (size_t i = 0; i < t->count; i++) {
+            if (t->elements[i].type == TYPE_STRING) {
+                free(t->elements[i].data.s_val);
+                t->elements[i].data.s_val = NULL;
+            }
+        }
+        free(t->elements);
+        t->elements = NULL;
+    }
+    t->count = 0;
+    t->capacity = 0;
+}
+
+static int tuple_add_int(Tuple *t, int value)
+{
+    if (t == NULL || t->elements == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    t->elements[t->count].type = TYPE_INT;
+    t->elements[t->count].data.i_val = value;
+    t->count++;
+    return 0;
+}
+
+static int tuple_add_float(Tuple *t, double value)
+{
+    if (t == NULL || t->elements == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    t->elements[t->count].type = TYPE_FLOAT;
+    t->elements[t->count].data.f_val = value;
+    t->count++;
+    return 0;
+}
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int tuple_add_string(Tuple *t, const char *value)
+{
+    if (t == NULL || t->elements == NULL || value == NULL || t->count >= t->capacity) {
+        return -1;
+    }
+    size_t len = bounded_strlen(value, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return -1;
+    }
+    if (len == SIZE_MAX) {
+        return -1;
+    }
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return -1;
+    }
+    memcpy(copy, value, len);
+    copy[len] = '\0';
+    t->elements[t->count].type = TYPE_STRING;
+    t->elements[t->count].data.s_val = copy;
+    t->count++;
+    return 0;
+}
+
+static int remove_type_elements(Tuple *t, ElementType type_to_remove)
+{
+    size_t write_index = 0;
+
+    if (t == NULL || t->elements == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < t->count; i++) {
+        if (t->elements[i].type == type_to_remove) {
+            if (t->elements[i].type == TYPE_STRING) {
+                free(t->elements[i].data.s_val);
+                t->elements[i].data.s_val = NULL;
+            }
+        } else {
+            if (write_index != i) {
+                t->elements[write_index] = t->elements[i];
+            }
+            write_index++;
+        }
+    }
+    for (size_t i = write_index; i < t->count; i++) {
+        memset(&t->elements[i], 0, sizeof(Element));
+    }
+    t->count = write_index;
+    return 0;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL || t->elements == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->count; i++) {
+        switch (t->elements[i].type) {
+        case TYPE_INT:
+            printf("%d", t->elements[i].data.i_val);
+            break;
+        case TYPE_FLOAT:
+            printf("%f", t->elements[i].data.f_val);
+            break;
+        case TYPE_STRING:
+            printf("\"%s\"", t->elements[i].data.s_val != NULL ? t->elements[i].data.s_val : "");
+            break;
+        default:
+            printf("?");
+            break;
+        }
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    Tuple t;
+
+    if (tuple_init(&t, 6) != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_add_int(&t, 10) != 0 ||
+        tuple_add_string(&t, "hello") != 0 ||
+        tuple_add_float(&t, 3.14) != 0 ||
+        tuple_add_int(&t, 42) != 0 ||
+        tuple_add_string(&t, "world") != 0 ||
+        tuple_add_float(&t, 2.71) != 0) {
+        fprintf(stderr, "Failed to populate tuple\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original tuple: ");
+    tuple_print(&t);
+
+    if (remove_type_elements(&t, TYPE_STRING) != 0) {
+        fprintf(stderr, "Failed to remove elements\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("After removing strings: ");
+    tuple_print(&t);
+
+    if (remove_type_elements(&t, TYPE_FLOAT) != 0) {
+        fprintf(stderr, "Failed to remove elements\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+
+    printf("After removing floats: ");
+    tuple_print(&t);
+
+    tuple_free(&t);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses and improve robustness:
+
+1. **Flawfinder memcpy (CWE-120)**: The original `memcpy` was already safe since the destination buffer is allocated as `len + 1` and exactly `len` bytes are copied. The fix strengthens the guarantee by validating `len` against both `MAX_STRING_LEN` and `SIZE_MAX` before allocation, ensuring `malloc(len + 1)` cannot overflow and the destination always holds the source data.
+
+2. **Missing `<stdint.h>` include**: The original code used `SIZE_MAX` without including `<stdint.h>`, which would fail to compile on strictly conforming implementations. This header is now included.
+
+3. **Portability of `strnlen`**: `strnlen` is POSIX, not guaranteed by C99/C11 without feature-test macros. It was replaced with a local `bounded_strlen` implementation that never reads past `max_len` bytes, preserving the bounded-read safety property.
+
+4. **Stale union data after removal (defensive hardening)**: In `remove_type_elements`, slots beyond the new `count` previously retained copies of moved elements, including dangling `s_val` pointer values. While not exploitable given `tuple_free` only iterates up to `count`, these slots are now zeroed with `memset` to eliminate any risk of use-after-free or double-free if the code evolves.

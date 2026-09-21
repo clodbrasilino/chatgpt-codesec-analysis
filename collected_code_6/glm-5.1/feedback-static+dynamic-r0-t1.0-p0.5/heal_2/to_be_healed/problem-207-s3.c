@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int longestRepeatingSubseq(const char *str) {
+    size_t n = strnlen(str, 1024);
+    /* Possible weaknesses found:
+     *  Checking if unsigned expression 'n' is less than zero. [unsignedLessThanZero]
+     */
+    if (n <= 0) {
+        return 0;
+    }
+    int **dp = (int **)malloc((n + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i <= n; i++) {
+        dp[i] = (int *)malloc((n + 1) * sizeof(int));
+        if (dp[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    for (size_t i = 0; i <= n; i++) {
+        for (size_t j = 0; j <= n; j++) {
+            dp[i][j] = 0;
+        }
+    }
+    for (size_t i = 1; i <= n; i++) {
+        for (size_t j = 1; j <= n; j++) {
+            if (str[i - 1] == str[j - 1] && i != j) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    int result = dp[n][n];
+    for (size_t i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    return result;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'str1' can be declared as const array [constVariable]
+     */
+    char str1[] = "aabebcdd";
+    int res1 = longestRepeatingSubseq(str1);
+    printf("%d\n", res1);
+    /* Possible weaknesses found:
+     *  Variable 'str2' can be declared as const array [constVariable]
+     */
+    char str2[] = "axxxy";
+    int res2 = longestRepeatingSubseq(str2);
+    printf("%d\n", res2);
+    /* Possible weaknesses found:
+     *  Variable 'str3' can be declared as const array [constVariable]
+     */
+    char str3[] = "abc";
+    int res3 = longestRepeatingSubseq(str3);
+    printf("%d\n", res3);
+    return 0;
+}

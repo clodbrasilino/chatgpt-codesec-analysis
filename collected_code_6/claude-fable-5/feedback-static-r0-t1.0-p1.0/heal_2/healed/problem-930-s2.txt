@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_a_followed_by_bs(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^a(b*)$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        size_t errbuf_size = regerror(ret, &regex, NULL, 0);
+        char *errbuf = malloc(errbuf_size);
+        if (errbuf != NULL) {
+            regerror(ret, &regex, errbuf, errbuf_size);
+            fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+            free(errbuf);
+        } else {
+            fprintf(stderr, "Regex compilation failed\n");
+        }
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = { "a", "ab", "abb", "abbbbb", "b", "ac", "aab", "" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_a_followed_by_bs(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\": %s\n", tests[i], result == 1 ? "Match" : "No match");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis and changes made:**
+
+The Flawfinder warning (CWE-119/CWE-120) flagged the statically-sized `char errbuf[256]` buffer. While the original code was technically safe—`regerror()` respects the size parameter and truncates the message—the rewritten version eliminates the concern entirely by:
+
+1. **Querying the required size first**: Calling `regerror(ret, &regex, NULL, 0)` returns the exact buffer size needed for the full error message, including the null terminator.
+
+2. **Dynamic allocation**: The buffer is allocated via `malloc()` to exactly the required size, so no truncation or overflow is possible regardless of the error message length.
+
+3. **Handling allocation failure**: If `malloc()` fails, a generic error message is printed rather than dereferencing a `NULL` pointer.
+
+4. **Freeing the buffer**: `free(errbuf)` prevents a memory leak on the error path.
+
+The rest of the code was already sound: `regfree()` is properly called after `regexec()`, the return values distinguish match/no-match/error cases, and the test loop in `main()` correctly computes array bounds with `sizeof(tests) / sizeof(tests[0])`.

@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c: In function 'left_rotate_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:25:19: error: implicit declaration of function 'memcpy_s'; did you mean 'memcpy'? [-Wimplicit-function-declaration]
+   25 |     errno_t err = memcpy_s(buffer, rotations, str, rotations);
+      |                   ^~~~~~~~
+      |                   memcpy
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-973-s2.c:31:5: error: implicit declaration of function 'memmove_s'; did you mean 'memmove'? [-Wimplicit-function-declaration]
+   31 |     memmove_s(str, len, str + rotations, len - rotations);
+      |     ^~~~~~~~~
+      |     memmove

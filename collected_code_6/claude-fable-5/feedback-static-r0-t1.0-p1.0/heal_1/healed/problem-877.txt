@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_string(char *str, size_t max_len)
+{
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    if (len >= max_len) {
+        return -1;
+    }
+
+    if (len > 1) {
+        qsort(str, len, sizeof(char), compare_chars);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    if (sort_string(buffer, sizeof(buffer)) != 0) {
+        fprintf(stderr, "Error sorting string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted string: %s\n", buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes from the original:
+
+1. **`strlen` → `strnlen`**: Both flagged `strlen` calls (CWE-126) are replaced with `strnlen`, which takes a maximum length bound and cannot over-read past the buffer even if the string were somehow not null-terminated.
+
+2. **Explicit null termination**: After `fgets`, `buffer[sizeof(buffer) - 1] = '\0';` guarantees termination defensively, addressing the root concern behind the CWE-126 warnings.
+
+3. **Bounds-aware API**: `sort_string` now accepts a `max_len` parameter and validates that the string fits within it, so the function no longer trusts the caller to pass a properly terminated string — this mitigates the CWE-119/CWE-120 concern about the statically-sized array by enforcing bounds checking at every point of use.
+
+4. **Named constant**: `BUFFER_SIZE` replaces the magic number, and `sizeof(buffer)` is used consistently so the size can never drift out of sync with the checks.
+
+Note that the original code was already fairly safe in practice (`fgets` null-terminates on success), so these warnings were largely low-risk; the rewrite hardens the code against future modifications rather than fixing an exploitable bug.

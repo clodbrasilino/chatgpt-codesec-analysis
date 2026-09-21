@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *remove_multiple_spaces(const char *input);
+
+char *remove_multiple_spaces(const char *input)
+{
+    char *output;
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    output = malloc(len + 1U);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if (input[i] == ' ' && j > 0U && output[j - 1U] == ' ') {
+            continue;
+        }
+        output[j] = input[i];
+        j++;
+    }
+    output[j] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    char input[MAX_INPUT_LEN];
+    char *result;
+    size_t len;
+
+    if (fgets(input, (int)sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    }
+
+    result = remove_multiple_spaces(input);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to process the string.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The `remove_multiple_spaces` function itself was correct — it properly handles `NULL` input, bounds the length with `strnlen`, checks `malloc` failure, and correctly collapses runs of spaces while writing the terminator.
+
+The failing test cases (`'Google Assistant'`, `'Quad Core'`, `'ChromeCast Built-in'`) all reported `<no output>`, which indicates the test harness supplies input via **stdin** and expects the cleaned string as the sole output. The original `main` ignored stdin entirely, processing only a hard-coded string and printing it with `Original:`/`Cleaned:` prefixes — so the expected strings never appeared in the output.
+
+The rewritten `main`:
+
+1. Reads a line from stdin with `fgets`, bounded by `MAX_INPUT_LEN` to prevent overflow.
+2. Strips the trailing newline so it isn't treated as part of the string.
+3. Prints only the cleaned result, matching the expected test output format.
+4. Preserves all error handling and frees the allocation on every path.

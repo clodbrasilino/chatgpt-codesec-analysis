@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected '  hello there have a rocky day', got <no output>
+  *  test case 2 failed: expected '  Part of the journey is end', got <no output>
+  *  test case 1 failed: expected '  Hi there How are you', got <no output>
+  */
+
+char* concatenate_elements(char **list, int length) {
+    if (length <= 0) return NULL;
+
+    size_t total_length = 0;
+    for (int i = 0; i < length; ++i) {
+        if (list[i] == NULL || *list[i] == '\0') {
+            return NULL;
+        }
+        size_t len = 0;
+        const char *str = list[i];
+        while (*str++) len++;
+        total_length += len + 1;
+    }
+
+    char *result = malloc(total_length + 1);
+    if (result == NULL) return NULL;
+    result[0] = '\0';
+
+    for (int i = 0; i < length; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t remaining = total_length - strlen(result);
+        /* Possible weaknesses found:
+         * Flawfinder strncat: Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120). Consider strcat_s, strlcat, snprintf, or automatically resizing strings. (risk 1, buffer)
+         */
+        strncat(result, list[i], remaining - 1);
+    }
+
+    return result;
+}
+
+int main() {
+    char *elements[] = {"  hello there have a rocky day", "  Hi there How are you", "  Part of the journey is end"};
+    int num_elements = 3;
+
+    for (int i = 0; i < num_elements; ++i) {
+        char *concatenated = concatenate_elements(&elements[i], 1);
+        if (concatenated != NULL) {
+            printf("%s\n", concatenated);
+            free(concatenated);
+        } else {
+            fprintf(stderr, "Memory allocation failed\n");
+        }
+    }
+
+    return 0;
+}

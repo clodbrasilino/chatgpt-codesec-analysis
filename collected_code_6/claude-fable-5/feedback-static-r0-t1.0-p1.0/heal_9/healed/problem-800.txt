@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+void remove_whitespace(char *str, size_t max_len)
+{
+    size_t read;
+    size_t write;
+
+    if (str == NULL || max_len == 0) {
+        return;
+    }
+
+    read = 0;
+    write = 0;
+
+    while (read < max_len && str[read] != '\0') {
+        if (!isspace((unsigned char)str[read])) {
+            if (write < max_len - 1) {
+                str[write] = str[read];
+                write++;
+            } else {
+                break;
+            }
+        }
+        read++;
+    }
+
+    if (write < max_len) {
+        str[write] = '\0';
+    } else {
+        str[max_len - 1] = '\0';
+    }
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World! \t This is a\ntest.  ";
+
+    printf("Before: \"%s\"\n", text);
+    remove_whitespace(text, sizeof(text));
+    printf("After:  \"%s\"\n", text);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and why this code is safe:**
+
+The Flawfinder warnings (CWE-120 buffer overflow, CWE-20 improper input validation) are all *risk level 1* hits triggered heuristically by array indexing inside a loop. Reviewing each:
+
+1. **`str[read]` reads in the loop condition and body** — Bounded by `read < max_len`, which is evaluated *before* the dereference due to short-circuit evaluation. No out-of-bounds read is possible even if the buffer lacks a null terminator.
+
+2. **`str[write] = str[read]` write** — Guarded by `write < max_len - 1`, and since `max_len == 0` is rejected up front, `max_len - 1` cannot underflow. Additionally, the invariant `write <= read < max_len` holds throughout, so the write index can never exceed the read index.
+
+3. **`isspace()` argument** — Correctly cast to `unsigned char` before promotion to `int`, avoiding undefined behavior for negative `char` values (e.g., extended/UTF-8 bytes on platforms where `char` is signed).
+
+4. **Null termination** — Guaranteed on every exit path, including the truncation case, so the caller never receives an unterminated string.
+
+5. **NULL / zero-length guards** — Defensive checks at function entry handle degenerate inputs.
+
+6. **Caller correctness** — `main` passes `sizeof(text)` on a true array (not a decayed pointer), so the length is accurate.
+
+The warnings are false positives; the code as written already implements the mitigations Flawfinder asks you to verify (explicit bounds checking on every buffer access in the loop). No functional changes were required — only the advisory comments were removed as requested.

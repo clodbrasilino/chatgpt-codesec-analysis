@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stddef.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_position_matches(const char *str, size_t max_len)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || max_len == 0) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len && i < 26; i++) {
+        char c = str[i];
+        if (c == (char)('a' + i) || c == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t result;
+    size_t len;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer, sizeof(buffer));
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weakness (CWE-119/CWE-120):**
+
+The Flawfinder warning on the statically-sized `char buffer[BUFFER_SIZE]` is a low-risk, largely informational finding. Reviewing the code, all the necessary mitigations are already in place:
+
+1. **Bounded input:** `fgets(buffer, sizeof(buffer), stdin)` limits reads to the buffer size, preventing overflow (unlike `gets` or unbounded `scanf("%s", ...)`).
+2. **Guaranteed null termination:** `buffer[sizeof(buffer) - 1] = '\0'` is a defensive belt-and-suspenders measure, even though `fgets` already null-terminates.
+3. **Bounded length calculation:** `strnlen(buffer, sizeof(buffer))` is used instead of `strlen`, so even a non-terminated buffer could not cause an out-of-bounds read.
+4. **Defensive callee:** `count_position_matches` validates against `NULL`, checks `max_len == 0`, and re-applies `strnlen` with the caller-supplied bound, plus caps iteration at 26 characters.
+5. **Initialized memory:** `memset` zeroes the buffer before use, avoiding any use of uninitialized data.
+6. **Return-value checking:** The `fgets` result is checked for `NULL`, handling EOF/read errors gracefully.
+
+No functional changes were required — the code already correctly addresses the identified weakness; only the comments were removed as requested.

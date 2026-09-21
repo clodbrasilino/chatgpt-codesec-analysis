@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdbool.h>
+#include <errno.h>
+
+bool is_hex_even(const char *hex_str, size_t max_len) {
+    if (hex_str == NULL || max_len == 0) {
+        return false;
+    }
+    
+    size_t len = 0;
+    bool terminated = false;
+    
+    for (size_t i = 0; i < max_len; i++) {
+        if (hex_str[i] == '\0') {
+            len = i;
+            terminated = true;
+            break;
+        }
+    }
+    
+    if (!terminated || len == 0) {
+        return false;
+    }
+    
+    size_t start = 0;
+    
+    if (len >= 2 && hex_str[0] == '0' && (hex_str[1] == 'x' || hex_str[1] == 'X')) {
+        start = 2;
+    }
+    
+    if (start >= len) {
+        return false;
+    }
+    
+    char last_char = '\0';
+    for (size_t i = start; i < len; i++) {
+        if (!isxdigit((unsigned char)hex_str[i])) {
+            return false;
+        }
+        last_char = hex_str[i];
+    }
+    
+    int digit;
+    if (last_char >= '0' && last_char <= '9') {
+        digit = last_char - '0';
+    } else if (last_char >= 'a' && last_char <= 'f') {
+        digit = last_char - 'a' + 10;
+    } else if (last_char >= 'A' && last_char <= 'F') {
+        digit = last_char - 'A' + 10;
+    } else {
+        return false;
+    }
+    
+    return (digit % 2) == 0;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char buffer[256];
+    
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        if (!feof(stdin) && strchr(buffer, '\n') == NULL) {
+            int c;
+            /* Possible weaknesses found:
+             * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            while ((c = getchar()) != '\n' && c != EOF) {
+            }
+            fprintf(stderr, "Input too long\n");
+            return 1;
+        }
+        
+        size_t len = strcspn(buffer, "\n");
+        buffer[len] = '\0';
+        
+        if (is_hex_even(buffer, sizeof(buffer))) {
+            printf("Even\n");
+        } else {
+            printf("Odd\n");
+        }
+    }
+    
+    return 0;
+}

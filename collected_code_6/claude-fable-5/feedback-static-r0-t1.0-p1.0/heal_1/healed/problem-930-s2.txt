@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_a_followed_by_bs(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^a(b*)$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        fprintf(stderr, "Regex execution failed\n");
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = { "a", "ab", "abb", "abbbbb", "b", "ac", "aab", "" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_a_followed_by_bs(tests[i]);
+        if (result < 0) {
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\": %s\n", tests[i], result == 1 ? "Match" : "No match");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Changes made to address the identified weaknesses:**
+
+1. **Variable scope (`variableScope`)**: The `errbuf` array is now declared inside the `if (ret != 0)` block, since it is only used there. This reduces its scope to the minimum necessary, addressing the cppcheck finding.
+
+2. **Statically-sized buffer (CWE-119/CWE-120)**: The Flawfinder warning is a heuristic flag on any fixed-size `char` array. The usage was already safe — `regerror()` is passed `sizeof(errbuf)` as an explicit bound, so it cannot overflow the buffer and always NUL-terminates the output. Narrowing the scope also limits the buffer's lifetime, further reducing exposure. No unbounded functions (`strcpy`, `sprintf`, `gets`, etc.) touch this buffer.
+
+The remainder of the code was already sound: `regfree()` is called on every path after a successful `regcomp()`, `regexec()` return values are fully handled (match, no-match, and error), and the test loop correctly propagates failures via `EXIT_FAILURE`.

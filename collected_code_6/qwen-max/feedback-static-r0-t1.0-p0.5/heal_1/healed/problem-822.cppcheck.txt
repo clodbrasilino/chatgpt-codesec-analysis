@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:13:20: warning: Either the condition 'length>=8' is redundant or the array 'password[5]' is accessed at index 8, which is out of bounds. [arrayIndexOutOfBoundsCond]
+    while (password[length] != '\0' && length < 64) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:24:19: note: Assuming that condition 'length>=8' is not redundant
+    return length >= 8 && has_upper && has_lower && has_digit;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:13:20: note: Array index out of bounds
+    while (password[length] != '\0' && length < 64) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:14:21: warning: Either the condition 'length<64' is redundant or the array 'password[5]' is accessed at index 63, which is out of bounds. [arrayIndexOutOfBoundsCond]
+        if (password[length] >= 'A' && password[length] <= 'Z') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:13:47: note: Assuming that condition 'length<64' is not redundant
+    while (password[length] != '\0' && length < 64) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:14:21: note: Array index out of bounds
+        if (password[length] >= 'A' && password[length] <= 'Z') {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-822.c:13:20: style: Array index 'length' is used before limits check. [arrayIndexThenCheck]
+    while (password[length] != '\0' && length < 64) {
+                   ^

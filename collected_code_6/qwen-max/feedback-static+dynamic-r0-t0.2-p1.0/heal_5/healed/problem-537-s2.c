@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+char* find_first_repeated_word(const char *str) {
+    const int max_words = 1024;
+    char *words[max_words];
+    bool seen[max_words] = {false};
+    int word_count = 0;
+
+    for (int i = 0; i < max_words; i++) {
+        words[i] = NULL;
+    }
+
+    const char *p = str;
+    while (*p) {
+        const char *start = p;
+        while (*p && *p != ' ') p++;
+        if (start == p) break;
+
+        for (int i = 0; i < word_count; i++) {
+            if (strcmp(words[i], start) == 0) {
+                return (char *)start;
+            }
+        }
+
+        if (word_count < max_words) {
+            int len = p - start;
+            words[word_count] = (char *)malloc(len + 1);
+            if (words[word_count] == NULL) {
+                for (int i = 0; i < word_count; i++) {
+                    free(words[i]);
+                }
+                return NULL;
+            }
+            memcpy(words[word_count], start, len);
+            words[word_count][len] = '\0';
+            seen[word_count++] = true;
+        } else {
+            for (int i = 0; i < word_count; i++) {
+                free(words[i]);
+            }
+            return NULL;
+        }
+
+        if (*p) p++;
+    }
+
+    for (int i = 0; i < word_count; i++) {
+        free(words[i]);
+    }
+
+    return NULL;
+}
+
+int main() {
+    const char *input = "This is a test to find the first repeated word in this string";
+    char *result = find_first_repeated_word(input);
+    if (result) {
+        printf("First repeated word: %s\n", result);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MIN_LENGTH 8
+#define MAX_LENGTH 64
+#define BUFFER_SIZE 128
+#define MAX_DISCARD 4096
+
+static void secure_clear(void *ptr, size_t size)
+{
+    volatile unsigned char *p;
+
+    if (ptr == NULL || size == 0) {
+        return;
+    }
+
+    p = (volatile unsigned char *)ptr;
+
+    while (size--) {
+        *p++ = 0;
+    }
+}
+
+static bool flush_stdin(void)
+{
+    int ch;
+    bool discarded = false;
+    size_t count = 0;
+
+    do {
+        ch = getchar();
+        if (ch != '\n' && ch != EOF) {
+            discarded = true;
+        }
+        count++;
+    } while (ch != '\n' && ch != EOF && count < MAX_DISCARD);
+
+    return discarded;
+}
+
+static bool is_valid_password(const char *password, size_t max_size)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL || max_size == 0) {
+        return false;
+    }
+
+    length = strnlen(password, max_size);
+
+    if (length == max_size) {
+        return false;
+    }
+
+    if (length < MIN_LENGTH || length > MAX_LENGTH) {
+        return false;
+    }
+
+    for (i = 0; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (!isprint(c)) {
+            return false;
+        }
+
+        if (isupper(c)) {
+            has_upper = true;
+        } else if (islower(c)) {
+            has_lower = true;
+        } else if (isdigit(c)) {
+            has_digit = true;
+        } else if (ispunct(c)) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && has_special;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    bool truncated = false;
+
+    printf("Enter password: ");
+
+    if (fflush(stdout) != 0) {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        secure_clear(buffer, sizeof(buffer));
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    length = strnlen(buffer, sizeof(buffer));
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else {
+        truncated = flush_stdin();
+    }
+
+    if (!truncated && is_valid_password(buffer, sizeof(buffer))) {
+        printf("Password is valid\n");
+    } else {
+        printf("Password is invalid\n");
+    }
+
+    secure_clear(buffer, sizeof(buffer));
+
+    return 0;
+}
+```
+
+**Analysis of the flagged weaknesses and their mitigations:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20)** — The Flawfinder warning about `getchar()` in `flush_stdin()` is a low-risk hint. The original code already mitigates it correctly: the character is stored in an `int` (so `EOF` is distinguishable), nothing is written to a buffer, and the loop is bounded by `MAX_DISCARD` to prevent unbounded iteration on a hostile or broken stream. No change needed.
+
+2. **Statically-sized `char buffer[BUFFER_SIZE]` (CWE-119/CWE-120)** — This is a generic warning on any fixed-size array. The mitigations are already in place:
+   - Input is read with `fgets(buffer, (int)sizeof(buffer), stdin)`, which enforces the bound.
+   - Explicit null termination at `buffer[sizeof(buffer) - 1]` as defense-in-depth.
+   - `strnlen()` (bounded) is used instead of `strlen()`.
+   - Truncated input (no newline found) is detected and rejected via `flush_stdin()`, avoiding silent validation of a partial password.
+   - `is_valid_password()` rejects the case where `length == max_size` (missing terminator).
+
+3. **Sensitive data handling** — `secure_clear()` uses a `volatile` pointer to prevent the compiler from optimizing away the memset-like wipe of the password buffer on all exit paths, addressing CWE-14/CWE-226 style concerns.
+
+The code as given is already the *fixed* version — both Flawfinder findings are false positives given the surrounding bounds checks, so the rewrite preserves the logic verbatim with comments removed.

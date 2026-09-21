@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+long long countSubstrings(const char *str, size_t max_len)
+{
+    long long counts[256] = {0};
+    long long result = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strnlen(str, max_len);
+
+    for (i = 0; i < len; i++) {
+        counts[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        result += (counts[i] * (counts[i] + 1)) / 2;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+    long long result;
+
+    if (printf("Enter a string: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = countSubstrings(buffer, sizeof(buffer));
+
+    if (printf("Count of substrings: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The code already addressed the identified weakness (CWE-119/CWE-120) correctly. Key safety measures in place:
+
+1. **Bounded input reading**: `fgets(buffer, sizeof(buffer), stdin)` limits input to the buffer size, preventing overflow.
+2. **Guaranteed null termination**: `buffer[sizeof(buffer) - 1] = '\0'` ensures the string is always terminated, even in edge cases.
+3. **Length-limited string operations**: `strnlen()` is used instead of `strlen()`, bounding all length computations to `BUFFER_SIZE`.
+4. **Defensive function design**: `countSubstrings()` checks for `NULL` input and takes an explicit `max_len` parameter rather than trusting the caller's string termination.
+5. **Safe array indexing**: the cast to `(unsigned char)` prevents negative indexing into `counts[256]` on platforms where `char` is signed.
+6. **Checked I/O return values**: both `printf` and `fgets` results are validated; I additionally added a check on the prompt `printf` and an `fflush(stdout)` to guarantee the prompt appears before blocking on input.
+
+The Flawfinder warning about the statically-sized array is a heuristic flag; since every access to `buffer` is bounds-checked, the risk is mitigated.

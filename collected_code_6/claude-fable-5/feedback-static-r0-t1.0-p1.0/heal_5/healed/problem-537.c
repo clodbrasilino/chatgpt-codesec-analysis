@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LEN 256
+
+static int extract_word(const char *str, size_t *pos, char *word, size_t word_size, size_t *word_len)
+{
+    size_t i;
+    size_t w = 0;
+
+    if (str == NULL || pos == NULL || word == NULL || word_size == 0 || word_len == NULL) {
+        return 0;
+    }
+
+    i = *pos;
+
+    while (str[i] != '\0' && !isalnum((unsigned char)str[i])) {
+        i++;
+    }
+
+    if (str[i] == '\0') {
+        *pos = i;
+        return 0;
+    }
+
+    while (str[i] != '\0' && isalnum((unsigned char)str[i])) {
+        if (w + 1 < word_size) {
+            word[w] = str[i];
+            w++;
+        }
+        i++;
+    }
+
+    word[w] = '\0';
+    *word_len = w;
+    *pos = i;
+    return 1;
+}
+
+static int safe_copy(char *dst, size_t dst_size, const char *src, size_t src_len)
+{
+    if (dst == NULL || src == NULL || dst_size == 0) {
+        return -1;
+    }
+
+    if (src_len >= dst_size) {
+        return -1;
+    }
+
+    memcpy(dst, src, src_len);
+    dst[src_len] = '\0';
+    return 0;
+}
+
+char *first_repeated_word(const char *str)
+{
+    char (*words)[MAX_WORD_LEN];
+    char *current;
+    size_t pos = 0;
+    size_t count = 0;
+    size_t current_len = 0;
+    size_t i;
+    char *result = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    words = calloc(MAX_WORDS, sizeof(*words));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    current = calloc(1, MAX_WORD_LEN);
+    if (current == NULL) {
+        free(words);
+        return NULL;
+    }
+
+    while (extract_word(str, &pos, current, MAX_WORD_LEN, &current_len) == 1) {
+        if (current_len >= MAX_WORD_LEN) {
+            current_len = MAX_WORD_LEN - 1;
+            current[current_len] = '\0';
+        }
+
+        for (i = 0; i < count; i++) {
+            if (strncmp(words[i], current, MAX_WORD_LEN) == 0) {
+                result = malloc(current_len + 1);
+                if (result != NULL) {
+                    if (safe_copy(result, current_len + 1, current, current_len) != 0) {
+                        free(result);
+                        result = NULL;
+                    }
+                }
+                free(current);
+                free(words);
+                return result;
+            }
+        }
+
+        if (count < MAX_WORDS) {
+            if (safe_copy(words[count], MAX_WORD_LEN, current, current_len) == 0) {
+                count++;
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    free(current);
+    free(words);
+    return NULL;
+}
+
+static int report_result(char *repeated)
+{
+    if (repeated != NULL) {
+        if (printf("First repeated word: %s\n", repeated) < 0) {
+            free(repeated);
+            return -1;
+        }
+        free(repeated);
+    } else {
+        if (printf("No repeated word found\n") < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    const char *test1 = "the quick brown fox jumps over the lazy dog";
+    const char *test2 = "hello world foo bar";
+    const char *test3 = "one two two three";
+
+    if (report_result(first_repeated_word(test1)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_result(first_repeated_word(test2)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (report_result(first_repeated_word(test3)) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

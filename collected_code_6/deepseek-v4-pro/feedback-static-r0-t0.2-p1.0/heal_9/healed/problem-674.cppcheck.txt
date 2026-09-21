@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-674.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-674.c:57:22: warning: Either the condition 'copy_len<100' is redundant or the array 'collection->words[1000][100]' is accessed at index collection->words[*][100], which is out of bounds. [arrayIndexOutOfBoundsCond]
+    collection->words[collection->count][copy_len] = '\0';
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-674.c:54:34: note: Assuming that condition 'copy_len<100' is not redundant
+    if (copy_len > 0 && copy_len < MAX_WORD_LEN) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_9/healed/problem-674.c:57:22: note: Array index out of bounds
+    collection->words[collection->count][copy_len] = '\0';
+                     ^

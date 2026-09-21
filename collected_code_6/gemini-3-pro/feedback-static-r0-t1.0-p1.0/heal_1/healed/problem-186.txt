@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_literals(const char *text, const char **literals, size_t num_literals) {
+    if (text == NULL || literals == NULL || num_literals == 0) {
+        return -1;
+    }
+
+    size_t pattern_len = 0;
+    for (size_t i = 0; i < num_literals; i++) {
+        if (literals[i] != NULL) {
+            pattern_len += strlen(literals[i]) + 4;
+        }
+    }
+
+    if (pattern_len == 0) {
+        return -1;
+    }
+
+    char *pattern = (char *)malloc(pattern_len + 1);
+    if (pattern == NULL) {
+        return -1;
+    }
+
+    pattern[0] = '\0';
+    size_t remaining = pattern_len + 1;
+    char *current = pattern;
+    int is_first = 1;
+
+    for (size_t i = 0; i < num_literals; i++) {
+        if (literals[i] != NULL && literals[i][0] != '\0') {
+            int written;
+            if (!is_first) {
+                written = snprintf(current, remaining, "|(%s)", literals[i]);
+            } else {
+                written = snprintf(current, remaining, "(%s)", literals[i]);
+                is_first = 0;
+            }
+            
+            if (written > 0 && (size_t)written < remaining) {
+                current += written;
+                remaining -= written;
+            }
+        }
+    }
+
+    if (is_first) {
+        free(pattern);
+        return -1;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, pattern, REG_EXTENDED);
+    free(pattern);
+
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog.";
+    const char *literals[] = {"fox", "cat", "dog"};
+    size_t num_literals = sizeof(literals) / sizeof(literals[0]);
+
+    int result = search_literals(text, literals, num_literals);
+
+    if (result == 1) {
+        printf("Match found.\n");
+    } else if (result == 0) {
+        printf("No match found.\n");
+    } else {
+        printf("An error occurred.\n");
+    }
+
+    return 0;
+}
+```

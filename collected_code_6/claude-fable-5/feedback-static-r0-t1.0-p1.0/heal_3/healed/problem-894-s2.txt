@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+typedef struct {
+    double *values;
+    size_t count;
+} FloatTuple;
+
+static int count_tokens(const char *str, size_t max_len)
+{
+    int count = 0;
+    int in_token = 0;
+    size_t i;
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] == ',' || isspace((unsigned char)str[i])) {
+            in_token = 0;
+        } else {
+            if (!in_token) {
+                count++;
+                in_token = 1;
+            }
+        }
+    }
+    return count;
+}
+
+FloatTuple *string_to_tuple(const char *input)
+{
+    FloatTuple *tuple;
+    char *copy;
+    char *token;
+    char *saveptr;
+    char *endptr;
+    size_t index;
+    size_t len;
+    size_t copy_size;
+    int expected;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    if (len == 0 || len == MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    expected = count_tokens(input, len);
+    if (expected <= 0) {
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(FloatTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->values = calloc((size_t)expected, sizeof(double));
+    if (tuple->values == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->count = 0;
+
+    copy_size = len + 1;
+    copy = calloc(copy_size, sizeof(char));
+    if (copy == NULL) {
+        free(tuple->values);
+        free(tuple);
+        return NULL;
+    }
+
+    if (snprintf(copy, copy_size, "%s", input) < 0) {
+        free(copy);
+        free(tuple->values);
+        free(tuple);
+        return NULL;
+    }
+
+    index = 0;
+    saveptr = NULL;
+    token = strtok_r(copy, ", \t\n", &saveptr);
+    while (token != NULL && index < (size_t)expected) {
+        errno = 0;
+        tuple->values[index] = strtod(token, &endptr);
+        if (endptr == token || *endptr != '\0' || errno == ERANGE) {
+            free(copy);
+            free(tuple->values);
+            free(tuple);
+            return NULL;
+        }
+        index++;
+        token = strtok_r(NULL, ", \t\n", &saveptr);
+    }
+
+    tuple->count = index;
+    free(copy);
+
+    if (tuple->count == 0) {
+        free(tuple->values);
+        free(tuple);
+        return NULL;
+    }
+
+    return tuple;
+}
+
+void free_tuple(FloatTuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->values);
+        free(tuple);
+    }
+}
+
+int main(void)
+{
+    const char *input = "1.2, 3.4, 5.6, 7.8";
+    FloatTuple *tuple;
+    size_t i;
+
+    tuple = string_to_tuple(input);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < tuple->count; i++) {
+        printf("%g", tuple->values[i]);
+        if (i + 1 < tuple->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the always-false conditions** (`copy_size <= len` and `len >= copy_size`): Since `len` is strictly bounded by `MAX_INPUT_LEN` (4096), `len + 1` can never overflow a `size_t`, making both overflow guards dead code. Removing them resolves the `knownConditionTrueFalse` findings.
+
+2. **Replaced `memcpy` with `snprintf`**: This eliminates the Flawfinder CWE-120 warning. `snprintf` is bounds-aware and guarantees null-termination within `copy_size`, so no separate manual `copy[len] = '\0'` is required.
+
+3. **Switched `malloc` to `calloc` for the buffers**: This zero-initializes memory, avoids any use of uninitialized bytes, and `calloc`'s internal multiplication-overflow check adds defense-in-depth for the `expected * sizeof(double)` allocation.
+
+4. **Added `len == 0` early rejection**: An empty string can't produce a valid tuple, so failing fast avoids unnecessary allocations.
+
+5. **Initialized `saveptr` to `NULL`**: While `strtok_r` sets it on the first call, explicit initialization silences static-analyzer uninitialized-variable warnings.
+
+All original correct behaviors are preserved: strict input length limiting via `strnlen`, per-token validation with `strtod`/`errno`/`endptr` checks, complete cleanup on every error path, and the `free_tuple` helper for symmetric resource management.

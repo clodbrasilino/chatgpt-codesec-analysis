@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+unsigned long long calculate_pell(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    unsigned long long a = 0;
+    unsigned long long b = 1;
+    for (int i = 2; i <= n; i++) {
+        unsigned long long c = 2 * b + a;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    /* Possible weaknesses found:
+     *  'INT_MAX' undeclared (first use in this function)
+     *  use of undeclared identifier 'INT_MAX'
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    if (*endptr != '\0' || val < 0 || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+    int n = (int)val;
+    unsigned long long result = calculate_pell(n);
+    printf("%llu\n", result);
+    return EXIT_SUCCESS;
+}

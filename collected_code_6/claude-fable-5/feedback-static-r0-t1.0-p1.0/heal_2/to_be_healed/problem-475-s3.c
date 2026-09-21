@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define KEY_SIZE 64U
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char key[KEY_SIZE];
+    int value;
+} Counter;
+
+static int compare_by_value(const void *a, const void *b)
+{
+    const Counter *ca = (const Counter *)a;
+    const Counter *cb = (const Counter *)b;
+
+    if (ca->value < cb->value) {
+        return 1;
+    }
+    if (ca->value > cb->value) {
+        return -1;
+    }
+    return strcmp(ca->key, cb->key);
+}
+
+static int sort_counter_by_value(Counter *counters, size_t count)
+{
+    if (counters == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(counters, count, sizeof(Counter), compare_by_value);
+    return 0;
+}
+
+static int set_counter(Counter *counter, const char *key, int value)
+{
+    int written;
+
+    if (counter == NULL || key == NULL) {
+        return -1;
+    }
+    written = snprintf(counter->key, sizeof(counter->key), "%s", key);
+    if (written < 0 || (size_t)written >= sizeof(counter->key)) {
+        return -1;
+    }
+    counter->value = value;
+    return 0;
+}
+
+int main(void)
+{
+    size_t count = 5U;
+    size_t i;
+    Counter *counters = malloc(count * sizeof(Counter));
+
+    if (counters == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (set_counter(&counters[0], "apple", 3) != 0 ||
+        set_counter(&counters[1], "banana", 7) != 0 ||
+        set_counter(&counters[2], "cherry", 1) != 0 ||
+        set_counter(&counters[3], "date", 7) != 0 ||
+        set_counter(&counters[4], "elderberry", 5) != 0) {
+        fprintf(stderr, "Failed to initialize counters\n");
+        free(counters);
+        return EXIT_FAILURE;
+    }
+
+    if (sort_counter_by_value(counters, count) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free(counters);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("%s: %d\n", counters[i].key, counters[i].value) < 0) {
+            fprintf(stderr, "Output failed\n");
+            free(counters);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(counters);
+    return EXIT_SUCCESS;
+}

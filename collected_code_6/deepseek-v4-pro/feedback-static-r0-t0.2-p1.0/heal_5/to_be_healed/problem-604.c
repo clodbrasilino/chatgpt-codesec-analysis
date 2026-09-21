@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <errno.h>
+ /* Possible weaknesses found:
+  *  'LONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+void reverse_range(char *start, char *end) {
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+char *reverse_words(char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len == 0) {
+        return str;
+    }
+
+    reverse_range(str, str + len - 1);
+
+    char *word_start = str;
+    char *p = str;
+
+    while (*p != '\0') {
+        if (*p == ' ') {
+            reverse_range(word_start, p - 1);
+            word_start = p + 1;
+        }
+        p++;
+    }
+
+    reverse_range(word_start, p - 1);
+
+    return str;
+}
+
+int main(void) {
+    char *input = NULL;
+    size_t buffer_size = 256;
+    /* Possible weaknesses found:
+     *  'LONG_MAX' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     *  use of undeclared identifier 'LONG_MAX'
+     */
+    long max_size = LONG_MAX;
+
+    if (max_size > SIZE_MAX) {
+        /* Possible weaknesses found:
+         *  Variable 'max_size' is assigned a value that is never used. [unreadVariable]
+         */
+        max_size = (long)SIZE_MAX;
+    }
+
+    input = (char *)malloc(buffer_size);
+    if (input == NULL) {
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(input, (int)buffer_size, stdin) == NULL) {
+        free(input);
+        return 1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t input_len = strlen(input);
+    if (input_len > 0 && input[input_len - 1] == '\n') {
+        input[input_len - 1] = '\0';
+    } else {
+        int c;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        fprintf(stderr, "Input too long, truncation occurred.\n");
+        input[buffer_size - 1] = '\0';
+    }
+
+    reverse_words(input);
+
+    printf("Reversed words: %s\n", input);
+
+    free(input);
+    return 0;
+}

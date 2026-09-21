@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+size_t count_characters(const char *str);
+void strip_newline(char *str);
+static void flush_stdin(void);
+
+size_t count_characters(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    while (count < BUFFER_SIZE && str[count] != '\0')
+    {
+        count++;
+    }
+
+    return count;
+}
+
+void strip_newline(char *str)
+{
+    size_t i = 0;
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    while (i < BUFFER_SIZE && str[i] != '\0')
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            return;
+        }
+        i++;
+    }
+}
+
+static void flush_stdin(void)
+{
+    size_t guard = 0;
+    const size_t max_flush = 1024 * 1024;
+
+    while (guard < max_flush)
+    {
+        int ch = getchar();
+        if (ch == '\n' || ch == EOF)
+        {
+            break;
+        }
+        guard++;
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t length;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    printf("Enter a string: ");
+    if (fflush(stdout) != 0)
+    {
+        fprintf(stderr, "Error flushing output\n");
+        return 1;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    if (memchr(buffer, '\n', sizeof(buffer)) == NULL)
+    {
+        flush_stdin();
+    }
+
+    strip_newline(buffer);
+
+    length = count_characters(buffer);
+
+    printf("Total characters: %zu\n", length);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+The original source was already written defensively, and the Flawfinder hits were largely informational rather than genuine vulnerabilities:
+
+1. **`char buffer[BUFFER_SIZE]` (CWE-119/CWE-120, risk 2):** The statically-sized array is safe here because every access is bounds-checked. `fgets` is called with `sizeof(buffer)`, which guarantees no overflow; the buffer is zero-initialized with `memset`; and a defensive `buffer[sizeof(buffer) - 1] = '\0'` guarantees null-termination. Both `count_characters` and `strip_newline` cap iteration at `BUFFER_SIZE`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read. This finding is a false positive, but the mitigations were preserved.
+
+2. **`getchar` in a loop (CWE-120/CWE-20, risk 1):** `getchar` itself writes nothing to a buffer, so there is no overflow risk. The original guard of `(size_t)-1` (i.e., `SIZE_MAX`) was effectively unbounded; I replaced it with a sane 1 MiB cap so a malicious or broken stream (e.g., a pipe that never sends a newline or EOF) cannot spin the loop for an impractically long time. The loop still terminates correctly on `'\n'` or `EOF`.
+
+3. **Minor hardening added:** The return value of `fflush(stdout)` is now checked, addressing an unchecked-return-value pattern (CWE-252).
+
+Overall the program correctly handles NULL inputs, truncated reads, oversized input lines (via `flush_stdin`), and guarantees termination of all loops — the rewrite retains those properties while tightening the flush guard.

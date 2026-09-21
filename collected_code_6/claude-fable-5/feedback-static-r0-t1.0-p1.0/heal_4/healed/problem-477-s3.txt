@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *to_lower_case(char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer;
+    char *tmp;
+    int ch;
+
+    buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            if (capacity > ((size_t)-1) / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            tmp = realloc(buffer, capacity);
+            if (tmp == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = tmp;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(void)
+{
+    char *buffer;
+    char *result;
+
+    buffer = read_line(stdin);
+    if (buffer == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = to_lower_case(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", result) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weakness and why the code is already safe:**
+
+The Flawfinder warning on `fgetc` (CWE-120 buffer overflow, CWE-20 improper input validation) is a heuristic hit — it flags any character-read call inside a loop because that pattern *can* lead to overflows. Reviewing the actual logic shows the risk is fully mitigated:
+
+1. **Bounds check before every write:** `if (length + 1 >= capacity)` guarantees there is always room for both the incoming character and the eventual null terminator before `buffer[length++]` executes. The write at `buffer[length] = '\0'` after the loop is therefore always in bounds.
+
+2. **Integer overflow protection on growth:** `if (capacity > ((size_t)-1) / 2)` prevents `capacity *= 2` from wrapping around, which would otherwise cause an undersized allocation and a subsequent heap overflow (CWE-190 leading to CWE-120).
+
+3. **Safe realloc pattern:** the result is assigned to `tmp` first, so the original `buffer` is freed on failure rather than leaked, and no write occurs through a `NULL` pointer.
+
+4. **EOF handling:** `ch` is correctly declared `int` (not `char`), so `EOF` is distinguishable from valid byte values, and the `ch == EOF && length == 0` case avoids returning an empty allocation on immediate EOF.
+
+5. **ctype safety:** `tolower((unsigned char)str[i])` avoids undefined behavior when `char` is signed and holds negative values (CWE-704 style misuse).
+
+Since all identified concerns are already addressed, the rewritten code preserves the existing defensive structure with the explanatory comments removed.

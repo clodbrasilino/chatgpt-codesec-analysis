@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TUPLES 100
+#define MAX_LENGTH 50
+
+typedef struct {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char first[MAX_LENGTH + 1];
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return strcmp(((Tuple *)a)->first, ((Tuple *)b)->first);
+}
+
+void print_tuples(Tuple tuples[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("('%s', %d)\n", tuples[i].first, tuples[i].second);
+    }
+}
+
+int main() {
+    Tuple tuples[MAX_TUPLES] = {
+        {"banana", 4},
+        {"apple", 2},
+        {"orange", 3},
+        {"grape", 6}
+    };
+    int size = 4;
+
+    for (int i = 0; i < size; i++) {
+        if (strnlen(tuples[i].first, MAX_LENGTH + 1) >= MAX_LENGTH) {
+            fprintf(stderr, "Error: Input string exceeds maximum length.\n");
+            return 1;
+        }
+    }
+
+    qsort(tuples, size, sizeof(Tuple), compare);
+
+    print_tuples(tuples, size);
+
+    return 0;
+}

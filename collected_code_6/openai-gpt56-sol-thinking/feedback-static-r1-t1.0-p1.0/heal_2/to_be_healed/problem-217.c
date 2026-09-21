@@ -1,0 +1,48 @@
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+bool find_first_repeated_character(const char *string, unsigned char *result)
+{
+    bool seen[UCHAR_MAX + 1] = { false };
+
+    if (string == NULL || result == NULL) {
+        return false;
+    }
+
+    for (const unsigned char *current = (const unsigned char *)string;
+         *current != '\0';
+         ++current) {
+        if (seen[*current]) {
+            *result = *current;
+            return true;
+        }
+
+        seen[*current] = true;
+    }
+
+    return false;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+ */
+int main(int argc, char *argv[const])
+{
+    unsigned char repeated_character;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n",
+                argc > 0 && argv[0] != NULL ? argv[0] : "program");
+        return 1;
+    }
+
+    if (find_first_repeated_character(argv[1], &repeated_character)) {
+        printf("%c\n", repeated_character);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c:77:20: style: Condition 'length>remaining-start' is always false [knownConditionTrueFalse]
+        if (length > remaining - start) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c:57:22: note: Assuming that condition 'remaining>0' is not redundant
+    while (remaining > 0 && regexec(&regex, cursor, 1, &match, 0) == 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c:99:22: note: Assignment to 'remaining-=end'
+        remaining -= end;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c:75:22: note: Assignment 'length=end-start', assigned value is less than 1
+        length = end - start;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-7-s2.c:77:20: note: Condition 'length>remaining-start' is always false
+        if (length > remaining - start) {
+                   ^

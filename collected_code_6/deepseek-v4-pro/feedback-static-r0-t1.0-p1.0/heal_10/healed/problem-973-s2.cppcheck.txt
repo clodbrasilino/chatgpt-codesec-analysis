@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:29:38: warning: Identical condition '(unsigned long)n>size-1', second condition is always false [identicalConditionAfterEarlyExit]
+    if ((size_t)n > len || (size_t)n > size - 1) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:20:19: note: If condition '(unsigned long)n>size-1' is true, the function will return/exit
+    if ((size_t)n > size - 1) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-973-s2.c:29:38: note: Testing identical condition '(unsigned long)n>size-1'
+    if ((size_t)n > len || (size_t)n > size - 1) {
+                                     ^

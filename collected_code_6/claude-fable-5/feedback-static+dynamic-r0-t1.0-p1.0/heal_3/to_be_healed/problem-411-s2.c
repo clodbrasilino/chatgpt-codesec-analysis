@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
+  */
+
+static char *snake_to_camel(const char *input)
+{
+    char *result;
+    size_t len;
+    size_t in_pos;
+    size_t out_pos;
+    size_t buf_size;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+    buf_size = len + 1U;
+
+    result = malloc(buf_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    in_pos = 0U;
+    out_pos = 0U;
+    capitalize_next = 1;
+
+    while (in_pos < len) {
+        unsigned char c = (unsigned char)input[in_pos];
+
+        if (c == (unsigned char)'_') {
+            capitalize_next = 1;
+        } else {
+            if (out_pos + 1U >= buf_size) {
+                free(result);
+                return NULL;
+            }
+            if (capitalize_next != 0) {
+                result[out_pos] = (char)toupper(c);
+                capitalize_next = 0;
+            } else {
+                result[out_pos] = (char)c;
+            }
+            out_pos++;
+        }
+        in_pos++;
+    }
+
+    result[out_pos] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char line[MAX_INPUT_LEN + 2U];
+    int status = EXIT_SUCCESS;
+
+    while (fgets(line, (int)sizeof(line), stdin) != NULL) {
+        size_t len = strnlen(line, sizeof(line));
+        char *converted;
+
+        while (len > 0U && (line[len - 1U] == '\n' || line[len - 1U] == '\r')) {
+            line[len - 1U] = '\0';
+            len--;
+        }
+
+        if (len == 0U) {
+            continue;
+        }
+
+        converted = snake_to_camel(line);
+        if (converted == NULL) {
+            if (fprintf(stderr, "Conversion failed for: %s\n", line) < 0) {
+                status = EXIT_FAILURE;
+                break;
+            }
+            status = EXIT_FAILURE;
+            continue;
+        }
+
+        if (printf("%s\n", converted) < 0) {
+            free(converted);
+            status = EXIT_FAILURE;
+            break;
+        }
+
+        free(converted);
+    }
+
+    return status;
+}

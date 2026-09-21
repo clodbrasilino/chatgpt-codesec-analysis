@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_lowercase(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(input, MAX_INPUT_LEN);
+
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (!islower((unsigned char)input[i])) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    char *output;
+    size_t len;
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+
+        output = remove_lowercase(buffer);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+
+        printf("%s\n", output);
+        free(output);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and fixes applied:**
+
+The failing test cases (`expected 'PYTH', got <no output>`, `expected 'FID'`, `expected 'STRG'`) reveal the actual problem: the original program never reads external input. It only processes three hardcoded strings (`test1`, `test2`, `test3`), so when a test harness pipes input such as `PYTHon`, `FrIDay`, or `STRinG` into the program, that input is ignored entirely — hence `<no output>` matching the expected values.
+
+A secondary issue compounding this: the original output format `Input: %s -> Output: %s` would never match a harness expecting the bare filtered string like `PYTH`.
+
+**Fixes made:**
+
+1. **Read from stdin** — `main` now loops over `fgets`, processing each line the test harness supplies, instead of using hardcoded constants.
+2. **Newline stripping** — `fgets` retains the trailing `\n`; since `\n` is not lowercase, it would otherwise leak into the output and break exact-match comparisons.
+3. **Clean output format** — prints only the filtered result followed by a newline, matching the expected values (`PYTH`, `FID`, `STRG`).
+4. **Retained defensive measures** — the `NULL` input check, `strnlen` bounding against `MAX_INPUT_LEN`, the `(unsigned char)` cast for `islower` (avoiding UB with negative `char` values), `malloc` failure handling, and freeing the result on every iteration to prevent leaks in the loop.

@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+char *camel_to_snake(const char *input);
+
+char *camel_to_snake(const char *input)
+{
+    char *output = NULL;
+    size_t in_len = 0;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+    size_t i = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    while (in_len < MAX_INPUT_LEN && input[in_len] != '\0') {
+        in_len++;
+    }
+
+    if (in_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    out_cap = (in_len * 2U) + 1U;
+    output = malloc(out_cap);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < in_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c)) {
+            if (i > 0U && out_len < (out_cap - 1U)) {
+                output[out_len] = '_';
+                out_len++;
+            }
+            if (out_len < (out_cap - 1U)) {
+                output[out_len] = (char)tolower(c);
+                out_len++;
+            }
+        } else {
+            if (out_len < (out_cap - 1U)) {
+                output[out_len] = (char)c;
+                out_len++;
+            }
+        }
+    }
+
+    output[out_len] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "GoogleAssistant",
+        "ChromeCast",
+        "QuadCore",
+        "camelCaseString",
+        "ThisIsATest",
+        "already_snake",
+        "simpleXMLParser",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i = 0;
+
+    for (i = 0; i < count; i++) {
+        char *result = camel_to_snake(tests[i]);
+        if (result == NULL) {
+            fprintf(stderr, "Conversion failed for: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        printf("%s -> %s\n", tests[i], result);
+        free(result);
+        result = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and fixes applied:**
+
+The reported test failures (`<no output>` for valid inputs like `"GoogleAssistant"`, `"ChromeCast"`, and `"QuadCore"`) indicate the function was returning `NULL` and aborting instead of producing output. The root cause is the defensive capacity checks inside the loop that `free(output)` and `return NULL` on a boundary condition rather than handling it gracefully.
+
+Key points in the rewrite:
+
+1. **No spurious failure paths in the loop** — The original code treated hitting the capacity boundary as a fatal error (`free` + `return NULL`), even though the buffer of size `2 * in_len + 1` is mathematically sufficient for the worst case (`n` lowercase chars plus `n - 1` underscores = `2n - 1` bytes plus the terminator). The rewrite bounds each write with a simple guard instead of failing, so valid inputs can never trigger a `NULL` return.
+
+2. **Guaranteed null termination** — The terminator write is no longer preceded by a check that can fail; `out_len` can never reach `out_cap` given the capacity math, so `output[out_len] = '\0'` is always safe.
+
+3. **Retained safety properties** — `NULL` input check, bounded length scan against `MAX_INPUT_LEN`, `unsigned char` casts before `isupper`/`tolower` (avoiding UB for negative `char` values), and `malloc` failure handling are all preserved.
+
+4. **Pointer hygiene** — `result` is set to `NULL` after `free` in `main` to avoid any dangling-pointer reuse.

@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+long ascii_sum(const char *str, size_t max_len)
+{
+    long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    len = strnlen(str, max_len);
+    for (i = 0; i < len; i++) {
+        sum += (long)(unsigned char)str[i];
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    long result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = ascii_sum(buffer, sizeof(buffer));
+    if (result < 0) {
+        fprintf(stderr, "Invalid string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total ASCII value: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **CWE-126 (`strlen` over-read)**: Replaced both `strlen` calls with `strnlen`, which takes a maximum length bound. Even if a string were somehow not null-terminated, the read is capped at the buffer size, preventing an over-read.
+
+2. **CWE-119/CWE-120 (statically-sized array)**: The buffer size is now a named constant (`BUFFER_SIZE`), `fgets` is already bounded by `sizeof(buffer)`, and an explicit null terminator is written at `buffer[sizeof(buffer) - 1]` as a defensive guarantee that the buffer is always a valid C string before any string operations occur.
+
+3. **Defensive API design**: `ascii_sum` now accepts a `max_len` parameter so the function itself enforces the bound rather than trusting the caller to pass a terminated string — this makes the function safe by contract, not by assumption.
+
+The original code was already reasonably safe in practice (`fgets` bounds the input and null-terminates), so these changes are hardening measures that eliminate the residual risk flagged by Flawfinder rather than fixing exploitable bugs.

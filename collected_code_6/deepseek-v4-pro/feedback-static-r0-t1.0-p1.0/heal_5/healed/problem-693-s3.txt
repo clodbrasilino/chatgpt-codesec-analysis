@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *remove_multiple_spaces(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = 0;
+    while (input[input_len] != '\0') {
+        if (input_len == SIZE_MAX) {
+            return NULL;
+        }
+        input_len++;
+    }
+
+    size_t max_output_len = input_len + 1;
+    if (max_output_len < input_len) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc(max_output_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+
+    while (src_pos < input_len) {
+        if (input[src_pos] == ' ' || input[src_pos] == '\t' ||
+            input[src_pos] == '\n' || input[src_pos] == '\r' ||
+            input[src_pos] == '\f' || input[src_pos] == '\v') {
+            
+            while (src_pos < input_len &&
+                   (input[src_pos] == ' ' || input[src_pos] == '\t' ||
+                    input[src_pos] == '\n' || input[src_pos] == '\r' ||
+                    input[src_pos] == '\f' || input[src_pos] == '\v')) {
+                src_pos++;
+            }
+            
+            if (dst_pos > 0 && src_pos < input_len) {
+                if (dst_pos + 1 > max_output_len) {
+                    size_t new_size = max_output_len;
+                    if (new_size > SIZE_MAX / 2) {
+                        free(result);
+                        return NULL;
+                    }
+                    new_size = new_size * 2;
+                    if (new_size <= max_output_len) {
+                        free(result);
+                        return NULL;
+                    }
+                    char *temp = (char *)realloc(result, new_size);
+                    if (temp == NULL) {
+                        free(result);
+                        return NULL;
+                    }
+                    result = temp;
+                    max_output_len = new_size;
+                }
+                result[dst_pos++] = ' ';
+            }
+        } else {
+            size_t word_start = src_pos;
+            while (src_pos < input_len &&
+                   !(input[src_pos] == ' ' || input[src_pos] == '\t' ||
+                     input[src_pos] == '\n' || input[src_pos] == '\r' ||
+                     input[src_pos] == '\f' || input[src_pos] == '\v')) {
+                src_pos++;
+            }
+            
+            size_t word_len = src_pos - word_start;
+            if (dst_pos + word_len > max_output_len) {
+                size_t new_size = max_output_len;
+                if (new_size > SIZE_MAX / 2) {
+                    free(result);
+                    return NULL;
+                }
+                new_size = new_size * 2 + word_len;
+                if (new_size <= max_output_len) {
+                    free(result);
+                    return NULL;
+                }
+                char *temp = (char *)realloc(result, new_size);
+                if (temp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+                max_output_len = new_size;
+            }
+            
+            if (dst_pos + word_len <= max_output_len) {
+                memcpy(result + dst_pos, input + word_start, word_len);
+                dst_pos += word_len;
+            }
+        }
+    }
+
+    if (dst_pos + 1 > max_output_len) {
+        size_t new_size = dst_pos + 1;
+        if (new_size <= dst_pos) {
+            free(result);
+            return NULL;
+        }
+        char *temp = (char *)realloc(result, new_size);
+        if (temp == NULL) {
+            free(result);
+            return NULL;
+        }
+        result = temp;
+        max_output_len = new_size;
+    }
+    
+    result[dst_pos] = '\0';
+    
+    if (dst_pos > 0 && result[dst_pos - 1] == ' ') {
+        result[dst_pos - 1] = '\0';
+    }
+    
+    return result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "Hello   World",
+        "  Multiple   spaces   here  ",
+        "NoSpaces",
+        "",
+        "   ",
+        NULL
+    };
+
+    for (int i = 0; test_strings[i] != NULL; i++) {
+        char *cleaned = remove_multiple_spaces(test_strings[i]);
+        if (cleaned != NULL) {
+            printf("Original: \"%s\"\n", test_strings[i]);
+            printf("Cleaned:  \"%s\"\n\n", cleaned);
+            free(cleaned);
+        } else {
+            printf("Error processing string %d\n", i);
+        }
+    }
+
+    return 0;
+}
+```

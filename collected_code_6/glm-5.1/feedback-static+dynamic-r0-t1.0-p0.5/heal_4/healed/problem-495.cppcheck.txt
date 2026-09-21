@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:41:31: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (remaining > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:40:27: note: outer condition: remaining>0
+            if (remaining > 0 && result_idx + remaining <= result_size) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:41:31: note: identical inner condition: remaining>0
+                if (remaining > 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:58:28: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+            if (prefix_len > 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:57:24: note: outer condition: prefix_len>0
+        if (prefix_len > 0 && result_idx + prefix_len <= result_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:58:28: note: identical inner condition: prefix_len>0
+            if (prefix_len > 0) {
+                           ^

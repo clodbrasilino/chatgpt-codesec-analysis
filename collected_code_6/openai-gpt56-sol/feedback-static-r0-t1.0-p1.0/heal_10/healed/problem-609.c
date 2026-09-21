@@ -1,0 +1,129 @@
+#include <errno.h>
+#include <math.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef double (*PeriodicFunction)(double);
+
+static int find_periodic_minimum(
+    PeriodicFunction function,
+    double period,
+    size_t iterations,
+    double *minimum_x,
+    double *minimum_value)
+{
+    const double ratio = 0.5 * (sqrt(5.0) - 1.0);
+    double left;
+    double right;
+    double x1;
+    double x2;
+    double value1;
+    double value2;
+
+    if (function == NULL || minimum_x == NULL || minimum_value == NULL ||
+        !isfinite(period) || period <= 0.0 || iterations == 0U) {
+        return -1;
+    }
+
+    left = 0.0;
+    right = period;
+    x1 = right - ratio * (right - left);
+    x2 = left + ratio * (right - left);
+    value1 = function(x1);
+    value2 = function(x2);
+
+    if (!isfinite(value1) || !isfinite(value2)) {
+        return -1;
+    }
+
+    for (size_t i = 0U; i < iterations; ++i) {
+        if (value1 <= value2) {
+            right = x2;
+            x2 = x1;
+            value2 = value1;
+            x1 = right - ratio * (right - left);
+            value1 = function(x1);
+
+            if (!isfinite(value1)) {
+                return -1;
+            }
+        } else {
+            left = x1;
+            x1 = x2;
+            value1 = value2;
+            x2 = left + ratio * (right - left);
+            value2 = function(x2);
+
+            if (!isfinite(value2)) {
+                return -1;
+            }
+        }
+    }
+
+    *minimum_x = 0.5 * (left + right);
+    *minimum_value = function(*minimum_x);
+
+    return isfinite(*minimum_value) ? 0 : -1;
+}
+
+static double periodic_function(double x)
+{
+    return sin(x) + 0.25 * cos(2.0 * x);
+}
+
+int main(int argc, char const *const argv[])
+{
+    const double default_period = 2.0 * acos(-1.0);
+    const char *program_name;
+    double period = default_period;
+    double minimum_x;
+    double minimum_value;
+
+    if (argc < 1 || argv == NULL || argv[0] == NULL) {
+        fputs("Invalid command-line arguments\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    program_name = argv[0];
+
+    if (argc > 2) {
+        fprintf(stderr, "Usage: %s [period]\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    if (argc == 2) {
+        const char *argument;
+        char *end = NULL;
+
+        if (argv[1] == NULL) {
+            fputs("Invalid period\n", stderr);
+            return EXIT_FAILURE;
+        }
+
+        argument = argv[1];
+        errno = 0;
+        period = strtod(argument, &end);
+
+        if (errno == ERANGE || end == argument || *end != '\0' ||
+            !isfinite(period) || period <= 0.0) {
+            fputs("Invalid period\n", stderr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (find_periodic_minimum(
+            periodic_function,
+            period,
+            200U,
+            &minimum_x,
+            &minimum_value) != 0) {
+        fputs("Unable to determine the minimum\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum value: %.17g\n", minimum_value);
+    printf("At x: %.17g\n", minimum_x);
+
+    return EXIT_SUCCESS;
+}

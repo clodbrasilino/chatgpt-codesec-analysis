@@ -1,0 +1,170 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdint.h>
+
+static void free_tokens(char **tokens)
+{
+    if (tokens != NULL) {
+        for (int i = 0; tokens[i] != NULL; ++i) {
+            free(tokens[i]);
+        }
+        free(tokens);
+    }
+}
+
+char **split_regex(const char *str, const char *pattern, int *count)
+{
+    if (str == NULL || pattern == NULL) {
+        if (count != NULL) {
+            *count = -1;
+        }
+        return NULL;
+    }
+
+    regex_t regex;
+    int regex_ok = 0;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        if (count != NULL) {
+            *count = -1;
+        }
+        return NULL;
+    }
+    regex_ok = 1;
+
+    char **tokens = NULL;
+    size_t token_count = 0;
+    const char *p = str;
+    regmatch_t match;
+
+    while (*p != '\0') {
+        int exec_status = regexec(&regex, p, 1, &match, 0);
+
+        if (exec_status == REG_NOMATCH) {
+            const char *tmp = p;
+            size_t token_len = 0;
+            while (*tmp != '\0') {
+                token_len++;
+                tmp++;
+            }
+            if (token_len > 0) {
+                char *token = strndup(p, token_len);
+                if (token == NULL) goto error;
+
+                if (token_count > (SIZE_MAX / sizeof(char *)) - 2) {
+                    free(token);
+                    goto error;
+                }
+                char **new_tokens = realloc(tokens, (token_count + 2) * sizeof(char *));
+                if (new_tokens == NULL) {
+                    free(token);
+                    goto error;
+                }
+                tokens = new_tokens;
+                tokens[token_count] = token;
+                tokens[token_count + 1] = NULL;
+                token_count++;
+            }
+            break;
+        }
+
+        if (exec_status != 0) {
+            goto error;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo < match.rm_so) {
+            goto error;
+        }
+
+        if (match.rm_so == 0 && match.rm_eo == 0) {
+            if (*p != '\0') {
+                char *token = strndup(p, 1);
+                if (token == NULL) goto error;
+
+                if (token_count > (SIZE_MAX / sizeof(char *)) - 2) {
+                    free(token);
+                    goto error;
+                }
+                char **new_tokens = realloc(tokens, (token_count + 2) * sizeof(char *));
+                if (new_tokens == NULL) {
+                    free(token);
+                    goto error;
+                }
+                tokens = new_tokens;
+                tokens[token_count] = token;
+                tokens[token_count + 1] = NULL;
+                token_count++;
+                p++;
+            } else {
+                break;
+            }
+            continue;
+        }
+
+        size_t token_len = (size_t)match.rm_so;
+        if (token_len > 0) {
+            char *token = strndup(p, token_len);
+            if (token == NULL) goto error;
+
+            if (token_count > (SIZE_MAX / sizeof(char *)) - 2) {
+                free(token);
+                goto error;
+            }
+            char **new_tokens = realloc(tokens, (token_count + 2) * sizeof(char *));
+            if (new_tokens == NULL) {
+                free(token);
+                goto error;
+            }
+            tokens = new_tokens;
+            tokens[token_count] = token;
+            tokens[token_count + 1] = NULL;
+            token_count++;
+        }
+        p += match.rm_eo;
+    }
+
+    if (tokens == NULL) {
+        tokens = malloc(sizeof(char *));
+        if (tokens == NULL) goto error;
+        tokens[0] = NULL;
+    }
+
+    regfree(&regex);
+    if (count != NULL) {
+        *count = (int)token_count;
+    }
+    return tokens;
+
+error:
+    if (regex_ok) {
+        regfree(&regex);
+    }
+    free_tokens(tokens);
+    if (count != NULL) {
+        *count = -1;
+    }
+    return NULL;
+}
+
+int main(void)
+{
+    const char *text = "one, two; three:four";
+    const char *pattern = "[,;: ]+";
+    int count = 0;
+    char **tokens = split_regex(text, pattern, &count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "split failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        printf("%s\n", tokens[i]);
+    }
+
+    free_tokens(tokens);
+    return EXIT_SUCCESS;
+}

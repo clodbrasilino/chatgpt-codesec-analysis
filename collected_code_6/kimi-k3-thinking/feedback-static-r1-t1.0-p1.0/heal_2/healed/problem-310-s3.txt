@@ -1,0 +1,189 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_INPUT_LENGTH 4096
+
+typedef struct {
+    char **elements;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+static int tuple_init(Tuple *tuple, size_t capacity)
+{
+    if (tuple == NULL || capacity == 0) {
+        return -1;
+    }
+    if (capacity > SIZE_MAX / sizeof(*tuple->elements)) {
+        return -1;
+    }
+    tuple->elements = calloc(capacity, sizeof(*tuple->elements));
+    if (tuple->elements == NULL) {
+        return -1;
+    }
+    tuple->count = 0;
+    tuple->capacity = capacity;
+    return 0;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->count; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+        tuple->elements = NULL;
+    }
+    tuple->count = 0;
+    tuple->capacity = 0;
+}
+
+static int tuple_append(Tuple *tuple, const char *data, size_t length)
+{
+    char *element;
+    size_t alloc_size;
+
+    if (tuple == NULL || data == NULL || tuple->count >= tuple->capacity) {
+        return -1;
+    }
+    if (length >= SIZE_MAX - 1) {
+        return -1;
+    }
+    alloc_size = length + 1;
+    if (alloc_size <= length) {
+        return -1;
+    }
+    element = malloc(alloc_size);
+    if (element == NULL) {
+        return -1;
+    }
+    if (alloc_size < length + 1) {
+        free(element);
+        return -1;
+    }
+    memcpy(element, data, length);
+    element[length] = '\0';
+    tuple->elements[tuple->count] = element;
+    tuple->count++;
+    return 0;
+}
+
+static void trim_segment(const char **start, size_t *length)
+{
+    while (*length > 0 && (*start)[0] == ' ') {
+        (*start)++;
+        (*length)--;
+    }
+    while (*length > 0 && (*start)[*length - 1] == ' ') {
+        (*length)--;
+    }
+}
+
+int string_to_tuple(const char *str, Tuple *tuple)
+{
+    size_t length;
+    size_t commas = 0;
+    const char *cursor;
+    const char *segment_start;
+
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    while (*str == ' ') {
+        str++;
+    }
+
+    length = strnlen(str, MAX_INPUT_LENGTH);
+    if (length == MAX_INPUT_LENGTH) {
+        return -1;
+    }
+    while (length > 0 && str[length - 1] == ' ') {
+        length--;
+    }
+
+    if (length < 2 || str[0] != '(' || str[length - 1] != ')') {
+        return -1;
+    }
+
+    for (size_t i = 1; i + 1 < length; i++) {
+        if (str[i] == ',') {
+            commas++;
+        }
+    }
+
+    if (tuple_init(tuple, commas + 1) != 0) {
+        return -1;
+    }
+
+    cursor = str + 1;
+    segment_start = cursor;
+
+    while (cursor < str + length - 1) {
+        if (*cursor == ',') {
+            size_t seg_len = (size_t)(cursor - segment_start);
+            trim_segment(&segment_start, &seg_len);
+            if (tuple_append(tuple, segment_start, seg_len) != 0) {
+                tuple_destroy(tuple);
+                return -1;
+            }
+            segment_start = cursor + 1;
+        }
+        cursor++;
+    }
+
+    {
+        size_t seg_len = (size_t)(cursor - segment_start);
+        trim_segment(&segment_start, &seg_len);
+        if (seg_len > 0) {
+            if (tuple_append(tuple, segment_start, seg_len) != 0) {
+                tuple_destroy(tuple);
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static void tuple_print(const Tuple *tuple)
+{
+    if (tuple == NULL) {
+        return;
+    }
+    putchar('(');
+    for (size_t i = 0; i < tuple->count; i++) {
+        if (i > 0) {
+            printf(", ");
+        }
+        printf("%s", tuple->elements[i]);
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    Tuple tuple;
+    const char *input = "(C, is, a, powerful, language)";
+
+    if (string_to_tuple(input, &tuple) != 0) {
+        fprintf(stderr, "Error: unable to convert string to tuple.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Input string: %s\n", input);
+    printf("Tuple element count: %zu\n", tuple.count);
+    printf("Resulting tuple: ");
+    tuple_print(&tuple);
+
+    tuple_destroy(&tuple);
+    return EXIT_SUCCESS;
+}
+```

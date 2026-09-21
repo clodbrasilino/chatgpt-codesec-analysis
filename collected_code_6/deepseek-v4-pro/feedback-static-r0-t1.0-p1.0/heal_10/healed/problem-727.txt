@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_non_alphanumeric(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    if (input[0] == '\0') {
+        char *empty_result = (char *)malloc(1);
+        if (empty_result != NULL) {
+            empty_result[0] = '\0';
+        }
+        return empty_result;
+    }
+
+    size_t max_result_size = 256;
+    char *result = (char *)malloc(max_result_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        if (isalnum((unsigned char)input[i])) {
+            if (result_index >= max_result_size - 1) {
+                size_t new_size = max_result_size * 2;
+                char *temp = (char *)realloc(result, new_size);
+                if (temp == NULL) {
+                    free(result);
+                    return NULL;
+                }
+                result = temp;
+                max_result_size = new_size;
+            }
+            result[result_index] = input[i];
+            result_index++;
+        }
+    }
+
+    result[result_index] = '\0';
+
+    char *final_result = (char *)realloc(result, result_index + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World! 123...";
+    char *cleaned = remove_non_alphanumeric(test_string);
+    
+    if (cleaned != NULL) {
+        printf("%s\n", cleaned);
+        free(cleaned);
+    }
+
+    return 0;
+}
+```

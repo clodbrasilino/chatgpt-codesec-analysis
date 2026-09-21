@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-561.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-561.c:85:15: style: Condition 'count==0' is always false [knownConditionTrueFalse]
+    if (count == 0 || count > (size_t)(-1) / sizeof(Pair)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-561.c:83:34: note: Assignment 'count=sizeof(pairs)/sizeof(pairs[0])', assigned value is 5
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-561.c:85:15: note: Condition 'count==0' is always false
+    if (count == 0 || count > (size_t)(-1) / sizeof(Pair)) {
+              ^

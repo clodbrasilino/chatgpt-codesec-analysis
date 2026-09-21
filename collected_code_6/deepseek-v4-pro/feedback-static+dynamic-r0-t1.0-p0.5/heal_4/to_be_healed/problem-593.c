@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define IP_BUFFER_SIZE 16
+
+size_t safe_strlen(const char *str, size_t max_len) {
+    size_t len = 0;
+    if (str == NULL) return 0;
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+void safe_strncpy(char *dest, const char *src, size_t dest_size) {
+    if (dest == NULL || src == NULL || dest_size == 0) return;
+    
+    size_t i;
+    for (i = 0; i < dest_size - 1 && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+}
+
+void remove_leading_zeroes(char *ip) {
+    if (ip == NULL) return;
+    
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char result[IP_BUFFER_SIZE];
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char ip_copy[IP_BUFFER_SIZE];
+    char *token;
+    char *rest = ip;
+    int first = 1;
+    size_t current_length = 0;
+    
+    result[0] = '\0';
+    
+    safe_strncpy(ip_copy, ip, IP_BUFFER_SIZE);
+    
+    while ((token = strtok_r(rest, ".", &rest)) != NULL) {
+        char *start = token;
+        while (*start == '0' && *(start + 1) != '\0') {
+            start++;
+        }
+        
+        if (!first) {
+            if (current_length < IP_BUFFER_SIZE - 1) {
+                result[current_length] = '.';
+                current_length++;
+                result[current_length] = '\0';
+            }
+        }
+        
+        size_t token_length = safe_strlen(start, IP_BUFFER_SIZE - current_length);
+        if (current_length + token_length < IP_BUFFER_SIZE) {
+            safe_strncpy(result + current_length, start, IP_BUFFER_SIZE - current_length);
+            current_length += token_length;
+        }
+        
+        first = 0;
+    }
+    
+    result[IP_BUFFER_SIZE - 1] = '\0';
+    
+    size_t result_len = safe_strlen(result, IP_BUFFER_SIZE);
+    if (result_len < IP_BUFFER_SIZE) {
+        safe_strncpy(ip, result, IP_BUFFER_SIZE);
+    }
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char ip1[IP_BUFFER_SIZE] = "192.168.001.001";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char ip2[IP_BUFFER_SIZE] = "010.000.000.001";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char ip3[IP_BUFFER_SIZE] = "000.000.000.000";
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char ip4[IP_BUFFER_SIZE] = "255.255.255.255";
+    
+    remove_leading_zeroes(ip1);
+    remove_leading_zeroes(ip2);
+    remove_leading_zeroes(ip3);
+    remove_leading_zeroes(ip4);
+    
+    printf("%s\n", ip1);
+    printf("%s\n", ip2);
+    printf("%s\n", ip3);
+    printf("%s\n", ip4);
+    
+    return 0;
+}

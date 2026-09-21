@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <ctype.h>
+
+typedef struct {
+    int64_t key;
+    int64_t value;
+} Tuple;
+
+static int compare_tuples(const void *lhs, const void *rhs)
+{
+    const Tuple *a = lhs;
+    const Tuple *b = rhs;
+
+    if (a->key < b->key) {
+        return -1;
+    }
+    if (a->key > b->key) {
+        return 1;
+    }
+    return 0;
+}
+
+static int add_checked(int64_t a, int64_t b, int64_t *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+
+    if ((b > 0 && a > INT64_MAX - b) ||
+        (b < 0 && a < INT64_MIN - b)) {
+        return -1;
+    }
+
+    *result = a + b;
+    return 0;
+}
+
+static int maximum_aggregate(Tuple *tuples, size_t count, int64_t *maximum)
+{
+    if (tuples == NULL || maximum == NULL || count == 0) {
+        return -1;
+    }
+
+    qsort(tuples, count, sizeof(*tuples), compare_tuples);
+
+    int64_t current_sum = tuples[0].value;
+    int64_t maximum_sum = current_sum;
+
+    for (size_t i = 1; i < count; ++i) {
+        if (tuples[i].key == tuples[i - 1].key) {
+            if (add_checked(current_sum, tuples[i].value, &current_sum) != 0) {
+                return -1;
+            }
+        } else {
+            if (current_sum > maximum_sum) {
+                maximum_sum = current_sum;
+            }
+            current_sum = tuples[i].value;
+        }
+    }
+
+    if (current_sum > maximum_sum) {
+        maximum_sum = current_sum;
+    }
+
+    *maximum = maximum_sum;
+    return 0;
+}
+
+static int read_int64(int64_t *value)
+{
+    char token[64];
+    char *end = NULL;
+    intmax_t parsed;
+
+    if (value == NULL || scanf("%63s", token) != 1) {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtoimax(token, &end, 10);
+
+    if (errno == ERANGE || end == token || *end != '\0' ||
+        parsed < INT64_MIN || parsed > INT64_MAX) {
+        return -1;
+    }
+
+    *value = (int64_t)parsed;
+    return 0;
+}
+
+static int read_count(size_t *count)
+{
+    char token[64];
+    char *end = NULL;
+    uintmax_t parsed;
+
+    if (count == NULL || scanf("%63s", token) != 1) {
+        return -1;
+    }
+
+    if (token[0] == '-') {
+        return -1;
+    }
+
+    errno = 0;
+    parsed = strtoumax(token, &end, 10);
+
+    if (errno == ERANGE || end == token || *end != '\0' ||
+        parsed == 0 || parsed > SIZE_MAX ||
+        (size_t)parsed > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    *count = (size_t)parsed;
+    return 0;
+}
+
+int main(void)
+{
+    size_t count;
+    int64_t maximum;
+    Tuple *tuples;
+
+    if (read_count(&count) != 0) {
+        fputs("Invalid input\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    tuples = malloc(count * sizeof(*tuples));
+    if (tuples == NULL) {
+        fputs("Allocation failed\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (read_int64(&tuples[i].key) != 0 ||
+            read_int64(&tuples[i].value) != 0) {
+            fputs("Invalid input\n", stderr);
+            free(tuples);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (maximum_aggregate(tuples, count, &maximum) != 0) {
+        fputs("Unable to calculate maximum aggregate\n", stderr);
+        free(tuples);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%" PRId64 "\n", maximum) < 0) {
+        free(tuples);
+        return EXIT_FAILURE;
+    }
+
+    free(tuples);
+    return EXIT_SUCCESS;
+}

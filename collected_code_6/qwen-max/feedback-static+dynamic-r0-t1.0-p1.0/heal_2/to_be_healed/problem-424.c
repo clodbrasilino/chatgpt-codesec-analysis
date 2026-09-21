@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *extract_rear_index(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return NULL;
+    }
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Redundant condition: If 'str[len] != '\0'', the comparison 'str[len] != 0' is always true. [redundantCondition]
+     */
+    while (str[len] != '\0' && str[len] != 0) {
+        len++;
+    }
+    if (len == 0) {
+        return NULL;
+    }
+    char *rear_char = (char *)malloc(2 * sizeof(char));
+    if (rear_char == NULL) {
+        return NULL;
+    }
+    rear_char[0] = str[len - 1];
+    rear_char[1] = '\0';
+    return rear_char;
+}
+
+int main() {
+    const char *array[] = {"hello", "world", "C", "programming", "", NULL};
+    size_t array_size = sizeof(array) / sizeof(array[0]);
+
+    for (size_t i = 0; i < array_size; ++i) {
+        char *rear_char = extract_rear_index(array[i]);
+        if (rear_char != NULL) {
+            printf("Rear index of '%s': %s\n", array[i], rear_char);
+            free(rear_char);
+        } else {
+            /* Possible weaknesses found:
+             *  printf format string requires 0 parameters but 1 is given. [wrongPrintfScanfArgNum]
+             */
+            printf("Rear index of '%%s': (null)\n", array[i] ? array[i] : "(null)");
+        }
+    }
+
+    return 0;
+}

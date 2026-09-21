@@ -1,0 +1,208 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define INITIAL_CAPACITY 4
+
+typedef struct {
+    char *key;
+    char **values;
+    size_t count;
+    size_t capacity;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t count;
+    size_t capacity;
+} Dict;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(src) + 1U;
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(copy, src, len);
+    return copy;
+}
+
+static int dict_init(Dict *dict)
+{
+    if (dict == NULL) {
+        return -1;
+    }
+    dict->entries = malloc(INITIAL_CAPACITY * sizeof(Entry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->count = 0U;
+    dict->capacity = INITIAL_CAPACITY;
+    return 0;
+}
+
+static Entry *dict_find(Dict *dict, const char *key)
+{
+    size_t i;
+
+    for (i = 0U; i < dict->count; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return &dict->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static int entry_add_value(Entry *entry, const char *value)
+{
+    char *copy;
+
+    if (entry->count == entry->capacity) {
+        size_t new_capacity = entry->capacity * 2U;
+        char **new_values;
+
+        if (new_capacity <= entry->capacity) {
+            return -1;
+        }
+        new_values = realloc(entry->values, new_capacity * sizeof(char *));
+        if (new_values == NULL) {
+            return -1;
+        }
+        entry->values = new_values;
+        entry->capacity = new_capacity;
+    }
+    copy = duplicate_string(value);
+    if (copy == NULL) {
+        return -1;
+    }
+    entry->values[entry->count] = copy;
+    entry->count++;
+    return 0;
+}
+
+static int dict_add(Dict *dict, const char *key, const char *value)
+{
+    Entry *entry;
+
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    entry = dict_find(dict, key);
+    if (entry == NULL) {
+        if (dict->count == dict->capacity) {
+            size_t new_capacity = dict->capacity * 2U;
+            Entry *new_entries;
+
+            if (new_capacity <= dict->capacity) {
+                return -1;
+            }
+            new_entries = realloc(dict->entries, new_capacity * sizeof(Entry));
+            if (new_entries == NULL) {
+                return -1;
+            }
+            dict->entries = new_entries;
+            dict->capacity = new_capacity;
+        }
+        entry = &dict->entries[dict->count];
+        entry->key = duplicate_string(key);
+        if (entry->key == NULL) {
+            return -1;
+        }
+        entry->values = malloc(INITIAL_CAPACITY * sizeof(char *));
+        if (entry->values == NULL) {
+            free(entry->key);
+            return -1;
+        }
+        entry->count = 0U;
+        entry->capacity = INITIAL_CAPACITY;
+        dict->count++;
+    }
+    return entry_add_value(entry, value);
+}
+
+static void dict_free(Dict *dict)
+{
+    size_t i;
+    size_t j;
+
+    if (dict == NULL || dict->entries == NULL) {
+        return;
+    }
+    for (i = 0U; i < dict->count; i++) {
+        for (j = 0U; j < dict->entries[i].count; j++) {
+            free(dict->entries[i].values[j]);
+        }
+        free(dict->entries[i].values);
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0U;
+    dict->capacity = 0U;
+}
+
+static void dict_print(const Dict *dict)
+{
+    size_t i;
+    size_t j;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0U; i < dict->count; i++) {
+        printf("%s: [", dict->entries[i].key);
+        for (j = 0U; j < dict->entries[i].count; j++) {
+            printf("%s", dict->entries[i].values[j]);
+            if (j + 1U < dict->entries[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Dict dict;
+    size_t i;
+    static const char *pairs[][2] = {
+        {"fruit", "apple"},
+        {"vegetable", "carrot"},
+        {"fruit", "banana"},
+        {"vegetable", "potato"},
+        {"fruit", "cherry"},
+        {"grain", "rice"}
+    };
+    size_t pair_count = sizeof(pairs) / sizeof(pairs[0]);
+
+    if (dict_init(&dict) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < pair_count; i++) {
+        if (dict_add(&dict, pairs[i][0], pairs[i][1]) != 0) {
+            fprintf(stderr, "Failed to add pair (%s, %s)\n",
+                    pairs[i][0], pairs[i][1]);
+            dict_free(&dict);
+            return EXIT_FAILURE;
+        }
+    }
+
+    dict_print(&dict);
+    dict_free(&dict);
+    return EXIT_SUCCESS;
+}

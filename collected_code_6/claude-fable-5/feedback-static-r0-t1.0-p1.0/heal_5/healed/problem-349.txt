@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 256
+
+bool is_binary_string(const char *str, size_t max_len)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    if (str[0] == '\0') {
+        return false;
+    }
+
+    for (i = 0; i < max_len && str[i] != '\0'; i++) {
+        if (str[i] != '0' && str[i] != '1') {
+            return false;
+        }
+    }
+
+    if (i == max_len) {
+        return false;
+    }
+
+    return true;
+}
+
+static void flush_stdin(void)
+{
+    int ch;
+
+    do {
+        ch = getchar();
+    } while (ch != '\n' && ch != EOF);
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    size_t len;
+
+    printf("Enter a string: ");
+    fflush(stdout);
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    len = strnlen(buffer, sizeof(buffer));
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    } else if (len == sizeof(buffer) - 1) {
+        flush_stdin();
+    }
+
+    if (is_binary_string(buffer, sizeof(buffer))) {
+        printf("\"%s\" is a binary string\n", buffer);
+    } else {
+        printf("\"%s\" is not a binary string\n", buffer);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the flagged weaknesses and why the code is already safe:**
+
+1. **`getchar` in a loop (CWE-120, CWE-20):** The `flush_stdin` function only reads and discards characters; nothing is stored in a buffer, so no overflow is possible. The loop correctly terminates on both `'\n'` and `EOF`, preventing an infinite loop when stdin closes. This is a false positive — no fix needed.
+
+2. **Statically-sized `char` array (CWE-119/CWE-120):** The buffer is used safely throughout:
+   - `fgets(buffer, sizeof(buffer), stdin)` limits input to `BUFFER_SIZE - 1` characters and guarantees null termination.
+   - The explicit `buffer[sizeof(buffer) - 1] = '\0';` is defensive redundancy.
+   - `strnlen` (bounded) is used instead of `strlen`, so even a hypothetically unterminated buffer cannot cause an out-of-bounds read.
+   - Leftover input beyond the buffer capacity is drained via `flush_stdin`, preventing stale data from affecting subsequent reads.
+
+3. **`is_binary_string`:** Properly bounds-checked with `max_len`, handles `NULL` and empty strings, and rejects strings that fill the entire buffer without a terminator.
+
+The warnings are informational hints from Flawfinder's pattern matching rather than actual vulnerabilities; the code already implements the recommended mitigations (bounded reads, bounded string operations, null-termination guarantees, and input draining), so the rewritten version is functionally identical with the comments removed.

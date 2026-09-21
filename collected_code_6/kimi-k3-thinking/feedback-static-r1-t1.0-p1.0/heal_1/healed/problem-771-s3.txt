@@ -1,0 +1,90 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_EXPRESSION_LENGTH 4096
+
+int isBalanced(const char *expression)
+{
+    if (expression == NULL) {
+        return -1;
+    }
+
+    size_t length = strnlen(expression, MAX_EXPRESSION_LENGTH);
+    if (length == MAX_EXPRESSION_LENGTH) {
+        return -1;
+    }
+    if (length == 0) {
+        return 1;
+    }
+
+    char *stack = malloc(length);
+    if (stack == NULL) {
+        return -1;
+    }
+
+    size_t top = 0;
+    int balanced = 1;
+
+    for (size_t i = 0; i < length; i++) {
+        char ch = expression[i];
+
+        if (ch == '(' || ch == '[' || ch == '{') {
+            stack[top] = ch;
+            top++;
+        } else if (ch == ')' || ch == ']' || ch == '}') {
+            if (top == 0) {
+                balanced = 0;
+                break;
+            }
+            top--;
+            char opening = stack[top];
+            if ((ch == ')' && opening != '(') ||
+                (ch == ']' && opening != '[') ||
+                (ch == '}' && opening != '{')) {
+                balanced = 0;
+                break;
+            }
+        }
+    }
+
+    if (balanced != 0 && top != 0) {
+        balanced = 0;
+    }
+
+    free(stack);
+    stack = NULL;
+
+    return balanced;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "{[()]}",
+        "{[(])}",
+        "(a+b)*(c-d)",
+        "((())",
+        "a+b*c",
+        "())(",
+        "}",
+        ""
+    };
+
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        int result = isBalanced(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error: failed to evaluate expression\n");
+            return EXIT_FAILURE;
+        }
+        printf("\"%s\" -> %s\n", tests[i], result ? "Balanced" : "Not Balanced");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

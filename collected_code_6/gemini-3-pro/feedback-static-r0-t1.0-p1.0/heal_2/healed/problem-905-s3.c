@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long calculateCombination(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    unsigned long long c = 1;
+    for (int i = 1; i <= k; i++) {
+        c = c * (n - i + 1) / i;
+    }
+    return c;
+}
+
+unsigned long long sumOfSquaresOfBinomialCoeffs(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return calculateCombination(2 * n, n);
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    errno = 0;
+    long n_long = strtol(argv[1], &endptr, 10);
+    
+    if (errno != 0 || *endptr != '\0' || n_long < 0 || n_long > INT_MAX) {
+        fprintf(stderr, "Error: n must be a valid non-negative integer within range.\n");
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)n_long;
+    
+    unsigned long long result = sumOfSquaresOfBinomialCoeffs(n);
+    printf("Sum of squares of binomial coefficients for n=%d is %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

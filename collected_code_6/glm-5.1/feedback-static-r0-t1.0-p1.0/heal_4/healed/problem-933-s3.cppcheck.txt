@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c:29:17: style: Condition 'max_len>0' is always true [knownConditionTrueFalse]
+    if (max_len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c:19:36: note: Assignment 'max_len=input_len*2+1', assigned value is greater than 0
+    size_t max_len = input_len * 2 + 1;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c:23:23: note: Assuming condition is false
+    if (temp1 == NULL || temp2 == NULL) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c:29:17: note: Condition 'max_len>0' is always true
+    if (max_len > 0) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-933-s3.c:88:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^

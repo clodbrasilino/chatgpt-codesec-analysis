@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:31:63: warning: Comparison is wrong. Result of 'dest+dest_offset' can't be 0 unless there is pointer overflow, and pointer overflow is undefined behaviour. [pointerAdditionResultNotNull]
+        if (copy_len > 0 && src != NULL && dest + dest_offset != NULL) {
+                                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:21:19: style: Condition 'available==0' is always false [knownConditionTrueFalse]
+    if (available == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:16:21: note: Assuming that condition 'dest_offset>=dest_size' is not redundant
+    if (dest_offset >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:20:34: note: Assignment 'available=dest_size-dest_offset', assigned value is greater than 0
+    size_t available = dest_size - dest_offset;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:21:19: note: Condition 'available==0' is always false
+    if (available == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:29:33: style: Condition 'max_copy>0' is always true [knownConditionTrueFalse]
+            copy_len = max_copy > 0 ? max_copy - 1 : 0;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:16:21: note: Assuming that condition 'dest_offset>=dest_size' is not redundant
+    if (dest_offset >= dest_size) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:21:19: note: Assuming condition is false
+    if (available == 0) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:27:37: note: Assignment 'max_copy=dest_size-dest_offset', assigned value is greater than 0
+        size_t max_copy = dest_size - dest_offset;
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-495.c:29:33: note: Condition 'max_copy>0' is always true
+            copy_len = max_copy > 0 ? max_copy - 1 : 0;
+                                ^

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_list(const char *list[], int size) {
+    if (size <= 0) return NULL;
+
+    int total_length = 0;
+    for (int i = 0; i < size; ++i) {
+        total_length += strnlen(list[i], 4096);
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) return NULL;
+
+    result[0] = '\0';
+    for (int i = 0; i < size; ++i) {
+        size_t len = strnlen(result, 4096);
+        snprintf(result + len, total_length - len + 1, "%s", list[i]);
+    }
+
+    return result;
+}
+
+int main() {
+    const char *list[] = {"Hello", " ", "World", "!"};
+    int size = sizeof(list) / sizeof(list[0]);
+
+    char *result = concatenate_list(list, size);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

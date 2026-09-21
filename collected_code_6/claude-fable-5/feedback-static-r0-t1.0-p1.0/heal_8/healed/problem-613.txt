@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define NAME_MAX_LEN 32U
+
+typedef struct {
+    char name[NAME_MAX_LEN];
+    int *records;
+    size_t record_count;
+} Tuple;
+
+static bool set_tuple_name(Tuple *tuple, const char *name)
+{
+    size_t len;
+
+    if (tuple == NULL || name == NULL) {
+        return false;
+    }
+
+    len = strnlen(name, sizeof(tuple->name));
+    if (len >= sizeof(tuple->name)) {
+        return false;
+    }
+
+    memcpy(tuple->name, name, len);
+    tuple->name[len] = '\0';
+    return true;
+}
+
+bool find_max_record(const Tuple *tuples, size_t tuple_count, int *max_out)
+{
+    bool found = false;
+    int max_val = INT_MIN;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || max_out == NULL || tuple_count == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < tuple_count; i++) {
+        if (tuples[i].records == NULL) {
+            continue;
+        }
+        for (j = 0U; j < tuples[i].record_count; j++) {
+            if (!found || tuples[i].records[j] > max_val) {
+                max_val = tuples[i].records[j];
+                found = true;
+            }
+        }
+    }
+
+    if (!found) {
+        return false;
+    }
+
+    *max_out = max_val;
+    return true;
+}
+
+int main(void)
+{
+    int records1[] = {3, 7, 2};
+    int records2[] = {15, 4};
+    int records3[] = {9, 11, 6, 8};
+    Tuple tuples[3];
+    int max_value = 0;
+
+    memset(tuples, 0, sizeof(tuples));
+
+    tuples[0].records = records1;
+    tuples[0].record_count = sizeof(records1) / sizeof(records1[0]);
+    if (!set_tuple_name(&tuples[0], "alpha")) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[1].records = records2;
+    tuples[1].record_count = sizeof(records2) / sizeof(records2[0]);
+    if (!set_tuple_name(&tuples[1], "beta")) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[2].records = records3;
+    tuples[2].record_count = sizeof(records3) / sizeof(records3[0]);
+    if (!set_tuple_name(&tuples[2], "gamma")) {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max_record(tuples, 3U, &max_value)) {
+        if (printf("Maximum record value: %d\n", max_value) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "No records found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the flagged weaknesses and why the code is already safe:
+
+**1. Flawfinder `char name[NAME_MAX_LEN]` (CWE-119/CWE-120, statically-sized array):** This is a hygiene warning, not an actual defect. The fixed-size buffer is safe because every write to it goes through `set_tuple_name`, which performs explicit bounds checking. The struct member itself cannot overflow as long as all access paths are validated — which they are.
+
+**2. Flawfinder `memcpy` (CWE-120, no overflow check when copying):** This is a false positive in context. The code already mitigates it correctly:
+
+- `strnlen(name, sizeof(tuple->name))` bounds the length scan to the destination size, so even a non-terminated or oversized source string cannot cause an over-read beyond `NAME_MAX_LEN` bytes.
+- The check `len >= sizeof(tuple->name)` rejects any name of 32 characters or more, guaranteeing `len <= 31`, so `memcpy` of `len` bytes plus the explicit `'\0'` at `tuple->name[len]` always fits within the 32-byte buffer.
+- NULL-pointer checks on both `tuple` and `name` precede any use.
+
+Additional defensive qualities already present in the code:
+
+- `find_max_record` validates all pointers, handles `tuple_count == 0`, skips tuples with NULL `records`, and uses the `found` flag rather than relying on `INT_MIN` sentinel comparison alone, correctly handling records that legitimately contain `INT_MIN`.
+- Array sizes in `main` are computed with `sizeof(arr) / sizeof(arr[0])`, avoiding magic numbers.
+- Return values of `printf`/`fprintf` are checked, and `memset` zero-initializes the `tuples` array before use.
+
+No functional changes were required; the code as written already contains the correct mitigations for both Flawfinder findings.

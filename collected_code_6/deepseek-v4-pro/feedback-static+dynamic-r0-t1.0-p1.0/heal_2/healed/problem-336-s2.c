@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int has_28_days(const char *month) {
+    if (month == NULL) {
+        return 0;
+    }
+    
+    size_t len = 0;
+    
+    while (len < 31 && month[len] != '\0') {
+        len++;
+    }
+    
+    if (len != 8 || month[len] != '\0') {
+        return 0;
+    }
+    
+    if (tolower((unsigned char)month[0]) != 'f') return 0;
+    if (tolower((unsigned char)month[1]) != 'e') return 0;
+    if (tolower((unsigned char)month[2]) != 'b') return 0;
+    if (tolower((unsigned char)month[3]) != 'r') return 0;
+    if (tolower((unsigned char)month[4]) != 'u') return 0;
+    if (tolower((unsigned char)month[5]) != 'a') return 0;
+    if (tolower((unsigned char)month[6]) != 'r') return 0;
+    if (tolower((unsigned char)month[7]) != 'y') return 0;
+    
+    return 1;
+}
+
+int main(void) {
+    const char *test_months[] = {
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December",
+        "february", "FEBRUARY", "Feb", NULL
+    };
+    
+    for (int i = 0; test_months[i] != NULL; i++) {
+        printf("%s: %s\n", test_months[i], 
+               has_28_days(test_months[i]) ? "28 days" : "not 28 days");
+    }
+    
+    printf("NULL: not 28 days\n");
+    
+    return 0;
+}

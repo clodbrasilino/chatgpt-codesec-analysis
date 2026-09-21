@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+char *remove_whitespace(const char *input);
+
+char *remove_whitespace(const char *input)
+{
+    char *result = NULL;
+    size_t result_len = 0;
+    size_t input_len = 0;
+    size_t buffer_size;
+    size_t i;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    while (input_len < MAX_INPUT_LEN && input[input_len] != '\0') {
+        input_len++;
+    }
+
+    if (input_len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    buffer_size = input_len + 1;
+    result = malloc(buffer_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+        if (!isspace(c)) {
+            if (result_len >= buffer_size - 1) {
+                free(result);
+                return NULL;
+            }
+            result[result_len] = (char)c;
+            result_len++;
+        }
+    }
+
+    result[result_len] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    char *input = NULL;
+    char *cleaned = NULL;
+
+    input = malloc(MAX_INPUT_LEN);
+    if (input == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(input, MAX_INPUT_LEN, stdin) == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    input[MAX_INPUT_LEN - 1] = '\0';
+
+    cleaned = remove_whitespace(input);
+    free(input);
+
+    if (cleaned == NULL) {
+        fprintf(stderr, "Failed to remove whitespace\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", cleaned) < 0) {
+        free(cleaned);
+        return EXIT_FAILURE;
+    }
+
+    free(cleaned);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fix applied:**
+
+The Flawfinder warning flagged the statically-sized stack array `char input[MAX_INPUT_LEN]` (CWE-119/CWE-120). While the original code was actually safe in practice — `fgets(input, sizeof(input), stdin)` properly bounds the read, and the explicit null-termination at `input[sizeof(input) - 1]` was defensive — the rewrite eliminates the static analyzer finding by:
+
+1. **Heap allocation instead of a stack buffer**: `malloc(MAX_INPUT_LEN)` replaces the fixed stack array, removing the flagged pattern and avoiding a 4 KB stack frame, which also protects against stack exhaustion in constrained environments.
+
+2. **Consistent bounds checking retained**: `fgets` is still limited to `MAX_INPUT_LEN`, and the buffer is force-terminated before use.
+
+3. **Complete error-path cleanup**: every failure path now frees any allocated memory (`input` is freed both on the `fgets` failure path and immediately after `remove_whitespace` returns, since it is no longer needed), preventing leaks.
+
+4. **Existing safe practices preserved**: `remove_whitespace` already correctly casts to `unsigned char` before calling `isspace` (avoiding UB on negative `char` values), validates the input length against `MAX_INPUT_LEN`, performs an explicit bounds check before each write, and null-terminates the result.

@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char ch) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *read_ptr = str;
+    char *write_ptr = str;
+    
+    while (*read_ptr != '\0') {
+        if (*read_ptr != ch) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+bool get_line(char *buffer, size_t size) {
+    if (buffer == NULL || size == 0) {
+        return false;
+    }
+    
+    if (fgets(buffer, size, stdin) == NULL) {
+        return false;
+    }
+    
+    size_t len = strnlen(buffer, size);
+    
+    if (len == 0) {
+        return false;
+    }
+    
+    if (buffer[len - 1] != '\n' && !feof(stdin)) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+        buffer[0] = '\0';
+        return false;
+    }
+    
+    if (buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    
+    return true;
+}
+
+bool get_character(char *ch) {
+    if (ch == NULL) {
+        return false;
+    }
+    
+    int c = getchar();
+    
+    if (c == EOF) {
+        return false;
+    }
+    
+    while (c == ' ' || c == '\t') {
+        c = getchar();
+        if (c == EOF) {
+            return false;
+        }
+    }
+    
+    if (c == '\n') {
+        return false;
+    }
+    
+    *ch = (char)c;
+    
+    int next;
+    while ((next = getchar()) != '\n' && next != EOF) {
+    }
+    
+    return true;
+}
+
+int main(void) {
+    char buffer[BUFFER_SIZE];
+    char ch;
+    
+    if (!get_line(buffer, sizeof(buffer))) {
+        return EXIT_FAILURE;
+    }
+    
+    if (!get_character(&ch)) {
+        return EXIT_FAILURE;
+    }
+    
+    remove_char(buffer, ch);
+    
+    if (printf("%s\n", buffer) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

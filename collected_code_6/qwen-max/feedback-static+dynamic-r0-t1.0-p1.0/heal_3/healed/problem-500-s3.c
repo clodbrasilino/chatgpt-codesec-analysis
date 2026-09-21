@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_list(const char **list, int count) {
+    size_t total_len = 0;
+    for (int i = 0; i < count; i++) {
+        const char *current = list[i];
+        if (current == NULL) continue;
+        size_t len = 0;
+        while (current[len] != '\0') {
+            len++;
+        }
+        total_len += len + 1;
+    }
+
+    char *result = malloc(total_len);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+    size_t pos = 0;
+    for (int i = 0; i < count; i++) {
+        const char *current = list[i];
+        if (current == NULL) continue;
+        size_t len = 0;
+        while (current[len] != '\0') {
+            result[pos + len] = current[len];
+            len++;
+        }
+        pos += len;
+        result[pos++] = ' ';
+        result[pos] = '\0';
+    }
+    if (pos > 0 && result[pos - 1] == ' ') {
+        result[pos - 1] = '\0';
+    }
+    return result;
+}
+
+int main() {
+    const char *words[] = {"Hello", "world", "this", "is", "C"};
+    int count = sizeof(words) / sizeof(words[0]);
+    char *concatenated = concatenate_list(words, count);
+    if (concatenated != NULL) {
+        printf("%s\n", concatenated);
+        free(concatenated);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    return 0;
+}

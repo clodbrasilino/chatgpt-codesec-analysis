@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_lowercase_underscore_sequences(const char *input) {
+    if (input == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int reti = regcomp(&regex, "[a-z]+_[a-z]+", REG_EXTENDED);
+    if (reti != 0) {
+        return;
+    }
+
+    const char *cursor = input;
+    regmatch_t match[1];
+
+    while (regexec(&regex, cursor, 1, match, 0) == 0) {
+        size_t match_length = (size_t)(match[0].rm_eo - match[0].rm_so);
+        
+        printf("%.*s\n", (int)match_length, cursor + match[0].rm_so);
+        
+        cursor += match[0].rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *text = "this is a test_string with some_words and INVALID_words plus another valid_sequence.";
+    
+    find_lowercase_underscore_sequences(text);
+    
+    return 0;
+}

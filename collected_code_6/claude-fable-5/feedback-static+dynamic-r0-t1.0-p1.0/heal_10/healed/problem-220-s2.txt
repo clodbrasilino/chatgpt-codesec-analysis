@@ -1,0 +1,92 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_chars(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0' && count < n; i++) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    static const char source[] = "Hello world, this is a test. Replace them all.";
+    char *buffer;
+    size_t buf_size;
+    size_t len;
+    size_t replaced;
+
+    buf_size = sizeof(source);
+    len = strnlen(source, buf_size - 1U);
+
+    if (len >= buf_size) {
+        fprintf(stderr, "Source length exceeds destination buffer\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer = malloc(buf_size);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (len + 1U > buf_size) {
+        fprintf(stderr, "Copy would exceed destination buffer\n");
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, source, len);
+    buffer[len] = '\0';
+
+    replaced = replace_chars(buffer, 5U);
+
+    if (printf("Original: %s\n", source) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Modified: %s\n", buffer) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+    if (printf("Replacements made: %zu\n", replaced) < 0) {
+        free(buffer);
+        return EXIT_FAILURE;
+    }
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was already largely defensive, but the rewrite hardens it against the flagged `memcpy` weakness (CWE-120) as follows:
+
+1. **Pre-allocation bounds check**: A validation `len >= buf_size` is performed *before* `malloc` and *before* `memcpy`, guaranteeing the source length (plus the NUL terminator written afterward) can never exceed the destination capacity. Combined with the retained `len + 1U > buf_size` guard, the `memcpy(buffer, source, len)` call is provably safe — `len` is capped at `buf_size - 1U` by `strnlen`, and the explicit checks make this invariant locally verifiable rather than implicit.
+
+2. **`strnlen` over `strlen`**: Retained, since it bounds the length computation to the known buffer size, avoiding over-read if the array were ever not NUL-terminated.
+
+3. **Explicit NUL termination**: `buffer[len] = '\0'` writes within bounds because `len <= buf_size - 1U` is guaranteed by the checks above.
+
+4. **Feature-test macro**: `_POSIX_C_SOURCE 200809L` is added so `strnlen` is properly declared in strict compilation modes (`-std=c11`), avoiding implicit-declaration undefined behavior.
+
+5. **Resource hygiene**: All error paths release `buffer`, the pointer is nulled after `free` to prevent use-after-free/double-free, and `printf` return values are checked per the original design.

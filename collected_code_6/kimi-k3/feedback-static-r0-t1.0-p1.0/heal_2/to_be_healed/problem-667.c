@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_SIZE 1024
+
+static bool is_vowel(char c)
+{
+    char lower_c = (char)tolower((unsigned char)c);
+    return (lower_c == 'a' || lower_c == 'e' || lower_c == 'i' || 
+            lower_c == 'o' || lower_c == 'u');
+}
+
+size_t count_vowels(const char *str)
+{
+    size_t count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str != '\0') {
+        if (is_vowel(*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[MAX_INPUT_SIZE];
+    size_t vowel_count;
+    size_t len;
+    
+    printf("Enter a string: ");
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    len = strnlen(input, sizeof(input));
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    vowel_count = count_vowels(input);
+    printf("Number of vowels: %zu\n", vowel_count);
+    
+    return 0;
+}

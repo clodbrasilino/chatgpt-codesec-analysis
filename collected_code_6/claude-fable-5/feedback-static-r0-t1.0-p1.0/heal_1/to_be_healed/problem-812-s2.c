@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *abbreviate_road(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    len = strlen(input);
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    while (i < len) {
+        if ((len - i) >= 4 && strncmp(&input[i], "road", 4) == 0) {
+            result[j] = 'r';
+            result[j + 1] = 'd';
+            result[j + 2] = '.';
+            j += 3;
+            i += 4;
+        } else {
+            result[j] = input[i];
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Take the main road until the road ends.";
+    char *abbreviated;
+
+    abbreviated = abbreviate_road(text);
+    if (abbreviated == NULL) {
+        fprintf(stderr, "Failed to abbreviate string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Abbreviated: %s\n", abbreviated) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    free(abbreviated);
+    return EXIT_SUCCESS;
+}

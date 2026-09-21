@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *minimize_string(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t len = strlen(str);
+    if (len > SIZE_MAX - 1) {
+        return NULL;
+    }
+
+    if (len == 0) {
+        char *empty = (char *)malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    int freq[256] = {0};
+    const char *p = str;
+    while (*p != '\0') {
+        freq[(unsigned char)*p]++;
+        p++;
+    }
+
+    char target = str[0];
+    int max_freq = freq[(unsigned char)str[0]];
+    for (int i = 1; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            target = (char)i;
+        }
+    }
+
+    size_t new_len = len - max_freq;
+    char *result = (char *)malloc(new_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    p = str;
+    while (*p != '\0') {
+        if (*p != target) {
+            result[j++] = *p;
+        }
+        p++;
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "aabbbcc";
+    const char *test2 = "aaaa";
+    const char *test3 = "abc";
+    const char *test4 = "";
+    /* Possible weaknesses found:
+     *  Assignment 'test5=NULL', assigned value is 0
+     */
+    const char *test5 = NULL;
+
+    char *r1 = minimize_string(test1);
+    char *r2 = minimize_string(test2);
+    char *r3 = minimize_string(test3);
+    char *r4 = minimize_string(test4);
+    /* Possible weaknesses found:
+     *  Calling function 'minimize_string' returns 0
+     *  Assignment 'r5=minimize_string(test5)', assigned value is 0
+     */
+    char *r5 = minimize_string(test5);
+
+    printf("Input: %s, Output: %s\n", test1 ? test1 : "(null)", r1 ? r1 : "NULL");
+    printf("Input: %s, Output: %s\n", test2 ? test2 : "(null)", r2 ? r2 : "NULL");
+    printf("Input: %s, Output: %s\n", test3 ? test3 : "(null)", r3 ? r3 : "NULL");
+    printf("Input: \"%s\", Output: %s\n", test4 ? test4 : "(null)", r4 ? r4 : "NULL");
+    /* Possible weaknesses found:
+     *  Condition 'r5' is always false [knownConditionTrueFalse]
+     *  Condition 'test5' is always false
+     *  Condition 'test5' is always false [knownConditionTrueFalse]
+     *  Condition 'r5' is always false
+     */
+    printf("Input: %s, Output: %s\n", test5 ? test5 : "(null)", r5 ? r5 : "NULL");
+
+    free(r1);
+    free(r2);
+    free(r3);
+    free(r4);
+    free(r5);
+
+    return 0;
+}

@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+#include <ctype.h>
+#include <string.h>
+
+static int calculate_profit(double cost, double revenue, double *profit)
+{
+    double result;
+
+    if (profit == NULL || !isfinite(cost) || !isfinite(revenue) ||
+        cost < 0.0 || revenue < 0.0 || revenue <= cost) {
+        return 0;
+    }
+
+    result = revenue - cost;
+    if (!isfinite(result)) {
+        return 0;
+    }
+
+    *profit = result;
+    return 1;
+}
+
+static int read_values(double *cost, double *revenue)
+{
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char input[256];
+    char *cursor;
+    char *end;
+
+    if (cost == NULL || revenue == NULL) {
+        return 0;
+    }
+
+    if (fgets(input, sizeof input, stdin) == NULL) {
+        return 0;
+    }
+
+    if (strchr(input, '\n') == NULL && !feof(stdin)) {
+        int ch;
+
+        do {
+            /* Possible weaknesses found:
+             * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+             */
+            ch = getchar();
+        } while (ch != '\n' && ch != EOF);
+
+        return 0;
+    }
+
+    cursor = input;
+    errno = 0;
+    *cost = strtod(cursor, &end);
+    if (end == cursor || errno == ERANGE) {
+        return 0;
+    }
+
+    cursor = end;
+    errno = 0;
+    *revenue = strtod(cursor, &end);
+    if (end == cursor || errno == ERANGE) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+
+    return *end == '\0';
+}
+
+int main(void)
+{
+    double cost;
+    double revenue;
+    double profit;
+
+    if (!read_values(&cost, &revenue)) {
+        return EXIT_FAILURE;
+    }
+
+    if (calculate_profit(cost, revenue, &profit)) {
+        if (printf("%.2f\n", profit) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else if (puts("none") == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

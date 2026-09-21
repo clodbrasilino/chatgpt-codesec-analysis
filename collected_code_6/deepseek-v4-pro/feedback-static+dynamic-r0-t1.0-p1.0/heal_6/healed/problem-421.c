@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **concat_elements(const char **tuple, int tuple_size, const char *delimiter, int *result_count) {
+    if (tuple == NULL || delimiter == NULL || result_count == NULL || tuple_size <= 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    for (int i = 0; i < tuple_size; i++) {
+        if (tuple[i] == NULL) {
+            *result_count = 0;
+            return NULL;
+        }
+    }
+
+    size_t delim_len = strnlen(delimiter, SIZE_MAX);
+    size_t *lens = malloc(tuple_size * sizeof(size_t));
+    if (lens == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < tuple_size; i++) {
+        lens[i] = strnlen(tuple[i], SIZE_MAX);
+    }
+
+    int result_size = tuple_size - 1;
+    if (result_size <= 0) {
+        free(lens);
+        *result_count = 0;
+        return NULL;
+    }
+
+    char **result = malloc(result_size * sizeof(char *));
+    if (result == NULL) {
+        free(lens);
+        *result_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < result_size; i++) {
+        if (lens[i] > SIZE_MAX - lens[i + 1] || lens[i] + lens[i + 1] > SIZE_MAX - delim_len) {
+            for (int j = 0; j < count; j++) {
+                free(result[j]);
+            }
+            free(result);
+            free(lens);
+            *result_count = 0;
+            return NULL;
+        }
+
+        size_t combined_len = lens[i] + lens[i + 1] + delim_len;
+        char *combined = malloc(combined_len + 1);
+        if (combined == NULL) {
+            for (int j = 0; j < count; j++) {
+                free(result[j]);
+            }
+            free(result);
+            free(lens);
+            *result_count = 0;
+            return NULL;
+        }
+
+        memcpy(combined, tuple[i], lens[i]);
+        memcpy(combined + lens[i], delimiter, delim_len);
+        memcpy(combined + lens[i] + delim_len, tuple[i + 1], lens[i + 1]);
+        combined[combined_len] = '\0';
+        result[count++] = combined;
+    }
+
+    free(lens);
+    *result_count = count;
+    return result;
+}
+
+int main(void) {
+    const char *tuple[] = {"hello", "world", "foo", "bar"};
+    int result_count = 0;
+    char **result = concat_elements(tuple, 4, "-", &result_count);
+
+    if (result == NULL) {
+        fprintf(stderr, "Failed to concatenate elements\n");
+        return 1;
+    }
+
+    for (int i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

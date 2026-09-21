@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-796.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-796.c:76:13: style: Condition 'len>=alloc_size' is always false [knownConditionTrueFalse]
+    if (len >= alloc_size) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-796.c:71:16: note: alloc_size is assigned 'len+1' here.
+    alloc_size = len + 1;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-796.c:73:18: note: Assuming condition is false
+    if (key_copy == NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-796.c:76:13: note: Condition 'len>=alloc_size' is always false
+    if (len >= alloc_size) {
+            ^

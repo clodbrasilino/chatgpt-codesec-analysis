@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-779.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-779.c:76:49: style: Condition '!use_bulk' is always true [knownConditionTrueFalse]
+                        if (lists[j].len > 0 && !use_bulk) {
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-779.c:70:17: note: Assuming that condition 'use_bulk' is not redundant
+            if (use_bulk) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-779.c:76:49: note: Condition '!use_bulk' is always true
+                        if (lists[j].len > 0 && !use_bulk) {
+                                                ^

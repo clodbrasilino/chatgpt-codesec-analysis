@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:52:19: style: Condition 'input1!=NULL' is always true [knownConditionTrueFalse]
+    while (input1 != NULL && input1[len1] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:50:26: note: Assignment 'input1="Hello (World) this (is a) test!"', assigned value is "Hello (World) this (is a) test!"
+    const char *input1 = "Hello (World) this (is a) test!";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:52:19: note: Condition 'input1!=NULL' is always true
+    while (input1 != NULL && input1[len1] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:64:19: style: Condition 'input2!=NULL' is always true [knownConditionTrueFalse]
+    while (input2 != NULL && input2[len2] != '\0') {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:62:26: note: Assignment 'input2="(Nested (Parentheses)) Outside"', assigned value is "(Nested (Parentheses)) Outside"
+    const char *input2 = "(Nested (Parentheses)) Outside";
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-640.c:64:19: note: Condition 'input2!=NULL' is always true
+    while (input2 != NULL && input2[len2] != '\0') {
+                  ^

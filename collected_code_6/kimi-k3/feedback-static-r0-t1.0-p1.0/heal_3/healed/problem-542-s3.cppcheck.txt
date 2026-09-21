@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:94:24: style: The if condition is the same as the previous if condition [duplicateCondition]
+    if (result_len + 1 > buffer_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:88:24: note: First condition
+    if (result_len + 1 > buffer_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:94:24: note: Second condition
+    if (result_len + 1 > buffer_size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:57:39: style: Condition 'result_len+copy_len>buffer_size' is always false [knownConditionTrueFalse]
+            if (result_len + copy_len > buffer_size) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:50:39: note: Assuming that condition 'result_len+copy_len+2>buffer_size' is not redundant
+        if (result_len + copy_len + 2 > buffer_size) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:57:39: note: Condition 'result_len+copy_len>buffer_size' is always false
+            if (result_len + copy_len > buffer_size) {
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:78:42: style: Condition 'result_len+(str_len-pos)>buffer_size' is always false [knownConditionTrueFalse]
+        if (result_len + (str_len - pos) > buffer_size) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:71:42: note: Assuming that condition 'result_len+(str_len-pos)+1>buffer_size' is not redundant
+    if (result_len + (str_len - pos) + 1 > buffer_size) {
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-542-s3.c:78:42: note: Condition 'result_len+(str_len-pos)>buffer_size' is always false
+        if (result_len + (str_len - pos) > buffer_size) {
+                                         ^

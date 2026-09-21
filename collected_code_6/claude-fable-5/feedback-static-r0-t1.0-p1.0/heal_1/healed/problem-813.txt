@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 256
+
+size_t string_length(const char *str)
+{
+    size_t length = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT];
+    size_t length;
+    size_t i;
+    int ch;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    length = string_length(buffer);
+
+    if (length > 0 && buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0';
+    } else if (length == sizeof(buffer) - 1) {
+        while ((ch = getchar()) != '\n' && ch != EOF) {
+        }
+    }
+
+    for (i = 0; buffer[i] != '\0'; i++) {
+        if (buffer[i] == '\n') {
+            buffer[i] = '\0';
+            break;
+        }
+    }
+
+    length = string_length(buffer);
+
+    printf("Length of the string: %zu\n", length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and applied fixes:**
+
+The Flawfinder warning about the statically-sized `char buffer[MAX_INPUT]` (CWE-119/CWE-120) was largely a false positive in the original code, because the input was already read safely:
+
+1. **Bounds-checked input** — `fgets(buffer, sizeof(buffer), stdin)` already limits the read to `sizeof(buffer) - 1` characters plus the null terminator, so no buffer overflow was possible. Using `sizeof(buffer)` rather than a hardcoded constant means the code stays correct even if `MAX_INPUT` changes.
+
+2. **NULL return check** — the return value of `fgets` was already checked, correctly handling EOF and read errors.
+
+3. **Null-termination guarantee** — `fgets` always null-terminates on success, so `string_length` and the newline-stripping loop operate on a valid C string. The `NULL` guard in `string_length` adds defensive robustness.
+
+**Improvement added in the rewrite:** if the user enters more than 255 characters, the original code silently truncated the input and left the remainder in `stdin`, which could corrupt subsequent reads. The rewrite detects the truncation case (buffer full with no trailing newline) and drains the rest of the input line with `getchar()` until newline or EOF, ensuring the stream is left in a consistent state.
+
+The code remains standard-conforming C, uses the correct `%zu` format specifier for `size_t`, and returns proper `EXIT_SUCCESS`/`EXIT_FAILURE` codes.

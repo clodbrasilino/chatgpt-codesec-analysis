@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 2, got <no output>
+  *  test case 1 failed: expected 7, got <no output>
+  *  test case 0 failed: expected 10, got <no output>
+  */
+
+long long maxProfit(int k, const int* prices, int pricesSize) {
+    if (pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        long long max_profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                max_profit += (long long)prices[i] - prices[i - 1];
+            }
+        }
+        return max_profit;
+    }
+
+    long long* dp = (long long*)calloc(pricesSize, sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (int i = 1; i <= k; i++) {
+        long long max_diff = - (long long)prices[0];
+        for (int j = 1; j < pricesSize; j++) {
+            long long prev_dp = dp[j];
+            long long curr_profit = (long long)prices[j] + max_diff;
+            
+            if (dp[j - 1] > curr_profit) {
+                dp[j] = dp[j - 1];
+            } else {
+                dp[j] = curr_profit;
+            }
+
+            long long diff = prev_dp - prices[j];
+            if (diff > max_diff) {
+                max_diff = diff;
+            }
+        }
+    }
+
+    long long result = dp[pricesSize - 1];
+    free(dp);
+
+    return result;
+}
+
+int read_int(int *val) {
+    int c;
+    int sign = 1;
+    long long temp = 0;
+    
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && !isdigit(c) && c != '-') {}
+    if (c == EOF) return 0;
+    if (c == '-') {
+        sign = -1;
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        c = getchar();
+        if (!isdigit(c)) {
+            return read_int(val);
+        }
+    }
+    while (isdigit(c)) {
+        if (temp < 2147483647LL) {
+            temp = temp * 10 + (c - '0');
+        }
+        /* Possible weaknesses found:
+         * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        c = getchar();
+    }
+    
+    if (temp > 2147483647LL) {
+        temp = 2147483647LL;
+    }
+    *val = (int)(temp * sign);
+    return 1;
+}
+
+int main(void) {
+    int k = 0;
+    if (!read_int(&k)) {
+        return 0;
+    }
+
+    int capacity = 1000;
+    int* prices = (int*)malloc(capacity * sizeof(int));
+    if (!prices) {
+        return 1;
+    }
+    
+    int pricesSize = 0;
+    int val;
+
+    while (read_int(&val)) {
+        if (pricesSize >= capacity) {
+            capacity *= 2;
+            int* temp = (int*)realloc(prices, capacity * sizeof(int));
+            if (!temp) {
+                free(prices);
+                return 1;
+            }
+            prices = temp;
+        }
+        prices[pricesSize++] = val;
+    }
+
+    long long profit = maxProfit(k, prices, pricesSize);
+    printf("%lld\n", profit);
+    
+    free(prices);
+    return 0;
+}

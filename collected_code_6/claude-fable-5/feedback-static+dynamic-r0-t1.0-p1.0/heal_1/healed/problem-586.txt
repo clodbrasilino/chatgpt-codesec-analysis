@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int split_and_rotate(int *arr, size_t n, size_t k)
+{
+    int *temp;
+    size_t copy_size;
+    size_t move_size;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    k = k % n;
+    if (k == 0) {
+        return 0;
+    }
+
+    copy_size = k * sizeof(int);
+    move_size = (n - k) * sizeof(int);
+
+    temp = malloc(copy_size);
+    if (temp == NULL) {
+        return -1;
+    }
+
+    memcpy(temp, arr, copy_size);
+    memmove(arr, arr + k, move_size);
+    memcpy(arr + (n - k), temp, copy_size);
+
+    free(temp);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 2;
+    size_t i;
+
+    if (split_and_rotate(arr, n, k) != 0) {
+        fprintf(stderr, "Error: rotation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The Flawfinder warnings on `memcpy` (CWE-120) are informational — the original copies were actually safe because `k < n` is guaranteed after `k = k % n`, so both `memcpy` calls stay within the bounds of `arr` and `temp`. However, to harden the code and address the underlying concern:
+
+1. **Integer overflow guard**: Added a check `n > SIZE_MAX / sizeof(int)` before any size arithmetic. On platforms where `n * sizeof(int)` could wrap around, the `malloc` size and copy sizes could otherwise become inconsistent, leading to a genuine heap overflow — the real-world root cause behind many CWE-120/CWE-190 bugs.
+
+2. **Explicit size variables**: `copy_size` and `move_size` are computed once, making it easy to verify that the destination buffer (`temp`, allocated with exactly `copy_size` bytes) always matches the amount copied into it, satisfying the "make sure destination can always hold the source data" requirement.
+
+3. **Preserved invariants**: `k % n` ensures `0 < k < n` at the point of copying, so `arr + (n - k)` plus `copy_size` bytes never exceeds `arr + n`, and `memmove` correctly handles the overlapping region.
+
+The program output remains `5 6 52 36 12 10`.

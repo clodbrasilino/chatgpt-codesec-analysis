@@ -1,0 +1,92 @@
+```c
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <stdint.h>
+
+double complex_angle(double real, double imag) {
+    if (real == 0.0 && imag == 0.0) {
+        errno = EDOM;
+        return 0.0;
+    }
+    return atan2(imag, real);
+}
+
+static void clear_input_buffer(void) {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+    }
+    if (ferror(stdin)) {
+        clearerr(stdin);
+    }
+}
+
+static int read_double(const char *prompt, double *value) {
+    char input[256] = {0};
+    char *endptr;
+    size_t len;
+    int overflow = 0;
+
+    if (prompt == NULL || value == NULL) {
+        return 0;
+    }
+
+    printf("%s", prompt);
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 0;
+    }
+
+    len = strnlen(input, sizeof(input));
+    if (len == 0) {
+        return 0;
+    }
+
+    if (input[len - 1] != '\n') {
+        if (len == sizeof(input) - 1) {
+            overflow = 1;
+            clear_input_buffer();
+        }
+    } else {
+        input[len - 1] = '\0';
+    }
+
+    if (overflow) {
+        return 0;
+    }
+
+    errno = 0;
+    *value = strtod(input, &endptr);
+    if (errno == ERANGE || endptr == input || *endptr != '\0') {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void) {
+    double real, imag, angle;
+
+    if (!read_double("Enter real part: ", &real)) {
+        fprintf(stderr, "Invalid real part.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!read_double("Enter imaginary part: ", &imag)) {
+        fprintf(stderr, "Invalid imaginary part.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    angle = complex_angle(real, imag);
+    if (errno == EDOM) {
+        fprintf(stderr, "Angle undefined for zero complex number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Angle: %f radians\n", angle);
+    return EXIT_SUCCESS;
+}
+```

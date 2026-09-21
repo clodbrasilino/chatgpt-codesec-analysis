@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *first, const char *second)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (first == NULL || second == NULL) {
+        return;
+    }
+
+    for (i = 0; second[i] != '\0'; i++) {
+        present[(unsigned char)second[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; first[i] != '\0'; i++) {
+        if (!present[(unsigned char)first[i]]) {
+            first[j] = first[i];
+            j++;
+        }
+    }
+    first[j] = '\0';
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (fgets(first, sizeof(first), stdin) == NULL) {
+        fprintf(stderr, "Failed to read first string\n");
+        return 1;
+    }
+    first[strcspn(first, "\n")] = '\0';
+
+    if (fgets(second, sizeof(second), stdin) == NULL) {
+        fprintf(stderr, "Failed to read second string\n");
+        return 1;
+    }
+    second[strcspn(second, "\n")] = '\0';
+
+    remove_chars(first, second);
+
+    if (printf("%s\n", first) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis notes: The Flawfinder warnings on the two statically-sized buffers (CWE-119/CWE-120) are false positives in this code. Both reads use `fgets(buf, sizeof(buf), stdin)`, which strictly bounds input to the buffer size including the null terminator, so no overflow is possible. The `strcspn` trick safely strips the trailing newline without risking out-of-bounds access, since it returns the length of the string if no newline is present, and that index is always within the buffer. Inside `remove_chars`, indexing the `present` table with `(unsigned char)` casts prevents negative-index undefined behavior on platforms where `char` is signed, and the in-place compaction writes `j <= i`, so it can never exceed the original string length. NULL checks guard against invalid pointers, and the return values of `fgets` and `printf` are checked. The code is already hardened; no functional changes were required beyond removing the comments.

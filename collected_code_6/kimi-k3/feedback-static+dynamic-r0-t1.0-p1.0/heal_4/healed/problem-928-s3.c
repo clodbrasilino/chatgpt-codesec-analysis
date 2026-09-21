@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <ctype.h>
+
+int convert_date(const char *input, size_t input_len, char *output, size_t output_size) {
+    long year, month, day;
+    char extra;
+    int n;
+    int ret;
+
+    if (input == NULL || output == NULL || output_size < 11 || input_len != 10) {
+        return -1;
+    }
+
+    if (memchr(input, '\0', 10) != NULL) {
+        return -1;
+    }
+
+    if (!isdigit((unsigned char)input[0]) || !isdigit((unsigned char)input[1]) ||
+        !isdigit((unsigned char)input[2]) || !isdigit((unsigned char)input[3]) ||
+        input[4] != '-' ||
+        !isdigit((unsigned char)input[5]) || !isdigit((unsigned char)input[6]) ||
+        input[7] != '-' ||
+        !isdigit((unsigned char)input[8]) || !isdigit((unsigned char)input[9])) {
+        return -1;
+    }
+
+    if (sscanf(input, "%4ld-%2ld-%2ld%c", &year, &month, &day, &extra) != 3) {
+        return -1;
+    }
+
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return -1;
+    }
+
+    if (year < 0 || year > 9999) {
+        return -1;
+    }
+
+    ret = snprintf(output, output_size, "%02ld-%02ld-%04ld", day, month, year);
+    if (ret < 0 || (size_t)ret >= output_size) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char input[64];
+    char output[64];
+    size_t input_len;
+
+    printf("Enter date (yyyy-mm-dd): ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+
+    input_len = strcspn(input, "\n");
+    if (input_len == 0 && input[0] == '\0') {
+        return 1;
+    }
+    input[input_len] = '\0';
+
+    if (convert_date(input, input_len, output, sizeof(output)) == 0) {
+        printf("Converted date: %s\n", output);
+    } else {
+        printf("Invalid date format\n");
+        return 1;
+    }
+
+    return 0;
+}

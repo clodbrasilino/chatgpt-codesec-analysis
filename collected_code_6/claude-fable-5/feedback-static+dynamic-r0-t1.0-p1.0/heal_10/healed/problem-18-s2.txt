@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define BUF_SIZE 256
+
+void remove_chars(char *first, const char *second)
+{
+    int present[UCHAR_MAX + 1] = {0};
+    size_t i;
+    size_t j;
+
+    if (first == NULL || second == NULL) {
+        return;
+    }
+
+    for (i = 0; second[i] != '\0'; i++) {
+        present[(unsigned char)second[i]] = 1;
+    }
+
+    j = 0;
+    for (i = 0; first[i] != '\0'; i++) {
+        if (!present[(unsigned char)first[i]]) {
+            first[j] = first[i];
+            j++;
+        }
+    }
+    first[j] = '\0';
+}
+
+int main(void)
+{
+    char first[BUF_SIZE];
+    char second[BUF_SIZE];
+
+    if (fgets(first, sizeof(first), stdin) == NULL) {
+        fprintf(stderr, "Failed to read first string\n");
+        return 1;
+    }
+    first[strcspn(first, "\n")] = '\0';
+
+    if (fgets(second, sizeof(second), stdin) == NULL) {
+        fprintf(stderr, "Failed to read second string\n");
+        return 1;
+    }
+    second[strcspn(second, "\n")] = '\0';
+
+    remove_chars(first, second);
+
+    if (printf("%s\n", first) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Analysis notes on the flagged weaknesses:
+
+The Flawfinder warnings on `char first[BUF_SIZE]` and `char second[BUF_SIZE]` are informational (risk level 2) — they flag any statically-sized buffer as a *potential* overflow site. In this program the risks are already mitigated:
+
+1. **Bounded input**: Both reads use `fgets(buf, sizeof(buf), stdin)`, which guarantees at most `BUF_SIZE - 1` characters are written plus the null terminator. There is no possibility of overflow, unlike `gets()` or unbounded `scanf("%s", ...)`.
+
+2. **Safe truncation handling**: `strcspn(buf, "\n")` correctly strips the newline if present, and if the input was longer than the buffer (no newline read), it simply indexes the existing null terminator — no out-of-bounds write.
+
+3. **Safe character indexing**: In `remove_chars`, characters are cast to `unsigned char` before indexing `present[]`, avoiding negative-index undefined behavior on platforms where `char` is signed. The table is sized `UCHAR_MAX + 1`, covering all byte values.
+
+4. **NULL guards**: `remove_chars` checks both pointers before dereferencing.
+
+5. **In-place compaction is safe**: The write index `j` never exceeds the read index `i`, so writes stay within the original string bounds, and the result is properly null-terminated.
+
+Since the warnings are false positives given the bounded I/O, the code is retained as-is with the audit comments removed.

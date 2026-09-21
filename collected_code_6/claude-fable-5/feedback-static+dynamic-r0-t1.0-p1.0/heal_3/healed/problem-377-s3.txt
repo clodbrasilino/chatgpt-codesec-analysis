@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 256
+
+void remove_char(char *str, char c)
+{
+    size_t read_idx = 0;
+    size_t write_idx = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_idx] != '\0') {
+        if (str[read_idx] != c) {
+            str[write_idx] = str[read_idx];
+            write_idx++;
+        }
+        read_idx++;
+    }
+    str[write_idx] = '\0';
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    const char *source = "hello world, hello everyone";
+    char target = 'l';
+    size_t source_len;
+    int written;
+
+    source_len = strnlen(source, BUFFER_SIZE);
+    if (source_len >= sizeof(buffer)) {
+        fprintf(stderr, "Source string too long\n");
+        return EXIT_FAILURE;
+    }
+
+    written = snprintf(buffer, sizeof(buffer), "%s", source);
+    if (written < 0 || (size_t)written >= sizeof(buffer)) {
+        fprintf(stderr, "Failed to copy source string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already well-defended against the Flawfinder warning (CWE-119/CWE-120) regarding the statically-sized `buffer`:
+
+1. **Bounds checking before copy** — `strnlen(source, BUFFER_SIZE)` safely determines the source length without reading past `BUFFER_SIZE` bytes, and the result is validated against `sizeof(buffer)` before any copy occurs.
+
+2. **Length-limited copy** — `snprintf(buffer, sizeof(buffer), "%s", source)` is used instead of unsafe functions like `strcpy` or `sprintf`, guaranteeing no overflow and NUL-termination. The return value is checked for both encoding errors (`< 0`) and truncation (`>= sizeof(buffer)`).
+
+3. **Safe in-place mutation** — `remove_char` guards against `NULL`, only ever shrinks the string (`write_idx <= read_idx`), and explicitly writes the terminating `'\0'`, so it cannot overflow the buffer it receives.
+
+Since the identified weakness was already properly mitigated, the rewrite preserves the logic unchanged and simply strips the comments as requested.

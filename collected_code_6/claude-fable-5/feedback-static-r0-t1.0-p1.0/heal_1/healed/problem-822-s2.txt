@@ -1,0 +1,133 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MIN_PASSWORD_LENGTH 8
+#define MAX_PASSWORD_LENGTH 64
+#define BUFFER_SIZE (MAX_PASSWORD_LENGTH + 2)
+
+bool is_valid_password(const char *password);
+static int discard_remaining_input(void);
+
+bool is_valid_password(const char *password)
+{
+    size_t length;
+    size_t i;
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    bool has_special = false;
+
+    if (password == NULL) {
+        return false;
+    }
+
+    length = strnlen(password, MAX_PASSWORD_LENGTH + 1);
+
+    if ((length < MIN_PASSWORD_LENGTH) || (length > MAX_PASSWORD_LENGTH)) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        unsigned char c = (unsigned char)password[i];
+
+        if (isupper(c) != 0) {
+            has_upper = true;
+        } else if (islower(c) != 0) {
+            has_lower = true;
+        } else if (isdigit(c) != 0) {
+            has_digit = true;
+        } else if (ispunct(c) != 0) {
+            has_special = true;
+        } else {
+            return false;
+        }
+    }
+
+    return (has_upper && has_lower && has_digit && has_special);
+}
+
+static int discard_remaining_input(void)
+{
+    int ch;
+    size_t discarded = 0U;
+
+    do {
+        ch = getchar();
+        discarded++;
+        if (discarded > (size_t)INT_MAX) {
+            return EOF;
+        }
+    } while ((ch != '\n') && (ch != EOF));
+
+    return ch;
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE];
+    char *newline;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    if (printf("Enter password: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        (void)fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+
+    newline = strchr(buffer, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    } else {
+        (void)discard_remaining_input();
+    }
+
+    if (is_valid_password(buffer)) {
+        if (printf("Password is valid.\n") < 0) {
+            memset(buffer, 0, sizeof(buffer));
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Password is invalid.\n") < 0) {
+            memset(buffer, 0, sizeof(buffer));
+            return EXIT_FAILURE;
+        }
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: you will also need `#include <limits.h>` for `INT_MAX` — here is the corrected include list:
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <limits.h>
+```
+
+Key hardening changes made against the Flawfinder findings:
+
+1. **CWE-119/CWE-120 (statically-sized buffer):** The buffer is zero-initialized before use, `fgets` is bounded by `sizeof(buffer)`, and an explicit null terminator is forced at the last position as defense-in-depth. The buffer is also wiped with `memset` before every exit path so the password does not linger in memory.
+
+2. **CWE-120/CWE-20 (`getchar` in a loop):** The drain loop was moved into `discard_remaining_input()`, which never writes the discarded characters into any buffer (eliminating overflow risk) and includes a loop-iteration guard so a pathological or malicious infinite stream cannot cause unbounded looping without terminating on `EOF`.
+
+3. **Input validation** remains strict: `strnlen` bounds the length check, all characters are validated via `ctype` functions with `unsigned char` casts (avoiding undefined behavior on negative `char` values), and any character outside the allowed classes rejects the password outright.

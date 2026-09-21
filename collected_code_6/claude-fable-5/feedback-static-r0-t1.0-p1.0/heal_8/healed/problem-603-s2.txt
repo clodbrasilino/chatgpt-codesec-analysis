@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <string.h>
+
+int *get_lucid_numbers(int n, size_t *count);
+
+int *get_lucid_numbers(int n, size_t *count)
+{
+    if (count == NULL || n < 1) {
+        return NULL;
+    }
+    if ((size_t)n > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    size_t capacity = (size_t)n;
+    size_t len = capacity;
+
+    int *arr = malloc(capacity * sizeof *arr);
+    if (arr == NULL) {
+        return NULL;
+    }
+
+    int *result = malloc(capacity * sizeof *result);
+    if (result == NULL) {
+        free(arr);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < capacity; i++) {
+        arr[i] = (int)(i + 1);
+    }
+
+    size_t rcount = 0;
+    result[rcount++] = arr[0];
+
+    size_t start = 1;
+    while (start < len && start < capacity) {
+        int step = arr[start];
+        if (step <= 0 || rcount >= capacity) {
+            free(arr);
+            free(result);
+            return NULL;
+        }
+        result[rcount++] = step;
+
+        size_t write = start;
+        size_t idx = 0;
+        size_t limit = (len < capacity) ? len : capacity;
+
+        for (size_t read = start; read < limit; read++, idx++) {
+            if (idx % (size_t)step != 0) {
+                if (write >= capacity || write > read) {
+                    free(arr);
+                    free(result);
+                    return NULL;
+                }
+                arr[write] = arr[read];
+                write++;
+            }
+        }
+
+        if (write > capacity) {
+            free(arr);
+            free(result);
+            return NULL;
+        }
+        len = write;
+    }
+
+    free(arr);
+
+    if (rcount > 0 && rcount <= capacity) {
+        int *shrunk = realloc(result, rcount * sizeof *shrunk);
+        if (shrunk != NULL) {
+            result = shrunk;
+        }
+    }
+
+    *count = rcount;
+    return result;
+}
+
+int main(int argc, const char *const argv[])
+{
+    int n = 25;
+
+    if (argc > 1 && argv[1] != NULL) {
+        char *end = NULL;
+        errno = 0;
+        long value = strtol(argv[1], &end, 10);
+        if (errno != 0 || end == argv[1] || end == NULL || *end != '\0' ||
+            value < 1 || value > INT_MAX) {
+            fprintf(stderr, "Invalid input: expected a positive integer\n");
+            return EXIT_FAILURE;
+        }
+        n = (int)value;
+    }
+
+    size_t count = 0;
+    int *lucid = get_lucid_numbers(n, &count);
+    if (lucid == NULL) {
+        fprintf(stderr, "Failed to compute lucid numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Lucid numbers <= %d:\n", n);
+    for (size_t i = 0; i < count; i++) {
+        printf("%d ", lucid[i]);
+    }
+    printf("\n");
+
+    free(lucid);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already defensively written, and the Flawfinder hits (CWE-120/CWE-20, risk 1) are low-severity heuristic warnings triggered simply because array indexing occurs inside loops — Flawfinder flags any buffer access in a loop for manual review, not because it detected an actual overflow.
+
+Reviewing each flagged site:
+
+1. **The inner `for` loop reads (`arr[read]`)** — `read` is bounded by `read < len && read < capacity` in the loop condition. I consolidated this into a precomputed `limit = min(len, capacity)`, which makes the bound explicit, removes the redundant `read >= capacity` re-check inside the loop body, and is marginally faster.
+
+2. **The write access (`arr[write]`)** — guarded by `write >= capacity || write > read` before every store. Since `write <= read < capacity` is enforced, no out-of-bounds write is possible. This check is retained.
+
+3. **`result[rcount++]`** — guarded by `rcount >= capacity` before each append inside the loop; the initial `result[0]` store is safe because `capacity >= 1` is guaranteed by the `n < 1` rejection.
+
+Other correctness properties preserved:
+
+- **Integer overflow guard** on the allocation size (`n > SIZE_MAX / sizeof(int)`).
+- **`realloc` shrink handled safely** — if it fails, the original (larger, still valid) buffer is kept.
+- **`strtol` input validation** covers `errno`, empty input, trailing garbage, and range (`1..INT_MAX`).
+- **No memory leaks** — every early-exit path frees both `arr` and `result`.
+
+The rewrite is functionally identical; the only substantive change is the clearer, single-point loop bound, which addresses the reviewer intent behind the Flawfinder annotations.

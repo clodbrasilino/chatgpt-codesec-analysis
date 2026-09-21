@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static char **split_string(const char *input, const char *delimiter_pattern, int *token_count) {
+    regex_t regex;
+    regmatch_t match;
+    char **tokens = NULL;
+    int count = 0;
+    size_t capacity = 0;
+    const char *cursor = input;
+    const char *token_start = input;
+    int compile_result;
+
+    if (input == NULL || delimiter_pattern == NULL || token_count == NULL) {
+        return NULL;
+    }
+
+    compile_result = regcomp(&regex, delimiter_pattern, REG_EXTENDED);
+    if (compile_result != 0) {
+        return NULL;
+    }
+
+    while (*cursor != '\0') {
+        int exec_result = regexec(&regex, cursor, 1, &match, 0);
+        if (exec_result == 0) {
+            size_t token_length = (size_t)(cursor + match.rm_so - token_start);
+            if (count >= (int)capacity) {
+                size_t new_capacity = (capacity == 0) ? 8 : capacity * 2;
+                if (new_capacity > SIZE_MAX / sizeof(char *)) {
+                    for (int i = 0; i < count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    regfree(&regex);
+                    return NULL;
+                }
+                char **new_tokens = (char **)realloc(tokens, new_capacity * sizeof(char *));
+                if (new_tokens == NULL) {
+                    for (int i = 0; i < count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    regfree(&regex);
+                    return NULL;
+                }
+                tokens = new_tokens;
+                capacity = new_capacity;
+            }
+            if (token_length > 0 && token_length <= SIZE_MAX - 1) {
+                tokens[count] = (char *)malloc(token_length + 1);
+                if (tokens[count] == NULL) {
+                    for (int i = 0; i < count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    regfree(&regex);
+                    return NULL;
+                }
+                if (token_length > 0) {
+                    memcpy(tokens[count], token_start, token_length);
+                }
+                tokens[count][token_length] = '\0';
+            } else if (token_length == 0) {
+                tokens[count] = (char *)malloc(1);
+                if (tokens[count] == NULL) {
+                    for (int i = 0; i < count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    regfree(&regex);
+                    return NULL;
+                }
+                tokens[count][0] = '\0';
+            } else {
+                for (int i = 0; i < count; i++) {
+                    free(tokens[i]);
+                }
+                free(tokens);
+                regfree(&regex);
+                return NULL;
+            }
+            count++;
+            cursor += match.rm_eo;
+            token_start = cursor;
+        } else if (exec_result == REG_NOMATCH) {
+            break;
+        } else {
+            for (int i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            regfree(&regex);
+            return NULL;
+        }
+    }
+
+    if (*token_start != '\0' || count == 0) {
+        size_t remaining_length = strlen(token_start);
+        if (remaining_length > SIZE_MAX - 1) {
+            for (int i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            regfree(&regex);
+            return NULL;
+        }
+        if (count >= (int)capacity) {
+            size_t new_capacity = (capacity == 0) ? 8 : capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(char *)) {
+                for (int i = 0; i < count; i++) {
+                    free(tokens[i]);
+                }
+                free(tokens);
+                regfree(&regex);
+                return NULL;
+            }
+            char **new_tokens = (char **)realloc(tokens, new_capacity * sizeof(char *));
+            if (new_tokens == NULL) {
+                for (int i = 0; i < count; i++) {
+                    free(tokens[i]);
+                }
+                free(tokens);
+                regfree(&regex);
+                return NULL;
+            }
+            tokens = new_tokens;
+            capacity = new_capacity;
+        }
+        tokens[count] = (char *)malloc(remaining_length + 1);
+        if (tokens[count] == NULL) {
+            for (int i = 0; i < count; i++) {
+                free(tokens[i]);
+            }
+            free(tokens);
+            regfree(&regex);
+            return NULL;
+        }
+        if (remaining_length > 0) {
+            memcpy(tokens[count], token_start, remaining_length);
+        }
+        tokens[count][remaining_length] = '\0';
+        count++;
+    }
+
+    regfree(&regex);
+    *token_count = count;
+    return tokens;
+}
+
+static void free_tokens(char **tokens, int token_count) {
+    if (tokens == NULL) {
+        return;
+    }
+    for (int i = 0; i < token_count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void) {
+    const char *input = "Hello,world;this|is a test";
+    const char *pattern = "[,;| ]+";
+    int token_count = 0;
+    char **tokens = split_string(input, pattern, &token_count);
+
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    for (int i = 0; i < token_count; i++) {
+        printf("Token %d: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, token_count);
+    return 0;
+}

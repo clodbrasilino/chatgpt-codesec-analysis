@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-674-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-674-s3.c:36:16: style: Array index 'word_len' is used before limits check. [arrayIndexThenCheck]
+    while (word[word_len] != '\0' && word_len < MAX_WORD_LEN) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-674-s3.c:86:23: style: Condition 'input_len+1>0' is always true [knownConditionTrueFalse]
+    if (input_len + 1 > 0) {
+                      ^

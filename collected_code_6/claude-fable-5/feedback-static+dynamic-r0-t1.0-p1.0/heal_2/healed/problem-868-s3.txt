@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096U
+
+size_t length_of_last_word(const char *s)
+{
+    size_t len;
+    size_t end;
+    size_t count;
+
+    if (s == NULL) {
+        return 0U;
+    }
+
+    len = strnlen(s, MAX_INPUT_LEN);
+    if (len == 0U) {
+        return 0U;
+    }
+
+    end = len;
+    while (end > 0U && isspace((unsigned char)s[end - 1U])) {
+        end--;
+    }
+
+    count = 0U;
+    while (end > 0U && !isspace((unsigned char)s[end - 1U])) {
+        count++;
+        end--;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[MAX_INPUT_LEN];
+    size_t result;
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL) {
+        buffer[0] = '\0';
+    }
+
+    result = length_of_last_word(buffer);
+
+    if (printf("%zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The key weakness was in `main`: the test harness expected only the numeric result on stdout for input supplied via stdin, but the original program ignored stdin entirely and ran a hard-coded self-test with verbose formatting, so the harness saw no matching output at all. The rewrite reads a single line from stdin (safely bounded with `fgets`, handling EOF/empty input by treating it as an empty string) and prints only the computed length followed by a newline. The `length_of_last_word` logic itself was already sound — null-safe, bounded by `strnlen`, trailing-whitespace tolerant, and using `(unsigned char)` casts to avoid undefined behavior with `isspace` — so it is preserved unchanged.

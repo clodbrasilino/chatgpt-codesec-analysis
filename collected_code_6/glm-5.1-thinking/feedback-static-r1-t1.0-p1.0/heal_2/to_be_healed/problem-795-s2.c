@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(Item *arr, int size, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && arr[left].price < arr[smallest].price) {
+        smallest = left;
+    }
+
+    if (right < size && arr[right].price < arr[smallest].price) {
+        smallest = right;
+    }
+
+    if (smallest != i) {
+        swap(&arr[i], &arr[smallest]);
+        min_heapify(arr, size, smallest);
+    }
+}
+
+void build_min_heap(Item *arr, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) {
+        min_heapify(arr, size, i);
+    }
+}
+
+Item extract_min(Item *arr, int *size) {
+    Item min_item = arr[0];
+    arr[0] = arr[*size - 1];
+    *size = *size - 1;
+    min_heapify(arr, *size, 0);
+    return min_item;
+}
+
+int find_n_cheapest(Item *dataset, int dataset_size, int n, Item *result) {
+    if (dataset == NULL || result == NULL || dataset_size <= 0 || n <= 0) {
+        return -1;
+    }
+
+    if (n > dataset_size) {
+        n = dataset_size;
+    }
+
+    if ((size_t)dataset_size > SIZE_MAX / sizeof(Item)) {
+        return -1;
+    }
+
+    size_t alloc_size = (size_t)dataset_size * sizeof(Item);
+    Item *heap = malloc(alloc_size);
+    if (heap == NULL) {
+        return -1;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    memcpy(heap, dataset, alloc_size);
+    build_min_heap(heap, dataset_size);
+
+    int current_size = dataset_size;
+    for (int i = 0; i < n; i++) {
+        result[i] = extract_min(heap, &current_size);
+    }
+
+    free(heap);
+    return 0;
+}
+
+int main() {
+    Item dataset[] = {
+        {1, 19.99},
+        {2, 5.99},
+        {3, 12.50},
+        {4, 1.99},
+        {5, 8.75}
+    };
+    int dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    int n = 3;
+
+    Item *result = malloc(n * sizeof(Item));
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (find_n_cheapest(dataset, dataset_size, n, result) == 0) {
+        for (int i = 0; i < n; i++) {
+            printf("ID: %d, Price: %.2f\n", result[i].id, result[i].price);
+        }
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,133 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 1024U
+
+size_t remove_words(char **words, size_t count, const char *const *remove_list, size_t remove_count);
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(s, MAX_WORD_LENGTH);
+    if (len >= MAX_WORD_LENGTH) {
+        return NULL;
+    }
+    len += 1U;
+
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+     */
+    (void)memcpy(copy, s, len);
+    copy[len - 1U] = '\0';
+
+    return copy;
+}
+
+size_t remove_words(char **words, size_t count, const char *const *remove_list, size_t remove_count)
+{
+    size_t i;
+    size_t j;
+    size_t out;
+
+    if (words == NULL) {
+        return 0U;
+    }
+
+    out = 0U;
+    for (i = 0U; i < count; i++) {
+        int match = 0;
+
+        if (words[i] != NULL && remove_list != NULL) {
+            for (j = 0U; j < remove_count; j++) {
+                if (remove_list[j] != NULL && strcmp(words[i], remove_list[j]) == 0) {
+                    match = 1;
+                    break;
+                }
+            }
+        }
+
+        if (match != 0) {
+            free(words[i]);
+            words[i] = NULL;
+        } else {
+            words[out] = words[i];
+            out++;
+        }
+    }
+
+    for (i = out; i < count; i++) {
+        words[i] = NULL;
+    }
+
+    return out;
+}
+
+int main(void)
+{
+    static const char *initial[] = {
+        "apple", "banana", "cherry", "date", "elderberry", "fig", "grape"
+    };
+    static const char *to_remove[] = {
+        "banana", "date", "grape"
+    };
+
+    char **words;
+    size_t count;
+    size_t remove_count;
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+    count = sizeof(initial) / sizeof(initial[0]);
+    remove_count = sizeof(to_remove) / sizeof(to_remove[0]);
+
+    words = calloc(count, sizeof(*words));
+    if (words == NULL) {
+        (void)fprintf(stderr, "Error: unable to allocate word list.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        words[i] = duplicate_string(initial[i]);
+        if (words[i] == NULL) {
+            (void)fprintf(stderr, "Error: unable to duplicate word.\n");
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    if (status == EXIT_SUCCESS) {
+        size_t new_count = remove_words(words, count, to_remove, remove_count);
+
+        for (i = 0U; i < new_count; i++) {
+            if (printf("%s\n", words[i]) < 0) {
+                (void)fprintf(stderr, "Error: unable to write output.\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(words[i]);
+        words[i] = NULL;
+    }
+    free(words);
+    words = NULL;
+
+    return status;
+}

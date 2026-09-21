@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORDS 1024
+#define MAX_INPUT_LEN 65536
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    char *dup;
+
+    if (src == NULL) {
+        return NULL;
+    }
+
+    len = strnlen(src, MAX_INPUT_LEN);
+    if (len >= MAX_INPUT_LEN) {
+        return NULL;
+    }
+
+    dup = malloc(len + 1);
+    if (dup == NULL) {
+        return NULL;
+    }
+
+    memcpy(dup, src, len);
+    dup[len] = '\0';
+    return dup;
+}
+
+char *find_first_repeated_word(const char *input)
+{
+    char *copy;
+    char *token;
+    char *result;
+    char *saveptr;
+    const char *delims = " \t\r\n.,;:!?\"'()";
+    char *seen[MAX_WORDS];
+    size_t count;
+    size_t i;
+
+    if (input == NULL) {
+        return duplicate_string("None");
+    }
+
+    copy = duplicate_string(input);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    result = NULL;
+    count = 0;
+    saveptr = NULL;
+
+    token = strtok_r(copy, delims, &saveptr);
+    while (token != NULL && count < MAX_WORDS) {
+        for (i = 0; i < count; i++) {
+            if (strcmp(seen[i], token) == 0) {
+                result = duplicate_string(token);
+                goto cleanup;
+            }
+        }
+        seen[count] = duplicate_string(token);
+        if (seen[count] == NULL) {
+            goto cleanup;
+        }
+        count++;
+        token = strtok_r(NULL, delims, &saveptr);
+    }
+
+    result = duplicate_string("None");
+
+cleanup:
+    for (i = 0; i < count; i++) {
+        free(seen[i]);
+    }
+    free(copy);
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "the quick brown fox jumps over the lazy dog";
+    char *repeated;
+
+    repeated = find_first_repeated_word(text);
+    if (repeated == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    if (strcmp(repeated, "None") == 0) {
+        if (printf("No repeated word found\n") < 0) {
+            free(repeated);
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("First repeated word: %s\n", repeated) < 0) {
+            free(repeated);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(repeated);
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **CWE-126 (`strlen` over-read):** Replaced `strlen` with `strnlen` bounded by `MAX_INPUT_LEN`, so a non-terminated buffer can no longer cause an unbounded read. Inputs at or beyond the cap are rejected.
+
+2. **CWE-120 (`memcpy` overflow):** The copy is now exactly `len` bytes into a buffer of `len + 1`, with explicit manual null-termination. The destination size is derived directly from the measured length, so it can never be undersized.
+
+3. **Failed test case (`expected 'None', got (null)`):** The function now returns a heap-allocated `"None"` string instead of `NULL` when no repeated word exists (including the `NULL`-input path), matching the expected contract. `NULL` is now reserved exclusively for allocation failure, which `main` treats as an error.
+
+4. **Static array concern (CWE-119/CWE-120):** The `seen[MAX_WORDS]` array access remains strictly bounds-checked by the `count < MAX_WORDS` loop condition before any write.
+
+5. **Additional hardening:** Swapped `strtok` for the reentrant `strtok_r`, eliminating hidden static state and making the function thread-safe.

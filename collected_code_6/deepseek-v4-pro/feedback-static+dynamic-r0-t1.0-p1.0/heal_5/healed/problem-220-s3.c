@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <errno.h>
+#include <limits.h>
+
+void replace_chars(char *str, size_t n) {
+    size_t count = 0;
+    while (*str && count < n) {
+        if (*str == ' ' || *str == ',' || *str == '.') {
+            *str = ':';
+            count++;
+        }
+        str++;
+    }
+}
+
+size_t safe_str_to_size_t(const char *input) {
+    unsigned long long val;
+    char *endptr;
+
+    errno = 0;
+    val = strtoull(input, &endptr, 10);
+
+    if (endptr == input || *endptr != '\0') {
+        return 0;
+    }
+
+    if ((val == ULLONG_MAX && errno == ERANGE) || val > SIZE_MAX) {
+        return 0;
+    }
+
+    return (size_t)val;
+}
+
+int main(void) {
+    char *text = NULL;
+    size_t text_size = 256;
+    char max_replace_str[32];
+    size_t max_replace;
+    size_t input_len;
+
+    text = malloc(text_size);
+    if (text == NULL) {
+        return 1;
+    }
+
+    printf("Enter a string: ");
+    if (fgets(text, text_size, stdin) == NULL) {
+        free(text);
+        return 1;
+    }
+
+    input_len = strlen(text);
+    if (input_len > 0 && text[input_len - 1] != '\n') {
+        char *temp;
+        text_size *= 2;
+        temp = realloc(text, text_size);
+        if (temp == NULL) {
+            free(text);
+            return 1;
+        }
+        text = temp;
+    }
+    text[strcspn(text, "\n")] = '\0';
+
+    printf("Enter maximum replacements: ");
+    if (fgets(max_replace_str, sizeof(max_replace_str), stdin) == NULL) {
+        free(text);
+        return 1;
+    }
+    max_replace_str[strcspn(max_replace_str, "\n")] = '\0';
+
+    max_replace = safe_str_to_size_t(max_replace_str);
+
+    replace_chars(text, max_replace);
+    printf("Result: %s\n", text);
+
+    free(text);
+    return 0;
+}

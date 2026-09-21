@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_INPUT_LEN 8192
+
+bool is_vowel(char c);
+char* reverse_vowels(const char *input);
+
+bool is_vowel(char c) {
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
+}
+
+char* reverse_vowels(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  Array index out of bounds
+     *  Either the condition 'len<8192' is redundant or the array 'input[24]' is accessed at index 8191, which is out of bounds. [arrayIndexOutOfBoundsCond]
+     *  Assuming that condition 'len<8192' is not redundant
+     */
+    while (len < MAX_INPUT_LEN && input[len] != '\0') {
+        len++;
+    }
+
+    char *str = (char *)malloc(len + 1);
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        str[i] = input[i];
+    }
+    str[len] = '\0';
+
+    if (len == 0) {
+        return str;
+    }
+
+    size_t left = 0;
+    size_t right = len - 1;
+
+    while (left < right) {
+        while (left < right && !is_vowel(str[left])) {
+            left++;
+        }
+        while (left < right && !is_vowel(str[right])) {
+            right--;
+        }
+        if (left < right) {
+            char temp = str[left];
+            str[left] = str[right];
+            str[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    return str;
+}
+
+int main(void) {
+    const char *test_str = "Programming in C is fun";
+    char *result = reverse_vowels(test_str);
+    
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

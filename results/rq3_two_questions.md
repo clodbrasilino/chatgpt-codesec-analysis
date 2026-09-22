@@ -6,10 +6,14 @@ problem of the non-thinking arm is paired to the same problem in the
 thinking arm), 3 independent samples per problem per arm (600 programs
 each), t=1.0/p=1.0, horizon = 5 rounds (config-driven). Detection =
 the analysis gate at round 0 (Q1) and pass-within-horizon (Q2).
-Currently valid pairs: GPT-5.6 and GLM-5.1. Gemini 3.1 Pro excluded
-(base arm saturated: 97.0% pass, no headroom). DeepSeek V4 Pro and
-Kimi K3 pending the heal-repair of their thinking cells (transient
-failures); numbers refresh when repaired.
+Included: GPT-5.6 and GLM-5.1 (both arms valid). Gemini 3.1 Pro is
+reported but its answers are INCONCLUSIVE for two reasons: (a) its
+base arm already has reasoning enabled at the lowest available level
+(Gemini's reasoning cannot be disabled), so the contrast is reasoning
+low -> medium, not off -> on; and (b) the base arm is near ceiling
+(97.0% pass @horizon; 94.2% repair success among flagged), leaving no
+headroom. DeepSeek V4 Pro and Kimi K3 pending the heal-repair of their
+thinking cells (transient failures); numbers refresh when repaired.
 
 Paired statistics use the problem as the unit: McNemar exact on the
 majority-of-3 problem label, Wilcoxon signed-rank on per-problem
@@ -25,16 +29,17 @@ with no gate finding (`clean_at_start`).
 |---|---:|---:|---:|---|---|---|
 | GPT-5.6 | 49.3% | 42.7% | **-6.7pp** | [-11.3, -2.0] | 23/11, p = 0.058 | n=74, p = 0.005, r = -0.362 |
 | GLM-5.1 | 39.3% | 47.3% | **+8.0pp** | [+2.5, +13.5] | 20/37, p = 0.033 | n=109, p = 0.006, r = +0.296 |
+| Gemini 3.1 Pro | 48.2% | 52.3% | +4.2pp | [-2.7, +10.8] | 30/40, p = 0.28 | n=120, p = 0.26, r = +0.117 |
 
 **Answer: no.** Thinking does not reliably reduce generation-time
 detections — the effect is model-dependent and runs in OPPOSITE
 directions: for GPT-5.6 thinking generates significantly MORE flagged
 code (-6.7pp detection-free, Wilcoxon p = 0.005), for GLM-5.1 it
-generates less (+8.0pp, p = 0.006). Across the two valid models the
-generation-time effect is inconsistent and small relative to the
-repair effect (Q2). (Gemini, the one model where generation-time
-detection-free rate rises clearly with thinking in the static-only
-configuration, is excluded here for saturation.)
+generates less (+8.0pp, p = 0.006). Gemini shows no significant
+difference (+4.2pp, CI crossing zero), and its contrast is reasoning
+low -> medium rather than off -> on, so it is uninformative for the
+off-vs-on question. Across models the generation-time effect is
+inconsistent and small relative to the repair effect (Q2).
 
 ## Q2 — Does thinking repair detections better?
 
@@ -45,10 +50,15 @@ share that reach a pass state within the five-round horizon.
 |---|---:|---:|---:|---|
 | GPT-5.6 | 56.2% (304 flagged) | 89.8% (344 flagged) | **+33.6pp** | [+26.0, +41.1] |
 | GLM-5.1 | 69.2% (364 flagged) | 94.3% (316 flagged) | **+25.1pp** | [+18.5, +31.8] |
+| Gemini 3.1 Pro | 94.2% (311 flagged) | 92.7% (286 flagged) | -1.6pp | [-5.7, +2.2] |
 
-**Answer: yes, substantially.** Conditioned on being flagged,
-thinking repairs detections at a 25-34pp higher rate, with cluster
-bootstrap CIs far from zero in both models. Consistent with the
+**Answer: yes, substantially — where measurable.** Conditioned on
+being flagged, thinking repairs detections at a 25-34pp higher rate in
+GPT-5.6 and GLM-5.1, with cluster bootstrap CIs far from zero. For
+Gemini the metric is saturated (base arm already repairs 94.2% of
+flagged programs within the horizon), the difference is -1.6pp with a
+CI crossing zero, and the arm contrast is reasoning low -> medium, so
+its Q2 answer is inconclusive by ceiling and by design. Consistent with the
 unconditioned contrast (pass @horizon 77.8% -> 94.2% for GPT,
 81.3% -> 97.0% for GLM; McNemar p = 7.3e-07 / 2.3e-07) and with the
 penalized rounds statistic (Wilcoxon effect r = -0.29 both models:

@@ -52,6 +52,16 @@ share that reach a pass state within the five-round horizon.
 | GLM-5.1 | 69.2% (364 flagged) | 94.3% (316 flagged) | **+25.1pp** | [+18.5, +31.8] |
 | Gemini 3.1 Pro | 94.2% (311 flagged) | 92.7% (286 flagged) | -1.6pp | [-5.7, +2.2] |
 
+**Gemini as a low-vs-medium reasoning contrast.** Within Gemini, the
+two arms differ only in reasoning level (low -> medium, the only such
+pair available). Q1: no detectable difference (+4.2pp, CI crossing
+zero, p = 0.28) -- a null at n = 200 problems, consistent with the
+absence of a reliable generation-time effect across models, but not
+evidence of absence. Q2: UNINFORMATIVE, not negative -- the metric is
+at ceiling (base repairs 94.2% of flagged programs), so no effect
+could be measured even if one existed; "no change observed" here is a
+design limitation, not a finding.
+
 **Answer: yes, substantially — where measurable.** Conditioned on
 being flagged, thinking repairs detections at a 25-34pp higher rate in
 GPT-5.6 and GLM-5.1, with cluster bootstrap CIs far from zero. For

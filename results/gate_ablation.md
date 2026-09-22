@@ -89,6 +89,43 @@ x = first arm passes / second does not; y = reverse.
 x = first arm passes / second does not; y = reverse.
 
 
+## RESOLVED: common-criterion pass rates (cross-evaluation, 2026-09-22)
+
+The cross-evaluation ran the missing channel on each arm's FINAL code
+(static analyzers on the dynamic-only arm's finals; tests + sanitizer
+oracle -- no fuzzing -- on the static-only arm's finals), placing all
+three arms on the FULL-GATE criterion (static-clean AND dynamic-clean,
+600 programs per model):
+
+| Model | static-only arm | dynamic-only arm | full-gate arm |
+|---|---:|---:|---:|
+| DeepSeek V4 Pro | 58.0% | 36.3% | **73.2%** |
+| GPT-5.6 | 56.2% | 49.7% | **72.8%** |
+| Gemini 3.1 Pro | 74.7% | 49.2% | **95.3%** |
+| Kimi K3 | 48.3% | 35.2% | **69.3%** |
+| GLM-5.1 | 58.5% | 40.2% | **77.8%** |
+| Qwen Max | 63.5% | 44.5% | **78.7%** |
+| Claude Fable 5 | 59.5% | 46.0% | **78.8%** |
+
+Findings:
+1. **The full gate wins under the common criterion in every model.**
+   The "full gate is worse" reading of comparisons B/C was entirely a
+   criterion artifact: when all arms are measured against the full
+   criterion, the full-gate loop produces the most truly-clean
+   programs (69.3-95.3% vs 48.3-74.7% static-only, 35.2-49.7%
+   dynamic-only).
+2. **Dynamic-only termination leaves massive static residue**: only
+   35.2-49.7% of its passes are also static-clean. Its 95-99%
+   self-criterion pass rate collapses by half under the common
+   criterion.
+3. **False closure of the static gate: 23.6-31.0%** -- of the programs
+   the static-only loop passed, 24-31% are dynamically DIRTY (fail
+   tests or violate sanitizers; no fuzzing, so this is a LOWER bound).
+   Static-clean does not imply dynamic-clean for roughly one in four
+   programs.
+4. Data: results/cross_eval_common_criterion.json; raw reports under
+   cross_eval/{model}/{from_static,from_dynamic}/.
+
 ## Interpretation (criterion caveat is essential)
 
 Each arm's "pass" is its own gate's termination criterion, so the bars

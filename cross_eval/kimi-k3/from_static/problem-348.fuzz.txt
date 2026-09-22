@@ -1,0 +1,3 @@
+problem-348.c:27:20:medium:UBSan: signed integer overflow: 4611686018427387904 * 4 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000000,sig:06,src:000006,time:30358,execs:7905,op:havoc,rep:1)
+problem-348.c:27:20:medium:UBSan: signed integer overflow: 4052555153018976267 * 3 cannot be represented in type 'll' (aka 'long long') (AFL crash: id:000003,sig:06,src:000013,time:42566,execs:9523,op:havoc,rep:5)
+problem-348.c:96:0:error:Fuzzing found a crash (signal 6) on input id:000001,sig:06,src:000011,time:32409,execs:8445,op:havoc,rep:3; likely memory-safety defect

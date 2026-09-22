@@ -90,3 +90,35 @@ channel on each arm's final code:
   closure).
 Fuzzing scope for the latter is a separate decision (AFL++ on ~4,200
 finals is hours of compute; tests+oracle is the fast core).
+
+
+## Plain-language summary: are the detections on the same problems?
+
+No. On identical round-0 code (4,200 programs, 7 models), the channels
+flag largely different subsets:
+
+| per 100 programs | |
+|---|---|
+| 42 | neither channel flags -- both loops terminate immediately |
+| 51 | ONLY static flags -- dynamic loop passes instantly; static loop burns rounds, clears 72% in 5 rounds |
+| 2 | only dynamic flags |
+| 5 | both flag |
+
+Static flagged 2,362 programs, dynamic 301; overlap 227 (9.6% of
+static's set). Asymmetry: ~75% of dynamically-flagged programs are
+also statically flagged, but only ~10% of statically-flagged programs
+are dynamically flagged -- static findings are largely invisible to
+the dynamic channel (quality/lexical issues, not behavioral failures).
+
+Consequences:
+1. Dynamic-only's high pass rate (95-99%) reflects a gate that rarely
+   triggers (7% of programs) plus quick fixes -- not better feedback.
+2. Static-only's lower pass rate (70-84%) reflects a gate that
+   triggers on half the programs and keeps re-triggering (slow hazard
+   decay: 44/23/10/7/6%) -- a persistent tail of findings the models
+   do not fully clear.
+3. Per-finding actionability is equal (round-1 fix rate 44% vs 42%,
+   median 1 round both arms). The right question is not "which
+   feedback does the LLM understand better" but "which criterion is
+   satisfiable": static casts a wide net with an uncleared residue;
+   dynamic casts a narrow net with quickly-fixed catches.

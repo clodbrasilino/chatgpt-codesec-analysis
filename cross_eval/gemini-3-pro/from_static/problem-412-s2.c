@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* remove_odd_numbers(Node* head) {
+    Node* current = head;
+    Node* prev = NULL;
+    Node* temp = NULL;
+
+    while (current != NULL) {
+        if (current->data % 2 != 0) {
+            if (prev == NULL) {
+                head = current->next;
+                temp = current;
+                current = current->next;
+                free(temp);
+            } else {
+                prev->next = current->next;
+                temp = current;
+                current = current->next;
+                free(temp);
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+Node* insert_node(Node* head, int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return head;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (head == NULL) {
+        return new_node;
+    }
+
+    Node* current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+
+    return head;
+}
+
+void print_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    Node* temp = NULL;
+    while (current != NULL) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+
+    head = insert_node(head, 1);
+    head = insert_node(head, 2);
+    head = insert_node(head, 3);
+    head = insert_node(head, 4);
+    head = insert_node(head, 5);
+    head = insert_node(head, 6);
+
+    head = remove_odd_numbers(head);
+
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

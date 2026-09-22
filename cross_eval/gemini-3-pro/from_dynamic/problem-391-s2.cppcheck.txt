@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-391-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-391-s2.c:47:74: style: Condition 'len>1' is always true [knownConditionTrueFalse]
+        head->nested_dict = lists_to_nested_dict(keys + 1, values && len > 1 ? values + 1 : NULL, len - 1);
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-391-s2.c:46:13: note: Assuming condition 'len>1' is true
+    if (len > 1) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-391-s2.c:47:74: note: Condition 'len>1' is always true
+        head->nested_dict = lists_to_nested_dict(keys + 1, values && len > 1 ? values + 1 : NULL, len - 1);
+                                                                         ^

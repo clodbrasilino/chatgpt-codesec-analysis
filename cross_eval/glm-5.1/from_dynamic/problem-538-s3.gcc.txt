@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-538-s3.c: In function 'free_tuple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-538-s3.c:52:33: error: 't' is a pointer; did you mean to use '->'?
+   52 |         for (size_t i = 0; i < t.count; ++i) {
+      |                                 ^
+      |                                 ->

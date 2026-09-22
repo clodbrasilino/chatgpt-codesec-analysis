@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#define MAX_TUPLE_SIZE 10
+
+typedef struct {
+    int values[MAX_TUPLE_SIZE];
+    size_t count;
+} Tuple;
+
+bool check_all_k(const Tuple *tuples, size_t num_tuples, int k)
+{
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL) {
+        return false;
+    }
+
+    if (num_tuples == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < num_tuples; i++) {
+        if (tuples[i].count == 0U) {
+            return false;
+        }
+        if (tuples[i].count > (size_t)MAX_TUPLE_SIZE) {
+            return false;
+        }
+        for (j = 0U; j < tuples[i].count; j++) {
+            if (tuples[i].values[j] != k) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    Tuple list1[3] = {
+        { {4, 4}, 2U },
+        { {4, 4, 4}, 3U },
+        { {4, 4}, 2U }
+    };
+
+    Tuple list2[3] = {
+        { {7, 7, 7}, 3U },
+        { {7, 7}, 2U },
+        { {7, 7, 5}, 3U }
+    };
+
+    if (check_all_k(list1, 3U, 4)) {
+        (void)printf("True\n");
+    } else {
+        (void)printf("False\n");
+    }
+
+    if (check_all_k(list2, 3U, 7)) {
+        (void)printf("True\n");
+    } else {
+        (void)printf("False\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_woodall(int n) {
+    if (n < 1) {
+        return false;
+    }
+
+    int i = 1;
+    int power_of_two = 2;
+    int current_woodall = (i * power_of_two) - 1;
+
+    while (current_woodall <= n) {
+        if (current_woodall == n) {
+            return true;
+        }
+        i++;
+        power_of_two *= 2;
+        current_woodall = (i * power_of_two) - 1;
+        
+        if (current_woodall < 0) {
+            break;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int test_numbers[] = {1, 7, 23, 63, 159, 383, 20, -5, 0};
+    size_t num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+
+    for (size_t k = 0; k < num_tests; k++) {
+        int n = test_numbers[k];
+        if (is_woodall(n)) {
+            printf("%d is a Woodall number.\n", n);
+        } else {
+            printf("%d is not a Woodall number.\n", n);
+        }
+    }
+
+    return 0;
+}

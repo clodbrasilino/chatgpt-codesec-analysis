@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* rotateRight(struct Node* head, int k) {
+    if (!head || !head->next || k <= 0) {
+        return head;
+    }
+
+    int length = 1;
+    struct Node* tail = head;
+    while (tail->next) {
+        length++;
+        tail = tail->next;
+    }
+
+    k = k % length;
+    if (k == 0) {
+        return head;
+    }
+
+    struct Node* newTail = head;
+    for (int i = 1; i < length - k; i++) {
+        newTail = newTail->next;
+    }
+
+    struct Node* newHead = newTail->next;
+    newTail->next = NULL;
+    tail->next = head;
+
+    return newHead;
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(struct Node* head) {
+    while (head) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    int k = 2;
+    
+    head = rotateRight(head, k);
+    
+    printList(head);
+    
+    freeList(head);
+    head = NULL;
+
+    return 0;
+}

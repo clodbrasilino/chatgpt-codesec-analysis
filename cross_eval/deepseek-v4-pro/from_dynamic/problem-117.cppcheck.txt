@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-117.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-117.c:67:16: style: Variable 'val' is assigned a value that is never used. [unreadVariable]
+    double val = strtod(str, &endptr);
+               ^

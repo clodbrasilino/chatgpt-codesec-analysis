@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+void initTupleList(TupleList *list, size_t initialCapacity) {
+    list->tuples = (Tuple *)malloc(initialCapacity * sizeof(Tuple));
+    list->count = 0;
+    list->capacity = initialCapacity;
+}
+
+void addToTupleList(TupleList *list, int first, int second) {
+    if (list->count == list->capacity) {
+        list->capacity *= 2;
+        list->tuples = (Tuple *)realloc(list->tuples, list->capacity * sizeof(Tuple));
+    }
+    list->tuples[list->count].first = first;
+    list->tuples[list->count].second = second;
+    list->count++;
+}
+
+void freeTupleList(TupleList *list) {
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void joinTuples(TupleList *source, TupleList *destination) {
+    for (size_t i = 0; i < source->count; i++) {
+        int found = 0;
+        for (size_t j = 0; j < destination->count; j++) {
+            if (source->tuples[i].first == destination->tuples[j].first) {
+                destination->tuples[j].second += source->tuples[i].second;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            addToTupleList(destination, source->tuples[i].first, source->tuples[i].second);
+        }
+    }
+}
+
+int main() {
+    TupleList list1, list2;
+    initTupleList(&list1, 4);
+    initTupleList(&list2, 4);
+
+    addToTupleList(&list1, 1, 10);
+    addToTupleList(&list1, 2, 20);
+    addToTupleList(&list2, 2, 30);
+    addToTupleList(&list2, 3, 40);
+
+    joinTuples(&list1, &list2);
+
+    for (size_t i = 0; i < list2.count; i++) {
+        printf("%d %d\n", list2.tuples[i].first, list2.tuples[i].second);
+    }
+
+    freeTupleList(&list1);
+    freeTupleList(&list2);
+
+    return 0;
+}

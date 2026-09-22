@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    if (initial_capacity == 0) return NULL;
+    
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    
+    dict->items = malloc(initial_capacity * sizeof(KeyValuePair));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int add_item(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return 0;
+    
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->items[i].key, key) == 0) {
+            char *new_value = strdup(value);
+            if (!new_value) return 0;
+            free(dict->items[i].value);
+            dict->items[i].value = new_value;
+            return 1;
+        }
+    }
+    
+    if (dict->count >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        KeyValuePair *new_items = realloc(dict->items, new_capacity * sizeof(KeyValuePair));
+        if (!new_items) return 0;
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+    
+    dict->items[dict->count].key = strdup(key);
+    dict->items[dict->count].value = strdup(value);
+    
+    if (!dict->items[dict->count].key || !dict->items[dict->count].value) {
+        free(dict->items[dict->count].key);
+        free(dict->items[dict->count].value);
+        return 0;
+    }
+    
+    dict->count++;
+    return 1;
+}
+
+Dictionary* merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2) {
+    if (!dict1 || !dict2) return NULL;
+    
+    size_t initial_capacity = dict1->count + dict2->count;
+    if (initial_capacity == 0) initial_capacity = 4;
+    
+    Dictionary *merged = create_dictionary(initial_capacity);
+    if (!merged) return NULL;
+    
+    for (size_t i = 0; i < dict1->count; ++i) {
+        if (!add_item(merged, dict1->items[i].key, dict1->items[i].value)) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+    
+    for (size_t i = 0; i < dict2->count; ++i) {
+        if (!add_item(merged, dict2->items[i].key, dict2->items[i].value)) {
+            free_dictionary(merged);
+            return NULL;
+        }
+    }
+    
+    return merged;
+}
+
+void print_dictionary(const Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; ++i) {
+        printf("%s: %s\n", dict->items[i].key, dict->items[i].value);
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary(4);
+    if (!dict1) return 1;
+    
+    Dictionary *dict2 = create_dictionary(4);
+    if (!dict2) {
+        free_dictionary(dict1);
+        return 1;
+    }
+    
+    if (!add_item(dict1, "key1", "value1") ||
+        !add_item(dict1, "key2", "value2") ||
+        !add_item(dict2, "key2", "new_value2") ||
+        !add_item(dict2, "key3", "value3")) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+    if (!merged) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    print_dictionary(merged);
+    
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+    
+    return 0;
+}

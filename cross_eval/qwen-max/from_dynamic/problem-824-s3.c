@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* remove_even(Node *head) {
+    Node *current = head;
+    Node **ptr = &head;
+    while (current) {
+        if (current->value % 2 == 0) {
+            *ptr = current->next;
+            free(current);
+            current = *ptr;
+        } else {
+            ptr = &current->next;
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+Node* create_node(int value) {
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void print_list(Node *head) {
+    while (head) {
+        printf("%d -> ", head->value);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+    head->next->next->next = create_node(4);
+    head->next->next->next->next = create_node(5);
+
+    printf("Original list: ");
+    print_list(head);
+
+    head = remove_even(head);
+
+    printf("List after removing even numbers: ");
+    print_list(head);
+
+    while (head) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

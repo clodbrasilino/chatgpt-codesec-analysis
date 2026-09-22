@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-495.c:23:26: style: Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+        size_t match_len = matches[0].rm_eo - matches[0].rm_so;
+                         ^

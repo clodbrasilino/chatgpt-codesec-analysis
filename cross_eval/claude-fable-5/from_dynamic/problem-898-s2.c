@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int extract_continuous(const int *list, size_t list_size, size_t count,
+                       int **result, size_t *result_size)
+{
+    size_t i;
+    size_t run;
+    size_t found;
+    int *temp;
+
+    if (list == NULL || result == NULL || result_size == NULL) {
+        return -1;
+    }
+    if (count == 0 || list_size == 0 || count > list_size) {
+        return -1;
+    }
+
+    temp = malloc(list_size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    found = 0;
+    i = 0;
+    while (i < list_size) {
+        run = 1;
+        while ((i + run) < list_size && list[i + run] == list[i]) {
+            run++;
+        }
+        if (run == count) {
+            temp[found] = list[i];
+            found++;
+        }
+        i += run;
+    }
+
+    if (found == 0) {
+        free(temp);
+        *result = NULL;
+        *result_size = 0;
+        return 0;
+    }
+
+    *result = realloc(temp, found * sizeof(int));
+    if (*result == NULL) {
+        *result = temp;
+    }
+    *result_size = found;
+    return 0;
+}
+
+int main(void)
+{
+    int data[] = {1, 1, 3, 4, 4, 5, 5, 5, 7, 8, 8};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t count = 2;
+    int *result = NULL;
+    size_t result_size = 0;
+    size_t i;
+
+    if (extract_continuous(data, data_size, count, &result, &result_size) != 0) {
+        fprintf(stderr, "Extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result_size == 0) {
+        printf("No elements found repeating exactly %zu times\n", count);
+    } else {
+        printf("Elements repeating exactly %zu times: ", count);
+        for (i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

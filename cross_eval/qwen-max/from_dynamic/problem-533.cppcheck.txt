@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-533.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-533.c:11:27: style: Same expression on both sides of '=='. [duplicateExpression]
+    return *(int*)element == *(int*)element; // Simple check, assuming integer for demonstration
+                          ^

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-539.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-539.c:42:25: style: Parameter 'bases' can be declared as pointer to const [constParameterPointer]
+ListNode *mapPower(int *bases, int *indices, int size) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-539.c:42:37: style: Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+ListNode *mapPower(int *bases, int *indices, int size) {
+                                    ^

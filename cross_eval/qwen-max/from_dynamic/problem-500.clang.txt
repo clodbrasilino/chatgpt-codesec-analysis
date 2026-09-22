@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-500.c:51:14: error: use of undeclared identifier 'combained'; did you mean 'combined'?
+   51 |         free(combained);
+      |              ^~~~~~~~~
+      |              combined
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-500.c:30:11: note: 'combined' declared here
+   30 |     char *combined = concat_elements(elements, count);
+      |           ^
+1 error generated.

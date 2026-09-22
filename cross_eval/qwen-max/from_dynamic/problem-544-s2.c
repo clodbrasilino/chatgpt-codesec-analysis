@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *flatten_tuple_list(const char *list[], int len) {
+    if (len <= 0) return NULL;
+    int total_len = 0;
+    for (int i = 0; i < len; ++i) {
+        total_len += strlen(list[i]) + 1; // 1 for comma or space
+    }
+    --total_len; // Remove the last extra comma or space
+    char *result = (char *)malloc(total_len + 1); // +1 for null terminator
+    if (result == NULL) return NULL;
+    result[0] = '\0';
+    for (int i = 0; i < len; ++i) {
+        strcat(result, list[i]);
+        if (i < len - 1) {
+            strcat(result, ", ");
+        }
+    }
+    return result;
+}
+
+int main() {
+    const char *tuple_list[] = {"one", "two", "three"};
+    int len = 3;
+    char *flat_string = flatten_tuple_list(tuple_list, len);
+    if (flat_string != NULL) {
+        printf("%s\n", flat_string);
+        free(flat_string);
+    } else {
+        printf("Failed to create flat string\n");
+    }
+    return 0;
+}

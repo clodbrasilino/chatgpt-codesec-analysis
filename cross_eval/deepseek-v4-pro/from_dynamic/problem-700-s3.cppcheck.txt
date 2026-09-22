@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-700-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-700-s3.c:39:11: style: The scope of the variable 'temp' can be reduced. [variableScope]
+    Node *temp;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-700-s3.c:51:9: style: Variable 'values' can be declared as const array [constVariable]
+    int values[] = {5, 12, 3, 8, 15, 7, 20, 1, 9, 14};
+        ^

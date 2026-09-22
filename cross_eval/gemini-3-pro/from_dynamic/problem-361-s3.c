@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListOfLists {
+    Node* list;
+    struct ListOfLists* next;
+} ListOfLists;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+ListOfLists* create_list_of_lists(Node* list) {
+    ListOfLists* new_lol = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (!new_lol) {
+        exit(EXIT_FAILURE);
+    }
+    new_lol->list = list;
+    new_lol->next = NULL;
+    return new_lol;
+}
+
+void free_node_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(ListOfLists* head) {
+    ListOfLists* current = head;
+    while (current != NULL) {
+        ListOfLists* temp = current;
+        current = current->next;
+        free_node_list(temp->list);
+        free(temp);
+    }
+}
+
+void remove_empty_lists(ListOfLists** head_ref) {
+    if (head_ref == NULL || *head_ref == NULL) {
+        return;
+    }
+
+    ListOfLists* current = *head_ref;
+    ListOfLists* prev = NULL;
+
+    while (current != NULL) {
+        if (current->list == NULL) {
+            ListOfLists* temp = current;
+            if (prev == NULL) {
+                *head_ref = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            current = current->next;
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void print_list_of_lists(ListOfLists* head) {
+    ListOfLists* current_lol = head;
+    while (current_lol != NULL) {
+        printf("[ ");
+        Node* current_node = current_lol->list;
+        while (current_node != NULL) {
+            printf("%d ", current_node->data);
+            current_node = current_node->next;
+        }
+        printf("]\n");
+        current_lol = current_lol->next;
+    }
+}
+
+int main(void) {
+    Node* list1 = create_node(1);
+    list1->next = create_node(2);
+
+    Node* list2 = NULL; 
+
+    Node* list3 = create_node(3);
+
+    ListOfLists* head = create_list_of_lists(list1);
+    head->next = create_list_of_lists(list2);
+    head->next->next = create_list_of_lists(list3);
+
+    remove_empty_lists(&head);
+
+    print_list_of_lists(head);
+
+    free_list_of_lists(head);
+
+    return 0;
+}

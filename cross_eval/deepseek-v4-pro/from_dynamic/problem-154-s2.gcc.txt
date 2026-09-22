@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-154-s2.c: In function 'extract_elements':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-154-s2.c:29:12: error: returning 'int *' from a function with incompatible return type 'int **' [-Wincompatible-pointer-types]
+   29 |     return *result;
+      |            ^~~~~~~

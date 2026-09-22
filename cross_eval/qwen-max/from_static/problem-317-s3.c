@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int val;
+    int count;
+    struct Node *next;
+} Node;
+
+Node* createNode(int val, int count) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) return NULL;
+    newNode->val = val;
+    newNode->count = count;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* decodeRLE(Node *head) {
+    Node *dummy = createNode(0, 0), *current = dummy;
+    while (head) {
+        for (int i = 0; i < head->count; ++i) {
+            Node *newNode = createNode(head->val, 1);
+            if (newNode == NULL) {
+                freeList(dummy->next);
+                return NULL;
+            }
+            current->next = newNode;
+            current = current->next;
+        }
+        head = head->next;
+    }
+    Node *result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+int main() {
+    Node *head = createNode(1, 2);
+    head->next = createNode(2, 3);
+    head->next->next = createNode(3, 1);
+
+    Node *decoded = decodeRLE(head);
+
+    while (decoded) {
+        printf("%d %d -> ", decoded->val, decoded->count);
+        Node *temp = decoded;
+        decoded = decoded->next;
+        free(temp);
+    }
+    printf("NULL\n");
+
+    freeList(head);
+
+    return 0;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-921-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-921-s3.c:19:47: style: Parameter 'tuples' can be declared as pointer to const [constParameterPointer]
+struct ChunkResult chunk_tuples(struct Tuple *tuples, int num_tuples, int n) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-921-s3.c:71:9: style: Variable 'tuple_sizes' can be declared as const array [constVariable]
+    int tuple_sizes[] = {3, 2, 1, 4, 2, 2, 3};
+        ^

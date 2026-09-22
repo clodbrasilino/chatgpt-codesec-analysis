@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+long long newman_shanks_williams(int n) {
+    if (n < 0) {
+        return -1; 
+    }
+    if (n == 0) return 1;
+    if (n == 1) return 1;
+
+    long long prev2 = 1;
+    long long prev1 = 1;
+    long long current = 0;
+
+    for (int i = 2; i <= n; i++) {
+        current = 2 * prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return current;
+}
+
+bool is_prime(long long num) {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 == 0 || num % 3 == 0) return false;
+
+    for (long long i = 5; i * i <= num; i += 6) {
+        if (num % i == 0 || num % (i + 2) == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+long long nth_nsw_prime(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+
+    int count = 0;
+    int i = 0;
+    long long nsw_num = 0;
+
+    while (count < n) {
+        nsw_num = newman_shanks_williams(i);
+        if (nsw_num < 0) {
+            return -1;
+        }
+        if (is_prime(nsw_num)) {
+            count++;
+        }
+        i++;
+    }
+
+    return nsw_num;
+}
+
+int main(void) {
+    int n = 4;
+    long long result = nth_nsw_prime(n);
+    
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        printf("Error calculating prime or overflow.\n");
+    }
+
+    return 0;
+}

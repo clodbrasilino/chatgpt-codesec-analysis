@@ -1,0 +1,233 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STR_LEN 4096U
+
+typedef struct {
+    char *key;
+    char *value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static char *dup_string(const char *s)
+{
+    size_t len;
+    size_t i;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strnlen(s, MAX_STR_LEN);
+    if (len >= MAX_STR_LEN) {
+        return NULL;
+    }
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < len; i++) {
+        copy[i] = s[i];
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+Dict *dict_create(void)
+{
+    Dict *d = malloc(sizeof(Dict));
+
+    if (d == NULL) {
+        return NULL;
+    }
+    d->size = 0;
+    d->capacity = 8;
+    d->entries = malloc(d->capacity * sizeof(Entry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+void dict_free(Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0; i < d->size; i++) {
+        free(d->entries[i].key);
+        free(d->entries[i].value);
+    }
+    free(d->entries);
+    free(d);
+}
+
+static Entry *dict_find(const Dict *d, const char *key)
+{
+    size_t i;
+
+    for (i = 0; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            return &d->entries[i];
+        }
+    }
+    return NULL;
+}
+
+int dict_set(Dict *d, const char *key, const char *value)
+{
+    Entry *existing;
+    char *new_key;
+    char *new_value;
+
+    if (d == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    existing = dict_find(d, key);
+    if (existing != NULL) {
+        new_value = dup_string(value);
+        if (new_value == NULL) {
+            return -1;
+        }
+        free(existing->value);
+        existing->value = new_value;
+        return 0;
+    }
+
+    if (d->size == d->capacity) {
+        size_t new_capacity;
+        Entry *new_entries;
+
+        if (d->capacity > (SIZE_MAX / sizeof(Entry)) / 2U) {
+            return -1;
+        }
+        new_capacity = d->capacity * 2U;
+        new_entries = realloc(d->entries, new_capacity * sizeof(Entry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        d->entries = new_entries;
+        d->capacity = new_capacity;
+    }
+
+    new_key = dup_string(key);
+    if (new_key == NULL) {
+        return -1;
+    }
+    new_value = dup_string(value);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+
+    d->entries[d->size].key = new_key;
+    d->entries[d->size].value = new_value;
+    d->size++;
+    return 0;
+}
+
+Dict *dict_merge(const Dict *a, const Dict *b)
+{
+    Dict *merged;
+    size_t i;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    merged = dict_create();
+    if (merged == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < a->size; i++) {
+        if (dict_set(merged, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_free(merged);
+            return NULL;
+        }
+    }
+    for (i = 0; i < b->size; i++) {
+        if (dict_set(merged, b->entries[i].key, b->entries[i].value) != 0) {
+            dict_free(merged);
+            return NULL;
+        }
+    }
+    return merged;
+}
+
+void dict_print(const Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    printf("{");
+    for (i = 0; i < d->size; i++) {
+        printf("\"%s\": \"%s\"", d->entries[i].key, d->entries[i].value);
+        if (i + 1U < d->size) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void)
+{
+    Dict *a;
+    Dict *b;
+    Dict *merged;
+    int status = EXIT_FAILURE;
+
+    a = dict_create();
+    if (a == NULL) {
+        fprintf(stderr, "Failed to create dictionary a\n");
+        return EXIT_FAILURE;
+    }
+
+    b = dict_create();
+    if (b == NULL) {
+        fprintf(stderr, "Failed to create dictionary b\n");
+        dict_free(a);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_set(a, "name", "Alice") != 0 ||
+        dict_set(a, "city", "Paris") != 0 ||
+        dict_set(b, "city", "London") != 0 ||
+        dict_set(b, "role", "Developer") != 0) {
+        fprintf(stderr, "Failed to populate dictionaries\n");
+        dict_free(a);
+        dict_free(b);
+        return EXIT_FAILURE;
+    }
+
+    merged = dict_merge(a, b);
+    if (merged == NULL) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+    } else {
+        printf("Dict a: ");
+        dict_print(a);
+        printf("Dict b: ");
+        dict_print(b);
+        printf("Merged: ");
+        dict_print(merged);
+        status = EXIT_SUCCESS;
+    }
+
+    dict_free(merged);
+    dict_free(a);
+    dict_free(b);
+    return status;
+}

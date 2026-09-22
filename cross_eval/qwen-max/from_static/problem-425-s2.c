@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* createNode(int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) exit(EXIT_FAILURE);
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node **head, int value) {
+    Node *newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+int countSublistsWithElement(Node *head, int target) {
+    int count = 0;
+    while (head != NULL) {
+        Node *current = head;
+        while (current != NULL) {
+            if (current->value == target) {
+                count++;
+                break;
+            }
+            current = current->next;
+        }
+        head = head->next;
+    }
+    return count;
+}
+
+int main() {
+    Node *head = NULL;
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    Node *subList1 = NULL;
+    appendNode(&subList1, 4);
+    appendNode(&subList1, 5);
+    appendNode(&subList1, 2);
+    Node *subList2 = NULL;
+    appendNode(&subList2, 6);
+    appendNode(&subList2, 7);
+    appendNode(&subList2, 8);
+
+    head->next->next->next = subList1;
+    subList1->next->next->next = subList2;
+
+    int target = 2;
+    int result = countSublistsWithElement(head, target);
+    printf("Number of sublists containing %d: %d\n", target, result);
+
+    // Cleanup
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

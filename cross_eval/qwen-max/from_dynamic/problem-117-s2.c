@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+enum { MAX_LIST_SIZE = 100 };
+
+typedef struct {
+    char *str;
+    float value;
+    int is_float;
+} ListElement;
+
+float str_to_float(const char *s) {
+    char *endptr;
+    float val = strtof(s, &endptr);
+    if (endptr == s || *endptr != '\0') return -1.0f; // Conversion failed
+    return val;
+}
+
+void convert_list_to_float(ListElement *list, int count) {
+    for (int i = 0; i < count; ++i) {
+        list[i].is_float = 0;
+        list[i].value = str_to_float(list[i].str);
+        if (list[i].value != -1.0f) {
+            list[i].is_float = 1;
+        }
+    }
+}
+
+int main() {
+    ListElement list[MAX_LIST_SIZE] = {
+        {"123.45", 0, 0},
+        {"abc", 0, 0},
+        {"678", 0, 0},
+        {"9.10", 0, 0},
+        {"def", 0, 0}
+    };
+    int count = sizeof(list) / sizeof(list[0]);
+
+    convert_list_to_float(list, count);
+
+    for (int i = 0; i < count; ++i) {
+        if (list[i].is_float) {
+            printf("Converted: %s -> %.2f\n", list[i].str, list[i].value);
+        } else {
+            printf("Not convertible: %s\n", list[i].str);
+        }
+    }
+
+    return 0;
+}

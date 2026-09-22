@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_balanced(const char *expr) {
+    int len = 0;
+    while (expr[len] != '\0') len++;
+    if (len % 2 != 0) return false;
+
+    int stack[len + 1];
+    int top = -1;
+
+    for (int i = 0; expr[i] != '\0'; i++) {
+        switch (expr[i]) {
+            case '(':
+            case '[':
+            case '{':
+                stack[++top] = expr[i];
+                break;
+            case ')':
+                if (top == -1 || stack[top--] != '(') return false;
+                break;
+            case ']':
+                if (top == -1 || stack[top--] != '[') return false;
+                break;
+            case '}':
+                if (top == -1 || stack[top--] != '{') return false;
+                break;
+        }
+    }
+
+    return top == -1;
+}
+
+int main() {
+    const char *expr1 = "([]{})";
+    const char *expr2 = "([)]";
+    const char *expr3 = "(((())))";
+    const char *expr4 = "({[)]}";
+
+    printf("%s: %s\n", expr1, is_balanced(expr1) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr2, is_balanced(expr2) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr3, is_balanced(expr3) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", expr4, is_balanced(expr4) ? "Balanced" : "Not Balanced");
+
+    return 0;
+}

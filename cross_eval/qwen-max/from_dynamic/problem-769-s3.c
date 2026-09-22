@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int data;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(int data) {
+    ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(ListNode** head, int data) {
+    ListNode* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    ListNode* temp = *head;
+    while (temp->next != NULL) temp = temp->next;
+    temp->next = newNode;
+}
+
+ListNode* getDifference(ListNode* list1, ListNode* list2) {
+    ListNode* result = NULL;
+    ListNode* temp1 = list1;
+    while (temp1 != NULL) {
+        int found = 0;
+        ListNode* temp2 = list2;
+        while (temp2 != NULL) {
+            if (temp1->data == temp2->data) {
+                found = 1;
+                break;
+            }
+            temp2 = temp2->next;
+        }
+        if (!found) insertAtEnd(&result, temp1->data);
+        temp1 = temp1->next;
+    }
+    return result;
+}
+
+void printList(ListNode* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    ListNode* list1 = NULL;
+    insertAtEnd(&list1, 1);
+    insertAtEnd(&list1, 2);
+    insertAtEnd(&list1, 3);
+    insertAtEnd(&list1, 4);
+
+    ListNode* list2 = NULL;
+    insertAtEnd(&list2, 2);
+    insertAtEnd(&list2, 4);
+
+    ListNode* result = getDifference(list1, list2);
+    printList(result);
+
+    // Free allocated memory
+    while (list1 != NULL) {
+        ListNode* temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+    while (list2 != NULL) {
+        ListNode* temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+    while (result != NULL) {
+        ListNode* temp = result;
+        result = result->next;
+        free(temp);
+    }
+
+    return 0;
+}

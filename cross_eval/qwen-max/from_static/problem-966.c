@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+int is_empty_tuple(Tuple t) {
+    return t.length == 0;
+}
+
+void remove_empty_tuple(TupleList *list) {
+    for (size_t i = 0; i < list->size; ++i) {
+        if (is_empty_tuple(list->tuples[i])) {
+            for (size_t j = i + 1; j < list->size; ++j) {
+                list->tuples[j - 1] = list->tuples[j];
+            }
+            --list->size;
+            --i;
+        }
+    }
+}
+
+int main() {
+    TupleList list = {
+        .tuples = (Tuple[]){ 
+            {.data = (int[]){1, 2}, .length = 2},
+            {.data = (int[]){}, .length = 0},
+            {.data = (int[]){3, 4, 5}, .length = 3},
+            {.data = (int[]){}, .length = 0},
+            {.data = (int[]){6}, .length = 1}
+        },
+        .size = 5
+    };
+
+    remove_empty_tuple(&list);
+
+    for (size_t i = 0; i < list.size; ++i) {
+        printf("Tuple %zu: ", i);
+        for (size_t j = 0; j < list.tuples[i].length; ++j) {
+            printf("%d ", list.tuples[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

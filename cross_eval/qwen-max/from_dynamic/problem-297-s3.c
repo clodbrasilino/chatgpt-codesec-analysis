@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct NestedList {
+    int value;
+    struct NestedList *next;
+    struct NestedList *child;
+} NestedList;
+
+ListNode* flattenNestedList(NestedList *head) {
+    if (head == NULL) return NULL;
+
+    ListNode *newHead = NULL, *current = NULL;
+    NestedList *stack[100];
+    int top = -1;
+
+    stack[++top] = head;
+
+    while (top >= 0) {
+        NestedList *temp = stack[top--];
+
+        if (temp->child) {
+            if (temp->next) {
+                stack[++top] = temp->next;
+            }
+            stack[++top] = temp->child;
+        } else if (temp->next) {
+            stack[++top] = temp->next;
+        }
+
+        ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+        newNode->value = temp->value;
+        newNode->next = NULL;
+
+        if (newHead == NULL) {
+            newHead = newNode;
+            current = newHead;
+        } else {
+            current->next = newNode;
+            current = newNode;
+        }
+    }
+
+    return newHead;
+}
+
+void printList(ListNode *head) {
+    while (head) {
+        printf("%d -> ", head->value);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    NestedList n7 = {7, NULL, NULL};
+    NestedList n8 = {8, NULL, NULL};
+    NestedList n6 = {6, &n7, &n8};
+    NestedList n5 = {5, &n6, NULL};
+    NestedList n4 = {4, &n5, NULL};
+    NestedList n2 = {2, &n4, NULL};
+    NestedList n3 = {3, NULL, NULL};
+    NestedList n1 = {1, &n2, &n3};
+
+    ListNode *flattened = flattenNestedList(&n1);
+    printList(flattened);
+
+    while (flattened != NULL) {
+        ListNode *temp = flattened;
+        flattened = flattened->next;
+        free(temp);
+    }
+
+    return 0;
+}

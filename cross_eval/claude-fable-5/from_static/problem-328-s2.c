@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void reverse(int *arr, size_t start, size_t end)
+{
+    while (start < end) {
+        int tmp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = tmp;
+        start++;
+        end--;
+    }
+}
+
+int rotate_left(int *arr, size_t size, size_t shift)
+{
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    shift = shift % size;
+    if (shift == 0) {
+        return 0;
+    }
+
+    reverse(arr, 0, shift - 1);
+    reverse(arr, shift, size - 1);
+    reverse(arr, 0, size - 1);
+
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t shift = 3;
+
+    printf("Original list: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+
+    if (rotate_left(list, size, shift) != 0) {
+        fprintf(stderr, "Error: rotation failed due to invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated list:  ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

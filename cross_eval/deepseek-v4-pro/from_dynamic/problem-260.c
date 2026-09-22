@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int is_prime(int64_t n) {
+    if (n < 2) return 0;
+    if (n == 2) return 1;
+    if (n % 2 == 0) return 0;
+    for (int64_t i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return 0;
+    }
+    return 1;
+}
+
+int64_t newman_shanks_williams_prime(int n) {
+    if (n <= 0) return -1;
+    
+    int64_t *a = NULL;
+    int count = 0;
+    int64_t result = -1;
+    
+    a = (int64_t*)malloc(3 * sizeof(int64_t));
+    if (a == NULL) {
+        return -1;
+    }
+    
+    a[0] = 1;
+    a[1] = 1;
+    
+    int index = 2;
+    int current_capacity = 3;
+    
+    while (count < n) {
+        if (index >= current_capacity) {
+            int new_capacity = current_capacity * 2;
+            int64_t *temp = (int64_t*)realloc(a, new_capacity * sizeof(int64_t));
+            if (temp == NULL) {
+                free(a);
+                return -1;
+            }
+            a = temp;
+            current_capacity = new_capacity;
+        }
+        
+        int64_t prev1 = a[index - 1];
+        int64_t prev2 = a[index - 2];
+        
+        if (prev1 > INT64_MAX / 2) {
+            free(a);
+            return -1;
+        }
+        int64_t doubled = 2 * prev1;
+        
+        if (doubled > INT64_MAX - prev2) {
+            free(a);
+            return -1;
+        }
+        a[index] = doubled + prev2;
+        
+        if (is_prime(a[index])) {
+            count++;
+            result = a[index];
+        }
+        
+        index++;
+    }
+    
+    free(a);
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int64_t result = newman_shanks_williams_prime(n);
+    
+    if (result == -1) {
+        printf("Error computing result\n");
+        return 1;
+    }
+    
+    printf("The %dth Newman-Shanks-Williams prime is: %" PRId64 "\n", n, result);
+    
+    return 0;
+}

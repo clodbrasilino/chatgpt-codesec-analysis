@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-127-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-127-s3.c:16:11: portability: Shifting a negative value is technically undefined behaviour [shiftNegativeLHS]
+        a <<= 1;
+          ^

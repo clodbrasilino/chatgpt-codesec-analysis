@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **generate_2d_array(int rows, int cols) {
+    int *data = (int *)malloc(rows * cols * sizeof(int));
+    if (data == NULL) return NULL;
+    int **array = (int **)malloc(rows * sizeof(int *));
+    if (array == NULL) {
+        free(data);
+        return NULL;
+    }
+    for (int i = 0; i < rows; ++i) {
+        array[i] = &data[i * cols];
+    }
+    return array;
+}
+
+void free_2d_array(int **array, int rows) {
+    free(array[0]);
+    free(array);
+}
+
+int main() {
+    int rows = 3;
+    int cols = 4;
+    int **array = generate_2d_array(rows, cols);
+    if (array != NULL) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                array[i][j] = i * cols + j;
+                printf("%3d", array[i][j]);
+            }
+            putchar('\n');
+        }
+        free_2d_array(array, rows);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+    return 0;
+}

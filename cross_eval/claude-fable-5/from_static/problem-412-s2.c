@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t remove_odd_numbers(int *arr, size_t size)
+{
+    size_t write_index = 0;
+    size_t read_index;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (read_index = 0; read_index < size; read_index++) {
+        if (arr[read_index] % 2 == 0) {
+            arr[write_index] = arr[read_index];
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+int main(void)
+{
+    size_t original_size = 10;
+    size_t new_size;
+    size_t i;
+    int *numbers;
+
+    numbers = malloc(original_size * sizeof(int));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < original_size; i++) {
+        numbers[i] = (int)(i + 1);
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < original_size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    new_size = remove_odd_numbers(numbers, original_size);
+
+    printf("After removing odd numbers: ");
+    for (i = 0; i < new_size; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    free(numbers);
+    numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

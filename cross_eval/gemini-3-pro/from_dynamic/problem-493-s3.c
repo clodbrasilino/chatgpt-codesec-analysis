@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point points[6];
+} Hexagon;
+
+typedef struct {
+    Hexagon *hexagons;
+    size_t count;
+} HexGrid;
+
+HexGrid generate_hex_grid(int rows, int cols, double size);
+void free_hex_grid(HexGrid *grid);
+
+HexGrid generate_hex_grid(int rows, int cols, double size) {
+    HexGrid grid = {NULL, 0};
+
+    if (rows <= 0 || cols <= 0 || size <= 0.0) {
+        return grid;
+    }
+
+    size_t total_hexagons = (size_t)rows * (size_t)cols;
+    grid.hexagons = (Hexagon *)malloc(total_hexagons * sizeof(Hexagon));
+    
+    if (grid.hexagons == NULL) {
+        return grid;
+    }
+    
+    grid.count = total_hexagons;
+
+    double width = sqrt(3.0) * size;
+    double height = 2.0 * size;
+    size_t index = 0;
+
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            double cx = (c * width) + ((r % 2) * (width / 2.0));
+            double cy = r * (height * 0.75);
+
+            for (int i = 0; i < 6; ++i) {
+                double angle_deg = 60.0 * i - 30.0;
+                double angle_rad = PI / 180.0 * angle_deg;
+                grid.hexagons[index].points[i].x = cx + size * cos(angle_rad);
+                grid.hexagons[index].points[i].y = cy + size * sin(angle_rad);
+            }
+            index++;
+        }
+    }
+
+    return grid;
+}
+
+void free_hex_grid(HexGrid *grid) {
+    if (grid != NULL && grid->hexagons != NULL) {
+        free(grid->hexagons);
+        grid->hexagons = NULL;
+        grid->count = 0;
+    }
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 3;
+    double size = 10.0;
+
+    HexGrid grid = generate_hex_grid(rows, cols, size);
+
+    if (grid.hexagons == NULL) {
+        fprintf(stderr, "Failed to generate hexagon grid.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < grid.count; ++i) {
+        printf("Hexagon %zu:\n", i);
+        for (int j = 0; j < 6; ++j) {
+            printf("  Point %d: (%f, %f)\n", j, grid.hexagons[i].points[j].x, grid.hexagons[i].points[j].y);
+        }
+    }
+
+    free_hex_grid(&grid);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    if (!head) return;
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int isPresent(Node* head, int data) {
+    Node* current = head;
+    while (current) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void removeElements(Node** list1, Node* list2) {
+    if (!list1 || !*list1 || !list2) return;
+
+    Node* current = *list1;
+    Node* prev = NULL;
+
+    while (current) {
+        if (isPresent(list2, current->data)) {
+            Node* temp = current;
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                *list1 = current->next;
+            }
+            current = current->next;
+            free(temp);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+    append(&list1, 5);
+    append(&list1, 2);
+
+    append(&list2, 2);
+    append(&list2, 4);
+    append(&list2, 6);
+
+    removeElements(&list1, list2);
+
+    printList(list1);
+
+    freeList(list1);
+    freeList(list2);
+
+    return 0;
+}

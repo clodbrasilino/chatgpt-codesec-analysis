@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/openai-gpt56-sol/from_dynamic/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/openai-gpt56-sol/from_dynamic/problem-495.c:71:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[])
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/openai-gpt56-sol/from_dynamic/problem-495.c:41:27: style: Variable 'source_offset' is assigned a value that is never used. [unreadVariable]
+            source_offset = input_length;
+                          ^

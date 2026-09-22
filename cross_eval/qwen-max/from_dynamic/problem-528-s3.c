@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} List;
+
+List *shortestLists(List lists[], size_t count) {
+    if (count == 0) return NULL;
+
+    size_t min_length = lists[0].length;
+    for (size_t i = 1; i < count; ++i) {
+        if (lists[i].length < min_length) {
+            min_length = lists[i].length;
+        }
+    }
+
+    List **result = malloc(count * sizeof(List *));
+    if (result == NULL) return NULL;
+
+    size_t result_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i].length == min_length) {
+            result[result_count++] = &lists[i];
+        }
+    }
+
+    List *final_result = malloc(result_count * sizeof(List));
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < result_count; ++i) {
+        final_result[i] = *result[i];
+    }
+
+    free(result);
+    return final_result;
+}
+
+int main() {
+    List lists[] = {
+        { (int[]) {1, 2, 3}, 3 },
+        { (int[]) {4, 5}, 2 },
+        { (int[]) {6}, 1 },
+        { (int[]) {7, 8, 9, 10}, 4 },
+        { (int[]) {11, 12}, 2 }
+    };
+    size_t list_count = sizeof(lists) / sizeof(lists[0]);
+
+    List *result = shortestLists(lists, list_count);
+    if (result == NULL) {
+        printf("Error: Memory allocation failed.\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < list_count; ++i) {
+        for (size_t j = 0; j < result[i].length; ++j) {
+            printf("%d ", result[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    return 0;
+}

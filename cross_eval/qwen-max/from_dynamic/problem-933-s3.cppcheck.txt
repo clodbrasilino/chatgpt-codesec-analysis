@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-933-s3.c:16:66: error: Memory leak: result [memleak]
+    if (regcomp(&reg, pattern, REG_EXTENDED | REG_NEWLINE) != 0) return NULL;
+                                                                 ^

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-154.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-154.c:4:72: style: Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+int **extract_elements(int **matrix, size_t rows, size_t cols, size_t *indices, size_t num_indices, size_t *result_rows) {
+                                                                       ^

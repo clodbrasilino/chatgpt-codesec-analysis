@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LEN 4096U
+
+typedef struct InnerDict {
+    char *key;
+    int value;
+} InnerDict;
+
+typedef struct NestedDict {
+    char *key;
+    InnerDict inner;
+} NestedDict;
+
+static char *duplicate_string(const char *src)
+{
+    size_t len;
+    size_t i;
+    char *copy;
+
+    if (src == NULL) {
+        return NULL;
+    }
+    len = strnlen(src, MAX_STRING_LEN);
+    if (len >= MAX_STRING_LEN) {
+        return NULL;
+    }
+    copy = malloc(len + 1U);
+    if (copy == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < len; i++) {
+        copy[i] = src[i];
+    }
+    copy[len] = '\0';
+    return copy;
+}
+
+static void free_nested_dict(NestedDict *dict, size_t count)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(dict[i].key);
+        free(dict[i].inner.key);
+    }
+    free(dict);
+}
+
+static NestedDict *convert_lists_to_nested_dict(const char *const *outer_keys,
+                                                const char *const *inner_keys,
+                                                const int *values,
+                                                size_t count)
+{
+    NestedDict *dict;
+    size_t i;
+
+    if (outer_keys == NULL || inner_keys == NULL || values == NULL || count == 0U) {
+        return NULL;
+    }
+    if (count > SIZE_MAX / sizeof(NestedDict)) {
+        return NULL;
+    }
+    dict = calloc(count, sizeof(NestedDict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < count; i++) {
+        dict[i].key = duplicate_string(outer_keys[i]);
+        dict[i].inner.key = duplicate_string(inner_keys[i]);
+        dict[i].inner.value = values[i];
+        if (dict[i].key == NULL || dict[i].inner.key == NULL) {
+            free_nested_dict(dict, i + 1U);
+            return NULL;
+        }
+    }
+    return dict;
+}
+
+static void print_nested_dict(const NestedDict *dict, size_t count)
+{
+    size_t i;
+
+    if (dict == NULL) {
+        return;
+    }
+    printf("{");
+    for (i = 0; i < count; i++) {
+        printf("'%s': {'%s': %d}", dict[i].key, dict[i].inner.key, dict[i].inner.value);
+        if (i + 1U < count) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void)
+{
+    const char *names[] = { "S001", "S002", "S003" };
+    const char *students[] = { "Adina Park", "Leyton Marsh", "Duncan Boyle" };
+    int marks[] = { 85, 98, 89 };
+    size_t count = sizeof(marks) / sizeof(marks[0]);
+    NestedDict *dict;
+
+    dict = convert_lists_to_nested_dict(names, students, marks, count);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to build nested dictionary\n");
+        return EXIT_FAILURE;
+    }
+    print_nested_dict(dict, count);
+    free_nested_dict(dict, count);
+    return EXIT_SUCCESS;
+}

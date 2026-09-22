@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/claude-fable-5/from_dynamic/problem-966.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/claude-fable-5/from_dynamic/problem-966.c:120:9: style: Variable 'a' can be declared as const array [constVariable]
+    int a[] = {1, 2};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/claude-fable-5/from_dynamic/problem-966.c:121:9: style: Variable 'b' can be declared as const array [constVariable]
+    int b[] = {3};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/claude-fable-5/from_dynamic/problem-966.c:122:9: style: Variable 'c' can be declared as const array [constVariable]
+    int c[] = {4, 5, 6};
+        ^

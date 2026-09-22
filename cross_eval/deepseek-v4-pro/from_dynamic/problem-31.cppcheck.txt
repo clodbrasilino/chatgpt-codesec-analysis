@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-31.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/deepseek-v4-pro/from_dynamic/problem-31.c:93:52: style: Parameter 'listSizes' can be declared as pointer to const [constParameterPointer]
+int* topKFrequent(int** lists, int listsSize, int* listSizes, int k, int* returnSize) {
+                                                   ^

@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct SubList {
+    int *data;
+    size_t length;
+};
+
+const struct SubList *find_max_sublist(const struct SubList *lists, size_t count)
+{
+    size_t i;
+    const struct SubList *max_list = NULL;
+
+    if (lists == NULL || count == 0U) {
+        return NULL;
+    }
+
+    max_list = &lists[0];
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length > max_list->length) {
+            max_list = &lists[i];
+        }
+    }
+
+    return max_list;
+}
+
+static int init_sublist(struct SubList *list, const int *values, size_t length)
+{
+    size_t i;
+
+    if (list == NULL || values == NULL || length == 0U) {
+        return -1;
+    }
+
+    list->data = malloc(length * sizeof(int));
+    if (list->data == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < length; i++) {
+        list->data[i] = values[i];
+    }
+    list->length = length;
+
+    return 0;
+}
+
+static void free_sublists(struct SubList *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(lists[i].data);
+        lists[i].data = NULL;
+        lists[i].length = 0U;
+    }
+}
+
+int main(void)
+{
+    struct SubList lists[3];
+    const struct SubList *result = NULL;
+    const int a[] = {1, 2};
+    const int b[] = {3, 4, 5, 6};
+    const int c[] = {7, 8, 9};
+    size_t i;
+
+    for (i = 0U; i < 3U; i++) {
+        lists[i].data = NULL;
+        lists[i].length = 0U;
+    }
+
+    if (init_sublist(&lists[0], a, 2U) != 0) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    if (init_sublist(&lists[1], b, 4U) != 0) {
+        fprintf(stderr, "Allocation failed\n");
+        free_sublists(lists, 3U);
+        return EXIT_FAILURE;
+    }
+    if (init_sublist(&lists[2], c, 3U) != 0) {
+        fprintf(stderr, "Allocation failed\n");
+        free_sublists(lists, 3U);
+        return EXIT_FAILURE;
+    }
+
+    result = find_max_sublist(lists, 3U);
+    if (result == NULL) {
+        fprintf(stderr, "No sublist found\n");
+        free_sublists(lists, 3U);
+        return EXIT_FAILURE;
+    }
+
+    printf("Max sublist (length %zu): ", result->length);
+    for (i = 0U; i < result->length; i++) {
+        printf("%d ", result->data[i]);
+    }
+    printf("\n");
+
+    free_sublists(lists, 3U);
+
+    return EXIT_SUCCESS;
+}

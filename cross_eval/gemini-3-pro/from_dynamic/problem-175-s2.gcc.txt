@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-175-s2.c: In function 'is_valid_parentheses':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-175-s2.c:21:5: error: unknown type name 'ptrdiff_t'
+   21 |     ptrdiff_t top = -1;
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-175-s2.c:5:1: note: 'ptrdiff_t' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'
+    4 | #include <string.h>
+  +++ |+#include <stddef.h>
+    5 | 

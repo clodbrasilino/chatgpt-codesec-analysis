@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *value;
+    int frequency;
+} Tuple;
+
+Tuple* create_tuple(char *value) {
+    Tuple *new_tuple = (Tuple *)malloc(sizeof(Tuple));
+    new_tuple->value = strdup(value);
+    new_tuple->frequency = 1;
+    return new_tuple;
+}
+
+int tuple_exists(Tuple **tuple_list, int size, char *value) {
+    for (int i = 0; i < size; ++i) {
+        if (strcmp(tuple_list[i]->value, value) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void assign_frequencies(Tuple **tuple_list, int *size, char *value) {
+    int index = tuple_exists(tuple_list, *size, value);
+    if (index >= 0) {
+        tuple_list[index]->frequency++;
+    } else {
+        tuple_list[*size] = create_tuple(value);
+        (*size)++;
+    }
+}
+
+int main() {
+    char *values[] = {"apple", "banana", "apple", "cherry", "banana", "cherry", "cherry"};
+    int num_values = sizeof(values) / sizeof(values[0]);
+    
+    Tuple **tuple_list = (Tuple **)malloc(num_values * sizeof(Tuple *));
+    int size = 0;
+    
+    for (int i = 0; i < num_values; ++i) {
+        assign_frequencies(tuple_list, &size, values[i]);
+    }
+    
+    for (int i = 0; i < size; ++i) {
+        printf("%s: %d\n", tuple_list[i]->value, tuple_list[i]->frequency);
+        free(tuple_list[i]->value);
+        free(tuple_list[i]);
+    }
+    
+    free(tuple_list);
+    return 0;
+}

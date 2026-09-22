@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverse_list(int *list, size_t length)
+{
+    size_t i;
+    size_t j;
+    int temp;
+
+    if (list == NULL || length < 2U) {
+        return;
+    }
+
+    i = 0U;
+    j = length - 1U;
+    while (i < j) {
+        temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+void reverse_list_of_lists(int **lists, const size_t *lengths, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL || lengths == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        reverse_list(lists[i], lengths[i]);
+    }
+}
+
+static void print_list_of_lists(int **lists, const size_t *lengths, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0U; i < count; i++) {
+        printf("[");
+        for (j = 0U; j < lengths[i]; j++) {
+            printf("%d", lists[i][j]);
+            if (j + 1U < lengths[i]) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    const size_t count = 3U;
+    size_t lengths[3] = {4U, 3U, 5U};
+    int **lists;
+    size_t i;
+    size_t j;
+    int status = EXIT_SUCCESS;
+
+    lists = (int **)malloc(count * sizeof(int *));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        lists[i] = (int *)malloc(lengths[i] * sizeof(int));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (j = 0U; j < i; j++) {
+                free(lists[j]);
+            }
+            free(lists);
+            return EXIT_FAILURE;
+        }
+        for (j = 0U; j < lengths[i]; j++) {
+            lists[i][j] = (int)(j + 1U + (i * 10U));
+        }
+    }
+
+    printf("Before:\n");
+    print_list_of_lists(lists, lengths, count);
+
+    reverse_list_of_lists(lists, lengths, count);
+
+    printf("After:\n");
+    print_list_of_lists(lists, lengths, count);
+
+    for (i = 0U; i < count; i++) {
+        free(lists[i]);
+        lists[i] = NULL;
+    }
+    free(lists);
+    lists = NULL;
+
+    return status;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-572-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-572-s3.c:37:22: style: Variable 'head' is assigned a value that is never used. [unreadVariable]
+                head = current;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-572-s3.c:63:22: style: Variable 'removedCount' is assigned a value that is never used. [unreadVariable]
+    int removedCount = removeDuplicates(head, valueToRemove, countToRemove);
+                     ^

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+void reverseList(ListNode **head) {
+    ListNode *prev = NULL, *current = *head, *next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(ListNode *head) {
+    ListNode *current = head, *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    ListNode *lists[2];
+
+    lists[0] = createNode(1);
+    lists[0]->next = createNode(2);
+    lists[0]->next->next = createNode(3);
+
+    lists[1] = createNode(4);
+    lists[1]->next = createNode(5);
+    lists[1]->next->next = createNode(6);
+
+    for (int i = 0; i < 2; ++i) {
+        reverseList(&lists[i]);
+        ListNode *temp = lists[i];
+        while (temp != NULL) {
+            printf("%d -> ", temp->value);
+            temp = temp->next;
+        }
+        putchar('\n');
+    }
+
+    for (int i = 0; i < 2; ++i) {
+        freeList(lists[i]);
+    }
+
+    return 0;
+}

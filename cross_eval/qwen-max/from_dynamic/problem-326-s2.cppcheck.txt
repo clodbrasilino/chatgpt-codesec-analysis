@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-326-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-326-s2.c:11:16: style: Variable 'wca' can be declared as pointer to const [constVariablePointer]
+    WordCount *wca = (WordCount *)a;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-326-s2.c:12:16: style: Variable 'wcb' can be declared as pointer to const [constVariablePointer]
+    WordCount *wcb = (WordCount *)b;
+               ^

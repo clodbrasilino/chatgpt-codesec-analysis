@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-674-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-674-s2.c:40:17: error: Common realloc mistake: 'output' nulled but not freed upon failure [memleakOnRealloc]
+                output = realloc(output, (strlen(output) + strlen(token) + 2) * sizeof(char));
+                ^

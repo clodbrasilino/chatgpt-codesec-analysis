@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+size_t remove_negatives(int *arr, size_t len)
+{
+    size_t write_index = 0;
+    size_t read_index;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (read_index = 0; read_index < len; read_index++) {
+        if (arr[read_index] >= 0) {
+            arr[write_index] = arr[read_index];
+            write_index++;
+        }
+    }
+
+    return write_index;
+}
+
+int main(void)
+{
+    size_t original_len = 10;
+    size_t new_len;
+    size_t i;
+    const int initial_values[] = { 3, -1, 7, -5, 0, 12, -8, 4, -2, 9 };
+    int *numbers;
+
+    numbers = malloc(original_len * sizeof(*numbers));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < original_len; i++) {
+        numbers[i] = initial_values[i];
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < original_len; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    new_len = remove_negatives(numbers, original_len);
+
+    printf("Filtered list: ");
+    for (i = 0; i < new_len; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    free(numbers);
+    numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_even(long long number);
+
+bool is_even(long long number)
+{
+    return (number % 2) == 0;
+}
+
+int main(void)
+{
+    long long value = 0;
+    int result = 0;
+
+    printf("Enter an integer: ");
+    result = scanf("%lld", &value);
+
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_even(value))
+    {
+        printf("%lld is even\n", value);
+    }
+    else
+    {
+        printf("%lld is odd\n", value);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-875.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-875.c:4:26: style: Parameter 't1' can be declared as pointer to const [constParameterPointer]
+int min_diff_tuples(int *t1, int *t2, int n) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-875.c:4:35: style: Parameter 't2' can be declared as pointer to const [constParameterPointer]
+int min_diff_tuples(int *t1, int *t2, int n) {
+                                  ^

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int val;
+    int arr_num;
+} Element;
+
+int compare(const void *a, const void *b) {
+    return ((Element *)a)->val - ((Element *)b)->val;
+}
+
+void find_closest_triplet(const int *A, const int *B, const int *C, int len1, int len2, int len3) {
+    int i, j, k;
+    Element sorted[3];
+    int min_diff = INT_MAX;
+    int res_i = 0, res_j = 0, res_k = 0;
+
+    for (i = 0; i < len1; ++i) {
+        for (j = 0; j < len2; ++j) {
+            for (k = 0; k < len3; ++k) {
+                sorted[0].val = A[i];
+                sorted[1].val = B[j];
+                sorted[2].val = C[k];
+
+                qsort(sorted, 3, sizeof(Element), compare);
+
+                int diff = sorted[2].val - sorted[0].val;
+                if (diff < min_diff) {
+                    min_diff = diff;
+                    res_i = i;
+                    res_j = j;
+                    res_k = k;
+                }
+            }
+        }
+    }
+
+    printf("Closest elements: %d, %d, %d\n", A[res_i], B[res_j], C[res_k]);
+}
+
+int main() {
+    int A[] = {1, 4, 10};
+    int B[] = {2, 15, 20};
+    int C[] = {10, 12};
+
+    int len1 = sizeof(A) / sizeof(A[0]);
+    int len2 = sizeof(B) / sizeof(B[0]);
+    int len3 = sizeof(C) / sizeof(C[0]);
+
+    find_closest_triplet(A, B, C, len1, len2, len3);
+
+    return 0;
+}

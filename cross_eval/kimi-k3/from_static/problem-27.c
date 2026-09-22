@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_digits(char *str, size_t max_len) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t read_pos = 0;
+    size_t write_pos = 0;
+    size_t len = 0;
+    
+    while (len < max_len && str[len] != '\0') {
+        len++;
+    }
+    
+    while (read_pos < len) {
+        if (!isdigit((unsigned char)str[read_pos])) {
+            str[write_pos] = str[read_pos];
+            write_pos++;
+        }
+        read_pos++;
+    }
+    str[write_pos] = '\0';
+}
+
+void process_string_list(char **list, size_t count, size_t max_len) {
+    if (list == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            remove_digits(list[i], max_len);
+        }
+    }
+}
+
+int main(void) {
+    char str1[] = "abc123def";
+    char str2[] = "test456";
+    char str3[] = "no_digits_here";
+    char str4[] = "789mixed012";
+    char str5[] = "999";
+    char str6[] = "";
+    
+    char *strings[] = {
+        str1,
+        str2,
+        str3,
+        str4,
+        str5,
+        str6
+    };
+    
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    size_t max_len = 256;
+    
+    printf("Original strings:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("[%zu]: %s\n", i, strings[i]);
+    }
+    
+    process_string_list(strings, count, max_len);
+    
+    printf("\nAfter removing digits:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("[%zu]: %s\n", i, strings[i]);
+    }
+    
+    return 0;
+}

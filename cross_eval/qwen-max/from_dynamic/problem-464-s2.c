@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int key;
+    void *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+bool initDictionary(Dictionary *dict, size_t capacity) {
+    dict->entries = (DictionaryEntry *)malloc(capacity * sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
+        return false;
+    }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return true;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+bool areAllValuesSame(const Dictionary *dict) {
+    if (dict->count <= 1) {
+        return true;
+    }
+
+    const void *firstValue = dict->entries[0].value;
+    for (size_t i = 1; i < dict->count; i++) {
+        if (dict->entries[i].value != firstValue) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    Dictionary dict;
+    if (!initDictionary(&dict, 3)) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return 1;
+    }
+
+    // Example values
+    dict.entries[0] = (DictionaryEntry){1, (void *)"test"};
+    dict.entries[1] = (DictionaryEntry){2, (void *)"test"};
+    dict.entries[2] = (DictionaryEntry){3, (void *)"test"};
+    dict.count = 3;
+
+    if (areAllValuesSame(&dict)) {
+        printf("All values are the same\n");
+    } else {
+        printf("Not all values are the same\n");
+    }
+
+    freeDictionary(&dict);
+    return 0;
+}

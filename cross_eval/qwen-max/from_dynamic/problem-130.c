@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ItemFrequency;
+
+int compare(const void *a, const void *b) {
+    return ((ItemFrequency*)b)->count - ((ItemFrequency*)a)->count;
+}
+
+ItemFrequency* findMaxFrequency(int* list, int len) {
+    if (len == 0) return NULL;
+
+    ItemFrequency* freqs = malloc(len * sizeof(ItemFrequency));
+    if (!freqs) return NULL;
+
+    for (int i = 0; i < len; i++) {
+        int found = 0;
+        for (int j = 0; j < i; j++) {
+            if (list[i] == freqs[j].value) {
+                freqs[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freqs[i].value = list[i];
+            freqs[i].count = 1;
+        }
+    }
+
+    qsort(freqs, len, sizeof(ItemFrequency), compare);
+    ItemFrequency* maxFreq = malloc(sizeof(ItemFrequency));
+    if (maxFreq) {
+        *maxFreq = freqs[0];
+    }
+    free(freqs);
+    return maxFreq;
+}
+
+int main() {
+    int list[] = {1, 3, 2, 1, 4, 1, 3, 2, 3};
+    int len = sizeof(list) / sizeof(list[0]);
+
+    ItemFrequency* result = findMaxFrequency(list, len);
+    if (result) {
+        printf("Item: %d, Frequency: %d\n", result->value, result->count);
+        free(result);
+    } else {
+        printf("No item found.\n");
+    }
+
+    return 0;
+}

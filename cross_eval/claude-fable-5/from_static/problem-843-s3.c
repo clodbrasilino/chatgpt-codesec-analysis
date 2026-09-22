@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    long long val;
+    long long prime;
+    int idx;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    size_t size;
+    size_t cap;
+} Heap;
+
+static int heap_init(Heap *h, size_t cap)
+{
+    if (h == NULL || cap == 0U) {
+        return -1;
+    }
+    h->data = malloc(cap * sizeof(HeapNode));
+    if (h->data == NULL) {
+        return -1;
+    }
+    h->size = 0U;
+    h->cap = cap;
+    return 0;
+}
+
+static void heap_free(Heap *h)
+{
+    if (h != NULL) {
+        free(h->data);
+        h->data = NULL;
+        h->size = 0U;
+        h->cap = 0U;
+    }
+}
+
+static void heap_swap(HeapNode *a, HeapNode *b)
+{
+    HeapNode tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int heap_push(Heap *h, HeapNode node)
+{
+    size_t i;
+    if (h == NULL) {
+        return -1;
+    }
+    if (h->size == h->cap) {
+        size_t newcap;
+        HeapNode *tmp;
+        if (h->cap > (SIZE_MAX / sizeof(HeapNode)) / 2U) {
+            return -1;
+        }
+        newcap = h->cap * 2U;
+        tmp = realloc(h->data, newcap * sizeof(HeapNode));
+        if (tmp == NULL) {
+            return -1;
+        }
+        h->data = tmp;
+        h->cap = newcap;
+    }
+    i = h->size;
+    h->data[i] = node;
+    h->size++;
+    while (i > 0U) {
+        size_t parent = (i - 1U) / 2U;
+        if (h->data[parent].val <= h->data[i].val) {
+            break;
+        }
+        heap_swap(&h->data[parent], &h->data[i]);
+        i = parent;
+    }
+    return 0;
+}
+
+static int heap_pop(Heap *h, HeapNode *out)
+{
+    size_t i;
+    if (h == NULL || out == NULL || h->size == 0U) {
+        return -1;
+    }
+    *out = h->data[0];
+    h->size--;
+    h->data[0] = h->data[h->size];
+    i = 0U;
+    for (;;) {
+        size_t left = 2U * i + 1U;
+        size_t right = 2U * i + 2U;
+        size_t smallest = i;
+        if (left < h->size && h->data[left].val < h->data[smallest].val) {
+            smallest = left;
+        }
+        if (right < h->size && h->data[right].val < h->data[smallest].val) {
+            smallest = right;
+        }
+        if (smallest == i) {
+            break;
+        }
+        heap_swap(&h->data[i], &h->data[smallest]);
+        i = smallest;
+    }
+    return 0;
+}
+
+long long nth_super_ugly_number(int n, const long long *primes, int k)
+{
+    long long *ugly;
+    Heap heap;
+    long long result;
+    int count;
+    int i;
+
+    if (n < 1 || k < 1 || primes == NULL) {
+        return -1LL;
+    }
+    for (i = 0; i < k; i++) {
+        if (primes[i] < 2LL) {
+            return -1LL;
+        }
+    }
+
+    ugly = malloc((size_t)n * sizeof(long long));
+    if (ugly == NULL) {
+        return -1LL;
+    }
+
+    if (heap_init(&heap, (size_t)k) != 0) {
+        free(ugly);
+        return -1LL;
+    }
+
+    ugly[0] = 1LL;
+    count = 1;
+
+    for (i = 0; i < k; i++) {
+        HeapNode node;
+        node.val = primes[i];
+        node.prime = primes[i];
+        node.idx = 0;
+        if (heap_push(&heap, node) != 0) {
+            heap_free(&heap);
+            free(ugly);
+            return -1LL;
+        }
+    }
+
+    while (count < n) {
+        HeapNode node;
+        if (heap_pop(&heap, &node) != 0) {
+            heap_free(&heap);
+            free(ugly);
+            return -1LL;
+        }
+        if (node.val != ugly[count - 1]) {
+            ugly[count] = node.val;
+            count++;
+        }
+        if (node.idx + 1 < count) {
+            long long next_base = ugly[node.idx + 1];
+            if (next_base <= LLONG_MAX / node.prime) {
+                HeapNode next;
+                next.val = next_base * node.prime;
+                next.prime = node.prime;
+                next.idx = node.idx + 1;
+                if (heap_push(&heap, next) != 0) {
+                    heap_free(&heap);
+                    free(ugly);
+                    return -1LL;
+                }
+            }
+        }
+    }
+
+    result = ugly[n - 1];
+    heap_free(&heap);
+    free(ugly);
+    return result;
+}
+
+int main(void)
+{
+    long long primes[] = {2LL, 7LL, 13LL, 19LL};
+    int k = (int)(sizeof(primes) / sizeof(primes[0]));
+    int n = 12;
+    long long result;
+
+    result = nth_super_ugly_number(n, primes, k);
+    if (result < 0LL) {
+        fprintf(stderr, "Error computing super ugly number\n");
+        return EXIT_FAILURE;
+    }
+    if (printf("The %dth super ugly number is %lld\n", n, result) < 0) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}

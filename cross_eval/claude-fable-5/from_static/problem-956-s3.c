@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *prefix)
+{
+    size_t needed;
+    char *errbuf;
+
+    needed = regerror(errcode, regex, NULL, 0);
+    errbuf = malloc(needed);
+    if (errbuf == NULL) {
+        fprintf(stderr, "%s: unable to allocate error buffer\n", prefix);
+        return;
+    }
+    regerror(errcode, regex, errbuf, needed);
+    fprintf(stderr, "%s: %s\n", prefix, errbuf);
+    free(errbuf);
+}
+
+static int split_at_uppercase(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    int ret;
+
+    if (input == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Z][^A-Z]*", REG_EXTENDED);
+    if (ret != 0) {
+        print_regex_error(ret, &regex, "Regex compilation failed");
+        return -1;
+    }
+
+    cursor = input;
+    while (*cursor != '\0') {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            if (printf("%s\n", cursor) < 0) {
+                regfree(&regex);
+                return -1;
+            }
+            break;
+        }
+        if (ret != 0) {
+            print_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            return -1;
+        }
+        if (match.rm_so > 0) {
+            if (printf("%.*s\n", (int)match.rm_so, cursor) < 0) {
+                regfree(&regex);
+                return -1;
+            }
+        }
+        if (match.rm_eo <= match.rm_so) {
+            regfree(&regex);
+            return -1;
+        }
+        if (printf("%.*s\n", (int)(match.rm_eo - match.rm_so),
+                   cursor + match.rm_so) < 0) {
+            regfree(&regex);
+            return -1;
+        }
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "splitThisStringAtUppercaseLetters";
+
+    if (split_at_uppercase(text) != 0) {
+        fprintf(stderr, "Failed to split the string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

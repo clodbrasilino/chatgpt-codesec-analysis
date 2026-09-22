@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-484-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-484-s2.c:18:73: style: Parameter 'tuple_array2' can be declared as pointer to const [constParameterPointer]
+void remove_matching_tuples(Tuple** tuple_array1, size_t* size1, Tuple* tuple_array2, size_t size2) {
+                                                                        ^

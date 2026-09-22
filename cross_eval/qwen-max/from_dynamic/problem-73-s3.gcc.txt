@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-73-s3.c: In function 'split_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-73-s3.c:29:27: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+   29 |             result[i++] = strdup(input + offset);
+      |                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-73-s3.c:35:27: error: implicit declaration of function 'strndup' [-Wimplicit-function-declaration]
+   35 |             result[i++] = strndup(input + offset, matches[0].rm_so);
+      |                           ^~~~~~~

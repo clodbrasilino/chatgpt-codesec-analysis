@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STACK_SIZE 1024
+
+typedef struct {
+    char *items;
+    int top;
+    size_t capacity;
+} Stack;
+
+Stack* createStack(size_t capacity) {
+    Stack *s = (Stack*)malloc(sizeof(Stack));
+    if (s == NULL) {
+        return NULL;
+    }
+    s->items = (char*)malloc(capacity * sizeof(char));
+    if (s->items == NULL) {
+        free(s);
+        return NULL;
+    }
+    s->top = -1;
+    s->capacity = capacity;
+    return s;
+}
+
+void destroyStack(Stack *s) {
+    if (s != NULL) {
+        free(s->items);
+        free(s);
+    }
+}
+
+int isEmpty(const Stack *s) {
+    return s != NULL && s->top == -1;
+}
+
+int isFull(const Stack *s) {
+    return s != NULL && (size_t)(s->top + 1) >= s->capacity;
+}
+
+int push(Stack *s, char c) {
+    if (s == NULL || isFull(s)) {
+        return 0;
+    }
+    s->top++;
+    s->items[s->top] = c;
+    return 1;
+}
+
+int pop(Stack *s) {
+    if (s == NULL || isEmpty(s)) {
+        return 0;
+    }
+    s->top--;
+    return 1;
+}
+
+char peek(const Stack *s) {
+    if (s == NULL || isEmpty(s)) {
+        return '\0';
+    }
+    return s->items[s->top];
+}
+
+int isMatchingPair(char opening, char closing) {
+    if (opening == '(' && closing == ')') return 1;
+    if (opening == '[' && closing == ']') return 1;
+    if (opening == '{' && closing == '}') return 1;
+    return 0;
+}
+
+int isBalanced(const char *expression) {
+    if (expression == NULL) {
+        return 0;
+    }
+
+    size_t expr_len = strlen(expression);
+    if (expr_len == 0) {
+        return 1;
+    }
+
+    Stack *stack = createStack(expr_len);
+    if (stack == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < expr_len; i++) {
+        char current = expression[i];
+
+        if (current == '(' || current == '[' || current == '{') {
+            if (!push(stack, current)) {
+                destroyStack(stack);
+                return 0;
+            }
+        }
+        else if (current == ')' || current == ']' || current == '}') {
+            if (isEmpty(stack)) {
+                destroyStack(stack);
+                return 0;
+            }
+
+            char top = peek(stack);
+            if (!isMatchingPair(top, current)) {
+                destroyStack(stack);
+                return 0;
+            }
+
+            if (!pop(stack)) {
+                destroyStack(stack);
+                return 0;
+            }
+        }
+    }
+
+    int result = isEmpty(stack);
+    destroyStack(stack);
+    return result;
+}
+
+int main() {
+    char expression1[] = "{[()]}";
+    char expression2[] = "{[(])}";
+    char expression3[] = "((()))";
+    char expression4[] = "((())";
+    char expression5[] = "";
+    char expression6[] = "a*(b+c)-[d/{e-f}]";
+
+    printf("\"%s\" is %s\n", expression1, isBalanced(expression1) ? "balanced" : "not balanced");
+    printf("\"%s\" is %s\n", expression2, isBalanced(expression2) ? "balanced" : "not balanced");
+    printf("\"%s\" is %s\n", expression3, isBalanced(expression3) ? "balanced" : "not balanced");
+    printf("\"%s\" is %s\n", expression4, isBalanced(expression4) ? "balanced" : "not balanced");
+    printf("\"%s\" is %s\n", expression5, isBalanced(expression5) ? "balanced" : "not balanced");
+    printf("\"%s\" is %s\n", expression6, isBalanced(expression6) ? "balanced" : "not balanced");
+
+    return 0;
+}

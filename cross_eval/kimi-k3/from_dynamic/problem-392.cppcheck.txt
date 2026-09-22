@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c:62:14: style: Condition 'size<=0' is always false [knownConditionTrueFalse]
+    if (size <= 0 || (uintmax_t)size > (uintmax_t)SIZE_MAX / sizeof(long long)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c:53:37: note: Assuming that condition 'n<0' is not redundant
+    if (scanf("%lld", &n) != 1 || n < 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c:57:11: note: Assuming condition is false
+    if (n == LLONG_MAX) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c:61:24: note: Assignment 'size=n+1', assigned value is greater than 0
+    long long size = n + 1;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-392.c:62:14: note: Condition 'size<=0' is always false
+    if (size <= 0 || (uintmax_t)size > (uintmax_t)SIZE_MAX / sizeof(long long)) {
+             ^

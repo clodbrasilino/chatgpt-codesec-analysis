@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-31.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-31.c:170:56: style: Parameter 'list_sizes' can be declared as pointer to const [constParameterPointer]
+int* findTopKFrequent(int** lists, int num_lists, int* list_sizes, int k, int* out_k) {
+                                                       ^

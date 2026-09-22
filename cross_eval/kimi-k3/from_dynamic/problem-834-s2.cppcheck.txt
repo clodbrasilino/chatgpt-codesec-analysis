@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-834-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-834-s2.c:63:46: style: Same expression on both sides of '||' because '(unsigned long)n>SIZE_MAX/sizeof(int*)' and '(unsigned long)n>SIZE_MAX/sizeof(int)' represent the same value. [knownConditionTrueFalse]
+    if ((size_t)n > SIZE_MAX / sizeof(int *) || (size_t)n > SIZE_MAX / sizeof(int) || (size_t)n * (size_t)n > INT_MAX) {
+                                             ^

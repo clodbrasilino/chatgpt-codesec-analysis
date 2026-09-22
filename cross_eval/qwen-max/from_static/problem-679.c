@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    void *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->count = 0;
+    dict->entries = NULL;
+    return dict;
+}
+
+void add_entry(Dictionary *dict, const char *key, void *value) {
+    dict->entries = (DictionaryEntry*)realloc(dict->entries, (dict->count + 1) * sizeof(DictionaryEntry));
+    if (dict->entries) {
+        dict->entries[dict->count].key = strdup(key);
+        dict->entries[dict->count].value = value;
+        dict->count++;
+    }
+}
+
+void* get_entry_by_index(Dictionary *dict, size_t index) {
+    if (index < dict->count) {
+        return dict->entries[index].value;
+    }
+    return NULL;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
+        return 1;
+    }
+
+    int num1 = 42;
+    int num2 = 73;
+    add_entry(dict, "one", &num1);
+    add_entry(dict, "two", &num2);
+
+    void *value1 = get_entry_by_index(dict, 0);
+    void *value2 = get_entry_by_index(dict, 1);
+
+    if (value1) {
+        printf("Value at index 0: %d\n", *(int*)value1);
+    } else {
+        printf("No value found at index 0\n");
+    }
+
+    if (value2) {
+        printf("Value at index 1: %d\n", *(int*)value2);
+    } else {
+        printf("No value found at index 1\n");
+    }
+
+    free_dictionary(dict);
+    return 0;
+}

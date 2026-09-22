@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-906.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-906.c:17:34: error: Array 'matches[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+        *day = atoi(url + matches[3].rm_so);
+                                 ^

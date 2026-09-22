@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-932-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-932-s3.c:55:10: error: Deallocation of an auto-variable results in undefined behaviour. [autovarInvalidDeallocation]
+    free(words);
+         ^

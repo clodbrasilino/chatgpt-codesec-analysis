@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int swap_first_last(int *arr, size_t n)
+{
+    int temp;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n == 1) {
+        return 0;
+    }
+
+    temp = arr[0];
+    arr[0] = arr[n - 1];
+    arr[n - 1] = temp;
+
+    return 0;
+}
+
+void print_list(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int list[] = {10, 20, 30, 40, 50};
+    size_t n = sizeof(list) / sizeof(list[0]);
+
+    printf("Before: ");
+    print_list(list, n);
+
+    if (swap_first_last(list, n) != 0) {
+        fprintf(stderr, "Error: invalid list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("After:  ");
+    print_list(list, n);
+
+    return EXIT_SUCCESS;
+}

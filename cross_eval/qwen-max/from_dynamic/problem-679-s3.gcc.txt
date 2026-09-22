@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-679-s3.c: In function 'dictionary_add':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-679-s3.c:25:39: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+   25 |     dict->elements[dict->count].key = strdup(key);
+      |                                       ^~~~~~

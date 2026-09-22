@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-484-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-484-s3.c:13:38: style: Parameter 't1' can be declared as pointer to const [constParameterPointer]
+Tuple* remove_matching_tuples(Tuple* t1, int* s1, Tuple* t2, int* s2) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/glm-5.1/from_dynamic/problem-484-s3.c:13:58: style: Parameter 't2' can be declared as pointer to const [constParameterPointer]
+Tuple* remove_matching_tuples(Tuple* t1, int* s1, Tuple* t2, int* s2) {
+                                                         ^

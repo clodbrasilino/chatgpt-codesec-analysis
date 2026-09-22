@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-108-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/gemini-3-pro/from_dynamic/problem-108-s2.c:79:20: style: Checking if unsigned expression 'heap->size' is less than zero. [unsignedLessThanZero]
+    if (heap->size <= 0) return false;
+                   ^

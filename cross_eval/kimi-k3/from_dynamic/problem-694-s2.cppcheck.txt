@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-694-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-694-s2.c:12:20: style: Parameter 'values' can be declared as const array [constParameter]
+int is_unique(char values[][50], int count, const char *value) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-694-s2.c:8:10: style: struct member 'DictionaryEntry::key' is never used. [unusedStructMember]
+    char key[50];
+         ^

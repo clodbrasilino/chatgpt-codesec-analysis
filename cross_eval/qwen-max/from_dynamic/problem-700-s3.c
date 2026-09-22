@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+int countInRange(Node *head, int lower, int upper) {
+    if (head == NULL) return 0;
+    int count = 0;
+    for (Node *current = head; current != NULL; current = current->next) {
+        if (current->value >= lower && current->value <= upper) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void insertNode(Node **head, int newValue) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = newValue;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+int main() {
+    Node *head = NULL;
+    insertNode(&head, 15);
+    insertNode(&head, 20);
+    insertNode(&head, 25);
+    insertNode(&head, 30);
+    insertNode(&head, 35);
+
+    int count = countInRange(head, 20, 35);
+    printf("Count: %d\n", count);
+
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

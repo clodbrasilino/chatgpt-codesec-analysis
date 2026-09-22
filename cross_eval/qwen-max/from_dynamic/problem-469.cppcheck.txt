@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-469.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-469.c:22:32: style: Condition 'i==0' is always false [knownConditionTrueFalse]
+            else dp[i][j] = (i == 0) ? 0 : -INT_MAX;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/qwen-max/from_dynamic/problem-469.c:5:27: style: Parameter 'prices' can be declared as pointer to const [constParameterPointer]
+int maxProfit(int k, int* prices, int n) {
+                          ^

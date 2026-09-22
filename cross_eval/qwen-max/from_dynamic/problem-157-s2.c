@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int count;
+    struct Node *next;
+} Node;
+
+Node* append(Node *head, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return head;
+    new_node->value = value;
+    new_node->count = 1;
+    new_node->next = NULL;
+    if (head == NULL) {
+        return new_node;
+    }
+    Node *current = head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return head;
+}
+
+Node* encode(Node *head) {
+    if (head == NULL || head->next == NULL) return head;
+
+    Node *encoded = NULL;
+    Node *current = head;
+    Node *prev = NULL;
+
+    while (current != NULL) {
+        if (prev != NULL && prev->value == current->value) {
+            prev->count += current->count;
+        } else {
+            encoded = append(encoded, current->value);
+            prev = encoded;
+            while (prev->next) {
+                prev = prev->next;
+            }
+            prev->count = current->count;
+        }
+        current = current->next;
+    }
+    return encoded;
+}
+
+void print_encoded_list(Node *head) {
+    while (head) {
+        printf("%d(%d) ", head->value, head->count);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node *list = NULL;
+    list = append(list, 1);
+    list = append(list, 1);
+    list = append(list, 2);
+    list = append(list, 2);
+    list = append(list, 2);
+    list = append(list, 3);
+
+    Node *encoded_list = encode(list);
+    print_encoded_list(encoded_list);
+
+    // Free the memory
+    while (list) {
+        Node *to_delete = list;
+        list = list->next;
+        free(to_delete);
+    }
+    
+    while (encoded_list) {
+        Node *to_delete = encoded_list;
+        encoded_list = encoded_list->next;
+        free(to_delete);
+    }
+
+    return 0;
+}

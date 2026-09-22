@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* decode_rle(int* encoded, int size, int* return_size) {
+    int count = 0;
+    for (int i = 1; i < size; i += 2) {
+        count += encoded[i];
+    }
+    *return_size = count;
+
+    int* decoded = (int*)malloc(count * sizeof(int));
+    if (!decoded) {
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size; i += 2) {
+        for (int j = 0; j < encoded[i + 1]; ++j) {
+            decoded[index++] = encoded[i];
+        }
+    }
+    return decoded;
+}
+
+int main() {
+    int encoded[] = {3, 4, 2, 3, 1, 2};
+    int size = sizeof(encoded) / sizeof(encoded[0]);
+    int return_size;
+
+    int* decoded = decode_rle(encoded, size, &return_size);
+    if (decoded) {
+        for (int i = 0; i < return_size; ++i) {
+            printf("%d ", decoded[i]);
+        }
+        free(decoded);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

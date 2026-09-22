@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_sublist_length(const int *sublists, int count) {
+    if (sublists == NULL || count <= 0) {
+        return -1;
+    }
+    int max_length = 0;
+    for (int i = 0; i < count; ++i) {
+        if (sublists[i] > max_length) {
+            max_length = sublists[i];
+        }
+    }
+    return max_length;
+}
+
+int main() {
+    const int sublists[] = {2, 3, 5, 7, 11};
+    int count = 5;
+    int max_length = find_max_sublist_length(sublists, count);
+    if (max_length != -1) {
+        printf("The maximum length of a sublist is: %d\n", max_length);
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

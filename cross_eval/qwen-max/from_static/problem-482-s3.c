@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_sequences(const char *input) {
+    regex_t regex;
+    int reti;
+    regmatch_t matches[1];
+
+    const char *pattern = "[A-Z][a-z]+";
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while (regexec(&regex, input, 1, matches, 0) == 0) {
+        for (int i = 0; i < 1; i++) {
+            if (matches[i].rm_so == -1) {
+                break;
+            }
+            printf("%.*s\n", matches[i].rm_eo - matches[i].rm_so, input + matches[i].rm_so);
+            input += matches[i].rm_eo;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "This is a Test String with Some Sequences like Abc and Xyz";
+    find_sequences(input);
+    return 0;
+}

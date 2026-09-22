@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int value;
+    struct node *next;
+};
+
+typedef struct node Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void remove_elements(Node **list1, const Node *list2) {
+    Node *current = *list1;
+    Node *prev = NULL;
+
+    while (current != NULL) {
+        Node *runner = list2;
+        while (runner != NULL) {
+            if (current->value == runner->value) {
+                if (prev == NULL) {
+                    *list1 = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+                free(current);
+                current = prev ? prev->next : *list1;
+                break;
+            }
+            runner = runner->next;
+        }
+        if (runner == NULL) {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+
+    append(&list2, 2);
+    append(&list2, 3);
+    append(&list2, 5);
+
+    remove_elements(&list1, list2);
+
+    for (Node *tmp = list1; tmp != NULL; tmp = tmp->next) {
+        printf("%d ", tmp->value);
+    }
+
+    while (list1) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    while (list2) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+
+    return 0;
+}

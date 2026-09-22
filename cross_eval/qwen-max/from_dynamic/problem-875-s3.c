@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->first - ((Tuple *)b)->first;
+}
+
+int findMinDifference(Tuple *tuples, int n) {
+    if (n <= 1) {
+        return -1;
+    }
+
+    qsort(tuples, n, sizeof(Tuple), compare);
+
+    int min_diff = INT_MAX;
+    for (int i = 0; i < n - 1; ++i) {
+        int diff = tuples[i + 1].first - tuples[i].first;
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    return min_diff;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {4, 5}, {8, 9}, {10, 11}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+
+    int min_diff = findMinDifference(tuples, n);
+    if (min_diff != -1) {
+        printf("The minimum difference is: %d\n", min_diff);
+    } else {
+        printf("Invalid input or not enough tuples to find a difference.\n");
+    }
+
+    return 0;
+}

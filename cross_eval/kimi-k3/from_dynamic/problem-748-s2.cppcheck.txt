@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-748-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-748-s2.c:50:33: style: Variable 'result_capacity' is assigned a value that is never used. [unreadVariable]
+                result_capacity = result_len + remaining + 1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cross_eval/kimi-k3/from_dynamic/problem-748-s2.c:53:24: style: Variable 'result_len' is assigned a value that is never used. [unreadVariable]
+            result_len += remaining;
+                       ^

@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int extract_continuous(const int *list, size_t size, size_t run_length,
+                       int **result, size_t *result_count)
+{
+    size_t i;
+    size_t count;
+    size_t found;
+    int *buffer;
+
+    if (list == NULL || result == NULL || result_count == NULL) {
+        return -1;
+    }
+    if (run_length == 0U || size == 0U) {
+        *result = NULL;
+        *result_count = 0U;
+        return 0;
+    }
+
+    buffer = malloc(size * sizeof(int));
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    found = 0U;
+    count = 1U;
+    for (i = 1U; i <= size; i++) {
+        if (i < size && list[i] == list[i - 1U]) {
+            count++;
+        } else {
+            if (count == run_length) {
+                buffer[found] = list[i - 1U];
+                found++;
+            }
+            count = 1U;
+        }
+    }
+
+    if (found == 0U) {
+        free(buffer);
+        *result = NULL;
+        *result_count = 0U;
+        return 0;
+    }
+
+    *result = buffer;
+    *result_count = found;
+    return 0;
+}
+
+int main(void)
+{
+    int data[] = {1, 1, 3, 4, 4, 5, 5, 5, 6, 7, 7};
+    size_t size = sizeof(data) / sizeof(data[0]);
+    size_t run_length = 2U;
+    int *result = NULL;
+    size_t result_count = 0U;
+    size_t i;
+
+    if (extract_continuous(data, size, run_length, &result, &result_count) != 0) {
+        fprintf(stderr, "Extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result_count == 0U) {
+        printf("No elements found with run length %zu\n", run_length);
+    } else {
+        printf("Elements occurring exactly %zu times continuously: ", run_length);
+        for (i = 0U; i < result_count; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

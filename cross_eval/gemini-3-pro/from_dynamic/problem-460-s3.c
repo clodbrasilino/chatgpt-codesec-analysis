@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct SubList {
+    Node* head;
+    struct SubList* next;
+} SubList;
+
+int* get_first_elements(SubList* head, int* count) {
+    if (!head || !count) {
+        return NULL;
+    }
+
+    int list_count = 0;
+    SubList* current = head;
+    while (current) {
+        if (current->head) {
+            list_count++;
+        }
+        current = current->next;
+    }
+
+    if (list_count == 0) {
+        *count = 0;
+        return NULL;
+    }
+
+    int* result = (int*)malloc(list_count * sizeof(int));
+    if (!result) {
+        return NULL;
+    }
+
+    int index = 0;
+    current = head;
+    while (current) {
+        if (current->head) {
+            result[index++] = current->head->data;
+        }
+        current = current->next;
+    }
+
+    *count = list_count;
+    return result;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node) {
+        new_node->data = data;
+        new_node->next = NULL;
+    }
+    return new_node;
+}
+
+SubList* create_sublist(Node* head) {
+    SubList* new_sublist = (SubList*)malloc(sizeof(SubList));
+    if (new_sublist) {
+        new_sublist->head = head;
+        new_sublist->next = NULL;
+    }
+    return new_sublist;
+}
+
+void free_sublists(SubList* head) {
+    while (head) {
+        SubList* next_sublist = head->next;
+        Node* current_node = head->head;
+        while (current_node) {
+            Node* next_node = current_node->next;
+            free(current_node);
+            current_node = next_node;
+        }
+        free(head);
+        head = next_sublist;
+    }
+}
+
+int main() {
+    Node* list1 = create_node(1);
+    if (list1) list1->next = create_node(2);
+
+    Node* list2 = create_node(3);
+    if (list2) list2->next = create_node(4);
+
+    Node* list3 = create_node(5);
+
+    SubList* main_list = create_sublist(list1);
+    if (main_list) {
+        main_list->next = create_sublist(list2);
+        if (main_list->next) {
+            main_list->next->next = create_sublist(list3);
+        }
+    }
+
+    int count = 0;
+    int* first_elements = get_first_elements(main_list, &count);
+
+    if (first_elements) {
+        for (int i = 0; i < count; i++) {
+            printf("%d ", first_elements[i]);
+        }
+        printf("\n");
+        free(first_elements);
+    }
+
+    free_sublists(main_list);
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_min_indices(const int* arr, size_t size, size_t** out_indices, size_t* out_count) {
+    if (!arr || size == 0 || !out_indices || !out_count) {
+        if (out_count) *out_count = 0;
+        if (out_indices) *out_indices = NULL;
+        return;
+    }
+
+    int min_val = arr[0];
+    for (size_t i = 1; i < size; ++i) {
+        if (arr[i] < min_val) {
+            min_val = arr[i];
+        }
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == min_val) {
+            count++;
+        }
+    }
+
+    size_t* indices = (size_t*)malloc(count * sizeof(size_t));
+    if (!indices) {
+        *out_count = 0;
+        *out_indices = NULL;
+        return;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == min_val) {
+            indices[idx++] = i;
+        }
+    }
+
+    *out_count = count;
+    *out_indices = indices;
+}
+
+int main(void) {
+    int data[] = {5, 2, 7, 2, 9, 2, 8};
+    size_t size = sizeof(data) / sizeof(data[0]);
+    
+    size_t* min_indices = NULL;
+    size_t min_count = 0;
+
+    find_min_indices(data, size, &min_indices, &min_count);
+
+    if (min_indices) {
+        for (size_t i = 0; i < min_count; ++i) {
+            printf("%zu ", min_indices[i]);
+        }
+        printf("\n");
+        free(min_indices);
+    }
+
+    return 0;
+}

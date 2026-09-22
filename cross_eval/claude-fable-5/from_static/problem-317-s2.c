@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t count;
+    int value;
+} RLEItem;
+
+RLEItem *modified_rle(const int *input, size_t length, size_t *result_length)
+{
+    RLEItem *result;
+    RLEItem *shrunk;
+    size_t i;
+    size_t j;
+
+    if (input == NULL || result_length == NULL || length == 0) {
+        return NULL;
+    }
+
+    result = malloc(length * sizeof *result);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    result[0].value = input[0];
+    result[0].count = 1;
+
+    for (i = 1; i < length; i++) {
+        if (input[i] == result[j].value) {
+            result[j].count++;
+        } else {
+            j++;
+            result[j].value = input[i];
+            result[j].count = 1;
+        }
+    }
+
+    *result_length = j + 1;
+
+    shrunk = realloc(result, (j + 1) * sizeof *shrunk);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+void print_encoded(const RLEItem *items, size_t length)
+{
+    size_t i;
+
+    if (items == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < length; i++) {
+        if (items[i].count == 1) {
+            printf("%d", items[i].value);
+        } else {
+            printf("(%zu, %d)", items[i].count, items[i].value);
+        }
+        if (i + 1 < length) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    int data[] = {1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 6};
+    size_t data_length = sizeof data / sizeof data[0];
+    size_t encoded_length = 0;
+    RLEItem *encoded;
+
+    encoded = modified_rle(data, data_length, &encoded_length);
+    if (encoded == NULL) {
+        fprintf(stderr, "Encoding failed\n");
+        return EXIT_FAILURE;
+    }
+
+    print_encoded(encoded, encoded_length);
+    free(encoded);
+
+    return EXIT_SUCCESS;
+}

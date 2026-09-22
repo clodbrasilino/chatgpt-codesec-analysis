@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+void extract_date_from_url(const char *url, int *year, int *month, int *day) {
+    regex_t regex;
+    regmatch_t matches[4];
+    const char *pattern = ".*\\/([0-9]{4})\\/([0-9]{2})\\/([0-9]{2}).*";
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        fprintf(stderr, "Regex compilation failed\n");
+        exit(1);
+    }
+
+    if (regexec(&regex, url, 4, matches, 0) == 0) {
+        char *endptr;
+        long y, m, d;
+
+        y = strtol(url + matches[1].rm_so, &endptr, 10);
+        if (*endptr != '\0' || y < 0 || y > 9999) {
+            *year = -1;
+        } else {
+            *year = (int)y;
+        }
+
+        m = strtol(url + matches[2].rm_so, &endptr, 10);
+        if (*endptr != '\0' || m < 1 || m > 12) {
+            *month = -1;
+        } else {
+            *month = (int)m;
+        }
+
+        d = strtol(url + matches[3].rm_so, &endptr, 10);
+        if (*endptr != '\0' || d < 1 || d > 31) {
+            *day = -1;
+        } else {
+            *day = (int)d;
+        }
+    } else {
+        *year = -1;
+        *month = -1;
+        *day = -1;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *url = "http://example.com/2023/10/05/some-article";
+    int year, month, day;
+
+    extract_date_from_url(url, &year, &month, &day);
+
+    if (year != -1 && month != -1 && day != -1) {
+        printf("Year: %d, Month: %d, Day: %d\n", year, month, day);
+    } else {
+        printf("Date not found in the URL.\n");
+    }
+
+    return 0;
+}

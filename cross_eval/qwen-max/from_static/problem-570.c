@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_strings(char *strings[], int count, char *remove_char, int *new_count) {
+    char **filtered = (char **)malloc(count * sizeof(char *));
+    int j = 0;
+    for (int i = 0; i < count; i++) {
+        if (strstr(strings[i], remove_char) == NULL) {
+            filtered[j] = strings[i];
+            j++;
+        }
+    }
+    *new_count = j;
+    return filtered;
+}
+
+int main() {
+    char *list[] = {"apple", "banana", "cherry", "date", "elderberry"};
+    int count = 5;
+    int new_count;
+    char *remove_char = "a";
+    
+    char **filtered_list = filter_strings(list, count, remove_char, &new_count);
+
+    for (int i = 0; i < new_count; i++) {
+        printf("%s\n", filtered_list[i]);
+    }
+
+    free(filtered_list);
+    return 0;
+}

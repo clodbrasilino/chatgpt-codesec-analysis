@@ -23,6 +23,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -64,6 +65,22 @@ def _usage_summary(model: str, slug: str) -> dict | None:
     }
 
 
+def tasks_present(man: dict) -> set[int]:
+    """Task ids actually present in outcomes.
+
+    cell.tasks is the REQUESTED scope of the last run: re-running a cell
+    with --tasks <ids> rewrites it to those ids only (deepseek-thinking
+    dropped 200 -> 55) while outcomes keep every program. Derive the
+    pairing from outcomes instead of cell.tasks.
+    """
+    out = set()
+    for k in man.get("outcomes", {}):
+        m = re.match(r"^problem-(\d+)(?:-s(\d+))?$", k)
+        if m:
+            out.add(int(m.group(1)))
+    return out
+
+
 def analyze() -> Path | None:
     baseline = _load(RESULTS / BASE_MODEL / f"{BASE_SLUG}.manifest.json")
     thinking = _load(RESULTS / THINK_MODEL / f"{THINK_SLUG}.manifest.json")
@@ -74,7 +91,7 @@ def analyze() -> Path | None:
         print("[thinking_paired] thinking manifest not ready (cell still running?) — abort")
         return None
 
-    pids = set(int(t) for t in thinking["cell"]["tasks"])
+    pids = tasks_present(think)
     penalty = not_cleaned_penalty(int(thinking["cell"]["max_rounds"]))
 
     base_s1 = _sample1_per_problem(baseline["outcomes"], pids, penalty)

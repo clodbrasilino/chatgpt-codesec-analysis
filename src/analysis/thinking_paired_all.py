@@ -34,6 +34,7 @@ Output: results/thinking_paired_all.md
 from __future__ import annotations
 
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -65,6 +66,22 @@ DISPATCH_NAME = {"deepseek-v4-pro": "DeepSeek V4 Pro",
                  "gemini-3-pro": "Gemini 3.1 Pro",
                  "kimi-k3": "Kimi K3",
                  "glm-5.1": "GLM-5.1"}
+
+
+def tasks_present(man: dict) -> set[int]:
+    """Task ids actually present in outcomes.
+
+    cell.tasks is the REQUESTED scope of the last run: re-running a cell
+    with --tasks <ids> rewrites it to those ids only (deepseek-thinking
+    dropped 200 -> 55) while outcomes keep every program. Derive the
+    pairing from outcomes instead of cell.tasks.
+    """
+    out = set()
+    for k in man.get("outcomes", {}):
+        m = re.match(r"^problem-(\d+)(?:-s(\d+))?$", k)
+        if m:
+            out.add(int(m.group(1)))
+    return out
 
 
 def manifest_valid(man: dict) -> tuple[bool, str]:
@@ -121,7 +138,7 @@ def analyze_config(model: str, label: str, base_slug: str,
     ok_t, why_t = manifest_valid(think)
     lines.append(f"Base `{base_slug}`: {why_b}. Thinking `{think_slug}`: {why_t}.")
 
-    pids = set(int(t) for t in think["cell"]["tasks"])
+    pids = tasks_present(think)
     cap = max_healing_rounds(manifest_max_rounds=int(think["cell"]["max_rounds"]))
     penalty = float(cap + 1)
 
@@ -217,7 +234,7 @@ def usage_block() -> list[str]:
             think_man = _load(RESULTS / f"{model}-thinking" / f"{think_slug}.manifest.json")
             if think_man is None:
                 continue
-            pids = set(int(t) for t in think_man["cell"]["tasks"])
+            pids = tasks_present(think)
             ub = usage_subset(model, base_slug, pids)
             ut = usage_subset(f"{model}-thinking", think_slug, pids)
             if not ub or not ut or not ub["ok"] or not ut["ok"]:

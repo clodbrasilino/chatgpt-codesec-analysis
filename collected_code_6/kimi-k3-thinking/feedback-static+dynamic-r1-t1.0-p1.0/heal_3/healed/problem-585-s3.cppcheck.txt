@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:225:20: style: Condition 'name_count<init_limit' is always false [knownConditionTrueFalse]
+    if (name_count < init_limit)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:214:39: note: Assignment 'name_count=sizeof(names)/sizeof(names[0])', assigned value is 10
+    size_t name_count = sizeof(names) / sizeof(names[0]);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:225:20: note: Condition 'name_count<init_limit' is always false
+    if (name_count < init_limit)
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:227:21: style: Condition 'price_count<init_limit' is always false [knownConditionTrueFalse]
+    if (price_count < init_limit)
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:215:41: note: Assignment 'price_count=sizeof(prices)/sizeof(prices[0])', assigned value is 10
+    size_t price_count = sizeof(prices) / sizeof(prices[0]);
+                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-585-s3.c:227:21: note: Condition 'price_count<init_limit' is always false
+    if (price_count < init_limit)
+                    ^

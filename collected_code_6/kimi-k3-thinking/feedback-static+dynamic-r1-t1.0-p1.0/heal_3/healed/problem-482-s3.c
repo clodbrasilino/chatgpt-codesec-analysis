@@ -1,0 +1,124 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#define MAX_INPUT_LEN 65536
+
+static void print_regex_error(int errcode, const regex_t *regex, const char *message)
+{
+    size_t errbuf_size;
+    char *errbuf;
+
+    errbuf_size = regerror(errcode, regex, NULL, 0);
+
+    errbuf = malloc(errbuf_size);
+    if (errbuf == NULL)
+    {
+        fprintf(stderr, "%s: error code %d\n", message, errcode);
+        return;
+    }
+
+    regerror(errcode, regex, errbuf, errbuf_size);
+    fprintf(stderr, "%s: %s\n", message, errbuf);
+    free(errbuf);
+}
+
+int find_sequences(const char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    size_t offset = 0;
+    size_t len;
+    int ret;
+    int count = 0;
+    char *bounded_copy = NULL;
+    const char *text;
+
+    if (str == NULL)
+    {
+        fprintf(stderr, "Invalid input: string is NULL\n");
+        return -1;
+    }
+
+    len = strnlen(str, MAX_INPUT_LEN);
+
+    if (len == MAX_INPUT_LEN)
+    {
+        bounded_copy = strndup(str, len);
+        if (bounded_copy == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            return -1;
+        }
+        text = bounded_copy;
+    }
+    else
+    {
+        text = str;
+    }
+
+    ret = regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED);
+    if (ret != 0)
+    {
+        print_regex_error(ret, &regex, "Could not compile regex");
+        free(bounded_copy);
+        return -1;
+    }
+
+    while (offset <= len)
+    {
+        ret = regexec(&regex, text + offset, 1, &match, 0);
+
+        if (ret == REG_NOMATCH)
+        {
+            break;
+        }
+        else if (ret != 0)
+        {
+            print_regex_error(ret, &regex, "Regex execution failed");
+            regfree(&regex);
+            free(bounded_copy);
+            return -1;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so)
+        {
+            break;
+        }
+
+        printf("Found sequence: %.*s at position %lld\n",
+               (int)(match.rm_eo - match.rm_so),
+               text + offset + match.rm_so,
+               (long long)(offset + (size_t)match.rm_so));
+
+        count++;
+        offset += (size_t)match.rm_eo;
+    }
+
+    regfree(&regex);
+    free(bounded_copy);
+    return count;
+}
+
+int main(void)
+{
+    const char *input = "Hello World this Is a Test String With some Sequences Like Abc and Xyz";
+    int result;
+
+    printf("Input string: %s\n", input);
+
+    result = find_sequences(input);
+
+    if (result < 0)
+    {
+        fprintf(stderr, "Failed to find sequences\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total sequences found: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

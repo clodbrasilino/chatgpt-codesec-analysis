@@ -1,0 +1,102 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *join_tuple(const char **tuple, size_t count, const char *delimiter)
+{
+    if (count == 0) {
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    if (tuple == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+     */
+    size_t delimiter_length = strlen(delimiter);
+    size_t total_length = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t element_length = strlen(tuple[i]);
+        if (total_length > SIZE_MAX - element_length) {
+            return NULL;
+        }
+        total_length += element_length;
+    }
+
+    if (count > 1 && delimiter_length > 0) {
+        size_t separator_count = count - 1;
+        if (delimiter_length > SIZE_MAX / separator_count) {
+            return NULL;
+        }
+        size_t separators_length = delimiter_length * separator_count;
+        if (total_length > SIZE_MAX - separators_length) {
+            return NULL;
+        }
+        total_length += separators_length;
+    }
+
+    if (total_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *position = result;
+    for (size_t i = 0; i < count; ++i) {
+        /* Possible weaknesses found:
+         * Flawfinder strlen: Does not handle strings that are not \0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126). (risk 1, buffer)
+         */
+        size_t element_length = strlen(tuple[i]);
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(position, tuple[i], element_length);
+        position += element_length;
+        if (i < count - 1) {
+            /* Possible weaknesses found:
+             * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+             */
+            memcpy(position, delimiter, delimiter_length);
+            position += delimiter_length;
+        }
+    }
+    *position = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tuple[] = {"alpha", "beta", "gamma"};
+    const char *delimiter = "-";
+
+    char *result = join_tuple(tuple, sizeof(tuple) / sizeof(tuple[0]), delimiter);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to concatenate tuple\n");
+        return 1;
+    }
+
+    printf("%s\n", result);
+    free(result);
+
+    return 0;
+}

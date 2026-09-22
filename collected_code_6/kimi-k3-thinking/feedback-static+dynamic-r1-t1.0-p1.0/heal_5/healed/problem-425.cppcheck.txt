@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-425.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-425.c:158:27: style: Condition 'copy_size>capacities[i]' is always false [knownConditionTrueFalse]
+            if (copy_size > capacities[i])
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-425.c:156:27: note: capacities[i] is assigned 'copy_size' here.
+            capacities[i] = copy_size;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-425.c:158:27: note: Condition 'copy_size>capacities[i]' is always false
+            if (copy_size > capacities[i])
+                          ^

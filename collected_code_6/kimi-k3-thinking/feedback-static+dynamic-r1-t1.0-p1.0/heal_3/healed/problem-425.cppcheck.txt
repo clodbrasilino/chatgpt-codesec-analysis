@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-425.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-425.c:145:27: style: The comparison 'copy_size > dest_capacity' is always false because 'copy_size' and 'dest_capacity' represent the same value. [knownConditionTrueFalse]
+            if (copy_size > dest_capacity)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-425.c:128:42: note: 'dest_capacity' is assigned value 'copy_size' here.
+            const size_t dest_capacity = copy_size;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-425.c:145:27: note: The comparison 'copy_size > dest_capacity' is always false because 'copy_size' and 'dest_capacity' represent the same value.
+            if (copy_size > dest_capacity)
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-425.c:52:12: style: The scope of the variable 'j' can be reduced. [variableScope]
+    size_t j;
+           ^

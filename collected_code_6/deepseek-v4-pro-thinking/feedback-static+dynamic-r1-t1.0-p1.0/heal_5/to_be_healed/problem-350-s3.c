@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static char *read_line(size_t *out_len) {
+    size_t capacity = 16;
+    char *buffer = malloc(capacity);
+    if (!buffer) return NULL;
+    size_t len = 0;
+    int c;
+    /* Possible weaknesses found:
+     * Flawfinder getchar: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+     */
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (len + 2 > capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            char *tmp = realloc(buffer, capacity);
+            if (!tmp) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = tmp;
+        }
+        buffer[len++] = (char)c;
+    }
+    buffer[len] = '\0';
+    if (c == EOF && len == 0) {
+        free(buffer);
+        return NULL;
+    }
+    *out_len = len;
+    return buffer;
+}
+
+size_t minimizeLength(char *str, size_t size) {
+    if (str == NULL || size == 0) {
+        return (size_t)-1;
+    }
+
+    size_t len = 0;
+    while (len < size && str[len] != '\0') {
+        ++len;
+    }
+    if (len == size) {
+        return (size_t)-1;
+    }
+
+    if (len == 0) {
+        return 0;
+    }
+
+    unsigned long frequency[256] = {0};
+    unsigned char maxChar = 0;
+    size_t maxFrequency = 0;
+
+    for (size_t i = 0; i < len; ++i) {
+        unsigned char ch = (unsigned char)str[i];
+        ++frequency[ch];
+        if (frequency[ch] > maxFrequency) {
+            maxFrequency = frequency[ch];
+            maxChar = ch;
+        }
+    }
+
+    size_t writeIndex = 0;
+    for (size_t i = 0; i < len; ++i) {
+        if ((unsigned char)str[i] != maxChar) {
+            str[writeIndex++] = str[i];
+        }
+    }
+    str[writeIndex] = '\0';
+
+    return writeIndex;
+}
+
+int main(void) {
+    size_t len;
+    char *input = read_line(&len);
+    if (input == NULL) {
+        return 1;
+    }
+
+    size_t result = minimizeLength(input, len + 1);
+    if (result == (size_t)-1) {
+        free(input);
+        return 1;
+    }
+
+    printf("%zu\n", result);
+    free(input);
+    return 0;
+}

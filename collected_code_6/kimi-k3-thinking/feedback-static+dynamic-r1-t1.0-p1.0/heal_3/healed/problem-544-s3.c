@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define MAX_STRING_LENGTH 4096
+
+typedef struct {
+    const char *first;
+    const char *second;
+} Tuple;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+    if (s == NULL) {
+        return 0;
+    }
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+static int safe_memcpy(char **dst, size_t *remaining, const char *src, size_t len)
+{
+    if (dst == NULL || *dst == NULL || remaining == NULL || src == NULL) {
+        return -1;
+    }
+    if (len > *remaining) {
+        return -1;
+    }
+    memcpy(*dst, src, len);
+    *dst += len;
+    *remaining -= len;
+    return 0;
+}
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count, const char *delimiter)
+{
+    if (tuples == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    size_t delim_len = bounded_strlen(delimiter, MAX_STRING_LENGTH + 1);
+    if (delim_len > MAX_STRING_LENGTH) {
+        return NULL;
+    }
+
+    size_t *first_lens = NULL;
+    size_t *second_lens = NULL;
+
+    if (count > 0) {
+        if (count > SIZE_MAX / sizeof(size_t)) {
+            return NULL;
+        }
+        first_lens = malloc(count * sizeof(size_t));
+        second_lens = malloc(count * sizeof(size_t));
+        if (first_lens == NULL || second_lens == NULL) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+    }
+
+    size_t total_length = 1;
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].first == NULL || tuples[i].second == NULL) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+
+        size_t first_len = bounded_strlen(tuples[i].first, MAX_STRING_LENGTH + 1);
+        size_t second_len = bounded_strlen(tuples[i].second, MAX_STRING_LENGTH + 1);
+        if (first_len > MAX_STRING_LENGTH || second_len > MAX_STRING_LENGTH) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+        first_lens[i] = first_len;
+        second_lens[i] = second_len;
+
+        size_t pair_len = first_len;
+        if (pair_len > SIZE_MAX - second_len) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+        pair_len += second_len;
+        if (delim_len > (SIZE_MAX - pair_len) / 2) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+        pair_len += 2 * delim_len;
+        if (total_length > SIZE_MAX - pair_len) {
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+        total_length += pair_len;
+    }
+
+    char *result = malloc(total_length);
+    if (result == NULL) {
+        free(first_lens);
+        free(second_lens);
+        return NULL;
+    }
+
+    char *ptr = result;
+    size_t remaining = total_length - 1;
+
+    for (size_t i = 0; i < count; i++) {
+        if (safe_memcpy(&ptr, &remaining, tuples[i].first, first_lens[i]) != 0) {
+            free(result);
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+
+        if (safe_memcpy(&ptr, &remaining, delimiter, delim_len) != 0) {
+            free(result);
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+
+        if (safe_memcpy(&ptr, &remaining, tuples[i].second, second_lens[i]) != 0) {
+            free(result);
+            free(first_lens);
+            free(second_lens);
+            return NULL;
+        }
+
+        if (i + 1 < count) {
+            if (safe_memcpy(&ptr, &remaining, delimiter, delim_len) != 0) {
+                free(result);
+                free(first_lens);
+                free(second_lens);
+                return NULL;
+            }
+        }
+    }
+    *ptr = '\0';
+
+    free(first_lens);
+    free(second_lens);
+    return result;
+}
+
+int main(void)
+{
+    const Tuple tuples[] = {
+        {"apple", "red"},
+        {"banana", "yellow"},
+        {"grape", "purple"},
+        {"orange", "orange"}
+    };
+    const size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    char *flattened = flatten_tuple_list(tuples, count, ", ");
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten tuple list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", flattened);
+    free(flattened);
+
+    return EXIT_SUCCESS;
+}

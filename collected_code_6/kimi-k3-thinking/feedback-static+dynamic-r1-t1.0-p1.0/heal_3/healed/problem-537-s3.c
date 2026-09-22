@@ -1,0 +1,163 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <sys/types.h>
+
+static int is_delimiter(char c)
+{
+    return isspace((unsigned char)c) || ispunct((unsigned char)c);
+}
+
+static char *copy_word(const char *start, size_t len)
+{
+    char *word;
+    size_t i;
+
+    if (start == NULL || len == SIZE_MAX) {
+        return NULL;
+    }
+
+    word = malloc(len + 1);
+    if (word == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        word[i] = start[i];
+    }
+    word[len] = '\0';
+
+    return word;
+}
+
+static void free_words(char **words, size_t count)
+{
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+char *find_first_repeated_word(const char *str)
+{
+    size_t capacity, count, i;
+    size_t *lengths;
+    char **seen, **resized;
+    const char *p;
+
+    if (str == NULL || *str == '\0') {
+        return copy_word("None", 4);
+    }
+
+    capacity = 16;
+    count = 0;
+    seen = malloc(capacity * sizeof(*seen));
+    if (seen == NULL) {
+        return NULL;
+    }
+    lengths = malloc(capacity * sizeof(*lengths));
+    if (lengths == NULL) {
+        free(seen);
+        return NULL;
+    }
+
+    p = str;
+    while (*p != '\0') {
+        const char *start;
+        size_t len;
+
+        while (*p != '\0' && is_delimiter(*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+        while (*p != '\0' && !is_delimiter(*p)) {
+            p++;
+        }
+        len = (size_t)(p - start);
+
+        for (i = 0; i < count; i++) {
+            if (lengths[i] == len && memcmp(seen[i], start, len) == 0) {
+                char *result = copy_word(start, len);
+                free(lengths);
+                free_words(seen, count);
+                return result;
+            }
+        }
+
+        if (count == capacity) {
+            size_t *new_lengths;
+
+            if (capacity > SIZE_MAX / (2 * sizeof(*seen))) {
+                free(lengths);
+                free_words(seen, count);
+                return NULL;
+            }
+
+            resized = realloc(seen, capacity * 2 * sizeof(*resized));
+            if (resized == NULL) {
+                free(lengths);
+                free_words(seen, count);
+                return NULL;
+            }
+            seen = resized;
+
+            new_lengths = realloc(lengths, capacity * 2 * sizeof(*new_lengths));
+            if (new_lengths == NULL) {
+                free(lengths);
+                free_words(seen, count);
+                return NULL;
+            }
+            lengths = new_lengths;
+            capacity *= 2;
+        }
+
+        seen[count] = copy_word(start, len);
+        if (seen[count] == NULL) {
+            free(lengths);
+            free_words(seen, count);
+            return NULL;
+        }
+        lengths[count] = len;
+        count++;
+    }
+
+    free(lengths);
+    free_words(seen, count);
+    return copy_word("None", 4);
+}
+
+int main(void)
+{
+    char *input = NULL;
+    size_t size = 0;
+    ssize_t nread;
+    char *word;
+
+    nread = getline(&input, &size, stdin);
+    if (nread < 0) {
+        free(input);
+        printf("None\n");
+        return EXIT_SUCCESS;
+    }
+
+    word = find_first_repeated_word(input);
+    if (word != NULL) {
+        printf("%s\n", word);
+        free(word);
+    } else {
+        printf("None\n");
+    }
+
+    free(input);
+    return EXIT_SUCCESS;
+}

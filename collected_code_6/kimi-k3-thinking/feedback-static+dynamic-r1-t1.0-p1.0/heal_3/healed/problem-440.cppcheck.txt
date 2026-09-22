@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-440.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-440.c:185:30: style: Condition 'wlen<copy_size' is always true [knownConditionTrueFalse]
+                    if (wlen < copy_size) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-440.c:178:38: note: copy_size is assigned 'wlen+1' here.
+                    size_t copy_size = wlen + 1;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-440.c:181:45: note: Assuming condition is false
+                    if (results[found].word == NULL) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-440.c:185:30: note: Condition 'wlen<copy_size' is always true
+                    if (wlen < copy_size) {
+                             ^

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 2, got 0
+  *  test case 1 failed: expected 7, got 0
+  *  test case 0 failed: expected 10, got 5
+  */
+
+/* Possible weaknesses found:
+ *  Parameter 'prices' can be declared as const array [constParameter]
+ */
+int maxProfit(int k, int prices[], int n) {
+    if (n <= 1 || k <= 0) {
+        return 0;
+    }
+    if (k >= n / 2) {
+        int profit = 0;
+        for (int i = 1; i < n; ++i) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+    long long *buy = (long long *)malloc((size_t)(k + 1) * sizeof(long long));
+    long long *sell = (long long *)malloc((size_t)(k + 1) * sizeof(long long));
+    if (buy == NULL || sell == NULL) {
+        free(buy);
+        free(sell);
+        return 0;
+    }
+    for (int j = 0; j <= k; ++j) {
+        buy[j] = LLONG_MIN / 2;
+        sell[j] = 0;
+    }
+    for (int i = 0; i < n; ++i) {
+        long long prev_sell = sell[0];
+        for (int j = 1; j <= k; ++j) {
+            long long new_buy = prev_sell - prices[i];
+            if (new_buy > buy[j]) {
+                buy[j] = new_buy;
+            }
+            long long old_sell = sell[j];
+            long long new_sell = buy[j] + prices[i];
+            if (new_sell > sell[j]) {
+                sell[j] = new_sell;
+            }
+            prev_sell = old_sell;
+        }
+    }
+    int result = (int)sell[k];
+    free(buy);
+    free(sell);
+    return result;
+}
+
+int main(void) {
+    int prices[] = {3, 2, 6, 5, 0, 3};
+    int k = 2;
+    int n = sizeof(prices) / sizeof(prices[0]);
+    int result = maxProfit(k, prices, n);
+    printf("Maximum profit: %d\n", result);
+    return 0;
+}

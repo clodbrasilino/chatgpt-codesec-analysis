@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-585-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-585-s3.c:68:13: style: Condition 'len>=capacity' is always false [knownConditionTrueFalse]
+    if (len >= capacity) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-585-s3.c:64:14: note: capacity is assigned 'len+1' here.
+    capacity = len + 1;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-585-s3.c:66:14: note: Assuming condition is false
+    if (copy == NULL)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_5/healed/problem-585-s3.c:68:13: note: Condition 'len>=capacity' is always false
+    if (len >= capacity) {
+            ^

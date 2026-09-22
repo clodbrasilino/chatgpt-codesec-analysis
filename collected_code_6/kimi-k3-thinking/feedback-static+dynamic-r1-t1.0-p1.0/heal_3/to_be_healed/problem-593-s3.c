@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define IP_MAX_LEN 15
+#define RESULT_SIZE 16
+
+#if RESULT_SIZE <= IP_MAX_LEN
+#error "RESULT_SIZE must be greater than IP_MAX_LEN"
+#endif
+
+static size_t bounded_strnlen(const char *s, size_t max_len)
+{
+    size_t n = 0;
+
+    if (s == NULL)
+    {
+        return 0;
+    }
+
+    while (n < max_len && s[n] != '\0')
+    {
+        n++;
+    }
+
+    return n;
+}
+
+int remove_leading_zeros(const char *ip, char *result, size_t result_size)
+{
+    size_t len;
+    size_t i = 0;
+    size_t j = 0;
+    int segment = 0;
+
+    if (ip == NULL || result == NULL || result_size == 0)
+    {
+        return -1;
+    }
+
+    len = bounded_strnlen(ip, IP_MAX_LEN + 1);
+    if (len == 0 || len > IP_MAX_LEN)
+    {
+        return -1;
+    }
+
+    while (i <= len)
+    {
+        size_t octet_start = i;
+        size_t octet_len;
+        size_t k;
+
+        while (i < len && ip[i] != '.')
+        {
+            if (ip[i] < '0' || ip[i] > '9')
+            {
+                return -1;
+            }
+            i++;
+        }
+
+        octet_len = i - octet_start;
+
+        if (octet_len == 0 || octet_len > 3)
+        {
+            return -1;
+        }
+
+        if (octet_len == 3)
+        {
+            int value = (ip[octet_start] - '0') * 100 +
+                        (ip[octet_start + 1] - '0') * 10 +
+                        (ip[octet_start + 2] - '0');
+            if (value > 255)
+            {
+                return -1;
+            }
+        }
+
+        while (octet_len > 1 && ip[octet_start] == '0')
+        {
+            octet_start++;
+            octet_len--;
+        }
+
+        if (j >= result_size || octet_len >= result_size - j)
+        {
+            return -1;
+        }
+
+        for (k = 0; k < octet_len; k++)
+        {
+            if (j >= result_size - 1)
+            {
+                return -1;
+            }
+            result[j] = ip[octet_start + k];
+            j++;
+        }
+
+        if (i < len && ip[i] == '.')
+        {
+            if (segment == 3)
+            {
+                return -1;
+            }
+            if (j >= result_size - 1)
+            {
+                return -1;
+            }
+            result[j] = '.';
+            j++;
+            i++;
+            segment++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (segment != 3 || i != len)
+    {
+        return -1;
+    }
+
+    if (j >= result_size)
+    {
+        return -1;
+    }
+
+    result[j] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_ips[] = {
+        "192.168.001.001",
+        "010.000.000.001",
+        "001.002.003.004",
+        "255.255.255.255",
+        "0.0.0.0",
+        "000.000.000.000"
+    };
+    const size_t num_tests = sizeof(test_ips) / sizeof(test_ips[0]);
+    /* Possible weaknesses found:
+     * Flawfinder char: Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length. (risk 2, buffer)
+     */
+    char result[RESULT_SIZE];
+    size_t k;
+
+    if (sizeof(result) <= IP_MAX_LEN)
+    {
+        fprintf(stderr, "Result buffer is too small\n");
+        return EXIT_FAILURE;
+    }
+
+    for (k = 0; k < num_tests; k++)
+    {
+        memset(result, 0, sizeof(result));
+
+        if (remove_leading_zeros(test_ips[k], result, sizeof(result)) == 0)
+        {
+            printf("Input:  %s\n", test_ips[k]);
+            printf("Output: %s\n\n", result);
+        }
+        else
+        {
+            printf("Invalid IP address: %s\n\n", test_ips[k]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

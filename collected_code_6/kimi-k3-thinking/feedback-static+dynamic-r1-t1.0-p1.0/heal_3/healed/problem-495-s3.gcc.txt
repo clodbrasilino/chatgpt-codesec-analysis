@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-495-s3.c: In function 'remove_lowercase_substrings':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-495-s3.c:36:22: error: 'SIZE_MAX' undeclared (first use in this function)
+   36 |     if (input_len >= SIZE_MAX - 1) {
+      |                      ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-495-s3.c:7:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; this is probably fixable by adding '#include <stdint.h>'
+    6 | #include <regex.h>
+  +++ |+#include <stdint.h>
+    7 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-495-s3.c:36:22: note: each undeclared identifier is reported only once for each function it appears in
+   36 |     if (input_len >= SIZE_MAX - 1) {
+      |                      ^~~~~~~~

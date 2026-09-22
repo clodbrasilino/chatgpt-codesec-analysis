@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+static void reverse_range(char *str, size_t start, size_t end)
+{
+    while (start < end)
+    {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+static char *read_line(FILE *stream, size_t *out_len)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    if (buffer == NULL)
+    {
+        return NULL;
+    }
+
+    int ch;
+    while ((ch = fgetc(stream)) != EOF && ch != '\n')
+    {
+        if (length + 1 >= capacity)
+        {
+            if (capacity > SIZE_MAX / 2)
+            {
+                free(buffer);
+                return NULL;
+            }
+            size_t new_capacity = capacity * 2;
+            char *new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL)
+            {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+        buffer[length] = (char)ch;
+        length++;
+    }
+
+    if (ferror(stream) != 0 || (ch == EOF && length == 0))
+    {
+        free(buffer);
+        return NULL;
+    }
+
+    const char *cr = memchr(buffer, '\r', length);
+    if (cr != NULL)
+    {
+        length = (size_t)(cr - buffer);
+    }
+
+    buffer[length] = '\0';
+
+    if (out_len != NULL)
+    {
+        *out_len = length;
+    }
+
+    return buffer;
+}
+
+char *reverse_words(const char *str, size_t len)
+{
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    if (len == SIZE_MAX)
+    {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    memcpy(result, str, len);
+    result[len] = '\0';
+
+    if (len > 0)
+    {
+        reverse_range(result, 0, len - 1);
+    }
+
+    size_t word_start = 0;
+    for (size_t i = 0; i <= len; i++)
+    {
+        if (result[i] == ' ' || result[i] == '\0')
+        {
+            if (word_start < i)
+            {
+                reverse_range(result, word_start, i - 1);
+            }
+            word_start = i + 1;
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    char *input;
+    size_t len = 0;
+
+    while ((input = read_line(stdin, &len)) != NULL)
+    {
+        char *reversed = reverse_words(input, len);
+        free(input);
+
+        if (reversed == NULL)
+        {
+            fprintf(stderr, "Error: failed to reverse words\n");
+            return EXIT_FAILURE;
+        }
+
+        fputs(reversed, stdout);
+        putchar('\n');
+
+        free(reversed);
+    }
+
+    if (ferror(stdin) != 0)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

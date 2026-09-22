@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:44:19: style: Condition 'input_len>=work_cap' is always false [knownConditionTrueFalse]
+    if (input_len >= work_cap) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:36:14: note: work_cap is assigned 'input_len+1' here.
+    work_cap = input_len + 1;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:40:14: note: Assuming condition is false
+    if (work == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:44:19: note: Condition 'input_len>=work_cap' is always false
+    if (input_len >= work_cap) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:98:22: style: Condition 'copy_len>input_len-pos' is always false [knownConditionTrueFalse]
+        if (copy_len > input_len - pos ||
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:97:18: note: copy_len is assigned 'input_len-pos' here.
+        copy_len = input_len - pos;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_4/healed/problem-495.c:98:22: note: Condition 'copy_len>input_len-pos' is always false
+        if (copy_len > input_len - pos ||
+                     ^

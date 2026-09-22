@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct list_node {
+    const char *data;
+    struct list_node *next;
+} list_node;
+
+#define STR_LEN_LIMIT ((size_t)1 << 30)
+
+static size_t safe_strlen(const char *str, size_t maxlen) {
+    const char *s = str;
+    while (maxlen-- && *s != '\0') {
+        s++;
+    }
+    if (*s != '\0') {
+        return (size_t)-1;
+    }
+    return (size_t)(s - str);
+}
+
+char *concatenate_list(const list_node *head) {
+    const list_node *current = NULL;
+    char *result = NULL;
+    size_t total_length = 0;
+    size_t node_count = 0;
+    size_t *lengths = NULL;
+    size_t i = 0;
+    char *position = NULL;
+
+    if (head == NULL) {
+        result = malloc(1);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    for (current = head; current != NULL; current = current->next) {
+        if (current->data != NULL) {
+            node_count++;
+        }
+    }
+
+    if (node_count == 0) {
+        result = malloc(1);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    lengths = malloc(node_count * sizeof(size_t));
+    if (lengths == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    total_length = 0;
+    for (current = head; current != NULL; current = current->next) {
+        size_t len;
+
+        if (current->data == NULL) {
+            continue;
+        }
+
+        len = safe_strlen(current->data, STR_LEN_LIMIT);
+        if (len == (size_t)-1) {
+            free(lengths);
+            return NULL;
+        }
+
+        if (total_length > (size_t)-1 - len) {
+            free(lengths);
+            return NULL;
+        }
+
+        lengths[i] = len;
+        total_length += len;
+        i++;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        free(lengths);
+        return NULL;
+    }
+
+    position = result;
+    i = 0;
+    for (current = head; current != NULL; current = current->next) {
+        if (current->data == NULL) {
+            continue;
+        }
+
+        /* Possible weaknesses found:
+         * Flawfinder memcpy: Does not check for buffer overflows when copying to destination (CWE-120). Make sure destination can always hold the source data. (risk 2, buffer)
+         */
+        memcpy(position, current->data, lengths[i]);
+        position += lengths[i];
+        i++;
+    }
+
+    *position = '\0';
+
+    free(lengths);
+    return result;
+}
+
+int main(void) {
+    list_node node3 = { "world", NULL };
+    list_node node2 = { " ", &node3 };
+    list_node node1 = { "Hello", &node2 };
+    char *combined = NULL;
+
+    combined = concatenate_list(&node1);
+    if (combined == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", combined);
+    free(combined);
+
+    return EXIT_SUCCESS;
+}

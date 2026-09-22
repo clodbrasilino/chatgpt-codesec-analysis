@@ -1,0 +1,130 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LEN 1024
+
+static void reverse_string(char *str, size_t max_len)
+{
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return;
+    }
+
+    len = strnlen(str, max_len);
+    if (len < 2) {
+        return;
+    }
+
+    for (i = 0; i < len / 2; i++) {
+        char temp;
+
+        temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+static int reverse_strings(char **strings, size_t count, size_t max_len)
+{
+    size_t i;
+
+    if (strings == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            return -1;
+        }
+        reverse_string(strings[i], max_len);
+    }
+
+    return 0;
+}
+
+static int copy_string(char *dest, size_t dest_size, const char *src)
+{
+    size_t len;
+    size_t i;
+
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        return -1;
+    }
+
+    len = strnlen(src, dest_size);
+    if (len >= dest_size) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        dest[i] = src[i];
+    }
+    dest[len] = '\0';
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input[] = {"hello", "world", "programming", "reverse"};
+    size_t count = sizeof(input) / sizeof(input[0]);
+    char **strings;
+    size_t i;
+    int status = EXIT_SUCCESS;
+
+    strings = calloc(count, sizeof(*strings));
+    if (strings == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        strings[i] = malloc(MAX_STRING_LEN + 1);
+        if (strings[i] == NULL) {
+            size_t j;
+
+            fprintf(stderr, "Memory allocation failed\n");
+            for (j = 0; j < count; j++) {
+                free(strings[j]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+
+        if (copy_string(strings[i], MAX_STRING_LEN + 1, input[i]) != 0) {
+            size_t j;
+
+            fprintf(stderr, "Failed to copy input string\n");
+            for (j = 0; j < count; j++) {
+                free(strings[j]);
+            }
+            free(strings);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (reverse_strings(strings, count, MAX_STRING_LEN + 1) != 0) {
+        fprintf(stderr, "Failed to reverse strings\n");
+        status = EXIT_FAILURE;
+    } else {
+        for (i = 0; i < count; i++) {
+            if (printf("%s\n", strings[i]) < 0) {
+                fprintf(stderr, "Output error\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+    }
+
+    for (i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+
+    return status;
+}

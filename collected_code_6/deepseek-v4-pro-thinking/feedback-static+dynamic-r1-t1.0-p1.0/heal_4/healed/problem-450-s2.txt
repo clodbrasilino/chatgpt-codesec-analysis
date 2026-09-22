@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SAFE_STRING_LENGTH 4096
+
+static size_t my_strnlen(const char *s, size_t maxlen)
+{
+    size_t len = 0;
+    while (len < maxlen && s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+char **extract_strings(const char **strings, size_t count, size_t length, size_t *out_count)
+{
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (strings == NULL || count == 0) {
+        return NULL;
+    }
+
+    size_t matching_count = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (strings[i] == NULL) continue;
+        if (my_strnlen(strings[i], length + 1) >= length) {
+            matching_count++;
+        }
+    }
+
+    if (matching_count == 0) {
+        return NULL;
+    }
+
+    char **result = malloc(matching_count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (strings[i] == NULL) continue;
+        size_t len = my_strnlen(strings[i], length + 1);
+        if (len >= length) {
+            size_t full_len = my_strnlen(strings[i], MAX_SAFE_STRING_LENGTH);
+            char *copy = malloc(full_len + 1);
+            if (copy == NULL) {
+                for (size_t k = 0; k < result_index; k++) {
+                    free(result[k]);
+                }
+                free(result);
+                *out_count = 0;
+                return NULL;
+            }
+            for (size_t j = 0; j < full_len; j++) {
+                copy[j] = strings[i][j];
+            }
+            copy[full_len] = '\0';
+            result[result_index] = copy;
+            result_index++;
+        }
+    }
+
+    *out_count = matching_count;
+    return result;
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "pear", "fig", "kiwi", "date", "plum", "" };
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    size_t extracted_count = 0;
+    size_t target_length = 3;
+
+    char **extracted = extract_strings(words, word_count, target_length, &extracted_count);
+
+    if (extracted == NULL) {
+        printf("No strings longer than %zu found or allocation failed.\n", target_length);
+        return 0;
+    }
+
+    for (size_t i = 0; i < extracted_count; i++) {
+        printf("%s\n", extracted[i]);
+        free(extracted[i]);
+    }
+    free(extracted);
+
+    return 0;
+}
+```

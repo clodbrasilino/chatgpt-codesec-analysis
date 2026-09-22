@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#define MAX_HEX_DIGITS 16
+#define BUFFER_SIZE (MAX_HEX_DIGITS + 4)
+
+int isEvenHex(unsigned long long number)
+{
+    return (number & 1ULL) == 0ULL;
+}
+
+static void discard_remaining_input(void)
+{
+    int ch = getchar();
+
+    while (ch != '\n' && ch != EOF)
+    {
+        ch = getchar();
+    }
+}
+
+int main(void)
+{
+    char buffer[BUFFER_SIZE] = {0};
+    char *endptr = NULL;
+    unsigned long long number = 0ULL;
+    size_t input_length = 0U;
+
+    printf("Enter a hexadecimal number: ");
+    fflush(stdout);
+
+    if (fgets(buffer, (int)sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[sizeof(buffer) - 1U] = '\0';
+    input_length = strlen(buffer);
+
+    if (input_length == (sizeof(buffer) - 1U) &&
+        buffer[input_length - 1U] != '\n' &&
+        !feof(stdin))
+    {
+        discard_remaining_input();
+        fprintf(stderr, "Input exceeds maximum allowed length.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    number = strtoull(buffer, &endptr, 16);
+
+    if (endptr == buffer)
+    {
+        fprintf(stderr, "No hexadecimal digits were provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (errno == ERANGE)
+    {
+        fprintf(stderr, "Hexadecimal number is out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (*endptr != '\n' && *endptr != '\0')
+    {
+        fprintf(stderr, "Invalid character in input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isEvenHex(number))
+    {
+        printf("%llX is even.\n", number);
+    }
+    else
+    {
+        printf("%llX is odd.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}

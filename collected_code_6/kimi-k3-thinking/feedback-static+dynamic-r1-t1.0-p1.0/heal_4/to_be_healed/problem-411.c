@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_INPUT_LEN 4096
+
+typedef enum {
+    READ_LINE_OK,
+    READ_LINE_EOF,
+    READ_LINE_TOO_LONG,
+    READ_LINE_ERROR
+} read_line_status;
+
+static size_t bounded_strlen(const char *s, size_t max_len)
+{
+    size_t len = 0;
+
+    if (s == NULL) {
+        return 0;
+    }
+
+    while (len < max_len && s[len] != '\0') {
+        len++;
+    }
+
+    return len;
+}
+
+char *snake_to_camel(const char *input, size_t max_len)
+{
+    char *result;
+    size_t input_len;
+    size_t result_idx = 0;
+    size_t i;
+    int capitalize_next = 1;
+
+    if (input == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    input_len = bounded_strlen(input, max_len);
+
+    result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < input_len; i++) {
+        unsigned char c = (unsigned char)input[i];
+
+        if (c == '_') {
+            capitalize_next = 1;
+            continue;
+        }
+
+        if (capitalize_next) {
+            result[result_idx++] = (char)toupper(c);
+            capitalize_next = 0;
+        } else {
+            result[result_idx++] = (char)c;
+        }
+    }
+
+    result[result_idx] = '\0';
+    return result;
+}
+
+static char *read_input_line(FILE *stream, size_t max_len, read_line_status *status)
+{
+    char *buf;
+    size_t capacity = 128;
+    size_t len = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'ch' can be reduced. [variableScope]
+     */
+    int ch;
+
+    if (stream == NULL || status == NULL || max_len == 0) {
+        return NULL;
+    }
+
+    if (capacity > max_len + 1) {
+        capacity = max_len + 1;
+    }
+
+    buf = (char *)malloc(capacity);
+    if (buf == NULL) {
+        *status = READ_LINE_ERROR;
+        return NULL;
+    }
+
+    for (;;) {
+        /* Possible weaknesses found:
+         * Flawfinder fgetc: Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20). (risk 1, buffer)
+         */
+        ch = fgetc(stream);
+
+        if (ch == EOF) {
+            if (ferror(stream)) {
+                free(buf);
+                *status = READ_LINE_ERROR;
+                return NULL;
+            }
+            if (len == 0) {
+                free(buf);
+                *status = READ_LINE_EOF;
+                return NULL;
+            }
+            break;
+        }
+
+        if (ch == '\n') {
+            break;
+        }
+
+        if (len >= max_len) {
+            free(buf);
+            *status = READ_LINE_TOO_LONG;
+            return NULL;
+        }
+
+        if (len + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *new_buf;
+
+            if (new_capacity > max_len + 1) {
+                new_capacity = max_len + 1;
+            }
+
+            new_buf = (char *)realloc(buf, new_capacity);
+            if (new_buf == NULL) {
+                free(buf);
+                *status = READ_LINE_ERROR;
+                return NULL;
+            }
+
+            buf = new_buf;
+            capacity = new_capacity;
+        }
+
+        buf[len++] = (char)ch;
+    }
+
+    buf[len] = '\0';
+    *status = READ_LINE_OK;
+    return buf;
+}
+
+int main(int argc, char *argv[])
+{
+    const char *input;
+    char *input_buffer = NULL;
+    char *output;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'len' can be reduced. [variableScope]
+     */
+    size_t len;
+
+    if (argc > 1) {
+        if (bounded_strlen(argv[1], MAX_INPUT_LEN) >= MAX_INPUT_LEN) {
+            fprintf(stderr, "Error: input too long\n");
+            return EXIT_FAILURE;
+        }
+        input = argv[1];
+    } else {
+        read_line_status status = READ_LINE_ERROR;
+
+        input_buffer = read_input_line(stdin, MAX_INPUT_LEN, &status);
+
+        if (input_buffer == NULL) {
+            if (status == READ_LINE_TOO_LONG) {
+                fprintf(stderr, "Error: input too long\n");
+                return EXIT_FAILURE;
+            }
+            if (status == READ_LINE_ERROR) {
+                fprintf(stderr, "Error: failed to read input\n");
+                return EXIT_FAILURE;
+            }
+            input = "convert_snake_case_to_camel_case";
+        } else {
+            len = bounded_strlen(input_buffer, MAX_INPUT_LEN + 1);
+            while (len > 0 && (input_buffer[len - 1] == '\r' || input_buffer[len - 1] == '\n')) {
+                input_buffer[--len] = '\0';
+            }
+            input = input_buffer;
+        }
+    }
+
+    output = snake_to_camel(input, MAX_INPUT_LEN);
+    if (output == NULL) {
+        fprintf(stderr, "Error: conversion failed\n");
+        free(input_buffer);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    free(output);
+    free(input_buffer);
+    return EXIT_SUCCESS;
+}

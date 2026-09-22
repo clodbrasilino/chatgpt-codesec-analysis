@@ -135,6 +135,21 @@ def gen_usd(model: str, slug: str, tasks: dict, peak: bool = True) -> float:
                model, peak)
 
 
+def gen_usd_exact(model: str, slug: str, peak: bool = True) -> float:
+    """Exact generation cost where the ledger records generate calls."""
+    fp = R / model / f"{slug}.usage.jsonl"
+    if not fp.is_file():
+        return 0.0
+    total = 0.0
+    for line in open(fp):
+        c = json.loads(line)
+        if c.get("kind") != "generate" or not c.get("ok"):
+            continue
+        total += usd(c.get("prompt_tokens") or 0,
+                     c.get("completion_tokens") or 0, model, peak)
+    return total
+
+
 def subset_pids(model: str) -> set[int]:
     return {int(m.group(1)) for k in manifest(model, D_SLUG)["outcomes"]
             if (m := KEY_RE.match(k))}
@@ -254,6 +269,48 @@ def main() -> None:
             passes = pass_count(m, slug, pids)
             cpp = st["total"] / passes if passes else float("nan")
             L.append(f"| {NAME[m]} | {label} | {st['total']/600:.4f} | {passes} | {cpp:.3f} |")
+
+    # ---------- A2. every cell as its own row (thinking separated) ----------
+    SUB = "feedback-static+dynamic-r1-t1.0-p1.0"   # thinking full-gate slug
+    GSUB = "feedback-static-r1-t1.0-p1.0"          # thinking generation slug
+    L += ["", "## A2. Every cell separately: non-thinking vs thinking arms", "",
+          "Non-thinking rows are the main cells restricted to the same",
+          "200-problem subset as the thinking cells (600 programs), so the",
+          "arms are comparable; Qwen Max and Claude Fable 5 have no",
+          "thinking variant; Gemini 3.1 Pro's contrast is reasoning",
+          "low -> medium (its reasoning cannot be disabled). Generation is",
+          "EXACT for the thinking arms (their ledgers record generate",
+          "calls) and estimated for the non-thinking cells", "",
+          "| Cell | n | repair $/prog mean/std/median | gen est $/prog | pass @horizon | $/pass | s/pass | cell $ |",
+          "|---|---:|---|---:|---:|---:|---:|---:|"]
+    order = [("qwen-max", None), ("claude-fable-5", None),
+             ("deepseek-v4-pro", "deepseek-v4-pro-thinking"),
+             ("openai-gpt56-sol", "openai-gpt56-sol-thinking"),
+             ("gemini-3-pro", "gemini-3-pro-thinking"),
+             ("kimi-k3", "kimi-k3-thinking"),
+             ("glm-5.1", "glm-5.1-thinking")]
+    for m, tm in order:
+        pids = subset_pids(m)
+        st = usd_split(m, MAIN, pids, peak=(m == "deepseek-v4-pro"))
+        passes = pass_count(m, MAIN, pids)
+        gen = gen_usd(m, MAIN, tasks, peak=(m == "deepseek-v4-pro")) * 600 / \
+            len(manifest(m)["outcomes"])   # prorate cell-wide gen estimate
+        pp = np.asarray(st["per_prog"], float)
+        fix = st["total"] / passes if passes else float("nan")
+        spp = st["lat_total"] / passes if passes else float("nan")
+        L.append(f"| {NAME[m]} (non-thinking) | 600 | {stats_row(pp)} | "
+                 f"{gen/600:.4f} | {passes} ({100*passes/600:.1f}%) | "
+                 f"{fix:.3f} | {spp:.1f} | {st['total']+gen:,.0f} |")
+        if tm:
+            stt = usd_split(tm, SUB, peak=(m == "deepseek-v4-pro"))
+            passes_t = pass_count(tm, SUB)
+            gen_t = gen_usd_exact(tm, GSUB, peak=(m == "deepseek-v4-pro"))
+            ppt = np.asarray(stt["per_prog"], float)
+            fix_t = stt["total"] / passes_t if passes_t else float("nan")
+            spp_t = stt["lat_total"] / passes_t if passes_t else float("nan")
+            L.append(f"| {NAME[m]} (thinking) | 600 | {stats_row(ppt)} | "
+                     f"{gen_t/600:.4f} | {passes_t} ({100*passes_t/600:.1f}%) | "
+                     f"{fix_t:.3f} | {spp_t:.1f} | {stt['total']+gen_t:,.0f} |")
 
     L += ["", "## Caveats", "",
          "- Gemini 3.1 Pro's ledger covers only 1,110 of 2,922 programs:",

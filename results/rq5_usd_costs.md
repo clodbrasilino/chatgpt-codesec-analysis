@@ -100,6 +100,31 @@ DeepSeek off-peak bound: cell total $18 (vs $36 at peak).
 | Qwen Max | t=0.2 p=1.0 | 0.0026 | 489 | 0.003 |
 | Qwen Max | t=1.0 p=0.5 | 0.0025 | 482 | 0.003 |
 
+## A2. Every cell separately: non-thinking vs thinking arms
+
+Non-thinking rows are the main cells restricted to the same
+200-problem subset as the thinking cells (600 programs), so the
+arms are comparable; Qwen Max and Claude Fable 5 have no
+thinking variant; Gemini 3.1 Pro's contrast is reasoning
+low -> medium (its reasoning cannot be disabled). Generation is
+EXACT for the thinking arms (their ledgers record generate
+calls) and estimated for the non-thinking cells
+
+| Cell | n | repair $/prog mean/std/median | gen est $/prog | pass @horizon | $/pass | s/pass | cell $ |
+|---|---:|---|---:|---:|---:|---:|---:|
+| Qwen Max (non-thinking) | 600 | 0.003 / 0.004 / 0.001 | 0.0004 | 472 (78.7%) | 0.003 | 42.8 | 2 |
+| Claude Fable 5 (non-thinking) | 600 | 0.306 / 0.504 / 0.046 | 0.0241 | 473 (78.8%) | 0.388 | 75.8 | 198 |
+| DeepSeek V4 Pro (non-thinking) | 600 | 0.018 / 0.028 / 0.004 | 0.0018 | 439 (73.2%) | 0.025 | 63.0 | 12 |
+| DeepSeek V4 Pro (thinking) | 600 | 0.029 / 0.100 / 0.003 | 0.0277 | 541 (90.2%) | 0.033 | 210.0 | 34 |
+| GPT-5.6 (non-thinking) | 600 | 0.118 / 0.185 / 0.007 | 0.0150 | 437 (72.8%) | 0.163 | 51.8 | 80 |
+| GPT-5.6 (thinking) | 600 | 0.182 / 0.290 / 0.043 | 0.0553 | 536 (89.3%) | 0.204 | 134.0 | 142 |
+| Gemini 3.1 Pro (non-thinking) | 600 | 0.013 / 0.033 / 0.005 | 0.0043 | 572 (95.3%) | 0.014 | 22.3 | 10 |
+| Gemini 3.1 Pro (thinking) | 600 | 0.013 / 0.027 / 0.000 | 0.0088 | 578 (96.3%) | 0.013 | 45.9 | 13 |
+| Kimi K3 (non-thinking) | 600 | 0.063 / 0.091 / 0.014 | 0.0068 | 416 (69.3%) | 0.090 | 92.8 | 42 |
+| Kimi K3 (thinking) | 600 | 0.140 / 0.402 / 0.027 | 0.0447 | 542 (90.3%) | 0.155 | 357.2 | 111 |
+| GLM-5.1 (non-thinking) | 600 | 0.010 / 0.016 / 0.002 | 0.0013 | 467 (77.8%) | 0.012 | 32.4 | 7 |
+| GLM-5.1 (thinking) | 600 | 0.045 / 0.158 / 0.006 | 0.0130 | 563 (93.8%) | 0.048 | 194.2 | 35 |
+
 ## Caveats
 
 - Gemini 3.1 Pro's ledger covers only 1,110 of 2,922 programs:

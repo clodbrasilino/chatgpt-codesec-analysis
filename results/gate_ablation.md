@@ -118,3 +118,24 @@ additionally involve independently generated round-0 code.
   full gate's stricter criterion costs pass rate.
 - Scope: 200-problem vulnerable-prone subset, non-thinking, 3
   samples/problem; Gemini near ceiling throughout.
+
+## D. Thinking contrast under the static-only gate (deferred from RQ3)
+
+Same 200-problem subset, static-only cells, thinking vs non-thinking
+(3 samples per arm; primary = common 5-round censor; tests as in RQ3).
+From results/thinking_paired_all.md:
+
+| Model | pass base → thinking | Δ | McNemar p | 95% CI |
+|---|---|---:|---|---|
+| DeepSeek V4 Pro | 80.3% → 97.2% | +16.9pp | 3.1e-08 | [+11.5, +23.5] |
+| GPT-5.6 | 77.8% → 94.3% | +16.5pp | 2.3e-09 | [+14.0, +27.0] |
+| Kimi K3 | 72.7% → 96.0% | +23.3pp | 5.9e-12 | [+18.0, +31.0] |
+| GLM-5.1 | 84.0% → 98.5% | +14.5pp | 1.1e-07 | [+8.5, +18.5] |
+| Gemini 3.1 Pro | 100.0% → 99.0% | -1.0pp | 0.5 (saturated) | [-2.5, 0.0] |
+
+Reading: reasoning helps repair under the static-only gate too (+14 to
++23pp in 4/5), but the static-only pass ceiling (94-99%) remains below
+what dynamic feedback achieves on non-thinking arms (95-99%) --
+reinforcing that the channel, not the reasoning mode, dominates
+termination. This section belongs to the gate-usage ablation, per the
+RQ3 scope decision.

@@ -74,9 +74,24 @@ def gather(model: str, src_slug: str, bases: set[str], outdir: Path) -> int:
     return n
 
 
+def _record(model: str, direction: str, n: int, counts) -> None:
+    prog = json.loads(PROGRESS.read_text()) if PROGRESS.is_file() else {}
+    prog.setdefault(model, {})[direction] = {"programs": n,
+                                             "counts": str(counts)}
+    PROGRESS.write_text(json.dumps(prog, indent=1))
+
+
 def run_direction(direction: str, model: str) -> None:
     dyn_man = json.load(open(R / model / f"{D_SLUG}.manifest.json"))
     bases = {k for k in dyn_man["outcomes"] if KEY_RE.match(k)}
+    if direction == "fuzz":
+        outdir = OUTROOT / model / "from_static"
+        n = sum(1 for _ in outdir.glob("*.c"))
+        print(f"[{model}/fuzz] fuzzing {n} finals -> {outdir}", flush=True)
+        counts = _run_dynamic(str(outdir), model, fuzz=True)
+        _record(model, direction, n, counts)
+        print(f"[{model}/fuzz] done: {counts}", flush=True)
+        return
     outdir = OUTROOT / model / ("from_dynamic" if direction == "static"
                                 else "from_static")
     src_slug = D_SLUG if direction == "static" else S_SLUG
@@ -97,7 +112,7 @@ def run_direction(direction: str, model: str) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] not in ("static", "dynamic"):
+    if len(sys.argv) != 3 or sys.argv[1] not in ("static", "dynamic", "fuzz"):
         print(__doc__)
         sys.exit(2)
     run_direction(sys.argv[1], sys.argv[2])

@@ -118,11 +118,14 @@ Findings:
    35.2-49.7% of its passes are also static-clean. Its 95-99%
    self-criterion pass rate collapses by half under the common
    criterion.
-3. **False closure of the static gate: 23.6-31.0%** -- of the programs
-   the static-only loop passed, 24-31% are dynamically DIRTY (fail
-   tests or violate sanitizers; no fuzzing, so this is a LOWER bound).
-   Static-clean does not imply dynamic-clean for roughly one in four
-   programs.
+3. **False closure of the static gate: 23.8-31.7%** -- of the programs
+   the static-only loop passed, roughly one in four is dynamically
+   DIRTY (fail tests, violate sanitizers, or crash under fuzzing).
+   The fuzzed re-evaluation of all 4,200 finals (60s/program, AFL++,
+   all 7 models) moved the rate only from 23.6-31.0% to 23.8-31.7%:
+   tests+oracle already catch essentially all of the dynamic dirt, so
+   the finding is not a fuzz-coverage artifact. Static-clean does not
+   imply dynamic-clean for roughly one in four programs.
 4. Data: results/cross_eval_common_criterion.json; raw reports under
    cross_eval/{model}/{from_static,from_dynamic}/.
 

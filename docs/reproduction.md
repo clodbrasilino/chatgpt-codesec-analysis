@@ -1,0 +1,201 @@
+# Experiment Reproduction Manual
+
+This manual explains how to run the paper's experiment, in which large language models (LLMs) write and repair C programs, and how to reproduce its results from the collected data.
+
+## Contents
+
+1. [What the experiment does](#1-what-the-experiment-does)
+2. [Environment and tools](#2-environment-and-tools)
+3. [Configuring the tools](#3-configuring-the-tools)
+4. [Access keys](#4-access-keys)
+5. [Running](#5-running)
+6. [Execution options](#6-execution-options)
+7. [Resuming an interrupted run](#7-resuming-an-interrupted-run)
+8. [Generated reports](#8-generated-reports)
+9. [Reproducing the paper's results](#9-reproducing-the-papers-results)
+10. [Notes](#10-notes)
+
+## 1. What the experiment does
+
+We asked seven LLMs to write C programs for 974 tasks. The pipeline then analyzes each program with static tools and, depending on the configuration, also with dynamic tools. When the tools find problems, the pipeline itself inserts these findings as comments into the code and sends it back to the model, asking for a fix. Only the findings from the channels selected for feedback go into the comments.
+
+This cycle repeats until no findings remain or until the round limit is reached. The limit is set by `max_rounds` in `config/experiment.yaml`, and the limit used in each run is recorded in its manifest (Section 8).
+
+We call each combination of a model and a configuration a cell.
+
+## 2. Environment and tools
+
+We ran the experiment on macOS with these versions:
+
+- Python 3, with the packages in `requirements.txt`
+- GNU Compiler Collection (GCC) 15.2.0, installed with Homebrew as `gcc-15`
+- Apple clang 21.0.0, used for static analysis and for builds with the AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan) sanitizers
+- Cppcheck Premium 23.6.0
+- Flawfinder 2.0.19
+- AFL++ 5.02c, a fuzzer derived from American Fuzzy Lop (AFL), used only for fuzzing
+
+To install the Python packages, we used:
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+### 2.1 About Cppcheck Premium
+
+We used Cppcheck Premium in `bughunting` mode, which is only available in the paid version and performs a broader analysis than the default mode. Without it, the pipeline still works: it skips cppcheck, or it runs the free version if we point the path to it and remove the `--premium=bughunting` flag from `config/tools.yaml`.
+
+## 3. Configuring the tools
+
+Tool paths and flags are set in `config/tools.yaml`. In the repository, the paths are absolute and point to the machine where we ran the experiment. Before running, we replace these fields with local paths:
+
+- `tools.gcc.path`
+- `tools.clang.path`
+- `tools.cppcheck.path`
+- `tools.flawfinder.path`
+- `dynamic.afl_bin`, `dynamic.afl_cc`, and `dynamic.afl_lib`
+
+The flags should stay as they are, to keep the same configuration as the paper.
+
+If a tool is not found, the pipeline prints a warning and continues without it:
+
+```
+[warn] gcc not found at /usr/local/bin/gcc-15; skipping
+```
+
+Two details:
+
+- Sanitizer builds use the `clang` found on the PATH.
+- Besides the analysis, gcc runs the compilation check, which produces the `.o` file. Without gcc, this check is not run either.
+
+## 4. Access keys
+
+The models are accessed through an application programming interface (API). Each model reads its key from an environment variable defined in `config/models.yaml`. The id used with `--model` is shown in parentheses:
+
+- `OPENAI_API_KEY`: GPT-5.6 Sol (`openai-gpt56-sol`)
+- `ANTHROPIC_API_KEY`: Claude Fable 5 (`claude-fable-5`)
+- `GEMINI_API_KEY`: Gemini 3.1 Pro (`gemini-3-pro`)
+- `DASHSCOPE_API_KEY`, all through Alibaba's DashScope platform:
+  - DeepSeek V4 Pro (`deepseek-v4-pro`)
+  - Qwen Max (`qwen-max`)
+  - Kimi K3 (`kimi-k3`)
+  - GLM-5.1 (`glm-5.1`)
+
+The reasoning variants, whose ids end in `-thinking`, use the same key as the base model. We only need the keys for the models we run. Without the key, the pipeline stops with the message `API key missing: set env var ...`.
+
+## 5. Running
+
+Every run goes through a single command, `python -m src.pipeline.run_experiment`, and each run executes one cell.
+
+---
+
+**Quick test**, with one task:
+
+```sh
+.venv/bin/python -m src.pipeline.run_experiment --model qwen-max --feedback static --tasks 2
+```
+
+---
+
+**Main cell**, with all 974 tasks, three samples per task, and only the static channel:
+
+```sh
+.venv/bin/python -m src.pipeline.run_experiment --model qwen-max --feedback static --tasks all --samples 3
+```
+
+---
+
+**Cell with the static and dynamic channels.** It reuses the initial code from the previous cell, so it does not pay for generation again:
+
+```sh
+.venv/bin/python -m src.pipeline.run_experiment --model qwen-max --feedback static+dynamic --tasks all --samples 3 --fuzz --gen-source feedback-static-r0-t1.0-p1.0 --gen-source-reports
+```
+
+---
+
+**Reasoning cells.** We use the model id ending in `-thinking` (for example, `glm-5.1-thinking`), with `--tasks subset` and `--samples 3`.
+
+---
+
+Each cell name summarizes its configuration. For example, `feedback-static+dynamic-r0-t1.0-p1.0` means static and dynamic feedback, no reasoning (`r0`), temperature 1.0, and top_p 1.0. The exact parameters of each cell in the paper are in `results/<model>/<cell>.manifest.json`.
+
+## 6. Execution options
+
+These options let us run only part of the experiment or change its configuration:
+
+- `--tasks 1-30` or `--tasks 5,8,13`: runs only these tasks.
+- `--tasks subset`: runs the first 200 tasks of the ranking in `results/vulnerable_subset.csv`. The size comes from `subset_size` in `config/experiment.yaml`.
+- `--feedback`: sets what the model receives as comments (`none`, `static`, `dynamic`, or `static+dynamic`).
+- `--measure`: sets the tools that measure the code. If omitted, it follows `--feedback`; with `none` or `dynamic`, it uses both channels.
+- `--max-rounds N`: round limit. The default comes from `config/experiment.yaml`.
+- `--samples N`: number of samples per task.
+- `--temp` and `--top-p`: the model's sampling parameters.
+- `--fuzz`: turns on AFL++, only for programs that read from standard input or from arguments.
+- `--gen-source <cell>`: reuses the initial generation of another cell of the same model.
+- `--gen-source-reports`: also reuses the static reports of that cell.
+
+Environment variables for the dynamic channel:
+
+- `DYN_SANITIZERS`: sanitizers to use. The default is `address,undefined`.
+- `DYN_ARCHIVE=0`: does not keep the builds or the fuzzer sessions.
+- `DYN_ARCHIVE_ROOT`: folder where these files are kept. The default is `artifacts/` in the repository.
+
+## 7. Resuming an interrupted run
+
+If a run is interrupted, we just run the same command again. The pipeline skips what already exists and continues where it stopped.
+
+## 8. Generated reports
+
+The data of each cell is stored in `collected_code_6/<model>/<cell>/`, split by round:
+
+- `heal_0/`: the initial generation and its reports
+- `heal_<n>/to_be_healed/`: the code with the findings inserted as comments, exactly as it was sent to the model in round `n`
+- `heal_<n>/healed/`: the code fixed by the model and its reports
+
+For each program, for example `problem-5.c`, the pipeline produces, depending on the measured channels:
+
+- `problem-5.txt`: the model's original answer
+- `problem-5.c`: the code extracted from that answer
+- `problem-5.gcc.txt`, `problem-5.clang.txt`, `problem-5.cppcheck.txt`, and `problem-5.flawfinder.txt`: the static tool reports
+- `problem-5.test.txt`: the test case results
+- `problem-5.asan.txt`: the sanitizer findings
+- `problem-5.fuzz.txt`: the fuzzing findings, when `--fuzz` is on
+- `problem-5.o`: the result of the compilation check, when gcc is installed
+
+With more than one sample, files get the suffix `-s2`, `-s3`, and so on.
+
+The clang analyzer also writes one `.plist` file per program in the folder where the command was run. The pipeline does not use these files.
+
+For each cell, the pipeline also produces:
+
+- `results/<model>/<cell>.manifest.json`: the cell summary, with the parameters and the outcome of each program
+- `results/<model>/<cell>.usage.jsonl`: the token and time log of each API call
+
+## 9. Reproducing the paper's results
+
+The analyses do not call the models. They read the collected data in `collected_code_6/` and `results/` and write their output to `results/`, overwriting existing files. All of them run with the same command format, replacing `<name>` with the analysis name:
+
+```sh
+.venv/bin/python -m src.analysis.<name>
+```
+
+Paper numbers, with the research question (RQ) of each analysis:
+
+- overall numbers of the results section: `final_numbers`
+- RQ1: `consistency_tests`
+- RQ2: `rq2_3channel --model <id>` and `rq2_paired --model <id>`
+- RQ3: `thinking_paired_all` and `rq3_paired`
+- RQ4: `rq4_sampling`
+- RQ5: `rq5_cost_benefit`, `rq5_cost_dynamics`, and `rq5_usd_costs`
+
+Figures:
+
+- Venn diagram of the channels: `problem_channel_venn`, then `make_venn_figure`
+- reasoning token histograms: `thinking_token_histogram`
+- Kaplan-Meier curves: `rq5_cost_dynamics`
+
+## 10. Notes
+
+- API calls have a cost, so we recommend starting with the quick test.
+- LLMs do not always produce the same answer, even with the same parameters. A new run therefore produces code different from the code we collected. To check the paper's numbers, we use the collected data (Section 9).
+- The test harnesses, which run the test cases of each task, are already in `harnesses/<id>/spec.json`. The `mbpp/mbpp.jsonl` file, from the Mostly Basic Python Problems (MBPP) dataset, is only needed to rebuild them.

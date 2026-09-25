@@ -1,4 +1,8 @@
 import csv
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # bct.py stays in the repo root
 from bct import problems
 
 mbpp_csv: list[dict] = []

@@ -49,4 +49,4 @@ def get_healed_path(path: str, healing_round: int) -> str:
 
 if __name__ == "__main__":
     # run_experiment(sys.argv[1])
-    run_experiment("collected_code_4/round2/")
+    run_experiment("../collected_code_4/round2/")

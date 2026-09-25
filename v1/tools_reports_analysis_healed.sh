@@ -1,4 +1,4 @@
-FOLDER=collected_code/heal_round_15/healed
+FOLDER=../collected_code/heal_round_15/healed
 
 echo Total sources generated: `ls -l $FOLDER/*.c | wc -l`
 # 871

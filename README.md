@@ -57,6 +57,7 @@ export OPENAI_API_KEY="<your api key here>"
 
 3. Run the collector
 ```bash
+cd v1
 python collect_code.py
 ```
 
@@ -84,7 +85,7 @@ If it does not generate C code (in some cases it generated python code), just tr
 
 ### Data preprocessing
 
-All data preprocessing information steps can be found in its [Jupyter Notebook](data_preprocessing.ipynb).
+All data preprocessing information steps can be found in its [Jupyter Notebook](v1/data_preprocessing.ipynb).
 
 ### Clustering analysis
 
@@ -97,4 +98,4 @@ https://lucid.app/lucidspark/33c6e3b8-eeea-4df0-8f87-715afc602d08/edit?beaconFlo
 
 ## Data analysis visualizations
 
-Many of the paper data visualization figures were built in [this Orange data analysis file](data-analysis.ows). We used Orange Data Mining v3.36.
+Many of the paper data visualization figures were built in [this Orange data analysis file](v1/data-analysis.ows). We used Orange Data Mining v3.36.

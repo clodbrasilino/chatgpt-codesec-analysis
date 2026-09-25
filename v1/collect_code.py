@@ -3,6 +3,9 @@ import sys
 import time
 import traceback
 from os import getenv, path, mkdir, listdir
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # bct.py stays in the repo root
 from bct import problems
 from tqdm import tqdm
 from multiprocessing.pool import ThreadPool

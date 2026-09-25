@@ -1,6 +1,6 @@
 import os
 
-path = "./collected_code_3/round3/heal_0"
+path = "../collected_code_3/round3/heal_0"
 
 for i in range(1, 975):
     os.system(f"mv {path}/problem-{i}-3.txt {path}/problem-{i}.txt")

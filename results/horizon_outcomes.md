@@ -38,7 +38,7 @@ Rounds used by the repaired programs (main cells):
 | deepseek-v4-pro | `feedback-static-r0-t0.2-p1.0` | 200 | 82 | 64 | 10 | 44 | 0 | 73.0\% |
 | deepseek-v4-pro | `feedback-static-r0-t1.0-p0.5` | 200 | 75 | 77 | 0 | 2 | 46 | 76.0\% |
 | deepseek-v4-pro | `feedback-static-r0-t1.0-p1.0` | 2922 | 1404 | 1031 | 73 | 414 | 0 | 83.3\% |
-| deepseek-v4-pro-thinking | `feedback-static+dynamic-r1-t1.0-p1.0` | 600 | 295 | 212 | 1 | 3 | 89 | 84.5\% |
+| deepseek-v4-pro-thinking | `feedback-static+dynamic-r1-t1.0-p1.0` | 600 | 295 | 246 | 0 | 58 | 1 | 90.2\% |
 | deepseek-v4-pro-thinking | `feedback-static-r1-t1.0-p1.0` | 600 | 303 | 259 | 21 | 17 | 0 | 93.7\% |
 | gemini-3-pro | `feedback-dynamic-r0-t1.0-p1.0` | 600 | 559 | 30 | 4 | 7 | 0 | 98.2\% |
 | gemini-3-pro | `feedback-static+dynamic-r0-t0.2-p1.0` | 600 | 312 | 270 | 7 | 11 | 0 | 97.0\% |
@@ -54,7 +54,7 @@ Rounds used by the repaired programs (main cells):
 | glm-5.1-thinking | `feedback-static-r1-t1.0-p1.0` | 600 | 289 | 281 | 21 | 9 | 0 | 95.0\% |
 | kimi-k3 | `feedback-dynamic-r0-t1.0-p1.0` | 600 | 554 | 19 | 2 | 25 | 0 | 95.5\% |
 | kimi-k3 | `feedback-static-r0-t1.0-p1.0` | 2922 | 1565 | 781 | 72 | 504 | 0 | 80.3\% |
-| kimi-k3-thinking | `feedback-static+dynamic-r1-t1.0-p1.0` | 600 | 238 | 247 | 12 | 19 | 84 | 80.8\% |
+| kimi-k3-thinking | `feedback-static+dynamic-r1-t1.0-p1.0` | 600 | 238 | 304 | 0 | 58 | 0 | 90.3\% |
 | kimi-k3-thinking | `feedback-static-r1-t1.0-p1.0` | 600 | 251 | 306 | 19 | 24 | 0 | 92.8\% |
 | openai-gpt56-sol | `feedback-dynamic-r0-t1.0-p1.0` | 600 | 583 | 14 | 0 | 0 | 3 | 99.5\% |
 | openai-gpt56-sol | `feedback-static-r0-t1.0-p1.0` | 2922 | 1461 | 807 | 110 | 544 | 0 | 77.6\% |
